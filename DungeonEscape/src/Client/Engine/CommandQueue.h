@@ -9,13 +9,14 @@ public:
 	CCommandQueue();
 	~CCommandQueue();
 
-	void Init(ComPtr<ID3D12Device> device, std::shared_ptr<CSwapChain> swapChain, std::shared_ptr<CDescriptorHeap> descHeap);
+	void Init(ComPtr<ID3D12Device> device, std::shared_ptr<CSwapChain> swapChain);
 	void WaitSync();
 
 	void RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect);
 	void RenderEnd();
 
 	ComPtr<ID3D12CommandQueue> GetCmdQueue() { return m_cmdQueue; }
+	ComPtr<ID3D12GraphicsCommandList> GetCmdList(void) { return m_cmdList; }
 
 private:
 	// CommandQueue : DX12에 등장
@@ -32,6 +33,5 @@ private:
 	HANDLE								m_fenceEvent = INVALID_HANDLE_VALUE;
 
 	std::shared_ptr<CSwapChain>			m_swapChain;
-	std::shared_ptr<CDescriptorHeap>	m_descHeap;
 };
 

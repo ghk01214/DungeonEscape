@@ -1,10 +1,6 @@
 ﻿#include "pch.h"
 #include "Engine.h"
 
-#include "Device.h"
-#include "CommandQueue.h"
-#include "SwapChain.h"
-#include "DescriptorHeap.h"
 
 Engine::Engine()
 	: m_viewport({}), m_scissorRect({})
@@ -30,12 +26,12 @@ void Engine::Init(const WindowInfo& info)
 	m_device = std::make_shared<CDevice>();
 	m_cmdQueue = std::make_shared<CCommandQueue>();
 	m_swapChain = std::make_shared<CSwapChain>();
-	m_descHeap = std::make_shared<CDescriptorHeap>();
+	m_rootSignature = std::make_shared<CRootSignature>();
 
 	m_device->Init();
-	m_cmdQueue->Init(m_device->GetDevice(), m_swapChain, m_descHeap);
-	m_swapChain->Init(info, m_device->GetDXGI(), m_cmdQueue->GetCmdQueue());
-	m_descHeap->Init(m_device->GetDevice(), m_swapChain);
+	m_cmdQueue->Init(m_device->GetDevice(), m_swapChain);
+	m_swapChain->Init(info, m_device->GetDevice(), m_device->GetDXGI(), m_cmdQueue->GetCmdQueue());
+	m_rootSignature->Init(m_device->GetDevice());
 }
 
 void Engine::Render()

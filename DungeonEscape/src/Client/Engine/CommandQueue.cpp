@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "CommandQueue.h"
 #include "SwapChain.h"
-#include "DescriptorHeap.h"
 
 CCommandQueue::CCommandQueue()
 {
@@ -12,10 +11,9 @@ CCommandQueue::~CCommandQueue()
 	::CloseHandle(m_fenceEvent);
 }
 
-void CCommandQueue::Init(ComPtr<ID3D12Device> device, std::shared_ptr<CSwapChain> swapChain, std::shared_ptr<CDescriptorHeap> descHeap)
+void CCommandQueue::Init(ComPtr<ID3D12Device> device, std::shared_ptr<CSwapChain> swapChain)
 {
 	m_swapChain = swapChain;
-	m_descHeap = descHeap;
 
 	D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 	queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
@@ -76,7 +74,7 @@ void CCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect
 	// 현재 화면을 백버퍼로 옮기는 과정, 바로 실행되는것이 아닌, D3D12_RESOURCE_BARRIER형식으로 만들어진다.
 	// GPU에 자원을 전부 기록하지 않거나 기록을 시작하지않은 상태에서 자원의 자료를 읽는 것을 방지하기 위한 자원 방벽 생성
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		m_swapChain->GetCurrentBackBufferResource().Get(),	// 리소스를 가져옴
+		m_swapChain->GetBackRTVBuffer().Get(),	// 리소스를 가져옴
 		D3D12_RESOURCE_STATE_PRESENT, // 현재 상태 -> 화면 출력
 		D3D12_RESOURCE_STATE_RENDER_TARGET); // 나중 상태 -> 외주 결과물
 
@@ -90,7 +88,7 @@ void CCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect
 
 	// GPU에게 현재 작업할 백버퍼에 대해 알려준다.
 	// Specify the buffers we are going to render to.
-	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = m_descHeap->GetBackBufferView();
+	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = m_swapChain->GetBackRTV();
 
 	// 기본적인 백 버퍼의 색상 결정, 어떤 색으로 지울 것인가? 현재 Colors::LightSteelBlue로 설정되어 있음
 	m_cmdList->ClearRenderTargetView(backBufferView, Colors::LightSteelBlue, 0, nullptr);
@@ -101,7 +99,7 @@ void CCommandQueue::RenderEnd()
 {
 	// RenderBegin과는 다르게 인자의 순서를 달리하여 자원방벽을 생성한다.
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		m_swapChain->GetCurrentBackBufferResource().Get(),
+		m_swapChain->GetBackRTVBuffer().Get(),
 		D3D12_RESOURCE_STATE_RENDER_TARGET, // 현재 상태 -> 외주 결과물
 		D3D12_RESOURCE_STATE_PRESENT); // 나중 상태 -> 화면 출력
 

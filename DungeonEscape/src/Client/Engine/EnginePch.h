@@ -57,6 +57,15 @@ typedef struct _tagWindowInfo
 	bool windowed;	// 모드(창모드 or 전체화면)
 }WindowInfo;
 
-extern std::unique_ptr<class Engine> g_Engine;
 
-void HelloEngine();
+struct Vertex
+{
+	Vec3 pos;	// 위치 정보
+	Vec4 color;	// 색상 정보
+};
+
+#define DEVICE			g_Engine->GetDevice()->GetDevice()
+#define CMD_LIST		g_Engine->GetCmdQueue()->GetCmdList()
+#define ROOT_SIGNATURE	g_Engine->GetRootSignature()->GetSignature()
+
+extern std::unique_ptr<class Engine> g_Engine;

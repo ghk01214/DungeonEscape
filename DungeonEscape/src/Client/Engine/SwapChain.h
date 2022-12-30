@@ -25,19 +25,32 @@
 class CSwapChain
 {
 public:
-	void Init(const WindowInfo& info, ComPtr<IDXGIFactory> dxgi, ComPtr<ID3D12CommandQueue> cmdQueue);
+	void Init(const WindowInfo& info, ComPtr<ID3D12Device> device, ComPtr<IDXGIFactory> dxgi, ComPtr<ID3D12CommandQueue> cmdQueue);
 	void Present();
 	void SwapIndex();
 
 	ComPtr<IDXGISwapChain> GetSwapChain() { return m_swapChain; }
-	ComPtr<ID3D12Resource> GetRenderTarget(int32 index) { return m_renderTargets[index]; }
+	ComPtr<ID3D12Resource> GetRenderTarget(int32 index) { return m_rtvBuffer[index]; }
 
-	uint32 GetCurrentBackBufferIndex() { return m_backBufferIndex; }	// 현재 백버퍼 인덱스가 몇번인지 반환
-	ComPtr<ID3D12Resource> GetCurrentBackBufferResource() { return m_renderTargets[m_backBufferIndex]; }	// 현재 백버퍼 리소스 반환(버퍼, 그니깐 그림이 그려져 있는 종이 자체(ID3D12Resource)를 반환한다고 생각하면 됨)
+	//uint32 GetCurrentBackBufferIndex() { return m_backBufferIndex; }	// 현재 백버퍼 인덱스가 몇번인지 반환
+	ComPtr<ID3D12Resource> GetBackRTVBuffer() { return m_rtvBuffer[m_backBufferIndex]; }	// 현재 백버퍼 리소스 반환(버퍼, 그니깐 그림이 그려져 있는 종이 자체(ID3D12Resource)를 반환한다고 생각하면 됨)
+
+	D3D12_CPU_DESCRIPTOR_HANDLE GetBackRTV(void) { return m_rtvHandle[m_backBufferIndex]; }
+
+private:
+	void CreateSwapChain(const WindowInfo& info, ComPtr<IDXGIFactory> dxgi, ComPtr<ID3D12CommandQueue> cmdQueue);
+	void CreateRTV(ComPtr<ID3D12Device> device);
 
 private:
 	ComPtr<IDXGISwapChain>	m_swapChain;
-	ComPtr<ID3D12Resource>	m_renderTargets[SWAP_CHAIN_BUFFER_COUNT];
+
+	ComPtr<ID3D12Resource>	m_rtvBuffer[SWAP_CHAIN_BUFFER_COUNT];
+
+	// rtv(render target view)
+	ComPtr<ID3D12DescriptorHeap>	m_rtvHeap;
+	D3D12_CPU_DESCRIPTOR_HANDLE		m_rtvHandle[SWAP_CHAIN_BUFFER_COUNT];
+
+
 	uint32					m_backBufferIndex = 0;	// 0,1을 반복하며 바꿈
 };
 
