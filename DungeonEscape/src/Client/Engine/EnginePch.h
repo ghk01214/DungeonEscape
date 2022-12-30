@@ -1,7 +1,7 @@
-#pragma once
+﻿#pragma once
 
 
-// ���� include
+// 각종 include
 #include <windows.h>
 #include <tchar.h>
 #include <memory>
@@ -24,13 +24,13 @@ using namespace DirectX;
 using namespace DirectX::PackedVector;
 using namespace Microsoft::WRL;
 
-// ���� lib
+// 각종 lib
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3dcompiler")
 
-// ���� typedef
+// 각종 typedef
 using int8 = __int8;
 using int16 = __int16;
 using int32 = __int32;
@@ -43,5 +43,20 @@ using Vec2 = XMFLOAT2;
 using Vec3 = XMFLOAT3;
 using Vec4 = XMFLOAT4;
 using Matrix = XMMATRIX;
+
+enum
+{
+	SWAP_CHAIN_BUFFER_COUNT = 2
+};
+
+typedef struct _tagWindowInfo
+{
+	HWND hWnd;		// 출력 윈도우
+	int32 width;	// 윈도우 너비
+	int32 height;	// 윈도우 높이
+	bool windowed;	// 모드(창모드 or 전체화면)
+}WindowInfo;
+
+extern std::unique_ptr<class Engine> g_Engine;
 
 void HelloEngine();

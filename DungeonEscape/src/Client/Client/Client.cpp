@@ -9,6 +9,7 @@
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
+WindowInfo g_windowInfo;
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
@@ -44,8 +45,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg;
 
+    g_windowInfo.width = 800;
+    g_windowInfo.height = 600;
+    g_windowInfo.windowed = true;
+
     std::unique_ptr<CGame> pGame = std::make_unique<CGame>();
-    pGame->Init();
+    pGame->Init(g_windowInfo);
 
     while (true)
     {
@@ -122,6 +127,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
+
+   g_windowInfo.hWnd = hWnd;
 
    return TRUE;
 }

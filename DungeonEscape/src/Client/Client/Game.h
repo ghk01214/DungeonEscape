@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 
 class CGame
 {
 public:
-	void Init();
+	void Init(const WindowInfo& Info);
 	void Update();
 
 };
