@@ -4,9 +4,9 @@
 #include "CommandQueue.h"
 #include "SwapChain.h"
 #include "RootSignature.h"
-
 #include "Mesh.h"
 #include "Shader.h"
+#include "ConstantBuffer.h"
 
 class Engine
 {
@@ -23,6 +23,7 @@ public:
 	std::shared_ptr<CCommandQueue> GetCmdQueue(void) { return m_cmdQueue; }
 	std::shared_ptr<CSwapChain> GetSwapChain(void) { return m_swapChain; }
 	std::shared_ptr<CRootSignature> GetRootSignature(void) { return m_rootSignature; }
+	std::shared_ptr<CConstantBuffer> GetCB() { return m_cb; }
 
 public:
 	void RenderBegin();	// 일감(리소스 및 사용법) 맡기기
@@ -39,5 +40,6 @@ private:
 	std::shared_ptr<CCommandQueue> m_cmdQueue;
 	std::shared_ptr<CSwapChain> m_swapChain;
 	std::shared_ptr<CRootSignature> m_rootSignature;
+	std::shared_ptr<CConstantBuffer> m_cb;
 };
 

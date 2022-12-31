@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "CommandQueue.h"
 #include "SwapChain.h"
+#include "Engine.h"
 
 CCommandQueue::CCommandQueue()
 {
@@ -77,6 +78,18 @@ void CCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect
 		m_swapChain->GetBackRTVBuffer().Get(),	// 리소스를 가져옴
 		D3D12_RESOURCE_STATE_PRESENT, // 현재 상태 -> 화면 출력
 		D3D12_RESOURCE_STATE_RENDER_TARGET); // 나중 상태 -> 외주 결과물
+
+
+
+
+	// RootSignature를 세팅한다.
+	m_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
+	// ConstantBuffer의 인덱스 0으로 초기화
+	g_Engine->GetCB()->Clear();
+
+
+
+
 
 	// 생성된 자원 방벽을 커맨드 리스트에 추가
 	m_cmdList->ResourceBarrier(1, &barrier);

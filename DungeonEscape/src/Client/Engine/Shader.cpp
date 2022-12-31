@@ -42,7 +42,7 @@ void CShader::CreateShader(const std::wstring& path, const std::string& name, co
 #endif
 
 	if (FAILED(::D3DCompileFromFile(path.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE
-		, name.c_str(), version.c_str(), compileFlag, 0, &blob, &m_errBlob)))		// 파일 자체를 읽어 통과하면 _vsBlob, _psBlob에 shader와 관련된 리소스가 만들어진다.
+		, name.c_str(), version.c_str(), compileFlag, 0, &blob, &m_errBlob)))		// 파일 자체를 읽어 통과하면 m_vsBlob, m_psBlob에 shader와 관련된 리소스가 만들어진다.
 	{
 		
 		::MessageBoxA(nullptr, "Shader Create Failed !", nullptr, MB_OK);

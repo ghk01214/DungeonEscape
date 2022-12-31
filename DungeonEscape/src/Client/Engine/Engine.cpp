@@ -27,11 +27,13 @@ void Engine::Init(const WindowInfo& info)
 	m_cmdQueue = std::make_shared<CCommandQueue>();
 	m_swapChain = std::make_shared<CSwapChain>();
 	m_rootSignature = std::make_shared<CRootSignature>();
+	m_cb = std::make_shared<CConstantBuffer>();
 
 	m_device->Init();
 	m_cmdQueue->Init(m_device->GetDevice(), m_swapChain);
 	m_swapChain->Init(info, m_device->GetDevice(), m_device->GetDXGI(), m_cmdQueue->GetCmdQueue());
 	m_rootSignature->Init(m_device->GetDevice());
+	m_cb->Init(sizeof(Transform), 256);	// 256개의 오브젝트 할당
 }
 
 void Engine::Render()

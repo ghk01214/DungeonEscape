@@ -64,6 +64,11 @@ struct Vertex
 	Vec4 color;	// 색상 정보
 };
 
+struct Transform
+{
+	Vec4 offset;
+};
+
 #define DEVICE			g_Engine->GetDevice()->GetDevice()
 #define CMD_LIST		g_Engine->GetCmdQueue()->GetCmdList()
 #define ROOT_SIGNATURE	g_Engine->GetRootSignature()->GetSignature()
