@@ -114,4 +114,7 @@ struct Transform
 #define RESOURCE_CMD_LIST	g_Engine->GetCmdQueue()->GetResourceCmdList()
 #define ROOT_SIGNATURE		g_Engine->GetRootSignature()->GetSignature()
 
+#define INPUT				g_Engine->GetInput()
+#define DELTA_TIME			g_Engine->GetTimer()->GetDeltaTime()
+
 extern std::unique_ptr<class Engine> g_Engine;

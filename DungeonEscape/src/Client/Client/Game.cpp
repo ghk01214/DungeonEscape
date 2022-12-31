@@ -48,15 +48,24 @@ void CGame::Init(const WindowInfo& Info)
 
 void CGame::Update()
 {
-	//g_Engine->Render();
+	g_Engine->Update();
 
 	g_Engine->RenderBegin();
 
 	shader->Update();
 
 	{
-		Transform t;
-		t.offset = Vec4(0.25f, 0.25f, 0.1f, 0.f);
+		static Transform t;
+
+		if (INPUT->GetButton(KEY_TYPE::W))
+			t.offset.y += 1.f * DELTA_TIME;
+		if (INPUT->GetButton(KEY_TYPE::S))
+			t.offset.y -= 1.f * DELTA_TIME;
+		if (INPUT->GetButton(KEY_TYPE::A))
+			t.offset.x -= 1.f * DELTA_TIME;
+		if (INPUT->GetButton(KEY_TYPE::D))
+			t.offset.x += 1.f * DELTA_TIME;
+
 		mesh->SetTransform(t);
 
 		mesh->SetTexture(texture);
@@ -64,15 +73,15 @@ void CGame::Update()
 		mesh->Render();
 	}
 
-	{
-		Transform t;
-		t.offset = Vec4(0.f, 0.f, 0.f, 0.f);
-		mesh->SetTransform(t);
+	//{
+	//	Transform t;
+	//	t.offset = Vec4(0.f, 0.f, 0.f, 0.f);
+	//	mesh->SetTransform(t);
 
-		mesh->SetTexture(texture);
+	//	mesh->SetTexture(texture);
 
-		mesh->Render();
-	}
+	//	mesh->Render();
+	//}
 
 	g_Engine->RenderEnd();
 }

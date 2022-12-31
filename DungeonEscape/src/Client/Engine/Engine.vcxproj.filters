@@ -43,6 +43,12 @@
     <Filter Include="Engine\DepthSencilBuffer">
       <UniqueIdentifier>{13f5dacd-75d5-4993-b0c7-5315f9ebd974}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Input">
+      <UniqueIdentifier>{2bbabb2b-f9f7-4ff9-a380-6f13d93889f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Timer">
+      <UniqueIdentifier>{80ee85bb-19a0-4263-bf1e-26fe96dc8128}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -83,6 +89,12 @@
     </ClCompile>
     <ClCompile Include="DepthStencilBuffer.cpp">
       <Filter>Engine\DepthSencilBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Engine\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Engine\Timer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -127,6 +139,12 @@
     </ClInclude>
     <ClInclude Include="DepthStencilBuffer.h">
       <Filter>Engine\DepthSencilBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Engine\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Engine\Timer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

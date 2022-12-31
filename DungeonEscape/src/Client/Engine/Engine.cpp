@@ -36,6 +36,9 @@ void Engine::Init(const WindowInfo& info)
 	m_tableDescHeap->Init(256);
 	m_depthStencilBuffer->Init(m_window);
 
+	m_input->Init(info.hWnd);
+	m_timer->Init();
+
 	// 윈도우 크기 조절, 위에서 모든 처리를 다 끝내고, 나온 값으로 마지막에 윈도우 창의 크기를 조정한다.
 	ResizeWindow(info.width, info.height);
 }
@@ -47,6 +50,14 @@ void Engine::Render()
 	// TODO : 나머지 물체들 그려준다
 
 	RenderEnd();
+}
+
+void Engine::Update()
+{
+	m_input->Update();
+	m_timer->Update();
+
+	ShowFps();
 }
 
 void Engine::RenderBegin()
@@ -76,4 +87,14 @@ void Engine::ResizeWindow(int32 width, int32 height)
 
 	// 위에서 처리했는데? 일단 추가, 왜 했는지는 몰?루 겠다.
 	m_depthStencilBuffer->Init(m_window);
+}
+
+void Engine::ShowFps()
+{
+	uint32 fps = m_timer->GetFps();
+
+	WCHAR text[100] = L"";
+	::wsprintf(text, L"FPS : %d", fps);
+
+	::SetWindowText(m_window.hWnd, text);
 }
