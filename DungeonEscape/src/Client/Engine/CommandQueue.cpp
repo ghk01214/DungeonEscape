@@ -35,6 +35,10 @@ void CCommandQueue::Init(ComPtr<ID3D12Device> device, std::shared_ptr<CSwapChain
 	// Open 상태에서 Command를 넣다가 Close한 다음 제출하는 개념
 	m_cmdList->Close();
 
+	// 텍스쳐를 로드하기 위한 CommandList를 생성
+	device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_resCmdAlloc));
+	device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_resCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_resCmdList));
+
 	// CreateFence
 	// - CPU와 GPU의 동기화 수단으로 쓰인다
 	device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence));
@@ -140,4 +144,20 @@ void CCommandQueue::RenderEnd()
 	WaitSync();
 
 	m_swapChain->SwapIndex();
+}
+
+void CCommandQueue::FlushResourceCommandQueue()
+{
+	// 리소스 관련 CommandList를 닫고
+	m_resCmdList->Close();
+
+	// CommandList를 실행한다.
+	ID3D12CommandList* cmdListArr[] = { m_resCmdList.Get() };
+	m_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
+
+	WaitSync();
+
+	// 재사용을 위해 reset을 한다.
+	m_resCmdAlloc->Reset();
+	m_resCmdList->Reset(m_resCmdAlloc.Get(), nullptr);
 }

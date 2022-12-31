@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+class CTexture;
+
 // [유니티짱]과 같이 정점으로 이루어진 물체
 class CMesh
 {
@@ -8,6 +10,7 @@ public:
 	void Render();
 
 	void SetTransform(const Transform& t) { m_transform = t; }
+	void SetTexture(std::shared_ptr<CTexture> tex) { m_tex = tex; }
 
 private:
 	void CreateVertexBuffer(const std::vector<Vertex>& buffer);
@@ -24,6 +27,9 @@ private:
 	ComPtr<ID3D12Resource>		m_vertexBuffer;
 	D3D12_VERTEX_BUFFER_VIEW	m_vertexBufferView = {};
 	uint32 m_vertexCount = 0;
+
+private:
+	std::shared_ptr<CTexture> m_tex = {};
 
 private:
 	Transform m_transform = {};	// 위치 정보

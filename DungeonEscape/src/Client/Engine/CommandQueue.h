@@ -15,8 +15,11 @@ public:
 	void RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect);
 	void RenderEnd();
 
+	void FlushResourceCommandQueue();
+
 	ComPtr<ID3D12CommandQueue> GetCmdQueue() { return m_cmdQueue; }
 	ComPtr<ID3D12GraphicsCommandList> GetCmdList(void) { return m_cmdList; }
+	ComPtr<ID3D12GraphicsCommandList> GetResourceCmdList() { return	m_resCmdList; }
 
 private:
 	// CommandQueue : DX12에 등장
@@ -25,6 +28,9 @@ private:
 	ComPtr<ID3D12CommandQueue>			m_cmdQueue;
 	ComPtr<ID3D12CommandAllocator>		m_cmdAlloc;	// CommandList에 추가된 Command들은 Allocator의 메모리에 저장된다.
 	ComPtr<ID3D12GraphicsCommandList>	m_cmdList;
+
+	ComPtr<ID3D12CommandAllocator>		m_resCmdAlloc;
+	ComPtr<ID3D12GraphicsCommandList>	m_resCmdList;
 
 	// Fence : 울타리(?)
 	// CPU / GPU 동기화를 위한 간단한 도구

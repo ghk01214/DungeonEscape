@@ -33,7 +33,7 @@ void Engine::Init(const WindowInfo& info)
 	m_device->Init();
 	m_cmdQueue->Init(m_device->GetDevice(), m_swapChain);
 	m_swapChain->Init(info, m_device->GetDevice(), m_device->GetDXGI(), m_cmdQueue->GetCmdQueue());
-	m_rootSignature->Init(m_device->GetDevice());
+	m_rootSignature->Init();
 	m_cb->Init(sizeof(Transform), 256);	// 256개의 오브젝트 할당
 	m_tableDescHeap->Init(256);
 }

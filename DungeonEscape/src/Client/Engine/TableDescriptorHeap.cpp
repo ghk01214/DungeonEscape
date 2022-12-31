@@ -33,6 +33,16 @@ void CTableDescriptorHeap::SetCBV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, CBV_REG
 	DEVICE->CopyDescriptors(1, &destHandle, &destRange, 1, &srcHandle, &srcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
+void CTableDescriptorHeap::SetSRV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, SRV_REGISTER reg)
+{
+	// SetCBV과 동일하게 작동, 차이점은 register에 작용하는 부분이 CBV가 아닌 SRV라는 것
+	D3D12_CPU_DESCRIPTOR_HANDLE destHandle = GetCPUHandle(reg);
+
+	uint32 destRange = 1;
+	uint32 srcRange = 1;
+	DEVICE->CopyDescriptors(1, &destHandle, &destRange, 1, &srcHandle, &srcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
 void CTableDescriptorHeap::CommitTable()
 {
 	// GPU 제출용 DescriptorHeap에 있는 정보를 register에 제출하는 함수
@@ -45,10 +55,15 @@ void CTableDescriptorHeap::CommitTable()
 
 D3D12_CPU_DESCRIPTOR_HANDLE CTableDescriptorHeap::GetCPUHandle(CBV_REGISTER reg)
 {
-	return GetCPUHandle(static_cast<uint32>(reg));
+	return GetCPUHandle(static_cast<uint8>(reg));
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE CTableDescriptorHeap::GetCPUHandle(uint32 reg)
+D3D12_CPU_DESCRIPTOR_HANDLE CTableDescriptorHeap::GetCPUHandle(SRV_REGISTER reg)
+{
+	return GetCPUHandle(static_cast<uint8>(reg));
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE CTableDescriptorHeap::GetCPUHandle(uint8 reg)
 {
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_descHeap->GetCPUDescriptorHandleForHeapStart();
 	handle.ptr += m_currentGroupIndex * m_groupSize;

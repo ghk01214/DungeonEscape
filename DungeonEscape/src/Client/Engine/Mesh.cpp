@@ -31,6 +31,9 @@ void CMesh::Render()
 		D3D12_CPU_DESCRIPTOR_HANDLE handle = g_Engine->GetCB()->PushData(0, &m_transform, sizeof(m_transform));
 		// 가져온 handle을 사용하여 여러 GPU제출용 DescHeap을 생성한다.
 		g_Engine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b0);
+
+
+		g_Engine->GetTableDescHeap()->SetSRV(m_tex->GetCpuHandle(), SRV_REGISTER::t0);
 	}
 	//{
 	//	D3D12_CPU_DESCRIPTOR_HANDLE handle = g_Engine->GetCB()->PushData(0, &m_transform, sizeof(m_transform));

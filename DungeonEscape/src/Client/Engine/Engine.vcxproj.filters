@@ -31,6 +31,15 @@
     <Filter Include="Engine\TableDescriptorHeap">
       <UniqueIdentifier>{67a4403a-5576-48ef-bc1b-8bf92aab2833}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource\Mesh">
+      <UniqueIdentifier>{32a87a2c-f56f-4abe-a07b-a56586edd68c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Texture">
+      <UniqueIdentifier>{bcd33a04-99b6-43dc-8b20-3a7a5118006e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Shader">
+      <UniqueIdentifier>{b557df4e-fd36-4998-83d2-1abf895f3b5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -41,12 +50,6 @@
     </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Resource</Filter>
     </ClCompile>
     <ClCompile Include="CommandQueue.cpp">
       <Filter>Engine\CommandQueue</Filter>
@@ -66,6 +69,15 @@
     <ClCompile Include="TableDescriptorHeap.cpp">
       <Filter>Engine\TableDescriptorHeap</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Resource\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Resource\Texture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EnginePch.h">
@@ -79,12 +91,6 @@
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Resource</Filter>
     </ClInclude>
     <ClInclude Include="CommandQueue.h">
       <Filter>Engine\CommandQueue</Filter>
@@ -103,6 +109,15 @@
     </ClInclude>
     <ClInclude Include="TableDescriptorHeap.h">
       <Filter>Engine\TableDescriptorHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Resource\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Resource\Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
