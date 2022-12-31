@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
+#include "Engine.h"
 #include "CommandQueue.h"
 #include "SwapChain.h"
-#include "Engine.h"
 
 CCommandQueue::CCommandQueue()
 {
@@ -87,8 +87,13 @@ void CCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect
 	// ConstantBuffer의 인덱스 0으로 초기화
 	g_Engine->GetCB()->Clear();
 
+	g_Engine->GetTableDescHeap()->Clear();
 
 
+	ID3D12DescriptorHeap* descHeap = g_Engine->GetTableDescHeap()->GetDescriptorHeap().Get();	// ComPtr을 사용하지 않고 Get을 사용한 이유는 SetDescriptorHeaps 함수에서 요구하는 인자가 그렇기 때문이다.
+	m_cmdList->SetDescriptorHeaps(1, &descHeap);	// CommandQueue와 Table을 바인딩하는 함수, CommandQueue로 Desc Heap이 넘어간다. 
+													// Desc Heap을 사용할 때 큰 배열 하나를 사용하는 이유가 해당 함수(SetDescriptorHeaps)의 실행이 느리기 때문이다.
+													// 이후 CTableDescriptorHeap의 CommitTable함수에서 SetGraphicsRootDescriptorTable함수로 register에 사용할 값들을 제출한다.
 
 
 	// 생성된 자원 방벽을 커맨드 리스트에 추가

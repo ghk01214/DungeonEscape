@@ -1,19 +1,31 @@
 ﻿#include "pch.h"
 #include "RootSignature.h"
+#include "Engine.h"
 
 void CRootSignature::Init(ComPtr<ID3D12Device> device)
 {
-	CD3DX12_ROOT_PARAMETER param[2];
-	param[0].InitAsConstantBufferView(0); // 0번 -> b0 -> CBV 
-	param[1].InitAsConstantBufferView(1); // 1번 -> b1 -> CBV
-	// 이름(b0, b1...)이 겹치더라도 이를 registerspace로 중복처리할 수 도 있다.
+	CD3DX12_DESCRIPTOR_RANGE ranges[] =
+	{
+		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, CBV_REGISTER_COUNT, 0), // b0 ~ b4
+		// (CBV타입으로, n개의 갯수 생성, 몇번 register부터 사용하는가?)
+		// -> CBV 타입으로 CBV_REGISTER_COUNT 개 만큼 생성하되, register는 0부터 시작, 그니깐 CBV는 b로 시작하니, b0, b1, b2... b(CBV_REGISTER_COUNT - 1)에 생성
+	};
 
-	// Constant Buffer View를 다음과 같은 형태로 생성한다.
-	// 0 rootCBV b0
-	// 1 rootCBV b1
+	CD3DX12_ROOT_PARAMETER param[1];
+	param[0].InitAsDescriptorTable(_countof(ranges), ranges);
 
+	//CD3DX12_ROOT_PARAMETER param[2];
+	//param[0].InitAsConstantBufferView(0); // 0번 -> b0 -> CBV 
+	//param[1].InitAsConstantBufferView(1); // 1번 -> b1 -> CBV
+	//// 이름(b0, b1...)이 겹치더라도 이를 registerspace로 중복처리할 수 도 있다.
 
-	D3D12_ROOT_SIGNATURE_DESC sigDesc = CD3DX12_ROOT_SIGNATURE_DESC(2, param);	// 위의 param을 가져와 하나의 
+	//// Constant Buffer View를 다음과 같은 형태로 생성한다.
+	//// 0 rootCBV b0
+	//// 1 rootCBV b1
+
+	D3D12_ROOT_SIGNATURE_DESC sigDesc = CD3DX12_ROOT_SIGNATURE_DESC(_countof(param), param);
+
+	//D3D12_ROOT_SIGNATURE_DESC sigDesc = CD3DX12_ROOT_SIGNATURE_DESC(2, param);	// 위의 param을 가져와 하나의 구조체를 생성
 	//D3D12_ROOT_SIGNATURE_DESC sigDesc = CD3DX12_ROOT_SIGNATURE_DESC(D3D12_DEFAULT);	// D3D12_DEFAULT -> 기본 상태의 서명
 	sigDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT; // 입력 조립기 단계
 

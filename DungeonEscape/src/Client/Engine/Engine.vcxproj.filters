@@ -13,6 +13,24 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{7e01d464-3695-4c14-b8e5-90589ddef59a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\CommandQueue">
+      <UniqueIdentifier>{93fbba35-241b-4cfb-9c03-3155da0b2b0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\ConstantBuffer">
+      <UniqueIdentifier>{ac69e395-eaff-4f9e-8eb0-4f6916ad14a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Device">
+      <UniqueIdentifier>{ce2fa91c-6a5f-43d4-b07a-de30c630867a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\RootSignature">
+      <UniqueIdentifier>{3585e486-25e9-4b7a-ae3a-8e22e0f19392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\SwapChain">
+      <UniqueIdentifier>{501437ff-7aba-431d-852f-3fe15fa747db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\TableDescriptorHeap">
+      <UniqueIdentifier>{67a4403a-5576-48ef-bc1b-8bf92aab2833}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -24,26 +42,29 @@
     <ClCompile Include="Engine.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="CommandQueue.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Device.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="SwapChain.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="RootSignature.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
+    <ClCompile Include="CommandQueue.cpp">
+      <Filter>Engine\CommandQueue</Filter>
+    </ClCompile>
     <ClCompile Include="ConstantBuffer.cpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <Filter>Engine\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="RootSignature.cpp">
+      <Filter>Engine\RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="SwapChain.cpp">
+      <Filter>Engine\SwapChain</Filter>
+    </ClCompile>
+    <ClCompile Include="TableDescriptorHeap.cpp">
+      <Filter>Engine\TableDescriptorHeap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -56,20 +77,8 @@
     <ClInclude Include="Engine.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Device.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="CommandQueue.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="SwapChain.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="RootSignature.h">
-      <Filter>Engine</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Resource</Filter>
@@ -77,8 +86,23 @@
     <ClInclude Include="Shader.h">
       <Filter>Resource</Filter>
     </ClInclude>
+    <ClInclude Include="CommandQueue.h">
+      <Filter>Engine\CommandQueue</Filter>
+    </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
-      <Filter>Engine</Filter>
+      <Filter>Engine\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>Engine\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="RootSignature.h">
+      <Filter>Engine\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="SwapChain.h">
+      <Filter>Engine\SwapChain</Filter>
+    </ClInclude>
+    <ClInclude Include="TableDescriptorHeap.h">
+      <Filter>Engine\TableDescriptorHeap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
