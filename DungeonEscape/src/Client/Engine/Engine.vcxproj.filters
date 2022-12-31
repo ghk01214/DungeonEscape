@@ -40,6 +40,9 @@
     <Filter Include="Resource\Shader">
       <UniqueIdentifier>{b557df4e-fd36-4998-83d2-1abf895f3b5d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\DepthSencilBuffer">
+      <UniqueIdentifier>{13f5dacd-75d5-4993-b0c7-5315f9ebd974}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -77,6 +80,9 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthStencilBuffer.cpp">
+      <Filter>Engine\DepthSencilBuffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencilBuffer.h">
+      <Filter>Engine\DepthSencilBuffer</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

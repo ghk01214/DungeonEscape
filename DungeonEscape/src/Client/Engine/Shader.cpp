@@ -19,13 +19,16 @@ void CShader::Init(const std::wstring& path)
 
 	m_pipelineDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	m_pipelineDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-	m_pipelineDesc.DepthStencilState.DepthEnable = FALSE;
-	m_pipelineDesc.DepthStencilState.StencilEnable = FALSE;
+	m_pipelineDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);	// D3D12_DEFAULT -> m_pipelineDesc.DepthStencilState.DepthEnable = TRUE;
+																					//					m_pipelineDesc.DepthStencilState.StencilEnable = FALSE;
 	m_pipelineDesc.SampleMask = UINT_MAX;
 	m_pipelineDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 	m_pipelineDesc.NumRenderTargets = 1;
 	m_pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 	m_pipelineDesc.SampleDesc.Count = 1;
+
+	m_pipelineDesc.DSVFormat = g_Engine->GetDepthStencilBuffer()->GetDSVFormat();		// 기본은 DXGI_FORMAT_D32_FLOAT로 설정되어 있음. Depth용도로 32bit float을 전부 사용하겠다는 의미
+																						// Depth Stencil View를 사용하기 위해 Shader쪽에 명시해 준것
 
 	DEVICE->CreateGraphicsPipelineState(&m_pipelineDesc, IID_PPV_ARGS(&m_pipelineState));
 }

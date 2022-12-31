@@ -23,7 +23,7 @@ void CRootSignature::CreateRootSignature()
 		// (CBV타입으로, n개의 갯수 생성, 몇번 register부터 사용하는가?)
 		// -> CBV 타입으로 CBV_REGISTER_COUNT 개 만큼 생성하되, register는 0부터 시작, 그니깐 CBV는 b로 시작하니, b0, b1, b2... b(CBV_REGISTER_COUNT - 1)에 생성
 
-		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, SRV_REGISTER_COUNT, 0), // t0~t4
+		CD3DX12_DESCRIPTOR_RANGE(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, SRV_REGISTER_COUNT, 0) // t0~t4
 		// Shader Resource View
 	};
 

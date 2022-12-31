@@ -85,7 +85,7 @@ enum
 	SWAP_CHAIN_BUFFER_COUNT = 2,	// 스왑체인 버퍼 갯수
 	CBV_REGISTER_COUNT = CBV_REGISTER::END,	// Constant Buffer Rgister Count
 	SRV_REGISTER_COUNT = static_cast<uint8>(SRV_REGISTER::END) - CBV_REGISTER_COUNT,	// CBV가 끝나고 바로 이어서 SRV 값이 들어가기에 관련 값을 넣음. CBV_REGISTER 값이 바뀌명 알아서 값이 조정됨
-	REGISTER_COUNT = CBV_REGISTER::END	// Register Count, TableDescriptorHeap에서 사용
+	REGISTER_COUNT = CBV_REGISTER_COUNT + SRV_REGISTER_COUNT	// Register Count, TableDescriptorHeap에서 사용
 };
 
 typedef struct _tagWindowInfo

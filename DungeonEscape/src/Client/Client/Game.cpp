@@ -41,7 +41,7 @@ void CGame::Init(const WindowInfo& Info)
 	mesh->Init(vec, indexVec);
 
 	shader->Init(L"..\\Resources\\Shader\\default.hlsli");
-	texture->Init(L"..\\Resources\\Texture\\blue_archive_celebration.dds");
+	texture->Init(L"..\\Resources\\Texture\\blue_archive_celebration.png");
 
 	g_Engine->GetCmdQueue()->WaitSync();
 }
@@ -53,6 +53,16 @@ void CGame::Update()
 	g_Engine->RenderBegin();
 
 	shader->Update();
+
+	{
+		Transform t;
+		t.offset = Vec4(0.25f, 0.25f, 0.1f, 0.f);
+		mesh->SetTransform(t);
+
+		mesh->SetTexture(texture);
+
+		mesh->Render();
+	}
 
 	{
 		Transform t;

@@ -114,7 +114,14 @@ void CCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect
 
 	// 기본적인 백 버퍼의 색상 결정, 어떤 색으로 지울 것인가? 현재 Colors::LightSteelBlue로 설정되어 있음
 	m_cmdList->ClearRenderTargetView(backBufferView, Colors::LightSteelBlue, 0, nullptr);
-	m_cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, nullptr);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = g_Engine->GetDepthStencilBuffer()->GetDSVCpuHandle();
+	m_cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);	// OM 단계에서 깊이/스텐실이 처리되야 한다. depthStencilView값을 얻어와 처리.
+
+	// 깊이를 초기화 하는 값을 1.0f로 설정하고, Stencil은 지금 처리하지 않으므로, 0으로 설정한다.
+	// 매 프레임마다 버퍼를 1.0f로 지워주는 함수
+	m_cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);	// 현재는 depth만 사용하기 때문에 D3D12_CLEAR_FLAG_DEPTH를 사용한다.
+																										// 만약 stencil을 사용하게 되면 flag 값을 추가한다. D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL
 }
 
 void CCommandQueue::RenderEnd()

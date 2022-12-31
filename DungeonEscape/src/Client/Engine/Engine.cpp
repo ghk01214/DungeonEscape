@@ -16,9 +16,6 @@ void Engine::Init(const WindowInfo& info)
 {
 	m_window = info;
 
-	// 윈도우 크기 조절
-	ResizeWindow(info.width, info.height);
-
 	// 그려질 화면 크기를 설정
 	m_viewport = { 0, 0, static_cast<FLOAT>(info.width), static_cast<FLOAT>(info.height), 0.0f, 1.0f };
 	m_scissorRect = CD3DX12_RECT(0, 0, info.width, info.height);
@@ -29,6 +26,7 @@ void Engine::Init(const WindowInfo& info)
 	m_rootSignature = std::make_shared<CRootSignature>();
 	m_cb = std::make_shared<CConstantBuffer>();
 	m_tableDescHeap = std::make_shared<CTableDescriptorHeap>();
+	m_depthStencilBuffer = std::make_shared<CDepthStencilBuffer>();
 
 	m_device->Init();
 	m_cmdQueue->Init(m_device->GetDevice(), m_swapChain);
@@ -36,6 +34,10 @@ void Engine::Init(const WindowInfo& info)
 	m_rootSignature->Init();
 	m_cb->Init(sizeof(Transform), 256);	// 256개의 오브젝트 할당
 	m_tableDescHeap->Init(256);
+	m_depthStencilBuffer->Init(m_window);
+
+	// 윈도우 크기 조절, 위에서 모든 처리를 다 끝내고, 나온 값으로 마지막에 윈도우 창의 크기를 조정한다.
+	ResizeWindow(info.width, info.height);
 }
 
 void Engine::Render()
@@ -71,4 +73,7 @@ void Engine::ResizeWindow(int32 width, int32 height)
 
 	// 윈도우 위치 설정
 	::SetWindowPos(m_window.hWnd, 0, 100, 100, width, height, 0);
+
+	// 위에서 처리했는데? 일단 추가, 왜 했는지는 몰?루 겠다.
+	m_depthStencilBuffer->Init(m_window);
 }

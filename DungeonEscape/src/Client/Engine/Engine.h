@@ -9,6 +9,7 @@
 #include "ConstantBuffer.h"
 #include "TableDescriptorHeap.h"
 #include "Texture.h"
+#include "DepthStencilBuffer.h"
 
 class Engine
 {
@@ -27,6 +28,7 @@ public:
 	std::shared_ptr<CRootSignature> GetRootSignature(void) { return m_rootSignature; }
 	std::shared_ptr<CConstantBuffer> GetCB() { return m_cb; }
 	std::shared_ptr<CTableDescriptorHeap> GetTableDescHeap() { return m_tableDescHeap; }
+	std::shared_ptr<CDepthStencilBuffer> GetDepthStencilBuffer() { return m_depthStencilBuffer; }
 
 public:
 	void RenderBegin();	// 일감(리소스 및 사용법) 맡기기
@@ -45,5 +47,6 @@ private:
 	std::shared_ptr<CRootSignature> m_rootSignature;
 	std::shared_ptr<CConstantBuffer> m_cb;
 	std::shared_ptr<CTableDescriptorHeap> m_tableDescHeap;
+	std::shared_ptr<CDepthStencilBuffer> m_depthStencilBuffer;
 };
 
