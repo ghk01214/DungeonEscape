@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Mesh.h"
 #include "Engine.h"
+#include "Material.h"
 
 void CMesh::Init(const std::vector<Vertex>& vertexBuffer, const std::vector<uint32>& indexbuffer)
 {
@@ -18,23 +19,31 @@ void CMesh::Render()
 
 	/*
 	// 1) Buffer에다가 데이터 세팅
-	// 2) Buffer의 주소를 register에다가 전송, ConstantBuffer에서 CBV 2개(b0, b1)를 생성하고, 여기에 각각 값(m_transform)을 집어넣어준다. 
+	// 2) Buffer의 주소를 register에다가 전송, ConstantBuffer에서 CBV 2개(b0, b1)를 생성하고, 여기에 각각 값(m_transform)을 집어넣어준다.
 	g_Engine->GetCB()->PushData(0, &m_transform, sizeof(m_transform));
 	g_Engine->GetCB()->PushData(1, &m_transform, sizeof(m_transform));
 	*/
 
+
+
 	// 1) Buffer에다가 데이터 세팅
 	// 2) TableDescHeap에다가 CBV 전달
 	// 3) 모두 세팅이 끝났으면 TableDescHeap 커밋
-	{
+
 		// 위치 정보를 CB에 넣고, 해당 값이 저장된 handle값(주소값)을 찾아 가져온다.
-		D3D12_CPU_DESCRIPTOR_HANDLE handle = g_Engine->GetCB()->PushData(0, &m_transform, sizeof(m_transform));
-		// 가져온 handle을 사용하여 여러 GPU제출용 DescHeap을 생성한다.
-		g_Engine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b0);
+		//D3D12_CPU_DESCRIPTOR_HANDLE handle = g_Engine->GetCB()->PushData(0, &m_transform, sizeof(m_transform));
+	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushData(&m_transform, sizeof(m_transform));
+
+	// 가져온 handle을 사용하여 여러 GPU제출용 DescHeap을 생성한다.
+	//g_Engine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b0);
 
 
-		g_Engine->GetTableDescHeap()->SetSRV(m_tex->GetCpuHandle(), SRV_REGISTER::t0);
-	}
+	//g_Engine->GetTableDescHeap()->SetSRV(m_tex->GetCpuHandle(), SRV_REGISTER::t0);
+	m_mat->Update();
+
+
+
+
 	//{
 	//	D3D12_CPU_DESCRIPTOR_HANDLE handle = g_Engine->GetCB()->PushData(0, &m_transform, sizeof(m_transform));
 	//	g_Engine->GetTableDescHeap()->SetCBV(handle, CBV_REGISTER::b1);

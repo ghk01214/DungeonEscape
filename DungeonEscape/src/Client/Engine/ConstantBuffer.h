@@ -1,15 +1,27 @@
 ﻿#pragma once
 
+enum class CONSTANT_BUFFER_TYPE : uint8
+{
+	TRANSFORM,
+	MATERIAL,
+	END
+};
+
+enum
+{
+	CONSTANT_BUFFER_COUNT = static_cast<uint8>(CONSTANT_BUFFER_TYPE::END)
+};
+
 class CConstantBuffer
 {
 public:
 	CConstantBuffer();
 	~CConstantBuffer();
 
-	void Init(uint32 size, uint32 count);
+	void Init(CBV_REGISTER reg, uint32 size, uint32 count);
 
 	void Clear();
-	D3D12_CPU_DESCRIPTOR_HANDLE PushData(int32 rootParamIndex, void* buffer, uint32 size);
+	void PushData(void* buffer, uint32 size);
 
 	D3D12_GPU_VIRTUAL_ADDRESS GetGpuVirtualAddress(uint32 index);
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCpuHandle(uint32 index);
@@ -29,5 +41,7 @@ private:
 	uint32								m_handleIncrementSize = 0;	// 핸들간의 간격, [ 배열의 시작지점 = 간격 * 원하는 핸들 숫자 ] 로 원하는 시작 지점을 찾는데 사용한다.
 
 	uint32					m_currentIndex = 0;	// 현재 사용하고 있는 버퍼의 인덱스
+
+	CBV_REGISTER			m_reg = {};
 };
 

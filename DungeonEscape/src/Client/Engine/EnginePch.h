@@ -117,4 +117,6 @@ struct Transform
 #define INPUT				g_Engine->GetInput()
 #define DELTA_TIME			g_Engine->GetTimer()->GetDeltaTime()
 
+#define CONST_BUFFER(type)	g_Engine->GetConstantBuffer(type)
+
 extern std::unique_ptr<class Engine> g_Engine;

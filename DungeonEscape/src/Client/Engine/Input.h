@@ -24,7 +24,7 @@ enum class KEY_STATE
 
 enum
 {
-	KEY_TYPE_COUNT = static_cast<int32>(UINT8_MAX),		// 키 256개의 상태를 관리할 수 있다. 2의 8승 => 256
+	KEY_TYPE_COUNT = static_cast<int32>(UINT8_MAX + 1),		// 키 256개의 상태를 관리할 수 있다. 2의 8승 => 256
 	KEY_STATE_COUNT = static_cast<int32>(KEY_STATE::END),
 };
 

@@ -1,10 +1,10 @@
 ﻿#include "pch.h"
 #include "Game.h"
 #include "Engine.h"
+#include "Material.h"
 
 std::shared_ptr<CMesh> mesh = std::make_shared<CMesh>();
-std::shared_ptr<CShader> shader = std::make_shared<CShader>();
-std::shared_ptr<CTexture> texture = std::make_shared<CTexture>();
+
 
 void CGame::Init(const WindowInfo& Info)
 {
@@ -40,8 +40,18 @@ void CGame::Init(const WindowInfo& Info)
 
 	mesh->Init(vec, indexVec);
 
+	std::shared_ptr<CShader> shader = std::make_shared<CShader>();
+	std::shared_ptr<CTexture> texture = std::make_shared<CTexture>();
 	shader->Init(L"..\\Resources\\Shader\\default.hlsli");
 	texture->Init(L"..\\Resources\\Texture\\blue_archive_celebration.png");
+
+	std::shared_ptr<CMaterial> material = std::make_shared<CMaterial>();
+	material->SetShader(shader);
+	material->SetFloat(0, 0.3f);
+	material->SetFloat(1, 0.4f);
+	material->SetFloat(2, 0.3f);
+	material->SetTexture(0, texture);
+	mesh->SetMaterial(material);
 
 	g_Engine->GetCmdQueue()->WaitSync();
 }
@@ -52,7 +62,7 @@ void CGame::Update()
 
 	g_Engine->RenderBegin();
 
-	shader->Update();
+	//shader->Update();	// mesh의 Render부분에서 Update 관련을 처리한다. 
 
 	{
 		static Transform t;
@@ -68,7 +78,7 @@ void CGame::Update()
 
 		mesh->SetTransform(t);
 
-		mesh->SetTexture(texture);
+		//mesh->SetTexture(texture);
 
 		mesh->Render();
 	}

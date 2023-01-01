@@ -88,8 +88,12 @@ void CCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect
 
 	// RootSignature를 세팅한다.
 	m_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
+
 	// ConstantBuffer의 인덱스 0으로 초기화
-	g_Engine->GetCB()->Clear();
+	//g_Engine->GetCB()->Clear();	// 이제 여러개의 CB를 사용할 것이므로, 각 버퍼 타입을 찾아 전부 Clear를 해준다.
+	g_Engine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM)->Clear();
+	g_Engine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL)->Clear();
+
 
 	g_Engine->GetTableDescHeap()->Clear();
 

@@ -19,8 +19,11 @@ CConstantBuffer::~CConstantBuffer()
 
 
 
-void CConstantBuffer::Init(uint32 size, uint32 count)
+void CConstantBuffer::Init(CBV_REGISTER reg, uint32 size, uint32 count)
 {
+	// 등록된 레지스터 정보를 가지고 있는다.
+	m_reg = reg;
+
 	// 상수 버퍼는 256 바이트 배수로 만들어야 한다
 	// 0 256 512 768
 	m_elementSize = (size + 255) & ~255;	// -> 인자로 받은 숫자와 가장 비슷하지만 큰 256의 배수 값을 찾는다.
@@ -82,10 +85,13 @@ void CConstantBuffer::Clear()
 	m_currentIndex = 0;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE CConstantBuffer::PushData(int32 rootParamIndex, void* buffer, uint32 size)
+void CConstantBuffer::PushData(void* buffer, uint32 size)
 {
 	// 현재 인덱스가 원소 갯수를 넘어갔는지 확인
 	assert(m_currentIndex < m_elementCount);
+
+	// 원소의 크기가 256의 배수인지 확인
+	assert(m_elementSize == ((size + 255) & ~255));
 
 	// m_mappedBuffer에 데이터 삽입
 	::memcpy(&m_mappedBuffer[m_currentIndex * m_elementSize], buffer, size);
@@ -102,9 +108,10 @@ D3D12_CPU_DESCRIPTOR_HANDLE CConstantBuffer::PushData(int32 rootParamIndex, void
 	// m_mappedBuffer의 주소값을 TableDesciptorHeap에 넘겨줘야 하는데, 이를 위해 현재 인덱스가 가리키는 핸들의 값을 가져와 이를 반환해준다.
 	D3D12_CPU_DESCRIPTOR_HANDLE cpuHandle = GetCpuHandle(m_currentIndex);
 
-	m_currentIndex++;
+	// 생성시 받은 레지스터 값에 넣어줄 DescHeap을 생성한다.
+	g_Engine->GetTableDescHeap()->SetCBV(cpuHandle, m_reg);
 
-	return cpuHandle;
+	m_currentIndex++;
 }
 
 D3D12_GPU_VIRTUAL_ADDRESS CConstantBuffer::GetGpuVirtualAddress(uint32 index)
