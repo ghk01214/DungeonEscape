@@ -3,6 +3,8 @@
 
 class CTimer
 {
+	DECLARE_SINGLE(CTimer);
+
 public:
 	void Init();
 	void Update();

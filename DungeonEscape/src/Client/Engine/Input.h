@@ -30,6 +30,8 @@ enum
 
 class CInput
 {
+	DECLARE_SINGLE(CInput);
+
 public:
 	void Init(HWND hwnd);
 	void Update();

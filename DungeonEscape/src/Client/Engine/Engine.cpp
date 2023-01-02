@@ -3,6 +3,10 @@
 #include "Material.h"
 #include "Transform.h"
 
+#include "Input.h"
+#include "Timer.h"
+
+#include "SceneManager.h"
 
 Engine::Engine()
 	: m_viewport({}), m_scissorRect({})
@@ -30,35 +34,37 @@ void Engine::Init(const WindowInfo& info)
 	m_tableDescHeap->Init(256);
 	m_depthStencilBuffer->Init(m_window);
 
-	m_input->Init(info.hWnd);
-	m_timer->Init();
-
 	CreateConstantBuffer(CBV_REGISTER::b0, sizeof(TransformMatrix), 256);
 	CreateConstantBuffer(CBV_REGISTER::b1, sizeof(MaterialParams), 256);
 
 	// 윈도우 크기 조절, 위에서 모든 처리를 다 끝내고, 나온 값으로 마지막에 윈도우 창의 크기를 조정한다.
 	ResizeWindow(info.width, info.height);
-}
 
-void Engine::Render()
-{
-	RenderBegin();
-
-	// TODO : 나머지 물체들 그려준다
-
-	RenderEnd();
+	GET_SINGLE(CInput)->Init(info.hWnd);
+	GET_SINGLE(CTimer)->Init();
 }
 
 void Engine::Update()
 {
-	m_input->Update();
-	m_timer->Update();
+	GET_SINGLE(CInput)->Update();
+	GET_SINGLE(CTimer)->Update();
+
+	Render();
 
 	ShowFps();
 }
 
 void Engine::LateUpdate()
 {
+}
+
+void Engine::Render()
+{
+	RenderBegin();
+
+	GET_SINGLE(CSceneManager)->Update();
+
+	RenderEnd();
 }
 
 void Engine::RenderBegin()
@@ -92,7 +98,7 @@ void Engine::ResizeWindow(int32 width, int32 height)
 
 void Engine::ShowFps()
 {
-	uint32 fps = m_timer->GetFps();
+	uint32 fps = GET_SINGLE(CTimer)->GetFps();
 
 	WCHAR text[100] = L"";
 	::wsprintf(text, L"FPS : %d", fps);

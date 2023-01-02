@@ -11,9 +11,6 @@
 #include "Texture.h"
 #include "DepthStencilBuffer.h"
 
-#include "Input.h"
-#include "Timer.h"
-
 class Engine
 {
 public:
@@ -22,9 +19,6 @@ public:
 
 public:
 	void Init(const WindowInfo& info);
-	void Render();
-
-public:
 	void Update();
 	void LateUpdate();
 
@@ -33,16 +27,13 @@ public:
 	std::shared_ptr<CCommandQueue> GetCmdQueue(void) { return m_cmdQueue; }
 	std::shared_ptr<CSwapChain> GetSwapChain(void) { return m_swapChain; }
 	std::shared_ptr<CRootSignature> GetRootSignature(void) { return m_rootSignature; }
-	//std::shared_ptr<CConstantBuffer> GetCB() { return m_cb; }
 	std::shared_ptr<CTableDescriptorHeap> GetTableDescHeap() { return m_tableDescHeap; }
 	std::shared_ptr<CDepthStencilBuffer> GetDepthStencilBuffer() { return m_depthStencilBuffer; }
-
-	std::shared_ptr<CInput> GetInput() { return m_input; }
-	std::shared_ptr<CTimer> GetTimer() { return m_timer; }
 
 	std::shared_ptr<CConstantBuffer> GetConstantBuffer(CONSTANT_BUFFER_TYPE type) { return m_constantBuffers[static_cast<uint8>(type)]; }
 
 public:
+	void Render();
 	void RenderBegin();	// 일감(리소스 및 사용법) 맡기기
 	void RenderEnd();	// 가져온 일감으로 그리기
 
@@ -61,12 +52,8 @@ private:
 	std::shared_ptr<CCommandQueue> m_cmdQueue = std::make_shared<CCommandQueue>();
 	std::shared_ptr<CSwapChain> m_swapChain = std::make_shared<CSwapChain>();
 	std::shared_ptr<CRootSignature> m_rootSignature = std::make_shared<CRootSignature>();
-	//std::shared_ptr<CConstantBuffer> m_cb = std::make_shared<CConstantBuffer>();
 	std::shared_ptr<CTableDescriptorHeap> m_tableDescHeap = std::make_shared<CTableDescriptorHeap>();
 	std::shared_ptr<CDepthStencilBuffer> m_depthStencilBuffer = std::make_shared<CDepthStencilBuffer>();
-
-	std::shared_ptr<CInput> m_input = std::make_shared<CInput>();
-	std::shared_ptr<CTimer> m_timer = std::make_shared<CTimer>();
 
 	std::vector<std::shared_ptr<CConstantBuffer>> m_constantBuffers;
 };
