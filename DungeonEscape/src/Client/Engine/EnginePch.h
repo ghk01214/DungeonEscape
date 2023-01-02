@@ -104,11 +104,6 @@ struct Vertex
 	Vec2 uv;	// uv 좌표
 };
 
-struct Transform
-{
-	Vec4 offset;
-};
-
 #define DEVICE				g_Engine->GetDevice()->GetDevice()
 #define CMD_LIST			g_Engine->GetCmdQueue()->GetCmdList()
 #define RESOURCE_CMD_LIST	g_Engine->GetCmdQueue()->GetResourceCmdList()

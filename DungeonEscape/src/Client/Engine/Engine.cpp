@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Engine.h"
 #include "Material.h"
+#include "Transform.h"
 
 
 Engine::Engine()
@@ -32,7 +33,7 @@ void Engine::Init(const WindowInfo& info)
 	m_input->Init(info.hWnd);
 	m_timer->Init();
 
-	CreateConstantBuffer(CBV_REGISTER::b0, sizeof(Transform), 256);
+	CreateConstantBuffer(CBV_REGISTER::b0, sizeof(TransformMatrix), 256);
 	CreateConstantBuffer(CBV_REGISTER::b1, sizeof(MaterialParams), 256);
 
 	// 윈도우 크기 조절, 위에서 모든 처리를 다 끝내고, 나온 값으로 마지막에 윈도우 창의 크기를 조정한다.
@@ -54,6 +55,10 @@ void Engine::Update()
 	m_timer->Update();
 
 	ShowFps();
+}
+
+void Engine::LateUpdate()
+{
 }
 
 void Engine::RenderBegin()

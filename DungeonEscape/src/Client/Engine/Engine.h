@@ -26,6 +26,7 @@ public:
 
 public:
 	void Update();
+	void LateUpdate();
 
 public:
 	std::shared_ptr<CDevice> GetDevice(void) { return m_device; }

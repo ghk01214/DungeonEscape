@@ -3,7 +3,10 @@
 #include "Engine.h"
 #include "Material.h"
 
-std::shared_ptr<CMesh> mesh = std::make_shared<CMesh>();
+#include "GameObject.h"
+#include "MeshRenderer.h"
+
+std::shared_ptr<CGameObject> gameObject = std::make_shared<CGameObject>();
 
 
 void CGame::Init(const WindowInfo& Info)
@@ -38,20 +41,34 @@ void CGame::Init(const WindowInfo& Info)
 		indexVec.push_back(3);
 	}
 
-	mesh->Init(vec, indexVec);
 
-	std::shared_ptr<CShader> shader = std::make_shared<CShader>();
-	std::shared_ptr<CTexture> texture = std::make_shared<CTexture>();
-	shader->Init(L"..\\Resources\\Shader\\default.hlsli");
-	texture->Init(L"..\\Resources\\Texture\\blue_archive_celebration.png");
 
-	std::shared_ptr<CMaterial> material = std::make_shared<CMaterial>();
-	material->SetShader(shader);
-	material->SetFloat(0, 0.3f);
-	material->SetFloat(1, 0.4f);
-	material->SetFloat(2, 0.3f);
-	material->SetTexture(0, texture);
-	mesh->SetMaterial(material);
+	// 오늘 테스트
+	gameObject->Init(); // Transform
+
+	std::shared_ptr<CMeshRenderer> meshRenderer = std::make_shared<CMeshRenderer>();
+
+	{
+		std::shared_ptr<CMesh> mesh = std::make_shared<CMesh>();
+		mesh->Init(vec, indexVec);
+		meshRenderer->SetMesh(mesh);
+	}
+	{
+		std::shared_ptr<CShader> shader = std::make_shared<CShader>();
+		std::shared_ptr<CTexture> texture = std::make_shared<CTexture>();
+		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
+		texture->Init(L"..\\Resources\\Texture\\blue_archive_celebration.png");
+
+		std::shared_ptr<CMaterial> material = std::make_shared<CMaterial>();
+		material->SetShader(shader);
+		material->SetFloat(0, 0.3f);
+		material->SetFloat(1, 0.4f);
+		material->SetFloat(2, 0.3f);
+		material->SetTexture(0, texture);
+		meshRenderer->SetMaterial(material);
+	}
+
+	gameObject->AddComponent(meshRenderer);
 
 	g_Engine->GetCmdQueue()->WaitSync();
 }
@@ -62,36 +79,7 @@ void CGame::Update()
 
 	g_Engine->RenderBegin();
 
-	//shader->Update();	// mesh의 Render부분에서 Update 관련을 처리한다. 
-
-	{
-		static Transform t;
-
-		if (INPUT->GetButton(KEY_TYPE::W))
-			t.offset.y += 1.f * DELTA_TIME;
-		if (INPUT->GetButton(KEY_TYPE::S))
-			t.offset.y -= 1.f * DELTA_TIME;
-		if (INPUT->GetButton(KEY_TYPE::A))
-			t.offset.x -= 1.f * DELTA_TIME;
-		if (INPUT->GetButton(KEY_TYPE::D))
-			t.offset.x += 1.f * DELTA_TIME;
-
-		mesh->SetTransform(t);
-
-		//mesh->SetTexture(texture);
-
-		mesh->Render();
-	}
-
-	//{
-	//	Transform t;
-	//	t.offset = Vec4(0.f, 0.f, 0.f, 0.f);
-	//	mesh->SetTransform(t);
-
-	//	mesh->SetTexture(texture);
-
-	//	mesh->Render();
-	//}
+	gameObject->Update();
 
 	g_Engine->RenderEnd();
 }
