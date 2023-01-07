@@ -1,0 +1,263 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{2ea3fc68-f656-4e03-b04a-4f09b0519832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{3e593f7f-cb36-491b-a0c0-c772d591c097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{e424ef81-4f6b-4045-a094-ae244a945297}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{7e01d464-3695-4c14-b8e5-90589ddef59a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Mesh">
+      <UniqueIdentifier>{32a87a2c-f56f-4abe-a07b-a56586edd68c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Texture">
+      <UniqueIdentifier>{bcd33a04-99b6-43dc-8b20-3a7a5118006e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Shader">
+      <UniqueIdentifier>{b557df4e-fd36-4998-83d2-1abf895f3b5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\Material">
+      <UniqueIdentifier>{56329210-0252-4237-b022-c1a8485f0fb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{9c54d8ba-5bad-49fb-a87d-eb7512718638}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{43dbe28b-24a8-4479-b8d0-7d619e71fdc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Scene">
+      <UniqueIdentifier>{07056e0f-73b7-4802-bc3a-699f513c887b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Timer">
+      <UniqueIdentifier>{80ee85bb-19a0-4263-bf1e-26fe96dc8128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Input">
+      <UniqueIdentifier>{2bbabb2b-f9f7-4ff9-a380-6f13d93889f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Math">
+      <UniqueIdentifier>{49eb7297-9d8f-434f-a055-c4545c6d030e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Scene\Manager">
+      <UniqueIdentifier>{3c98c40c-6540-40ea-9190-ea2db95d435e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Camera">
+      <UniqueIdentifier>{27f6196e-5eeb-4a97-976f-7c276a832a1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic">
+      <UniqueIdentifier>{e78c2a21-2287-4102-b3aa-0c31da8c491a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\Device">
+      <UniqueIdentifier>{ce2fa91c-6a5f-43d4-b07a-de30c630867a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\DepthSencilBuffer">
+      <UniqueIdentifier>{13f5dacd-75d5-4993-b0c7-5315f9ebd974}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\ConstantBuffer">
+      <UniqueIdentifier>{ac69e395-eaff-4f9e-8eb0-4f6916ad14a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\CommandQueue">
+      <UniqueIdentifier>{93fbba35-241b-4cfb-9c03-3155da0b2b0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\RootSignature">
+      <UniqueIdentifier>{3585e486-25e9-4b7a-ae3a-8e22e0f19392}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\SwapChain">
+      <UniqueIdentifier>{501437ff-7aba-431d-852f-3fe15fa747db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\TableDescriptorHeap">
+      <UniqueIdentifier>{67a4403a-5576-48ef-bc1b-8bf92aab2833}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component">
+      <UniqueIdentifier>{5f3434d9-4796-49c9-9634-6416e70c5c98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\Transform">
+      <UniqueIdentifier>{55b74979-2a4d-4bec-91e7-108414e12709}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\MeshRenderer">
+      <UniqueIdentifier>{9dc44675-24c7-42f2-bd2a-3967d88ddf88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\MonoBehaviour">
+      <UniqueIdentifier>{c5ac215c-6d35-43bf-bab3-fae71f74b71b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Camera\TestCameraScript">
+      <UniqueIdentifier>{cdbd4129-9a64-42c3-a12d-d46d29997941}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="EnginePch.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandQueue.cpp">
+      <Filter>Engine\Logic\CommandQueue</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantBuffer.cpp">
+      <Filter>Engine\Logic\ConstantBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Device.cpp">
+      <Filter>Engine\Logic\Device</Filter>
+    </ClCompile>
+    <ClCompile Include="RootSignature.cpp">
+      <Filter>Engine\Logic\RootSignature</Filter>
+    </ClCompile>
+    <ClCompile Include="SwapChain.cpp">
+      <Filter>Engine\Logic\SwapChain</Filter>
+    </ClCompile>
+    <ClCompile Include="TableDescriptorHeap.cpp">
+      <Filter>Engine\Logic\TableDescriptorHeap</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Resource\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Resource\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Resource\Texture</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthStencilBuffer.cpp">
+      <Filter>Engine\Logic\DepthSencilBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Manager\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Manager\Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Resource\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>GameObject\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="MonoBehaviour.cpp">
+      <Filter>GameObject\Component\MonoBehaviour</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshRenderer.cpp">
+      <Filter>GameObject\Component\MeshRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>GameObject\Component\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMath.cpp">
+      <Filter>Utils\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Manager\Scene\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>GameObject\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCameraScript.cpp">
+      <Filter>GameObject\Camera\TestCameraScript</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EnginePch.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandQueue.h">
+      <Filter>Engine\Logic\CommandQueue</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Engine\Logic\ConstantBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Device.h">
+      <Filter>Engine\Logic\Device</Filter>
+    </ClInclude>
+    <ClInclude Include="RootSignature.h">
+      <Filter>Engine\Logic\RootSignature</Filter>
+    </ClInclude>
+    <ClInclude Include="SwapChain.h">
+      <Filter>Engine\Logic\SwapChain</Filter>
+    </ClInclude>
+    <ClInclude Include="TableDescriptorHeap.h">
+      <Filter>Engine\Logic\TableDescriptorHeap</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Resource\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Resource\Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Resource\Texture</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencilBuffer.h">
+      <Filter>Engine\Logic\DepthSencilBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Manager\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Manager\Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Resource\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>GameObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="MonoBehaviour.h">
+      <Filter>GameObject\Component\MonoBehaviour</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>GameObject\Component\MeshRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>GameObject\Component\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMath.h">
+      <Filter>Utils\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Manager\Scene\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>GameObject\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="TestCameraScript.h">
+      <Filter>GameObject\Camera\TestCameraScript</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\Shader\default.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="SimpleMath.inl">
+      <Filter>Utils\Math</Filter>
+    </None>
+  </ItemGroup>
+</Project>
