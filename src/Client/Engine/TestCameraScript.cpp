@@ -25,6 +25,8 @@ void CTestCameraScript::KeyInput(void)
 	// 카메라의 위치값을 가져옴
 	Vec3 pos = GetTransform()->GetLocalPosition();
 
+	std::shared_ptr<CTransform> Transform = std::static_pointer_cast<CTransform>(GetTransform());
+
 	if (INPUT->GetButton(KEY_TYPE::W))
 		pos += GetTransform()->GetLook() * m_speed * DELTA_TIME;
 

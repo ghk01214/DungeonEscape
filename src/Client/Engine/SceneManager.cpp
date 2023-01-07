@@ -9,6 +9,7 @@
 #include "Transform.h"
 #include "Camera.h"
 
+#include "Input.h"
 #include "TestCameraScript.h"
 
 void CSceneManager::Update()
@@ -19,6 +20,8 @@ void CSceneManager::Update()
 	m_activeScene->Update();
 	m_activeScene->LateUpdate();
 	m_activeScene->FinalUpdate();
+
+	KeyInput();
 }
 
 void CSceneManager::Render()
@@ -52,8 +55,33 @@ std::shared_ptr<CScene> CSceneManager::LoadTestScene()
 	// Scene 객체 생성
 	std::shared_ptr<CScene> scene = std::make_shared<CScene>();
 
-#pragma region TestObject
-	// TestObject 생성
+	// 해당 씬에 추가할 오브젝트 생성
+#pragma region CreateObjects
+	// 함수 인자로 텍스쳐 경로, 위치, 사이즈 값 입력
+	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(25.f, 25.f, 0.f), Vec3(50.f, 50.f, 0.f));
+	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(25.f, -25.f, 0.f), Vec3(50.f, 50.f, 0.f));
+	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(-25.f, 25.f, 0.f), Vec3(50.f, 50.f, 0.f));
+	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(-25.f, -25.f, 0.f), Vec3(50.f, 50.f, 0.f));
+#pragma endregion
+
+
+#pragma region Camera
+	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
+	camera->AddComponent(std::make_shared<CTransform>());
+	camera->AddComponent(std::make_shared<CCamera>()); // Near=1, Far=1000, FOV=45도
+	camera->AddComponent(std::make_shared<CTestCameraScript>());
+	camera->GetTransform()->SetLocalPosition(Vec3(50.f, 50.f, -50.f));
+	camera->GetTransform()->SetLocalRotation(Vec3(XMConvertToRadians(45.f), -XMConvertToRadians(45.f), 0.f));		// 시계방향이 +, 반시계방향이 -
+	scene->AddGameObject(camera);
+
+	Matrix matWorld = XMMatrixLookAtLH(XMVectorSet(5.f, 5.f, -5.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
+#pragma endregion
+
+	return scene;
+}
+
+void CSceneManager::CreateObject(std::shared_ptr<CScene> scene, const std::wstring& texturePath, Vec3 vPos, Vec3 vScale)
+{
 	std::shared_ptr<CGameObject> gameObject = std::make_shared<CGameObject>();
 
 	// 사각형 정점 4개(버텍스 버퍼) 생성, 위치 / 색상 / uv값 세팅
@@ -90,8 +118,8 @@ std::shared_ptr<CScene> CSceneManager::LoadTestScene()
 
 	// 오브젝트 존재하는 Transform 컴포넌트를 가져와 값을 넣어줌
 	std::shared_ptr<CTransform> transform = gameObject->GetTransform();
-	transform->SetLocalPosition(Vec3(0.f, 100.f, 200.f));
-	transform->SetLocalScale(Vec3(100.f, 100.f, 1.f));
+	transform->SetLocalPosition(vPos);
+	transform->SetLocalScale(vScale);
 
 	// MeshRenderer 컴포넌트 생성
 	std::shared_ptr<CMeshRenderer> meshRenderer = std::make_shared<CMeshRenderer>();
@@ -106,15 +134,12 @@ std::shared_ptr<CScene> CSceneManager::LoadTestScene()
 	{
 		std::shared_ptr<CShader> shader = std::make_shared<CShader>();
 		std::shared_ptr<CTexture> texture = std::make_shared<CTexture>();
-		
+
 		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
-		texture->Init(L"..\\Resources\\Texture\\blue_archive_celebration.png");
+		texture->Init(texturePath);
 
 		std::shared_ptr<CMaterial> material = std::make_shared<CMaterial>();
 		material->SetShader(shader);
-		material->SetFloat(0, 0.3f);
-		material->SetFloat(1, 0.4f);
-		material->SetFloat(2, 0.3f);
 		material->SetTexture(0, texture);
 		meshRenderer->SetMaterial(material);
 	}
@@ -122,17 +147,46 @@ std::shared_ptr<CScene> CSceneManager::LoadTestScene()
 	gameObject->AddComponent(meshRenderer);
 
 	scene->AddGameObject(gameObject);
-#pragma endregion
 
+	// 현재 씬의 게임 오브젝트만 보아놓은 vector에 오브젝트 추가
+	m_gameObjects.push_back(gameObject);
 
-#pragma region Camera
-	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
-	camera->AddComponent(std::make_shared<CTransform>());
-	camera->AddComponent(std::make_shared<CCamera>()); // Near=1, Far=1000, FOV=45도
-	camera->AddComponent(std::make_shared<CTestCameraScript>());
-	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 100.f, 0.f));
-	scene->AddGameObject(camera);
-#pragma endregion
+	// 생성된 오브젝트를 현재 선택된 오브젝트로 바꿈
+	m_targetObject = gameObject;
+}
 
-	return scene;
+void CSceneManager::KeyInput(void)
+{
+	// targetObject 바꾸기
+	if (INPUT->GetButtonDown(KEY_TYPE::Number1) || INPUT->GetButtonDown(KEY_TYPE::NumPad1))
+	{
+		if (m_gameObjects.size() >= 1)
+		{
+			m_targetObject = m_gameObjects.at(0);
+		}
+	}
+
+	if (INPUT->GetButtonDown(KEY_TYPE::Number2) || INPUT->GetButtonDown(KEY_TYPE::NumPad2))
+	{
+		if (m_gameObjects.size() >= 2)
+		{
+			m_targetObject = m_gameObjects.at(1);
+		}
+	}
+
+	if (INPUT->GetButtonDown(KEY_TYPE::Number3) || INPUT->GetButtonDown(KEY_TYPE::NumPad3))
+	{
+		if (m_gameObjects.size() >= 3)
+		{
+			m_targetObject = m_gameObjects.at(2);
+		}
+	}
+
+	if (INPUT->GetButtonDown(KEY_TYPE::Number4) || INPUT->GetButtonDown(KEY_TYPE::NumPad4))
+	{
+		if (m_gameObjects.size() >= 4)
+		{
+			m_targetObject = m_gameObjects.at(3);
+		}
+	}
 }

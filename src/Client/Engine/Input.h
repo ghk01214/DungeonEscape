@@ -2,6 +2,16 @@
 
 enum class KEY_TYPE
 {
+	Number1 = '1',
+	Number2 = '2',
+	Number3 = '3',
+	Number4 = '4',
+
+	NumPad1 = VK_NUMPAD1,
+	NumPad2 = VK_NUMPAD2,
+	NumPad3 = VK_NUMPAD3,
+	NumPad4 = VK_NUMPAD4,
+
 	UP = VK_UP,
 	DOWN = VK_DOWN,
 	LEFT = VK_LEFT,
@@ -13,7 +23,7 @@ enum class KEY_TYPE
 	D = 'D',
 
 	Q = 'Q',
-	E = 'E',
+	E = 'E'
 };
 
 enum class KEY_STATE
