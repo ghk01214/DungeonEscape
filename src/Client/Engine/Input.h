@@ -23,7 +23,16 @@ enum class KEY_TYPE
 	D = 'D',
 
 	Q = 'Q',
-	E = 'E'
+	E = 'E',
+
+	R = 'R',
+	T = 'T',
+
+	C = 'C',
+	V = 'V',
+
+	PAGEUP = VK_PRIOR,
+	PAGEDOWN = VK_NEXT
 };
 
 enum class KEY_STATE
