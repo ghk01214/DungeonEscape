@@ -3,9 +3,9 @@
 #include "Engine.h"
 #include "SceneManager.h"
 
-void CGame::Init(const WindowInfo& Info)
+void CGame::Init(const WindowInfo& Info, std::shared_ptr<network::CNetwork> pNetwork)
 {
-	g_Engine->Init(Info);
+	g_Engine->Init(Info, pNetwork);
 
 	GET_SINGLE(CSceneManager)->LoadScene(L"TestScene");
 }

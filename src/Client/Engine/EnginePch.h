@@ -3,6 +3,7 @@
 // std::byte 사용하지 않음
 //#define _HAS_STD_BYTE 0	// 없어도 되는게 현재 using namespace std;를 사용하고 있지 않기 때문에 굳이 적용하지 않아도 괜찮다. std::byte 관련 오류가 생길시 사용
 
+#define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
 // 각종 include
 #include <windows.h>
 #include <tchar.h>
@@ -32,6 +33,13 @@ using namespace Microsoft::WRL;
 
 #include <DirectXTex/DirectXTex.h>
 #include <DirectXTex/DirectXTex.inl>
+
+#include <boost/asio.hpp>
+#include <thread>
+#include <Packet.h>
+#include <Define.h>
+#include <protocol.hpp>
+#include "Network.h"
 
 // 각종 lib
 #pragma comment(lib, "d3d12")

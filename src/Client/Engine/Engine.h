@@ -18,9 +18,11 @@ public:
 	~Engine();
 
 public:
-	void Init(const WindowInfo& info);
+	void Init(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNetwork);
 	void Update();
 	void LateUpdate();
+
+	void UpdateEngine();
 
 public:
 	const WindowInfo& GetWindow() { return m_window; }
@@ -54,6 +56,9 @@ private:
 	std::shared_ptr<CRootSignature> m_rootSignature = std::make_shared<CRootSignature>();
 	std::shared_ptr<CTableDescriptorHeap> m_tableDescHeap = std::make_shared<CTableDescriptorHeap>();
 	std::shared_ptr<CDepthStencilBuffer> m_depthStencilBuffer = std::make_shared<CDepthStencilBuffer>();
+
+	std::shared_ptr<network::CNetwork> m_network;
+	std::vector<std::thread> m_workerThreads;
 
 	std::vector<std::shared_ptr<CConstantBuffer>> m_constantBuffers;
 };

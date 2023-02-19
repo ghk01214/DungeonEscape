@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+//#include "Network.h"
+
 class CScene;
 class CGameObject;
 
@@ -24,8 +26,15 @@ public:
 	void Render();
 	void LoadScene(std::wstring sceneName);
 
+	void ObjectTranslationMode(Vec3 pos);
+	void ObjectRotationMode(Vec3 rotation);
+
 public:
 	std::shared_ptr<CScene> GetActiveScene() { return m_activeScene; }
+	std::shared_ptr<CGameObject> GetTarget() { return m_targetObject; }
+
+	void SetNetworkManager(std::shared_ptr<network::CNetwork> network) { m_network = network; }
+	void SetTarget(int32_t targetNum) { m_targetObject = m_gameObjects[targetNum]; }
 
 private:
 	std::shared_ptr<CScene> LoadTestScene();
@@ -54,5 +63,7 @@ private:
 	OBJECT_MODE m_eObjectMode = OBJECT_MODE::OM_ROTATION;	// 현재 선택된 오브젝트 모드 정보
 
 	float		m_speed = 100.f;
+
+	std::shared_ptr<network::CNetwork> m_network;
 };
 

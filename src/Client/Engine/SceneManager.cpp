@@ -51,6 +51,20 @@ void CSceneManager::LoadScene(std::wstring sceneName)
 	m_activeScene->Start();
 }
 
+void CSceneManager::ObjectTranslationMode(Vec3 pos)
+{
+	std::shared_ptr<CTransform> Transform{ m_targetObject->GetTransform() };
+
+	Transform->SetLocalPosition(pos);
+}
+
+void CSceneManager::ObjectRotationMode(Vec3 rotation)
+{
+	std::shared_ptr<CTransform> Transform{ m_targetObject->GetTransform() };
+
+	Transform->SetLocalRotation(rotation);
+}
+
 std::shared_ptr<CScene> CSceneManager::LoadTestScene()
 {
 	// Scene 객체 생성
@@ -65,6 +79,7 @@ std::shared_ptr<CScene> CSceneManager::LoadTestScene()
 	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(-25.f, -25.f, 0.f), Vec3(50.f, 50.f, 0.f));
 #pragma endregion
 
+	m_network->SendLoginRequestPacket(m_gameObjects);
 
 #pragma region Camera
 	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
@@ -207,6 +222,7 @@ void CSceneManager::SetTarget(void)
 		if (m_gameObjects.size() >= 1)
 		{
 			m_targetObject = m_gameObjects.at(0);
+			m_network->SendTargetNumPacket(0);
 		}
 	}
 
@@ -215,6 +231,7 @@ void CSceneManager::SetTarget(void)
 		if (m_gameObjects.size() >= 2)
 		{
 			m_targetObject = m_gameObjects.at(1);
+			m_network->SendTargetNumPacket(1);
 		}
 	}
 
@@ -223,6 +240,7 @@ void CSceneManager::SetTarget(void)
 		if (m_gameObjects.size() >= 3)
 		{
 			m_targetObject = m_gameObjects.at(2);
+			m_network->SendTargetNumPacket(2);
 		}
 	}
 
@@ -231,6 +249,7 @@ void CSceneManager::SetTarget(void)
 		if (m_gameObjects.size() >= 4)
 		{
 			m_targetObject = m_gameObjects.at(3);
+			m_network->SendTargetNumPacket(3);
 		}
 	}
 }
@@ -264,71 +283,83 @@ void CSceneManager::ActivateCamera(void)
 void CSceneManager::ObjectRotationMode(void)
 {
 	// 현재 선택된 오브젝트의 회전값을 가져옴
-	Vec3 rotation = m_targetObject->GetTransform()->GetLocalRotation();
+	//Vec3 rotation = m_targetObject->GetTransform()->GetLocalRotation();
 
-	std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
+	//std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
 
 	if (INPUT->GetButton(KEY_TYPE::LEFT))
 	{
-		rotation.y += DELTA_TIME * 2.f;
+		//rotation.y += DELTA_TIME * 2.f;
+		m_network->SendRotationRequestPacket(ROTATION::X_INCREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::RIGHT))
 	{
-		rotation.y -= DELTA_TIME * 2.f;
+		//rotation.y -= DELTA_TIME * 2.f;
+		m_network->SendRotationRequestPacket(ROTATION::X_DECREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::UP))
 	{
-		rotation.x += DELTA_TIME * 2.f;
+		//rotation.x += DELTA_TIME * 2.f;
+		m_network->SendRotationRequestPacket(ROTATION::Z_INCREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::DOWN))
 	{
-		rotation.x -= DELTA_TIME * 2.f;
+		//rotation.x -= DELTA_TIME * 2.f;
+		m_network->SendRotationRequestPacket(ROTATION::Z_DECREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::PAGEUP))
 	{
-		rotation.z += DELTA_TIME * 2.f;
+		//rotation.z += DELTA_TIME * 2.f;
+		m_network->SendRotationRequestPacket(ROTATION::Y_INCREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::PAGEDOWN))
 	{
-		rotation.z -= DELTA_TIME * 2.f;
+		//rotation.z -= DELTA_TIME * 2.f;
+		m_network->SendRotationRequestPacket(ROTATION::Y_DECREASE);
 	}
 
-	Transform->SetLocalRotation(rotation);
+	//Transform->SetLocalRotation(rotation);
 }
 
 void CSceneManager::ObjectTranslationMode(void)
 {
 	// 현재 선택된 오브젝트의 회전값을 가져옴
-	Vec3 position = m_targetObject->GetTransform()->GetLocalPosition();
+	//Vec3 position = m_targetObject->GetTransform()->GetLocalPosition();
 
-	std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
+	//std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
 
 	if (INPUT->GetButton(KEY_TYPE::LEFT))
 	{
-		position.x -= m_speed * DELTA_TIME;
+		//position.x -= m_speed * DELTA_TIME;
+		m_network->SendMoveRequestPacket(DIRECTION::LEFT);
 	}
 	if (INPUT->GetButton(KEY_TYPE::RIGHT))
 	{
-		position.x += m_speed * DELTA_TIME;
+		//position.x += m_speed * DELTA_TIME;
+		m_network->SendMoveRequestPacket(DIRECTION::RIGHT);
 	}
 	if (INPUT->GetButton(KEY_TYPE::UP))
 	{
-		position.y += m_speed * DELTA_TIME;
+		//position.y += m_speed * DELTA_TIME;
+		m_network->SendMoveRequestPacket(DIRECTION::FRONT);
 	}
 	if (INPUT->GetButton(KEY_TYPE::DOWN))
 	{
-		position.y -= m_speed * DELTA_TIME;
+		//position.y -= m_speed * DELTA_TIME;
+		m_network->SendMoveRequestPacket(DIRECTION::BACK);
 	}
 	if (INPUT->GetButton(KEY_TYPE::PAGEUP))
 	{
-		position.z += m_speed * DELTA_TIME;
+		//position.z += m_speed * DELTA_TIME;
+		m_network->SendMoveRequestPacket(DIRECTION::UP);
 	}
 	if (INPUT->GetButton(KEY_TYPE::PAGEDOWN))
 	{
-		position.z -= m_speed * DELTA_TIME;
+		//position.z -= m_speed * DELTA_TIME;
+		m_network->SendMoveRequestPacket(DIRECTION::DOWN);
 	}
 
-	Transform->SetLocalPosition(position);
+	//Transform->SetLocalPosition(position);
 }
 
 void CSceneManager::CameraRotationMode(void)

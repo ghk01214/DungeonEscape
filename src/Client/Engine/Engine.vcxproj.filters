@@ -88,6 +88,9 @@
     <Filter Include="GameObject\Camera\TestCameraScript">
       <UniqueIdentifier>{cdbd4129-9a64-42c3-a12d-d46d29997941}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{865b09d7-9f8c-42b7-893e-71ee71d72595}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -167,6 +170,12 @@
     </ClCompile>
     <ClCompile Include="TestCameraScript.cpp">
       <Filter>GameObject\Camera\TestCameraScript</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vendor\include\Packet.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +259,12 @@
     </ClInclude>
     <ClInclude Include="TestCameraScript.h">
       <Filter>GameObject\Camera\TestCameraScript</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vendor\include\Packet.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

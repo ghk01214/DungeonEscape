@@ -6,6 +6,10 @@
 #include "Client.h"
 #include "Game.h"
 
+#if _DEBUG
+//#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+#endif
+
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -49,8 +53,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_windowInfo.height = 600;
     g_windowInfo.windowed = true;
 
+    std::vector<std::thread> threads;
     std::unique_ptr<CGame> pGame = std::make_unique<CGame>();
-    pGame->Init(g_windowInfo);
+    boost::asio::io_context ioContext;
+
+    std::shared_ptr<network::CNetwork> pNetwork{ std::make_shared<network::CNetwork>(ioContext, boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), GAME_SERVER_PORT)) };
+    pGame->Init(g_windowInfo, pNetwork);
+    threads.push_back(std::thread{ [&pNetwork] { pNetwork->Run(); } });
+    threads.push_back(std::thread{ [&pGame] { pGame->Update(); } });
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
 
     while (true)
     {
@@ -70,7 +85,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         // 게임 로직 추가
         pGame->Update();
     }
-
 
     return (int) msg.wParam;
 }
