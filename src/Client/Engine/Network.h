@@ -4,40 +4,50 @@ class CGameObject;
 
 namespace network
 {
-	using boost::asio::ip::tcp;
-
 	class CNetwork
 	{
 	public:
-		CNetwork(boost::asio::io_context& context, const tcp::endpoint& endpoints);
+		CNetwork();
 		~CNetwork();
 
-		void Connect(const tcp::endpoint& endpoints);
+		void Connect();
+		void ProcessThread();
+		void EndThread();
+
 		void Recv();
+		void Recv(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
+		void Send(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 
-		void Run();
-
-		void SendLoginRequestPacket(std::vector<std::shared_ptr<CGameObject>>& m_gameObjects);
-		void SendMoveRequestPacket(DIRECTION direction);
-		void SendRotationRequestPacket(ROTATION direction);
-		void SendTargetNumPacket(uint8_t targetNum);
-
-		void Update();
+#pragma region [SEND PACKET]
+		void SendLoginPacket(std::vector<std::shared_ptr<CGameObject>>& m_gameObjects);
+		void SendMovePacket(DIRECTION direction);
+		void SendRotationPacket(ROTATION direction);
+#pragma endregion
 	private:
-		void Send(packet::CPacket& packet);
+		void Send(network::CPacket& packet);
 
 		void ProcessPacket();
-		void AuthorizePacketProcess(ProtocolID type);
-		void MyPacketProcess(ProtocolID type);
+		void ProcessAUPacket(ProtocolID type);
+		void ProcessMYPacket(ProtocolID type);
+		void ProcessBTPacket(ProtocolID type);
+		void ProcessITPacket(ProtocolID type);
+		void ProcessCMPacket(ProtocolID type);
+		void ProcessTTPacket(ProtocolID type);
 
 	private:
-		boost::asio::io_context& m_ioContext;
-		tcp::socket m_socket;
-		uint32_t m_id;
+		HANDLE m_iocp;
+		SOCKET m_socket;
+		int32_t m_serverKey;
 
-		std::array<uint8_t, packet::CPacket::BUFF_SIZE> m_recvPacket;
-		packet::CPacket m_packet;
-		uint16_t m_recvPacketSize;
-		uint16_t m_prevPacketSize;
+		std::thread m_networkThread;
+
+		OVERLAPPEDEX m_recvEx;
+		OVERLAPPEDEX m_sendEx;
+
+		char* m_recvPacket;
+		network::CPacket m_packet;
+		int32_t m_remainSize;
+
+		uint16_t m_myTarget;
 	};
 }

@@ -11,6 +11,11 @@
 #include "Texture.h"
 #include "DepthStencilBuffer.h"
 
+namespace network
+{
+	class CNetwork;
+}
+
 class Engine
 {
 public:
@@ -56,9 +61,6 @@ private:
 	std::shared_ptr<CRootSignature> m_rootSignature = std::make_shared<CRootSignature>();
 	std::shared_ptr<CTableDescriptorHeap> m_tableDescHeap = std::make_shared<CTableDescriptorHeap>();
 	std::shared_ptr<CDepthStencilBuffer> m_depthStencilBuffer = std::make_shared<CDepthStencilBuffer>();
-
-	std::shared_ptr<network::CNetwork> m_network;
-	std::vector<std::thread> m_workerThreads;
 
 	std::vector<std::shared_ptr<CConstantBuffer>> m_constantBuffers;
 };

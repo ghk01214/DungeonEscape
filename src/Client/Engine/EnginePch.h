@@ -34,18 +34,22 @@ using namespace Microsoft::WRL;
 #include <DirectXTex/DirectXTex.h>
 #include <DirectXTex/DirectXTex.inl>
 
-#include <boost/asio.hpp>
+#include <WS2tcpip.h>
+#include <MSWSock.h>
 #include <thread>
 #include <Packet.h>
 #include <Define.h>
 #include <protocol.hpp>
-#include "Network.h"
+#include <OVERLAPPEDEX.h>//OVERLAPPEDEX.h
 
 // 각종 lib
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3dcompiler")
+
+#pragma comment(lib, "WS2_32")
+#pragma comment(lib, "MSWSock")
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTex\\DirectXTex_Debug.lib")
@@ -142,3 +146,8 @@ struct TransformParams
 };
 
 extern std::unique_ptr<class Engine> g_Engine;
+
+void ErrorQuit(const std::wstring& msg);
+#if _DEBUG
+void ErrorDisplay(const std::wstring& msg);
+#endif

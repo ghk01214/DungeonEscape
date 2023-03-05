@@ -91,6 +91,15 @@
     <Filter Include="Network">
       <UniqueIdentifier>{865b09d7-9f8c-42b7-893e-71ee71d72595}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\Network">
+      <UniqueIdentifier>{946a7579-22d0-412d-aa6c-cbda9d54c590}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Network\OVERLAPPEDEX">
+      <UniqueIdentifier>{7a05c037-9d77-4b07-b923-19b800a873d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\Network\Packet">
+      <UniqueIdentifier>{4e8031cc-8f78-409f-b1ba-67dbbfb3ffcf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -175,7 +184,10 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\vendor\include\Packet.cpp">
-      <Filter>Network</Filter>
+      <Filter>Utils\Network\Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\vendor\include\OVERLAPPEDEX.cpp">
+      <Filter>Utils\Network\OVERLAPPEDEX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -264,7 +276,13 @@
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\vendor\include\Packet.h">
-      <Filter>Network</Filter>
+      <Filter>Utils\Network\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vendor\include\protocol.hpp">
+      <Filter>Utils\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\vendor\include\OVERLAPPEDEX.h">
+      <Filter>Utils\Network\OVERLAPPEDEX</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

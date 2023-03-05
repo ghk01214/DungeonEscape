@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "Network.h"
 #include "Engine.h"
 #include "Material.h"
 #include "Transform.h"
@@ -9,8 +10,7 @@
 #include "SceneManager.h"
 
 Engine::Engine()
-	: m_viewport({}), m_scissorRect({}),
-	m_network{ nullptr }
+	: m_viewport({}), m_scissorRect({})
 {
 	ZeroMemory(&m_window, sizeof(WindowInfo));
 }
@@ -44,14 +44,8 @@ void Engine::Init(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNe
 	GET_SINGLE(CInput)->Init(info.hWnd);
 	GET_SINGLE(CTimer)->Init();
 
-	m_network = pNetwork;
+	// Scene Manager에 Network 클래스 포인터 복사
 	GET_SINGLE(CSceneManager)->SetNetworkManager(pNetwork);
-	//boost::asio::io_context ioContext;
-	//
-	//m_network = std::make_shared<network::CNetwork>(ioContext, boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), GAME_SERVER_PORT));
-	//GET_SINGLE(CSceneManager)->SetNetworkManager(m_network);
-	//m_network->Run();
-	//GET_SINGLE(CSceneManager)->LogIn();
 }
 
 void Engine::Update()
@@ -72,13 +66,6 @@ void Engine::LateUpdate()
 
 void Engine::UpdateEngine()
 {
-	m_workerThreads.push_back(std::thread{ &Engine::Update, this });
-	m_workerThreads.push_back(std::thread{ &network::CNetwork::Run, m_network });
-
-	for (auto& thread : m_workerThreads)
-	{
-		thread.join();
-	}
 }
 
 void Engine::Render()

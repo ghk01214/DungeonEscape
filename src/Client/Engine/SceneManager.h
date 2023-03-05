@@ -5,6 +5,10 @@
 class CScene;
 class CGameObject;
 
+namespace network
+{
+	class CNetwork;
+}
 
 enum class CAMERA_MODE {
 	CM_ROTATION,		// 카메라 회전
@@ -33,7 +37,9 @@ public:
 	std::shared_ptr<CScene> GetActiveScene() { return m_activeScene; }
 	std::shared_ptr<CGameObject> GetTarget() { return m_targetObject; }
 
+	// 네트워크 포인터 설정
 	void SetNetworkManager(std::shared_ptr<network::CNetwork> network) { m_network = network; }
+	// 렌더링 타깃 변경 함수
 	void SetTarget(int32_t targetNum) { m_targetObject = m_gameObjects[targetNum]; }
 
 private:
@@ -64,6 +70,7 @@ private:
 
 	float		m_speed = 100.f;
 
+	// 네트워크 클래스 포인터
 	std::shared_ptr<network::CNetwork> m_network;
 };
 

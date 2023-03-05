@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "Network.h"
 #include "SceneManager.h"
 #include "Scene.h"
 
@@ -78,8 +79,10 @@ std::shared_ptr<CScene> CSceneManager::LoadTestScene()
 	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(-25.f, 25.f, 0.f), Vec3(50.f, 50.f, 0.f));
 	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(-25.f, -25.f, 0.f), Vec3(50.f, 50.f, 0.f));
 #pragma endregion
-
-	m_network->SendLoginRequestPacket(m_gameObjects);
+	// 서버에 로그인 요청 전송
+	m_network->SendLoginPacket(m_gameObjects);
+	// Recv 프로세스를 IOCP에 등록
+	m_network->Recv();
 
 #pragma region Camera
 	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
@@ -217,41 +220,38 @@ void CSceneManager::SetMode(void)
 
 void CSceneManager::SetTarget(void)
 {
-	if (INPUT->GetButtonDown(KEY_TYPE::Number1) || INPUT->GetButtonDown(KEY_TYPE::NumPad1))
-	{
-		if (m_gameObjects.size() >= 1)
-		{
-			m_targetObject = m_gameObjects.at(0);
-			m_network->SendTargetNumPacket(0);
-		}
-	}
-
-	if (INPUT->GetButtonDown(KEY_TYPE::Number2) || INPUT->GetButtonDown(KEY_TYPE::NumPad2))
-	{
-		if (m_gameObjects.size() >= 2)
-		{
-			m_targetObject = m_gameObjects.at(1);
-			m_network->SendTargetNumPacket(1);
-		}
-	}
-
-	if (INPUT->GetButtonDown(KEY_TYPE::Number3) || INPUT->GetButtonDown(KEY_TYPE::NumPad3))
-	{
-		if (m_gameObjects.size() >= 3)
-		{
-			m_targetObject = m_gameObjects.at(2);
-			m_network->SendTargetNumPacket(2);
-		}
-	}
-
-	if (INPUT->GetButtonDown(KEY_TYPE::Number4) || INPUT->GetButtonDown(KEY_TYPE::NumPad4))
-	{
-		if (m_gameObjects.size() >= 4)
-		{
-			m_targetObject = m_gameObjects.at(3);
-			m_network->SendTargetNumPacket(3);
-		}
-	}
+	// 클라이언트가 이동할 타깃을 변경하지 않게 하기 위해 주석처리
+	//if (INPUT->GetButtonDown(KEY_TYPE::Number1) || INPUT->GetButtonDown(KEY_TYPE::NumPad1))
+	//{
+	//	if (m_gameObjects.size() >= 1)
+	//	{
+	//		m_targetObject = m_gameObjects.at(0);
+	//	}
+	//}
+	//
+	//if (INPUT->GetButtonDown(KEY_TYPE::Number2) || INPUT->GetButtonDown(KEY_TYPE::NumPad2))
+	//{
+	//	if (m_gameObjects.size() >= 2)
+	//	{
+	//		m_targetObject = m_gameObjects.at(1);
+	//	}
+	//}
+	//
+	//if (INPUT->GetButtonDown(KEY_TYPE::Number3) || INPUT->GetButtonDown(KEY_TYPE::NumPad3))
+	//{
+	//	if (m_gameObjects.size() >= 3)
+	//	{
+	//		m_targetObject = m_gameObjects.at(2);
+	//	}
+	//}
+	//
+	//if (INPUT->GetButtonDown(KEY_TYPE::Number4) || INPUT->GetButtonDown(KEY_TYPE::NumPad4))
+	//{
+	//	if (m_gameObjects.size() >= 4)
+	//	{
+	//		m_targetObject = m_gameObjects.at(3);
+	//	}
+	//}
 }
 
 void CSceneManager::ActivateObject(void)
@@ -287,35 +287,36 @@ void CSceneManager::ObjectRotationMode(void)
 
 	//std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
 
+	// 각 키보드 입력 별 회전축 및 회전 방향 전송
 	if (INPUT->GetButton(KEY_TYPE::LEFT))
 	{
 		//rotation.y += DELTA_TIME * 2.f;
-		m_network->SendRotationRequestPacket(ROTATION::X_INCREASE);
+		m_network->SendRotationPacket(ROTATION::X_INCREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::RIGHT))
 	{
 		//rotation.y -= DELTA_TIME * 2.f;
-		m_network->SendRotationRequestPacket(ROTATION::X_DECREASE);
+		m_network->SendRotationPacket(ROTATION::X_DECREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::UP))
 	{
 		//rotation.x += DELTA_TIME * 2.f;
-		m_network->SendRotationRequestPacket(ROTATION::Z_INCREASE);
+		m_network->SendRotationPacket(ROTATION::Z_INCREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::DOWN))
 	{
 		//rotation.x -= DELTA_TIME * 2.f;
-		m_network->SendRotationRequestPacket(ROTATION::Z_DECREASE);
+		m_network->SendRotationPacket(ROTATION::Z_DECREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::PAGEUP))
 	{
 		//rotation.z += DELTA_TIME * 2.f;
-		m_network->SendRotationRequestPacket(ROTATION::Y_INCREASE);
+		m_network->SendRotationPacket(ROTATION::Y_INCREASE);
 	}
 	if (INPUT->GetButton(KEY_TYPE::PAGEDOWN))
 	{
 		//rotation.z -= DELTA_TIME * 2.f;
-		m_network->SendRotationRequestPacket(ROTATION::Y_DECREASE);
+		m_network->SendRotationPacket(ROTATION::Y_DECREASE);
 	}
 
 	//Transform->SetLocalRotation(rotation);
@@ -327,36 +328,36 @@ void CSceneManager::ObjectTranslationMode(void)
 	//Vec3 position = m_targetObject->GetTransform()->GetLocalPosition();
 
 	//std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
-
+	// 각 키에 맞는 이동 방향 전송
 	if (INPUT->GetButton(KEY_TYPE::LEFT))
 	{
 		//position.x -= m_speed * DELTA_TIME;
-		m_network->SendMoveRequestPacket(DIRECTION::LEFT);
+		m_network->SendMovePacket(DIRECTION::LEFT);
 	}
 	if (INPUT->GetButton(KEY_TYPE::RIGHT))
 	{
 		//position.x += m_speed * DELTA_TIME;
-		m_network->SendMoveRequestPacket(DIRECTION::RIGHT);
+		m_network->SendMovePacket(DIRECTION::RIGHT);
 	}
 	if (INPUT->GetButton(KEY_TYPE::UP))
 	{
 		//position.y += m_speed * DELTA_TIME;
-		m_network->SendMoveRequestPacket(DIRECTION::FRONT);
+		m_network->SendMovePacket(DIRECTION::FRONT);
 	}
 	if (INPUT->GetButton(KEY_TYPE::DOWN))
 	{
 		//position.y -= m_speed * DELTA_TIME;
-		m_network->SendMoveRequestPacket(DIRECTION::BACK);
+		m_network->SendMovePacket(DIRECTION::BACK);
 	}
 	if (INPUT->GetButton(KEY_TYPE::PAGEUP))
 	{
 		//position.z += m_speed * DELTA_TIME;
-		m_network->SendMoveRequestPacket(DIRECTION::UP);
+		m_network->SendMovePacket(DIRECTION::UP);
 	}
 	if (INPUT->GetButton(KEY_TYPE::PAGEDOWN))
 	{
 		//position.z -= m_speed * DELTA_TIME;
-		m_network->SendMoveRequestPacket(DIRECTION::DOWN);
+		m_network->SendMovePacket(DIRECTION::DOWN);
 	}
 
 	//Transform->SetLocalPosition(position);
