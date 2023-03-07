@@ -11,6 +11,11 @@
 #include "Texture.h"
 #include "DepthStencilBuffer.h"
 
+namespace network
+{
+	class CNetwork;
+}
+
 class Engine
 {
 public:

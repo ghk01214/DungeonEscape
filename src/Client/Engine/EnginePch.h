@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 // std::byte 사용하지 않음
 //#define _HAS_STD_BYTE 0	// 없어도 되는게 현재 using namespace std;를 사용하고 있지 않기 때문에 굳이 적용하지 않아도 괜찮다. std::byte 관련 오류가 생길시 사용
@@ -33,11 +33,22 @@ using namespace Microsoft::WRL;
 #include <DirectXTex/DirectXTex.h>
 #include <DirectXTex/DirectXTex.inl>
 
+#include <WS2tcpip.h>
+#include <MSWSock.h>
+#include <thread>
+#include <Packet.h>
+#include <Define.h>
+#include <protocol.hpp>
+#include <OVERLAPPEDEX.h>//OVERLAPPEDEX.h
+
 // 각종 lib
 #pragma comment(lib, "d3d12")
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3dcompiler")
+
+#pragma comment(lib, "WS2_32")
+#pragma comment(lib, "MSWSock")
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTex\\DirectXTex_Debug.lib")
@@ -134,3 +145,8 @@ struct TransformParams
 };
 
 extern std::unique_ptr<class Engine> g_Engine;
+
+void ErrorQuit(const std::wstring& msg);
+#if _DEBUG
+void ErrorDisplay(const std::wstring& msg);
+#endif

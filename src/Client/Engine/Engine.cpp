@@ -1,4 +1,5 @@
-﻿#include "pch.h"
+#include "pch.h"
+#include "Network.h"
 #include "Engine.h"
 #include "Material.h"
 #include "Transform.h"
@@ -42,6 +43,9 @@ void Engine::Init(const WindowInfo& info)
 
 	GET_SINGLE(CInput)->Init(info.hWnd);
 	GET_SINGLE(CTimer)->Init();
+
+	// Scene Manager에 Network 클래스 포인터 복사
+	GET_SINGLE(CSceneManager)->SetNetworkManager(pNetwork);
 }
 
 void Engine::Update()
@@ -57,6 +61,10 @@ void Engine::Update()
 }
 
 void Engine::LateUpdate()
+{
+}
+
+void Engine::UpdateEngine()
 {
 }
 

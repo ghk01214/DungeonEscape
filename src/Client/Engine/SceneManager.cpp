@@ -1,4 +1,5 @@
-﻿#include "pch.h"
+#include "pch.h"
+#include "Network.h"
 #include "SceneManager.h"
 #include "Scene.h"
 
@@ -52,8 +53,38 @@ std::shared_ptr<CScene> CSceneManager::LoadTestScene()
 	// Scene 객체 생성
 	std::shared_ptr<CScene> scene = std::make_shared<CScene>();
 
-#pragma region TestObject
-	// TestObject 생성
+	// 해당 씬에 추가할 오브젝트 생성
+#pragma region CreateObjects
+	// 함수 인자로 텍스쳐 경로, 위치, 사이즈 값 입력
+	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(25.f, 25.f, 0.f), Vec3(50.f, 50.f, 0.f));
+	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(25.f, -25.f, 0.f), Vec3(50.f, 50.f, 0.f));
+	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(-25.f, 25.f, 0.f), Vec3(50.f, 50.f, 0.f));
+	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(-25.f, -25.f, 0.f), Vec3(50.f, 50.f, 0.f));
+#pragma endregion
+	// 서버에 로그인 요청 전송
+	m_network->SendLoginPacket(m_gameObjects);
+	// Recv 프로세스를 IOCP에 등록
+	m_network->Recv();
+
+#pragma region Camera
+	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
+	camera->AddComponent(std::make_shared<CTransform>());
+	camera->AddComponent(std::make_shared<CCamera>()); // Near=1, Far=1000, FOV=45도
+	//camera->AddComponent(std::make_shared<CTestCameraScript>());
+	camera->GetTransform()->SetLocalPosition(Vec3(50.f, 50.f, -50.f));
+	camera->GetTransform()->SetLocalRotation(Vec3(XMConvertToRadians(45.f), -XMConvertToRadians(45.f), 0.f));		// 시계방향이 +, 반시계방향이 -
+	scene->AddGameObject(camera);
+
+	m_camera = camera;
+
+	Matrix matWorld = XMMatrixLookAtLH(XMVectorSet(5.f, 5.f, -5.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
+#pragma endregion
+
+	return scene;
+}
+
+void CSceneManager::CreateObject(std::shared_ptr<CScene> scene, const std::wstring& texturePath, Vec3 vPos, Vec3 vScale)
+{
 	std::shared_ptr<CGameObject> gameObject = std::make_shared<CGameObject>();
 
 	// 사각형 정점 4개(버텍스 버퍼) 생성, 위치 / 색상 / uv값 세팅
@@ -135,4 +166,252 @@ std::shared_ptr<CScene> CSceneManager::LoadTestScene()
 #pragma endregion
 
 	return scene;
+}
+
+void CSceneManager::SetMode(void)
+{
+	// 오브젝트 회전 모드
+	if (INPUT->GetButtonDown(KEY_TYPE::R))
+	{
+		m_eObjectMode = OBJECT_MODE::OM_ROTATION;
+	}
+
+	// 오브젝트 이동 모드
+	if (INPUT->GetButtonDown(KEY_TYPE::T))
+	{
+		m_eObjectMode = OBJECT_MODE::OM_TRANSLATION;
+	}
+
+	// 카메라 회전 모드
+	if (INPUT->GetButtonDown(KEY_TYPE::C))
+	{
+		m_eCameraMode = CAMERA_MODE::CM_ROTATION;
+	}
+
+	// 카메라 회전 모드
+	if (INPUT->GetButtonDown(KEY_TYPE::V))
+	{
+		m_eCameraMode = CAMERA_MODE::CM_TRANSLATION;
+	}
+}
+
+void CSceneManager::SetTarget(void)
+{
+	// 클라이언트가 이동할 타깃을 변경하지 않게 하기 위해 주석처리
+	//if (INPUT->GetButtonDown(KEY_TYPE::Number1) || INPUT->GetButtonDown(KEY_TYPE::NumPad1))
+	//{
+	//	if (m_gameObjects.size() >= 1)
+	//	{
+	//		m_targetObject = m_gameObjects.at(0);
+	//	}
+	//}
+	//
+	//if (INPUT->GetButtonDown(KEY_TYPE::Number2) || INPUT->GetButtonDown(KEY_TYPE::NumPad2))
+	//{
+	//	if (m_gameObjects.size() >= 2)
+	//	{
+	//		m_targetObject = m_gameObjects.at(1);
+	//	}
+	//}
+	//
+	//if (INPUT->GetButtonDown(KEY_TYPE::Number3) || INPUT->GetButtonDown(KEY_TYPE::NumPad3))
+	//{
+	//	if (m_gameObjects.size() >= 3)
+	//	{
+	//		m_targetObject = m_gameObjects.at(2);
+	//	}
+	//}
+	//
+	//if (INPUT->GetButtonDown(KEY_TYPE::Number4) || INPUT->GetButtonDown(KEY_TYPE::NumPad4))
+	//{
+	//	if (m_gameObjects.size() >= 4)
+	//	{
+	//		m_targetObject = m_gameObjects.at(3);
+	//	}
+	//}
+}
+
+void CSceneManager::ActivateObject(void)
+{
+	// 오브젝트 작동
+	if (OBJECT_MODE::OM_ROTATION == m_eObjectMode)
+	{
+		ObjectRotationMode();
+	}
+	else if (OBJECT_MODE::OM_TRANSLATION == m_eObjectMode)
+	{
+		ObjectTranslationMode();
+	}
+}
+
+void CSceneManager::ActivateCamera(void)
+{
+	// 카메라 작동
+	if (CAMERA_MODE::CM_ROTATION == m_eCameraMode)
+	{
+		CameraRotationMode();
+	}
+	else if (CAMERA_MODE::CM_TRANSLATION == m_eCameraMode)
+	{
+		CameraTranslationMode();
+	}
+}
+
+void CSceneManager::ObjectRotationMode(void)
+{
+	// 현재 선택된 오브젝트의 회전값을 가져옴
+	//Vec3 rotation = m_targetObject->GetTransform()->GetLocalRotation();
+
+	//std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
+
+	// 각 키보드 입력 별 회전축 및 회전 방향 전송
+	if (INPUT->GetButton(KEY_TYPE::LEFT))
+	{
+		//rotation.y += DELTA_TIME * 2.f;
+		m_network->SendRotationPacket(ROTATION::X_INCREASE);
+	}
+	if (INPUT->GetButton(KEY_TYPE::RIGHT))
+	{
+		//rotation.y -= DELTA_TIME * 2.f;
+		m_network->SendRotationPacket(ROTATION::X_DECREASE);
+	}
+	if (INPUT->GetButton(KEY_TYPE::UP))
+	{
+		//rotation.x += DELTA_TIME * 2.f;
+		m_network->SendRotationPacket(ROTATION::Z_INCREASE);
+	}
+	if (INPUT->GetButton(KEY_TYPE::DOWN))
+	{
+		//rotation.x -= DELTA_TIME * 2.f;
+		m_network->SendRotationPacket(ROTATION::Z_DECREASE);
+	}
+	if (INPUT->GetButton(KEY_TYPE::PAGEUP))
+	{
+		//rotation.z += DELTA_TIME * 2.f;
+		m_network->SendRotationPacket(ROTATION::Y_INCREASE);
+	}
+	if (INPUT->GetButton(KEY_TYPE::PAGEDOWN))
+	{
+		//rotation.z -= DELTA_TIME * 2.f;
+		m_network->SendRotationPacket(ROTATION::Y_DECREASE);
+	}
+
+	//Transform->SetLocalRotation(rotation);
+}
+
+void CSceneManager::ObjectTranslationMode(void)
+{
+	// 현재 선택된 오브젝트의 회전값을 가져옴
+	//Vec3 position = m_targetObject->GetTransform()->GetLocalPosition();
+
+	//std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
+	// 각 키에 맞는 이동 방향 전송
+	if (INPUT->GetButton(KEY_TYPE::LEFT))
+	{
+		//position.x -= m_speed * DELTA_TIME;
+		m_network->SendMovePacket(DIRECTION::LEFT);
+	}
+	if (INPUT->GetButton(KEY_TYPE::RIGHT))
+	{
+		//position.x += m_speed * DELTA_TIME;
+		m_network->SendMovePacket(DIRECTION::RIGHT);
+	}
+	if (INPUT->GetButton(KEY_TYPE::UP))
+	{
+		//position.y += m_speed * DELTA_TIME;
+		m_network->SendMovePacket(DIRECTION::FRONT);
+	}
+	if (INPUT->GetButton(KEY_TYPE::DOWN))
+	{
+		//position.y -= m_speed * DELTA_TIME;
+		m_network->SendMovePacket(DIRECTION::BACK);
+	}
+	if (INPUT->GetButton(KEY_TYPE::PAGEUP))
+	{
+		//position.z += m_speed * DELTA_TIME;
+		m_network->SendMovePacket(DIRECTION::UP);
+	}
+	if (INPUT->GetButton(KEY_TYPE::PAGEDOWN))
+	{
+		//position.z -= m_speed * DELTA_TIME;
+		m_network->SendMovePacket(DIRECTION::DOWN);
+	}
+
+	//Transform->SetLocalPosition(position);
+}
+
+void CSceneManager::CameraRotationMode(void)
+{
+	// 카메라의 회전값을 가져옴
+	Vec3 rotation = m_camera->GetTransform()->GetLocalRotation();
+
+	if (INPUT->GetButton(KEY_TYPE::W))
+	{
+		rotation.x += DELTA_TIME * 0.5f;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::S))
+	{
+		rotation.x -= DELTA_TIME * 0.5f;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::A))
+	{
+		rotation.y += DELTA_TIME * 0.5f;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::D))
+	{
+		rotation.y -= DELTA_TIME * 0.5f;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::Q))
+	{
+		rotation.z += DELTA_TIME * 0.5f;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::E))
+	{
+		rotation.z -= DELTA_TIME * 0.5f;
+	}
+
+	m_camera->GetTransform()->SetLocalRotation(rotation);
+}
+
+void CSceneManager::CameraTranslationMode(void)
+{
+	// 카메라의 위치값을 가져옴
+	Vec3 pos = m_camera->GetTransform()->GetLocalPosition();
+
+	if (INPUT->GetButton(KEY_TYPE::W))
+	{
+		pos.y += DELTA_TIME * 0.5f * m_speed;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::S))
+	{
+		pos.y -= DELTA_TIME * 0.5f * m_speed;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::A))
+	{
+		pos.x -= DELTA_TIME * 0.5f * m_speed;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::D))
+	{
+		pos.x += DELTA_TIME * 0.5f * m_speed;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::Q))
+	{
+		pos.z += DELTA_TIME * 0.5f * m_speed;
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::E))
+	{
+		pos.z -= DELTA_TIME * 0.5f * m_speed;
+	}
+
+	m_camera->GetTransform()->SetLocalPosition(pos);
 }

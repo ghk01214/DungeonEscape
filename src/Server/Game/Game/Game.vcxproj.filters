@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{9d7d2d7f-59b8-4a91-9717-7942f34b865f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\OVERLAPPEDEX">
+      <UniqueIdentifier>{fe1b19af-0975-402c-8239-4223bbdf755d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Packet">
+      <UniqueIdentifier>{8be28791-ca75-4610-98f1-f8360ec68b94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\pch">
+      <UniqueIdentifier>{d67b4dd7-36f3-490e-b001-fc64e913a602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Object">
+      <UniqueIdentifier>{d0b8a078-d75a-46bf-8888-7eb3336a738b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Object\Player">
+      <UniqueIdentifier>{e043323a-2a33-4654-abb1-f86456d16984}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Session">
+      <UniqueIdentifier>{13427df2-1108-4e0d-a1cb-f30ff0c01e05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Server">
+      <UniqueIdentifier>{d64e419a-141a-454d-bac5-8633adf8f441}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EntryPoint.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Utility\pch</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>source\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>source\Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Session.cpp">
+      <Filter>source\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="Server.cpp">
+      <Filter>source\Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vendor\include\OVERLAPPEDEX.cpp">
+      <Filter>Utility\OVERLAPPEDEX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\vendor\include\Packet.cpp">
+      <Filter>Utility\Packet</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Utility\pch</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>source\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Define.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Session.h">
+      <Filter>source\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="Server.h">
+      <Filter>source\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol.hpp">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vendor\include\OVERLAPPEDEX.h">
+      <Filter>Utility\OVERLAPPEDEX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vendor\include\Packet.h">
+      <Filter>Utility\Packet</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
