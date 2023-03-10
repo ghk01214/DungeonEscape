@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Network.h"
 #include "SceneManager.h"
 #include "Scene.h"
@@ -10,6 +10,8 @@
 #include "Transform.h"
 #include "Camera.h"
 
+#include "Input.h"
+#include "Timer.h"
 #include "TestCameraScript.h"
 
 void CSceneManager::Update()
@@ -20,6 +22,8 @@ void CSceneManager::Update()
 	m_activeScene->Update();
 	m_activeScene->LateUpdate();
 	m_activeScene->FinalUpdate();
+
+	KeyInput();
 }
 
 void CSceneManager::Render()
@@ -46,6 +50,20 @@ void CSceneManager::LoadScene(std::wstring sceneName)
 
 	m_activeScene->Awake();
 	m_activeScene->Start();
+}
+
+void CSceneManager::ObjectTranslationMode(Vec3 pos)
+{
+	std::shared_ptr<CTransform> Transform{ m_targetObject->GetTransform() };
+
+	Transform->SetLocalPosition(pos);
+}
+
+void CSceneManager::ObjectRotationMode(Vec3 rotation)
+{
+	std::shared_ptr<CTransform> Transform{ m_targetObject->GetTransform() };
+
+	Transform->SetLocalRotation(rotation);
 }
 
 std::shared_ptr<CScene> CSceneManager::LoadTestScene()
@@ -121,8 +139,8 @@ void CSceneManager::CreateObject(std::shared_ptr<CScene> scene, const std::wstri
 
 	// 오브젝트 존재하는 Transform 컴포넌트를 가져와 값을 넣어줌
 	std::shared_ptr<CTransform> transform = gameObject->GetTransform();
-	transform->SetLocalPosition(Vec3(0.f, 100.f, 200.f));
-	transform->SetLocalScale(Vec3(100.f, 100.f, 1.f));
+	transform->SetLocalPosition(vPos);
+	transform->SetLocalScale(vScale);
 
 	// MeshRenderer 컴포넌트 생성
 	std::shared_ptr<CMeshRenderer> meshRenderer = std::make_shared<CMeshRenderer>();
@@ -137,15 +155,12 @@ void CSceneManager::CreateObject(std::shared_ptr<CScene> scene, const std::wstri
 	{
 		std::shared_ptr<CShader> shader = std::make_shared<CShader>();
 		std::shared_ptr<CTexture> texture = std::make_shared<CTexture>();
-		
+
 		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
-		texture->Init(L"..\\Resources\\Texture\\blue_archive_celebration.png");
+		texture->Init(texturePath);
 
 		std::shared_ptr<CMaterial> material = std::make_shared<CMaterial>();
 		material->SetShader(shader);
-		material->SetFloat(0, 0.3f);
-		material->SetFloat(1, 0.4f);
-		material->SetFloat(2, 0.3f);
 		material->SetTexture(0, texture);
 		meshRenderer->SetMaterial(material);
 	}
@@ -153,19 +168,27 @@ void CSceneManager::CreateObject(std::shared_ptr<CScene> scene, const std::wstri
 	gameObject->AddComponent(meshRenderer);
 
 	scene->AddGameObject(gameObject);
-#pragma endregion
 
+	// 현재 씬의 게임 오브젝트만 보아놓은 vector에 오브젝트 추가
+	m_gameObjects.push_back(gameObject);
 
-#pragma region Camera
-	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
-	camera->AddComponent(std::make_shared<CTransform>());
-	camera->AddComponent(std::make_shared<CCamera>()); // Near=1, Far=1000, FOV=45도
-	camera->AddComponent(std::make_shared<CTestCameraScript>());
-	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 100.f, 0.f));
-	scene->AddGameObject(camera);
-#pragma endregion
+	// 생성된 오브젝트를 현재 선택된 오브젝트로 바꿈
+	m_targetObject = gameObject;
+}
 
-	return scene;
+void CSceneManager::KeyInput(void)
+{
+	// targetObject 설정
+	SetTarget();
+
+	// 카메라 모드 설정
+	SetMode();
+
+	// 카메라 작동
+	ActivateCamera();
+
+	// 오브젝트 작동
+	ActivateObject();
 }
 
 void CSceneManager::SetMode(void)

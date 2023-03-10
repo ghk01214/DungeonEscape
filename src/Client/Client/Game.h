@@ -8,7 +8,7 @@ namespace network
 class CGame
 {
 public:
-	void Init(const WindowInfo& Info);
+	void Init(const WindowInfo& Info, std::shared_ptr<network::CNetwork> pNetwork);
 	void Update();
 };
 

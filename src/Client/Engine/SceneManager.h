@@ -1,6 +1,9 @@
-#pragma once
+﻿#pragma once
+
+//#include "Network.h"
 
 class CScene;
+class CGameObject;
 
 namespace network
 {
@@ -27,8 +30,12 @@ public:
 	void Render();
 	void LoadScene(std::wstring sceneName);
 
+	void ObjectTranslationMode(Vec3 pos);
+	void ObjectRotationMode(Vec3 rotation);
+
 public:
 	std::shared_ptr<CScene> GetActiveScene() { return m_activeScene; }
+	std::shared_ptr<CGameObject> GetTarget() { return m_targetObject; }
 
 	// 네트워크 포인터 설정
 	void SetNetworkManager(std::shared_ptr<network::CNetwork> network) { m_network = network; }

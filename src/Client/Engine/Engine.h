@@ -23,9 +23,11 @@ public:
 	~Engine();
 
 public:
-	void Init(const WindowInfo& info);
+	void Init(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNetwork);
 	void Update();
 	void LateUpdate();
+
+	void UpdateEngine();
 
 public:
 	const WindowInfo& GetWindow() { return m_window; }

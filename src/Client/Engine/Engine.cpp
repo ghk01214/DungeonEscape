@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Network.h"
 #include "Engine.h"
 #include "Material.h"
@@ -19,7 +19,7 @@ Engine::~Engine()
 {
 }
 
-void Engine::Init(const WindowInfo& info)
+void Engine::Init(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNetwork)
 {
 	m_window = info;
 
