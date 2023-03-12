@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-class CGameObject;
+class GameObject;
+
 
 class CScene
 {
@@ -11,12 +12,31 @@ public:
 	void LateUpdate();
 	void FinalUpdate();
 
-	void AddGameObject(std::shared_ptr<CGameObject> gameObject);
-	void RemoveGameObject(std::shared_ptr<CGameObject> gameObject);
+	shared_ptr<class Camera> GetMainCamera();
 
-	const std::vector<std::shared_ptr<CGameObject>>& GetGameObjects() { return m_gameObjects; }	// 모든 게임 오브젝트 정보를 넘겨주는 함수
+	void Render();
+
+	void ClearRTV();
+
+	void RenderShadow();
+	void RenderDeferred();
+	void RenderLights();
+	void RenderFinal();
+
+	void RenderForward();
 
 private:
-	std::vector<std::shared_ptr<CGameObject>> m_gameObjects;
+	void PushLightData();
+
+public:
+	void AddGameObject(shared_ptr<GameObject> gameObject);
+	void RemoveGameObject(shared_ptr<GameObject> gameObject);
+
+	const vector<shared_ptr<GameObject>>& GetGameObjects() { return m_gameObjects; }
+
+private:
+	vector<shared_ptr<GameObject>>		m_gameObjects;
+	vector<shared_ptr<class Camera>>	m_cameras;
+	vector<shared_ptr<class Light>>		m_lights;
 };
 

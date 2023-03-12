@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class CGameObject;
+class GameObject;
 
 namespace network
 {
@@ -19,7 +19,7 @@ namespace network
 		void Send(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 
 #pragma region [SEND PACKET]
-		void SendLoginPacket(std::vector<std::shared_ptr<CGameObject>>& m_gameObjects);
+		void SendLoginPacket(std::vector<std::shared_ptr<GameObject>>& m_gameObjects);
 		void SendMovePacket(DIRECTION direction);
 		void SendRotationPacket(ROTATION direction);
 #pragma endregion

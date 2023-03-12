@@ -164,6 +164,7 @@ namespace game
 		{
 			m_sessions[id]->m_prevRemain = 0;
 			m_sessions[id]->SetSocket(clientSocket);
+			std::cout << "Accepted" << std::endl;
 
 			CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientSocket), m_iocp, id, 0);
 

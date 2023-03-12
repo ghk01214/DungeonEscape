@@ -151,7 +151,7 @@ namespace network
 	}
 
 #pragma region [SEND PACKET]
-	void CNetwork::SendLoginPacket(std::vector<std::shared_ptr<CGameObject>>& m_gameObjects)
+	void CNetwork::SendLoginPacket(std::vector<std::shared_ptr<GameObject>>& m_gameObjects)
 	{
 		network::CPacket packet;
 
@@ -255,7 +255,7 @@ namespace network
 				// 클라이언트의 조작 오브젝트 인덱스(변동X)
 				m_myTarget = m_packet.Read<uint16_t>();
 
-				GET_SINGLE(CSceneManager)->SetTarget(m_myTarget);
+				GET_SINGLE(SceneManager)->SetTarget(m_myTarget);
 			}
 			break;
 			default:
@@ -270,7 +270,7 @@ namespace network
 			case ProtocolID::MY_MOVE_ACK:
 			{
 				// 움직일 오브젝트 인덱스를 패킷에서 읽어서 타깃으로 설정
-				GET_SINGLE(CSceneManager)->SetTarget(m_packet.Read<uint16_t>());
+				GET_SINGLE(SceneManager)->SetTarget(m_packet.Read<uint16_t>());
 
 				// 패킷에서 오브젝트를 렌더링할 좌표 읽기
 				Vec3 pos;
@@ -279,14 +279,14 @@ namespace network
 				pos.z = m_packet.Read<float>();
 
 				// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-				GET_SINGLE(CSceneManager)->ObjectTranslationMode(pos);
+				GET_SINGLE(SceneManager)->ObjectTranslationMode(pos);
 			}
 			break;
 			// 회전은 개선이 필요(회전을 하지 않고 이동을 함)
 			case ProtocolID::MY_ROTATE_ACK:
 			{
 				// 회전할 오브젝트 인덱스를 패킷에서 읽어서 타깃으로 설정
-				GET_SINGLE(CSceneManager)->SetTarget(m_packet.Read<uint16_t>());
+				GET_SINGLE(SceneManager)->SetTarget(m_packet.Read<uint16_t>());
 
 				// 패킷에서 오브젝트를 렌더링할 좌표 읽기
 				Vec3 rotation;
@@ -295,7 +295,7 @@ namespace network
 				rotation.z = m_packet.Read<float>();
 
 				// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-				GET_SINGLE(CSceneManager)->ObjectRotationMode(rotation);
+				GET_SINGLE(SceneManager)->ObjectRotationMode(rotation);
 			}
 			break;
 			default:

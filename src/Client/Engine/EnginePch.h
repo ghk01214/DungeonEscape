@@ -1,9 +1,9 @@
 ﻿#pragma once
 
 // std::byte 사용하지 않음
-//#define _HAS_STD_BYTE 0	// 없어도 되는게 현재 using namespace std;를 사용하고 있지 않기 때문에 굳이 적용하지 않아도 괜찮다. std::byte 관련 오류가 생길시 사용
-
+#define _HAS_STD_BYTE 0
 #define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.
+
 // 각종 include
 #include <windows.h>
 #include <tchar.h>
@@ -13,13 +13,13 @@
 #include <array>
 #include <list>
 #include <map>
-//using namespace std;
+using namespace std;
 
 #include <filesystem>
 namespace fs = std::filesystem;
 
 #include "d3dx12.h"
-#include "SimpleMath.h"	// 오른손 좌표계로 설정되어있기에 z값 관련 함수 사용시 반대로 적용해야함
+#include "SimpleMath.h"
 #include <d3d12.h>
 #include <wrl.h>
 #include <d3dcompiler.h>
@@ -34,13 +34,7 @@ using namespace Microsoft::WRL;
 #include <DirectXTex/DirectXTex.h>
 #include <DirectXTex/DirectXTex.inl>
 
-#include <WS2tcpip.h>
-#include <MSWSock.h>
-#include <thread>
-#include <Packet.h>
-#include <Define.h>
-#include <protocol.hpp>
-#include <OVERLAPPEDEX.h>//OVERLAPPEDEX.h
+#include "FBX/fbxsdk.h"
 
 // 각종 lib
 #pragma comment(lib, "d3d12")
@@ -48,13 +42,20 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3dcompiler")
 
-#pragma comment(lib, "WS2_32")
-#pragma comment(lib, "MSWSock")
+#ifdef _DEBUG
+#pragma comment(lib, "DirectXTex\\DirectXTex_debug.lib")
+#else
+#pragma comment(lib, "DirectXTex\\DirectXTex.lib")
+#endif
 
 #ifdef _DEBUG
-#pragma comment(lib, "DirectXTex\\DirectXTex_Debug.lib")
+#pragma comment(lib, "FBX\\debug\\libfbxsdk-md.lib")
+#pragma comment(lib, "FBX\\debug\\libxml2-md.lib")
+#pragma comment(lib, "FBX\\debug\\zlib-md.lib")
 #else
-#pragma comment(lib, "DirectXTex\\DirectXTex_Release.lib")
+#pragma comment(lib, "FBX\\release\libfbxsdk-md.lib")
+#pragma comment(lib, "FBX\\release\libxml2-md.lib")
+#pragma comment(lib, "FBX\\release\\zlib-md.lib")
 #endif
 
 // 각종 typedef
@@ -89,32 +90,59 @@ enum class SRV_REGISTER : uint8
 	t2,
 	t3,
 	t4,
+	t5,
+	t6,
+	t7,
+	t8,
+	t9,
 
 	END
 };
 
-enum
+enum class UAV_REGISTER : uint8
 {
-	SWAP_CHAIN_BUFFER_COUNT = 2,	// 스왑체인 버퍼 갯수
-	CBV_REGISTER_COUNT = CBV_REGISTER::END,	// Constant Buffer Rgister Count
-	SRV_REGISTER_COUNT = static_cast<uint8>(SRV_REGISTER::END) - CBV_REGISTER_COUNT,	// CBV가 끝나고 바로 이어서 SRV 값이 들어가기에 관련 값을 넣음. CBV_REGISTER 값이 바뀌명 알아서 값이 조정됨
-	REGISTER_COUNT = CBV_REGISTER_COUNT + SRV_REGISTER_COUNT	// Register Count, TableDescriptorHeap에서 사용
+	u0 = static_cast<uint8>(SRV_REGISTER::END),
+	u1,
+	u2,
+	u3,
+	u4,
+
+	END,
 };
 
-typedef struct _tagWindowInfo
+enum
 {
-	HWND hWnd;		// 출력 윈도우
-	int32 width;	// 윈도우 너비
-	int32 height;	// 윈도우 높이
-	bool windowed;	// 모드(창모드 or 전체화면)
-}WindowInfo;
+	SWAP_CHAIN_BUFFER_COUNT = 2,
+	CBV_REGISTER_COUNT = CBV_REGISTER::END,
+	SRV_REGISTER_COUNT = static_cast<uint8>(SRV_REGISTER::END) - CBV_REGISTER_COUNT,
+	CBV_SRV_REGISTER_COUNT = CBV_REGISTER_COUNT + SRV_REGISTER_COUNT,
+	UAV_REGISTER_COUNT = static_cast<uint8>(UAV_REGISTER::END) - CBV_SRV_REGISTER_COUNT,
+	TOTAL_REGISTER_COUNT = CBV_SRV_REGISTER_COUNT + UAV_REGISTER_COUNT
+};
 
+struct WindowInfo
+{
+	HWND	hWnd; // 출력 윈도우
+	int32	width; // 너비
+	int32	height; // 높이
+	bool	windowed; // 창모드 or 전체화면
+};
 
 struct Vertex
 {
-	Vec3 pos;	// 위치 정보
-	Vec4 color;	// 색상 정보
-	Vec2 uv;	// uv 좌표
+	Vertex() {}
+
+	Vertex(Vec3 p, Vec2 u, Vec3 n, Vec3 t)
+		: pos(p), uv(u), normal(n), tangent(t)
+	{
+	}
+
+	Vec3 pos;
+	Vec2 uv;
+	Vec3 normal;
+	Vec3 tangent;
+	Vec4 weights;
+	Vec4 indices;
 };
 
 #define DECLARE_SINGLE(type)		\
@@ -130,24 +158,78 @@ public:								\
 
 #define GET_SINGLE(type)	type::GetInstance()
 
-#define DEVICE				g_Engine->GetDevice()->GetDevice()
-#define CMD_LIST			g_Engine->GetCmdQueue()->GetCmdList()
-#define RESOURCE_CMD_LIST	g_Engine->GetCmdQueue()->GetResourceCmdList()
-#define ROOT_SIGNATURE		g_Engine->GetRootSignature()->GetSignature()
+#define DEVICE				GEngine->GetDevice()->GetDevice()
+#define GRAPHICS_CMD_LIST	GEngine->GetGraphicsCmdQueue()->GetGraphicsCmdList()
+#define RESOURCE_CMD_LIST	GEngine->GetGraphicsCmdQueue()->GetResourceCmdList()
+#define COMPUTE_CMD_LIST	GEngine->GetComputeCmdQueue()->GetComputeCmdList()
 
-#define INPUT				GET_SINGLE(CInput)
-#define DELTA_TIME			GET_SINGLE(CTimer)->GetDeltaTime()
+#define GRAPHICS_ROOT_SIGNATURE		GEngine->GetRootSignature()->GetGraphicsRootSignature()
+#define COMPUTE_ROOT_SIGNATURE		GEngine->GetRootSignature()->GetComputeRootSignature()
 
-#define CONST_BUFFER(type)	g_Engine->GetConstantBuffer(type)
+#define INPUT				GET_SINGLE(Input)
+#define DELTA_TIME			GET_SINGLE(Timer)->GetDeltaTime()
+
+#define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
 
 struct TransformParams
 {
+	Matrix matWorld;
+	Matrix matView;
+	Matrix matProjection;
+	Matrix matWV;
 	Matrix matWVP;
+	Matrix matViewInv;
 };
 
-extern std::unique_ptr<class Engine> g_Engine;
+struct AnimFrameParams
+{
+	Vec4	scale;
+	Vec4	rotation; // Quaternion
+	Vec4	translation;
+};
+
+extern unique_ptr<class Engine> GEngine;
+extern unique_ptr<class CGameInstance> GGameInstance;
+
+// Utils
+wstring s2ws(const string& s);
+string ws2s(const wstring& s);
+
+
+
+
+
+
+
 
 void ErrorQuit(const std::wstring& msg);
 #if _DEBUG
 void ErrorDisplay(const std::wstring& msg);
 #endif
+
+
+
+
+
+using namespace std;
+
+
+
+
+
+
+
+
+
+// server 관련
+#include <WS2tcpip.h>
+#include <MSWSock.h>
+#include <thread>
+#include <Packet.h>
+#include <Define.h>
+#include <protocol.hpp>
+#include <OVERLAPPEDEX.h>//OVERLAPPEDEX.h
+
+#pragma comment(lib, "WS2_32")
+#pragma comment(lib, "MSWSock")
+

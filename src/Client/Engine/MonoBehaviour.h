@@ -1,14 +1,13 @@
-﻿#pragma once
+#pragma once
 #include "Component.h"
 
-class CMonoBehaviour : public CComponent
+class MonoBehaviour : public Component
 {
 public:
-	CMonoBehaviour();
-	virtual ~CMonoBehaviour();
-
+	MonoBehaviour();
+	virtual ~MonoBehaviour();
 
 private:
-	virtual void FinalUpdate() sealed { }	// sealed - 다른 class들이 CMonoBehaviour를 상속받아서 FinalUpdate함수를 오버라이드하는것을 막아줌
+	virtual void FinalUpdate() sealed { }
 };
 

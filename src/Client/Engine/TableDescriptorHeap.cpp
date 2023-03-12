@@ -2,30 +2,32 @@
 #include "TableDescriptorHeap.h"
 #include "Engine.h"
 
-void CTableDescriptorHeap::Init(uint32 count)
+// ************************
+// GraphicsDescriptorHeap
+// ************************
+
+void GraphicsDescriptorHeap::Init(uint32 count)
 {
 	m_groupCount = count;
 
 	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
-	desc.NumDescriptors = count * REGISTER_COUNT;
-	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;	// GPU 메모리에 넣는것은 SHADER_VISIBLE로 설정
+	desc.NumDescriptors = count * (CBV_SRV_REGISTER_COUNT - 1); // b0는 전역
+	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
 	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 
-	DEVICE->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&m_descHeap));	// _descHeap에 정보를 생성
+	DEVICE->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&m_descHeap));
 
 	m_handleSize = DEVICE->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-	m_groupSize = m_handleSize * REGISTER_COUNT;
+	m_groupSize = m_handleSize * (CBV_SRV_REGISTER_COUNT - 1); // b0는 전역
 }
 
-void CTableDescriptorHeap::Clear()
+void GraphicsDescriptorHeap::Clear()
 {
 	m_currentGroupIndex = 0;
 }
 
-void CTableDescriptorHeap::SetCBV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, CBV_REGISTER reg)
+void GraphicsDescriptorHeap::SetCBV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, CBV_REGISTER reg)
 {
-	// GPU의 register과 매핑할 때 제출용으로 활용할 Descriptor Heap을 생성, CommandQueue에 있는 명령이 나중에 일어나는 것인 데 반해
-	// 해당 과정은 즉시 일어나기 때문에 여러 Descriptor Heap을 생성해야 한다.
 	D3D12_CPU_DESCRIPTOR_HANDLE destHandle = GetCPUHandle(reg);
 
 	uint32 destRange = 1;
@@ -33,9 +35,8 @@ void CTableDescriptorHeap::SetCBV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, CBV_REG
 	DEVICE->CopyDescriptors(1, &destHandle, &destRange, 1, &srcHandle, &srcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
-void CTableDescriptorHeap::SetSRV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, SRV_REGISTER reg)
+void GraphicsDescriptorHeap::SetSRV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, SRV_REGISTER reg)
 {
-	// SetCBV과 동일하게 작동, 차이점은 register에 작용하는 부분이 CBV가 아닌 SRV라는 것
 	D3D12_CPU_DESCRIPTOR_HANDLE destHandle = GetCPUHandle(reg);
 
 	uint32 destRange = 1;
@@ -43,30 +44,106 @@ void CTableDescriptorHeap::SetSRV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, SRV_REG
 	DEVICE->CopyDescriptors(1, &destHandle, &destRange, 1, &srcHandle, &srcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 }
 
-void CTableDescriptorHeap::CommitTable()
+void GraphicsDescriptorHeap::CommitTable()
 {
-	// GPU 제출용 DescriptorHeap에 있는 정보를 register에 제출하는 함수
 	D3D12_GPU_DESCRIPTOR_HANDLE handle = m_descHeap->GetGPUDescriptorHandleForHeapStart();
 	handle.ptr += m_currentGroupIndex * m_groupSize;
-	CMD_LIST->SetGraphicsRootDescriptorTable(0, handle);
+	GRAPHICS_CMD_LIST->SetGraphicsRootDescriptorTable(1, handle);
 
 	m_currentGroupIndex++;
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE CTableDescriptorHeap::GetCPUHandle(CBV_REGISTER reg)
+D3D12_CPU_DESCRIPTOR_HANDLE GraphicsDescriptorHeap::GetCPUHandle(CBV_REGISTER reg)
 {
 	return GetCPUHandle(static_cast<uint8>(reg));
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE CTableDescriptorHeap::GetCPUHandle(SRV_REGISTER reg)
+D3D12_CPU_DESCRIPTOR_HANDLE GraphicsDescriptorHeap::GetCPUHandle(SRV_REGISTER reg)
 {
 	return GetCPUHandle(static_cast<uint8>(reg));
 }
 
-D3D12_CPU_DESCRIPTOR_HANDLE CTableDescriptorHeap::GetCPUHandle(uint8 reg)
+D3D12_CPU_DESCRIPTOR_HANDLE GraphicsDescriptorHeap::GetCPUHandle(uint8 reg)
 {
+	assert(reg > 0);
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_descHeap->GetCPUDescriptorHandleForHeapStart();
 	handle.ptr += m_currentGroupIndex * m_groupSize;
+	handle.ptr += (reg - 1) * m_handleSize;
+	return handle;
+}
+
+// ************************
+// ComputeDescriptorHeap
+// ************************
+
+void ComputeDescriptorHeap::Init()
+{
+	D3D12_DESCRIPTOR_HEAP_DESC desc = {};
+	desc.NumDescriptors = TOTAL_REGISTER_COUNT;
+	desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+	desc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+
+	DEVICE->CreateDescriptorHeap(&desc, IID_PPV_ARGS(&m_descHeap));
+
+	m_handleSize = DEVICE->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void ComputeDescriptorHeap::SetCBV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, CBV_REGISTER reg)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE destHandle = GetCPUHandle(reg);
+
+	uint32 destRange = 1;
+	uint32 srcRange = 1;
+	DEVICE->CopyDescriptors(1, &destHandle, &destRange, 1, &srcHandle, &srcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void ComputeDescriptorHeap::SetSRV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, SRV_REGISTER reg)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE destHandle = GetCPUHandle(reg);
+
+	uint32 destRange = 1;
+	uint32 srcRange = 1;
+	DEVICE->CopyDescriptors(1, &destHandle, &destRange, 1, &srcHandle, &srcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+}
+
+void ComputeDescriptorHeap::SetUAV(D3D12_CPU_DESCRIPTOR_HANDLE srcHandle, UAV_REGISTER reg)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE destHandle = GetCPUHandle(reg);
+
+	uint32 destRange = 1;
+	uint32 srcRange = 1;
+	DEVICE->CopyDescriptors(1, &destHandle, &destRange, 1, &srcHandle, &srcRange, D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+	// TODO : 리소스 상태 변경
+}
+
+void ComputeDescriptorHeap::CommitTable()
+{
+	ID3D12DescriptorHeap* descHeap = m_descHeap.Get();
+	COMPUTE_CMD_LIST->SetDescriptorHeaps(1, &descHeap);
+
+	D3D12_GPU_DESCRIPTOR_HANDLE handle = descHeap->GetGPUDescriptorHandleForHeapStart();
+	COMPUTE_CMD_LIST->SetComputeRootDescriptorTable(0, handle);
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE ComputeDescriptorHeap::GetCPUHandle(CBV_REGISTER reg)
+{
+	return GetCPUHandle(static_cast<uint8>(reg));
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE ComputeDescriptorHeap::GetCPUHandle(SRV_REGISTER reg)
+{
+	return GetCPUHandle(static_cast<uint8>(reg));
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE ComputeDescriptorHeap::GetCPUHandle(UAV_REGISTER reg)
+{
+	return GetCPUHandle(static_cast<uint8>(reg));
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE ComputeDescriptorHeap::GetCPUHandle(uint8 reg)
+{
+	D3D12_CPU_DESCRIPTOR_HANDLE handle = m_descHeap->GetCPUDescriptorHandleForHeapStart();
 	handle.ptr += reg * m_handleSize;
 	return handle;
 }

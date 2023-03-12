@@ -6,51 +6,143 @@
 #include "GameObject.h"
 #include "MeshRenderer.h"
 #include "Engine.h"
+#include "Material.h"
+#include "Shader.h"
+#include "ParticleSystem.h"
+#include "InstancingManager.h"
 
-Matrix CCamera::S_MatView;
-Matrix CCamera::S_MatProjection;
+Matrix Camera::S_MatView;
+Matrix Camera::S_MatProjection;
 
-CCamera::CCamera() : CComponent(COMPONENT_TYPE::CAMERA)
+Camera::Camera() : Component(COMPONENT_TYPE::CAMERA)
+{
+	m_width = static_cast<float>(GEngine->GetWindow().width);
+	m_height = static_cast<float>(GEngine->GetWindow().height);
+}
+
+Camera::~Camera()
 {
 }
 
-CCamera::~CCamera()
+void Camera::FinalUpdate()
 {
-}
-
-void CCamera::FinalUpdate()
-{
-	// 월드행렬의 역행렬(Invert), 카메라가 가지고 있는 행렬의 역행렬이 카메라에 잡히는 오브젝트들의 View 행렬이다.
 	m_matView = GetTransform()->GetLocalToWorldMatrix().Invert();
 
-	float width = static_cast<float>(g_Engine->GetWindow().width);
-	float height = static_cast<float>(g_Engine->GetWindow().height);
-
-	
-	if (m_type == PROJECTION_TYPE::PERSPECTIVE)
-		m_matProjection = ::XMMatrixPerspectiveFovLH(m_fov, width / height, m_near, m_far);	// 카메라의 시야각, 화면 비율, near, far를 인자로 받아 원근 투영용 행렬을 생성하여 투영행렬에 넣는다.
-																							// Matrix::CreatePerspectiveFieldOfView() 함수는 오른손 좌표계를 사용하기 떄문에 왼손좌표계를 사용하는 directXMath의 함수를 사용한다.
+	if (_type == PROJECTION_TYPE::PERSPECTIVE)
+		m_matProjection = ::XMMatrixPerspectiveFovLH(m_fov, m_width / m_height, m_near, m_far);
 	else
-		m_matProjection = ::XMMatrixOrthographicLH(width * m_scale, height * m_scale, m_near, m_far);	// 가로, 세로 길이, near, fat를 인자로 받아 직교 투영용 행렬을 생성하여 투영행렬에 넣는다.
+		m_matProjection = ::XMMatrixOrthographicLH(m_width * m_scale, m_height * m_scale, m_near, m_far);
 
-	// transform 컴포넌트에 값을 넘겨줄 임시 변수들에 값 대입
-	S_MatView = m_matView;
-	S_MatProjection = m_matProjection;
+	m_frustum.FinalUpdate();
 }
 
-void CCamera::Render()
+void Camera::SortGameObject()
 {
-	std::shared_ptr<CScene> scene = GET_SINGLE(CSceneManager)->GetActiveScene();
+	shared_ptr<CScene> scene = GET_SINGLE(SceneManager)->GetActiveScene();
+	const vector<shared_ptr<GameObject>>& gameObjects = scene->GetGameObjects();
 
-	// TODO : Layer 구분
-	const std::vector<std::shared_ptr<CGameObject>>& gameObjects = scene->GetGameObjects();
+	m_vecForward.clear();
+	m_vecDeferred.clear();
+	m_vecParticle.clear();
 
 	for (auto& gameObject : gameObjects)
 	{
-		// MeshRenderer 컴포넌트가 존재하는 오브젝트만 Render한다.
+		if (gameObject->GetMeshRenderer() == nullptr && gameObject->GetParticleSystem() == nullptr)
+			continue;
+
+		if (IsCulled(gameObject->GetLayerIndex()))
+			continue;
+
+		if (gameObject->GetCheckFrustum())
+		{
+			if (m_frustum.ContainsSphere(
+				gameObject->GetTransform()->GetWorldPosition(),
+				gameObject->GetTransform()->GetBoundingSphereRadius()) == false)
+			{
+				continue;
+			}
+		}
+
+		if (gameObject->GetMeshRenderer())
+		{
+			SHADER_TYPE shaderType = gameObject->GetMeshRenderer()->GetMaterial()->GetShader()->GetShaderType();
+			switch (shaderType)
+			{
+			case SHADER_TYPE::DEFERRED:
+				m_vecDeferred.push_back(gameObject);
+				break;
+			case SHADER_TYPE::FORWARD:
+				m_vecForward.push_back(gameObject);
+				break;
+			}
+		}
+		else
+		{
+			m_vecParticle.push_back(gameObject);
+		}
+	}
+}
+
+void Camera::SortShadowObject()
+{
+	shared_ptr<CScene> scene = GET_SINGLE(SceneManager)->GetActiveScene();
+	const vector<shared_ptr<GameObject>>& gameObjects = scene->GetGameObjects();
+
+	m_vecShadow.clear();
+
+	for (auto& gameObject : gameObjects)
+	{
 		if (gameObject->GetMeshRenderer() == nullptr)
 			continue;
 
-		gameObject->GetMeshRenderer()->Render();
+		if (gameObject->IsStatic())
+			continue;
+
+		if (IsCulled(gameObject->GetLayerIndex()))
+			continue;
+
+		if (gameObject->GetCheckFrustum())
+		{
+			if (m_frustum.ContainsSphere(
+				gameObject->GetTransform()->GetWorldPosition(),
+				gameObject->GetTransform()->GetBoundingSphereRadius()) == false)
+			{
+				continue;
+			}
+		}
+
+		m_vecShadow.push_back(gameObject);
+	}
+}
+
+void Camera::Render_Deferred()
+{
+	S_MatView = m_matView;
+	S_MatProjection = m_matProjection;
+
+	GET_SINGLE(InstancingManager)->Render(m_vecDeferred);
+}
+
+void Camera::Render_Forward()
+{
+	S_MatView = m_matView;
+	S_MatProjection = m_matProjection;
+
+	GET_SINGLE(InstancingManager)->Render(m_vecForward);
+
+	for (auto& gameObject : m_vecParticle)
+	{
+		gameObject->GetParticleSystem()->Render();
+	}
+}
+
+void Camera::Render_Shadow()
+{
+	S_MatView = m_matView;
+	S_MatProjection = m_matProjection;
+
+	for (auto& gameObject : m_vecShadow)
+	{
+		gameObject->GetMeshRenderer()->RenderShadow();
 	}
 }

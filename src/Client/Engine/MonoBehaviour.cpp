@@ -1,12 +1,12 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MonoBehaviour.h"
 
-CMonoBehaviour::CMonoBehaviour() : CComponent(COMPONENT_TYPE::MONO_BEHAVIOUR)
+MonoBehaviour::MonoBehaviour() : Component(COMPONENT_TYPE::MONO_BEHAVIOUR)
 {
 
 }
 
-CMonoBehaviour::~CMonoBehaviour()
+MonoBehaviour::~MonoBehaviour()
 {
 
 }

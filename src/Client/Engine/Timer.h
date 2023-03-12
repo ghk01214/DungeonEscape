@@ -1,25 +1,25 @@
-﻿#pragma once
+#pragma once
 
 
-class CTimer
+class Timer
 {
-	DECLARE_SINGLE(CTimer);
+	DECLARE_SINGLE(Timer);
 
 public:
 	void Init();
 	void Update();
 
-	uint32 GetFps() { return m_fps; }
-	float GetDeltaTime() { return m_deltaTime; }
+	uint32 GetFps() { return _fps; }
+	float GetDeltaTime() { return _deltaTime; }
 
 private:
-	uint64	m_frequency = 0;
-	uint64	m_prevCount = 0;
-	float	m_deltaTime = 0.f;
+	uint64	_frequency = 0;
+	uint64	_prevCount = 0;
+	float	_deltaTime = 0.f;
 
 private:
-	uint32	m_frameCount = 0;
-	float	m_frameTime = 0.f;
-	uint32	m_fps = 0;
+	uint32	_frameCount = 0;
+	float	_frameTime = 0.f;
+	uint32	_fps = 0;
 };
 

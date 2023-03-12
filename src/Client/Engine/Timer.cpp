@@ -1,28 +1,28 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Timer.h"
 
-void CTimer::Init()
+void Timer::Init()
 {
-	::QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
-	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_prevCount)); // CPU 클럭
+	::QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&_frequency));
+	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&_prevCount)); // CPU Ŭ��
 }
 
-void CTimer::Update()
+void Timer::Update()
 {
 	uint64 currentCount;
 	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));
 
-	m_deltaTime = (currentCount - m_prevCount) / static_cast<float>(m_frequency);	// (currentCount - m_prevCount) -> 경과된 시간(cpu 클럭), m_frequency -> 경과된 시간(초당 움직이는 cpu 클럭 수)
-	m_prevCount = currentCount;
+	_deltaTime = (currentCount - _prevCount) / static_cast<float>(_frequency);
+	_prevCount = currentCount;
 
-	m_frameCount++;
-	m_frameTime += m_deltaTime;
+	_frameCount++;
+	_frameTime += _deltaTime;
 
-	if (m_frameTime > 1.f)
+	if (_frameTime > 1.f)
 	{
-		m_fps = static_cast<uint32>(m_frameCount / m_frameTime);
+		_fps = static_cast<uint32>(_frameCount / _frameTime);
 
-		m_frameTime = 0.f;
-		m_frameCount = 0;
+		_frameTime = 0.f;
+		_frameCount = 0;
 	}
 }

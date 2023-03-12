@@ -1,7 +1,8 @@
 ﻿#pragma once
 
-// GPU에게 일을 맡기는 인력사무소, 객체 생성등을 여기서 처리한다.
-class CDevice
+
+// 인력 사무소
+class Device
 {
 public:
 	void Init();
@@ -18,3 +19,4 @@ private:
 	ComPtr<IDXGIFactory>		m_dxgi; // 화면 관련 기능들
 	ComPtr<ID3D12Device>		m_device; // 각종 객체 생성
 };
+

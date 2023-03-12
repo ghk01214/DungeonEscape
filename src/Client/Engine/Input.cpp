@@ -1,17 +1,17 @@
-ï»¿#include "pch.h"
+#include "pch.h"
 #include "Input.h"
+#include "Engine.h"
 
-
-void CInput::Init(HWND hwnd)
+void Input::Init(HWND hWnd)
 {
-	m_hwnd = hwnd;
+	m_hWnd = hWnd;
 	m_states.resize(KEY_TYPE_COUNT, KEY_STATE::NONE);
 }
 
-void CInput::Update()
+void Input::Update()
 {
-	HWND hwnd = ::GetActiveWindow();
-	if (m_hwnd != hwnd)
+	HWND hWnd = ::GetActiveWindow();
+	if (m_hWnd != hWnd)
 	{
 		for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
 			m_states[key] = KEY_STATE::NONE;
@@ -25,12 +25,12 @@ void CInput::Update()
 
 	for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
 	{
-		// í‚¤ê°€ ëˆŒë ¤ ìžˆìœ¼ë©´ true
+		// Å°°¡ ´­·Á ÀÖÀ¸¸é true
 		if (asciiKeys[key] & 0x80)
 		{
 			KEY_STATE& state = m_states[key];
 
-			// ì´ì „ í”„ë ˆìž„ì— í‚¤ë¥¼ ëˆ„ë¥¸ ìƒíƒœë¼ë©´ PRESS
+			// ÀÌÀü ÇÁ·¹ÀÓ¿¡ Å°¸¦ ´©¸¥ »óÅÂ¶ó¸é PRESS
 			if (state == KEY_STATE::PRESS || state == KEY_STATE::DOWN)
 				state = KEY_STATE::PRESS;
 			else
@@ -40,11 +40,14 @@ void CInput::Update()
 		{
 			KEY_STATE& state = m_states[key];
 
-			// ì´ì „ í”„ë ˆìž„ì— í‚¤ë¥¼ ëˆ„ë¥¸ ìƒíƒœë¼ë©´ UP
+			// ÀÌÀü ÇÁ·¹ÀÓ¿¡ Å°¸¦ ´©¸¥ »óÅÂ¶ó¸é UP
 			if (state == KEY_STATE::PRESS || state == KEY_STATE::DOWN)
 				state = KEY_STATE::UP;
 			else
 				state = KEY_STATE::NONE;
 		}
 	}
+
+	::GetCursorPos(&m_mousePos);
+	::ScreenToClient(GEngine->GetWindow().hWnd, &m_mousePos);
 }

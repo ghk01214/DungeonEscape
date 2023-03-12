@@ -1,22 +1,34 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Component.h"
 #include "GameObject.h"
+#include "MeshRenderer.h"
+#include "Animator.h"
 
-CComponent::CComponent(COMPONENT_TYPE type) : m_type(type)
+Component::Component(COMPONENT_TYPE type) : Object(OBJECT_TYPE::COMPONENT), m_type(type)
 {
 
 }
 
-CComponent::~CComponent()
+Component::~Component()
 {
 }
 
-std::shared_ptr<CGameObject> CComponent::GetGameObject()
+shared_ptr<GameObject> Component::GetGameObject()
 {
 	return m_gameObject.lock();
 }
 
-std::shared_ptr<CTransform> CComponent::GetTransform()
+shared_ptr<Transform> Component::GetTransform()
 {
 	return m_gameObject.lock()->GetTransform();
+}
+
+shared_ptr<MeshRenderer> Component::GetMeshRenderer()
+{
+	return m_gameObject.lock()->GetMeshRenderer();
+}
+
+shared_ptr<Animator> Component::GetAnimator()
+{
+	return m_gameObject.lock()->GetAnimator();
 }

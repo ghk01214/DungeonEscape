@@ -1,18 +1,18 @@
-﻿#include "pch.h"
-#include "Engine.h"
+#include "pch.h"
 #include "CommandQueue.h"
 #include "SwapChain.h"
+#include "Engine.h"
 
-CCommandQueue::CCommandQueue()
-{
-}
+// ************************
+// GraphicsCommandQueue
+// ************************
 
-CCommandQueue::~CCommandQueue()
+GraphicsCommandQueue::~GraphicsCommandQueue()
 {
 	::CloseHandle(m_fenceEvent);
 }
 
-void CCommandQueue::Init(ComPtr<ID3D12Device> device, std::shared_ptr<CSwapChain> swapChain)
+void GraphicsCommandQueue::Init(ComPtr<ID3D12Device> device, shared_ptr<SwapChain> swapChain)
 {
 	m_swapChain = swapChain;
 
@@ -22,30 +22,20 @@ void CCommandQueue::Init(ComPtr<ID3D12Device> device, std::shared_ptr<CSwapChain
 
 	device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_cmdQueue));
 
-	// - D3D12_COMMAND_LIST_TYPE_DIRECT : GPU가 직접 실행하는 명령 목록
 	device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_cmdAlloc));
-
-	// GPU가 하나인 시스템에서는 0으로
-	// DIRECT or BUNDLE
-	// Allocator
-	// 초기 상태 (그리기 명령은 nullptr 지정)
 	device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_cmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_cmdList));
-
-	// CommandList는 Close / Open 상태가 있는데
-	// Open 상태에서 Command를 넣다가 Close한 다음 제출하는 개념
 	m_cmdList->Close();
 
-	// 텍스쳐를 로드하기 위한 CommandList를 생성
 	device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_resCmdAlloc));
 	device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, m_resCmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_resCmdList));
 
 	// CreateFence
-	// - CPU와 GPU의 동기화 수단으로 쓰인다
+	// - CPU�� GPU�� ����ȭ �������� ���δ�
 	device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence));
 	m_fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
 }
 
-void CCommandQueue::WaitSync()
+void GraphicsCommandQueue::WaitSync()
 {
 	// Advance the fence value to mark commands up to this fence point.
 	m_fenceValue++;
@@ -66,109 +56,119 @@ void CCommandQueue::WaitSync()
 	}
 }
 
-
-void CCommandQueue::RenderBegin(const D3D12_VIEWPORT* vp, const D3D12_RECT* rect)
+void GraphicsCommandQueue::RenderBegin()
 {
-	// 현재 화면에 그려지고 있는 버퍼를 GPU에 있는 
-
-	// Allocator reset, vector의 clear와 같이 capacity는 그대로 두되, 사이즈만 초기화 하는 형식
 	m_cmdAlloc->Reset();
-	// CommandList의 초기화
 	m_cmdList->Reset(m_cmdAlloc.Get(), nullptr);
 
-	// 현재 화면을 백버퍼로 옮기는 과정, 바로 실행되는것이 아닌, D3D12_RESOURCE_BARRIER형식으로 만들어진다.
-	// GPU에 자원을 전부 기록하지 않거나 기록을 시작하지않은 상태에서 자원의 자료를 읽는 것을 방지하기 위한 자원 방벽 생성
+	int8 backIndex = m_swapChain->GetBackBufferIndex();
+
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		m_swapChain->GetBackRTVBuffer().Get(),	// 리소스를 가져옴
-		D3D12_RESOURCE_STATE_PRESENT, // 현재 상태 -> 화면 출력
-		D3D12_RESOURCE_STATE_RENDER_TARGET); // 나중 상태 -> 외주 결과물
+		GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->GetRTTexture(backIndex)->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_PRESENT, // ȭ�� ���
+		D3D12_RESOURCE_STATE_RENDER_TARGET); // ���� �����
 
+	m_cmdList->SetGraphicsRootSignature(GRAPHICS_ROOT_SIGNATURE.Get());
 
+	GEngine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM)->Clear();
+	GEngine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL)->Clear();
 
+	GEngine->GetGraphicsDescHeap()->Clear();
 
-	// RootSignature를 세팅한다.
-	m_cmdList->SetGraphicsRootSignature(ROOT_SIGNATURE.Get());
+	ID3D12DescriptorHeap* descHeap = GEngine->GetGraphicsDescHeap()->GetDescriptorHeap().Get();
+	m_cmdList->SetDescriptorHeaps(1, &descHeap);
 
-	// ConstantBuffer의 인덱스 0으로 초기화
-	//g_Engine->GetCB()->Clear();	// 이제 여러개의 CB를 사용할 것이므로, 각 버퍼 타입을 찾아 전부 Clear를 해준다.
-	g_Engine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::TRANSFORM)->Clear();
-	g_Engine->GetConstantBuffer(CONSTANT_BUFFER_TYPE::MATERIAL)->Clear();
-
-
-	g_Engine->GetTableDescHeap()->Clear();
-
-
-	ID3D12DescriptorHeap* descHeap = g_Engine->GetTableDescHeap()->GetDescriptorHeap().Get();	// ComPtr을 사용하지 않고 Get을 사용한 이유는 SetDescriptorHeaps 함수에서 요구하는 인자가 그렇기 때문이다.
-	m_cmdList->SetDescriptorHeaps(1, &descHeap);	// CommandQueue와 Table을 바인딩하는 함수, CommandQueue로 Desc Heap이 넘어간다. 
-													// Desc Heap을 사용할 때 큰 배열 하나를 사용하는 이유가 해당 함수(SetDescriptorHeaps)의 실행이 느리기 때문이다.
-													// 이후 CTableDescriptorHeap의 CommitTable함수에서 SetGraphicsRootDescriptorTable함수로 register에 사용할 값들을 제출한다.
-
-
-	// 생성된 자원 방벽을 커맨드 리스트에 추가
 	m_cmdList->ResourceBarrier(1, &barrier);
-
-	// 커맨드 리스트가 초기화 되었기 때문에 뷰포트(렌더링을 할 후면버퍼 영역)와 시저 사각형(렌더링에서 제거하지 않을 영역 설정)을 초기화 한다.
-	// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.
-	m_cmdList->RSSetViewports(1, vp);
-	m_cmdList->RSSetScissorRects(1, rect);
-
-	// GPU에게 현재 작업할 백버퍼에 대해 알려준다.
-	// Specify the buffers we are going to render to.
-	D3D12_CPU_DESCRIPTOR_HANDLE backBufferView = m_swapChain->GetBackRTV();
-
-	// 기본적인 백 버퍼의 색상 결정, 어떤 색으로 지울 것인가? 현재 Colors::LightSteelBlue로 설정되어 있음
-	m_cmdList->ClearRenderTargetView(backBufferView, Colors::LightSteelBlue, 0, nullptr);
-
-	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilView = g_Engine->GetDepthStencilBuffer()->GetDSVCpuHandle();
-	m_cmdList->OMSetRenderTargets(1, &backBufferView, FALSE, &depthStencilView);	// OM 단계에서 깊이/스텐실이 처리되야 한다. depthStencilView값을 얻어와 처리.
-
-	// 깊이를 초기화 하는 값을 1.0f로 설정하고, Stencil은 지금 처리하지 않으므로, 0으로 설정한다.
-	// 매 프레임마다 버퍼를 1.0f로 지워주는 함수
-	m_cmdList->ClearDepthStencilView(depthStencilView, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);	// 현재는 depth만 사용하기 때문에 D3D12_CLEAR_FLAG_DEPTH를 사용한다.
-																										// 만약 stencil을 사용하게 되면 flag 값을 추가한다. D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL
 }
 
-void CCommandQueue::RenderEnd()
+void GraphicsCommandQueue::RenderEnd()
 {
-	// RenderBegin과는 다르게 인자의 순서를 달리하여 자원방벽을 생성한다.
+	int8 backIndex = m_swapChain->GetBackBufferIndex();
+
 	D3D12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(
-		m_swapChain->GetBackRTVBuffer().Get(),
-		D3D12_RESOURCE_STATE_RENDER_TARGET, // 현재 상태 -> 외주 결과물
-		D3D12_RESOURCE_STATE_PRESENT); // 나중 상태 -> 화면 출력
+		GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->GetRTTexture(backIndex)->GetTex2D().Get(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, // ���� �����
+		D3D12_RESOURCE_STATE_PRESENT); // ȭ�� ���
 
-	// 자원 방벽(RESOURCE_BARRIER)이 커맨드 리스트에 추가됨.
 	m_cmdList->ResourceBarrier(1, &barrier);
-
-	// 커맨드 리스트를 실행하기 전에 이를 닫는다. 닫고 나서 수행이 가능하기 때문이다.
 	m_cmdList->Close();
 
-	// 커맨드 리스트를 수행한다.
+	// Ŀ�ǵ� ����Ʈ ����
 	ID3D12CommandList* cmdListArr[] = { m_cmdList.Get() };
 	m_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
 
-
 	m_swapChain->Present();
 
-	// Wait until frame commands are complete.  This waiting is inefficient and is
-	// done for simplicity.  Later we will show how to organize our rendering code
-	// so we do not have to wait per frame.
 	WaitSync();
 
 	m_swapChain->SwapIndex();
 }
 
-void CCommandQueue::FlushResourceCommandQueue()
+void GraphicsCommandQueue::FlushResourceCommandQueue()
 {
-	// 리소스 관련 CommandList를 닫고
 	m_resCmdList->Close();
 
-	// CommandList를 실행한다.
 	ID3D12CommandList* cmdListArr[] = { m_resCmdList.Get() };
 	m_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
 
 	WaitSync();
 
-	// 재사용을 위해 reset을 한다.
 	m_resCmdAlloc->Reset();
 	m_resCmdList->Reset(m_resCmdAlloc.Get(), nullptr);
+}
+
+// ************************
+// ComputeCommandQueue
+// ************************
+
+ComputeCommandQueue::~ComputeCommandQueue()
+{
+	::CloseHandle(m_fenceEvent);
+}
+
+void ComputeCommandQueue::Init(ComPtr<ID3D12Device> device)
+{
+	D3D12_COMMAND_QUEUE_DESC computeQueueDesc = {};
+	computeQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_COMPUTE;
+	computeQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	device->CreateCommandQueue(&computeQueueDesc, IID_PPV_ARGS(&m_cmdQueue));
+
+	device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_COMPUTE, IID_PPV_ARGS(&m_cmdAlloc));
+	device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COMPUTE, m_cmdAlloc.Get(), nullptr, IID_PPV_ARGS(&m_cmdList));
+
+	device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence));
+
+	// CreateFence
+	// - CPU�� GPU�� ����ȭ �������� ���δ�
+	device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_fence));
+	m_fenceEvent = ::CreateEvent(nullptr, FALSE, FALSE, nullptr);
+}
+
+void ComputeCommandQueue::WaitSync()
+{
+	m_fenceValue++;
+
+	m_cmdQueue->Signal(m_fence.Get(), m_fenceValue);
+
+	if (m_fence->GetCompletedValue() < m_fenceValue)
+	{
+		m_fence->SetEventOnCompletion(m_fenceValue, m_fenceEvent);
+		::WaitForSingleObject(m_fenceEvent, INFINITE);
+	}
+}
+
+void ComputeCommandQueue::FlushComputeCommandQueue()
+{
+	m_cmdList->Close();
+
+	ID3D12CommandList* cmdListArr[] = { m_cmdList.Get() };
+	auto t = _countof(cmdListArr);
+	m_cmdQueue->ExecuteCommandLists(_countof(cmdListArr), cmdListArr);
+
+	WaitSync();
+
+	m_cmdAlloc->Reset();
+	m_cmdList->Reset(m_cmdAlloc.Get(), nullptr);
+
+	COMPUTE_CMD_LIST->SetComputeRootSignature(COMPUTE_ROOT_SIGNATURE.Get());
 }

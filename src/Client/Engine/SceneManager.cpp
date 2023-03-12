@@ -1,5 +1,4 @@
 ﻿#include "pch.h"
-#include "Network.h"
 #include "SceneManager.h"
 #include "Scene.h"
 
@@ -9,12 +8,19 @@
 #include "MeshRenderer.h"
 #include "Transform.h"
 #include "Camera.h"
-
+#include "Light.h"
 #include "Input.h"
-#include "Timer.h"
-#include "TestCameraScript.h"
 
-void CSceneManager::Update()
+#include "TestCameraScript.h"
+#include "Resources.h"
+#include "ParticleSystem.h"
+#include "Terrain.h"
+#include "SphereCollider.h"
+#include "MeshData.h"
+
+#include "Network.h"
+
+void SceneManager::Update()
 {
 	if (m_activeScene == nullptr)
 		return;
@@ -22,419 +28,315 @@ void CSceneManager::Update()
 	m_activeScene->Update();
 	m_activeScene->LateUpdate();
 	m_activeScene->FinalUpdate();
-
-	KeyInput();
 }
 
-void CSceneManager::Render()
+// TEMP
+void SceneManager::Render()
 {
-	if (m_activeScene == nullptr)
-		return;
-
-	const std::vector<std::shared_ptr<CGameObject>>& gameObjects = m_activeScene->GetGameObjects();
-	for (auto& gameObject : gameObjects)
-	{
-		if (gameObject->GetCamera() == nullptr)
-			continue;
-
-		gameObject->GetCamera()->Render();
-	}
+	if (m_activeScene)
+		m_activeScene->Render();
 }
 
-void CSceneManager::LoadScene(std::wstring sceneName)
+void SceneManager::LoadScene(wstring sceneName)
 {
 	// TODO : 기존 Scene 정리
 	// TODO : 파일에서 Scene 정보 로드
 
-	m_activeScene = LoadTestScene();
+	//_activeScene = LoadTestScene();
+
+	//_activeScene->Awake();
+	//_activeScene->Start();
+}
+
+void SceneManager::LoadScene(std::shared_ptr<CScene> scene)
+{
+	m_activeScene = scene;
 
 	m_activeScene->Awake();
 	m_activeScene->Start();
 }
 
-void CSceneManager::ObjectTranslationMode(Vec3 pos)
+void SceneManager::SetLayerName(uint8 index, const wstring& name)
 {
-	std::shared_ptr<CTransform> Transform{ m_targetObject->GetTransform() };
+	// 기존 데이터 삭제
+	const wstring& prevName = m_layerNames[index];
+	m_layerIndex.erase(prevName);
+
+	m_layerNames[index] = name;
+	m_layerIndex[name] = index;
+}
+
+uint8 SceneManager::LayerNameToIndex(const wstring& name)
+{
+	auto findIt = m_layerIndex.find(name);
+	if (findIt == m_layerIndex.end())
+		return 0;
+
+	return findIt->second;
+}
+
+shared_ptr<GameObject> SceneManager::Pick(int32 screenX, int32 screenY)
+{
+	shared_ptr<Camera> camera = GetActiveScene()->GetMainCamera();
+
+	float width = static_cast<float>(GEngine->GetWindow().width);
+	float height = static_cast<float>(GEngine->GetWindow().height);
+
+	Matrix projectionMatrix = camera->GetProjectionMatrix();
+
+	// ViewSpace에서 Picking 진행
+	float viewX = (+2.0f * screenX / width - 1.0f) / projectionMatrix(0, 0);
+	float viewY = (-2.0f * screenY / height + 1.0f) / projectionMatrix(1, 1);
+
+	Matrix viewMatrix = camera->GetViewMatrix();
+	Matrix viewMatrixInv = viewMatrix.Invert();
+
+	auto& gameObjects = GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects();
+
+	float minDistance = FLT_MAX;
+	shared_ptr<GameObject> picked;
+
+	for (auto& gameObject : gameObjects)
+	{
+		if (gameObject->GetCollider() == nullptr)
+			continue;
+
+		// ViewSpace에서의 Ray 정의
+		Vec4 rayOrigin = Vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		Vec4 rayDir = Vec4(viewX, viewY, 1.0f, 0.0f);
+
+		// WorldSpace에서의 Ray 정의
+		rayOrigin = XMVector3TransformCoord(rayOrigin, viewMatrixInv);
+		rayDir = XMVector3TransformNormal(rayDir, viewMatrixInv);
+		rayDir.Normalize();
+
+		// WorldSpace에서 연산
+		float distance = 0.f;
+		if (gameObject->GetCollider()->Intersects(rayOrigin, rayDir, OUT distance) == false)
+			continue;
+
+		if (distance < minDistance)
+		{
+			minDistance = distance;
+			picked = gameObject;
+		}
+	}
+
+	return picked;
+}
+//shared_ptr<CScene> SceneManager::LoadTestScene()
+//{
+////#pragma region Server
+////	// 서버에 로그인 요청 전송
+////	m_network->SendLoginPacket(m_gameObjects);
+////	// Recv 프로세스를 IOCP에 등록
+////	m_network->Recv();
+////#pragma endregion
+////
+////#pragma region LayerMask
+////	SetLayerName(0, L"Default");
+////	SetLayerName(1, L"UI");
+////#pragma endregion
+////
+////#pragma region ComputeShader
+////	{
+////		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
+////
+////		// UAV 용 Texture 생성
+////		shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
+////			DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
+////			CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
+////			D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+////
+////		shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"ComputeShader");
+////		material->SetShader(shader);
+////		material->SetInt(0, 1);
+////		GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
+////
+////		// 쓰레드 그룹 (1 * 1024 * 1)
+////		material->Dispatch(1, 1024, 1);
+////	}
+////#pragma endregion
+////
+////	shared_ptr<CScene> scene = make_shared<CScene>();
+////
+////#pragma region Camera
+////	{
+////		shared_ptr<GameObject> camera = make_shared<GameObject>();
+////		camera->SetName(L"Main_Camera");
+////		camera->AddComponent(make_shared<Transform>());
+////		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45도
+////		camera->AddComponent(make_shared<TestCameraScript>());
+////		camera->GetCamera()->SetFar(10000.f);
+////		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
+////		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
+////		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI는 안 찍음
+////		scene->AddGameObject(camera);
+////	}
+////#pragma endregion
+////
+////#pragma region UI_Camera
+////	{
+////		shared_ptr<GameObject> camera = make_shared<GameObject>();
+////		camera->SetName(L"Orthographic_Camera");
+////		camera->AddComponent(make_shared<Transform>());
+////		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, 800*600
+////		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
+////		camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
+////		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
+////		camera->GetCamera()->SetCullingMaskAll(); // 다 끄고
+////		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI만 찍음
+////		scene->AddGameObject(camera);
+////	}
+////#pragma endregion
+////
+////#pragma region SkyBox
+////	{
+////		shared_ptr<GameObject> skybox = make_shared<GameObject>();
+////		skybox->AddComponent(make_shared<Transform>());
+////		skybox->SetCheckFrustum(false);
+////		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+////		{
+////			shared_ptr<Mesh> sphereMesh = GET_SINGLE(Resources)->LoadSphereMesh();
+////			meshRenderer->SetMesh(sphereMesh);
+////		}
+////		{
+////			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Skybox");
+////			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Sky01", L"..\\Resources\\Texture\\Sky01.jpg");
+////			shared_ptr<Material> material = make_shared<Material>();
+////			material->SetShader(shader);
+////			material->SetTexture(0, texture);
+////			meshRenderer->SetMaterial(material);
+////		}
+////		skybox->AddComponent(meshRenderer);
+////		scene->AddGameObject(skybox);
+////	}
+////#pragma endregion
+////
+////#pragma region Object
+////	/*{
+////		shared_ptr<GameObject> obj = make_shared<GameObject>();
+////		obj->SetName(L"OBJ");
+////		obj->AddComponent(make_shared<Transform>());
+////		obj->AddComponent(make_shared<SphereCollider>());
+////		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+////		obj->GetTransform()->SetLocalPosition(Vec3(0, 0.f, 500.f));
+////		obj->SetStatic(false);
+////		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+////		{
+////			shared_ptr<Mesh> sphereMesh = GET_SINGLE(Resources)->LoadSphereMesh();
+////			meshRenderer->SetMesh(sphereMesh);
+////		}
+////		{
+////			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"GameObject");
+////			meshRenderer->SetMaterial(material->Clone());
+////		}
+////		dynamic_pointer_cast<SphereCollider>(obj->GetCollider())->SetRadius(0.5f);
+////		dynamic_pointer_cast<SphereCollider>(obj->GetCollider())->SetCenter(Vec3(0.f, 0.f, 0.f));
+////		obj->AddComponent(meshRenderer);
+////		scene->AddGameObject(obj);
+////	}*/
+////#pragma endregion
+////
+////#pragma region Terrain
+////	/*{
+////		shared_ptr<GameObject> obj = make_shared<GameObject>();
+////		obj->AddComponent(make_shared<Transform>());
+////		obj->AddComponent(make_shared<Terrain>());
+////		obj->AddComponent(make_shared<MeshRenderer>());
+////
+////		obj->GetTransform()->SetLocalScale(Vec3(50.f, 250.f, 50.f));
+////		obj->GetTransform()->SetLocalPosition(Vec3(-100.f, -200.f, 300.f));
+////		obj->SetStatic(true);
+////		obj->GetTerrain()->Init(64, 64);
+////		obj->SetCheckFrustum(false);
+////
+////		scene->AddGameObject(obj);
+////	}*/
+////#pragma endregion
+////
+////#pragma region UI_Test
+////	for (int32 i = 0; i < 6; i++)
+////	{
+////		shared_ptr<GameObject> obj = make_shared<GameObject>();
+////		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+////		obj->AddComponent(make_shared<Transform>());
+////		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+////		obj->GetTransform()->SetLocalPosition(Vec3(-350.f + (i * 120), 250.f, 500.f));
+////		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+////		{
+////			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+////			meshRenderer->SetMesh(mesh);
+////		}
+////		{
+////			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Texture");
+////
+////			shared_ptr<Texture> texture;
+////			if (i < 3)
+////				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->GetRTTexture(i);
+////			else if (i < 5)
+////				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->GetRTTexture(i - 3);
+////			else
+////				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->GetRTTexture(0);
+////
+////			shared_ptr<Material> material = make_shared<Material>();
+////			material->SetShader(shader);
+////			material->SetTexture(0, texture);
+////			meshRenderer->SetMaterial(material);
+////		}
+////		obj->AddComponent(meshRenderer);
+////		scene->AddGameObject(obj);
+////	}
+////#pragma endregion
+////
+////#pragma region Directional Light
+////	{
+////		shared_ptr<GameObject> light = make_shared<GameObject>();
+////		light->AddComponent(make_shared<Transform>());
+////		light->GetTransform()->SetLocalPosition(Vec3(0, 1000, 500));
+////		light->AddComponent(make_shared<Light>());
+////		light->GetLight()->SetLightDirection(Vec3(0, -1, 1.f));
+////		light->GetLight()->SetLightType(LIGHT_TYPE::DIRECTIONAL_LIGHT);
+////		light->GetLight()->SetDiffuse(Vec3(1.f, 1.f, 1.f));
+////		light->GetLight()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
+////		light->GetLight()->SetSpecular(Vec3(0.1f, 0.1f, 0.1f));
+////
+////		scene->AddGameObject(light);
+////	}
+////#pragma endregion
+////
+////
+////#pragma region FBX
+////	{
+////		shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Dragon.fbx");
+////
+////		vector<shared_ptr<GameObject>> gameObjects = meshData->Instantiate();
+////
+////		for (auto& gameObject : gameObjects)
+////		{
+////			gameObject->SetName(L"Dragon");
+////			gameObject->SetCheckFrustum(false);
+////			gameObject->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 300.f));
+////			gameObject->GetTransform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+////			scene->AddGameObject(gameObject);
+////			gameObject->AddComponent(make_shared<TestDragon>());
+////		}
+////	}
+////#pragma endregion
+////
+////	return scene;
+//}
+
+void SceneManager::ObjectTranslationMode(Vec3 pos)
+{
+	std::shared_ptr<Transform> Transform{ m_targetObject->GetTransform() };
 
 	Transform->SetLocalPosition(pos);
 }
 
-void CSceneManager::ObjectRotationMode(Vec3 rotation)
+void SceneManager::ObjectRotationMode(Vec3 rotation)
 {
-	std::shared_ptr<CTransform> Transform{ m_targetObject->GetTransform() };
+	std::shared_ptr<Transform> Transform{ m_targetObject->GetTransform() };
 
 	Transform->SetLocalRotation(rotation);
-}
-
-std::shared_ptr<CScene> CSceneManager::LoadTestScene()
-{
-	// Scene 객체 생성
-	std::shared_ptr<CScene> scene = std::make_shared<CScene>();
-
-	// 해당 씬에 추가할 오브젝트 생성
-#pragma region CreateObjects
-	// 함수 인자로 텍스쳐 경로, 위치, 사이즈 값 입력
-	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(25.f, 25.f, 0.f), Vec3(50.f, 50.f, 0.f));
-	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(25.f, -25.f, 0.f), Vec3(50.f, 50.f, 0.f));
-	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(-25.f, 25.f, 0.f), Vec3(50.f, 50.f, 0.f));
-	CreateObject(scene, L"..\\Resources\\Texture\\blue_archive_celebration.png", Vec3(-25.f, -25.f, 0.f), Vec3(50.f, 50.f, 0.f));
-#pragma endregion
-	// 서버에 로그인 요청 전송
-	m_network->SendLoginPacket(m_gameObjects);
-	// Recv 프로세스를 IOCP에 등록
-	m_network->Recv();
-
-#pragma region Camera
-	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
-	camera->AddComponent(std::make_shared<CTransform>());
-	camera->AddComponent(std::make_shared<CCamera>()); // Near=1, Far=1000, FOV=45도
-	//camera->AddComponent(std::make_shared<CTestCameraScript>());
-	camera->GetTransform()->SetLocalPosition(Vec3(50.f, 50.f, -50.f));
-	camera->GetTransform()->SetLocalRotation(Vec3(XMConvertToRadians(45.f), -XMConvertToRadians(45.f), 0.f));		// 시계방향이 +, 반시계방향이 -
-	scene->AddGameObject(camera);
-
-	m_camera = camera;
-
-	Matrix matWorld = XMMatrixLookAtLH(XMVectorSet(5.f, 5.f, -5.f, 1.f), XMVectorSet(0.f, 0.f, 0.f, 1.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
-#pragma endregion
-
-	return scene;
-}
-
-void CSceneManager::CreateObject(std::shared_ptr<CScene> scene, const std::wstring& texturePath, Vec3 vPos, Vec3 vScale)
-{
-	std::shared_ptr<CGameObject> gameObject = std::make_shared<CGameObject>();
-
-	// 사각형 정점 4개(버텍스 버퍼) 생성, 위치 / 색상 / uv값 세팅
-	std::vector<Vertex> vec(4);
-	vec[0].pos = Vec3(-0.5f, 0.5f, 0.5f);
-	vec[0].color = Vec4(1.f, 0.f, 0.f, 1.f);
-	vec[0].uv = Vec2(0.f, 0.f);
-	vec[1].pos = Vec3(0.5f, 0.5f, 0.5f);
-	vec[1].color = Vec4(0.f, 1.f, 0.f, 1.f);
-	vec[1].uv = Vec2(1.f, 0.f);
-	vec[2].pos = Vec3(0.5f, -0.5f, 0.5f);
-	vec[2].color = Vec4(0.f, 0.f, 1.f, 1.f);
-	vec[2].uv = Vec2(1.f, 1.f);
-	vec[3].pos = Vec3(-0.5f, -0.5f, 0.5f);
-	vec[3].color = Vec4(0.f, 1.f, 0.f, 1.f);
-	vec[3].uv = Vec2(0.f, 1.f);
-
-	// 인덱스 버퍼 생성
-	std::vector<uint32> indexVec;
-	{
-		indexVec.push_back(0);
-		indexVec.push_back(1);
-		indexVec.push_back(2);
-	}
-	{
-		indexVec.push_back(0);
-		indexVec.push_back(2);
-		indexVec.push_back(3);
-	}
-
-
-	// Transform 컴포넌트 생성후 오브젝트에 추가
-	gameObject->AddComponent(std::make_shared<CTransform>());
-
-	// 오브젝트 존재하는 Transform 컴포넌트를 가져와 값을 넣어줌
-	std::shared_ptr<CTransform> transform = gameObject->GetTransform();
-	transform->SetLocalPosition(vPos);
-	transform->SetLocalScale(vScale);
-
-	// MeshRenderer 컴포넌트 생성
-	std::shared_ptr<CMeshRenderer> meshRenderer = std::make_shared<CMeshRenderer>();
-
-	{
-		// 메쉬 생성및 컴포넌트에 삽입
-		std::shared_ptr<CMesh> mesh = std::make_shared<CMesh>();
-		mesh->Init(vec, indexVec);
-		meshRenderer->SetMesh(mesh);
-	}
-
-	{
-		std::shared_ptr<CShader> shader = std::make_shared<CShader>();
-		std::shared_ptr<CTexture> texture = std::make_shared<CTexture>();
-
-		shader->Init(L"..\\Resources\\Shader\\default.hlsli");
-		texture->Init(texturePath);
-
-		std::shared_ptr<CMaterial> material = std::make_shared<CMaterial>();
-		material->SetShader(shader);
-		material->SetTexture(0, texture);
-		meshRenderer->SetMaterial(material);
-	}
-
-	gameObject->AddComponent(meshRenderer);
-
-	scene->AddGameObject(gameObject);
-
-	// 현재 씬의 게임 오브젝트만 보아놓은 vector에 오브젝트 추가
-	m_gameObjects.push_back(gameObject);
-
-	// 생성된 오브젝트를 현재 선택된 오브젝트로 바꿈
-	m_targetObject = gameObject;
-}
-
-void CSceneManager::KeyInput(void)
-{
-	// targetObject 설정
-	SetTarget();
-
-	// 카메라 모드 설정
-	SetMode();
-
-	// 카메라 작동
-	ActivateCamera();
-
-	// 오브젝트 작동
-	ActivateObject();
-}
-
-void CSceneManager::SetMode(void)
-{
-	// 오브젝트 회전 모드
-	if (INPUT->GetButtonDown(KEY_TYPE::R))
-	{
-		m_eObjectMode = OBJECT_MODE::OM_ROTATION;
-	}
-
-	// 오브젝트 이동 모드
-	if (INPUT->GetButtonDown(KEY_TYPE::T))
-	{
-		m_eObjectMode = OBJECT_MODE::OM_TRANSLATION;
-	}
-
-	// 카메라 회전 모드
-	if (INPUT->GetButtonDown(KEY_TYPE::C))
-	{
-		m_eCameraMode = CAMERA_MODE::CM_ROTATION;
-	}
-
-	// 카메라 회전 모드
-	if (INPUT->GetButtonDown(KEY_TYPE::V))
-	{
-		m_eCameraMode = CAMERA_MODE::CM_TRANSLATION;
-	}
-}
-
-void CSceneManager::SetTarget(void)
-{
-	// 클라이언트가 이동할 타깃을 변경하지 않게 하기 위해 주석처리
-	//if (INPUT->GetButtonDown(KEY_TYPE::Number1) || INPUT->GetButtonDown(KEY_TYPE::NumPad1))
-	//{
-	//	if (m_gameObjects.size() >= 1)
-	//	{
-	//		m_targetObject = m_gameObjects.at(0);
-	//	}
-	//}
-	//
-	//if (INPUT->GetButtonDown(KEY_TYPE::Number2) || INPUT->GetButtonDown(KEY_TYPE::NumPad2))
-	//{
-	//	if (m_gameObjects.size() >= 2)
-	//	{
-	//		m_targetObject = m_gameObjects.at(1);
-	//	}
-	//}
-	//
-	//if (INPUT->GetButtonDown(KEY_TYPE::Number3) || INPUT->GetButtonDown(KEY_TYPE::NumPad3))
-	//{
-	//	if (m_gameObjects.size() >= 3)
-	//	{
-	//		m_targetObject = m_gameObjects.at(2);
-	//	}
-	//}
-	//
-	//if (INPUT->GetButtonDown(KEY_TYPE::Number4) || INPUT->GetButtonDown(KEY_TYPE::NumPad4))
-	//{
-	//	if (m_gameObjects.size() >= 4)
-	//	{
-	//		m_targetObject = m_gameObjects.at(3);
-	//	}
-	//}
-}
-
-void CSceneManager::ActivateObject(void)
-{
-	// 오브젝트 작동
-	if (OBJECT_MODE::OM_ROTATION == m_eObjectMode)
-	{
-		ObjectRotationMode();
-	}
-	else if (OBJECT_MODE::OM_TRANSLATION == m_eObjectMode)
-	{
-		ObjectTranslationMode();
-	}
-}
-
-void CSceneManager::ActivateCamera(void)
-{
-	// 카메라 작동
-	if (CAMERA_MODE::CM_ROTATION == m_eCameraMode)
-	{
-		CameraRotationMode();
-	}
-	else if (CAMERA_MODE::CM_TRANSLATION == m_eCameraMode)
-	{
-		CameraTranslationMode();
-	}
-}
-
-void CSceneManager::ObjectRotationMode(void)
-{
-	// 현재 선택된 오브젝트의 회전값을 가져옴
-	//Vec3 rotation = m_targetObject->GetTransform()->GetLocalRotation();
-
-	//std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
-
-	// 각 키보드 입력 별 회전축 및 회전 방향 전송
-	if (INPUT->GetButton(KEY_TYPE::LEFT))
-	{
-		//rotation.y += DELTA_TIME * 2.f;
-		m_network->SendRotationPacket(ROTATION::X_INCREASE);
-	}
-	if (INPUT->GetButton(KEY_TYPE::RIGHT))
-	{
-		//rotation.y -= DELTA_TIME * 2.f;
-		m_network->SendRotationPacket(ROTATION::X_DECREASE);
-	}
-	if (INPUT->GetButton(KEY_TYPE::UP))
-	{
-		//rotation.x += DELTA_TIME * 2.f;
-		m_network->SendRotationPacket(ROTATION::Z_INCREASE);
-	}
-	if (INPUT->GetButton(KEY_TYPE::DOWN))
-	{
-		//rotation.x -= DELTA_TIME * 2.f;
-		m_network->SendRotationPacket(ROTATION::Z_DECREASE);
-	}
-	if (INPUT->GetButton(KEY_TYPE::PAGEUP))
-	{
-		//rotation.z += DELTA_TIME * 2.f;
-		m_network->SendRotationPacket(ROTATION::Y_INCREASE);
-	}
-	if (INPUT->GetButton(KEY_TYPE::PAGEDOWN))
-	{
-		//rotation.z -= DELTA_TIME * 2.f;
-		m_network->SendRotationPacket(ROTATION::Y_DECREASE);
-	}
-
-	//Transform->SetLocalRotation(rotation);
-}
-
-void CSceneManager::ObjectTranslationMode(void)
-{
-	// 현재 선택된 오브젝트의 회전값을 가져옴
-	//Vec3 position = m_targetObject->GetTransform()->GetLocalPosition();
-
-	//std::shared_ptr<CTransform> Transform = m_targetObject->GetTransform();
-	// 각 키에 맞는 이동 방향 전송
-	if (INPUT->GetButton(KEY_TYPE::LEFT))
-	{
-		//position.x -= m_speed * DELTA_TIME;
-		m_network->SendMovePacket(DIRECTION::LEFT);
-	}
-	if (INPUT->GetButton(KEY_TYPE::RIGHT))
-	{
-		//position.x += m_speed * DELTA_TIME;
-		m_network->SendMovePacket(DIRECTION::RIGHT);
-	}
-	if (INPUT->GetButton(KEY_TYPE::UP))
-	{
-		//position.y += m_speed * DELTA_TIME;
-		m_network->SendMovePacket(DIRECTION::FRONT);
-	}
-	if (INPUT->GetButton(KEY_TYPE::DOWN))
-	{
-		//position.y -= m_speed * DELTA_TIME;
-		m_network->SendMovePacket(DIRECTION::BACK);
-	}
-	if (INPUT->GetButton(KEY_TYPE::PAGEUP))
-	{
-		//position.z += m_speed * DELTA_TIME;
-		m_network->SendMovePacket(DIRECTION::UP);
-	}
-	if (INPUT->GetButton(KEY_TYPE::PAGEDOWN))
-	{
-		//position.z -= m_speed * DELTA_TIME;
-		m_network->SendMovePacket(DIRECTION::DOWN);
-	}
-
-	//Transform->SetLocalPosition(position);
-}
-
-void CSceneManager::CameraRotationMode(void)
-{
-	// 카메라의 회전값을 가져옴
-	Vec3 rotation = m_camera->GetTransform()->GetLocalRotation();
-
-	if (INPUT->GetButton(KEY_TYPE::W))
-	{
-		rotation.x += DELTA_TIME * 0.5f;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::S))
-	{
-		rotation.x -= DELTA_TIME * 0.5f;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::A))
-	{
-		rotation.y += DELTA_TIME * 0.5f;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::D))
-	{
-		rotation.y -= DELTA_TIME * 0.5f;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::Q))
-	{
-		rotation.z += DELTA_TIME * 0.5f;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::E))
-	{
-		rotation.z -= DELTA_TIME * 0.5f;
-	}
-
-	m_camera->GetTransform()->SetLocalRotation(rotation);
-}
-
-void CSceneManager::CameraTranslationMode(void)
-{
-	// 카메라의 위치값을 가져옴
-	Vec3 pos = m_camera->GetTransform()->GetLocalPosition();
-
-	if (INPUT->GetButton(KEY_TYPE::W))
-	{
-		pos.y += DELTA_TIME * 0.5f * m_speed;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::S))
-	{
-		pos.y -= DELTA_TIME * 0.5f * m_speed;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::A))
-	{
-		pos.x -= DELTA_TIME * 0.5f * m_speed;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::D))
-	{
-		pos.x += DELTA_TIME * 0.5f * m_speed;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::Q))
-	{
-		pos.z += DELTA_TIME * 0.5f * m_speed;
-	}
-
-	if (INPUT->GetButton(KEY_TYPE::E))
-	{
-		pos.z -= DELTA_TIME * 0.5f * m_speed;
-	}
-
-	m_camera->GetTransform()->SetLocalPosition(pos);
 }

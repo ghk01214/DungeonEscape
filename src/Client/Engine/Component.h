@@ -1,53 +1,59 @@
 ﻿#pragma once
+#include "Object.h"
 
 enum class COMPONENT_TYPE : uint8
 {
-	TRANSFORM,			// 이동 관련
-	MESH_RENDERER,		// 메쉬 렌더
-	CAMERA,				// 카메라
+	TRANSFORM,
+	MESH_RENDERER,
+	CAMERA,
+	LIGHT,
+	PARTICLE_SYSTEM,
+	TERRAIN,
+	COLLIDER,
+	ANIMATOR,
 	// ...
-	MONO_BEHAVIOUR,		// 스크립트용
-	END
+	MONO_BEHAVIOUR,
+	END,
 };
 
 enum
 {
-	FIXED_COMPONENT_COUNT = static_cast<uint8>(COMPONENT_TYPE::END) - 1		// MONO_BEHAVIOUR을 제외한 컴포넌트의 갯수
+	FIXED_COMPONENT_COUNT = static_cast<uint8>(COMPONENT_TYPE::END) - 1
 };
 
-class CGameObject;
-class CTransform;
+class GameObject;
+class Transform;
+class MeshRenderer;
+class Animator;
 
-// 상속용 class
-class CComponent
+class Component : public Object
 {
 public:
-	CComponent(COMPONENT_TYPE type);
-	virtual ~CComponent();
+	Component(COMPONENT_TYPE type);
+	virtual ~Component();
 
 public:
-	virtual void Awake() { }	// 초기화 관련 함수 - 컴포넌트 생성 시 참조와 변수를 초기화하는것들 처리
-	virtual void Start() { }	// 시작 - 초기화 된 컴포넌트들의 데이터에 접근 가능
-	virtual void Update() { }	// Update
-	virtual void LateUpdate() { }	// LateUpdate
-	virtual void FinalUpdate() { }	// 진짜 마지막 Update 함수...
+	virtual void Awake() { }
+	virtual void Start() { }
+	virtual void Update() { }
+	virtual void LateUpdate() { }
+	virtual void FinalUpdate() { }
 
 public:
 	COMPONENT_TYPE GetType() { return m_type; }
-	bool IsValid() { return m_gameObject.expired() == false; }	// 소멸 여부 확인
+	bool IsValid() { return m_gameObject.expired() == false; }
 
-	std::shared_ptr<CGameObject> GetGameObject();
-	std::shared_ptr<CTransform> GetTransform();
+	shared_ptr<GameObject> GetGameObject();
+	shared_ptr<Transform> GetTransform();
+	shared_ptr<MeshRenderer> GetMeshRenderer();
+	shared_ptr<Animator> GetAnimator();
 
 private:
-	// GameObject에게만 컴포넌트 class의 접근 권한을 줌
-	friend class CGameObject;
-	void SetGameObject(std::shared_ptr<CGameObject> gameObject) { m_gameObject = gameObject; }
+	friend class GameObject;
+	void SetGameObject(shared_ptr<GameObject> gameObject) { m_gameObject = gameObject; }
 
 protected:
 	COMPONENT_TYPE m_type;
-	std::weak_ptr<CGameObject> m_gameObject;	// 게임오브젝트와 서로 참조하고 있어야 하므로, 참조카운터 관련 문제로 weak_ptr 사용
+	weak_ptr<GameObject> m_gameObject;
 };
-
-
 

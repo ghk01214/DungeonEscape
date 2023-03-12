@@ -15,6 +15,24 @@
     <Filter Include="소스 파일\Game">
       <UniqueIdentifier>{07699f52-f304-490e-a434-2dda7e44a2a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Script">
+      <UniqueIdentifier>{3ad4cb2d-2f34-4ca0-9e79-55d611051b15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\00. Scene">
+      <UniqueIdentifier>{ffc51424-6759-4955-a77d-a12099f80a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\01. UI">
+      <UniqueIdentifier>{ca12ca84-1c51-45ff-9ffc-c5951463c314}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\02. Camera">
+      <UniqueIdentifier>{c73e4ffb-1df9-4e67-afca-b4e31b330758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\03. Monster">
+      <UniqueIdentifier>{903a5f91-2902-4cef-a63f-bfc9da285c71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\04. Player">
+      <UniqueIdentifier>{e490753e-6dfd-468e-bcb5-3817822b76f9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -34,6 +52,15 @@
     </ClInclude>
     <ClInclude Include="Game.h">
       <Filter>소스 파일\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Test.h">
+      <Filter>소스 파일\Script\00. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster_Script.h">
+      <Filter>소스 파일\Script\03. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera_Script.h">
+      <Filter>소스 파일\Script\02. Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +85,15 @@
     </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>소스 파일\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Test.cpp">
+      <Filter>소스 파일\Script\00. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Script.cpp">
+      <Filter>소스 파일\Script\03. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera_Script.cpp">
+      <Filter>소스 파일\Script\02. Camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

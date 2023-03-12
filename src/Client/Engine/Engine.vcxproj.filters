@@ -40,14 +40,8 @@
     <Filter Include="Manager\Input">
       <UniqueIdentifier>{2bbabb2b-f9f7-4ff9-a380-6f13d93889f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Math">
-      <UniqueIdentifier>{49eb7297-9d8f-434f-a055-c4545c6d030e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Manager\Scene\Manager">
       <UniqueIdentifier>{3c98c40c-6540-40ea-9190-ea2db95d435e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Camera">
-      <UniqueIdentifier>{27f6196e-5eeb-4a97-976f-7c276a832a1c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Logic">
       <UniqueIdentifier>{e78c2a21-2287-4102-b3aa-0c31da8c491a}</UniqueIdentifier>
@@ -85,29 +79,77 @@
     <Filter Include="GameObject\Component\MonoBehaviour">
       <UniqueIdentifier>{c5ac215c-6d35-43bf-bab3-fae71f74b71b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Camera\TestCameraScript">
-      <UniqueIdentifier>{cdbd4129-9a64-42c3-a12d-d46d29997941}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Network">
       <UniqueIdentifier>{865b09d7-9f8c-42b7-893e-71ee71d72595}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Network">
+    <Filter Include="Resource\MeshData">
+      <UniqueIdentifier>{c4ca0d84-089c-412d-9771-e530ffae1315}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\00. GameInstance">
+      <UniqueIdentifier>{0bef0c72-a839-4e4a-ba02-d874f08bd3d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\01. FBXLoader">
+      <UniqueIdentifier>{4209d072-7e65-4fe6-a2db-24951e82b468}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\97. Math">
+      <UniqueIdentifier>{10e7a726-282a-478f-a583-4733e4967c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\98. Pch">
+      <UniqueIdentifier>{6217d18d-9231-4388-8893-ccd78b8b6ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\99. Etc">
+      <UniqueIdentifier>{266832c2-ad79-48be-bc20-0d0d18854f82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils\02. Network">
       <UniqueIdentifier>{946a7579-22d0-412d-aa6c-cbda9d54c590}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Network\OVERLAPPEDEX">
+    <Filter Include="Utils\02. Network\OVERLAPPEDEX">
       <UniqueIdentifier>{7a05c037-9d77-4b07-b923-19b800a873d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\Network\Packet">
+    <Filter Include="Utils\02. Network\Packet">
       <UniqueIdentifier>{4e8031cc-8f78-409f-b1ba-67dbbfb3ffcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\InstancingBuffer">
+      <UniqueIdentifier>{da49e49f-7738-48b1-b54c-e3e91de5204c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\RenderTargetGroup">
+      <UniqueIdentifier>{0e75b4ea-297c-4e42-b092-5a69d917807e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Logic\StructureBuffer">
+      <UniqueIdentifier>{2e18e179-e5d4-43ac-973e-a57336911cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Instancing">
+      <UniqueIdentifier>{5fba6bff-d468-4366-b57d-3225dea032de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Resources">
+      <UniqueIdentifier>{a39d4f8c-7ca6-4b73-baf9-52dffbeb0abb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\Animator">
+      <UniqueIdentifier>{10fc71d0-c02a-450a-866a-57eee345641d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\Camera">
+      <UniqueIdentifier>{27f6196e-5eeb-4a97-976f-7c276a832a1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\Camera\TestCameraScript">
+      <UniqueIdentifier>{cdbd4129-9a64-42c3-a12d-d46d29997941}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\Collider">
+      <UniqueIdentifier>{09c6df9f-b00d-4e56-8380-3bddeae6fb22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\Terrain">
+      <UniqueIdentifier>{7928a644-e7c2-4985-9f72-95b3a7f6dd12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\ParticleSystem">
+      <UniqueIdentifier>{df48fec5-b796-457b-b873-68f61af392d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\Frustum">
+      <UniqueIdentifier>{ed882ad0-f42d-4f91-98ff-78064a8ac89f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\Light">
+      <UniqueIdentifier>{ce9f8aa8-8693-4893-893c-401e0cc39617}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="EnginePch.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -168,40 +210,85 @@
     <ClCompile Include="Transform.cpp">
       <Filter>GameObject\Component\Transform</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleMath.cpp">
-      <Filter>Utils\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>Manager\Scene\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>GameObject\Camera</Filter>
+      <Filter>GameObject\Component\Camera</Filter>
     </ClCompile>
     <ClCompile Include="TestCameraScript.cpp">
-      <Filter>GameObject\Camera\TestCameraScript</Filter>
+      <Filter>GameObject\Component\Camera\TestCameraScript</Filter>
     </ClCompile>
     <ClCompile Include="Network.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\vendor\include\Packet.cpp">
-      <Filter>Utils\Network\Packet</Filter>
+      <Filter>Utils\02. Network\Packet</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\vendor\include\OVERLAPPEDEX.cpp">
-      <Filter>Utils\Network\OVERLAPPEDEX</Filter>
+      <Filter>Utils\02. Network\OVERLAPPEDEX</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshData.cpp">
+      <Filter>Resource\MeshData</Filter>
+    </ClCompile>
+    <ClCompile Include="EnginePch.cpp">
+      <Filter>Utils\98. Pch</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Utils\98. Pch</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleMath.cpp">
+      <Filter>Utils\97. Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="InstancingBuffer.cpp">
+      <Filter>Engine\Logic\InstancingBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTargetGroup.cpp">
+      <Filter>Engine\Logic\RenderTargetGroup</Filter>
+    </ClCompile>
+    <ClCompile Include="StructuredBuffer.cpp">
+      <Filter>Engine\Logic\StructureBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="InstancingManager.cpp">
+      <Filter>Manager\Instancing</Filter>
+    </ClCompile>
+    <ClCompile Include="Resources.cpp">
+      <Filter>Manager\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXLoader.cpp">
+      <Filter>Utils\01. FBXLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInstance.cpp">
+      <Filter>Utils\00. GameInstance</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>GameObject\Component\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseCollider.cpp">
+      <Filter>GameObject\Component\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>GameObject\Component\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>GameObject\Component\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleSystem.cpp">
+      <Filter>GameObject\Component\ParticleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>GameObject\Component\Frustum</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Manager\Scene\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>GameObject\Component\Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EnginePch.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="d3dx12.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
-      <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="CommandQueue.h">
       <Filter>Engine\Logic\CommandQueue</Filter>
@@ -260,29 +347,86 @@
     <ClInclude Include="Transform.h">
       <Filter>GameObject\Component\Transform</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleMath.h">
-      <Filter>Utils\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>Manager\Scene\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>GameObject\Camera</Filter>
+      <Filter>GameObject\Component\Camera</Filter>
     </ClInclude>
     <ClInclude Include="TestCameraScript.h">
-      <Filter>GameObject\Camera\TestCameraScript</Filter>
+      <Filter>GameObject\Component\Camera\TestCameraScript</Filter>
     </ClInclude>
     <ClInclude Include="Network.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\vendor\include\Packet.h">
-      <Filter>Utils\Network\Packet</Filter>
+      <Filter>Utils\02. Network\Packet</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\vendor\include\protocol.hpp">
-      <Filter>Utils\Network</Filter>
+      <Filter>Utils\02. Network</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\vendor\include\OVERLAPPEDEX.h">
-      <Filter>Utils\Network\OVERLAPPEDEX</Filter>
+      <Filter>Utils\02. Network\OVERLAPPEDEX</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshData.h">
+      <Filter>Resource\MeshData</Filter>
+    </ClInclude>
+    <ClInclude Include="EnginePch.h">
+      <Filter>Utils\98. Pch</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>Utils\98. Pch</Filter>
+    </ClInclude>
+    <ClInclude Include="d3dx12.h">
+      <Filter>Utils\99. Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleMath.h">
+      <Filter>Utils\97. Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="InstancingBuffer.h">
+      <Filter>Engine\Logic\InstancingBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTargetGroup.h">
+      <Filter>Engine\Logic\RenderTargetGroup</Filter>
+    </ClInclude>
+    <ClInclude Include="StructuredBuffer.h">
+      <Filter>Engine\Logic\StructureBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="InstancingManager.h">
+      <Filter>Manager\Instancing</Filter>
+    </ClInclude>
+    <ClInclude Include="Resources.h">
+      <Filter>Manager\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="FBXLoader.h">
+      <Filter>Utils\01. FBXLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInstance.h">
+      <Filter>Utils\00. GameInstance</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>GameObject\Component\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCollider.h">
+      <Filter>GameObject\Component\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>GameObject\Component\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>GameObject\Component\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleSystem.h">
+      <Filter>GameObject\Component\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>GameObject\Component\Frustum</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Manager\Scene\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>GameObject\Component\Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -290,7 +434,48 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="SimpleMath.inl">
-      <Filter>Utils\Math</Filter>
+      <Filter>Utils\97. Math</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Resources\Shader\params.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\particle.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\shadow.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\skybox.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\terrain.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\tessellation.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\utils.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\animation.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\compute.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\deferred.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\forward.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\lighting.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\math.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

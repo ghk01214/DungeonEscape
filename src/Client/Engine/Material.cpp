@@ -1,22 +1,75 @@
-ï»¿#include "pch.h"
+#include "pch.h"
 #include "Material.h"
 #include "Engine.h"
 
-void CMaterial::PushData()
+Material::Material() : Object(OBJECT_TYPE::MATERIAL)
 {
-	// CBV ì—…ë¡œë“œ
-	CONST_BUFFER(CONSTANT_BUFFER_TYPE::MATERIAL)->PushData(&m_params, sizeof(m_params));
 
-	// SRV ì—…ë¡œë“œ
+}
+
+Material::~Material()
+{
+
+}
+
+void Material::PushGraphicsData()
+{
+	// CBV ¾÷·Îµå
+	CONST_BUFFER(CONSTANT_BUFFER_TYPE::MATERIAL)->PushGraphicsData(&m_params, sizeof(m_params));
+
+	// SRV ¾÷·Îµå
 	for (size_t i = 0; i < m_textures.size(); i++)
 	{
 		if (m_textures[i] == nullptr)
 			continue;
 
 		SRV_REGISTER reg = SRV_REGISTER(static_cast<int8>(SRV_REGISTER::t0) + i);
-		g_Engine->GetTableDescHeap()->SetSRV(m_textures[i]->GetCpuHandle(), reg);
+		GEngine->GetGraphicsDescHeap()->SetSRV(m_textures[i]->GetSRVHandle(), reg);
 	}
 
-	// íŒŒì´í”„ë¼ì¸ ì„¸íŒ…
+	// ÆÄÀÌÇÁ¶óÀÎ ¼¼ÆÃ
 	m_shader->Update();
+}
+
+void Material::PushComputeData()
+{
+	// CBV ¾÷·Îµå
+	CONST_BUFFER(CONSTANT_BUFFER_TYPE::MATERIAL)->PushComputeData(&m_params, sizeof(m_params));
+
+	// SRV ¾÷·Îµå
+	for (size_t i = 0; i < m_textures.size(); i++)
+	{
+		if (m_textures[i] == nullptr)
+			continue;
+
+		SRV_REGISTER reg = SRV_REGISTER(static_cast<int8>(SRV_REGISTER::t0) + i);
+		GEngine->GetComputeDescHeap()->SetSRV(m_textures[i]->GetSRVHandle(), reg);
+	}
+
+	// ÆÄÀÌÇÁ¶óÀÎ ¼¼ÆÃ
+	m_shader->Update();
+}
+
+void Material::Dispatch(uint32 x, uint32 y, uint32 z)
+{
+	// CBV + SRV + SetPipelineState
+	PushComputeData();
+
+	// SetDescriptorHeaps + SetComputeRootDescriptorTable
+	GEngine->GetComputeDescHeap()->CommitTable();
+
+	COMPUTE_CMD_LIST->Dispatch(x, y, z);
+
+	GEngine->GetComputeCmdQueue()->FlushComputeCommandQueue();
+}
+
+shared_ptr<Material> Material::Clone()
+{
+	shared_ptr<Material> material = make_shared<Material>();
+
+	material->SetShader(m_shader);
+	material->m_params = m_params;
+	material->m_textures = m_textures;
+
+	return material;
 }

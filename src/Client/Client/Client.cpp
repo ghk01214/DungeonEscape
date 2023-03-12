@@ -5,6 +5,7 @@
 #include "framework.h"
 #include "Client.h"
 #include "Game.h"
+
 #include "../Engine/Network.h"
 
 #if _DEBUG

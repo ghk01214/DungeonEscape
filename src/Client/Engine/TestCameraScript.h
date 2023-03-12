@@ -1,17 +1,15 @@
-﻿#pragma once
+#pragma once
 #include "MonoBehaviour.h"
 
-class CTestCameraScript : public CMonoBehaviour
+class TestCameraScript : public MonoBehaviour
 {
 public:
-	CTestCameraScript();
-	virtual ~CTestCameraScript();
+	TestCameraScript();
+	virtual ~TestCameraScript();
 
 	virtual void LateUpdate() override;
 
-	void KeyInput(void);
-
 private:
-	float		m_speed = 100.f;
+	float		_speed = 100.f;
 };
 

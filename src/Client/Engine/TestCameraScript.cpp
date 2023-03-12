@@ -1,43 +1,35 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TestCameraScript.h"
 #include "Transform.h"
 #include "Camera.h"
 #include "GameObject.h"
 #include "Input.h"
 #include "Timer.h"
+#include "SceneManager.h"
 
-CTestCameraScript::CTestCameraScript()
+TestCameraScript::TestCameraScript()
 {
 }
 
-CTestCameraScript::~CTestCameraScript()
+TestCameraScript::~TestCameraScript()
 {
 }
 
-void CTestCameraScript::LateUpdate()
+void TestCameraScript::LateUpdate()
 {
-	// 입력 처리
-	KeyInput();
-}
-
-void CTestCameraScript::KeyInput(void)
-{
-	// 카메라의 위치값을 가져옴
 	Vec3 pos = GetTransform()->GetLocalPosition();
 
-	std::shared_ptr<CTransform> Transform = std::static_pointer_cast<CTransform>(GetTransform());
-
 	if (INPUT->GetButton(KEY_TYPE::W))
-		pos += GetTransform()->GetLook() * m_speed * DELTA_TIME;
+		pos += GetTransform()->GetLook() * _speed * DELTA_TIME;
 
 	if (INPUT->GetButton(KEY_TYPE::S))
-		pos -= GetTransform()->GetLook() * m_speed * DELTA_TIME;
+		pos -= GetTransform()->GetLook() * _speed * DELTA_TIME;
 
 	if (INPUT->GetButton(KEY_TYPE::A))
-		pos -= GetTransform()->GetRight() * m_speed * DELTA_TIME;
+		pos -= GetTransform()->GetRight() * _speed * DELTA_TIME;
 
 	if (INPUT->GetButton(KEY_TYPE::D))
-		pos += GetTransform()->GetRight() * m_speed * DELTA_TIME;
+		pos += GetTransform()->GetRight() * _speed * DELTA_TIME;
 
 	if (INPUT->GetButton(KEY_TYPE::Q))
 	{
@@ -51,6 +43,26 @@ void CTestCameraScript::KeyInput(void)
 		Vec3 rotation = GetTransform()->GetLocalRotation();
 		rotation.x -= DELTA_TIME * 0.5f;
 		GetTransform()->SetLocalRotation(rotation);
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::Z))
+	{
+		Vec3 rotation = GetTransform()->GetLocalRotation();
+		rotation.y += DELTA_TIME * 0.5f;
+		GetTransform()->SetLocalRotation(rotation);
+	}
+
+	if (INPUT->GetButton(KEY_TYPE::C))
+	{
+		Vec3 rotation = GetTransform()->GetLocalRotation();
+		rotation.y -= DELTA_TIME * 0.5f;
+		GetTransform()->SetLocalRotation(rotation);
+	}
+
+	if (INPUT->GetButtonDown(KEY_TYPE::RBUTTON))
+	{
+		const POINT& pos = INPUT->GetMousePos();
+		GET_SINGLE(SceneManager)->Pick(pos.x, pos.y);
 	}
 
 	GetTransform()->SetLocalPosition(pos);
