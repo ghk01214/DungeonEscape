@@ -500,5 +500,7 @@ src/Server/*/out/
 *-prefix/
 
 !src/Client/vendor/lib/DirectXTex/*
+!src/Client/vendor/lib/FBX/*
+!src/Client/vendor/lib/FBX/*/*
 *.idb
 *.recipe
