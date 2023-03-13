@@ -12,7 +12,8 @@ namespace network
 
 		void Connect();
 		void ProcessThread();
-		void EndThread();
+		void EndThreadProcess();
+		void WaitForThreadTermination();
 
 		void Recv();
 		void Recv(DWORD bytes, network::OVERLAPPEDEX* pOverEx);

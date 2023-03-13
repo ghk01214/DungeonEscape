@@ -20,6 +20,8 @@ HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 
+std::shared_ptr<network::CNetwork> pNetwork{ nullptr };
+
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
@@ -56,7 +58,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	g_windowInfo.windowed = true;
 
 	// 네트워크 매니저 생성
-	std::shared_ptr<network::CNetwork> pNetwork{ std::make_shared<network::CNetwork>() };
+	pNetwork = std::make_shared<network::CNetwork>();
 	std::unique_ptr<CGame> pGame = std::make_unique<CGame>();
 	pGame->Init(g_windowInfo, pNetwork);
 
@@ -78,8 +80,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		// 게임 로직 추가
 		pGame->Update();
 	}
-
-	pNetwork->EndThread();
 
 	return (int)msg.wParam;
 }
@@ -182,6 +182,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 		case WM_DESTROY:
+		pNetwork->EndThreadProcess();
+		pNetwork->WaitForThreadTermination();
 		PostQuitMessage(0);
 		break;
 		default:

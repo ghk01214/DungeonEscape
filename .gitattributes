@@ -1,4 +1,0 @@
-src/Client/vendor/lib/FBX/debug/libfbxsdk-md.lib filter=lfs diff=lfs merge=lfs -text
-src/Client/vendor/lib/FBX/debug/libfbxsdk-mt.lib filter=lfs diff=lfs merge=lfs -text
-src/Client/vendor/lib/FBX/release/libfbxsdk-mt.lib filter=lfs diff=lfs merge=lfs -text
-src/Client/vendor/lib/FBX/release/libfbxsdk-md.lib filter=lfs diff=lfs merge=lfs -text

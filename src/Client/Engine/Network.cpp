@@ -23,9 +23,6 @@ namespace network
 	{
 		closesocket(m_socket);
 		WSACleanup();
-
-		// 여전히 문제 있음, 개선 필요
-		m_networkThread.join();
 	}
 
 	// 기본 초기화 작업
@@ -98,12 +95,17 @@ namespace network
 		}
 	}
 
-	void CNetwork::EndThread()
+	void CNetwork::EndThreadProcess()
 	{
 		// 스레드 종료를 위한 QUIT 명령을 PQCS로 작업 예약
 		OVERLAPPEDEX overEx{ network::COMPLETION::QUIT };
 
 		PostQueuedCompletionStatus(m_iocp, 1, m_serverKey, &overEx.over);
+	}
+
+	void CNetwork::WaitForThreadTermination()
+	{
+		m_networkThread.join();
 	}
 
 	void CNetwork::Recv(DWORD bytes, network::OVERLAPPEDEX* pOverEx)

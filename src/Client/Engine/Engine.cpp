@@ -36,6 +36,8 @@ void Engine::Init(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNe
 	GET_SINGLE(Input)->Init(info.hWnd);
 	GET_SINGLE(Timer)->Init();
 	GET_SINGLE(Resources)->Init();
+
+	GET_SINGLE(SceneManager)->SetNetworkManager(pNetwork);
 }
 
 void Engine::Update()
