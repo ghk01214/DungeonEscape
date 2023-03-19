@@ -18,8 +18,6 @@
 #include "SphereCollider.h"
 #include "MeshData.h"
 
-#include "Network.h"
-
 void SceneManager::Update()
 {
 	if (m_activeScene == nullptr)
@@ -326,17 +324,3 @@ shared_ptr<GameObject> SceneManager::Pick(int32 screenX, int32 screenY)
 ////
 ////	return scene;
 //}
-
-void SceneManager::ObjectTranslationMode(Vec3 pos)
-{
-	std::shared_ptr<Transform> Transform{ m_targetObject->GetTransform() };
-
-	Transform->SetLocalPosition(pos);
-}
-
-void SceneManager::ObjectRotationMode(Vec3 rotation)
-{
-	std::shared_ptr<Transform> Transform{ m_targetObject->GetTransform() };
-
-	Transform->SetLocalRotation(rotation);
-}

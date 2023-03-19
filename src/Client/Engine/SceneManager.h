@@ -3,11 +3,6 @@
 class CScene;
 class GameObject;
 
-namespace network
-{
-	class CNetwork;
-}
-
 enum class CAMERA_MODE {
 	CM_ROTATION,		// 카메라 회전
 	CM_TRANSLATION,		// 카메라 움직임
@@ -51,24 +46,5 @@ private:
 
 	array<wstring, MAX_LAYER> m_layerNames;
 	map<wstring, uint8> m_layerIndex;
-
-
-
-public:
-	void ObjectRotationMode(Vec3 rotation);
-	void ObjectTranslationMode(Vec3 pos);
-
-public:
-	// 네트워크 포인터 설정
-	void SetNetworkManager(std::shared_ptr<network::CNetwork> network) { m_network = network; }
-	// 렌더링 타깃 변경 함수
-	void SetTarget(int32_t targetNum) { m_targetObject = m_gameObjects[targetNum]; }
-
-
-private:
-	// 네트워크 클래스 포인터
-	std::shared_ptr<network::CNetwork> m_network;
-	std::shared_ptr<GameObject> m_targetObject;	// 현재 선택된 오브젝트 정보
-	std::vector<std::shared_ptr<GameObject>> m_gameObjects;	// 현재 선택된 씬에 있는 게임 오브젝트들의 정보
 };
 

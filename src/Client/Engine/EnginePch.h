@@ -13,6 +13,12 @@
 #include <array>
 #include <list>
 #include <map>
+
+#if _DEBUG
+#include <iostream>
+#include <format>
+#endif
+
 using namespace std;
 
 #include <filesystem>
@@ -43,9 +49,9 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "d3dcompiler")
 
 #ifdef _DEBUG
-#pragma comment(lib, "DirectXTex\\DirectXTex_debug.lib")
+#pragma comment(lib, "DirectXTex\\DirectXTex_Debug.lib")
 #else
-#pragma comment(lib, "DirectXTex\\DirectXTex.lib")
+#pragma comment(lib, "DirectXTex\\DirectXTex_Release.lib")
 #endif
 
 #ifdef _DEBUG
@@ -53,8 +59,8 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "FBX\\debug\\libxml2-md.lib")
 #pragma comment(lib, "FBX\\debug\\zlib-md.lib")
 #else
-#pragma comment(lib, "FBX\\release\libfbxsdk-md.lib")
-#pragma comment(lib, "FBX\\release\libxml2-md.lib")
+#pragma comment(lib, "FBX\\release\\libfbxsdk-md.lib")
+#pragma comment(lib, "FBX\\release\\libxml2-md.lib")
 #pragma comment(lib, "FBX\\release\\zlib-md.lib")
 #endif
 
@@ -194,42 +200,3 @@ extern unique_ptr<class CGameInstance> GGameInstance;
 // Utils
 wstring s2ws(const string& s);
 string ws2s(const wstring& s);
-
-
-
-
-
-
-
-
-void ErrorQuit(const std::wstring& msg);
-#if _DEBUG
-void ErrorDisplay(const std::wstring& msg);
-#endif
-
-
-
-
-
-using namespace std;
-
-
-
-
-
-
-
-
-
-// server 관련
-#include <WS2tcpip.h>
-#include <MSWSock.h>
-#include <thread>
-#include <Packet.h>
-#include <Define.h>
-#include <protocol.hpp>
-#include <OVERLAPPEDEX.h>//OVERLAPPEDEX.h
-
-#pragma comment(lib, "WS2_32")
-#pragma comment(lib, "MSWSock")
-

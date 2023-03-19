@@ -7,7 +7,7 @@
 class CGameInstance
 {
 public:
-	void Initialize_Engine(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNetwork);
+	void Initialize_Engine(const WindowInfo& info);
 
 public:
 	// scene 생성 관련 함수

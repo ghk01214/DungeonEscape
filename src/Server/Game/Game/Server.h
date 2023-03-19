@@ -30,17 +30,21 @@ namespace game
 		void Recv(ULONG_PTR id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 		void Send(ULONG_PTR id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 
-		int NewPlayerID();
+		int32_t NewPlayerID();
 		void Disconnect(ULONG_PTR id);
 
+#pragma region [PROCESS PACKET]
 		void ProcessPacket(ULONG_PTR id, network::CPacket& packet);
 		void ProcessAUPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
 		void ProcessMYPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
+		void ProcessWRPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
 		void ProcessBTPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
 		void ProcessITPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
 		void ProcessCMPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
 		void ProcessTTPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
+#pragma endregion
 
+		void Login(ULONG_PTR id, network::CPacket& packet);
 	private:
 		HANDLE m_iocp;
 		SOCKET m_socket;
@@ -56,6 +60,6 @@ namespace game
 		tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableID;
 
 		// 멀티스레드용 map
-		tbb::concurrent_hash_map<uint16_t, class CObject*> m_objects;
+		HashMap<uint16_t, class CObject*> m_objects;
 	};
 }

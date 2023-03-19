@@ -6,8 +6,6 @@
 #include "Client.h"
 #include "Game.h"
 
-#include "../Engine/Network.h"
-
 #if _DEBUG
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 #endif
@@ -19,8 +17,6 @@ WindowInfo g_windowInfo;
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
-
-std::shared_ptr<network::CNetwork> pNetwork{ nullptr };
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -58,9 +54,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	g_windowInfo.windowed = true;
 
 	// 네트워크 매니저 생성
-	pNetwork = std::make_shared<network::CNetwork>();
+	network::pNetwork->Connect();
 	std::unique_ptr<CGame> pGame = std::make_unique<CGame>();
-	pGame->Init(g_windowInfo, pNetwork);
+	pGame->Init(g_windowInfo);
 
 	while (true)
 	{
@@ -182,8 +178,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 		case WM_DESTROY:
-		pNetwork->EndThreadProcess();
-		pNetwork->WaitForThreadTermination();
+		network::pNetwork->EndThreadProcess();
+		network::pNetwork->WaitForThreadTermination();
 		PostQuitMessage(0);
 		break;
 		default:

@@ -1,5 +1,4 @@
 ﻿#include "pch.h"
-#include <OVERLAPPEDEX.h>
 #include "Session.h"
 #include "Object.h"
 #include "Player.h"
@@ -97,7 +96,7 @@ namespace game
 	{
 		for (int i = 0; i < 4; ++i)
 		{
-			m_workerThreads.push_back(std::thread{ &CServer::WorkerThread, this });
+			m_workerThreads.emplace_back(&CServer::WorkerThread, this);
 		}
 
 		for (auto& thread : m_workerThreads)
@@ -164,7 +163,10 @@ namespace game
 		{
 			m_sessions[id]->m_prevRemain = 0;
 			m_sessions[id]->SetSocket(clientSocket);
-			std::cout << "Accepted" << std::endl;
+			m_sessions[id]->SetID(id);
+			m_sessions[id]->SetState(STATE::ACCEPTED);
+
+			std::cout << std::format("session[{}] accepted\n", id);
 
 			CreateIoCompletionPort(reinterpret_cast<HANDLE>(clientSocket), m_iocp, id, 0);
 
@@ -234,7 +236,7 @@ namespace game
 		//delete pOverEx;
 	}
 
-	int CServer::NewPlayerID()
+	int32_t CServer::NewPlayerID()
 	{
 		// 현재 활성화된 세션의 개수가 수용 가능한 유저수를 초과하면 아이디 발급 거부
 		if (m_activeSessionNum >= MAX_USER)
@@ -266,10 +268,14 @@ namespace game
 	{
 		if (m_sessions[id]->GetState() == STATE::FREE)
 		{
+			std::cout << std::format("Already disconnected\n");
 			return;
 		}
 
 		m_sessions[id]->Reset();
+		m_reusableID.push(id);
+
+		std::cout << std::format("session[{}] disconnected\n", id);
 	}
 
 	void CServer::ProcessPacket(ULONG_PTR id, network::CPacket& packet)
@@ -286,10 +292,16 @@ namespace game
 			ProcessAUPacket(id, packet, packetType);
 		}
 		else if (ProtocolID::PROTOCOL_MY_BEGIN <= packetType and
-				 packetType < ProtocolID::PROTOCOL_BATTLE_BEGIN)
+				 packetType < ProtocolID::PROTOCOL_WR_BEGIN)
 		{
 			// 플레이어 프로토콜의 패킷 프로세스 처리
 			ProcessMYPacket(id, packet, packetType);
+		}
+		else if (ProtocolID::PROTOCOL_WR_BEGIN <= packetType and
+				 packetType < ProtocolID::PROTOCOL_BATTLE_BEGIN)
+		{
+			// 플레이어 프로토콜의 패킷 프로세스 처리
+			ProcessWRPacket(id, packet, packetType);
 		}
 	}
 
@@ -299,48 +311,9 @@ namespace game
 		{
 			case ProtocolID::AU_LOGIN_REQ:
 			{
-				// 전체 오브젝트 개수 읽기
-				uint16_t objNum{ packet.Read<uint16_t>() };
-				// Access<T, U> == tbb::concurrent_hash_map<T, U>::accessor
-				// concurrent_hash_map에 접근하기 위한 일종의 shared pointer
-				// concurrent_hash_map의 정보에 안전하게 접근하기 위해서는 사용 필수
-				Accessor<uint16_t, CObject*> access;
+				Login(id, packet);
 
-				for (int32_t i = 0; i < objNum; ++i)
-				{
-					// 오브젝트 인덱스 읽기
-					uint16_t objIndex{ packet.Read<uint16_t>() };
-
-					CObject* obj{ new CObject{} };
-					// 오브젝트 좌표 읽기
-					float x{ packet.Read<float>() };
-					float y{ packet.Read<float>() };
-					float z{ packet.Read<float>() };
-
-					// 읽은 오브젝트 좌표 설정
-					obj->SetPos(x, y, z);
-
-					// 오브젝트 회전각 읽기
-					x = packet.Read<float>();
-					y = packet.Read<float>();
-					z = packet.Read<float>();
-
-					// 읽은 오브젝트 회전각 설정
-					obj->SetRotate(x, y, z);
-
-					// 설정한 오브젝트를 container에 삽입
-					if (m_objects.insert(access, objIndex))
-					{
-						access->second = obj;
-					}
-				}
-
-				// 해당 세션의 메인 타킷 인덱스 설정
-				m_sessions[id]->SetTargetNum(m_activeSessionNum - 1);
-				// 해당 클라이언트에 로그인 완료 패킷 전송
-				m_sessions[id]->SendLoginPacket();
-
-				std::cout << "Login Complete" << std::endl;
+				std::cout << std::format("Login Complete\n");
 			}
 			break;
 			default:
@@ -350,48 +323,75 @@ namespace game
 
 	void CServer::ProcessMYPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
 	{
+		auto session{ m_sessions[id] };
+
 		switch (type)
 		{
 			case ProtocolID::MY_MOVE_REQ:
 			{
 				Accessor<uint16_t, CObject*> access;
-				// 이동할 타깃 인덱스 읽기
-				uint16_t targetNum{ packet.Read<uint16_t>() };
+				int32_t targetID{ packet.ReadID() };
 
-				// 이동할 타깃을 container에서 검색
-				m_objects.find(access, targetNum);
-
+				// 세션의 델타 타임 읽기
+				float deltaTime{ packet.Read<float>() };
 				// 타깃의 이동방향 읽기
 				DIRECTION direction{ packet.Read<DIRECTION>() };
-				// 타깃 이동
-				access->second->Move(direction);
+
+				std::cout << id << " : ";
+				//session->SetDeltaTime(deltaTime);
+				session->GetMyObject()->Move(direction, deltaTime);
 
 				// 모든 세션에 대해 이동 패킷 전송
-				for (int32_t i = 0; i < m_activeSessionNum; ++i)
+				for (auto& player : m_sessions)
 				{
-					m_sessions[i]->SendMovePacket(id, targetNum, access->second);
+					if (player->GetID() == id)
+						player->SendMovePacket(id, ProtocolID::MY_MOVE_ACK, session->GetMyObject());
+					else
+						player->SendMovePacket(id, ProtocolID::WR_MOVE_ACK, session->GetMyObject());
 				}
 			}
 			break;
 			case ProtocolID::MY_ROTATE_REQ:
 			{
 				Accessor<uint16_t, CObject*> access;
-				// 회전할 타깃 인덱스 읽기
-				uint16_t targetNum{ packet.Read<uint16_t>() };
 
-				// 회전할 타깃을 container에서 검색
-				m_objects.find(access, targetNum);
-
+				// 세션의 델타 타임 읽기
+				float deltaTime{ packet.Read<float>() };
 				// 타깃의 회전방향 읽기
 				ROTATION direction{ packet.Read<ROTATION>() };
-				// 타깃 회전
-				access->second->Rotate(direction);
+
+				//session->SetDeltaTime(deltaTime);
+				session->GetMyObject()->Rotate(direction, deltaTime);
 
 				// 모든 세션에 대해 회전 패킷 전송
-				for (int32_t i = 0; i < m_activeSessionNum; ++i)
+				for (auto& player : m_sessions)
 				{
-					m_sessions[i]->SendRotatePacket(id, targetNum, access->second);
+					if (player->GetID() == id)
+						player->SendMovePacket(id, ProtocolID::MY_ROTATE_ACK, session->GetMyObject());
+					else
+						player->SendMovePacket(id, ProtocolID::WR_ROTATE_ACK, session->GetMyObject());
 				}
+			}
+			break;
+			default:
+			break;
+		}
+	}
+
+	void CServer::ProcessWRPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
+	{
+		auto session{ m_sessions[id] };
+
+		switch (type)
+		{
+			case ProtocolID::WR_ADD_REQ:
+			{
+
+			}
+			break;
+			case ProtocolID::WR_REMOVE_REQ:
+			{
+
 			}
 			break;
 			default:
@@ -417,5 +417,46 @@ namespace game
 	void CServer::ProcessTTPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
 	{
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
+	}
+
+	void CServer::Login(ULONG_PTR id, network::CPacket& packet)
+	{
+		// Access<T, U> == tbb::concurrent_hash_map<T, U>::accessor
+		// concurrent_hash_map에 접근하기 위한 일종의 shared pointer
+		// concurrent_hash_map의 정보에 안전하게 접근하기 위해서는 사용 필수
+		//Accessor<uint16_t, CObject*> access;
+		auto session{ m_sessions[id] };
+		
+		// 세션의 델타 타임 읽기
+		float deltaTime{ packet.Read<float>() };
+
+		// 해당 세션의 델타 타임 설정
+		//session->SetDeltaTime(deltaTime);
+		session->SetState(STATE::INGAME);
+		session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);
+
+		auto pObject{ session->GetMyObject() };
+
+		//if (m_objects.insert(access, id) == true)
+		//{
+		//	access->second = pObject;
+		//}
+
+		session->SendLoginPacket(id, pObject);
+
+		for (auto& player : m_sessions)
+		{
+			// 접속 중이지 않은 세션은 패스
+			if (player->GetState() != STATE::INGAME)
+				continue;
+
+			// 다른 클라이언트에 오브젝트 추가 명령을 보내는 것이므로 자기 자신 제외
+			if (player->GetID() == id)
+				continue;
+
+			session->SendAddPacket(player->GetID(), player->GetMyObject());
+			// 해당 클라이언트에 로그인 완료 패킷 전송
+			player->SendAddPacket(id, pObject);
+		}
 	}
 }

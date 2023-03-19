@@ -47,27 +47,27 @@ namespace network
 		//bool ValidWriteSize(uint32_t size);
 		//bool ValidReadSize(uint32_t size);
 
-		void WriteID(uint32_t id);
+		void WriteID(int32_t id);
 		template<typename T>
 		void Write(T data) requires IsSingleVariable<T>;
 		void WriteString(const std::string& data);
 		void WriteWString(const std::wstring& data);
 		void WriteSize();
 
-		uint32_t ReadID();
+		int32_t ReadID();
 		template<typename T>
 		T Read() requires IsSingleVariable<T>;
 		void ReadString(std::string& str);
 		void ReadWString(std::wstring& wstr);
 
-		constexpr uint32_t GetID() const { return m_id; }
+		constexpr int32_t GetID() const { return m_id; }
 		constexpr uint16_t GetDataSize() const { return m_size; }
 		constexpr uint16_t GetPacketSize() const { return m_size + HEADER_SIZE; }
 		constexpr uint32_t GetRemainDataSize() const { return m_size - m_readOffset; }
 		constexpr std::array<char, BUFF_SIZE>& GetPacketData() { return m_data; }
 		char* GetPacketAddr() { return m_data.data(); }
 
-		void SetData(uint32_t id);
+		void SetData(int32_t id);
 		void SetData(char* data);
 		void SetData(std::array<char, BUFF_SIZE>::iterator recvIter, int32_t recvDataSize, int32_t prevSize);
 	private:
@@ -76,7 +76,7 @@ namespace network
 	private:
 		uint16_t m_size;		// Header를 제외한 데이터만의 크기
 		TYPE m_type;
-		uint32_t m_id;
+		int32_t m_id;
 
 		std::array<char, BUFF_SIZE> m_data;
 		uint32_t m_readOffset;

@@ -29,6 +29,9 @@
     <Filter Include="source\Server">
       <UniqueIdentifier>{d64e419a-141a-454d-bac5-8633adf8f441}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Object\NPC">
+      <UniqueIdentifier>{f403878b-13ba-49f6-98f5-251a6fe42bcb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp">
@@ -55,6 +58,9 @@
     <ClCompile Include="..\..\..\..\vendor\include\Packet.cpp">
       <Filter>Utility\Packet</Filter>
     </ClCompile>
+    <ClCompile Include="NPC.cpp">
+      <Filter>source\Object\NPC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -75,14 +81,17 @@
     <ClInclude Include="Server.h">
       <Filter>source\Server</Filter>
     </ClInclude>
-    <ClInclude Include="protocol.hpp">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\OVERLAPPEDEX.h">
       <Filter>Utility\OVERLAPPEDEX</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\Packet.h">
       <Filter>Utility\Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="NPC.h">
+      <Filter>source\Object\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vendor\include\protocol.hpp">
+      <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

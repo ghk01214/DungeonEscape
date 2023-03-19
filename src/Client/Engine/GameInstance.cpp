@@ -1,13 +1,12 @@
 ﻿#include "pch.h"
 #include "GameInstance.h"
 #include "Engine.h"
-#include "Network.h"
 
-void CGameInstance::Initialize_Engine(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNetwork)
+void CGameInstance::Initialize_Engine(const WindowInfo& info)
 {
 	m_sceneManager = SceneManager::GetInstance();
 
-	GEngine->Init(info, pNetwork);
+	GEngine->Init(info);
 }
 
 void CGameInstance::LoadScene(std::shared_ptr<CScene> scene)

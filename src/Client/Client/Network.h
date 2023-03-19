@@ -15,25 +15,28 @@ namespace network
 		void EndThreadProcess();
 		void WaitForThreadTermination();
 
-		void Recv();
-		void Recv(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
-		void Send(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
-
 #pragma region [SEND PACKET]
-		void SendLoginPacket(std::vector<std::shared_ptr<GameObject>>& m_gameObjects);
+		void SendLoginPacket();
 		void SendMovePacket(DIRECTION direction);
 		void SendRotationPacket(ROTATION direction);
 #pragma endregion
 	private:
+		void Recv();
 		void Send(network::CPacket& packet);
 
+		void Recv(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
+		void Send(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
+
+#pragma region [PROCESS PACKET]
 		void ProcessPacket();
 		void ProcessAUPacket(ProtocolID type);
 		void ProcessMYPacket(ProtocolID type);
+		void ProcessWRPacket(ProtocolID type);
 		void ProcessBTPacket(ProtocolID type);
 		void ProcessITPacket(ProtocolID type);
 		void ProcessCMPacket(ProtocolID type);
 		void ProcessTTPacket(ProtocolID type);
+#pragma endregion
 
 	private:
 		HANDLE m_iocp;
@@ -45,10 +48,12 @@ namespace network
 		OVERLAPPEDEX m_recvEx;
 		OVERLAPPEDEX m_sendEx;
 
-		char* m_recvPacket;
+		char* m_pRecvPacket;
 		network::CPacket m_packet;
 		int32_t m_remainSize;
 
-		uint16_t m_myTarget;
+		// 임시 map
+	public:
+		std::unordered_map<int32_t, int32_t> m_idMatch;
 	};
 }

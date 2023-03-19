@@ -8,17 +8,10 @@ namespace game
 	{
 	public:
 		CPlayer();
+		CPlayer(Pos pos);
+		CPlayer(float x, float y, float z);
 		~CPlayer();
 
-		void Init(int32_t id) override;
-
-		constexpr int32_t GetAccessID() const { return m_accessID; }
-
-		bool IsConnected() { return m_connected; }
-
-	private:
-		int32_t m_accessID;
-
-		std::atomic_bool m_connected;
+		void Init() override;
 	};
 }

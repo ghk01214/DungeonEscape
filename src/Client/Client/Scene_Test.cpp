@@ -1,4 +1,4 @@
-#include "pch.h"
+Ôªø#include "pch.h"
 #include "Scene_Test.h"
 #include "GameInstance.h"
 #include "SceneManager.h"
@@ -33,7 +33,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	{
 		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
 
-		// UAV øÎ Texture ª˝º∫
+		// UAV Ïö© Texture ÏÉùÏÑ±
 		shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
 			DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
 			CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
@@ -44,7 +44,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 		material->SetInt(0, 1);
 		GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
 
-		// æ≤∑πµÂ ±◊∑Ï (1 * 1024 * 1)
+		// Ïì∞Î†àÎìú Í∑∏Î£π (1 * 1024 * 1)
 		material->Dispatch(1, 1024, 1);
 	}
 #pragma endregion
@@ -56,12 +56,12 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 		shared_ptr<GameObject> camera = make_shared<GameObject>();
 		camera->SetName(L"Main_Camera");
 		camera->AddComponent(make_shared<Transform>());
-		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45µµ
+		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45ÎèÑ
 		camera->AddComponent(make_shared<Camera_Basic>());
 		camera->GetCamera()->SetFar(10000.f);
 		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
 		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
-		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI¥¬ æ» ¬Ô¿Ω
+		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UIÎäî Ïïà Ï∞çÏùå
 		scene->AddGameObject(camera);
 	}
 #pragma endregion
@@ -75,8 +75,8 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
 		camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
 		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
-		camera->GetCamera()->SetCullingMaskAll(); // ¥Ÿ ≤Ù∞Ì
-		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI∏∏ ¬Ô¿Ω
+		camera->GetCamera()->SetCullingMaskAll(); // Îã§ ÎÅÑÍ≥†
+		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UIÎßå Ï∞çÏùå
 		scene->AddGameObject(camera);
 	}
 #pragma endregion

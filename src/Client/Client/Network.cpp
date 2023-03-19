@@ -1,22 +1,25 @@
 ﻿#include "pch.h"
-#include "SceneManager.h"
-#include "GameObject.h"
+#include <GameObject.h>
 #include "Network.h"
-#include "Transform.h"
-#include <iostream>
+#include <SceneManager.h>
+#include <Scene.h>
+#include <Transform.h>
+#include <Timer.h>
+#include <Resources.h>
+
+#include <MeshData.h>
+#include "Monster_Script.h"
 
 namespace network
 {
+#pragma region [PUBLIC]
 	CNetwork::CNetwork() :
 		m_iocp{ INVALID_HANDLE_VALUE },
 		m_socket{ INVALID_SOCKET },
 		m_serverKey{ 99999 },
-		m_recvPacket{ nullptr },
-		m_remainSize{ 0 },
-		m_myTarget{ 0 }
+		m_pRecvPacket{ nullptr },
+		m_remainSize{ 0 }
 	{
-		// 서버와 커넥트
-		Connect();
 	}
 
 	CNetwork::~CNetwork()
@@ -107,6 +110,26 @@ namespace network
 	{
 		m_networkThread.join();
 	}
+#pragma endregion
+
+#pragma region [PRIVATE]
+	void CNetwork::Recv()
+	{
+		DWORD flag{};
+		ZeroMemory(&m_recvEx.over, sizeof(m_recvEx.over));
+
+		m_recvEx.wsa.len = network::CPacket::BUFF_SIZE + m_remainSize;
+		m_recvEx.wsa.buf = m_recvEx.data + m_remainSize;
+
+		WSARecv(m_socket, &m_recvEx.wsa, 1, 0, &flag, &m_recvEx.over, nullptr);
+	}
+
+	void CNetwork::Send(network::CPacket& packet)
+	{
+		m_sendEx.Set(packet);
+
+		WSASend(m_socket, &m_sendEx.wsa, 1, 0, 0, &m_sendEx.over, nullptr);
+	}
 
 	void CNetwork::Recv(DWORD bytes, network::OVERLAPPEDEX* pOverEx)
 	{
@@ -116,7 +139,7 @@ namespace network
 
 		// CPacket 클래스에 받은 데이터 저장
 		m_packet.SetData(pOverEx->data);
-		m_recvPacket = pOverEx->data;
+		m_pRecvPacket = pOverEx->data;
 
 		while (remainSize > 0)
 		{
@@ -129,8 +152,8 @@ namespace network
 			ProcessPacket();
 
 			// 패킷의 잘린 부분으로 포인터 이동
-			m_recvPacket += packetSize;
-			m_packet.SetData(m_recvPacket);
+			m_pRecvPacket += packetSize;
+			m_packet.SetData(m_pRecvPacket);
 			// 처리한 패킷 사이즈만큼 빼기
 			remainSize -= packetSize;
 		}
@@ -151,31 +174,33 @@ namespace network
 		pOverEx = nullptr;
 		//delete pOverEx;
 	}
+#pragma endregion
 
 #pragma region [SEND PACKET]
-	void CNetwork::SendLoginPacket(std::vector<std::shared_ptr<GameObject>>& m_gameObjects)
+	void CNetwork::SendLoginPacket()
 	{
 		network::CPacket packet;
 
+		auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
+
 		// 프로토콜 종류 작성
 		packet.Write<ProtocolID>(ProtocolID::AU_LOGIN_REQ);
+		// 델타 타임 작성
+		packet.Write<float>(DELTA_TIME);
 		// 전체 오브젝트 개수 작성
-		packet.Write<uint16_t>(static_cast<uint16_t>(m_gameObjects.size()));
+		//packet.Write<uint16_t>(1);
 
 		// 각 오브젝트의 인덱스와 좌표, 회전각 작성
-		for (uint16_t i = 0; i < m_gameObjects.size(); ++i)
-		{
-			packet.Write<uint16_t>(i);
-			packet.Write<float>(m_gameObjects[i]->GetTransform()->GetLocalPosition().x);
-			packet.Write<float>(m_gameObjects[i]->GetTransform()->GetLocalPosition().y);
-			packet.Write<float>(m_gameObjects[i]->GetTransform()->GetLocalPosition().z);
-			packet.Write<float>(m_gameObjects[i]->GetTransform()->GetLocalRotation().x);
-			packet.Write<float>(m_gameObjects[i]->GetTransform()->GetLocalRotation().y);
-			packet.Write<float>(m_gameObjects[i]->GetTransform()->GetLocalRotation().z);
-		}
+		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalPosition().x);
+		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalPosition().y);
+		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalPosition().z);
+		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalRotation().x);
+		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalRotation().y);
+		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalRotation().z);
 
 		// 패킷 전송
 		Send(packet);
+		Recv();
 	}
 
 	void CNetwork::SendMovePacket(DIRECTION direction)
@@ -184,8 +209,8 @@ namespace network
 
 		// 프로토콜 종류 작성
 		packet.Write<ProtocolID>(ProtocolID::MY_MOVE_REQ);
-		// 움직일 오브젝트의 인덱스 작성
-		packet.Write<uint16_t>(m_myTarget);
+		// 델타 타임 작성
+		packet.Write<float>(DELTA_TIME);
 		// 오브젝트 이동방향 작성
 		packet.Write<DIRECTION>(direction);
 
@@ -199,8 +224,8 @@ namespace network
 
 		// 프로토콜 종류 작성
 		packet.Write<ProtocolID>(ProtocolID::MY_ROTATE_REQ);
-		// 회전할 오브젝트의 인덱스 작성
-		packet.Write<uint16_t>(m_myTarget);
+		// 델타 타임 작성
+		packet.Write<float>(DELTA_TIME);
 		// 오브젝트 회전방향 작성
 		packet.Write<ROTATION>(direction);
 
@@ -209,24 +234,7 @@ namespace network
 	}
 #pragma endregion
 
-	void CNetwork::Recv()
-	{
-		DWORD flag{};
-		ZeroMemory(&m_recvEx.over, sizeof(m_recvEx.over));
-
-		m_recvEx.wsa.len = network::CPacket::BUFF_SIZE + m_remainSize;
-		m_recvEx.wsa.buf = m_recvEx.data + m_remainSize;
-
-		WSARecv(m_socket, &m_recvEx.wsa, 1, 0, &flag, &m_recvEx.over, nullptr);
-	}
-
-	void CNetwork::Send(network::CPacket& packet)
-	{
-		m_sendEx.Set(packet);
-
-		WSASend(m_socket, &m_sendEx.wsa, 1, 0, 0, &m_sendEx.over, nullptr);
-	}
-
+#pragma region [PROCESS PACKET]
 	void CNetwork::ProcessPacket()
 	{
 		// 프로토콜 종류 읽기
@@ -241,10 +249,15 @@ namespace network
 			ProcessAUPacket(packetType);
 		}
 		else if (ProtocolID::PROTOCOL_MY_BEGIN <= packetType and
-			packetType < ProtocolID::PROTOCOL_BATTLE_BEGIN)
+			packetType < ProtocolID::PROTOCOL_WR_BEGIN)
 		{
 			// 플레이어 프로토콜의 패킷 프로세스 처리
 			ProcessMYPacket(packetType);
+		}
+		else if (ProtocolID::PROTOCOL_WR_BEGIN <= packetType and
+			packetType < ProtocolID::PROTOCOL_BATTLE_BEGIN)
+		{
+			ProcessWRPacket(packetType);
 		}
 	}
 
@@ -255,9 +268,17 @@ namespace network
 			case ProtocolID::AU_LOGIN_ACK:
 			{
 				// 클라이언트의 조작 오브젝트 인덱스(변동X)
-				m_myTarget = m_packet.Read<uint16_t>();
+				int32_t id{ m_packet.ReadID() };
+				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
+				m_idMatch.insert(std::make_pair(m_packet.ReadID(), gameObjects.size() - 1));
+				int32_t index{ m_idMatch[id] };
 
-				GET_SINGLE(SceneManager)->SetTarget(m_myTarget);
+				Vec3 pos{};
+				pos.x = m_packet.Read<float>();
+				pos.y = m_packet.Read<float>();
+				pos.z = m_packet.Read<float>();
+
+				gameObjects[index]->GetTransform()->SetLocalPosition(pos);
 			}
 			break;
 			default:
@@ -272,7 +293,9 @@ namespace network
 			case ProtocolID::MY_MOVE_ACK:
 			{
 				// 움직일 오브젝트 인덱스를 패킷에서 읽어서 타깃으로 설정
-				GET_SINGLE(SceneManager)->SetTarget(m_packet.Read<uint16_t>());
+				int32_t id{ m_packet.ReadID() };
+				int32_t index{ m_idMatch[id] };
+				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
 
 				// 패킷에서 오브젝트를 렌더링할 좌표 읽기
 				Vec3 pos;
@@ -280,15 +303,19 @@ namespace network
 				pos.y = m_packet.Read<float>();
 				pos.z = m_packet.Read<float>();
 
+				//std::cout << std::format("{}(me) : {}, {}\n", id, pos.x, pos.y);
+
 				// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-				GET_SINGLE(SceneManager)->ObjectTranslationMode(pos);
+				gameObjects[index]->GetTransform()->SetLocalPosition(pos);
 			}
 			break;
 			// 회전은 개선이 필요(회전을 하지 않고 이동을 함)
 			case ProtocolID::MY_ROTATE_ACK:
 			{
 				// 회전할 오브젝트 인덱스를 패킷에서 읽어서 타깃으로 설정
-				GET_SINGLE(SceneManager)->SetTarget(m_packet.Read<uint16_t>());
+				int32_t id{ m_packet.ReadID() };
+				int32_t index{ m_idMatch[id] };
+				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
 
 				// 패킷에서 오브젝트를 렌더링할 좌표 읽기
 				Vec3 rotation;
@@ -297,7 +324,81 @@ namespace network
 				rotation.z = m_packet.Read<float>();
 
 				// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-				GET_SINGLE(SceneManager)->ObjectRotationMode(rotation);
+				gameObjects[index]->GetTransform()->SetLocalRotation(rotation);
+			}
+			break;
+			default:
+			break;
+		}
+	}
+
+	void CNetwork::ProcessWRPacket(ProtocolID type)
+	{
+		switch (type)
+		{
+			case ProtocolID::WR_ADD_ACK:
+			{
+				Vec3 pos{};
+				pos.x = m_packet.Read<float>();
+				pos.y = m_packet.Read<float>();
+				pos.z = m_packet.Read<float>();
+
+				std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Dragon.fbx") };
+				std::vector<std::shared_ptr<GameObject>> gameObjects{ meshData->Instantiate() };
+
+				for (auto& gameObject : gameObjects)
+				{
+					gameObject->SetName(L"Dragon" + std::to_wstring(m_idMatch.size()));
+					gameObject->SetCheckFrustum(false);
+					gameObject->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, pos.z));
+					gameObject->GetTransform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
+					GET_SINGLE(SceneManager)->GetActiveScene()->AddGameObject(gameObject);
+					gameObject->AddComponent(std::make_shared<Monster_Dragon>());
+				}
+
+				auto sceneGameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
+
+				m_idMatch.insert(std::make_pair(m_packet.ReadID(), sceneGameObjects.size() - 1));
+			}
+			break;
+			case ProtocolID::WR_REMOVE_ACK:
+			{
+				int32_t id{ m_packet.ReadID() };
+				int32_t index{ m_idMatch[id] };
+				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
+
+				GET_SINGLE(SceneManager)->GetActiveScene()->RemoveGameObject(gameObjects[index]);
+				m_idMatch.erase(id);
+			}
+			break;
+			case ProtocolID::WR_MOVE_ACK:
+			{
+				int32_t id{ m_packet.ReadID() };
+				int32_t index{ m_idMatch[id] };
+				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
+
+				Vec3 pos{};
+				pos.x = m_packet.Read<float>();
+				pos.y = m_packet.Read<float>();
+				pos.z = m_packet.Read<float>();
+
+				std::cout << std::format("{} : {}, {}\n", id, pos.x, pos.y);
+
+				gameObjects[index]->GetTransform()->SetLocalPosition(pos);
+			}
+			break;
+			case ProtocolID::WR_ROTATE_ACK:
+			{
+				int32_t id{ m_packet.ReadID() };
+				int32_t index{ m_idMatch[id] };
+				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
+
+				Vec3 rotation{};
+				rotation.x = m_packet.Read<float>();
+				rotation.y = m_packet.Read<float>();
+				rotation.z = m_packet.Read<float>();
+
+				gameObjects[index]->GetTransform()->SetLocalRotation(rotation);
 			}
 			break;
 			default:
@@ -324,4 +425,5 @@ namespace network
 	{
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
 	}
+#pragma endregion
 }

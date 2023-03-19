@@ -26,6 +26,7 @@
 #include <Define.h>
 #include <protocol.hpp>
 #include <Packet.h>
+#include <OVERLAPPEDEX.h>
 
 #pragma comment(lib, "WS2_32")
 #pragma comment(lib, "MSWSock")
@@ -35,6 +36,9 @@ using uchar_t = unsigned char;
 
 template<typename T, typename U>
 using Accessor = tbb::concurrent_hash_map<T, U>::accessor;
+
+template<typename T, typename U>
+using HashMap = tbb::concurrent_hash_map<T, U>;
 
 extern std::default_random_engine dre;
 

@@ -4,18 +4,27 @@
 
 namespace game
 {
-	CPlayer::CPlayer() :
-		m_accessID{ -1 },
-		m_connected{ false }
+	CPlayer::CPlayer()
 	{
+	}
+
+	CPlayer::CPlayer(Pos pos)
+	{
+		m_pos = pos;
+	}
+
+	CPlayer::CPlayer(float x, float y, float z)
+	{
+		m_pos.x = x;
+		m_pos.y = y;
+		m_pos.z = z;
 	}
 
 	CPlayer::~CPlayer()
 	{
 	}
 
-	void CPlayer::Init(int32_t id)
+	void CPlayer::Init()
 	{
-		m_accessID = id;
 	}
 }

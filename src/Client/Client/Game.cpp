@@ -7,11 +7,13 @@
 #include "GameInstance.h"
 #include "Scene_Test.h"
 
-void CGame::Init(const WindowInfo& Info, std::shared_ptr<network::CNetwork> pNetwork)
+void CGame::Init(const WindowInfo& Info)
 {
-	GGameInstance->Initialize_Engine(Info, pNetwork);
+	GGameInstance->Initialize_Engine(Info);
 
 	GET_SINGLE(SceneManager)->LoadScene(Scene_Test::GetInstance()->TestScene());
+
+	network::pNetwork->SendLoginPacket();
 }
 
 void CGame::Update()

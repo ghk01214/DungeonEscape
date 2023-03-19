@@ -503,4 +503,6 @@ src/Server/*/out/
 !src/Client/vendor/lib/FBX/*
 !src/Client/vendor/lib/FBX/*/*
 *.idb
-*.recipe
+
+bin/
+bin-int/

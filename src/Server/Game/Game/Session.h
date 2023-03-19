@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Object.h"
+
 namespace network
 {
 	class OVERLAPPEDEX;
@@ -7,8 +9,6 @@ namespace network
 
 namespace game
 {
-	class CObject;
-
 	enum class STATE
 	{
 		NONE = 0,
@@ -30,16 +30,23 @@ namespace game
 		void Recv();
 		void Send(network::CPacket& packet);
 
-		void SendLoginPacket();
-		void SendMovePacket(int32_t id, uint16_t targetNum, CObject* obj);
-		void SendRotatePacket(int32_t id, uint16_t targetNum, CObject* obj);
+		void SendLoginPacket(int32_t id, CObject* obj);
+		void SendAddPacket(int32_t id, CObject* obj);
+		void SendRemovePacket(int32_t id);
+		void SendMovePacket(int32_t id, ProtocolID packetType, CObject* obj);
+		void SendRotatePacket(int32_t id, ProtocolID packetType, CObject* obj);
 
 		const STATE GetState() const { return m_state; }
-		constexpr uint16_t GetTargetNum() { return m_targetNum; }
+		const int32_t GetID() const { return m_id; }
+		CObject* GetMyObject() { return m_pObject; }
 
+		void SetState(STATE state) { m_state = state; }
 		void SetSocket(SOCKET socket) { m_socket = socket; }
-		void SetID(int32_t id) { m_id.store(id, std::memory_order_seq_cst); }
-		void SetTargetNum(uint16_t targetNum) { m_targetNum = targetNum; }
+		void SetID(int32_t id) { m_id = id; }
+		//void SetDeltaTime(float deltaTime) { m_deltaTime = deltaTime; }
+		void SetObject(CObject* pObject) { m_pObject = pObject; }
+		void SetPos(Pos pos) { m_pObject->SetPos(pos); }
+		void SetPos(float x, float y, float z) { m_pObject->SetPos(x, y, z); }
 
 	private:
 		SOCKET m_socket;
@@ -49,9 +56,10 @@ namespace game
 
 		std::atomic<STATE> m_state;
 		std::atomic_int32_t m_id;
+
 		CObject* m_pObject;
 
-		uint16_t m_targetNum;
+		//float m_deltaTime;
 	public:
 		int32_t m_prevRemain;
 	};

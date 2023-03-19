@@ -79,9 +79,6 @@
     <Filter Include="GameObject\Component\MonoBehaviour">
       <UniqueIdentifier>{c5ac215c-6d35-43bf-bab3-fae71f74b71b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Network">
-      <UniqueIdentifier>{865b09d7-9f8c-42b7-893e-71ee71d72595}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource\MeshData">
       <UniqueIdentifier>{c4ca0d84-089c-412d-9771-e530ffae1315}</UniqueIdentifier>
     </Filter>
@@ -99,15 +96,6 @@
     </Filter>
     <Filter Include="Utils\99. Etc">
       <UniqueIdentifier>{266832c2-ad79-48be-bc20-0d0d18854f82}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utils\02. Network">
-      <UniqueIdentifier>{946a7579-22d0-412d-aa6c-cbda9d54c590}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utils\02. Network\OVERLAPPEDEX">
-      <UniqueIdentifier>{7a05c037-9d77-4b07-b923-19b800a873d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utils\02. Network\Packet">
-      <UniqueIdentifier>{4e8031cc-8f78-409f-b1ba-67dbbfb3ffcf}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Logic\InstancingBuffer">
       <UniqueIdentifier>{da49e49f-7738-48b1-b54c-e3e91de5204c}</UniqueIdentifier>
@@ -215,15 +203,6 @@
     </ClCompile>
     <ClCompile Include="TestCameraScript.cpp">
       <Filter>GameObject\Component\Camera\TestCameraScript</Filter>
-    </ClCompile>
-    <ClCompile Include="Network.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\vendor\include\Packet.cpp">
-      <Filter>Utils\02. Network\Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\vendor\include\OVERLAPPEDEX.cpp">
-      <Filter>Utils\02. Network\OVERLAPPEDEX</Filter>
     </ClCompile>
     <ClCompile Include="MeshData.cpp">
       <Filter>Resource\MeshData</Filter>
@@ -352,18 +331,6 @@
     </ClInclude>
     <ClInclude Include="TestCameraScript.h">
       <Filter>GameObject\Component\Camera\TestCameraScript</Filter>
-    </ClInclude>
-    <ClInclude Include="Network.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\vendor\include\Packet.h">
-      <Filter>Utils\02. Network\Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\vendor\include\protocol.hpp">
-      <Filter>Utils\02. Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\vendor\include\OVERLAPPEDEX.h">
-      <Filter>Utils\02. Network\OVERLAPPEDEX</Filter>
     </ClInclude>
     <ClInclude Include="MeshData.h">
       <Filter>Resource\MeshData</Filter>

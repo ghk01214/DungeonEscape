@@ -15,12 +15,14 @@ namespace game
 	{
 	public:
 		CObject() = default;
+		CObject(Pos pos);
+		CObject(float x, float y, float z);
 		virtual ~CObject() = default;
 
-		virtual void Init(int32_t id) {}
+		virtual void Init() {}
 
-		virtual void Move(DIRECTION direction);
-		virtual void Rotate(ROTATION direction);
+		virtual void Move(DIRECTION direction, float deltaTime);
+		virtual void Rotate(ROTATION direction, float deltaTime);
 
 		constexpr Pos GetPos() const { return m_pos; }
 		constexpr Rotation GetRotation() const { return m_rotate; }
@@ -32,10 +34,10 @@ namespace game
 
 		void ChangeSpeed(float speed) { m_speed = speed; }
 
-	private:
+	protected:
 		Pos m_pos;
 		Rotation m_rotate;
 
-		float m_speed = 0.1f;
+		float m_speed = 200.f;
 	};
 }

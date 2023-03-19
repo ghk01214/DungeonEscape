@@ -9,7 +9,7 @@
 #include "Resources.h"
 #include "InstancingManager.h"
 
-void Engine::Init(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNetwork)
+void Engine::Init(const WindowInfo& info)
 {
 	m_window = info;
 
@@ -36,8 +36,6 @@ void Engine::Init(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNe
 	GET_SINGLE(Input)->Init(info.hWnd);
 	GET_SINGLE(Timer)->Init();
 	GET_SINGLE(Resources)->Init();
-
-	GET_SINGLE(SceneManager)->SetNetworkManager(pNetwork);
 }
 
 void Engine::Update()

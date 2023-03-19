@@ -20,7 +20,7 @@ namespace network
 class Engine
 {
 public:
-	void Init(const WindowInfo& info, std::shared_ptr<network::CNetwork> pNetwork);
+	void Init(const WindowInfo& info);
 	void Update();
 
 public:
