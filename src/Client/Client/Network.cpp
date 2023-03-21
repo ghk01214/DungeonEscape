@@ -59,7 +59,7 @@ namespace network
 		}
 
 		// GQCS를 비동기로 돌릴 네트워크 스레드 생성
-		m_networkThread = std::thread{ &CNetwork::ProcessThread, this };
+		m_networkThread = std::thread{ &CNetwork::ProcessThread, this }; 
 	}
 
 	void CNetwork::ProcessThread()
@@ -344,7 +344,7 @@ namespace network
 				pos.z = m_packet.Read<float>();
 
 				std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Dragon.fbx") };
-				std::vector<std::shared_ptr<GameObject>> gameObjects{ meshData->Instantiate() };
+				std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
 
 				for (auto& gameObject : gameObjects)
 				{

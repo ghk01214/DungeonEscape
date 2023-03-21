@@ -175,6 +175,13 @@ public:								\
 #define INPUT				GET_SINGLE(Input)
 #define DELTA_TIME			GET_SINGLE(Timer)->GetDeltaTime()
 
+
+#define GET_PLAYER		GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer()
+#define GET_MONSTER		GET_SINGLE(SceneManager)->GetActiveScene()->GetMonster()
+#define GET_BOSS		GET_SINGLE(SceneManager)->GetActiveScene()->GetBoss()
+#define GET_OBJECT		GET_SINGLE(SceneManager)->GetActiveScene()->GetSceneObject()
+
+
 #define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
 
 struct TransformParams

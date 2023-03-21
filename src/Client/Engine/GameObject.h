@@ -12,11 +12,22 @@ class Terrain;
 class BaseCollider;
 class Animator;
 
-class GameObject : public Object, public enable_shared_from_this<GameObject>
+enum class GAME_OBJECT_TYPE : uint8
+{
+	OBJECT,				// 일반
+	PLAYER,				// 플레이어
+	MONSTER,			// 몬스터
+	BOSS_MONSTER,		// 보스몬스터
+	END
+};
+
+class CGameObject : public Object, public enable_shared_from_this<CGameObject>
 {
 public:
-	GameObject();
-	virtual ~GameObject();
+
+public:
+	CGameObject();
+	virtual ~CGameObject();
 
 	void Awake();
 	void Start();
@@ -46,6 +57,8 @@ public:
 	void SetStatic(bool flag) { m_static = flag; }
 	bool IsStatic() { return m_static; }
 
+	GAME_OBJECT_TYPE GetType(void) { return m_gameObjectType; }
+
 private:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> m_components;
 	vector<shared_ptr<MonoBehaviour>> m_scripts;
@@ -53,5 +66,7 @@ private:
 	bool m_checkFrustum = true;
 	uint8 m_layerIndex = 0;
 	bool m_static = true;
+
+	GAME_OBJECT_TYPE m_gameObjectType = GAME_OBJECT_TYPE::OBJECT;
 };
 

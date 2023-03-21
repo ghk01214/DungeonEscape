@@ -48,7 +48,10 @@ void FBXLoader::Import(const wstring& path)
 	m_scene = FbxScene::Create(m_manager, "");
 
 	// 나중에 Texture 경로 계산할 때 쓸 것
-	m_resourceDirectory = fs::path(path).parent_path().wstring();// +L"\\" + fs::path(path).filename().stem().wstring() + L".fbm";
+	m_resourceDirectory = fs::path(path).parent_path().wstring();// 
+	
+	
+	L"\\" + fs::path(path).filename().stem().wstring() + L".fbm";
 
 	m_importer = FbxImporter::Create(m_manager, "");
 

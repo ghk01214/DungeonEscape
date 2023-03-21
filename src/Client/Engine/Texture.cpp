@@ -1,3 +1,4 @@
+ï»¿
 #include "pch.h"
 #include "Texture.h"
 #include "Engine.h"
@@ -14,7 +15,7 @@ Texture::~Texture()
 
 void Texture::Load(const wstring& path)
 {
-	// ÆÄÀÏ È®ÀåÀÚ ¾ò±â
+	// íŒŒì¼ í™•ì¥ì ì–»ê¸°
 	wstring ext = fs::path(path).extension();
 
 	if (ext == L".dds" || ext == L".DDS")
@@ -129,8 +130,8 @@ void Texture::CreateFromResource(ComPtr<ID3D12Resource> tex2D)
 
 	m_desc = tex2D->GetDesc();
 
-	// ÁÖ¿ä Á¶ÇÕ
-	// - DSV ´Üµ¶ (Á¶ÇÕX)
+	// ì£¼ìš” ì¡°í•©
+	// - DSV ë‹¨ë… (ì¡°í•©X)
 	// - SRV
 	// - RTV + SRV
 	if (m_desc.Flags & D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL)

@@ -10,7 +10,7 @@
 
 Light::Light() : Component(COMPONENT_TYPE::LIGHT)
 {
-	m_shadowCamera = make_shared<GameObject>();
+	m_shadowCamera = make_shared<CGameObject>();
 	m_shadowCamera->AddComponent(make_shared<Transform>());
 	m_shadowCamera->AddComponent(make_shared<Camera>());
 	uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");

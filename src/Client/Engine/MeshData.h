@@ -3,7 +3,7 @@
 
 class Mesh;
 class Material;
-class GameObject;
+class CGameObject;
 
 struct MeshRenderInfo
 {
@@ -23,11 +23,8 @@ public:
 	virtual void Load(const wstring& path);
 	virtual void Save(const wstring& path);
 
-	vector<shared_ptr<GameObject>> Instantiate();
+	vector<shared_ptr<CGameObject>> Instantiate();
 
 private:
-	shared_ptr<Mesh>				m_mesh;
-	vector<shared_ptr<Material>>	m_materials;
-
 	vector<MeshRenderInfo> m_meshRenders;
 };

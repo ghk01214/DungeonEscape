@@ -29,7 +29,7 @@ uint8 CGameInstance::LayerNameToIndex(const wstring& name)
 	return m_sceneManager->LayerNameToIndex(name);
 }
 
-shared_ptr<class GameObject> CGameInstance::Pick(int32 screenX, int32 screenY)
+shared_ptr<class CGameObject> CGameInstance::Pick(int32 screenX, int32 screenY)
 {
 	return m_sceneManager->Pick(screenX, screenY);
 }

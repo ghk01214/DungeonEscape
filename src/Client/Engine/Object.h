@@ -25,7 +25,7 @@ public:
 	Object(OBJECT_TYPE type);
 	virtual ~Object();
 
-	OBJECT_TYPE GetType() { return m_objectType; }
+	OBJECT_TYPE GetType() { return m_gameObjectType; }
 
 	void SetName(const wstring& name) { m_name = name; }
 	const wstring& GetName() { return m_name; }
@@ -40,7 +40,7 @@ protected:
 	virtual void Save(const wstring& path) { }
 
 protected:
-	OBJECT_TYPE m_objectType = OBJECT_TYPE::NONE;
+	OBJECT_TYPE m_gameObjectType = OBJECT_TYPE::NONE;
 	wstring m_name;
 
 protected:

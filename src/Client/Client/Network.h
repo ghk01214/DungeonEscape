@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-class GameObject;
+class CGameObject;
 
 namespace network
 {
@@ -54,6 +54,6 @@ namespace network
 
 		// 임시 map
 	public:
-		std::unordered_map<int32_t, int32_t> m_idMatch;
+		std::unordered_map<int32_t, int32_t> m_idMatch;	// Client_ID, 연관된 플레이어 캐릭터 index
 	};
 }

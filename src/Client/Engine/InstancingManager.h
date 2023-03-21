@@ -1,14 +1,14 @@
 ﻿#pragma once
 #include "InstancingBuffer.h"
 
-class GameObject;
+class CGameObject;
 
 class InstancingManager
 {
 	DECLARE_SINGLE(InstancingManager);
 
 public:
-	void Render(vector<shared_ptr<GameObject>>& gameObjects);
+	void Render(vector<shared_ptr<CGameObject>>& gameObjects);
 
 	void ClearBuffer();
 	void Clear() { m_buffers.clear(); }

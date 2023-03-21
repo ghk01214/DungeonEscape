@@ -67,6 +67,6 @@ private:
 	shared_ptr<class Mesh> m_volumeMesh;
 	shared_ptr<class Material> m_lightMaterial;
 
-	shared_ptr<GameObject> m_shadowCamera;
+	shared_ptr<CGameObject> m_shadowCamera;
 };
 

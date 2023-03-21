@@ -39,7 +39,7 @@ void Camera::FinalUpdate()
 void Camera::SortGameObject()
 {
 	shared_ptr<CScene> scene = GET_SINGLE(SceneManager)->GetActiveScene();
-	const vector<shared_ptr<GameObject>>& gameObjects = scene->GetGameObjects();
+	const vector<shared_ptr<CGameObject>>& gameObjects = scene->GetGameObjects();
 
 	m_vecForward.clear();
 	m_vecDeferred.clear();
@@ -86,7 +86,7 @@ void Camera::SortGameObject()
 void Camera::SortShadowObject()
 {
 	shared_ptr<CScene> scene = GET_SINGLE(SceneManager)->GetActiveScene();
-	const vector<shared_ptr<GameObject>>& gameObjects = scene->GetGameObjects();
+	const vector<shared_ptr<CGameObject>>& gameObjects = scene->GetGameObjects();
 
 	m_vecShadow.clear();
 

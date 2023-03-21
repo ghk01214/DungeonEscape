@@ -204,6 +204,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="Struct.h" />
     <ClInclude Include="StructuredBuffer.h" />
     <ClInclude Include="SwapChain.h" />
     <ClInclude Include="TableDescriptorHeap.h" />

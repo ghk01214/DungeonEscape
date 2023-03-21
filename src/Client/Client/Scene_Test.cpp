@@ -53,12 +53,12 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 
 #pragma region Camera
 	{
-		shared_ptr<GameObject> camera = make_shared<GameObject>();
+		shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
 		camera->SetName(L"Main_Camera");
 		camera->AddComponent(make_shared<Transform>());
 		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45도
 		camera->AddComponent(make_shared<Camera_Basic>());
-		camera->GetCamera()->SetFar(10000.f);
+		camera->GetCamera()->SetFar(2000.f);
 		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
 		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
 		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI는 안 찍음
@@ -68,7 +68,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 
 #pragma region UI_Camera
 	{
-		shared_ptr<GameObject> camera = make_shared<GameObject>();
+		shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
 		camera->SetName(L"Orthographic_Camera");
 		camera->AddComponent(make_shared<Transform>());
 		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, 800*600
@@ -83,7 +83,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 
 #pragma region SkyBox
 	{
-		shared_ptr<GameObject> skybox = make_shared<GameObject>();
+		shared_ptr<CGameObject> skybox = std::make_shared<CGameObject>();
 		skybox->AddComponent(make_shared<Transform>());
 		skybox->SetCheckFrustum(false);
 		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
@@ -104,52 +104,10 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	}
 #pragma endregion
 
-#pragma region Object
-	/*{
-		shared_ptr<GameObject> obj = make_shared<GameObject>();
-		obj->SetName(L"OBJ");
-		obj->AddComponent(make_shared<Transform>());
-		obj->AddComponent(make_shared<SphereCollider>());
-		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(0, 0.f, 500.f));
-		obj->SetStatic(false);
-		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-		{
-			shared_ptr<Mesh> sphereMesh = GET_SINGLE(Resources)->LoadSphereMesh();
-			meshRenderer->SetMesh(sphereMesh);
-		}
-		{
-			shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"GameObject");
-			meshRenderer->SetMaterial(material->Clone());
-		}
-		dynamic_pointer_cast<SphereCollider>(obj->GetCollider())->SetRadius(0.5f);
-		dynamic_pointer_cast<SphereCollider>(obj->GetCollider())->SetCenter(Vec3(0.f, 0.f, 0.f));
-		obj->AddComponent(meshRenderer);
-		scene->AddGameObject(obj);
-	}*/
-#pragma endregion
-
-#pragma region Terrain
-	/*{
-		shared_ptr<GameObject> obj = make_shared<GameObject>();
-		obj->AddComponent(make_shared<Transform>());
-		obj->AddComponent(make_shared<Terrain>());
-		obj->AddComponent(make_shared<MeshRenderer>());
-
-		obj->GetTransform()->SetLocalScale(Vec3(50.f, 250.f, 50.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(-100.f, -200.f, 300.f));
-		obj->SetStatic(true);
-		obj->GetTerrain()->Init(64, 64);
-		obj->SetCheckFrustum(false);
-
-		scene->AddGameObject(obj);
-	}*/
-#pragma endregion
-
 #pragma region UI_Test
 	for (int32 i = 0; i < 6; i++)
 	{
-		shared_ptr<GameObject> obj = make_shared<GameObject>();
+		shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 		obj->AddComponent(make_shared<Transform>());
 		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
@@ -182,38 +140,50 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 
 #pragma region Directional Light
 	{
-		shared_ptr<GameObject> light = make_shared<GameObject>();
-		light->AddComponent(make_shared<Transform>());
-		light->GetTransform()->SetLocalPosition(Vec3(0, 1000, 500));
-		light->AddComponent(make_shared<Light>());
-		light->GetLight()->SetLightDirection(Vec3(0, -1, 1.f));
-		light->GetLight()->SetLightType(LIGHT_TYPE::DIRECTIONAL_LIGHT);
-		light->GetLight()->SetDiffuse(Vec3(1.f, 1.f, 1.f));
-		light->GetLight()->SetAmbient(Vec3(0.1f, 0.1f, 0.1f));
-		light->GetLight()->SetSpecular(Vec3(0.1f, 0.1f, 0.1f));
+		LightDesc lightDesc;
+		lightDesc.vDirection = Vec3(0, -1, 1.f);
+		lightDesc.vDiffuse = Vec3(1.f, 1.f, 1.f);
+		lightDesc.vAmbient = Vec3(0.1f, 0.1f, 0.1f);
+		lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
 
-		scene->AddGameObject(light);
+		scene->AddDirectionalLight(lightDesc);
 	}
 #pragma endregion
 
 
-#pragma region FBX
+#pragma region GameObjct : LoadFBX + RST + SCRIPT
 	{
-		shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Dragon.fbx");
+		ObjectDesc objectDesc;
+		objectDesc.strName = L"Moon";
+		objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
+		objectDesc.vPostion = Vec3(0.f, 0.f, 300.f);
+		objectDesc.vScale = Vec3(70.f, 70.f, 70.f);
+		objectDesc.script = make_shared<Monster_Dragon>();
 
-		vector<shared_ptr<GameObject>> gameObjects = meshData->Instantiate();
+		auto gameObject = CreateObject(objectDesc);
 
-		for (auto& gameObject : gameObjects)
-		{
-			gameObject->SetName(L"Dragon");
-			gameObject->SetCheckFrustum(false);
-			gameObject->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 300.f));
-			gameObject->GetTransform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-			scene->AddGameObject(gameObject);
-			gameObject->AddComponent(make_shared<Monster_Dragon>());
-		}
+		scene->AddSceneObject(gameObject);
 	}
 #pragma endregion
 
 	return scene;
+}
+
+std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateObject(ObjectDesc& objectDesc)
+{
+	shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath);
+
+	vector<shared_ptr<CGameObject>> gameObjects = meshData->Instantiate();
+
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->SetName(objectDesc.strName);
+		gameObject->SetCheckFrustum(false);
+		gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
+		gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
+		gameObject->AddComponent(objectDesc.script);
+		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
+	}
+
+	return gameObjects;
 }

@@ -136,6 +136,9 @@
     <Filter Include="GameObject\Component\Light">
       <UniqueIdentifier>{ce9f8aa8-8693-4893-893c-401e0cc39617}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utils\96. Defines">
+      <UniqueIdentifier>{13ec35ec-27be-44c7-84b1-4973a9b88aa7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -180,23 +183,11 @@
     <ClCompile Include="Material.cpp">
       <Filter>Resource\Material</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Manager\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>GameObject\Component</Filter>
-    </ClCompile>
     <ClCompile Include="MonoBehaviour.cpp">
       <Filter>GameObject\Component\MonoBehaviour</Filter>
     </ClCompile>
     <ClCompile Include="MeshRenderer.cpp">
       <Filter>GameObject\Component\MeshRenderer</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>GameObject\Component\Transform</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>GameObject\Component\Camera</Filter>
@@ -264,6 +255,18 @@
     <ClCompile Include="Light.cpp">
       <Filter>GameObject\Component\Light</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>GameObject\Component\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>GameObject\Component</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine.h">
@@ -308,23 +311,11 @@
     <ClInclude Include="Material.h">
       <Filter>Resource\Material</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Manager\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>GameObject\Component</Filter>
-    </ClInclude>
     <ClInclude Include="MonoBehaviour.h">
       <Filter>GameObject\Component\MonoBehaviour</Filter>
     </ClInclude>
     <ClInclude Include="MeshRenderer.h">
       <Filter>GameObject\Component\MeshRenderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>GameObject\Component\Transform</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>GameObject\Component\Camera</Filter>
@@ -394,6 +385,21 @@
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>GameObject\Component\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Struct.h">
+      <Filter>Utils\96. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Manager\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>GameObject\Component\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>GameObject\Component</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

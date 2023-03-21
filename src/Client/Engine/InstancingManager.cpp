@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "InstancingManager.h"
 #include "InstancingBuffer.h"
 #include "GameObject.h"
@@ -6,11 +6,11 @@
 #include "Transform.h"
 #include "Camera.h"
 
-void InstancingManager::Render(vector<shared_ptr<GameObject>>& gameObjects)
+void InstancingManager::Render(vector<shared_ptr<CGameObject>>& gameObjects)
 {
-	map<uint64, vector<shared_ptr<GameObject>>> cache;
+	map<uint64, vector<shared_ptr<CGameObject>>> cache;
 
-	for (shared_ptr<GameObject>& gameObject : gameObjects)
+	for (shared_ptr<CGameObject>& gameObject : gameObjects)
 	{
 		const uint64 instanceId = gameObject->GetMeshRenderer()->GetInstanceID();
 		cache[instanceId].push_back(gameObject);
@@ -18,7 +18,7 @@ void InstancingManager::Render(vector<shared_ptr<GameObject>>& gameObjects)
 
 	for (auto& pair : cache)
 	{
-		const vector<shared_ptr<GameObject>>& vec = pair.second;
+		const vector<shared_ptr<CGameObject>>& vec = pair.second;
 
 		if (vec.size() == 1)
 		{
@@ -28,7 +28,7 @@ void InstancingManager::Render(vector<shared_ptr<GameObject>>& gameObjects)
 		{
 			const uint64 instanceId = pair.first;
 
-			for (const shared_ptr<GameObject>& gameObject : vec)
+			for (const shared_ptr<CGameObject>& gameObject : vec)
 			{
 				InstancingParams params;
 				params.matWorld = gameObject->GetTransform()->GetLocalToWorldMatrix();

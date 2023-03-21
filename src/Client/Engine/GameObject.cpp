@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GameObject.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
@@ -10,17 +10,17 @@
 #include "BaseCollider.h"
 #include "Animator.h"
 
-GameObject::GameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
+CGameObject::CGameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 {
 
 }
 
-GameObject::~GameObject()
+CGameObject::~CGameObject()
 {
 
 }
 
-void GameObject::Awake()
+void CGameObject::Awake()
 {
 	for (shared_ptr<Component>& component : m_components)
 	{
@@ -34,7 +34,7 @@ void GameObject::Awake()
 	}
 }
 
-void GameObject::Start()
+void CGameObject::Start()
 {
 	for (shared_ptr<Component>& component : m_components)
 	{
@@ -48,7 +48,7 @@ void GameObject::Start()
 	}
 }
 
-void GameObject::Update()
+void CGameObject::Update()
 {
 	for (shared_ptr<Component>& component : m_components)
 	{
@@ -62,7 +62,7 @@ void GameObject::Update()
 	}
 }
 
-void GameObject::LateUpdate()
+void CGameObject::LateUpdate()
 {
 	for (shared_ptr<Component>& component : m_components)
 	{
@@ -76,7 +76,7 @@ void GameObject::LateUpdate()
 	}
 }
 
-void GameObject::FinalUpdate()
+void CGameObject::FinalUpdate()
 {
 	for (shared_ptr<Component>& component : m_components)
 	{
@@ -85,62 +85,62 @@ void GameObject::FinalUpdate()
 	}
 }
 
-shared_ptr<Component> GameObject::GetFixedComponent(COMPONENT_TYPE type)
+shared_ptr<Component> CGameObject::GetFixedComponent(COMPONENT_TYPE type)
 {
 	uint8 index = static_cast<uint8>(type);
 	assert(index < FIXED_COMPONENT_COUNT);
 	return m_components[index];
 }
 
-shared_ptr<Transform> GameObject::GetTransform()
+shared_ptr<Transform> CGameObject::GetTransform()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::TRANSFORM);
 	return static_pointer_cast<Transform>(component);
 }
 
-shared_ptr<MeshRenderer> GameObject::GetMeshRenderer()
+shared_ptr<MeshRenderer> CGameObject::GetMeshRenderer()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::MESH_RENDERER);
 	return static_pointer_cast<MeshRenderer>(component);
 }
 
-shared_ptr<Camera> GameObject::GetCamera()
+shared_ptr<Camera> CGameObject::GetCamera()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::CAMERA);
 	return static_pointer_cast<Camera>(component);
 }
 
-shared_ptr<Light> GameObject::GetLight()
+shared_ptr<Light> CGameObject::GetLight()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::LIGHT);
 	return static_pointer_cast<Light>(component);
 }
 
-shared_ptr<ParticleSystem> GameObject::GetParticleSystem()
+shared_ptr<ParticleSystem> CGameObject::GetParticleSystem()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::PARTICLE_SYSTEM);
 	return static_pointer_cast<ParticleSystem>(component);
 }
 
-shared_ptr<Terrain> GameObject::GetTerrain()
+shared_ptr<Terrain> CGameObject::GetTerrain()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::TERRAIN);
 	return static_pointer_cast<Terrain>(component);
 }
 
-shared_ptr<BaseCollider> GameObject::GetCollider()
+shared_ptr<BaseCollider> CGameObject::GetCollider()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::COLLIDER);
 	return static_pointer_cast<BaseCollider>(component);
 }
 
-shared_ptr<Animator> GameObject::GetAnimator()
+shared_ptr<Animator> CGameObject::GetAnimator()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::ANIMATOR);
 	return static_pointer_cast<Animator>(component);
 }
 
-void GameObject::AddComponent(shared_ptr<Component> component)
+void CGameObject::AddComponent(shared_ptr<Component> component)
 {
 	component->SetGameObject(shared_from_this());
 

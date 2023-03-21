@@ -65,10 +65,10 @@ private:
 	uint32 m_cullingMask = 0;
 
 private:
-	vector<shared_ptr<GameObject>>	m_vecDeferred;
-	vector<shared_ptr<GameObject>>	m_vecForward;
-	vector<shared_ptr<GameObject>>	m_vecParticle;
-	vector<shared_ptr<GameObject>>	m_vecShadow;
+	vector<shared_ptr<CGameObject>>	m_vecDeferred;
+	vector<shared_ptr<CGameObject>>	m_vecForward;
+	vector<shared_ptr<CGameObject>>	m_vecParticle;
+	vector<shared_ptr<CGameObject>>	m_vecShadow;
 
 public:
 	// TEMP

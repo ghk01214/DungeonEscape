@@ -15,7 +15,7 @@ public:
 	void SetLayerName(uint8 index, const wstring& name);
 	const wstring& IndexToLayerName(uint8 index);
 	uint8 LayerNameToIndex(const wstring& name);
-	shared_ptr<class GameObject> Pick(int32 screenX, int32 screenY);
+	shared_ptr<class CGameObject> Pick(int32 screenX, int32 screenY);
 	shared_ptr<CScene> GetActiveScene();
 
 

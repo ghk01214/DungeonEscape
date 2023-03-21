@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MeshData.h"
 #include "FBXLoader.h"
 #include "Mesh.h"
@@ -18,10 +18,14 @@ MeshData::~MeshData()
 
 shared_ptr<MeshData> MeshData::LoadFromFBX(const wstring& path)
 {
+	// 해당 경로에 bin파일이 존재한다면 해당 파일을 로드
+
+
+	// bin파일이 존재하지 않는다면 기존 방식으로 로드
+	shared_ptr<MeshData> meshData = make_shared<MeshData>();
+
 	FBXLoader loader;
 	loader.LoadFbx(path);
-
-	shared_ptr<MeshData> meshData = make_shared<MeshData>();
 
 	for (int32 i = 0; i < loader.GetMeshCount(); i++)
 	{
@@ -29,7 +33,7 @@ shared_ptr<MeshData> MeshData::LoadFromFBX(const wstring& path)
 
 		GET_SINGLE(Resources)->Add<Mesh>(mesh->GetName(), mesh);
 
-		// Material ã�Ƽ� ����
+		// Material 찾아서 연동
 		vector<shared_ptr<Material>> materials;
 		for (size_t j = 0; j < loader.GetMesh(i).materials.size(); j++)
 		{
@@ -53,16 +57,19 @@ void MeshData::Load(const wstring& _strFilePath)
 
 void MeshData::Save(const wstring& _strFilePath)
 {
-	// TODO
+	// m_meshRenders에 있는 정보를 save
+
+	// 우선 경로를 만든다. 인자로 받은 경로(_strFilePath)에 
+	//wstring fullPath = m_resourceDirectory + L"\\" + filename;
 }
 
-vector<shared_ptr<GameObject>> MeshData::Instantiate()
+vector<shared_ptr<CGameObject>> MeshData::Instantiate()
 {
-	vector<shared_ptr<GameObject>> v;
+	vector<shared_ptr<CGameObject>> v;
 
 	for (MeshRenderInfo& info : m_meshRenders)
 	{
-		shared_ptr<GameObject> gameObject = make_shared<GameObject>();
+		shared_ptr<CGameObject> gameObject = make_shared<CGameObject>();
 		gameObject->AddComponent(make_shared<Transform>());
 		gameObject->AddComponent(make_shared<MeshRenderer>());
 		gameObject->GetMeshRenderer()->SetMesh(info.mesh);

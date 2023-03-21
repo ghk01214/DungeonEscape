@@ -96,7 +96,7 @@ shared_ptr<T> Resources::Get(const wstring& key)
 template<typename T>
 inline OBJECT_TYPE Resources::GetObjectType()
 {
-	if (std::is_same_v<T, GameObject>)
+	if (std::is_same_v<T, CGameObject>)
 		return OBJECT_TYPE::GAMEOBJECT;
 	else if (std::is_same_v<T, Material>)
 		return OBJECT_TYPE::MATERIAL;

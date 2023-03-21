@@ -13,7 +13,7 @@ Component::~Component()
 {
 }
 
-shared_ptr<GameObject> Component::GetGameObject()
+shared_ptr<CGameObject> Component::GetGameObject()
 {
 	return m_gameObject.lock();
 }
