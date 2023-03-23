@@ -164,11 +164,11 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 
 		auto gameObject = CreateObject(objectDesc);
 
-		//// 네트워크 추가 예시
-		//for (auto& Object : gameObject)
-		//{
-		//	Object->AddComponent(std::make_shared<CNetwork>());
-		//}
+		// 네트워크 추가 예시
+		for (auto& Object : gameObject)
+		{
+			Object->AddComponent(std::make_shared<CNetwork>());
+		}
 
 		scene->AddSceneObject(gameObject);
 		scene->AddSceneObject(gameObject);

@@ -12,6 +12,8 @@
 #include <GameObject.h>
 #include <Transform.h>
 
+#include <Network.h>
+
 void Monster_Dragon::Update(void)
 {
 	if (INPUT->GetButtonDown(KEY_TYPE::KEY_1))

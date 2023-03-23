@@ -8,7 +8,7 @@ void NetworkManager::Update()
 {
 }
 
-void NetworkManager::RegiserObject(std::shared_ptr<CGameObject> object)
+void NetworkManager::RegisterObject(std::shared_ptr<CGameObject> object)
 {
 	// 해당 오브젝트가 기존에 존재하는 오브젝트인지 검사
 	// 초기값인 -1이 아니라면 등록됬다는 뜻
