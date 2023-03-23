@@ -184,6 +184,8 @@ public:								\
 
 #define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
 
+#define	MSG_BOX(_message) MessageBox(nullptr, _message, L"System Message", MB_OK)
+
 struct TransformParams
 {
 	Matrix matWorld;

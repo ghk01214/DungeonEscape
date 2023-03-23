@@ -139,6 +139,12 @@
     <Filter Include="Utils\96. Defines">
       <UniqueIdentifier>{13ec35ec-27be-44c7-84b1-4973a9b88aa7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Component\Network">
+      <UniqueIdentifier>{f25af743-fb67-401f-86b2-7f343e6be863}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Network">
+      <UniqueIdentifier>{bb966bc9-a312-4039-8ad7-a80ce4582e28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -266,6 +272,12 @@
     </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>GameObject\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="CNetwork.cpp">
+      <Filter>GameObject\Component\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkManager.cpp">
+      <Filter>Manager\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -400,6 +412,12 @@
     </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>GameObject\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="CNetwork.h">
+      <Filter>GameObject\Component\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkManager.h">
+      <Filter>Manager\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

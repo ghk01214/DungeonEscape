@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MeshRenderer.h"
 #include "Mesh.h"
 #include "Material.h"
@@ -41,6 +41,10 @@ void MeshRenderer::Render()
 			GetAnimator()->PushData();
 			material->SetInt(1, 1);
 		}
+		else
+		{
+			material->SetInt(1, 0);
+		}
 
 		material->PushGraphicsData();
 		m_mesh->Render(1, i);
@@ -62,6 +66,10 @@ void MeshRenderer::Render(shared_ptr<InstancingBuffer>& buffer)
 		{
 			GetAnimator()->PushData();
 			material->SetInt(1, 1);
+		}
+		else
+		{
+			material->SetInt(1, 0);
 		}
 
 		material->PushGraphicsData();

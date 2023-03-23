@@ -9,6 +9,7 @@
 #include "Terrain.h"
 #include "BaseCollider.h"
 #include "Animator.h"
+#include "CNetwork.h"
 
 CGameObject::CGameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 {
@@ -140,8 +141,17 @@ shared_ptr<Animator> CGameObject::GetAnimator()
 	return static_pointer_cast<Animator>(component);
 }
 
+shared_ptr<CNetwork> CGameObject::GetNetwork()
+{
+	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::NETWORK);
+	return static_pointer_cast<CNetwork>(component);
+}
+
 void CGameObject::AddComponent(shared_ptr<Component> component)
 {
+	if (nullptr == component)
+		return;
+
 	component->SetGameObject(shared_from_this());
 
 	uint8 index = static_cast<uint8>(component->GetType());

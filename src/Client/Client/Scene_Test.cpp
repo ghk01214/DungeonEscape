@@ -11,6 +11,7 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "Light.h"
+#include "../Engine/CNetwork.h"
 
 #include "TestCameraScript.h"
 #include "Resources.h"
@@ -157,10 +158,16 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 		objectDesc.strName = L"Moon";
 		objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
 		objectDesc.vPostion = Vec3(0.f, 0.f, 300.f);
-		objectDesc.vScale = Vec3(70.f, 70.f, 70.f);
-		objectDesc.script = make_shared<Monster_Dragon>();
+		objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
+		objectDesc.script = nullptr;// make_shared<Monster_Dragon>();
 
 		auto gameObject = CreateObject(objectDesc);
+
+		//// 네트워크 추가 예시
+		//for (auto& Object : gameObject)
+		//{
+		//	Object->AddComponent(std::make_shared<CNetwork>());
+		//}
 
 		scene->AddSceneObject(gameObject);
 	}
