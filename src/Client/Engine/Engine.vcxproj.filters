@@ -273,7 +273,7 @@
     <ClCompile Include="Component.cpp">
       <Filter>GameObject\Component</Filter>
     </ClCompile>
-    <ClCompile Include="CNetwork.cpp">
+    <ClCompile Include="Network.cpp">
       <Filter>GameObject\Component\Network</Filter>
     </ClCompile>
     <ClCompile Include="NetworkManager.cpp">
@@ -413,7 +413,7 @@
     <ClInclude Include="Component.h">
       <Filter>GameObject\Component</Filter>
     </ClInclude>
-    <ClInclude Include="CNetwork.h">
+    <ClInclude Include="Network.h">
       <Filter>GameObject\Component\Network</Filter>
     </ClInclude>
     <ClInclude Include="NetworkManager.h">
