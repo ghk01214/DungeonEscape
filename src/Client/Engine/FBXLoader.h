@@ -82,12 +82,25 @@ public:
 
 public:
 	void LoadFbx(const wstring& path);
+	void LoadFbxFromBinary(const wstring& path);
+	void SaveFbxBinary(const wstring& path);
+
+private:
+	std::wstring makeBinaryFilePath(const wstring& path);
+
+private:
+	template<typename T>
+	void saveVecData(HANDLE hFile, vector<T>& data, uint32 dataCount);
+	void saveData(HANDLE hFile, void* data, uint32 dataSize, uint32 dataCount);
+	void saveString(HANDLE hFile, const wstring& str);
+	void saveNumber(HANDLE hFile, uint32 number);
 
 public:
-	int32 GetMeshCount() { return static_cast<int32>(m_meshes.size()); }
-	const FbxMeshInfo& GetMesh(int32 idx) { return m_meshes[idx]; }
-	vector<shared_ptr<FbxBoneInfo>>& GetBones() { return m_bones; }
-	vector<shared_ptr<FbxAnimClipInfo>>& GetAnimClip() { return m_animClips; }
+	int32 GetMeshCount() { return static_cast<int32>(_meshes.size()); }
+	const FbxMeshInfo& GetMesh(int32 idx) { return _meshes[idx]; }
+
+	vector<shared_ptr<FbxBoneInfo>>& GetBones() { return _bones; }
+	vector<shared_ptr<FbxAnimClipInfo>>& GetAnimClip() { return _animClips; }
 private:
 	void Import(const wstring& path);
 
@@ -120,13 +133,24 @@ private:
 	void FillBoneWeight(FbxMesh* mesh, FbxMeshInfo* meshInfo);
 
 private:
-	FbxManager* m_manager = nullptr;
-	FbxScene* m_scene = nullptr;
-	FbxImporter* m_importer = nullptr;
-	wstring			m_resourceDirectory;
+	FbxManager* _manager = nullptr;
+	FbxScene* _scene = nullptr;
+	FbxImporter* _importer = nullptr;
+	wstring			_resourceDirectory;
 
-	vector<FbxMeshInfo>					m_meshes;
-	vector<shared_ptr<FbxBoneInfo>>		m_bones;
-	vector<shared_ptr<FbxAnimClipInfo>>	m_animClips;
-	FbxArray<FbxString*>				m_animNames;
+	vector<FbxMeshInfo>					_meshes;
+	vector<shared_ptr<FbxBoneInfo>>		_bones;
+	vector<shared_ptr<FbxAnimClipInfo>>	_animClips;
+	FbxArray<FbxString*>				_animNames;
+
+	wstring			m_binaryFilePath;
 };
+
+template<typename T>
+inline void FBXLoader::saveVecData(HANDLE hFile, vector<T>& data, uint32 dataCount)
+{
+	DWORD		dwByte = 0;
+
+	WriteFile(hFile, &dataCount, sizeof(uint32), &dwByte, NULL);
+	WriteFile(hFile, data.data(), sizeof(T) * dataCount, &dwByte, NULL);
+}

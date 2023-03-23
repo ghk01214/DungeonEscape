@@ -163,14 +163,21 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 		objectDesc.script = nullptr;// make_shared<Monster_Dragon>();
 
 		auto gameObject = CreateObject(objectDesc);
-
 		// 네트워크 추가 예시
 		for (auto& Object : gameObject)
 		{
 			Object->AddComponent(std::make_shared<CNetwork>());
 		}
-
 		scene->AddSceneObject(gameObject);
+
+
+
+		gameObject = CreateObject(objectDesc);
+		// 네트워크 추가 예시
+		for (auto& Object : gameObject)
+		{
+			Object->AddComponent(std::make_shared<CNetwork>());
+		}
 		scene->AddSceneObject(gameObject);
 	}
 #pragma endregion
