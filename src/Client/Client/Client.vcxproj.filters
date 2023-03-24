@@ -33,23 +33,11 @@
     <Filter Include="소스 파일\Script\04. Player">
       <UniqueIdentifier>{e490753e-6dfd-468e-bcb5-3817822b76f9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Utils\Network">
-      <UniqueIdentifier>{32fdfdc9-bdfa-4e6c-91e2-d1874d1ea533}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Utils\Client">
       <UniqueIdentifier>{723faaeb-7158-4061-97a3-d0e36878d6a2}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\Utils\pch">
       <UniqueIdentifier>{1dd5411e-af12-4be8-9197-d747ef6b4f76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Utils\Network\OVERLAPPEDEX">
-      <UniqueIdentifier>{ab1c5702-a599-4f5e-a21b-42bf03298504}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Utils\Network\Packet">
-      <UniqueIdentifier>{9aee3fa1-8b63-4a52-a588-5ed993bd46d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Utils\Network\Protocol">
-      <UniqueIdentifier>{616b9051-69ef-4171-b490-d0852aa1c5ec}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\Game\Network">
       <UniqueIdentifier>{00ce23e1-384a-437b-9b7a-8bdff418c093}</UniqueIdentifier>
@@ -80,20 +68,11 @@
     <ClInclude Include="pch.h">
       <Filter>소스 파일\Utils\pch</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\vendor\include\protocol.hpp">
-      <Filter>소스 파일\Utils\Network\Protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\vendor\include\OVERLAPPEDEX.h">
-      <Filter>소스 파일\Utils\Network\OVERLAPPEDEX</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\vendor\include\Define.h">
       <Filter>소스 파일\Utils\pch</Filter>
     </ClInclude>
     <ClInclude Include="Network.h">
       <Filter>소스 파일\Game\Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\vendor\include\Packet.h">
-      <Filter>소스 파일\Utils\Network\Packet</Filter>
     </ClInclude>
     <ClInclude Include="Scene_Test.h">
       <Filter>소스 파일\Script\00. Scene</Filter>
@@ -128,14 +107,8 @@
     <ClCompile Include="pch.cpp">
       <Filter>소스 파일\Utils\pch</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\vendor\include\OVERLAPPEDEX.cpp">
-      <Filter>소스 파일\Utils\Network\OVERLAPPEDEX</Filter>
-    </ClCompile>
     <ClCompile Include="Network.cpp">
       <Filter>소스 파일\Game\Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\vendor\include\Packet.cpp">
-      <Filter>소스 파일\Utils\Network\Packet</Filter>
     </ClCompile>
     <ClCompile Include="Scene_Test.cpp">
       <Filter>소스 파일\Script\00. Scene</Filter>

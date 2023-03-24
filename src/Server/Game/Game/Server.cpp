@@ -108,12 +108,12 @@ namespace game
 	void CServer::WorkerThread()
 	{
 		DWORD bytes;
-		ULONG_PTR id;
+		ULONG_PTR clientID;
 		network::OVERLAPPEDEX* pOverEx{ nullptr };
 
 		while (true)
 		{
-			if (GetQueuedCompletionStatus(m_iocp, &bytes, &id, reinterpret_cast<LPOVERLAPPED*>(&pOverEx), INFINITE) == FALSE)
+			if (GetQueuedCompletionStatus(m_iocp, &bytes, &clientID, reinterpret_cast<LPOVERLAPPED*>(&pOverEx), INFINITE) == FALSE)
 			{
 				if (pOverEx->type == network::COMPLETION::ACCEPT)
 				{
@@ -121,8 +121,8 @@ namespace game
 				}
 				else
 				{
-					ErrorDisplay(L"GQCS Error on client[" + std::to_wstring(id) + L"]");
-					Disconnect(id);
+					ErrorDisplay(L"GQCS Error on client[" + std::to_wstring(clientID) + L"]");
+					Disconnect(static_cast<uint32_t>(clientID));
 
 					if (pOverEx->type == network::COMPLETION::SEND)
 					{
@@ -133,6 +133,8 @@ namespace game
 					continue;
 				}
 			}
+
+			uint32_t id{ static_cast<uint32_t>(clientID) };
 
 			switch (pOverEx->type)
 			{
@@ -185,7 +187,7 @@ namespace game
 		AcceptEx(m_socket, clientSocket, pOverEx->data, 0, sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, 0, &pOverEx->over);
 	}
 
-	void CServer::Recv(ULONG_PTR id, DWORD bytes, network::OVERLAPPEDEX* pOverEx)
+	void CServer::Recv(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx)
 	{
 		if (bytes == 0)
 		{
@@ -199,6 +201,7 @@ namespace game
 		char* pPacket{ pOverEx->data };
 		network::CPacket packet{};
 		packet.SetData(pPacket);
+		//packet.ReadSize();
 
 		while (remainSize > 0)
 		{
@@ -224,7 +227,7 @@ namespace game
 		m_sessions[id]->Recv();
 	}
 
-	void CServer::Send(ULONG_PTR id, DWORD bytes, network::OVERLAPPEDEX* pOverEx)
+	void CServer::Send(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx)
 	{
 		if (bytes == 0)
 		{
@@ -264,7 +267,7 @@ namespace game
 		}
 	}
 
-	void CServer::Disconnect(ULONG_PTR id)
+	void CServer::Disconnect(uint32_t id)
 	{
 		if (m_sessions[id]->GetState() == STATE::FREE)
 		{
@@ -278,42 +281,76 @@ namespace game
 		std::cout << std::format("session[{}] disconnected\n", id);
 	}
 
-	void CServer::ProcessPacket(ULONG_PTR id, network::CPacket& packet)
+	void CServer::ProcessPacket(uint32_t id, network::CPacket& packet)
 	{
 		// 프로토콜 종류 읽기
-		ProtocolID packetType{ packet.Read<ProtocolID>() };
+		ProtocolID protocol{ packet.ReadProtocol() };
 
 		// 프로토콜의 범위에 따라서 1차적으로 패킷의 종류를 구분하여
 		// 패킷 종류에 맞는 프로세스로 이동
-		if (ProtocolID::PROTOCOL_AU_BEGIN <= packetType and
-			packetType < ProtocolID::PROTOCOL_MY_BEGIN)
+		if (ProtocolID::PROTOCOL_AU_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_AU_END)
 		{
 			// 인증 프로토콜의 패킷 프로세스 처리
-			ProcessAUPacket(id, packet, packetType);
+			ProcessAUPacket(id, packet, protocol);
 		}
-		else if (ProtocolID::PROTOCOL_MY_BEGIN <= packetType and
-				 packetType < ProtocolID::PROTOCOL_WR_BEGIN)
+		else if (ProtocolID::PROTOCOL_MY_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_MY_END)
 		{
 			// 플레이어 프로토콜의 패킷 프로세스 처리
-			ProcessMYPacket(id, packet, packetType);
+			ProcessMYPacket(id, packet, protocol);
 		}
-		else if (ProtocolID::PROTOCOL_WR_BEGIN <= packetType and
-				 packetType < ProtocolID::PROTOCOL_BATTLE_BEGIN)
+		else if (ProtocolID::PROTOCOL_WR_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_WR_END)
 		{
-			// 플레이어 프로토콜의 패킷 프로세스 처리
-			ProcessWRPacket(id, packet, packetType);
+			ProcessWRPacket(id, packet, protocol);
+		}
+		else if (ProtocolID::PROTOCOL_BT_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_BT_END)
+		{
+			ProcessBTPacket(id, packet, protocol);
+		}
+		else if (ProtocolID::PROTOCOL_IF_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_IF_END)
+		{
+			ProcessWRPacket(id, packet, protocol);
+		}
+		else if (ProtocolID::PROTOCOL_IT_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_IT_END)
+		{
+			ProcessWRPacket(id, packet, protocol);
+		}
+		else if (ProtocolID::PROTOCOL_CM_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_CM_END)
+		{
+			ProcessWRPacket(id, packet, protocol);
+		}
+		else if (ProtocolID::PROTOCOL_EC_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_EC_END)
+		{
+			ProcessWRPacket(id, packet, protocol);
+		}
+		else if (ProtocolID::PROTOCOL_GM_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_GM_END)
+		{
+			ProcessWRPacket(id, packet, protocol);
+		}
+		else if (ProtocolID::PROTOCOL_TT_BEGIN <= protocol and
+			protocol < ProtocolID::PROTOCOL_TT_END)
+		{
+			ProcessWRPacket(id, packet, protocol);
 		}
 	}
 
-	void CServer::ProcessAUPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
+	void CServer::ProcessAUPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
-		switch (type)
+		switch (protocol)
 		{
 			case ProtocolID::AU_LOGIN_REQ:
 			{
 				Login(id, packet);
 
-				std::cout << std::format("Login Complete\n");
+				std::cout << std::format("session[{}] login Complete\n", id);
 			}
 			break;
 			default:
@@ -321,17 +358,14 @@ namespace game
 		}
 	}
 
-	void CServer::ProcessMYPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
+	void CServer::ProcessMYPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		auto session{ m_sessions[id] };
 
-		switch (type)
+		switch (protocol)
 		{
 			case ProtocolID::MY_MOVE_REQ:
 			{
-				Accessor<uint16_t, CObject*> access;
-				int32_t targetID{ packet.ReadID() };
-
 				// 세션의 델타 타임 읽기
 				float deltaTime{ packet.Read<float>() };
 				// 타깃의 이동방향 읽기
@@ -353,8 +387,6 @@ namespace game
 			break;
 			case ProtocolID::MY_ROTATE_REQ:
 			{
-				Accessor<uint16_t, CObject*> access;
-
 				// 세션의 델타 타임 읽기
 				float deltaTime{ packet.Read<float>() };
 				// 타깃의 회전방향 읽기
@@ -373,16 +405,29 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::MY_ANI_REQ:
+			{
+				int32_t index{ packet.Read<int32_t>() };
+
+				for (auto& player : m_sessions)
+				{
+					if (player->GetID() == id)
+						continue;
+
+					player->SendAniIndexPacket(id, ProtocolID::WR_ANI_ACK, session->GetMyObject());
+				}
+			}
+			break;
 			default:
 			break;
 		}
 	}
 
-	void CServer::ProcessWRPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
+	void CServer::ProcessWRPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		auto session{ m_sessions[id] };
 
-		switch (type)
+		switch (protocol)
 		{
 			case ProtocolID::WR_ADD_REQ:
 			{
@@ -399,27 +444,39 @@ namespace game
 		}
 	}
 
-	void CServer::ProcessBTPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
+	void CServer::ProcessBTPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		// TODO : 추후 전투 관련 패킷 프로세스 처리
 	}
 
-	void CServer::ProcessITPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
+	void CServer::ProcessIFPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	{
+	}
+
+	void CServer::ProcessITPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		// TODO : 추후 아이템 관련 패킷 프로세스 처리
 	}
 
-	void CServer::ProcessCMPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
+	void CServer::ProcessCMPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		// TODO : 추후 커뮤니티(eg. 채팅) 관련 패킷 프로세스 처리
 	}
 
-	void CServer::ProcessTTPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type)
+	void CServer::ProcessECPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	{
+	}
+
+	void CServer::ProcessGMPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	{
+	}
+
+	void CServer::ProcessTTPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
 	}
 
-	void CServer::Login(ULONG_PTR id, network::CPacket& packet)
+	void CServer::Login(uint32_t id, network::CPacket& packet)
 	{
 		// Access<T, U> == tbb::concurrent_hash_map<T, U>::accessor
 		// concurrent_hash_map에 접근하기 위한 일종의 shared pointer

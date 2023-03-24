@@ -11,7 +11,6 @@ namespace network
 		~CNetwork();
 
 		void Connect();
-		void ProcessThread();
 		void EndThreadProcess();
 		void WaitForThreadTermination();
 
@@ -19,8 +18,11 @@ namespace network
 		void SendLoginPacket();
 		void SendMovePacket(DIRECTION direction);
 		void SendRotationPacket(ROTATION direction);
+		void SendAniIndexPacket(int32_t index);
 #pragma endregion
 	private:
+		void ProcessThread();
+
 		void Recv();
 		void Send(network::CPacket& packet);
 
@@ -33,10 +35,18 @@ namespace network
 		void ProcessMYPacket(ProtocolID type);
 		void ProcessWRPacket(ProtocolID type);
 		void ProcessBTPacket(ProtocolID type);
+		void ProcessIFPacket(ProtocolID type);
 		void ProcessITPacket(ProtocolID type);
 		void ProcessCMPacket(ProtocolID type);
+		void ProcessECPacket(ProtocolID type);
+		void ProcessGMPacket(ProtocolID type);
 		void ProcessTTPacket(ProtocolID type);
 #pragma endregion
+
+		void AddPlayer(uint32_t id);
+		void MovePlayer(uint32_t id);
+		void RotatePlayer(uint32_t id);
+		void PlayAni(uint32_t id);
 
 	private:
 		HANDLE m_iocp;
@@ -51,9 +61,9 @@ namespace network
 		char* m_pRecvPacket;
 		network::CPacket m_packet;
 		int32_t m_remainSize;
-
-		// 임시 map
-	public:
+		
+		uint32_t m_id;
+		std::shared_ptr<CGameObject> m_myObject;
 		std::unordered_map<int32_t, int32_t> m_idMatch;	// Client_ID, 연관된 플레이어 캐릭터 index
 	};
 }

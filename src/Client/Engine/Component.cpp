@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Component.h"
 #include "GameObject.h"
 #include "MeshRenderer.h"
@@ -34,7 +34,7 @@ shared_ptr<Animator> Component::GetAnimator()
 	return m_gameObject.lock()->GetAnimator();
 }
 
-shared_ptr<CNetwork> Component::GetNetwork()
-{
-	return m_gameObject.lock()->GetNetwork();
-}
+//shared_ptr<network::CNetwork> Component::GetNetwork()
+//{
+//	return m_gameObject.lock()->GetNetwork();
+//}

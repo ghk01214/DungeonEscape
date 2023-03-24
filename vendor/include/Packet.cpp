@@ -1,4 +1,5 @@
-﻿#include "Packet.h"
+﻿#include "protocol.hpp"
+#include "Packet.h"
 
 namespace network
 {
@@ -38,21 +39,33 @@ namespace network
 	//}
 
 	// 전송 클라이언트 id 작성
-	void CPacket::WriteID(int32_t id)
+	void CPacket::WriteID(uint32_t id)
 	{
-		int32_t size{ sizeof(id) };
+		std::memcpy(m_data.data(), &id, sizeof(id));
+	}
 
-		std::memcpy(m_data.data(), &id, size);
+	void CPacket::WriteProtocol(ProtocolID protocol)
+	{
+		std::memcpy(m_data.data() + PROTOCOL_ID_OFFSET, &protocol, sizeof(protocol));
 	}
 
 	// 패킷을 전송한 클라이언트 id 읽기
-	int32_t CPacket::ReadID()
+	uint32_t CPacket::ReadID()
 	{
-		int32_t id;
+		uint32_t id;
 
 		std::memcpy(&id, m_data.data(), sizeof(id));
 
 		return id;
+	}
+
+	ProtocolID CPacket::ReadProtocol()
+	{
+		ProtocolID protocol;
+
+		std::memcpy(&protocol, m_data.data() + PROTOCOL_ID_OFFSET, sizeof(protocol));
+
+		return protocol;
 	}
 
 	// 헤더 포함 패킷 전체 사이즈 작성
@@ -60,21 +73,21 @@ namespace network
 	{
 		uint16_t totalSize{ static_cast<uint16_t>(m_size + HEADER_SIZE) };
 
-		std::memcpy(m_data.data() + PACKET_SIZE_OFFSET, &totalSize, sizeof(totalSize));
+		std::memcpy(m_data.data() + SIZE_OFFSET, &totalSize, sizeof(totalSize));
 	}
 
 	// 패킷 사이즈 읽기
 	const uint16_t CPacket::ReadSize()
 	{
-		uint16_t size;
+		std::memcpy(&m_size, m_data.data() + SIZE_OFFSET, sizeof(m_size));
 
-		std::memcpy(&size, m_data.data() + PACKET_SIZE_OFFSET, sizeof(size));
+		m_size -= HEADER_SIZE;
 
-		return size;
+		return m_size;
 	}
 
 	// 아직 사용X
-	void CPacket::SetData(int32_t id)
+	void CPacket::SetData(uint32_t id)
 	{
 		m_type = TYPE::WRITE;
 		m_size = 0;

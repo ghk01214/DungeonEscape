@@ -4,6 +4,8 @@
 #include <string>
 #include <typeinfo>
 
+enum class ProtocolID : unsigned short;
+
 namespace network
 {
 	// 패킷의 종류(아직 미사용)
@@ -35,10 +37,11 @@ namespace network
 		{
 			// 버퍼의 최대 크기는 4MB로 고정
 			BUFF_SIZE = 4096,
-			// 헤더 크기(클라이언트 id 4바이트 + 패킷 사이즈 2바이트)
-			HEADER_SIZE = 6,
+			// 헤더 크기(클라이언트 id 4바이트(int32_t) + 패킷 프로토콜 2바이트(uint16_t) + 패킷 사이즈 2바이트(uint16_t))
+			HEADER_SIZE = 8,
+			PROTOCOL_ID_OFFSET = 4,
 			// 패킷 사이즈를 작성하는 오프셋(클라이언트 id가 4바이트이니까 4로 설정)
-			PACKET_SIZE_OFFSET = 4
+			SIZE_OFFSET = 6
 		};
 	public:
 		CPacket();
@@ -47,36 +50,37 @@ namespace network
 		//bool ValidWriteSize(uint32_t size);
 		//bool ValidReadSize(uint32_t size);
 
-		void WriteID(int32_t id);
+		void WriteID(uint32_t id);
+		void WriteProtocol(ProtocolID protocol);
 		template<typename T>
 		void Write(T data) requires IsSingleVariable<T>;
 		void WriteString(const std::string& data);
 		void WriteWString(const std::wstring& data);
 		void WriteSize();
 
-		int32_t ReadID();
+		uint32_t ReadID();
+		ProtocolID ReadProtocol();
 		template<typename T>
 		T Read() requires IsSingleVariable<T>;
 		void ReadString(std::string& str);
 		void ReadWString(std::wstring& wstr);
+		const uint16_t ReadSize();
 
-		constexpr int32_t GetID() const { return m_id; }
+		constexpr uint32_t GetID() const { return m_id; }
 		constexpr uint16_t GetDataSize() const { return m_size; }
 		constexpr uint16_t GetPacketSize() const { return m_size + HEADER_SIZE; }
 		constexpr uint32_t GetRemainDataSize() const { return m_size - m_readOffset; }
 		constexpr std::array<char, BUFF_SIZE>& GetPacketData() { return m_data; }
 		char* GetPacketAddr() { return m_data.data(); }
 
-		void SetData(int32_t id);
+		void SetData(uint32_t id);
 		void SetData(char* data);
 		void SetData(std::array<char, BUFF_SIZE>::iterator recvIter, int32_t recvDataSize, int32_t prevSize);
-	private:
-		const uint16_t ReadSize();
 
 	private:
 		uint16_t m_size;		// Header를 제외한 데이터만의 크기
 		TYPE m_type;
-		int32_t m_id;
+		uint32_t m_id;
 
 		std::array<char, BUFF_SIZE> m_data;
 		uint32_t m_readOffset;

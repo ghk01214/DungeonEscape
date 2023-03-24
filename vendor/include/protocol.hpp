@@ -24,20 +24,27 @@ enum class ProtocolID : unsigned short
 
 	AU_LOGIN_REQ,
 	AU_LOGIN_ACK,
+
+	PROTOCOL_AU_END = ProtocolBase::PROTOCOL_OFFSET_MY,
 #pragma endregion
 
 #pragma region [MY]
-	PROTOCOL_MY_BEGIN = ProtocolBase::PROTOCOL_OFFSET_MY,
+	PROTOCOL_MY_BEGIN = PROTOCOL_AU_END,
 
 	MY_MOVE_REQ,	// 플레이어 이동 요청
 	MY_MOVE_ACK,	// 플레이어 이동 응답
 
 	MY_ROTATE_REQ,	// 플레이어 회전 요청
 	MY_ROTATE_ACK,	// 플레이어 회전 응답
+
+	MY_ANI_REQ,
+	MY_ANI_ACK,
+
+	PROTOCOL_MY_END = ProtocolBase::PROTOCOL_OFFSET_WR,
 #pragma endregion
 
 #pragma region [WORLD]
-	PROTOCOL_WR_BEGIN = ProtocolBase::PROTOCOL_OFFSET_WR,
+	PROTOCOL_WR_BEGIN = PROTOCOL_MY_END,
 
 	WR_ADD_REQ,		// 오브젝트 추가 요청
 	WR_ADD_ACK,		// 오브젝트 추가 응답
@@ -50,33 +57,46 @@ enum class ProtocolID : unsigned short
 
 	WR_ROTATE_REQ,
 	WR_ROTATE_ACK,
+
+	WR_ANI_REQ,
+	WR_ANI_ACK,
+
+	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion
 
 #pragma region [BATTLE]
-	PROTOCOL_BATTLE_BEGIN = ProtocolBase::PROTOCOL_OFFSET_BT,
+	PROTOCOL_BT_BEGIN = PROTOCOL_WR_END,
+
+	PROTOCOL_BT_END = ProtocolBase::PROTOCOL_OFFSET_IF,
 #pragma endregion
 
 #pragma region [INFORMATION]
-	PROTOCOL_INFORMATION_BEGIN = ProtocolBase::PROTOCOL_OFFSET_IF,
+	PROTOCOL_IF_BEGIN = PROTOCOL_BT_END,
+	PROTOCOL_IF_END = ProtocolBase::PROTOCOL_OFFSET_IT,
 #pragma endregion
 
 #pragma region [ITEM]
-	PROTOCOL_ITEM_BEGIN = ProtocolBase::PROTOCOL_OFFSET_IT,
+	PROTOCOL_IT_BEGIN = PROTOCOL_IF_END,
+	PROTOCOL_IT_END = ProtocolBase::PROTOCOL_OFFSET_CM,
 #pragma endregion
 
 #pragma region [COMMUNITY]
-	PROTOCOL_COMMUNITY_BEGIN = ProtocolBase::PROTOCOL_OFFSET_CM,
+	PROTOCOL_CM_BEGIN = PROTOCOL_IT_END,
+	PROTOCOL_CM_END = ProtocolBase::PROTOCOL_OFFSET_EC,
 #pragma endregion
 
 #pragma region [ECONOMY]
-	PROTOCOL_ECONOMY_BEGIN = ProtocolBase::PROTOCOL_OFFSET_EC,
+	PROTOCOL_EC_BEGIN = PROTOCOL_CM_END,
+	PROTOCOL_EC_END = ProtocolBase::PROTOCOL_OFFSET_GM,
 #pragma endregion
 
 #pragma region [GAME MASTER]
-	PROTOCOL_GAME_MASTER_BEGIN = ProtocolBase::PROTOCOL_OFFSET_GM,
+	PROTOCOL_GM_BEGIN = PROTOCOL_EC_END,
+	PROTOCOL_GM_END = ProtocolBase::PROTOCOL_OFFSET_GM,
 #pragma endregion
 
 #pragma region [TEST]
-	PROTOCOL_TEST_BEGIN = ProtocolBase::PROTOCOL_OFFSET_TT,
+	PROTOCOL_TT_BEGIN = PROTOCOL_GM_END,
+	PROTOCOL_TT_END
 #pragma endregion
 };

@@ -1,13 +1,16 @@
 ﻿#include "pch.h"
-#include <GameObject.h>
 #include "Network.h"
+
 #include <SceneManager.h>
 #include <Scene.h>
+#include <GameObject.h>
 #include <Transform.h>
 #include <Timer.h>
 #include <Resources.h>
-
 #include <MeshData.h>
+#include <Animator.h>
+#include <MeshRenderer.h>
+
 #include "Monster_Script.h"
 
 namespace network
@@ -18,7 +21,9 @@ namespace network
 		m_socket{ INVALID_SOCKET },
 		m_serverKey{ 99999 },
 		m_pRecvPacket{ nullptr },
-		m_remainSize{ 0 }
+		m_remainSize{ 0 },
+		m_id{ 0 },
+		m_myObject{ nullptr }
 	{
 	}
 
@@ -62,6 +67,21 @@ namespace network
 		m_networkThread = std::thread{ &CNetwork::ProcessThread, this }; 
 	}
 
+	void CNetwork::EndThreadProcess()
+	{
+		// 스레드 종료를 위한 QUIT 명령을 PQCS로 작업 예약
+		OVERLAPPEDEX overEx{ network::COMPLETION::QUIT };
+
+		PostQueuedCompletionStatus(m_iocp, 1, m_serverKey, &overEx.over);
+	}
+
+	void CNetwork::WaitForThreadTermination()
+	{
+		m_networkThread.join();
+	}
+#pragma endregion
+
+#pragma region [PRIVATE]
 	void CNetwork::ProcessThread()
 	{
 		DWORD bytes;
@@ -98,21 +118,6 @@ namespace network
 		}
 	}
 
-	void CNetwork::EndThreadProcess()
-	{
-		// 스레드 종료를 위한 QUIT 명령을 PQCS로 작업 예약
-		OVERLAPPEDEX overEx{ network::COMPLETION::QUIT };
-
-		PostQueuedCompletionStatus(m_iocp, 1, m_serverKey, &overEx.over);
-	}
-
-	void CNetwork::WaitForThreadTermination()
-	{
-		m_networkThread.join();
-	}
-#pragma endregion
-
-#pragma region [PRIVATE]
 	void CNetwork::Recv()
 	{
 		DWORD flag{};
@@ -184,19 +189,9 @@ namespace network
 		auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
 
 		// 프로토콜 종류 작성
-		packet.Write<ProtocolID>(ProtocolID::AU_LOGIN_REQ);
+		packet.WriteProtocol(ProtocolID::AU_LOGIN_REQ);
 		// 델타 타임 작성
 		packet.Write<float>(DELTA_TIME);
-		// 전체 오브젝트 개수 작성
-		//packet.Write<uint16_t>(1);
-
-		// 각 오브젝트의 인덱스와 좌표, 회전각 작성
-		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalPosition().x);
-		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalPosition().y);
-		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalPosition().z);
-		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalRotation().x);
-		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalRotation().y);
-		//packet.Write<float>(gameObjects.back()->GetTransform()->GetLocalRotation().z);
 
 		// 패킷 전송
 		Send(packet);
@@ -208,7 +203,7 @@ namespace network
 		network::CPacket packet;
 
 		// 프로토콜 종류 작성
-		packet.Write<ProtocolID>(ProtocolID::MY_MOVE_REQ);
+		packet.WriteProtocol(ProtocolID::MY_MOVE_REQ);
 		// 델타 타임 작성
 		packet.Write<float>(DELTA_TIME);
 		// 오브젝트 이동방향 작성
@@ -223,7 +218,7 @@ namespace network
 		network::CPacket packet;
 
 		// 프로토콜 종류 작성
-		packet.Write<ProtocolID>(ProtocolID::MY_ROTATE_REQ);
+		packet.WriteProtocol(ProtocolID::MY_ROTATE_REQ);
 		// 델타 타임 작성
 		packet.Write<float>(DELTA_TIME);
 		// 오브젝트 회전방향 작성
@@ -232,30 +227,76 @@ namespace network
 		// 패킷 전송
 		Send(packet);
 	}
+
+	void CNetwork::SendAniIndexPacket(int32_t index)
+	{
+		network::CPacket packet;
+
+		packet.WriteProtocol(ProtocolID::MY_ANI_REQ);
+		//packet.Write<float>(DELTA_TIME);
+		packet.Write<int32_t>(index);
+
+		Send(packet);
+	}
 #pragma endregion
 
 #pragma region [PROCESS PACKET]
 	void CNetwork::ProcessPacket()
 	{
 		// 프로토콜 종류 읽기
-		ProtocolID packetType{ m_packet.Read<ProtocolID>() };
+		ProtocolID packetType{ m_packet.ReadProtocol() };
 
 		// 프로토콜의 범위에 따라서 1차적으로 패킷의 종류를 구분하여
 		// 패킷 종류에 맞는 프로세스로 이동
 		if (ProtocolID::PROTOCOL_AU_BEGIN <= packetType and
-			packetType < ProtocolID::PROTOCOL_MY_BEGIN)
+			packetType < ProtocolID::PROTOCOL_AU_END)
 		{
 			// 인증 프로토콜의 패킷 프로세스 처리
 			ProcessAUPacket(packetType);
 		}
 		else if (ProtocolID::PROTOCOL_MY_BEGIN <= packetType and
-			packetType < ProtocolID::PROTOCOL_WR_BEGIN)
+			packetType < ProtocolID::PROTOCOL_MY_END)
 		{
 			// 플레이어 프로토콜의 패킷 프로세스 처리
 			ProcessMYPacket(packetType);
 		}
 		else if (ProtocolID::PROTOCOL_WR_BEGIN <= packetType and
-			packetType < ProtocolID::PROTOCOL_BATTLE_BEGIN)
+			packetType < ProtocolID::PROTOCOL_WR_END)
+		{
+			ProcessWRPacket(packetType);
+		}
+		else if (ProtocolID::PROTOCOL_BT_BEGIN <= packetType and
+			packetType < ProtocolID::PROTOCOL_BT_END)
+		{
+			ProcessBTPacket(packetType);
+		}
+		else if (ProtocolID::PROTOCOL_IF_BEGIN <= packetType and
+			packetType < ProtocolID::PROTOCOL_IF_END)
+		{
+			ProcessWRPacket(packetType);
+		}
+		else if (ProtocolID::PROTOCOL_IT_BEGIN <= packetType and
+			packetType < ProtocolID::PROTOCOL_IT_END)
+		{
+			ProcessWRPacket(packetType);
+		}
+		else if (ProtocolID::PROTOCOL_CM_BEGIN <= packetType and
+			packetType < ProtocolID::PROTOCOL_CM_END)
+		{
+			ProcessWRPacket(packetType);
+		}
+		else if (ProtocolID::PROTOCOL_EC_BEGIN <= packetType and
+			packetType < ProtocolID::PROTOCOL_EC_END)
+		{
+			ProcessWRPacket(packetType);
+		}
+		else if (ProtocolID::PROTOCOL_GM_BEGIN <= packetType and
+			packetType < ProtocolID::PROTOCOL_GM_END)
+		{
+			ProcessWRPacket(packetType);
+		}
+		else if (ProtocolID::PROTOCOL_TT_BEGIN <= packetType and
+			packetType < ProtocolID::PROTOCOL_TT_END)
 		{
 			ProcessWRPacket(packetType);
 		}
@@ -267,18 +308,11 @@ namespace network
 		{
 			case ProtocolID::AU_LOGIN_ACK:
 			{
-				// 클라이언트의 조작 오브젝트 인덱스(변동X)
-				int32_t id{ m_packet.ReadID() };
-				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
-				m_idMatch.insert(std::make_pair(m_packet.ReadID(), gameObjects.size() - 1));
-				int32_t index{ m_idMatch[id] };
+				m_id = m_packet.ReadID();
 
-				Vec3 pos{};
-				pos.x = m_packet.Read<float>();
-				pos.y = m_packet.Read<float>();
-				pos.z = m_packet.Read<float>();
+				AddPlayer(m_id);
 
-				gameObjects[index]->GetTransform()->SetLocalPosition(pos);
+				std::cout << "ADD ME" << std::endl;
 			}
 			break;
 			default:
@@ -292,39 +326,18 @@ namespace network
 		{
 			case ProtocolID::MY_MOVE_ACK:
 			{
-				// 움직일 오브젝트 인덱스를 패킷에서 읽어서 타깃으로 설정
-				int32_t id{ m_packet.ReadID() };
-				int32_t index{ m_idMatch[id] };
-				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
-
-				// 패킷에서 오브젝트를 렌더링할 좌표 읽기
-				Vec3 pos;
-				pos.x = m_packet.Read<float>();
-				pos.y = m_packet.Read<float>();
-				pos.z = m_packet.Read<float>();
-
-				//std::cout << std::format("{}(me) : {}, {}\n", id, pos.x, pos.y);
-
-				// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-				gameObjects[index]->GetTransform()->SetLocalPosition(pos);
+				MovePlayer(m_id);
 			}
 			break;
-			// 회전은 개선이 필요(회전을 하지 않고 이동을 함)
 			case ProtocolID::MY_ROTATE_ACK:
 			{
-				// 회전할 오브젝트 인덱스를 패킷에서 읽어서 타깃으로 설정
-				int32_t id{ m_packet.ReadID() };
-				int32_t index{ m_idMatch[id] };
-				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
-
-				// 패킷에서 오브젝트를 렌더링할 좌표 읽기
-				Vec3 rotation;
-				rotation.x = m_packet.Read<float>();
-				rotation.y = m_packet.Read<float>();
-				rotation.z = m_packet.Read<float>();
-
-				// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-				gameObjects[index]->GetTransform()->SetLocalRotation(rotation);
+				// 회전할 오브젝트 인덱스를 패킷에서 읽어서 타깃으로 설정				
+				RotatePlayer(m_id);
+			}
+			break;
+			case ProtocolID::MY_ANI_ACK:
+			{
+				//PlayAni(m_id);
 			}
 			break;
 			default:
@@ -338,67 +351,41 @@ namespace network
 		{
 			case ProtocolID::WR_ADD_ACK:
 			{
-				Vec3 pos{};
-				pos.x = m_packet.Read<float>();
-				pos.y = m_packet.Read<float>();
-				pos.z = m_packet.Read<float>();
+				uint32_t id{ m_packet.ReadID() };
+				AddPlayer(id);
 
-				std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Dragon.fbx") };
-				std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
-
-				for (auto& gameObject : gameObjects)
-				{
-					gameObject->SetName(L"Dragon" + std::to_wstring(m_idMatch.size()));
-					gameObject->SetCheckFrustum(false);
-					gameObject->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, pos.z));
-					gameObject->GetTransform()->SetLocalScale(Vec3(1.f, 1.f, 1.f));
-					GET_SINGLE(SceneManager)->GetActiveScene()->AddGameObject(gameObject);
-					gameObject->AddComponent(std::make_shared<Monster_Dragon>());
-				}
-
-				auto sceneGameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
-
-				m_idMatch.insert(std::make_pair(m_packet.ReadID(), sceneGameObjects.size() - 1));
+				std::cout << "ADD REMOTE" << std::endl;
 			}
 			break;
 			case ProtocolID::WR_REMOVE_ACK:
 			{
-				int32_t id{ m_packet.ReadID() };
+				uint32_t id{ m_packet.ReadID() };
 				int32_t index{ m_idMatch[id] };
-				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
+				auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
 
-				GET_SINGLE(SceneManager)->GetActiveScene()->RemoveGameObject(gameObjects[index]);
+				GET_SINGLE(SceneManager)->GetActiveScene()->RemoveGameObject(player[index]);
 				m_idMatch.erase(id);
 			}
 			break;
 			case ProtocolID::WR_MOVE_ACK:
 			{
-				int32_t id{ m_packet.ReadID() };
-				int32_t index{ m_idMatch[id] };
-				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
-
-				Vec3 pos{};
-				pos.x = m_packet.Read<float>();
-				pos.y = m_packet.Read<float>();
-				pos.z = m_packet.Read<float>();
-
-				std::cout << std::format("{} : {}, {}\n", id, pos.x, pos.y);
-
-				gameObjects[index]->GetTransform()->SetLocalPosition(pos);
+				uint32_t id{ m_packet.ReadID() };
+				
+				MovePlayer(id);
 			}
 			break;
 			case ProtocolID::WR_ROTATE_ACK:
 			{
-				int32_t id{ m_packet.ReadID() };
-				int32_t index{ m_idMatch[id] };
-				auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
-
-				Vec3 rotation{};
-				rotation.x = m_packet.Read<float>();
-				rotation.y = m_packet.Read<float>();
-				rotation.z = m_packet.Read<float>();
-
-				gameObjects[index]->GetTransform()->SetLocalRotation(rotation);
+				uint32_t id{ m_packet.ReadID() };
+				
+				RotatePlayer(id);
+			}
+			break;
+			case ProtocolID::WR_ANI_ACK:
+			{
+				uint32_t id{ m_packet.ReadID() };
+				
+				PlayAni(id);
 			}
 			break;
 			default:
@@ -406,9 +393,14 @@ namespace network
 		}
 	}
 
+#pragma region [UNUSED]
 	void CNetwork::ProcessBTPacket(ProtocolID type)
 	{
 		// TODO : 추후 전투 관련 패킷 프로세스 처리
+	}
+
+	void CNetwork::ProcessIFPacket(ProtocolID type)
+	{
 	}
 
 	void CNetwork::ProcessITPacket(ProtocolID type)
@@ -421,9 +413,95 @@ namespace network
 		// TODO : 추후 커뮤니티(eg. 채팅) 관련 패킷 프로세스 처리
 	}
 
+	void CNetwork::ProcessECPacket(ProtocolID type)
+	{
+	}
+
+	void CNetwork::ProcessGMPacket(ProtocolID type)
+	{
+	}
+
 	void CNetwork::ProcessTTPacket(ProtocolID type)
 	{
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
+	}
+#pragma endregion
+
+	void CNetwork::AddPlayer(uint32_t id)
+	{
+		Vec3 pos{};
+		pos.x = m_packet.Read<float>();
+		pos.y = m_packet.Read<float>();
+		pos.z = m_packet.Read<float>();
+
+		ObjectDesc objectDesc;
+		objectDesc.strName = L"Dragon" + std::to_wstring(id);
+		//objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
+		objectDesc.strPath = L"..\\Resources\\FBX\\Dragon.fbx";
+		objectDesc.vPostion = pos;
+		objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
+		objectDesc.script = std::make_shared<Monster_Dragon>();
+
+		std::cout << "Start loading fbx" << std::endl;
+		auto start{ chrono::steady_clock::now() };
+		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
+		auto end{ chrono::steady_clock::now() };
+		std::cout << "fbx load finished : " << std::chrono::duration_cast<std::chrono::seconds>(end - start) << std::endl;
+		std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
+
+		for (auto& gameObject : gameObjects)
+		{
+			gameObject->SetName(objectDesc.strName);
+			gameObject->SetCheckFrustum(false);
+			gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
+			gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
+			gameObject->AddComponent(objectDesc.script);
+			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
+		}
+
+		GET_SINGLE(SceneManager)->GetActiveScene()->AddPlayer(gameObjects);
+
+		auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
+		m_idMatch.insert(std::make_pair(id, player.size() - 2));
+	}
+
+	void CNetwork::MovePlayer(uint32_t id)
+	{
+		int32_t index{ m_idMatch[id] };
+		auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
+
+		// 패킷에서 오브젝트를 렌더링할 좌표 읽기
+		Vec3 pos;
+		pos.x = m_packet.Read<float>();
+		pos.y = m_packet.Read<float>();
+		pos.z = m_packet.Read<float>();
+
+		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
+		player[index]->GetTransform()->SetLocalPosition(pos);
+	}
+
+	void CNetwork::RotatePlayer(uint32_t id)
+	{
+		int32_t index{ m_idMatch[id] };
+		auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
+
+		// 패킷에서 오브젝트를 렌더링할 좌표 읽기
+		Vec3 rotation;
+		rotation.x = m_packet.Read<float>();
+		rotation.y = m_packet.Read<float>();
+		rotation.z = m_packet.Read<float>();
+
+		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
+		player[index]->GetTransform()->SetLocalRotation(rotation);
+	}
+
+	void CNetwork::PlayAni(uint32_t id)
+	{
+		int32_t index{ m_idMatch[id] };
+		auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
+
+		int32_t aniIndex{ m_packet.Read<int32_t>() };
+		player[index]->GetAnimator()->Play(aniIndex);
 	}
 #pragma endregion
 }

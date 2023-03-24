@@ -154,24 +154,24 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 
 #pragma region GameObjct : LoadFBX + RST + SCRIPT
 	{
-		ObjectDesc objectDesc;
-		objectDesc.strName = L"Moon";
-		objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
-		//objectDesc.strPath = L"..\\Resources\\FBX\\Dragon.fbx";
-		objectDesc.vPostion = Vec3(0.f, 0.f, 300.f);
-		objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
-		objectDesc.script = nullptr;// make_shared<Monster_Dragon>();
+		//ObjectDesc objectDesc;
+		//objectDesc.strName = L"Moon";
+		//objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
+		////objectDesc.strPath = L"..\\Resources\\FBX\\Dragon.fbx";
+		//objectDesc.vPostion = Vec3(0.f, 0.f, 300.f);
+		//objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
+		//objectDesc.script = nullptr;// make_shared<Monster_Dragon>();
 
-		auto gameObject = CreateObject(objectDesc);
+		//auto gameObject = CreateObject(objectDesc);
 
-		// 네트워크 추가 예시
-		for (auto& Object : gameObject)
-		{
-			Object->AddComponent(std::make_shared<CNetwork>());
-		}
+		//// 네트워크 추가 예시
+		////for (auto& Object : gameObject)
+		////{
+		////	Object->AddComponent(std::make_shared<CNetwork>());
+		////}
 
-		scene->AddSceneObject(gameObject);
-		scene->AddSceneObject(gameObject);
+		//scene->AddSceneObject(gameObject);
+		//scene->AddSceneObject(gameObject);
 	}
 #pragma endregion
 

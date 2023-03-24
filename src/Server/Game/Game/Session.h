@@ -33,8 +33,9 @@ namespace game
 		void SendLoginPacket(int32_t id, CObject* obj);
 		void SendAddPacket(int32_t id, CObject* obj);
 		void SendRemovePacket(int32_t id);
-		void SendMovePacket(int32_t id, ProtocolID packetType, CObject* obj);
-		void SendRotatePacket(int32_t id, ProtocolID packetType, CObject* obj);
+		void SendMovePacket(int32_t id, ProtocolID protocol, CObject* obj);
+		void SendRotatePacket(int32_t id, ProtocolID protocol, CObject* obj);
+		void SendAniIndexPacket(int32_t id, ProtocolID protocol, CObject* obj);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

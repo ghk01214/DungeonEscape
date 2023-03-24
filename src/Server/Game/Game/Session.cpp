@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Session.h"
 
+#include "Player.h"
+
 namespace game
 {
 	CSession::CSession() :
@@ -67,12 +69,12 @@ namespace game
 		// 패킷을 전송할 클라이언트 id 작성
 		packet.WriteID(id);
 		// 프로토콜 종류 작성
-		packet.Write<ProtocolID>(ProtocolID::AU_LOGIN_ACK);
+		packet.WriteProtocol(ProtocolID::AU_LOGIN_ACK);
 
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
 		packet.Write<float>(pos.z);
-
+		std::cout << "login packet" << std::endl;
 		// 패킷 전송
 		Send(packet);
 	}
@@ -84,7 +86,7 @@ namespace game
 		Rotation rotate{ obj->GetRotation() };
 
 		packet.WriteID(id);
-		packet.Write<ProtocolID>(ProtocolID::WR_ADD_ACK);
+		packet.WriteProtocol(ProtocolID::WR_ADD_ACK);
 
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
@@ -102,12 +104,12 @@ namespace game
 		network::CPacket packet;
 
 		packet.WriteID(id);
-		packet.Write<ProtocolID>(ProtocolID::WR_REMOVE_ACK);
+		packet.WriteProtocol(ProtocolID::WR_REMOVE_ACK);
 
 		Send(packet);
 	}
 
-	void CSession::SendMovePacket(int32_t id, ProtocolID packetType, CObject* obj)
+	void CSession::SendMovePacket(int32_t id, ProtocolID protocol, CObject* obj)
 	{
 		network::CPacket packet;
 		Pos pos{ obj->GetPos() };
@@ -115,7 +117,7 @@ namespace game
 		// 타깃 id 작성
 		packet.WriteID(id);
 		// 프로토콜 종류 작성
-		packet.Write<ProtocolID>(packetType);
+		packet.WriteProtocol(protocol);
 		// 타깃 렌더링 좌표 작성
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
@@ -125,7 +127,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendRotatePacket(int32_t id, ProtocolID packetType, CObject* obj)
+	void CSession::SendRotatePacket(int32_t id, ProtocolID protocol, CObject* obj)
 	{
 		network::CPacket packet;
 		Rotation rotate{ obj->GetRotation() };
@@ -133,13 +135,25 @@ namespace game
 		// 타깃 id 작성
 		packet.WriteID(id);
 		// 프로토콜 종류 작성
-		packet.Write<ProtocolID>(packetType);
+		packet.WriteProtocol(protocol);
 		// 타깃 렌더링 회전각 작성
 		packet.Write<float>(rotate.x);
 		packet.Write<float>(rotate.y);
 		packet.Write<float>(rotate.z);
 
 		// 패킷 전송
+		Send(packet);
+	}
+
+	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, CObject* obj)
+	{
+		network::CPacket packet;
+		int32_t index{ dynamic_cast<CPlayer*>(obj)->GetAniIndex() };
+
+		packet.WriteID(id);
+		packet.WriteProtocol(protocol);
+		packet.Write<int32_t>(index);
+
 		Send(packet);
 	}
 }

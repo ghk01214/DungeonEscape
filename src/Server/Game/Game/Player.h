@@ -13,5 +13,12 @@ namespace game
 		~CPlayer();
 
 		void Init() override;
+
+		constexpr int32_t GetAniIndex() const { return m_aniIndex; }
+
+		void SetAniIndex(int32_t index) { m_aniIndex = index; }
+
+	private:
+		int32_t m_aniIndex;
 	};
 }

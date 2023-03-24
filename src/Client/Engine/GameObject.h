@@ -11,7 +11,11 @@ class ParticleSystem;
 class Terrain;
 class BaseCollider;
 class Animator;
-class CNetwork;
+
+//namespace network
+//{
+//	class CNetwork;
+//}
 
 enum class GAME_OBJECT_TYPE : uint8
 {
@@ -46,7 +50,7 @@ public:
 	shared_ptr<Terrain> GetTerrain();
 	shared_ptr<BaseCollider> GetCollider();
 	shared_ptr<Animator> GetAnimator();
-	shared_ptr<CNetwork> GetNetwork();
+	//shared_ptr<network::CNetwork> GetNetwork();
 
 	void AddComponent(shared_ptr<Component> component);
 

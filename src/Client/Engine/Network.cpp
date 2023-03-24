@@ -1,21 +1,32 @@
-#include "pch.h"
-#include "Network.h"
+﻿#include "pch.h"
 #include "NetworkManager.h"
+#include "Network.h"
 
-CNetwork::CNetwork() : Component(COMPONENT_TYPE::NETWORK)
-{
-}
+#include "Transform.h"
+#include "Resources.h"
+#include "MeshData.h"
+#include "SceneManager.h"
+#include "Scene.h"
 
-CNetwork::~CNetwork()
+namespace network
 {
-}
+	//CNetwork::CNetwork() :
+	//	Component{ COMPONENT_TYPE::NETWORK },
+	//	m_objectID{ 0 }
+	//{
+	//}
 
-void CNetwork::Awake()
-{
-	// 네트워크 매니저에 자신을 가지고 있는 게임 오브젝트 정보를 넘기면, objectID를 세팅해줌
-	GET_SINGLE(network::NetworkManager)->RegisterObject(m_gameObject.lock());
-}
+	//CNetwork::~CNetwork()
+	//{
+	//}
 
-void CNetwork::FinalUpdate()
-{
+	//void CNetwork::Awake()
+	//{
+	//	// 네트워크 매니저에 자신을 가지고 있는 게임 오브젝트 정보를 넘기면, objectID를 세팅해줌
+	//	//GET_SINGLE(network::NetworkManager)->RegisterObject(m_gameObject.lock());
+	//}
+
+	//void CNetwork::FinalUpdate()
+	//{
+	//}
 }

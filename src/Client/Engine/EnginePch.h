@@ -14,6 +14,7 @@
 #include <list>
 #include <map>
 
+// 디버깅용 io header
 #if _DEBUG
 #include <iostream>
 #include <format>
@@ -209,3 +210,25 @@ extern unique_ptr<class CGameInstance> GGameInstance;
 // Utils
 wstring s2ws(const string& s);
 string ws2s(const wstring& s);
+
+//// NETWORK
+//#include <WS2tcpip.h>
+//#include <MSWSock.h>
+//#include <thread>
+//#include <Packet.h>
+//#include <Define.h>
+//#include <protocol.hpp>
+//#include <OVERLAPPEDEX.h>
+////#include "Network.h"
+////#include "NetworkManager.h"
+//
+//#pragma comment(lib, "WS2_32")
+//#pragma comment(lib, "MSWSock")
+//
+//namespace network
+//{
+//	void ErrorQuit(const std::wstring& msg);
+//#if _DEBUG
+//	void ErrorDisplay(const std::wstring& msg);
+//#endif
+//}

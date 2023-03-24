@@ -26,7 +26,11 @@ class CGameObject;
 class Transform;
 class MeshRenderer;
 class Animator;
-class CNetwork;
+
+//namespace network
+//{
+//	class CNetwork;
+//}
 
 class Component : public Object
 {
@@ -49,7 +53,7 @@ public:
 	shared_ptr<Transform> GetTransform();
 	shared_ptr<MeshRenderer> GetMeshRenderer();
 	shared_ptr<Animator> GetAnimator();
-	shared_ptr<CNetwork> GetNetwork();
+	//shared_ptr<network::CNetwork> GetNetwork();
 
 private:
 	friend class CGameObject;

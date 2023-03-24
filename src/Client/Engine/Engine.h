@@ -12,10 +12,10 @@
 #include "RenderTargetGroup.h"
 #include "GameInstance.h"
 
-namespace network
-{
-	class CNetwork;
-}
+//namespace network
+//{
+//	class CNetwork;
+//}
 
 class Engine
 {

@@ -27,24 +27,27 @@ namespace game
 
 		void WorkerThread();
 		void AcceptClient(network::OVERLAPPEDEX* pOverEx);
-		void Recv(ULONG_PTR id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
-		void Send(ULONG_PTR id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
+		void Recv(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
+		void Send(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 
 		int32_t NewPlayerID();
-		void Disconnect(ULONG_PTR id);
+		void Disconnect(uint32_t id);
 
 #pragma region [PROCESS PACKET]
-		void ProcessPacket(ULONG_PTR id, network::CPacket& packet);
-		void ProcessAUPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
-		void ProcessMYPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
-		void ProcessWRPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
-		void ProcessBTPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
-		void ProcessITPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
-		void ProcessCMPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
-		void ProcessTTPacket(ULONG_PTR id, network::CPacket& packet, ProtocolID type);
+		void ProcessPacket(uint32_t id, network::CPacket& packet);
+		void ProcessAUPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessMYPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessWRPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessBTPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessIFPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessITPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessCMPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessECPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessGMPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessTTPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
 #pragma endregion
 
-		void Login(ULONG_PTR id, network::CPacket& packet);
+		void Login(uint32_t id, network::CPacket& packet);
 	private:
 		HANDLE m_iocp;
 		SOCKET m_socket;
