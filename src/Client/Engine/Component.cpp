@@ -1,8 +1,9 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Component.h"
 #include "GameObject.h"
 #include "MeshRenderer.h"
 #include "Animator.h"
+#include "Network.h"
 
 Component::Component(COMPONENT_TYPE type) : Object(OBJECT_TYPE::COMPONENT), m_type(type)
 {

@@ -9,7 +9,7 @@
 #include "Terrain.h"
 #include "BaseCollider.h"
 #include "Animator.h"
-#include "CNetwork.h"
+#include "Network.h"
 
 CGameObject::CGameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 {
