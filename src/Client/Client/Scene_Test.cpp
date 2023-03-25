@@ -154,6 +154,12 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 
 #pragma region GameObjct : LoadFBX + RST + SCRIPT
 	{
+		//std::cout << "Start loading fbx" << std::endl;
+		//auto start{ chrono::steady_clock::now() };
+		//std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Dragon.fbx") };
+		//auto end{ chrono::steady_clock::now() };
+		//std::cout << "fbx load finished : " << std::chrono::duration_cast<std::chrono::seconds>(end - start) << std::endl;
+
 		//ObjectDesc objectDesc;
 		//objectDesc.strName = L"Moon";
 		//objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";

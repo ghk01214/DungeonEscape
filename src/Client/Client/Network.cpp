@@ -186,12 +186,11 @@ namespace network
 	{
 		network::CPacket packet;
 
-		auto gameObjects{ GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects() };
-
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_REQ);
 		// 델타 타임 작성
 		packet.Write<float>(DELTA_TIME);
+		packet.Write<int32_t>(0);
 
 		// 패킷 전송
 		Send(packet);
@@ -228,19 +227,20 @@ namespace network
 		Send(packet);
 	}
 
-	void CNetwork::SendAniIndexPacket(int32_t index)
+	void CNetwork::SendAniIndexPacket(int32_t index, float updateTime)
 	{
 		network::CPacket packet;
 
 		packet.WriteProtocol(ProtocolID::MY_ANI_REQ);
 		//packet.Write<float>(DELTA_TIME);
 		packet.Write<int32_t>(index);
+		packet.Write<float>(updateTime);
 
 		Send(packet);
 	}
 #pragma endregion
 
-#pragma region [PROCESS PACKET]
+#pragma region [PROCESS PACKET] 
 	void CNetwork::ProcessPacket()
 	{
 		// 프로토콜 종류 읽기
@@ -312,7 +312,7 @@ namespace network
 
 				AddPlayer(m_id);
 
-				std::cout << "ADD ME" << std::endl;
+				std::cout << "ADD ME" << std::endl << std::endl;
 			}
 			break;
 			default:
@@ -337,7 +337,7 @@ namespace network
 			break;
 			case ProtocolID::MY_ANI_ACK:
 			{
-				//PlayAni(m_id);
+				PlayAni(m_id);
 			}
 			break;
 			default:
@@ -351,39 +351,38 @@ namespace network
 		{
 			case ProtocolID::WR_ADD_ACK:
 			{
-				uint32_t id{ m_packet.ReadID() };
+				int32_t id{ m_packet.ReadID() };
 				AddPlayer(id);
 
-				std::cout << "ADD REMOTE" << std::endl;
+				std::cout << "ADD REMOTE" << std::endl << std::endl;
 			}
 			break;
 			case ProtocolID::WR_REMOVE_ACK:
 			{
-				uint32_t id{ m_packet.ReadID() };
+				int32_t id{ m_packet.ReadID() };
 				int32_t index{ m_idMatch[id] };
-				auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
 
-				GET_SINGLE(SceneManager)->GetActiveScene()->RemoveGameObject(player[index]);
+				GET_SINGLE(SceneManager)->GetActiveScene()->RemoveGameObject(GET_PLAYER[index]);
 				m_idMatch.erase(id);
 			}
 			break;
 			case ProtocolID::WR_MOVE_ACK:
 			{
-				uint32_t id{ m_packet.ReadID() };
+				int32_t id{ m_packet.ReadID() };
 				
 				MovePlayer(id);
 			}
 			break;
 			case ProtocolID::WR_ROTATE_ACK:
 			{
-				uint32_t id{ m_packet.ReadID() };
+				int32_t id{ m_packet.ReadID() };
 				
 				RotatePlayer(id);
 			}
 			break;
 			case ProtocolID::WR_ANI_ACK:
 			{
-				uint32_t id{ m_packet.ReadID() };
+				int32_t id{ m_packet.ReadID() };
 				
 				PlayAni(id);
 			}
@@ -427,7 +426,7 @@ namespace network
 	}
 #pragma endregion
 
-	void CNetwork::AddPlayer(uint32_t id)
+	void CNetwork::AddPlayer(int32_t id)
 	{
 		Vec3 pos{};
 		pos.x = m_packet.Read<float>();
@@ -439,14 +438,10 @@ namespace network
 		//objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
 		objectDesc.strPath = L"..\\Resources\\FBX\\Dragon.fbx";
 		objectDesc.vPostion = pos;
-		objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
-		objectDesc.script = std::make_shared<Monster_Dragon>();
+		objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
+		objectDesc.script =  std::make_shared<Monster_Dragon>();
 
-		std::cout << "Start loading fbx" << std::endl;
-		auto start{ chrono::steady_clock::now() };
 		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
-		auto end{ chrono::steady_clock::now() };
-		std::cout << "fbx load finished : " << std::chrono::duration_cast<std::chrono::seconds>(end - start) << std::endl;
 		std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
 
 		for (auto& gameObject : gameObjects)
@@ -456,19 +451,22 @@ namespace network
 			gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
 			gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
 			gameObject->AddComponent(objectDesc.script);
-			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
+			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
 		}
 
 		GET_SINGLE(SceneManager)->GetActiveScene()->AddPlayer(gameObjects);
 
-		auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
-		m_idMatch.insert(std::make_pair(id, player.size() - 2));
+		m_idMatch.insert(std::make_pair(id, GET_PLAYER.size() - 1));
+
+		if (m_packet.ReadProtocol() == ProtocolID::AU_LOGIN_ACK)
+		{
+			GET_PLAYER[m_idMatch[id]]->SetClientID(id);
+		}
 	}
 
-	void CNetwork::MovePlayer(uint32_t id)
+	void CNetwork::MovePlayer(int32_t id)
 	{
 		int32_t index{ m_idMatch[id] };
-		auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
 
 		// 패킷에서 오브젝트를 렌더링할 좌표 읽기
 		Vec3 pos;
@@ -477,13 +475,13 @@ namespace network
 		pos.z = m_packet.Read<float>();
 
 		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-		player[index]->GetTransform()->SetLocalPosition(pos);
+		auto player{ GET_PLAYER[index] };
+		player->GetTransform()->SetLocalPosition(pos);
 	}
 
-	void CNetwork::RotatePlayer(uint32_t id)
+	void CNetwork::RotatePlayer(int32_t id)
 	{
 		int32_t index{ m_idMatch[id] };
-		auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
 
 		// 패킷에서 오브젝트를 렌더링할 좌표 읽기
 		Vec3 rotation;
@@ -492,16 +490,18 @@ namespace network
 		rotation.z = m_packet.Read<float>();
 
 		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-		player[index]->GetTransform()->SetLocalRotation(rotation);
+		GET_PLAYER[index]->GetTransform()->SetLocalRotation(rotation);
 	}
 
-	void CNetwork::PlayAni(uint32_t id)
+	void CNetwork::PlayAni(int32_t id)
 	{
+		//int32_t index{ m_idMatch[id] };
 		int32_t index{ m_idMatch[id] };
-		auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
 
 		int32_t aniIndex{ m_packet.Read<int32_t>() };
-		player[index]->GetAnimator()->Play(aniIndex);
+		float aniFrame{ m_packet.Read<float>() };
+
+		GET_PLAYER[index]->GetAnimator()->Play(aniIndex, aniFrame);
 	}
 #pragma endregion
 }

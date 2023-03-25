@@ -31,6 +31,9 @@ public:
 	const wstring& GetName() { return m_name; }
 
 	uint32 GetID() { return m_id; }
+	int32_t GetClientID() { return m_clientID; }
+
+	void SetClientID(int32_t id) { m_clientID = id; }
 
 	// TODO : Instantiate
 
@@ -45,5 +48,6 @@ protected:
 
 protected:
 	uint32 m_id = 0;
+	int32_t m_clientID;
 };
 

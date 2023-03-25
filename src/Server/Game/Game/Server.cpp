@@ -201,11 +201,10 @@ namespace game
 		char* pPacket{ pOverEx->data };
 		network::CPacket packet{};
 		packet.SetData(pPacket);
-		//packet.ReadSize();
 
 		while (remainSize > 0)
 		{
-			packetSize = packet.GetDataSize();
+			packetSize = packet.GetPacketSize();
 
 			if (packetSize > remainSize)
 				break;
@@ -378,6 +377,9 @@ namespace game
 				// 모든 세션에 대해 이동 패킷 전송
 				for (auto& player : m_sessions)
 				{
+					if (player->GetState() != STATE::INGAME)
+						continue;
+
 					if (player->GetID() == id)
 						player->SendMovePacket(id, ProtocolID::MY_MOVE_ACK, session->GetMyObject());
 					else
@@ -398,6 +400,9 @@ namespace game
 				// 모든 세션에 대해 회전 패킷 전송
 				for (auto& player : m_sessions)
 				{
+					if (player->GetState() != STATE::INGAME)
+						continue;
+
 					if (player->GetID() == id)
 						player->SendMovePacket(id, ProtocolID::MY_ROTATE_ACK, session->GetMyObject());
 					else
@@ -408,13 +413,26 @@ namespace game
 			case ProtocolID::MY_ANI_REQ:
 			{
 				int32_t index{ packet.Read<int32_t>() };
+				float aniFrame{ packet.Read<float>() };
+				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
+				pl->SetAniIndex(index);
+				pl->SetAniFrame(aniFrame);
 
 				for (auto& player : m_sessions)
 				{
-					if (player->GetID() == id)
+					if (player->GetState() != STATE::INGAME)
 						continue;
 
-					player->SendAniIndexPacket(id, ProtocolID::WR_ANI_ACK, session->GetMyObject());
+					if (player->GetID() == id)
+					{
+						player->SendAniIndexPacket(id, ProtocolID::MY_ANI_ACK, pl);
+						std::cout << player->GetID() << " : " << index << std::endl;
+					}
+					else
+					{
+						player->SendAniIndexPacket(id, ProtocolID::WR_ANI_ACK, pl);
+						std::cout << player->GetID() << " : " << index << std::endl;
+					}
 				}
 			}
 			break;
@@ -488,16 +506,13 @@ namespace game
 		float deltaTime{ packet.Read<float>() };
 
 		// 해당 세션의 델타 타임 설정
-		//session->SetDeltaTime(deltaTime);
 		session->SetState(STATE::INGAME);
 		session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);
 
 		auto pObject{ session->GetMyObject() };
 
-		//if (m_objects.insert(access, id) == true)
-		//{
-		//	access->second = pObject;
-		//}
+		auto aniIndex{ packet.Read<int32_t>() };
+		dynamic_cast<CPlayer*>(pObject)->SetAniIndex(aniIndex);
 
 		session->SendLoginPacket(id, pObject);
 

@@ -39,7 +39,7 @@ namespace network
 	//}
 
 	// 전송 클라이언트 id 작성
-	void CPacket::WriteID(uint32_t id)
+	void CPacket::WriteID(int32_t id)
 	{
 		std::memcpy(m_data.data(), &id, sizeof(id));
 	}
@@ -50,9 +50,9 @@ namespace network
 	}
 
 	// 패킷을 전송한 클라이언트 id 읽기
-	uint32_t CPacket::ReadID()
+	int32_t CPacket::ReadID()
 	{
-		uint32_t id;
+		int32_t id;
 
 		std::memcpy(&id, m_data.data(), sizeof(id));
 
@@ -87,7 +87,7 @@ namespace network
 	}
 
 	// 아직 사용X
-	void CPacket::SetData(uint32_t id)
+	void CPacket::SetData(int32_t id)
 	{
 		m_type = TYPE::WRITE;
 		m_size = 0;

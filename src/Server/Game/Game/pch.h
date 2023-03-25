@@ -42,5 +42,5 @@ using HashMap = tbb::concurrent_hash_map<T, U>;
 
 extern std::default_random_engine dre;
 
-void ErrorQuit(const std::wstring& msg);
-void ErrorDisplay(const std::wstring& msg);
+void ErrorQuit(const std::wstring_view& msg);
+void ErrorDisplay(const std::wstring_view& msg);

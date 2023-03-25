@@ -43,7 +43,7 @@ void MeshRenderer::Render()
 		}
 		else
 		{
-			material->SetInt(1, 0);
+			//material->SetInt(1, 0);
 		}
 
 		material->PushGraphicsData();
@@ -69,7 +69,7 @@ void MeshRenderer::Render(shared_ptr<InstancingBuffer>& buffer)
 		}
 		else
 		{
-			material->SetInt(1, 0);
+			//material->SetInt(1, 0);
 		}
 
 		material->PushGraphicsData();

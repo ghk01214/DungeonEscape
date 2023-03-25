@@ -15,11 +15,15 @@ public:
 public:
 	void SetBones(const vector<BoneInfo>* bones) { m_bones = bones; }
 	void SetAnimClip(const vector<AnimClipInfo>* animClips);
+	void SetPlayInstance(bool playInstance) { m_playInstance = playInstance; }
 	void PushData();
 
 	int32 GetAnimCount() { return static_cast<uint32>(m_animClips->size()); }
 	int32 GetCurrentClipIndex() { return m_clipIndex; }
+	bool GetPlayInstance() { return m_playInstance; }
+	float GetUpdateTime() { return m_updateTime; }
 	void Play(uint32 idx);
+	void Play(uint32 idx, float updateTime);
 
 public:
 	virtual void FinalUpdate() override;
@@ -37,4 +41,6 @@ private:
 	shared_ptr<Material>			m_computeMaterial;
 	shared_ptr<StructuredBuffer>	m_boneFinalMatrix;  // 특정 프레임의 최종 행렬
 	bool							m_boneFinalUpdated = false;
+
+	bool							m_playInstance = false;
 };

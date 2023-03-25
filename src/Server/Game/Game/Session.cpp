@@ -1,8 +1,6 @@
 ﻿#include "pch.h"
 #include "Session.h"
 
-#include "Player.h"
-
 namespace game
 {
 	CSession::CSession() :
@@ -145,14 +143,16 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, CObject* obj)
+	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer* obj)
 	{
 		network::CPacket packet;
-		int32_t index{ dynamic_cast<CPlayer*>(obj)->GetAniIndex() };
+		int32_t index{ obj->GetAniIndex() };
+		float frame{ obj->GetAniFrame() };
 
 		packet.WriteID(id);
 		packet.WriteProtocol(protocol);
 		packet.Write<int32_t>(index);
+		packet.Write<float>(frame);
 
 		Send(packet);
 	}

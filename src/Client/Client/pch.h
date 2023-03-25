@@ -21,8 +21,8 @@ namespace network
 {
 	extern std::unique_ptr<CNetwork> pNetwork;
 
-	void ErrorQuit(const std::wstring& msg);
+	void ErrorQuit(const std::wstring_view& msg);
 #if _DEBUG
-	void ErrorDisplay(const std::wstring& msg);
+	void ErrorDisplay(const std::wstring_view& msg);
 #endif
 }

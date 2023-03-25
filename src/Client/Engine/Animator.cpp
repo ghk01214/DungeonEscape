@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Animator.h"
 #include "Timer.h"
 #include "Resources.h"
@@ -67,4 +67,11 @@ void Animator::Play(uint32 idx)
 	assert(idx < m_animClips->size());
 	m_clipIndex = idx;
 	m_updateTime = 0.f;
+}
+
+void Animator::Play(uint32 idx, float updateTime)
+{
+	assert(idx < m_animClips->size());
+	m_clipIndex = idx;
+	m_updateTime = updateTime;
 }

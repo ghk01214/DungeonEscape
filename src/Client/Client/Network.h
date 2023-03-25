@@ -18,8 +18,10 @@ namespace network
 		void SendLoginPacket();
 		void SendMovePacket(DIRECTION direction);
 		void SendRotationPacket(ROTATION direction);
-		void SendAniIndexPacket(int32_t index);
+		void SendAniIndexPacket(int32_t index, float updateTime);
 #pragma endregion
+
+		constexpr uint32_t GetID() const { return m_id; }
 	private:
 		void ProcessThread();
 
@@ -43,10 +45,10 @@ namespace network
 		void ProcessTTPacket(ProtocolID type);
 #pragma endregion
 
-		void AddPlayer(uint32_t id);
-		void MovePlayer(uint32_t id);
-		void RotatePlayer(uint32_t id);
-		void PlayAni(uint32_t id);
+		void AddPlayer(int32_t id);
+		void MovePlayer(int32_t id);
+		void RotatePlayer(int32_t id);
+		void PlayAni(int32_t id);
 
 	private:
 		HANDLE m_iocp;
@@ -62,7 +64,7 @@ namespace network
 		network::CPacket m_packet;
 		int32_t m_remainSize;
 		
-		uint32_t m_id;
+		int32_t m_id;
 		std::shared_ptr<CGameObject> m_myObject;
 		std::unordered_map<int32_t, int32_t> m_idMatch;	// Client_ID, 연관된 플레이어 캐릭터 index
 	};

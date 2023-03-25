@@ -4,7 +4,9 @@
 
 namespace game
 {
-	CPlayer::CPlayer()
+	CPlayer::CPlayer() :
+		m_aniIndex{ 0 },
+		m_aniFrame{ 0.f }
 	{
 	}
 
