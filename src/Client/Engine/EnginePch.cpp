@@ -46,35 +46,81 @@ static int Get_RandomInt(int iStart, int iEnd)
 	return dist(gen);
 }
 
-//namespace network
-//{
-//	std::unique_ptr<CNetwork> pNetwork{ std::make_unique<network::CNetwork>() };
-//
-//	void ErrorQuit(const std::wstring& msg)
-//	{
-//		LPTSTR error{};
-//
-//		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr,
-//					  WSAGetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), error, 0, nullptr);
-//
-//		MessageBox(nullptr, error, msg.c_str(), MB_ICONERROR);
-//
-//		exit(true);
-//	}
-//}
-//
-//#if _DEBUG
-//
-//namespace network
-//{
-//	void ErrorDisplay(const std::wstring& msg)
-//	{
-//		LPTSTR error{};
-//
-//		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr,
-//					  WSAGetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), error, 0, nullptr);
-//
-//		std::wcout << std::format(L"[{}] {}\n", msg, error);
-//	}
-//}
-//#endif
+void saveString(const HANDLE& hFile, const wstring& str)
+{
+	DWORD		dwByte = 0;
+	uint32 num = str.size();
+
+	WriteFile(hFile, &num, sizeof(uint32), &dwByte, NULL);
+	WriteFile(hFile, str.c_str(), sizeof(wchar_t) * num, &dwByte, NULL);
+}
+
+void saveInt(const HANDLE& hFile, uint32 number)
+{
+	DWORD		dwByte = 0;
+
+	WriteFile(hFile, &number, sizeof(uint32), &dwByte, NULL);
+}
+
+void saveDouble(const HANDLE& hFile, double number)
+{
+	DWORD		dwByte = 0;
+
+	WriteFile(hFile, &number, sizeof(double), &dwByte, NULL);
+}
+
+void saveMatrix(const HANDLE& hFile, const Matrix& matrix)
+{
+	DWORD		dwByte = 0;
+
+	WriteFile(hFile, &matrix, sizeof(Matrix), &dwByte, NULL);
+}
+
+const wstring loadString(const HANDLE& hFile)
+{
+	uint32 num = 0;
+
+	DWORD		dwByte = 0;
+	DWORD		dwStrByte = 0;
+
+	ReadFile(hFile, &num, sizeof(uint32), &dwByte, NULL);
+	wchar_t* wstr = new wchar_t[num + 1];
+
+	ReadFile(hFile, wstr, sizeof(wchar_t) * num, &dwByte, NULL);
+
+	wstring readWStr{ wstr, num };
+
+	delete[] wstr;
+
+	return readWStr;
+}
+
+const uint32 loadInt(const HANDLE& hFile)
+{
+	uint32 num = 0;
+	DWORD		dwByte = 0;
+
+	ReadFile(hFile, &num, sizeof(uint32), &dwByte, NULL);
+
+	return num;
+}
+
+const double loadDouble(const HANDLE& hFile)
+{
+	double num = 0;
+	DWORD		dwByte = 0;
+
+	ReadFile(hFile, &num, sizeof(double), &dwByte, NULL);
+
+	return num;
+}
+
+const Matrix loadMatrix(const HANDLE& hFile)
+{
+	Matrix matrix{};
+	DWORD		dwByte = 0;
+
+	ReadFile(hFile, &matrix, sizeof(Matrix), &dwByte, NULL);
+
+	return matrix;
+}

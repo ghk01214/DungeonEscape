@@ -34,6 +34,230 @@ void FBXLoader::LoadFbx(const wstring& path)
 	CreateTextures();
 	CreateMaterials();
 }
+void FBXLoader::LoadFbxFromBinary(const HANDLE& hFile)
+{
+	// 불러와야할 파일 정보(fbx가 가지고 있는 정보)
+	// 1. vertices, indices -> FbxMeshInfo
+	// 2. AnimClipInfo, BoneInfo
+	// 3. 뼈의 StructuredBuffer, 뼈프레임의 StructuredBuffer
+
+	// 1. vertices, indices -> FbxMeshInfo 불러오기
+	/*
+		vector<FbxMeshInfo>
+
+		struct FbxMeshInfo
+		{
+			wstring								name;
+			vector<Vertex>						vertices;
+			vector<vector<uint32>>				indices;
+			vector<FbxMaterialInfo>				materials;
+			vector<BoneWeight>					boneWeights; // 뼈 가중치
+			bool								hasAnimation;
+		};
+	*/
+
+	/*
+		vector<FbxMeshInfo>의 사이즈 불러오기, 이만큼 반복하여 읽기
+
+		FbxMeshInfo 저장
+		1. name의 길이, name 저장
+		2. vertices의 갯수, vertices data 저장
+		3. indices의 갯수, indices를 돌아다니며 vector<uint32>의 갯수, vector<uint32> data 저장
+		4. materials의 갯수, materials data 저장(wstring은 길이, 내용 순으로 저장)
+		5. boneWeights의 갯수 저장, boneWeights를 돌아다니며 BoneWeight의 갯수, pair형식으로된 BoneWeight의 data 저장
+		6. hasAnimation 저장
+	*/
+
+	DWORD		dwByte = 0;
+	DWORD		dwStrByte = 0;
+
+	uint32 size = 0;
+
+	// vector<FbxMeshInfo>					_meshes;
+	m_meshes.clear();
+
+	// 1. vector<FbxMeshInfo>의 사이즈 불러오기
+	size = loadInt(hFile);
+
+	for (uint32 i = 0; i < size; ++i)
+	{
+		uint32 num = 0;
+		FbxMeshInfo meshInfo;
+
+		// 1. name의 길이, name
+		meshInfo.name = loadString(hFile);
+
+		// 2. vertices의 갯수, vertices data
+		meshInfo.vertices = loadVecData<Vertex>(hFile);
+
+		// 3. indices의 갯수, indices를 돌아다니며 vector<uint32>의 갯수, vector<uint32> data
+		num = loadInt(hFile);
+		meshInfo.indices.resize(num);
+		for (auto& indices : meshInfo.indices)
+		{
+			indices = loadVecData<uint32>(hFile);
+		}
+
+		// 4. materials의 갯수, materials data 저장
+		num = loadInt(hFile);
+		num = loadInt(hFile);
+		meshInfo.materials.resize(num);
+
+		for (auto& material : meshInfo.materials)
+		{
+			FbxMaterialInfo data;
+
+			data.ambient = loadStructData<Vec4>(hFile);
+			data.diffuse = loadStructData<Vec4>(hFile);
+			data.specular = loadStructData<Vec4>(hFile);
+
+			data.name = loadString(hFile);
+			data.diffuseTexName = loadString(hFile);
+			data.normalTexName = loadString(hFile);
+			data.specularTexName = loadString(hFile);
+
+			material = data;
+		}
+
+		// 5. boneWeights의 갯수, boneWeights를 돌아다니며 BoneWeight의 갯수, pair형식으로된 BoneWeight의 data
+		num = loadInt(hFile);
+		meshInfo.boneWeights.resize(num);
+
+		for (auto& boneWeight : meshInfo.boneWeights)
+		{
+			vector<pair<int32, double>> info = loadVecData<pair<int32, double>>(hFile);
+			boneWeight.boneWeights = info;
+		}
+
+		// 6. hasAnimation 저장
+		meshInfo.hasAnimation = static_cast<bool>(loadInt(hFile));
+
+
+		// 생성한 정보 추가
+		m_meshes.push_back(meshInfo);
+	}
+
+	// 우리 구조에 맞게 Texture / Material 생성
+	CreateTextures();
+	CreateMaterials();
+}
+
+void FBXLoader::SaveFbxToBinary(const HANDLE& hFile)
+{
+	// 저장해야할 파일 정보(fbx가 가지고 있는 정보)
+	// 1. vertices, indices -> FbxMeshInfo
+	// 2. AnimClipInfo, BoneInfo
+	// 3. 뼈의 StructuredBuffer, 뼈프레임의 StructuredBuffer
+
+	// 1. vertices, indices -> FbxMeshInfo 저장
+	/*
+		vector<FbxMeshInfo>
+
+		struct FbxMeshInfo
+		{
+			wstring								name;
+			vector<Vertex>						vertices;
+			vector<vector<uint32>>				indices;
+			vector<FbxMaterialInfo>				materials;
+			vector<BoneWeight>					boneWeights; // 뼈 가중치
+			bool								hasAnimation;
+		};
+	*/
+
+	/*
+		vector<FbxMeshInfo>의 사이즈 저장, 읽을 때 이만큼 반복하여 읽기
+
+		FbxMeshInfo 저장
+		1. name의 길이, name 저장
+		2. vertices의 갯수, vertices data 저장
+		3. indices의 갯수, indices를 돌아다니며 vector<uint32>의 갯수, vector<uint32> data 저장
+		4. materials의 갯수, materials data 저장(wstring은 길이, 내용 순으로 저장)
+		5. boneWeights의 갯수 저장, boneWeights를 돌아다니며 BoneWeight의 갯수, pair형식으로된 BoneWeight의 data 저장
+		6. hasAnimation 저장
+	*/
+
+	DWORD		dwByte = 0;
+
+	uint32 num = 0;
+
+	// 1. vector<FbxMeshInfo>의 사이즈 저장
+	num = m_meshes.size();
+	saveInt(hFile, num);
+
+	// saveVecData, saveString, save
+
+	// 반복하여 FbxMeshInfo 정보 저장
+	for (auto& iter : m_meshes)
+	{
+		// 1. name의 길이, name 저장
+		saveString(hFile, iter.name);
+
+		// 2. vertices의 갯수, vertices data 저장
+		saveVecData(hFile, iter.vertices);
+
+		// 3. indices의 갯수, indices를 돌아다니며 vector<uint32>의 갯수, vector<uint32> data 저장
+		saveInt(hFile, iter.indices.size());
+		for (auto& v : iter.indices)
+		{
+			saveVecData(hFile, v);
+		}
+
+		// 4. materials의 갯수, materials data 저장
+		/*
+			struct FbxMaterialInfo
+			{
+				Vec4			diffuse;
+				Vec4			ambient;
+				Vec4			specular;
+				wstring			name;
+				wstring			diffuseTexName;
+				wstring			normalTexName;
+				wstring			specularTexName;
+			};
+		*/
+		uint32 tempID = 2059871;
+		saveInt(hFile, tempID);
+		saveInt(hFile, iter.materials.size());
+
+		for (auto& v : iter.materials)
+		{
+			saveStructData(hFile, &v.ambient);
+			saveStructData(hFile, &v.diffuse);
+			saveStructData(hFile, &v.specular);
+
+			saveString(hFile, v.name);
+			saveString(hFile, v.diffuseTexName);
+			saveString(hFile, v.normalTexName);
+			saveString(hFile, v.specularTexName);
+		}
+
+		// 5. boneWeights의 갯수 저장, boneWeights를 돌아다니며 BoneWeight의 갯수, pair형식으로된 BoneWeight의 data 저장
+		saveInt(hFile, iter.boneWeights.size());
+
+		for (auto& v : iter.boneWeights)
+		{
+			saveVecData(hFile, v.boneWeights);
+		}
+
+		// 6. hasAnimation 저장
+		saveInt(hFile, static_cast<uint32>(iter.hasAnimation));
+	}
+}
+
+void FBXLoader::makeBinaryFilePath(const wstring& path)
+{
+	// fbx파일이 존재하는 폴더의 경로를 생성
+	std::wstring binaryFilePath = fs::path(path).parent_path().wstring();
+
+	// 생성된 폴더 안에 [ 파일이름.bin ] 의 binary파일 추가
+	wstring fileName = fs::path(path).filename().stem().wstring() + L".bin";
+	binaryFilePath += (wstring(L"\\") + fileName);
+
+	m_binaryFilePath = binaryFilePath;
+
+	// 나중에 Texture 경로 계산할 때 쓸 것
+	m_resourceDirectory = fs::path(path).parent_path().wstring();
+}
 
 void FBXLoader::Import(const wstring& path)
 {

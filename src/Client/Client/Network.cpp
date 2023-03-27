@@ -436,7 +436,7 @@ namespace network
 		ObjectDesc objectDesc;
 		objectDesc.strName = L"Dragon" + std::to_wstring(id);
 		//objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
-		objectDesc.strPath = L"..\\Resources\\FBX\\Dragon.fbx";
+		objectDesc.strPath = L"..\\Resources\\FBX\\Dragon\\Dragon.fbx";
 		objectDesc.vPostion = pos;
 		objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
 		objectDesc.script =  std::make_shared<Monster_Dragon>();

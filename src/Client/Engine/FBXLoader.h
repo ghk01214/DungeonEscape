@@ -82,6 +82,12 @@ public:
 
 public:
 	void LoadFbx(const wstring& path);
+	void LoadFbxFromBinary(const HANDLE& hFile);
+	void SaveFbxToBinary(const HANDLE& hFile);
+
+public:
+	const std::wstring& GetBinaryFilePath(void) { return m_binaryFilePath; }
+	void makeBinaryFilePath(const wstring& path);
 
 public:
 	int32 GetMeshCount() { return static_cast<int32>(m_meshes.size()); }
@@ -129,4 +135,6 @@ private:
 	vector<shared_ptr<FbxBoneInfo>>		m_bones;
 	vector<shared_ptr<FbxAnimClipInfo>>	m_animClips;
 	FbxArray<FbxString*>				m_animNames;
+
+	wstring			m_binaryFilePath;
 };

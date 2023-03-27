@@ -151,36 +151,6 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	}
 #pragma endregion
 
-
-#pragma region GameObjct : LoadFBX + RST + SCRIPT
-	{
-		//std::cout << "Start loading fbx" << std::endl;
-		//auto start{ chrono::steady_clock::now() };
-		//std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Dragon.fbx") };
-		//auto end{ chrono::steady_clock::now() };
-		//std::cout << "fbx load finished : " << std::chrono::duration_cast<std::chrono::seconds>(end - start) << std::endl;
-
-		//ObjectDesc objectDesc;
-		//objectDesc.strName = L"Moon";
-		//objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
-		////objectDesc.strPath = L"..\\Resources\\FBX\\Dragon.fbx";
-		//objectDesc.vPostion = Vec3(0.f, 0.f, 300.f);
-		//objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
-		//objectDesc.script = nullptr;// make_shared<Monster_Dragon>();
-
-		//auto gameObject = CreateObject(objectDesc);
-
-		//// 네트워크 추가 예시
-		////for (auto& Object : gameObject)
-		////{
-		////	Object->AddComponent(std::make_shared<CNetwork>());
-		////}
-
-		//scene->AddSceneObject(gameObject);
-		//scene->AddSceneObject(gameObject);
-	}
-#pragma endregion
-
 	return scene;
 }
 

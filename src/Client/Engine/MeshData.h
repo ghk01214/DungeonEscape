@@ -26,5 +26,9 @@ public:
 	vector<shared_ptr<CGameObject>> Instantiate();
 
 private:
+	HANDLE CreateFileWrite(const wstring& path);
+	HANDLE CreateFileRead(const wstring& path);
+
+private:
 	vector<MeshRenderInfo> m_meshRenders;
 };

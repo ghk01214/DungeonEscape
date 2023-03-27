@@ -48,10 +48,16 @@ public:
 
 	static shared_ptr<Mesh> CreateFromFBX(const struct FbxMeshInfo* meshInfo, class FBXLoader& loader);
 
+public:
+	void SaveDataBinary(HANDLE hFile);
+	void LoadDataBinary(HANDLE hFile, const FbxMeshInfo* meshInfo);
+
 private:
 	void CreateVertexBuffer(const vector<Vertex>& buffer);
 	void CreateIndexBuffer(const vector<uint32>& buffer);
 	void CreateBonesAndAnimations(class FBXLoader& loader);
+	void CreateBonesAndAnimations(void);
+
 	Matrix GetMatrix(FbxAMatrix& matrix);
 
 public:

@@ -211,24 +211,81 @@ extern unique_ptr<class CGameInstance> GGameInstance;
 wstring s2ws(const string& s);
 string ws2s(const wstring& s);
 
-//// NETWORK
-//#include <WS2tcpip.h>
-//#include <MSWSock.h>
-//#include <thread>
-//#include <Packet.h>
-//#include <Define.h>
-//#include <protocol.hpp>
-//#include <OVERLAPPEDEX.h>
-////#include "Network.h"
-////#include "NetworkManager.h"
-//
-//#pragma comment(lib, "WS2_32")
-//#pragma comment(lib, "MSWSock")
-//
-//namespace network
-//{
-//	void ErrorQuit(const std::wstring& msg);
-//#if _DEBUG
-//	void ErrorDisplay(const std::wstring& msg);
-//#endif
-//}
+
+static float Get_RandomFloat(float fStart, float fEnd);
+static int Get_RandomInt(int iStart, int iEnd);
+
+
+
+
+#pragma region save관련 함수들
+template<typename T>
+void saveVecData(const HANDLE& hFile, vector<T>& data);
+template<typename T>
+void saveStructData(const HANDLE& hFile, T* data);
+
+void saveString(const HANDLE& hFile, const wstring& str);
+void saveInt(const HANDLE& hFile, uint32 number);
+void saveDouble(const HANDLE& hFile, double number);
+void saveMatrix(const HANDLE& hFile, const Matrix& matrix);
+
+template<typename T>
+inline void saveVecData(const HANDLE& hFile, vector<T>& data)
+{
+	DWORD		dwByte = 0;
+	uint32 dataCount = data.size();
+
+	WriteFile(hFile, &dataCount, sizeof(uint32), &dwByte, NULL);
+	WriteFile(hFile, data.data(), sizeof(T) * dataCount, &dwByte, NULL);
+}
+
+template<typename T>
+inline void saveStructData(const HANDLE& hFile, T* data)
+{
+	DWORD		dwByte = 0;
+	WriteFile(hFile, data, sizeof(T), &dwByte, NULL);
+}
+#pragma endregion
+
+
+#pragma region load관련 함수들
+template<typename T>
+vector<T> loadVecData(const HANDLE& hFile);
+
+template<typename T>
+T loadStructData(const HANDLE& hFile);
+
+const wstring loadString(const HANDLE& hFile);
+const uint32 loadInt(const HANDLE& hFile);
+const double loadDouble(const HANDLE& hFile);
+const Matrix loadMatrix(const HANDLE& hFile);
+
+template<typename T>
+inline vector<T> loadVecData(const HANDLE& hFile)
+{
+	uint32 num = 0;
+	DWORD		dwByte = 0;
+
+	ReadFile(hFile, &num, sizeof(uint32), &dwByte, NULL);
+
+	vector<T> data;
+	data.resize(num);
+
+	ReadFile(hFile, data.data(), sizeof(T) * num, &dwByte, NULL);
+
+	return data;
+}
+
+template<typename T>
+inline T loadStructData(const HANDLE& hFile)
+{
+	DWORD		dwByte = 0;
+
+	T data;
+
+	ReadFile(hFile, &data, sizeof(T), &dwByte, NULL);
+
+	return data;
+}
+
+#pragma endregion

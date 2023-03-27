@@ -323,11 +323,30 @@ shared_ptr<MeshData> Resources::LoadFBX(const wstring& path)
 {
 	wstring key = path;
 
+	// 기존에 저장된 데이터인지 확인한다.
 	shared_ptr<MeshData> meshData = Get<MeshData>(key);
+
+	// 기존에 저장된 데이터라면
 	if (meshData)
+		// 해당 데이터를 반환한다.
 		return meshData;
 
+	// 파일을 로드한다. 이때 binary 파일이 존재할 경우 nullptr 반환
 	meshData = MeshData::LoadFromFBX(path);
+
+	// 파일이 로드 됬으므로, 해당 mesh 정보를 저장한다.
+	if (meshData)
+	{
+		meshData->Save(path);
+	}
+	// binary 파일이 존재하면 해당 파일로 로드한다.
+	else
+	{
+		meshData = std::make_shared<MeshData>();
+		meshData->Load(path);
+	}
+
+	// 기존에 없는 데이터이므로 저장후 반환한다.
 	meshData->SetName(key);
 	Add(key, meshData);
 

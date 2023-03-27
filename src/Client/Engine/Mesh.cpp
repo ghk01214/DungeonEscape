@@ -68,6 +68,103 @@ shared_ptr<Mesh> Mesh::CreateFromFBX(const FbxMeshInfo* meshInfo, FBXLoader& loa
 	return mesh;
 }
 
+void Mesh::SaveDataBinary(HANDLE hFile)
+{
+	// 1. 애니메이션 클립 정보 저장
+	/*
+		struct AnimClipInfo
+		{
+			wstring			animName;
+			int32			frameCount;
+			double			duration;
+			vector<vector<KeyFrameInfo>>	keyFrames;
+		};
+	*/
+	saveInt(hFile, m_animClips.size());
+	for (auto& Clip : m_animClips)
+	{
+		saveString(hFile, Clip.animName);
+		saveInt(hFile, Clip.frameCount);
+		saveDouble(hFile, Clip.duration);
+
+		saveInt(hFile, Clip.keyFrames.size());
+		for (auto& KeyFrame : Clip.keyFrames)
+		{
+			saveVecData(hFile, KeyFrame);
+		}
+	}
+
+	// 2. 본 데이터 정보 저장
+	/*
+		struct BoneInfo
+		{
+			wstring					boneName;
+			int32					parentIdx;
+			Matrix					matOffset;
+		};
+	*/
+
+	saveInt(hFile, m_bones.size());
+	for (auto& bone : m_bones)
+	{
+		saveString(hFile, bone.boneName);
+		saveInt(hFile, bone.parentIdx);
+		saveMatrix(hFile, bone.matOffset);
+	}
+}
+
+void Mesh::LoadDataBinary(HANDLE hFile, const FbxMeshInfo* meshInfo)
+{
+	// 정보 로드
+	uint32 num = loadInt(hFile);
+	m_animClips.resize(num);
+	for (auto& Clip : m_animClips)
+	{
+		Clip.animName = loadString(hFile);
+		Clip.frameCount = loadInt(hFile);
+		Clip.duration = loadDouble(hFile);
+
+		uint32 num = loadInt(hFile);
+		Clip.keyFrames.resize(num);
+		for (auto& KeyFrame : Clip.keyFrames)
+		{
+			KeyFrame = loadVecData<KeyFrameInfo>(hFile);
+		}
+	}
+
+	num = loadInt(hFile);
+	m_bones.resize(num);
+
+	for (auto& bone : m_bones)
+	{
+		bone.boneName = loadString(hFile);
+		bone.parentIdx = loadInt(hFile);
+		bone.matOffset = loadMatrix(hFile);
+	}
+
+
+
+	// 로드된 정보를 가지고 객체 초기화
+	CreateVertexBuffer(meshInfo->vertices);
+
+	for (const vector<uint32>& buffer : meshInfo->indices)
+	{
+		if (buffer.empty())
+		{
+			// FBX 파일이 이상하다. IndexBuffer가 없으면 에러 나니까 임시 처리
+			vector<uint32> defaultBuffer{ 0 };
+			CreateIndexBuffer(defaultBuffer);
+		}
+		else
+		{
+			CreateIndexBuffer(buffer);
+		}
+	}
+
+	if (meshInfo->hasAnimation)
+		CreateBonesAndAnimations();
+}
+
 void Mesh::CreateVertexBuffer(const vector<Vertex>& buffer)
 {
 	m_vertexCount = static_cast<uint32>(buffer.size());
@@ -244,6 +341,52 @@ void Mesh::CreateBonesAndAnimations(class FBXLoader& loader)
 		}
 	}
 #pragma endregion
+}
+
+void Mesh::CreateBonesAndAnimations(void)
+{
+	if (IsAnimMesh())
+	{
+		// BoneOffet 행렬
+		const int32 boneCount = static_cast<int32>(m_bones.size());
+		vector<Matrix> offsetVec(boneCount);
+		for (size_t b = 0; b < boneCount; b++)
+			offsetVec[b] = m_bones[b].matOffset;
+
+		// OffsetMatrix StructuredBuffer 세팅
+		m_offsetBuffer = make_shared<StructuredBuffer>();
+		m_offsetBuffer->Init(sizeof(Matrix), static_cast<uint32>(offsetVec.size()), offsetVec.data());
+
+		const int32 animCount = static_cast<int32>(m_animClips.size());
+		for (int32 i = 0; i < animCount; i++)
+		{
+			AnimClipInfo& animClip = m_animClips[i];
+
+			// 애니메이션 프레임 정보
+			vector<AnimFrameParams> frameParams;
+			frameParams.resize(m_bones.size() * animClip.frameCount);
+
+			for (int32 b = 0; b < boneCount; b++)
+			{
+				const int32 keyFrameCount = static_cast<int32>(animClip.keyFrames[b].size());
+				for (int32 f = 0; f < keyFrameCount; f++)
+				{
+					int32 idx = static_cast<int32>(boneCount * f + b);
+
+					frameParams[idx] = AnimFrameParams
+					{
+						Vec4(animClip.keyFrames[b][f].scale),
+						animClip.keyFrames[b][f].rotation, // Quaternion
+						Vec4(animClip.keyFrames[b][f].translate)
+					};
+				}
+			}
+
+			// StructuredBuffer 세팅
+			m_frameBuffer.push_back(make_shared<StructuredBuffer>());
+			m_frameBuffer.back()->Init(sizeof(AnimFrameParams), static_cast<uint32>(frameParams.size()), frameParams.data());
+		}
+	}
 }
 
 Matrix Mesh::GetMatrix(FbxAMatrix& matrix)
