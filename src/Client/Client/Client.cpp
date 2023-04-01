@@ -5,6 +5,7 @@
 #include "framework.h"
 #include "Client.h"
 #include "Game.h"
+#include <NetworkManager.h>
 
 #if _DEBUG
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
@@ -54,7 +55,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	g_windowInfo.windowed = true;
 
 	// 네트워크 매니저 생성
-	network::pNetwork->Connect();
+	GET_NETWORK->Init();
 	std::unique_ptr<CGame> pGame = std::make_unique<CGame>();
 	pGame->Init(g_windowInfo);
 
@@ -178,8 +179,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 		case WM_DESTROY:
-		network::pNetwork->EndThreadProcess();
-		network::pNetwork->WaitForThreadTermination();
+		GET_NETWORK->EndThreadProcess();
+		GET_NETWORK->CloseThread();
 		PostQuitMessage(0);
 		break;
 		default:

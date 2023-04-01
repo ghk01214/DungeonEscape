@@ -12,11 +12,12 @@
 #include <GameObject.h>
 #include <Transform.h>
 
+#include <NetworkManager.h>
 #include <Network.h>
 
 void Monster_Dragon::Update(void)
 {
-	if (m_gameObject.lock()->GetClientID() == network::pNetwork->GetID())
+	if (GET_NETWORK->GetID() == GetNetwork()->GetID())
 	{
 		if (INPUT->GetButtonDown(KEY_TYPE::KEY_1))
 		{
@@ -24,9 +25,8 @@ void Monster_Dragon::Update(void)
 			int32 currentIndex = GetAnimator()->GetCurrentClipIndex();
 
 			int32 index = (currentIndex + 1) % count;
-			//GetAnimator()->Play(index);
 
-			network::pNetwork->SendAniIndexPacket(index, GetAnimator()->GetUpdateTime());
+			GetNetwork()->SendAniIndexPacket(index, GetAnimator()->GetUpdateTime());
 		}
 
 		if (INPUT->GetButtonDown(KEY_TYPE::KEY_2))
@@ -35,46 +35,45 @@ void Monster_Dragon::Update(void)
 			int32 currentIndex = GetAnimator()->GetCurrentClipIndex();
 
 			int32 index = (currentIndex - 1 + count) % count;
-			//GetAnimator()->Play(index);
 
-			network::pNetwork->SendAniIndexPacket(index, GetAnimator()->GetUpdateTime());
+			GetNetwork()->SendAniIndexPacket(index, GetAnimator()->GetUpdateTime());
 		}
 
 
 		if (INPUT->GetButton(KEY_TYPE::LEFT))
 		{
-			auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
-			auto id{ network::pNetwork->GetID() };
+			auto player{ GET_SCENE->GetPlayer() };
+			auto id{ GetNetwork()->GetID() };
 			auto pos{ player[id]->GetTransform()->GetLocalPosition() };
 
-			network::pNetwork->SendMovePacket(DIRECTION::LEFT);
+			GetNetwork()->SendMovePacket(DIRECTION::LEFT);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::RIGHT))
 		{
-			auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
-			auto id{ network::pNetwork->GetID() };
+			auto player{ GET_SCENE->GetPlayer() };
+			auto id{ GetNetwork()->GetID() };
 			auto pos{ player[id]->GetTransform()->GetLocalPosition() };
 
-			network::pNetwork->SendMovePacket(DIRECTION::RIGHT);
+			GetNetwork()->SendMovePacket(DIRECTION::RIGHT);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::UP))
 		{
-			auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
-			auto id{ network::pNetwork->GetID() };
+			auto player{ GET_SCENE->GetPlayer() };
+			auto id{ GetNetwork()->GetID() };
 			auto pos{ player[id]->GetTransform()->GetLocalPosition() };
 
-			network::pNetwork->SendMovePacket(DIRECTION::UP);
+			GetNetwork()->SendMovePacket(DIRECTION::UP);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::DOWN))
 		{
-			auto player{ GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer() };
-			auto id{ network::pNetwork->GetID() };
+			auto player{ GET_SCENE->GetPlayer() };
+			auto id{ GetNetwork()->GetID() };
 			auto pos{ player[id]->GetTransform()->GetLocalPosition() };
 
-			network::pNetwork->SendMovePacket(DIRECTION::DOWN);
+			GetNetwork()->SendMovePacket(DIRECTION::DOWN);
 		}
 	}
 }

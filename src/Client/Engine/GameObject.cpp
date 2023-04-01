@@ -141,11 +141,11 @@ shared_ptr<Animator> CGameObject::GetAnimator()
 	return static_pointer_cast<Animator>(component);
 }
 
-//shared_ptr<network::CNetwork> CGameObject::GetNetwork()
-//{
-//	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::NETWORK);
-//	return static_pointer_cast<network::CNetwork>(component);
-//}
+shared_ptr<network::CNetwork> CGameObject::GetNetwork()
+{
+	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::NETWORK);
+	return static_pointer_cast<network::CNetwork>(component);
+}
 
 void CGameObject::AddComponent(shared_ptr<Component> component)
 {

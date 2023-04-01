@@ -20,6 +20,7 @@
 #include <format>
 #endif
 
+#pragma region [CLIENT]
 using namespace std;
 
 #include <filesystem>
@@ -176,11 +177,11 @@ public:								\
 #define INPUT				GET_SINGLE(Input)
 #define DELTA_TIME			GET_SINGLE(Timer)->GetDeltaTime()
 
-
-#define GET_PLAYER		GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer()
-#define GET_MONSTER		GET_SINGLE(SceneManager)->GetActiveScene()->GetMonster()
-#define GET_BOSS		GET_SINGLE(SceneManager)->GetActiveScene()->GetBoss()
-#define GET_OBJECT		GET_SINGLE(SceneManager)->GetActiveScene()->GetSceneObject()
+#define GET_SCENE		GET_SINGLE(SceneManager)->GetActiveScene()
+#define GET_PLAYER		GET_SCENE->GetPlayer()
+#define GET_MONSTER		GET_SCENE->GetMonster()
+#define GET_BOSS		GET_SCENE->GetBoss()
+#define GET_OBJECT		GET_SCENE->GetSceneObject()
 
 
 #define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
@@ -211,12 +212,8 @@ extern unique_ptr<class CGameInstance> GGameInstance;
 wstring s2ws(const string& s);
 string ws2s(const wstring& s);
 
-
 static float Get_RandomFloat(float fStart, float fEnd);
 static int Get_RandomInt(int iStart, int iEnd);
-
-
-
 
 #pragma region save관련 함수들
 template<typename T>
@@ -246,7 +243,6 @@ inline void saveStructData(const HANDLE& hFile, T* data)
 	WriteFile(hFile, data, sizeof(T), &dwByte, NULL);
 }
 #pragma endregion
-
 
 #pragma region load관련 함수들
 template<typename T>
@@ -288,4 +284,29 @@ inline T loadStructData(const HANDLE& hFile)
 	return data;
 }
 
+#pragma endregion
+#pragma endregion
+
+#pragma region [NETWORK]
+// network 관련
+#include <WS2tcpip.h>
+#include <MSWSock.h>
+#include <thread>
+#include <Packet.h>
+#include <Define.h>
+#include <protocol.hpp>
+#include <OVERLAPPEDEX.h>
+
+#pragma comment(lib, "WS2_32")
+#pragma comment(lib, "MSWSock")
+
+#define GET_NETWORK		GET_SINGLE(network::NetworkManager)
+
+namespace network
+{
+	void ErrorQuit(const std::wstring_view& msg);
+#if _DEBUG
+	void ErrorDisplay(const std::wstring_view& msg);
+#endif
+}
 #pragma endregion

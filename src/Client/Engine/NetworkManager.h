@@ -4,28 +4,30 @@ class CGameObject;
 
 namespace network
 {
-	/*class NetworkManager
+	class NetworkManager
 	{
+	private:
+		using Object = std::vector<std::shared_ptr<CGameObject>>;
+
 		DECLARE_SINGLE(NetworkManager);
 
 	public:
 		void Init();
 		void RegisterObject(std::shared_ptr<CGameObject> object);
+		void RegisterObject(Object object);
 
 		void Connect();
-		void WaitForThreadTermination();
-
-#pragma region [SEND PACKET]
-		void SendLoginPacket();
-		void SendMovePacket(DIRECTION direction);
-		void SendRotationPacket(ROTATION direction);
-#pragma endregion
-	private:
-		void ProcessThread();
 		void EndThreadProcess();
+		void CloseThread();
 
 		void Recv();
 		void Send(network::CPacket& packet);
+
+		void SendLoginPacket();
+
+		constexpr uint32_t GetID() const { return m_id; }
+	private:
+		void ProcessThread();
 
 		void Recv(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 		void Send(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
@@ -44,6 +46,11 @@ namespace network
 		void ProcessTTPacket(ProtocolID type);
 #pragma endregion
 
+		void AddPlayer(int32_t id);
+		void MovePlayer(int32_t id);
+		void RotatePlayer(int32_t id);
+		void PlayAni(int32_t id);
+
 	private:
 		HANDLE m_iocp;
 		SOCKET m_socket;
@@ -54,10 +61,11 @@ namespace network
 		OVERLAPPEDEX m_recvEx;
 		OVERLAPPEDEX m_sendEx;
 
-		char* m_pRecvPacket;
+		int8* m_pRecvPacket;
 		network::CPacket m_packet;
 		int32_t m_remainSize;
 
-		std::unordered_map<uint32_t, std::shared_ptr<CGameObject>> m_objects;
-	};*/
+		int32_t m_id;
+		std::unordered_map<int32_t, Object> m_objects;
+	};
 }

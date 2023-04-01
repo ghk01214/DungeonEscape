@@ -31,7 +31,7 @@ void InstancingManager::Render(vector<shared_ptr<CGameObject>>& gameObjects)
 				}
 			}
 		}
-		else 
+		else
 		{
 			if (vec.size() == 1)
 			{

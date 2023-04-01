@@ -1,10 +1,5 @@
 ﻿#pragma once
 
-namespace network
-{
-	class CNetwork;
-}
-
 class CGame
 {
 public:

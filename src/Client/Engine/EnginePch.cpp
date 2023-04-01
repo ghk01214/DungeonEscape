@@ -3,8 +3,10 @@
 #include "Engine.h"
 #include <random>
 
+#pragma region [CLIENT]
 std::unique_ptr<Engine> GEngine = std::make_unique<Engine>();
 std::unique_ptr<CGameInstance> GGameInstance = std::make_unique<CGameInstance>();
+std::default_random_engine dre{ std::random_device{}() };
 
 wstring s2ws(const string& s)
 {
@@ -30,20 +32,16 @@ string ws2s(const wstring& s)
 
 static float Get_RandomFloat(float fStart, float fEnd)
 {
-	std::random_device rd;
-	std::mt19937 gen(rd());
 	std::uniform_real_distribution<float> dist(fStart, fEnd);
 
-	return dist(gen);
+	return dist(dre);
 }
 
 static int Get_RandomInt(int iStart, int iEnd)
 {
-	std::random_device rd;
-	std::mt19937 gen(rd());
 	std::uniform_int_distribution<int> dist(iStart, iEnd);
 
-	return dist(gen);
+	return dist(dre);
 }
 
 void saveString(const HANDLE& hFile, const wstring& str)
@@ -124,3 +122,38 @@ const Matrix loadMatrix(const HANDLE& hFile)
 
 	return matrix;
 }
+#pragma endregion
+
+#pragma region [NETWORK]
+namespace network
+{
+	void ErrorQuit(const std::wstring_view& msg)
+	{
+		LPVOID error{};
+
+		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr,
+					  WSAGetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPTSTR>(&error), 0, nullptr);
+
+		MessageBox(nullptr, static_cast<LPCTSTR>(error), msg.data(), MB_ICONERROR);
+
+		LocalFree(error);
+		exit(true);
+	}
+}
+
+#if _DEBUG
+
+namespace network
+{
+	void ErrorDisplay(const std::wstring_view& msg)
+	{
+		LPVOID error{};
+
+		FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, nullptr,
+					  WSAGetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPTSTR>(&error), 0, nullptr);
+
+		std::wcout << std::format(L"[{}] {}\n", msg, static_cast<LPTSTR>(error));
+	}
+}
+#endif
+#pragma endregion

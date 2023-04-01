@@ -56,6 +56,7 @@ public:
 	void AddGameObject(shared_ptr<CGameObject> gameObject);
 	void AddGameObject(std::vector<std::shared_ptr<CGameObject>> gameObjects);
 	void RemoveGameObject(shared_ptr<CGameObject> gameObject);
+	void RemoveGameObject(std::vector<std::shared_ptr<CGameObject>> gameObjects);
 
 public:
 	void AddPlayer(std::vector<std::shared_ptr<CGameObject>> gameObject);
@@ -71,7 +72,7 @@ public:
 	const vector<shared_ptr<CGameObject>>& GetBoss(void) { return m_boss; }
 	const vector<shared_ptr<CGameObject>>& GetSceneObject(void) { return m_sceneObject; }
 	const shared_ptr<CGameObject>& GetSkyBoxObject(void) { return m_skyBox; }
-	
+
 private:
 	vector<shared_ptr<CGameObject>>		m_gameObjects;
 	vector<shared_ptr<class Camera>>	m_cameras;

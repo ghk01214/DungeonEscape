@@ -47,8 +47,8 @@ public:
 	void SetShader(shared_ptr<Shader> shader) { m_shader = shader; }
 	void SetInt(uint8 index, int32 value) { m_params.SetInt(index, value); }
 	void SetFloat(uint8 index, float value) { m_params.SetFloat(index, value); }
-	void SetTexture(uint8 index, shared_ptr<Texture> texture) 
-	{ 
+	void SetTexture(uint8 index, shared_ptr<Texture> texture)
+	{
 		m_textures[index] = texture;
 		m_params.SetTexOn(index, (texture == nullptr ? 0 : 1));
 	}

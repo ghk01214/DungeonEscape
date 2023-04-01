@@ -121,7 +121,7 @@ namespace game
 				}
 				else
 				{
-					ErrorDisplay(L"GQCS Error on client[" + std::to_wstring(clientID) + L"]");
+					ErrorDisplay(L"GQCS Error on session[" + std::to_wstring(clientID) + L"] :");
 					Disconnect(static_cast<uint32_t>(clientID));
 
 					if (pOverEx->type == network::COMPLETION::SEND)
@@ -248,7 +248,7 @@ namespace game
 		}
 
 		// 활성 세션수 증가
-		++m_activeSessionNum;		
+		++m_activeSessionNum;
 
 		// 재사용 가능 id가 없으면 최고 숫자 발급
 		if (bool issueNewID{ m_reusableID.empty() }; issueNewID == true)
@@ -501,7 +501,7 @@ namespace game
 		// concurrent_hash_map의 정보에 안전하게 접근하기 위해서는 사용 필수
 		//Accessor<uint16_t, CObject*> access;
 		auto session{ m_sessions[id] };
-		
+
 		// 세션의 델타 타임 읽기
 		float deltaTime{ packet.Read<float>() };
 

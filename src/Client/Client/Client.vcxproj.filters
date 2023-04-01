@@ -39,9 +39,6 @@
     <Filter Include="소스 파일\Utils\pch">
       <UniqueIdentifier>{1dd5411e-af12-4be8-9197-d747ef6b4f76}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Game\Network">
-      <UniqueIdentifier>{00ce23e1-384a-437b-9b7a-8bdff418c093}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -67,12 +64,6 @@
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>소스 파일\Utils\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\vendor\include\Define.h">
-      <Filter>소스 파일\Utils\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="Network.h">
-      <Filter>소스 파일\Game\Network</Filter>
     </ClInclude>
     <ClInclude Include="Scene_Test.h">
       <Filter>소스 파일\Script\00. Scene</Filter>
@@ -106,9 +97,6 @@
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>소스 파일\Utils\pch</Filter>
-    </ClCompile>
-    <ClCompile Include="Network.cpp">
-      <Filter>소스 파일\Game\Network</Filter>
     </ClCompile>
     <ClCompile Include="Scene_Test.cpp">
       <Filter>소스 파일\Script\00. Scene</Filter>

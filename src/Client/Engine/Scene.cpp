@@ -66,11 +66,11 @@ void CScene::Render()
 
 	ClearRTV();
 
-	RenderShadow(); 
-	
+	RenderShadow();
+
 	RenderDeferred();
 
-	RenderLights();	
+	RenderLights();
 
 	RenderFinal();
 
@@ -306,6 +306,29 @@ void CScene::RemoveGameObject(shared_ptr<CGameObject> gameObject)
 	auto findIt = std::find(m_gameObjects.begin(), m_gameObjects.end(), gameObject);
 	if (findIt != m_gameObjects.end())
 		m_gameObjects.erase(findIt);
+}
+
+void CScene::RemoveGameObject(std::vector<std::shared_ptr<CGameObject>> gameObjects)
+{
+	for (auto& gameObject : gameObjects)
+	{
+		if (gameObject->GetCamera())
+		{
+			auto findIt = std::find(m_cameras.begin(), m_cameras.end(), gameObject->GetCamera());
+			if (findIt != m_cameras.end())
+				m_cameras.erase(findIt);
+		}
+		else if (gameObject->GetLight())
+		{
+			auto findIt = std::find(m_lights.begin(), m_lights.end(), gameObject->GetLight());
+			if (findIt != m_lights.end())
+				m_lights.erase(findIt);
+		}
+
+		auto findIt = std::find(m_gameObjects.begin(), m_gameObjects.end(), gameObject);
+		if (findIt != m_gameObjects.end())
+			m_gameObjects.erase(findIt);
+	}
 }
 
 void CScene::AddPlayer(std::vector<std::shared_ptr<CGameObject>> gameObject)

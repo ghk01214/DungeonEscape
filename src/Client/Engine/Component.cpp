@@ -34,7 +34,7 @@ shared_ptr<Animator> Component::GetAnimator()
 	return m_gameObject.lock()->GetAnimator();
 }
 
-//shared_ptr<network::CNetwork> Component::GetNetwork()
-//{
-//	return m_gameObject.lock()->GetNetwork();
-//}
+shared_ptr<network::CNetwork> Component::GetNetwork()
+{
+	return m_gameObject.lock()->GetNetwork();
+}

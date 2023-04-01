@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
-#include "Network.h"
 #include "Game.h"
 #include "Engine.h"
 #include "SceneManager.h"
+#include <NetworkManager.h>
 
 #include "GameInstance.h"
 #include "Scene_Test.h"
@@ -13,7 +13,7 @@ void CGame::Init(const WindowInfo& Info)
 
 	GET_SINGLE(SceneManager)->LoadScene(Scene_Test::GetInstance()->TestScene());
 
-	network::pNetwork->SendLoginPacket();
+	GET_NETWORK->SendLoginPacket();
 }
 
 void CGame::Update()
