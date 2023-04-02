@@ -36,6 +36,7 @@ namespace game
 		void SendRemovePacket(int32_t id);
 		void SendMovePacket(int32_t id, ProtocolID protocol, CObject* obj);
 		void SendRotatePacket(int32_t id, ProtocolID protocol, CObject* obj);
+		void SendJumpPacket(int32_t id, ProtocolID protocol, CObject* obj);
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer* obj);
 
 		const STATE GetState() const { return m_state; }

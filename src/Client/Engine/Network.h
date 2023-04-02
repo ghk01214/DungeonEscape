@@ -18,6 +18,7 @@ namespace network
 #pragma region [SEND PACKET]
 		void SendMovePacket(DIRECTION direction);
 		void SendRotationPacket(ROTATION direction);
+		void SendJumpPacket();
 		void SendAniIndexPacket(int32_t index, float updateTime);
 #pragma endregion
 

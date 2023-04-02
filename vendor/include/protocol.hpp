@@ -37,6 +37,9 @@ enum class ProtocolID : unsigned short
 	MY_ROTATE_REQ,	// 플레이어 회전 요청
 	MY_ROTATE_ACK,	// 플레이어 회전 응답
 
+	MY_JUMP_REQ,
+	MY_JUMP_ACK,
+
 	MY_ANI_REQ,
 	MY_ANI_ACK,
 
@@ -57,6 +60,9 @@ enum class ProtocolID : unsigned short
 
 	WR_ROTATE_REQ,
 	WR_ROTATE_ACK,
+
+	WR_JUMP_REQ,
+	WR_JUMP_ACK,
 
 	WR_ANI_REQ,
 	WR_ANI_ACK,

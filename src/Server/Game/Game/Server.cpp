@@ -410,6 +410,25 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::MY_JUMP_REQ:
+			{
+				float deltaTime{ packet.Read<float>() };
+				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
+
+				pl->Jump();
+
+				for (auto& player : m_sessions)
+				{
+					if (player->GetState() != STATE::INGAME)
+						continue;
+
+					if (player->GetID() == id)
+						player->SendJumpPacket(id, ProtocolID::MY_JUMP_ACK, pl);
+					else
+						player->SendJumpPacket(id, ProtocolID::WR_JUMP_ACK, pl);
+				}
+			}
+			break;
 			case ProtocolID::MY_ANI_REQ:
 			{
 				int32_t index{ packet.Read<int32_t>() };
@@ -424,15 +443,9 @@ namespace game
 						continue;
 
 					if (player->GetID() == id)
-					{
 						player->SendAniIndexPacket(id, ProtocolID::MY_ANI_ACK, pl);
-						std::cout << player->GetID() << " : " << index << std::endl;
-					}
 					else
-					{
 						player->SendAniIndexPacket(id, ProtocolID::WR_ANI_ACK, pl);
-						std::cout << player->GetID() << " : " << index << std::endl;
-					}
 				}
 			}
 			break;

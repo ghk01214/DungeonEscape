@@ -65,6 +65,17 @@ namespace network
 		GET_NETWORK->Send(packet);
 	}
 
+	void CNetwork::SendJumpPacket()
+	{
+		network::CPacket packet;
+
+		packet.WriteID(m_networkID);
+		packet.WriteProtocol(ProtocolID::MY_JUMP_REQ);
+		packet.Write<float>(DELTA_TIME);
+
+		GET_NETWORK->Send(packet);
+	}
+
 	void CNetwork::SendAniIndexPacket(int32_t index, float updateTime)
 	{
 		network::CPacket packet;

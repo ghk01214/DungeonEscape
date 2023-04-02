@@ -143,6 +143,21 @@ namespace game
 		Send(packet);
 	}
 
+	void CSession::SendJumpPacket(int32_t id, ProtocolID protocol, CObject* obj)
+	{
+		network::CPacket packet;
+		Pos pos{ obj->GetPos() };
+
+		packet.WriteID(id);
+		packet.WriteProtocol(protocol);
+		// TODO : 점프 시 필요한 정보 전송
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
+
+		Send(packet);
+	}
+
 	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer* obj)
 	{
 		network::CPacket packet;

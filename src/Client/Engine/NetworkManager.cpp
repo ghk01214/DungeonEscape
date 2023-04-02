@@ -338,6 +338,10 @@ namespace network
 				RotatePlayer(m_id);
 			}
 			break;
+			case ProtocolID::MY_JUMP_REQ:
+			{
+				JumpPlayer(m_id);
+			}
 			case ProtocolID::MY_ANI_ACK:
 			{
 				PlayAni(m_id);
@@ -382,6 +386,12 @@ namespace network
 				RotatePlayer(id);
 			}
 			break;
+			case ProtocolID::WR_JUMP_ACK:
+			{
+				int32_t id{ m_packet.ReadID() };
+
+				JumpPlayer(id);
+			}
 			case ProtocolID::WR_ANI_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
@@ -495,6 +505,19 @@ namespace network
 		for (auto& object : m_objects[id])
 		{
 			object->GetTransform()->SetLocalRotation(rotation);
+		}
+	}
+
+	void NetworkManager::JumpPlayer(int32_t id)
+	{
+		Vec3 pos;
+		pos.x = m_packet.Read<float>();
+		pos.y = m_packet.Read<float>();
+		pos.z = m_packet.Read<float>();
+
+		for (auto& object : m_objects[id])
+		{
+			object->GetTransform()->SetLocalPosition(pos);
 		}
 	}
 

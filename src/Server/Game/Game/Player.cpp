@@ -29,4 +29,8 @@ namespace game
 	void CPlayer::Init()
 	{
 	}
+
+	void CPlayer::Jump()
+	{
+	}
 }

@@ -6,6 +6,7 @@ enum class KEY_TYPE
 	DOWN = VK_DOWN,
 	LEFT = VK_LEFT,
 	RIGHT = VK_RIGHT,
+	SPACE = VK_SPACE,
 
 	W = 'W',
 	A = 'A',
@@ -55,7 +56,7 @@ public:
 	bool GetButtonDown(KEY_TYPE key) { return GetState(key) == KEY_STATE::DOWN; }
 	// 맨 처음 눌렀다 뗐을 때
 	bool GetButtonUp(KEY_TYPE key) { return GetState(key) == KEY_STATE::UP; }
-	
+
 	const POINT& GetMousePos() { return m_mousePos; }
 
 private:

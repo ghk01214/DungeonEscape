@@ -14,6 +14,8 @@ namespace game
 
 		void Init() override;
 
+		void Jump();
+
 		constexpr int32_t GetAniIndex() const { return m_aniIndex; }
 		constexpr float GetAniFrame() const { return m_aniFrame; }
 

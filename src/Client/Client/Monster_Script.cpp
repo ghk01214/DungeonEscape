@@ -42,38 +42,30 @@ void Monster_Dragon::Update(void)
 
 		if (INPUT->GetButton(KEY_TYPE::LEFT))
 		{
-			auto player{ GET_SCENE->GetPlayer() };
-			auto id{ GetNetwork()->GetID() };
-			auto pos{ player[id]->GetTransform()->GetLocalPosition() };
-
 			GetNetwork()->SendMovePacket(DIRECTION::LEFT);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::RIGHT))
 		{
-			auto player{ GET_SCENE->GetPlayer() };
-			auto id{ GetNetwork()->GetID() };
-			auto pos{ player[id]->GetTransform()->GetLocalPosition() };
-
 			GetNetwork()->SendMovePacket(DIRECTION::RIGHT);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::UP))
 		{
-			auto player{ GET_SCENE->GetPlayer() };
-			auto id{ GetNetwork()->GetID() };
-			auto pos{ player[id]->GetTransform()->GetLocalPosition() };
-
 			GetNetwork()->SendMovePacket(DIRECTION::UP);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::DOWN))
 		{
-			auto player{ GET_SCENE->GetPlayer() };
-			auto id{ GetNetwork()->GetID() };
-			auto pos{ player[id]->GetTransform()->GetLocalPosition() };
-
 			GetNetwork()->SendMovePacket(DIRECTION::DOWN);
+		}
+
+		if (INPUT->GetButton(KEY_TYPE::SPACE))
+		{
+			auto id{ GetNetwork()->GetID() };
+			auto pos{ GET_PLAYER[id]->GetTransform()->GetLocalPosition() };
+
+			GetNetwork()->SendJumpPacket();
 		}
 	}
 }

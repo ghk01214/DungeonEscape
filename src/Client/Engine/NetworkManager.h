@@ -49,6 +49,7 @@ namespace network
 		void AddPlayer(int32_t id);
 		void MovePlayer(int32_t id);
 		void RotatePlayer(int32_t id);
+		void JumpPlayer(int32_t id);
 		void PlayAni(int32_t id);
 
 	private:
