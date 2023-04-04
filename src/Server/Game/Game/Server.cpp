@@ -153,6 +153,13 @@ namespace game
 					Send(id, bytes, pOverEx);
 				}
 				break;
+				case network::COMPLETION::JUMP:
+				{
+					Jump(id, pOverEx);
+				}
+				break;
+				default:
+				break;
 			}
 		}
 	}
@@ -276,6 +283,7 @@ namespace game
 
 		m_sessions[id]->Reset();
 		m_reusableID.push(id);
+		--m_activeSessionNum;
 
 		std::cout << std::format("session[{}] disconnected\n", id);
 	}
@@ -363,16 +371,16 @@ namespace game
 
 		switch (protocol)
 		{
-			case ProtocolID::MY_MOVE_REQ:
+			case ProtocolID::MY_TRANSFORM_REQ:
 			{
 				// 세션의 델타 타임 읽기
 				float deltaTime{ packet.Read<float>() };
 				// 타깃의 이동방향 읽기
 				DIRECTION direction{ packet.Read<DIRECTION>() };
+				ROTATION quat{ packet.Read<ROTATION>() };
 
 				std::cout << id << " : ";
-				//session->SetDeltaTime(deltaTime);
-				session->GetMyObject()->Move(direction, deltaTime);
+				session->GetMyObject()->Transform(direction, quat, deltaTime);
 
 				// 모든 세션에 대해 이동 패킷 전송
 				for (auto& player : m_sessions)
@@ -381,32 +389,9 @@ namespace game
 						continue;
 
 					if (player->GetID() == id)
-						player->SendMovePacket(id, ProtocolID::MY_MOVE_ACK, session->GetMyObject());
+						player->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, session->GetMyObject());
 					else
-						player->SendMovePacket(id, ProtocolID::WR_MOVE_ACK, session->GetMyObject());
-				}
-			}
-			break;
-			case ProtocolID::MY_ROTATE_REQ:
-			{
-				// 세션의 델타 타임 읽기
-				float deltaTime{ packet.Read<float>() };
-				// 타깃의 회전방향 읽기
-				ROTATION direction{ packet.Read<ROTATION>() };
-
-				//session->SetDeltaTime(deltaTime);
-				session->GetMyObject()->Rotate(direction, deltaTime);
-
-				// 모든 세션에 대해 회전 패킷 전송
-				for (auto& player : m_sessions)
-				{
-					if (player->GetState() != STATE::INGAME)
-						continue;
-
-					if (player->GetID() == id)
-						player->SendMovePacket(id, ProtocolID::MY_ROTATE_ACK, session->GetMyObject());
-					else
-						player->SendMovePacket(id, ProtocolID::WR_ROTATE_ACK, session->GetMyObject());
+						player->SendTransformPacket(id, ProtocolID::WR_TRANSFORM_ACK, session->GetMyObject());
 				}
 			}
 			break;
@@ -415,6 +400,7 @@ namespace game
 				float deltaTime{ packet.Read<float>() };
 				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
 
+				pl->SetDeltaTime(deltaTime);
 				pl->Jump();
 
 				for (auto& player : m_sessions)
@@ -423,9 +409,17 @@ namespace game
 						continue;
 
 					if (player->GetID() == id)
-						player->SendJumpPacket(id, ProtocolID::MY_JUMP_ACK, pl);
+						player->SendTransformPacket(id, ProtocolID::MY_JUMP_ACK, pl);
 					else
-						player->SendJumpPacket(id, ProtocolID::WR_JUMP_ACK, pl);
+						player->SendTransformPacket(id, ProtocolID::WR_JUMP_ACK, pl);
+				}
+
+				if (pl->IsJumping() == true)
+				{
+					network::OVERLAPPEDEX* pOverEx{ new network::OVERLAPPEDEX };
+					pOverEx->type = network::COMPLETION::JUMP;
+
+					PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
 				}
 			}
 			break;
@@ -434,6 +428,7 @@ namespace game
 				int32_t index{ packet.Read<int32_t>() };
 				float aniFrame{ packet.Read<float>() };
 				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
+
 				pl->SetAniIndex(index);
 				pl->SetAniFrame(aniFrame);
 
@@ -518,6 +513,7 @@ namespace game
 		// 세션의 델타 타임 읽기
 		float deltaTime{ packet.Read<float>() };
 
+		float x{ (m_activeSessionNum - 1) * 25.f };
 		// 해당 세션의 델타 타임 설정
 		session->SetState(STATE::INGAME);
 		session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);
@@ -539,9 +535,32 @@ namespace game
 			if (player->GetID() == id)
 				continue;
 
-			session->SendAddPacket(player->GetID(), player->GetMyObject());
 			// 해당 클라이언트에 로그인 완료 패킷 전송
 			player->SendAddPacket(id, pObject);
+			session->SendAddPacket(player->GetID(), player->GetMyObject());
+		}
+	}
+
+	void CServer::Jump(int32_t id, network::OVERLAPPEDEX* pOverEx)
+	{
+		auto pl{ dynamic_cast<CPlayer*>(m_sessions[id]->GetMyObject()) };
+
+		pl->Jump();
+
+		for (auto& player : m_sessions)
+		{
+			if (player->GetState() != STATE::INGAME)
+				continue;
+
+			if (player->GetID() == id)
+				player->SendTransformPacket(id, ProtocolID::MY_JUMP_ACK, pl);
+			else
+				player->SendTransformPacket(id, ProtocolID::WR_JUMP_ACK, pl);
+		}
+
+		if (pl->IsJumping() == true)
+		{
+			PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
 		}
 	}
 }

@@ -165,10 +165,10 @@
     <ClCompile Include="Session.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\vendor\include\Define.h" />
     <ClInclude Include="..\..\..\..\vendor\include\OVERLAPPEDEX.h" />
     <ClInclude Include="..\..\..\..\vendor\include\Packet.h" />
     <ClInclude Include="..\..\..\..\vendor\include\protocol.hpp" />
-    <ClInclude Include="Define.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Object.h" />

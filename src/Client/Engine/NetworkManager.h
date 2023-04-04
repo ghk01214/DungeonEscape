@@ -47,9 +47,8 @@ namespace network
 #pragma endregion
 
 		void AddPlayer(int32_t id);
-		void MovePlayer(int32_t id);
-		void RotatePlayer(int32_t id);
-		void JumpPlayer(int32_t id);
+		void RemovePlayer(int32_t id);
+		void TransformPlayer(int32_t id);
 		void PlayAni(int32_t id);
 
 	private:

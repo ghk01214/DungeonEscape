@@ -9,35 +9,52 @@ namespace game
 		float z;
 	};
 
-	using Rotation = Pos;
+	struct Quat
+	{
+		float x;
+		float y;
+		float z;
+		float w;
+	};
+
+	struct Trans
+	{
+		Pos p;
+		Quat q;
+	};
 
 	class CObject
 	{
 	public:
-		CObject() = default;
-		CObject(Pos pos);
+		CObject();
+		CObject(Trans trans);
+		CObject(Pos pos, Quat quat);
 		CObject(float x, float y, float z);
+		CObject(float x, float y, float z, float w);
+		CObject(float px, float py, float pz, float qx, float qy, float qz, float qw);
 		virtual ~CObject() = default;
 
 		virtual void Init() {}
 
-		virtual void Move(DIRECTION direction, float deltaTime);
-		virtual void Rotate(ROTATION direction, float deltaTime);
+		virtual void Transform(DIRECTION direction, ROTATION quaternion, float deltaTime);
 
-		constexpr Pos GetPos() const { return m_pos; }
-		constexpr Rotation GetRotation() const { return m_rotate; }
+		const Trans GetTransform() const { return m_transform; }
 
-		void SetPos(Pos pos) { m_pos = pos; }
+		void SetTransform(Trans transform) { m_transform = transform; }
+		void SetTransform(Pos pos, Quat quat) { SetTransform(Trans{ pos, quat }); }
+		void SetPos(Pos pos) { m_transform.p = pos; }
 		void SetPos(float x, float y, float z) { SetPos(Pos{ x, y, z }); }
-		void SetRotate(Rotation rotate) { m_rotate = rotate; }
-		void SetRotate(float x, float y, float z) { SetRotate(Rotation{ x, y, z }); }
-
-		void ChangeSpeed(float speed) { m_speed = speed; }
+		void SetQuat(Quat quat) { m_transform.q = quat; }
+		void SetQuat(float x, float y, float z, float w) { SetQuat(Quat{ x, y, z, w }); }
+		void SetDeltaTime(float deltaTime) { m_deltaTime = deltaTime; }
+		void SetSpeed(float speed) { m_speed = speed; }
+		void SetAngle(float angle) { m_angle = angle; }
 
 	protected:
-		Pos m_pos;
-		Rotation m_rotate;
+		Trans m_transform;
 
-		float m_speed = 200.f;
+		float m_deltaTime;
+		float m_speed;
+		float m_angle;
 	};
 }

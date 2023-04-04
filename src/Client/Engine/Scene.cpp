@@ -399,3 +399,51 @@ void CScene::SetSkyBox(std::wstring key, std::wstring texture_path)
 		AddGameObject(skybox);
 	}
 }
+
+void CScene::RemovePlayer(std::vector<std::shared_ptr<CGameObject>> gameObject)
+{
+	for (auto& object : gameObject)
+	{
+		auto findIt = std::find(m_player.begin(), m_player.end(), object);
+		if (findIt != m_player.end())
+			m_player.erase(findIt);
+	}
+
+	RemoveGameObject(gameObject);
+}
+
+void CScene::RemoveMonster(std::vector<std::shared_ptr<CGameObject>> gameObject)
+{
+	for (auto& object : gameObject)
+	{
+		auto findIt = std::find(m_monster.begin(), m_monster.end(), object);
+		if (findIt != m_monster.end())
+			m_monster.erase(findIt);
+	}
+
+	RemoveGameObject(gameObject);
+}
+
+void CScene::RemoveBoss(std::vector<std::shared_ptr<CGameObject>> gameObject)
+{
+	for (auto& object : gameObject)
+	{
+		auto findIt = std::find(m_boss.begin(), m_boss.end(), object);
+		if (findIt != m_boss.end())
+			m_boss.erase(findIt);
+	}
+
+	RemoveGameObject(gameObject);
+}
+
+void CScene::RemoveSceneObject(std::vector<std::shared_ptr<CGameObject>> gameObject)
+{
+	for (auto& object : gameObject)
+	{
+		auto findIt = std::find(m_sceneObject.begin(), m_sceneObject.end(), object);
+		if (findIt != m_boss.end())
+			m_sceneObject.erase(findIt);
+	}
+
+	RemoveGameObject(gameObject);
+}

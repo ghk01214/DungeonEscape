@@ -48,6 +48,7 @@ namespace game
 #pragma endregion
 
 		void Login(uint32_t id, network::CPacket& packet);
+		void Jump(int32_t id, network::OVERLAPPEDEX* pOverEx);
 	private:
 		HANDLE m_iocp;
 		SOCKET m_socket;

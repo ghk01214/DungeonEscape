@@ -211,7 +211,7 @@ namespace network
 		while (remainSize > 0)
 		{
 			// 헤더(클라이언트 id + 패킷 전체 사이즈)를 뺀 순수 데이터 사이즈
-			packetSize = m_packet.GetDataSize();
+			packetSize = m_packet.GetPacketSize();
 
 			if (packetSize > remainSize)
 				break;
@@ -327,21 +327,12 @@ namespace network
 	{
 		switch (type)
 		{
-			case ProtocolID::MY_MOVE_ACK:
+			case ProtocolID::MY_TRANSFORM_ACK:
+			case ProtocolID::MY_JUMP_ACK:
 			{
-				MovePlayer(m_id);
+				TransformPlayer(m_id);
 			}
 			break;
-			case ProtocolID::MY_ROTATE_ACK:
-			{
-				// 회전할 오브젝트 인덱스를 패킷에서 읽어서 타깃으로 설정
-				RotatePlayer(m_id);
-			}
-			break;
-			case ProtocolID::MY_JUMP_REQ:
-			{
-				JumpPlayer(m_id);
-			}
 			case ProtocolID::MY_ANI_ACK:
 			{
 				PlayAni(m_id);
@@ -368,30 +359,17 @@ namespace network
 			{
 				int32_t id{ m_packet.ReadID() };
 
-				GET_SCENE->RemoveGameObject(m_objects[id]);
-				m_objects.erase(id);
+				RemovePlayer(id);
 			}
 			break;
-			case ProtocolID::WR_MOVE_ACK:
-			{
-				int32_t id{ m_packet.ReadID() };
-
-				MovePlayer(id);
-			}
-			break;
-			case ProtocolID::WR_ROTATE_ACK:
-			{
-				int32_t id{ m_packet.ReadID() };
-
-				RotatePlayer(id);
-			}
-			break;
+			case ProtocolID::WR_TRANSFORM_ACK:
 			case ProtocolID::WR_JUMP_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
 
-				JumpPlayer(id);
+				TransformPlayer(id);
 			}
+			break;
 			case ProtocolID::WR_ANI_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
@@ -457,6 +435,7 @@ namespace network
 
 		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
 		Object gameObjects{ meshData->Instantiate() };
+		std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>() };
 
 		for (auto& gameObject : gameObjects)
 		{
@@ -466,6 +445,7 @@ namespace network
 			gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
 			//gameObject->AddComponent(objectDesc.script);
 			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
+			gameObject->AddComponent(networkComponent);
 		}
 
 		GET_SCENE->AddPlayer(gameObjects);
@@ -478,7 +458,14 @@ namespace network
 		}
 	}
 
-	void NetworkManager::MovePlayer(int32_t id)
+	void NetworkManager::RemovePlayer(int32_t id)
+	{
+		GET_SCENE->RemovePlayer(m_objects[id]);
+
+		m_objects.erase(id);
+	}
+
+	void NetworkManager::TransformPlayer(int32_t id)
 	{
 		// 패킷에서 오브젝트를 렌더링할 좌표 읽기
 		Vec3 pos;
@@ -486,38 +473,18 @@ namespace network
 		pos.y = m_packet.Read<float>();
 		pos.z = m_packet.Read<float>();
 
-		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-		for (auto& object : m_objects[id])
-		{
-			object->GetTransform()->SetLocalPosition(pos);
-		}
-	}
-
-	void NetworkManager::RotatePlayer(int32_t id)
-	{
-		// 패킷에서 오브젝트를 렌더링할 좌표 읽기
-		Vec3 rotation;
-		rotation.x = m_packet.Read<float>();
-		rotation.y = m_packet.Read<float>();
-		rotation.z = m_packet.Read<float>();
+		Vec4 quat;
+		quat.x = m_packet.Read<float>();
+		quat.y = m_packet.Read<float>();
+		quat.z = m_packet.Read<float>();
+		quat.w = m_packet.Read<float>();
 
 		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
 		for (auto& object : m_objects[id])
 		{
-			object->GetTransform()->SetLocalRotation(rotation);
-		}
-	}
-
-	void NetworkManager::JumpPlayer(int32_t id)
-	{
-		Vec3 pos;
-		pos.x = m_packet.Read<float>();
-		pos.y = m_packet.Read<float>();
-		pos.z = m_packet.Read<float>();
-
-		for (auto& object : m_objects[id])
-		{
 			object->GetTransform()->SetLocalPosition(pos);
+			// w좌표 수정 필요
+			//object->GetTransform()->SetLocalRotation(quat);
 		}
 	}
 

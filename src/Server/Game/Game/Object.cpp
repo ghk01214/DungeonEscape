@@ -3,77 +3,112 @@
 
 namespace game
 {
-	CObject::CObject(Pos pos) :
-		m_pos{ pos }
+	CObject::CObject() :
+		m_transform{ Pos{ 0.f, 0.f, 0.f }, Quat{ 0.f, 0.f, 0.f, 0.f } },
+		m_speed{ 200.f },
+		m_angle{ 2.f },
+		m_deltaTime{ 0.f }
+	{
+	}
+
+	CObject::CObject(Trans trans) :
+		m_transform{ trans },
+		m_speed{ 200.f },
+		m_angle{ 2.f },
+		m_deltaTime{ 0.f }
+	{
+	}
+
+	CObject::CObject(Pos pos, Quat quat) :
+		m_transform{ pos, quat },
+		m_speed{ 200.f },
+		m_angle{ 2.f },
+		m_deltaTime{ 0.f }
 	{
 	}
 
 	CObject::CObject(float x, float y, float z) :
-		m_pos{ x, y, z }
+		m_transform{ Pos{ x, y, z }, Quat{ 0.f, 0.f, 0.f, 0.f } },
+		m_speed{ 200.f },
+		m_angle{ 2.f },
+		m_deltaTime{ 0.f }
 	{
 	}
 
-	void CObject::Move(DIRECTION direction, float deltaTime)
+	CObject::CObject(float x, float y, float z, float w) :
+		m_transform{ Pos{ 0.f, 0.f, 0.f }, Quat{ x, y, z, w } },
+		m_speed{ 200.f },
+		m_angle{ 2.f },
+		m_deltaTime{ 0.f }
 	{
-		auto dir{ static_cast<int32_t>(direction) };
+	}
+
+	CObject::CObject(float px, float py, float pz, float qx, float qy, float qz, float qw) :
+		m_transform{ Pos{ px, py, pz }, Quat{ qx, qy, qz, qw } },
+		m_speed{ 200.f },
+		m_angle{ 2.f },
+		m_deltaTime{ 0.f }
+	{
+	}
+
+	void CObject::Transform(DIRECTION direction, ROTATION quaternion, float deltaTime)
+	{
+		auto dir{ static_cast<uint8_t>(direction) };
+		auto quat{ static_cast<uint8_t>(quaternion) };
 
 		// 이동방향에 따른 좌표 이동
-		if (dir == static_cast<int32_t>(DIRECTION::LEFT))
+		if (dir == static_cast<uint8_t>(DIRECTION::LEFT))
 		{
-			m_pos.x -= m_speed * deltaTime;
+			m_transform.p.x -= m_speed * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(DIRECTION::RIGHT))
+		if (dir == static_cast<uint8_t>(DIRECTION::RIGHT))
 		{
-			m_pos.x += m_speed * deltaTime;
+			m_transform.p.x += m_speed * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(DIRECTION::UP))
+		if (dir == static_cast<uint8_t>(DIRECTION::UP))
 		{
-			m_pos.y += m_speed * deltaTime;
+			m_transform.p.y += m_speed * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(DIRECTION::DOWN))
+		if (dir == static_cast<uint8_t>(DIRECTION::DOWN))
 		{
-			m_pos.y -= m_speed * deltaTime;
+			m_transform.p.y -= m_speed * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(DIRECTION::FRONT))
+		if (dir == static_cast<uint8_t>(DIRECTION::FRONT))
 		{
-			m_pos.z += m_speed * deltaTime;
+			m_transform.p.z += m_speed * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(DIRECTION::BACK))
+		if (dir == static_cast<uint8_t>(DIRECTION::BACK))
 		{
-			m_pos.z -= m_speed * deltaTime;
+			m_transform.p.z -= m_speed * deltaTime;
 		}
-
-		std::cout << std::format("{}, {}\n", m_pos.x, m_pos.y);
-	}
-
-	void CObject::Rotate(ROTATION direction, float deltaTime)
-	{
-		auto dir{ static_cast<int32_t>(direction) };
 
 		// 회전방향에 따른 회전
-		if (dir == static_cast<int32_t>(ROTATION::X_INCREASE))
+		if (quat == static_cast<uint8_t>(ROTATION::X_INCREASE))
 		{
-			m_rotate.x += 2.f * deltaTime;
+			m_transform.q.x += m_angle * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(ROTATION::X_DECREASE))
+		if (quat == static_cast<uint8_t>(ROTATION::X_DECREASE))
 		{
-			m_rotate.x -= 2.f * deltaTime;
+			m_transform.q.x -= m_angle * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(ROTATION::Y_INCREASE))
+		if (quat == static_cast<uint8_t>(ROTATION::Y_INCREASE))
 		{
-			m_rotate.y += 2.f * deltaTime;
+			m_transform.q.y += m_angle * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(ROTATION::Y_DECREASE))
+		if (quat == static_cast<uint8_t>(ROTATION::Y_DECREASE))
 		{
-			m_rotate.y -= 2.f * deltaTime;
+			m_transform.q.y -= m_angle * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(ROTATION::Z_INCREASE))
+		if (quat == static_cast<uint8_t>(ROTATION::Z_INCREASE))
 		{
-			m_rotate.z += 2.f * deltaTime;
+			m_transform.q.z += m_angle * deltaTime;
 		}
-		if (dir == static_cast<int32_t>(ROTATION::Z_DECREASE))
+		if (quat == static_cast<uint8_t>(ROTATION::Z_DECREASE))
 		{
-			m_rotate.z -= 2.f * deltaTime;
+			m_transform.q.z -= m_angle * deltaTime;
 		}
+
+		std::cout << std::format("{}, {}, {}\n", m_transform.p.x, m_transform.p.y, m_transform.p.z);
+		std::cout << std::format("{}, {}, {}, {}\n", m_transform.q.x, m_transform.q.y, m_transform.q.z, m_transform.q.w);
 	}
 }

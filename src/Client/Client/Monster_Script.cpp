@@ -42,22 +42,22 @@ void Monster_Dragon::Update(void)
 
 		if (INPUT->GetButton(KEY_TYPE::LEFT))
 		{
-			GetNetwork()->SendMovePacket(DIRECTION::LEFT);
+			GetNetwork()->SendTransformPacket(DIRECTION::LEFT, ROTATION::NONE);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::RIGHT))
 		{
-			GetNetwork()->SendMovePacket(DIRECTION::RIGHT);
+			GetNetwork()->SendTransformPacket(DIRECTION::RIGHT, ROTATION::NONE);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::UP))
 		{
-			GetNetwork()->SendMovePacket(DIRECTION::UP);
+			GetNetwork()->SendTransformPacket(DIRECTION::UP, ROTATION::NONE);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::DOWN))
 		{
-			GetNetwork()->SendMovePacket(DIRECTION::DOWN);
+			GetNetwork()->SendTransformPacket(DIRECTION::DOWN, ROTATION::NONE);
 		}
 
 		if (INPUT->GetButton(KEY_TYPE::SPACE))

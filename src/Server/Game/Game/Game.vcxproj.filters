@@ -72,9 +72,6 @@
     <ClInclude Include="Player.h">
       <Filter>source\Object\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Define.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
     <ClInclude Include="Session.h">
       <Filter>source\Session</Filter>
     </ClInclude>
@@ -91,6 +88,9 @@
       <Filter>source\Object\NPC</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\protocol.hpp">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vendor\include\Define.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,9 +1,11 @@
 ﻿#define CHAT_SERVER_PORT 5000
-#define GAME_SERVER_PORT 6000
+#define GAME_SERVER_PORT 5000
 
 #define MAX_STR_SIZE 100
 #define MAX_LENGTH 4086
 #define MAX_USER 2000
+
+#define GRAVITY 9.8f
 
 enum class DIRECTION : uint8_t
 {

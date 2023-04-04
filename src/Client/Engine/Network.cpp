@@ -33,33 +33,18 @@ namespace network
 	}
 
 #pragma region [SEND PACKET]
-	void CNetwork::SendMovePacket(DIRECTION direction)
+	void CNetwork::SendTransformPacket(DIRECTION direction, ROTATION rotation)
 	{
 		network::CPacket packet;
 
 		packet.WriteID(m_networkID);
 		// 프로토콜 종류 작성
-		packet.WriteProtocol(ProtocolID::MY_MOVE_REQ);
+		packet.WriteProtocol(ProtocolID::MY_TRANSFORM_REQ);
 		// 델타 타임 작성
 		packet.Write<float>(DELTA_TIME);
 		// 오브젝트 이동방향 작성
 		packet.Write<DIRECTION>(direction);
-
-		// 패킷 전송
-		GET_NETWORK->Send(packet);
-	}
-
-	void CNetwork::SendRotationPacket(ROTATION direction)
-	{
-		network::CPacket packet;
-
-		packet.WriteID(m_networkID);
-		// 프로토콜 종류 작성
-		packet.WriteProtocol(ProtocolID::MY_ROTATE_REQ);
-		// 델타 타임 작성
-		packet.Write<float>(DELTA_TIME);
-		// 오브젝트 회전방향 작성
-		packet.Write<ROTATION>(direction);
+		packet.Write<ROTATION>(rotation);
 
 		// 패킷 전송
 		GET_NETWORK->Send(packet);

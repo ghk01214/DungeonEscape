@@ -31,11 +31,8 @@ enum class ProtocolID : unsigned short
 #pragma region [MY]
 	PROTOCOL_MY_BEGIN = PROTOCOL_AU_END,
 
-	MY_MOVE_REQ,	// 플레이어 이동 요청
-	MY_MOVE_ACK,	// 플레이어 이동 응답
-
-	MY_ROTATE_REQ,	// 플레이어 회전 요청
-	MY_ROTATE_ACK,	// 플레이어 회전 응답
+	MY_TRANSFORM_REQ,	// 플레이어 이동 요청
+	MY_TRANSFORM_ACK,	// 플레이어 이동 응답
 
 	MY_JUMP_REQ,
 	MY_JUMP_ACK,
@@ -55,11 +52,8 @@ enum class ProtocolID : unsigned short
 	WR_REMOVE_REQ,	// 오브젝트 삭제 요청
 	WR_REMOVE_ACK,	// 오브젝트 삭제 응답
 
-	WR_MOVE_REQ,
-	WR_MOVE_ACK,
-
-	WR_ROTATE_REQ,
-	WR_ROTATE_ACK,
+	WR_TRANSFORM_REQ,
+	WR_TRANSFORM_ACK,
 
 	WR_JUMP_REQ,
 	WR_JUMP_ACK,

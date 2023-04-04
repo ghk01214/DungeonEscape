@@ -65,6 +65,11 @@ public:
 	void AddSceneObject(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void SetSkyBox(std::wstring key, std::wstring texture_path);
 
+	void RemovePlayer(std::vector<std::shared_ptr<CGameObject>> gameObject);
+	void RemoveMonster(std::vector<std::shared_ptr<CGameObject>> gameObject);
+	void RemoveBoss(std::vector<std::shared_ptr<CGameObject>> gameObject);
+	void RemoveSceneObject(std::vector<std::shared_ptr<CGameObject>> gameObject);
+
 public:
 	const vector<shared_ptr<CGameObject>>& GetGameObjects(void) { return m_gameObjects; }
 	const vector<shared_ptr<CGameObject>>& GetPlayer(void) { return m_player; }

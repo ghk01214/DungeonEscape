@@ -34,9 +34,7 @@ namespace game
 		void SendLoginPacket(int32_t id, CObject* obj);
 		void SendAddPacket(int32_t id, CObject* obj);
 		void SendRemovePacket(int32_t id);
-		void SendMovePacket(int32_t id, ProtocolID protocol, CObject* obj);
-		void SendRotatePacket(int32_t id, ProtocolID protocol, CObject* obj);
-		void SendJumpPacket(int32_t id, ProtocolID protocol, CObject* obj);
+		void SendTransformPacket(int32_t id, ProtocolID protocol, CObject* obj);
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer* obj);
 
 		const STATE GetState() const { return m_state; }
@@ -46,7 +44,6 @@ namespace game
 		void SetState(STATE state) { m_state = state; }
 		void SetSocket(SOCKET socket) { m_socket = socket; }
 		void SetID(int32_t id) { m_id = id; }
-		//void SetDeltaTime(float deltaTime) { m_deltaTime = deltaTime; }
 		void SetObject(CObject* pObject) { m_pObject = pObject; }
 		void SetPos(Pos pos) { m_pObject->SetPos(pos); }
 		void SetPos(float x, float y, float z) { m_pObject->SetPos(x, y, z); }
@@ -61,8 +58,6 @@ namespace game
 		std::atomic_int32_t m_id;
 
 		CObject* m_pObject;
-
-		//float m_deltaTime;
 	public:
 		int32_t m_prevRemain;
 	};

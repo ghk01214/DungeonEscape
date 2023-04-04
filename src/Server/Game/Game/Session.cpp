@@ -11,7 +11,6 @@ namespace game
 		m_id{ -1 },
 		m_pObject{ nullptr },
 		m_prevRemain{ 0 }
-		//m_deltaTime{ 0.f }
 	{
 	}
 
@@ -62,17 +61,22 @@ namespace game
 	void CSession::SendLoginPacket(int32_t id, CObject* obj)
 	{
 		network::CPacket packet;
-		Pos pos{ obj->GetPos() };
+		Trans trans{ obj->GetTransform() };
 
 		// 패킷을 전송할 클라이언트 id 작성
 		packet.WriteID(id);
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_ACK);
 
-		packet.Write<float>(pos.x);
-		packet.Write<float>(pos.y);
-		packet.Write<float>(pos.z);
-		std::cout << "login packet" << std::endl;
+		packet.Write<float>(trans.p.x);
+		packet.Write<float>(trans.p.y);
+		packet.Write<float>(trans.p.z);
+
+		packet.Write<float>(trans.q.x);
+		packet.Write<float>(trans.q.y);
+		packet.Write<float>(trans.q.z);
+		packet.Write<float>(trans.q.w);
+
 		// 패킷 전송
 		Send(packet);
 	}
@@ -80,19 +84,19 @@ namespace game
 	void CSession::SendAddPacket(int32_t id, CObject* obj)
 	{
 		network::CPacket packet;
-		Pos pos{ obj->GetPos() };
-		Rotation rotate{ obj->GetRotation() };
+		Trans trans{ obj->GetTransform() };
 
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_ADD_ACK);
 
-		packet.Write<float>(pos.x);
-		packet.Write<float>(pos.y);
-		packet.Write<float>(pos.z);
+		packet.Write<float>(trans.p.x);
+		packet.Write<float>(trans.p.y);
+		packet.Write<float>(trans.p.z);
 
-		packet.Write<float>(rotate.x);
-		packet.Write<float>(rotate.y);
-		packet.Write<float>(rotate.z);
+		packet.Write<float>(trans.q.x);
+		packet.Write<float>(trans.q.y);
+		packet.Write<float>(trans.q.z);
+		packet.Write<float>(trans.q.w);
 
 		Send(packet);
 	}
@@ -107,54 +111,26 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendMovePacket(int32_t id, ProtocolID protocol, CObject* obj)
+	void CSession::SendTransformPacket(int32_t id, ProtocolID protocol, CObject* obj)
 	{
 		network::CPacket packet;
-		Pos pos{ obj->GetPos() };
+		Trans trans{ obj->GetTransform() };
 
 		// 타깃 id 작성
 		packet.WriteID(id);
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(protocol);
 		// 타깃 렌더링 좌표 작성
-		packet.Write<float>(pos.x);
-		packet.Write<float>(pos.y);
-		packet.Write<float>(pos.z);
+		packet.Write<float>(trans.p.x);
+		packet.Write<float>(trans.p.y);
+		packet.Write<float>(trans.p.z);
+
+		packet.Write<float>(trans.q.x);
+		packet.Write<float>(trans.q.y);
+		packet.Write<float>(trans.q.z);
+		packet.Write<float>(trans.q.w);
 
 		// 패킷 전송
-		Send(packet);
-	}
-
-	void CSession::SendRotatePacket(int32_t id, ProtocolID protocol, CObject* obj)
-	{
-		network::CPacket packet;
-		Rotation rotate{ obj->GetRotation() };
-
-		// 타깃 id 작성
-		packet.WriteID(id);
-		// 프로토콜 종류 작성
-		packet.WriteProtocol(protocol);
-		// 타깃 렌더링 회전각 작성
-		packet.Write<float>(rotate.x);
-		packet.Write<float>(rotate.y);
-		packet.Write<float>(rotate.z);
-
-		// 패킷 전송
-		Send(packet);
-	}
-
-	void CSession::SendJumpPacket(int32_t id, ProtocolID protocol, CObject* obj)
-	{
-		network::CPacket packet;
-		Pos pos{ obj->GetPos() };
-
-		packet.WriteID(id);
-		packet.WriteProtocol(protocol);
-		// TODO : 점프 시 필요한 정보 전송
-		packet.Write<float>(pos.x);
-		packet.Write<float>(pos.y);
-		packet.Write<float>(pos.z);
-
 		Send(packet);
 	}
 
