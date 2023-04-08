@@ -22,9 +22,11 @@ private:
 public:
 	void Init();
 	void StepSim();
+	void GameLogic();
+	void ClearEventCallback();
+	void Update();
+	void LateUpdate();		//update와 lateupdate사이 물리 상호작용에 대한 게임 로직 적용
 	void Release();
-
-
 public:
 	physx::PxPhysics* GetPhysics() const;
 	physx::PxScene* GetScene() const;
@@ -36,17 +38,13 @@ public:
 public:
 	//Test용 함수
 	void CreateHelloWorldStack(const physx::PxTransform& t, physx::PxU32 size, physx::PxReal halfExtent, bool attributeStatic);
-	void CreateHelloWorldBox(bool attributeStatic);
-	void CreateHelloWorldDynamic(const physx::PxTransform& t, const physx::PxGeometry& geometry);
 	void InitialPlacement();
 
 	RigidBody* CreateDynamic(ColliderShape shape, float posX, float posY, float posZ);
 
-	void SetLinearVelocity();			//가속도 설정
-	void SetGlobalPoseRotation();		//각도 변경
-	void AddForce();					//힘 적용
-
-	void GameLogic();
+	void SetLinearVelocity();			
+	void SetGlobalPoseRotation();		
+	void AddForce();					
 private:
 	physx::PxDefaultAllocator				m_Allocator;
 	physx::PxDefaultErrorCallback			m_ErrorCallback;
@@ -68,6 +66,6 @@ private:
 	PhysQuery*								m_query = nullptr;
 
 	std::vector<RigidBody*>					m_RigidBodies;
-	CustomController*						m_customController;
+	std::vector<CustomController*>			m_customControllers;
 };
 

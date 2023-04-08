@@ -4,7 +4,7 @@
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
-#include "TriangleMeshCollider.h"
+#include "MeshCollider.h"
 
 void RigidBody::Init(ColliderShape shape)
 {
@@ -46,7 +46,7 @@ void RigidBody::Init(ColliderShape shape)
 		case ColliderShape::COLLIDER_MESH:
 		{
 			// body needs to be kinematic to apply meshGeometry
-			TriangleMeshCollider* mesh = new TriangleMeshCollider;
+			MeshCollider* mesh = new MeshCollider;
 			mesh->Init(this);
 
 			m_colliders.emplace_back(mesh);

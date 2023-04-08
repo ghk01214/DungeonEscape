@@ -21,7 +21,6 @@ public:
 	void GetSlidingVector(CollisionInfoType type);
 	bool CheckOnGround_Raycast();
 	void DirectionInput();
-	void GetAdjustedVector(CollisionInfoType type);
 	void Move();
 private:
 	physx::PxVec3	m_moveDirection{ 0.f };

@@ -32,6 +32,60 @@
     <Filter Include="source\Object\NPC">
       <UniqueIdentifier>{f403878b-13ba-49f6-98f5-251a6fe42bcb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Physx">
+      <UniqueIdentifier>{ba8faa45-b231-480f-b253-74a556939d3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Physx">
+      <UniqueIdentifier>{f49a2bcd-6629-43d6-bc61-154d6a9a5215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice">
+      <UniqueIdentifier>{98205cdf-b033-42c0-9f00-3287d050e728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\FilterCallback">
+      <UniqueIdentifier>{539b1455-be53-4ba3-82a6-735abd5d0d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\FilterShader">
+      <UniqueIdentifier>{137f7658-6687-4623-895c-16e33e743a8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\PhysQuery">
+      <UniqueIdentifier>{53f4d438-2df5-4c78-a2b4-2d85f1db325c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\PhysQuery\RaycastElements">
+      <UniqueIdentifier>{c3809ef3-54c3-4a0e-9fb1-941efacfe375}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\EventCallback">
+      <UniqueIdentifier>{432cfab7-0ceb-4f6a-a7a0-62a455e7043b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\EventCallback\CollisionInfo">
+      <UniqueIdentifier>{578783e8-ea6d-4545-805e-e29ca85dc300}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\Collider">
+      <UniqueIdentifier>{832f9aae-f013-46fe-b799-8101a423a49b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\Collider\Capsule">
+      <UniqueIdentifier>{45878056-e58f-4da5-b31e-aa9d60c29811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\Collider\Box">
+      <UniqueIdentifier>{a8f56ada-4830-47d8-b5b6-9b27be5d3686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\Collider\Sphere">
+      <UniqueIdentifier>{3414add6-1974-4cd1-948f-22775f14820a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\Collider\Mesh">
+      <UniqueIdentifier>{9f343387-0059-4710-a144-e272f070293f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\RigidBody">
+      <UniqueIdentifier>{6b90fb43-e27f-4515-8f62-8b81614d77df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\CustomController">
+      <UniqueIdentifier>{6a258216-4807-4f59-a55b-280ab3648ecf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\Controller">
+      <UniqueIdentifier>{d9312247-bb3f-40f4-b2b7-dbafa6d30a69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\Controller\ControllerManager">
+      <UniqueIdentifier>{eeafd0cb-b49d-4857-87bb-b2226eb4e499}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp">
@@ -60,6 +114,57 @@
     </ClCompile>
     <ClCompile Include="NPC.cpp">
       <Filter>source\Object\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysDevice.cpp">
+      <Filter>source\Physx\PhysDevice</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomQueryFilterCallback.cpp">
+      <Filter>source\Physx\PhysDevice\FilterCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomFilterShader.cpp">
+      <Filter>source\Physx\PhysDevice\FilterShader</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsRay.cpp">
+      <Filter>source\Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
+    </ClCompile>
+    <ClCompile Include="RaycastHit.cpp">
+      <Filter>source\Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysQuery.cpp">
+      <Filter>source\Physx\PhysDevice\PhysQuery</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionPairInfo.cpp">
+      <Filter>source\Physx\PhysDevice\EventCallback\CollisionInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomSimulationEventCallback.cpp">
+      <Filter>source\Physx\PhysDevice\EventCallback</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>source\Physx\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>source\Physx\RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>source\Physx\Collider\Box</Filter>
+    </ClCompile>
+    <ClCompile Include="CapsuleCollider.cpp">
+      <Filter>source\Physx\Collider\Capsule</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>source\Physx\Collider\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshCollider.cpp">
+      <Filter>source\Physx\Collider\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomController.cpp">
+      <Filter>source\Physx\CustomController</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerManagerWrapper.cpp">
+      <Filter>source\Physx\Controller\ControllerManager</Filter>
+    </ClCompile>
+    <ClCompile Include="ControllerWrapper.cpp">
+      <Filter>source\Physx\Controller\ControllerManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +197,63 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\Define.h">
       <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="physx_utils.h">
+      <Filter>Utility\Physx</Filter>
+    </ClInclude>
+    <ClInclude Include="physx_define.h">
+      <Filter>Utility\Physx</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysDevice.h">
+      <Filter>source\Physx\PhysDevice</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomQueryFilterCallback.h">
+      <Filter>source\Physx\PhysDevice\FilterCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomFilterShader.h">
+      <Filter>source\Physx\PhysDevice\FilterShader</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsRay.h">
+      <Filter>source\Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
+    </ClInclude>
+    <ClInclude Include="RaycastHit.h">
+      <Filter>source\Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysQuery.h">
+      <Filter>source\Physx\PhysDevice\PhysQuery</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionPairInfo.h">
+      <Filter>source\Physx\PhysDevice\EventCallback\CollisionInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomSimulationEventCallback.h">
+      <Filter>source\Physx\PhysDevice\EventCallback</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>source\Physx\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>source\Physx\RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>source\Physx\Collider\Box</Filter>
+    </ClInclude>
+    <ClInclude Include="CapsuleCollider.h">
+      <Filter>source\Physx\Collider\Capsule</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>source\Physx\Collider\Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshCollider.h">
+      <Filter>source\Physx\Collider\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomController.h">
+      <Filter>source\Physx\CustomController</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerManagerWrapper.h">
+      <Filter>source\Physx\Controller\ControllerManager</Filter>
+    </ClInclude>
+    <ClInclude Include="ControllerWrapper.h">
+      <Filter>source\Physx\Controller\ControllerManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

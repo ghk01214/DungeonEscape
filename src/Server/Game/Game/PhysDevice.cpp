@@ -72,6 +72,17 @@ void PhysDevice::StepSim()
 	m_Scene->fetchResults(true);
 }
 
+void PhysDevice::Update()
+{
+	GameLogic();
+	//여기에 상호작용
+}
+
+void PhysDevice::LateUpdate()
+{
+	ClearEventCallback();
+	StepSim();
+}
 void PhysDevice::Release()
 {
 	PX_RELEASE(m_Scene);
@@ -118,7 +129,6 @@ physx::PxCooking* PhysDevice::GetCooking() const
 	return m_cooking;
 }
 
-
 void PhysDevice::CreateHelloWorldStack(const physx::PxTransform& t, physx::PxU32 size, physx::PxReal halfExtent, bool attributeStatic)
 {
 	physx::PxShape* shape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
@@ -151,44 +161,14 @@ void PhysDevice::CreateHelloWorldStack(const physx::PxTransform& t, physx::PxU32
 	shape->release();
 }
 
-void PhysDevice::CreateHelloWorldBox(bool attributeStatic)
-{
-	physx::PxShape* shape = m_Physics->createShape(physx::PxBoxGeometry(5.0f, 5.0f, 5.0f), *m_Material);
-
-	if (!attributeStatic)
-	{
-		physx::PxRigidDynamic* body = m_Physics->createRigidDynamic(physx::PxTransform(physx::PxVec3(0.f, 10.f, 0.f)));
-
-		body->setSleepThreshold(physx::PxReal(5.f));						//Sleep 상태 전환을 위한 임계값 설정
-		body->setWakeCounter(physx::PxReal(5.f));							//Wake 상태 전환을 위한 임계값 설정
-
-		body->attachShape(*shape);
-		physx::PxRigidBodyExt::updateMassAndInertia(*body, 100.0f);		//dynamic actor 질량 계산에 필요한 요소 : 질량, 관성값, 무게중심(관성축 위치 결정)
-		m_Scene->addActor(*body);									//updateMassAndInertia 등의 도우미 함수를 사용하면 dynamic actor의 질량계산을 쉽게할 수 있다.
-	}
-	else
-	{
-		physx::PxRigidStatic* body = m_Physics->createRigidStatic(physx::PxTransform(physx::PxVec3(0.f, 10.f, 0.f)));
-		body->attachShape(*shape);
-		m_Scene->addActor(*body);
-	}
-	shape->release();
-}
-
-void PhysDevice::CreateHelloWorldDynamic(const physx::PxTransform& t, const physx::PxGeometry& geometry)
-{
-	physx::PxRigidDynamic* dynamic = PxCreateDynamic(*m_Physics, t, geometry, *m_Material, 10.0f);
-	m_Scene->addActor(*dynamic);
-}
-
 void PhysDevice::InitialPlacement()
 {
 	CreateDynamic(ColliderShape::COLLIDER_BOX, 0, 2, 0);				//plane = 0
 	CreateDynamic(ColliderShape::COLLIDER_SPHERE, 20, 20, 20);			//ball = 1
 	CreateDynamic(ColliderShape::COLLIDER_BOX, 20, 9.5, 0);			//box1 = 2
 	CreateDynamic(ColliderShape::COLLIDER_BOX, 10, 5.5, 0);				//box1 = 3
-	m_customController = new CustomController();
-	m_customController->Init();
+
+	//custom controller 제작이었다.
 
 	m_RigidBodies[2]->SetRotation(45.f, PhysicsAxis::Y);
 	m_RigidBodies[3]->SetRotation(-45.f, PhysicsAxis::X);
@@ -270,10 +250,10 @@ void PhysDevice::SetGlobalPoseRotation()
 
 	//if (InputDevice::GetInstance()->GetKeyDown(Key::R))
 	//{
-	physx::PxTransform pose = m_RigidBodies[0]->GetBody()->getGlobalPose();
-	value += 5.f;
-	pose.q = physx::PxQuat(value, physx::PxVec3(0.f, 1.f, 0.f));		//axis는 normalized 된 값
-	m_RigidBodies[0]->GetBody()->setGlobalPose(pose);
+	//physx::PxTransform pose = m_RigidBodies[0]->GetBody()->getGlobalPose();
+	//value += 5.f;
+	//pose.q = physx::PxQuat(value, physx::PxVec3(0.f, 1.f, 0.f));		//axis는 normalized 된 값
+	//m_RigidBodies[0]->GetBody()->setGlobalPose(pose);
 	//}
 }
 
@@ -300,8 +280,14 @@ void PhysDevice::GameLogic()
 	m_eventCallback->Notify();
 
 	//codeblocks of colliders using the information (move is one of them)
-	m_customController->Update();
+	for(auto& controller : m_customControllers)
+		controller->Update();
+
 	m_controllerManagerWrapper->UpdateControllers();
+}
+
+void PhysDevice::ClearEventCallback()
+{
 	for (auto& body : m_RigidBodies)
 	{
 		//currently only 1 collider for each body
@@ -310,5 +296,7 @@ void PhysDevice::GameLogic()
 
 	m_eventCallback->ClearVector();
 }
+
+
 
 

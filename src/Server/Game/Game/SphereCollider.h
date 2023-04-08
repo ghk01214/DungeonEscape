@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "physx_utils.h"
 
+class Collider;
+
 class SphereCollider : public Collider
 {
 	virtual physx::PxGeometryHolder CreateGeometry() override;

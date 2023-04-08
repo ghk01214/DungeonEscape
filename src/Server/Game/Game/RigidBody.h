@@ -22,6 +22,7 @@ public:
 
 public:
 	physx::PxRigidDynamic* GetBody();
+
 	Collider* GetCollider(int index);
 
 public:

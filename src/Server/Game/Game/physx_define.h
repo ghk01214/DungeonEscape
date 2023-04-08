@@ -52,7 +52,8 @@ enum class ColliderShape
 {
 	COLLIDER_BOX,
 	COLLIDER_SPHERE,
-	COLLIDER_CAPSULE
+	COLLIDER_CAPSULE,
+	COLLIDER_MESH
 };
 
 //physx RigidBody

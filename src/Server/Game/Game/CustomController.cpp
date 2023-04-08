@@ -181,18 +181,18 @@ void CustomController::Move()
 	GetSlidingVector(CollisionInfoType::Stay);
 	physx::PxVec3 a{ 0.f };
 	CheckOnGround(CollisionInfoType::Stay, a);
-	//PxVec3 adjustedVec = GetAdjustedVector(m_slidingVector ,CollisionInfoType::Stay, moveSpeed);
 
-	if (InputDevice::GetInstance()->GetKey(Key::Space) && m_onGround)
+	if (/*InputDevice::GetInstance()->GetKey(Key::Space) &&*/ m_onGround)
 	{
 		physx::PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
 
-		//add velocity
+		//choice 1 : add velocity
 		physx::PxVec3 velocity = m_body->GetVelocity();
 		velocity.y = jumpSpeed;
 		m_body->SetVelocity(velocity);
-		//or add force
+
+		//choice 2 : add force
 		//PxVec3 force = m_moveDirection * m_body->GetMass() * deltaTime * adjustmentValue;
 		//m_body->GetBody()->addForce(force, PxForceMode::eIMPULSE);
 

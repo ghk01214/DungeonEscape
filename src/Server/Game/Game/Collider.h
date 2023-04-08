@@ -70,10 +70,8 @@ protected:
 	RigidBody* m_OwnerBody = nullptr;
 
 #pragma region oldMatVariables
-
 	int m_materialIndex;
 	std::vector<physx::PxMaterial*> m_materials;
-
 #pragma endregion
 
 	physx::PxMaterial* m_material = nullptr;
