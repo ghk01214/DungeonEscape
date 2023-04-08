@@ -51,61 +51,32 @@ namespace game
 	{
 	}
 
-	void CObject::Transform(DIRECTION direction, ROTATION quaternion, float deltaTime)
+	void CObject::Transform(uint8_t keyInput, server::KEY_STATE keyState, float deltaTime)
 	{
-		auto dir{ static_cast<uint8_t>(direction) };
-		auto quat{ static_cast<uint8_t>(quaternion) };
+		auto ks{ static_cast<uint8_t>(keyState) };
 
-		// 이동방향에 따른 좌표 이동
-		if (dir == static_cast<uint8_t>(DIRECTION::LEFT))
+		if (keyInput == 0x0)
+			return;
+
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::LEFT)) != 0)
 		{
 			m_transform.p.x -= m_speed * deltaTime;
 		}
-		if (dir == static_cast<uint8_t>(DIRECTION::RIGHT))
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::RIGHT)) != 0)
 		{
 			m_transform.p.x += m_speed * deltaTime;
 		}
-		if (dir == static_cast<uint8_t>(DIRECTION::UP))
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::UP)) != 0)
 		{
 			m_transform.p.y += m_speed * deltaTime;
 		}
-		if (dir == static_cast<uint8_t>(DIRECTION::DOWN))
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::DOWN)) != 0)
 		{
 			m_transform.p.y -= m_speed * deltaTime;
 		}
-		if (dir == static_cast<uint8_t>(DIRECTION::FRONT))
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::SPACE)) != 0)
 		{
-			m_transform.p.z += m_speed * deltaTime;
-		}
-		if (dir == static_cast<uint8_t>(DIRECTION::BACK))
-		{
-			m_transform.p.z -= m_speed * deltaTime;
-		}
 
-		// 회전방향에 따른 회전
-		if (quat == static_cast<uint8_t>(ROTATION::X_INCREASE))
-		{
-			m_transform.q.x += m_angle * deltaTime;
-		}
-		if (quat == static_cast<uint8_t>(ROTATION::X_DECREASE))
-		{
-			m_transform.q.x -= m_angle * deltaTime;
-		}
-		if (quat == static_cast<uint8_t>(ROTATION::Y_INCREASE))
-		{
-			m_transform.q.y += m_angle * deltaTime;
-		}
-		if (quat == static_cast<uint8_t>(ROTATION::Y_DECREASE))
-		{
-			m_transform.q.y -= m_angle * deltaTime;
-		}
-		if (quat == static_cast<uint8_t>(ROTATION::Z_INCREASE))
-		{
-			m_transform.q.z += m_angle * deltaTime;
-		}
-		if (quat == static_cast<uint8_t>(ROTATION::Z_DECREASE))
-		{
-			m_transform.q.z -= m_angle * deltaTime;
 		}
 
 		std::cout << std::format("{}, {}, {}\n", m_transform.p.x, m_transform.p.y, m_transform.p.z);

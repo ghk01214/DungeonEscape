@@ -16,8 +16,7 @@ namespace network
 		virtual void FinalUpdate() override;
 
 #pragma region [SEND PACKET]
-		void SendTransformPacket(DIRECTION direction, ROTATION rotation);
-		void SendJumpPacket();
+		void SendTransformPacket(uint8_t key, server::KEY_STATE state);
 		void SendAniIndexPacket(int32_t index, float updateTime);
 #pragma endregion
 

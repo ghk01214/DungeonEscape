@@ -26,6 +26,7 @@ namespace game
 		void CreateThread();
 
 		void WorkerThread();
+		void PhysxThread();
 		void AcceptClient(network::OVERLAPPEDEX* pOverEx);
 		void Recv(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 		void Send(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
@@ -55,6 +56,7 @@ namespace game
 		int32_t m_key;
 
 		std::vector<std::thread> m_workerThreads;
+		std::vector<std::thread> m_physxThreads;
 		std::array<CSession*, MAX_USER> m_sessions;
 		std::atomic_int32_t m_activeSessionNum;
 

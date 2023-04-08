@@ -10,7 +10,9 @@ namespace game
 		m_socket{ INVALID_SOCKET },
 		m_id{ -1 },
 		m_pObject{ nullptr },
-		m_prevRemain{ 0 }
+		m_prevRemain{ 0 },
+		m_keyInput{ 0 },
+		m_keyState{ server::KEY_STATE::NONE }
 	{
 	}
 
@@ -21,7 +23,9 @@ namespace game
 		m_socket{ INVALID_SOCKET },
 		m_id{ -1 },
 		m_pObject{ obj },
-		m_prevRemain{ 0 }
+		m_prevRemain{ 0 },
+		m_keyInput{ 0 },
+		m_keyState{ server::KEY_STATE::NONE }
 	{
 	}
 
