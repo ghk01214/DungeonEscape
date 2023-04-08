@@ -17,6 +17,7 @@ namespace game
 
 		void Init() override;
 
+		void Transform(uint8_t keyInput, server::KEY_STATE keyState, float deltaTime) override;
 		void Jump();
 
 		constexpr int32_t GetAniIndex() const { return m_aniIndex; }

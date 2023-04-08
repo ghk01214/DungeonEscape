@@ -33,7 +33,7 @@ namespace network
 	}
 
 #pragma region [SEND PACKET]
-	void CNetwork::SendTransformPacket(DIRECTION direction, ROTATION rotation)
+	void CNetwork::SendTransformPacket(uint8_t key, server::KEY_STATE state)
 	{
 		network::CPacket packet;
 
@@ -42,22 +42,10 @@ namespace network
 		packet.WriteProtocol(ProtocolID::MY_TRANSFORM_REQ);
 		// 델타 타임 작성
 		packet.Write<float>(DELTA_TIME);
-		// 오브젝트 이동방향 작성
-		packet.Write<DIRECTION>(direction);
-		packet.Write<ROTATION>(rotation);
+		packet.Write<uint8_t>(key);
+		packet.Write<server::KEY_STATE>(state);
 
 		// 패킷 전송
-		GET_NETWORK->Send(packet);
-	}
-
-	void CNetwork::SendJumpPacket()
-	{
-		network::CPacket packet;
-
-		packet.WriteID(m_networkID);
-		packet.WriteProtocol(ProtocolID::MY_JUMP_REQ);
-		packet.Write<float>(DELTA_TIME);
-
 		GET_NETWORK->Send(packet);
 	}
 

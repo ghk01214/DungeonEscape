@@ -65,6 +65,39 @@ namespace game
 	{
 	}
 
+	void CPlayer::Transform(uint8_t keyInput, server::KEY_STATE keyState, float deltaTime)
+	{
+		// 키보드의 현재 상태(DOWN, PRESS, UP)
+		auto ks{ static_cast<uint8_t>(keyState) };
+
+		if (keyInput == 0x0)
+			return;
+
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::LEFT)) != 0)
+		{
+			m_transform.p.x -= m_speed * deltaTime;
+		}
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::RIGHT)) != 0)
+		{
+			m_transform.p.x += m_speed * deltaTime;
+		}
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::UP)) != 0)
+		{
+			m_transform.p.y += m_speed * deltaTime;
+		}
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::DOWN)) != 0)
+		{
+			m_transform.p.y -= m_speed * deltaTime;
+		}
+		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::SPACE)) != 0)
+		{
+			Jump();
+		}
+
+		std::cout << std::format("{}, {}, {}\n", m_transform.p.x, m_transform.p.y, m_transform.p.z);
+		std::cout << std::format("{}, {}, {}, {}\n", m_transform.q.x, m_transform.q.y, m_transform.q.z, m_transform.q.w);
+	}
+
 	void CPlayer::Jump()
 	{
 		if (m_jump == false)

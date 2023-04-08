@@ -94,12 +94,18 @@ namespace game
 	// Worker thread용 멀티스레드 생성
 	void CServer::CreateThread()
 	{
-		for (int i = 0; i < 4; ++i)
+		for (int32_t i = 0; i < 3; ++i)
 		{
 			m_workerThreads.emplace_back(&CServer::WorkerThread, this);
+			m_physxThreads.emplace_back(&CServer::PhysxThread, this);
 		}
 
 		for (auto& thread : m_workerThreads)
+		{
+			thread.join();
+		}
+
+		for (auto& thread : m_physxThreads)
 		{
 			thread.join();
 		}
@@ -161,6 +167,14 @@ namespace game
 				default:
 				break;
 			}
+		}
+	}
+
+	void CServer::PhysxThread()
+	{
+		while (true)
+		{
+
 		}
 	}
 
@@ -376,11 +390,13 @@ namespace game
 				// 세션의 델타 타임 읽기
 				float deltaTime{ packet.Read<float>() };
 				// 타깃의 이동방향 읽기
-				DIRECTION direction{ packet.Read<DIRECTION>() };
-				ROTATION quat{ packet.Read<ROTATION>() };
+				uint8_t keyInput{ packet.Read<uint8_t>() };
+				server::KEY_STATE keyState{ packet.Read<server::KEY_STATE>() };
+
+				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
 
 				std::cout << id << " : ";
-				session->GetMyObject()->Transform(direction, quat, deltaTime);
+				pl->Transform(keyInput, keyState, deltaTime);
 
 				// 모든 세션에 대해 이동 패킷 전송
 				for (auto& player : m_sessions)
@@ -392,26 +408,6 @@ namespace game
 						player->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, session->GetMyObject());
 					else
 						player->SendTransformPacket(id, ProtocolID::WR_TRANSFORM_ACK, session->GetMyObject());
-				}
-			}
-			break;
-			case ProtocolID::MY_JUMP_REQ:
-			{
-				float deltaTime{ packet.Read<float>() };
-				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
-
-				pl->SetDeltaTime(deltaTime);
-				pl->Jump();
-
-				for (auto& player : m_sessions)
-				{
-					if (player->GetState() != STATE::INGAME)
-						continue;
-
-					if (player->GetID() == id)
-						player->SendTransformPacket(id, ProtocolID::MY_JUMP_ACK, pl);
-					else
-						player->SendTransformPacket(id, ProtocolID::WR_JUMP_ACK, pl);
 				}
 
 				if (pl->IsJumping() == true)

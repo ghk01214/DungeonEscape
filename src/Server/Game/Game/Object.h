@@ -36,7 +36,7 @@ namespace game
 
 		virtual void Init() {}
 
-		virtual void Transform(DIRECTION direction, ROTATION quaternion, float deltaTime);
+		virtual void Transform(uint8_t keyInput, server::KEY_STATE keyState, float deltaTime);
 
 		const Trans GetTransform() const { return m_transform; }
 

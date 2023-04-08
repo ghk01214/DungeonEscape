@@ -1,4 +1,6 @@
-﻿#define CHAT_SERVER_PORT 5000
+﻿namespace server
+{
+#define CHAT_SERVER_PORT 5000
 #define GAME_SERVER_PORT 5000
 
 #define MAX_STR_SIZE 100
@@ -7,30 +9,71 @@
 
 #define GRAVITY 9.8f
 
-enum class DIRECTION : uint8_t
-{
-	NONE = 0,
+	enum class KEY_TYPE : uint8_t
+	{
+		NONE = 0,
 
-	LEFT,
-	RIGHT,
-	FRONT,
-	BACK,
-	UP,
-	DOWN,
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+		SPACE,
 
-	MAX
-};
+		W,
+		A,
+		S,
+		D,
 
-enum class ROTATION : uint8_t
-{
-	NONE = 0,
+		Q,
+		E,
+		Z,
+		C,
 
-	X_INCREASE,
-	X_DECREASE,
-	Y_INCREASE,
-	Y_DECREASE,
-	Z_INCREASE,
-	Z_DECREASE,
+		KEY_1,
+		KEY_2,
+		KEY_3,
+		KEY_4,
 
-	MAX
-};
+		LBUTTON,
+		RBUTTON,
+
+		MAX
+	};
+
+	enum class KEY_STATE : uint8_t
+	{
+		NONE = 0,
+		DOWN,
+		PRESS,
+		UP,
+		MAX
+	};
+
+	enum class MOVE_DIRECTION : uint8_t
+	{
+		NONE = 0,
+
+		LEFT,
+		RIGHT,
+		FRONT,
+		BACK,
+		UP,
+		DOWN,
+
+		MAX
+	};
+
+	enum class ROTATION : uint8_t
+	{
+		NONE = 0,
+
+		X_INCREASE,
+		X_DECREASE,
+		Y_INCREASE,
+		Y_DECREASE,
+		Z_INCREASE,
+		Z_DECREASE,
+
+		MAX
+	};
+}
