@@ -2,14 +2,14 @@
 
 namespace game
 {
-	struct Pos
+	struct Vec3
 	{
 		float x;
 		float y;
 		float z;
 	};
 
-	struct Quat
+	struct Vec4
 	{
 		float x;
 		float y;
@@ -17,10 +17,15 @@ namespace game
 		float w;
 	};
 
+	using Pos = Vec3;
+	using Quat = Vec4;
+	using Scale = Vec3;
+
 	struct Trans
 	{
 		Pos p;
 		Quat q;
+		Scale s;
 	};
 
 	class CObject
@@ -36,9 +41,9 @@ namespace game
 
 		virtual void Init() {}
 
-		virtual void Transform(uint8_t keyInput, server::KEY_STATE keyState, float deltaTime);
+		virtual void Transform(uint8_t keyInput, server::KEY_STATE keyState);
 
-		const Trans GetTransform() const { return m_transform; }
+		const Trans& GetTransform() const { return m_transform; }
 
 		void SetTransform(Trans transform) { m_transform = transform; }
 		void SetTransform(Pos pos, Quat quat) { SetTransform(Trans{ pos, quat }); }

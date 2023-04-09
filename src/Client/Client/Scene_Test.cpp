@@ -11,7 +11,6 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "Light.h"
-#include "../Engine/Network.h"
 
 #include "TestCameraScript.h"
 #include "Resources.h"
@@ -22,6 +21,9 @@
 
 #include "Monster_Script.h"
 #include "Camera_Script.h"
+
+#include <NetworkManager.h>
+#include <Network.h>
 
 std::shared_ptr<CScene> Scene_Test::TestScene(void)
 {
@@ -150,6 +152,31 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 		scene->AddDirectionalLight(lightDesc);
 	}
 #pragma endregion
+
+	ObjectDesc objectDesc;
+	objectDesc.strName = L"moon";
+	objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
+	//objectDesc.strPath = L"..\\Resources\\FBX\\Dragon\\Dragon.fbx";
+	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
+	objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
+	objectDesc.script = nullptr;// std::make_shared<Monster_Dragon>();
+
+	std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
+	std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
+	std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>() };
+
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->SetName(objectDesc.strName);
+		gameObject->SetCheckFrustum(false);
+		gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
+		gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
+		//gameObject->AddComponent(objectDesc.script);
+		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
+		gameObject->AddComponent(networkComponent);
+	}
+
+	scene->AddPlayer(gameObjects);
 
 	return scene;
 }

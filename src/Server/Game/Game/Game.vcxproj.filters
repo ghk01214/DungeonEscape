@@ -32,6 +32,12 @@
     <Filter Include="source\Object\NPC">
       <UniqueIdentifier>{f403878b-13ba-49f6-98f5-251a6fe42bcb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Scene">
+      <UniqueIdentifier>{18424dc1-65ef-4f87-92df-9cd2234d94a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Scene\Scene">
+      <UniqueIdentifier>{278da412-b309-4e33-a3af-52572f97b7c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp">
@@ -60,6 +66,15 @@
     </ClCompile>
     <ClCompile Include="NPC.cpp">
       <Filter>source\Object\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>source\Scene\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TempObject.cpp">
+      <Filter>source\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +106,18 @@
       <Filter>Utility</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\Define.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>source\Scene\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TempObject.h">
+      <Filter>source\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vendor\include\Singleton.h">
       <Filter>Utility</Filter>
     </ClInclude>
   </ItemGroup>

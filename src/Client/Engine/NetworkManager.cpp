@@ -147,13 +147,29 @@ namespace network
 	void NetworkManager::SendLoginPacket()
 	{
 		network::CPacket packet;
+		auto pos{ GET_PLAYER[0]->GetTransform()->GetLocalPosition() };
+		auto quat{ GET_PLAYER[0]->GetTransform()->GetLocalRotation() };
+		auto scale{ GET_PLAYER[0]->GetTransform()->GetLocalScale() };
 
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_REQ);
-		// 델타 타임 작성
-		packet.Write<float>(DELTA_TIME);
 		// 애니메이션 인덱스 작성
-		packet.Write<int32_t>(0);
+		//packet.Write<int32_t>(0);
+
+		packet.WriteWString(GET_PLAYER[0]->GetName());
+
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
+
+		packet.Write<float>(quat.x);
+		packet.Write<float>(quat.y);
+		packet.Write<float>(quat.z);
+		packet.Write<float>(1.f);
+
+		packet.Write<float>(scale.x);
+		packet.Write<float>(scale.y);
+		packet.Write<float>(scale.z);
 
 		// 패킷 전송
 		Send(packet);
@@ -418,19 +434,38 @@ namespace network
 
 	void NetworkManager::AddPlayer(int32_t id)
 	{
+		std::wstring fbxName{};
+
+		m_packet.ReadWString(fbxName);
+
 		Vec3 pos{};
 		pos.x = m_packet.Read<float>();
 		pos.y = m_packet.Read<float>();
 		pos.z = m_packet.Read<float>();
 
+		Vec4 quat{};
+		quat.x = m_packet.Read<float>();
+		quat.y = m_packet.Read<float>();
+		quat.z = m_packet.Read<float>();
+		quat.w = m_packet.Read<float>();
+
+		Vec3 scale{};
+		scale.x = m_packet.Read<float>();
+		scale.y = m_packet.Read<float>();
+		scale.z = m_packet.Read<float>();
+
+		std::cout << std::format("ID : {}\n", id);
+		std::wcout << std::format(L"name : {}\n", fbxName);
+		std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
+		std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
+		std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
+
 		ObjectDesc objectDesc;
-		objectDesc.strName = L"Dragon" + std::to_wstring(id);
-		objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
+		objectDesc.strName = fbxName;
+		objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\" + fbxName + L".fbx";
 		//objectDesc.strPath = L"..\\Resources\\FBX\\Dragon\\Dragon.fbx";
 		objectDesc.vPostion = pos;
-
-		std::cout << objectDesc.vPostion.x << std::endl;
-		objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
+		objectDesc.vScale = scale;
 		objectDesc.script = nullptr;// std::make_shared<Monster_Dragon>();
 
 		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };

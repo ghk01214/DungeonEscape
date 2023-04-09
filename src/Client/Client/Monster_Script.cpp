@@ -39,45 +39,8 @@ void Monster_Dragon::Update(void)
 			GetNetwork()->SendAniIndexPacket(index, GetAnimator()->GetUpdateTime());
 		}
 
-#pragma region [KEY DOWN]
 		uint8_t input{};
 		server::KEY_STATE state{ server::KEY_STATE::NONE };
-
-		if (INPUT->GetButtonDown(KEY_TYPE::LEFT))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::DOWN;
-		}
-
-		if (INPUT->GetButtonDown(KEY_TYPE::RIGHT))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::DOWN;
-		}
-
-		if (INPUT->GetButtonDown(KEY_TYPE::UP))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::DOWN;
-		}
-
-		if (INPUT->GetButtonDown(KEY_TYPE::DOWN))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::DOWN;
-		}
-
-		if (INPUT->GetButtonDown(KEY_TYPE::SPACE))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::DOWN;
-		}
-
-		if (input != 0 and state == server::KEY_STATE::DOWN)
-			GetNetwork()->SendTransformPacket(input, state);
-#pragma endregion
-#pragma region [KEY PRESS]
-		input = 0;
 
 		if (INPUT->GetButton(KEY_TYPE::LEFT))
 		{
@@ -111,6 +74,5 @@ void Monster_Dragon::Update(void)
 
 		if (input != 0 and state == server::KEY_STATE::PRESS)
 			GetNetwork()->SendTransformPacket(input, state);
-#pragma endregion
 	}
 }

@@ -65,7 +65,7 @@ namespace game
 	{
 	}
 
-	void CPlayer::Transform(uint8_t keyInput, server::KEY_STATE keyState, float deltaTime)
+	void CPlayer::Transform(uint8_t keyInput, server::KEY_STATE keyState)
 	{
 		// 키보드의 현재 상태(DOWN, PRESS, UP)
 		auto ks{ static_cast<uint8_t>(keyState) };
@@ -75,19 +75,19 @@ namespace game
 
 		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::LEFT)) != 0)
 		{
-			m_transform.p.x -= m_speed * deltaTime;
+			m_transform.p.x -= m_speed ;
 		}
 		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::RIGHT)) != 0)
 		{
-			m_transform.p.x += m_speed * deltaTime;
+			m_transform.p.x += m_speed;
 		}
 		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::UP)) != 0)
 		{
-			m_transform.p.y += m_speed * deltaTime;
+			m_transform.p.y += m_speed;
 		}
 		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::DOWN)) != 0)
 		{
-			m_transform.p.y -= m_speed * deltaTime;
+			m_transform.p.y -= m_speed;
 		}
 		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::SPACE)) != 0)
 		{
@@ -100,19 +100,19 @@ namespace game
 
 	void CPlayer::Jump()
 	{
-		if (m_jump == false)
-			m_jump = true;
-
-		if (m_transform.p.y + m_jumpSpeed * m_deltaTime < 0.f)
-		{
-			m_jump = false;
-			m_transform.p.y = 0.f;
-			m_jumpSpeed = 4.f;
-
-			return;
-		}
-
-		m_transform.p.y += m_jumpSpeed * m_deltaTime;
-		m_jumpSpeed -= GRAVITY * m_deltaTime;
+		//if (m_jump == false)
+		//	m_jump = true;
+		//
+		//if (m_transform.p.y + m_jumpSpeed * m_deltaTime < 0.f)
+		//{
+		//	m_jump = false;
+		//	m_transform.p.y = 0.f;
+		//	m_jumpSpeed = 4.f;
+		//
+		//	return;
+		//}
+		//
+		//m_transform.p.y += m_jumpSpeed * m_deltaTime;
+		//m_jumpSpeed -= GRAVITY * m_deltaTime;
 	}
 }

@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Player.h"
 #include "Server.h"
+#include "SceneManager.h"
 
 namespace game
 {
@@ -17,7 +18,8 @@ namespace game
 		// 클래스 생성 시 빈 세션 생성
 		for (int32_t i = 0; i < MAX_USER; ++i)
 		{
-			m_sessions[i] = new CSession{ new CPlayer{} };
+			//m_sessions[i] = new CSession{ new CPlayer{} };
+			m_sessions[i] = new CSession{};
 		}
 	}
 
@@ -97,18 +99,16 @@ namespace game
 		for (int32_t i = 0; i < 3; ++i)
 		{
 			m_workerThreads.emplace_back(&CServer::WorkerThread, this);
-			m_physxThreads.emplace_back(&CServer::PhysxThread, this);
 		}
+
+		m_physxThreads = std::thread{ &CServer::PhysxThread, this };
 
 		for (auto& thread : m_workerThreads)
 		{
 			thread.join();
 		}
 
-		for (auto& thread : m_physxThreads)
-		{
-			thread.join();
-		}
+		m_physxThreads.join();
 	}
 
 	void CServer::WorkerThread()
@@ -271,8 +271,10 @@ namespace game
 		// 활성 세션수 증가
 		++m_activeSessionNum;
 
+		bool issueNewID{ m_reusableID.empty() };
+
 		// 재사용 가능 id가 없으면 최고 숫자 발급
-		if (bool issueNewID{ m_reusableID.empty() }; issueNewID == true)
+		if (issueNewID == true)
 			return m_userID++;
 
 		int32_t newID{ -1 };
@@ -385,59 +387,109 @@ namespace game
 
 		switch (protocol)
 		{
+			case ProtocolID::MY_ADD_REQ:
+			{
+				auto objId{ GET_SCENE->NewObjectID() };
+
+				session->CreateObject(objId, packet);
+
+				for (auto& player : m_sessions)
+				{
+					if (player->GetState() != STATE::INGAME)
+						continue;
+
+					if (player->GetID() == id)
+						continue;
+
+					player->SendAddTempPacket(objId, session->GetTempObject(objId));
+				}
+			}
+			break;
 			case ProtocolID::MY_TRANSFORM_REQ:
 			{
-				// 세션의 델타 타임 읽기
-				float deltaTime{ packet.Read<float>() };
+#pragma region
+				//// 타깃의 이동방향 읽기
+				//uint8_t keyInput{ packet.Read<uint8_t>() };
+				//server::KEY_STATE keyState{ packet.Read<server::KEY_STATE>() };
+
+				//auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
+
+				//std::cout << id << " : ";
+				//pl->Transform(keyInput, keyState);
+
+				//// 모든 세션에 대해 이동 패킷 전송
+				//for (auto& player : m_sessions)
+				//{
+				//	if (player->GetState() != STATE::INGAME)
+				//		continue;
+
+				//	if (player->GetID() == id)
+				//		player->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, session->GetMyObject());
+				//	else
+				//		player->SendTransformPacket(id, ProtocolID::WR_TRANSFORM_ACK, session->GetMyObject());
+				//}
+
+				//if (pl->IsJumping() == true)
+				//{
+				//	network::OVERLAPPEDEX* pOverEx{ new network::OVERLAPPEDEX };
+				//	pOverEx->type = network::COMPLETION::JUMP;
+
+				//	PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
+				//}
+#pragma endregion
+				auto objID{ packet.ReadID() };
 				// 타깃의 이동방향 읽기
 				uint8_t keyInput{ packet.Read<uint8_t>() };
 				server::KEY_STATE keyState{ packet.Read<server::KEY_STATE>() };
 
-				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
+				GET_SCENE->DecodeKeyInput(id, objID, keyInput, keyState);
+				GET_SCENE->SendTransformPacket(objID);
 
-				std::cout << id << " : ";
-				pl->Transform(keyInput, keyState, deltaTime);
+				//auto pl{ dynamic_cast<CPlayer*>(session->GetTempObject(objID)) };
 
-				// 모든 세션에 대해 이동 패킷 전송
-				for (auto& player : m_sessions)
-				{
-					if (player->GetState() != STATE::INGAME)
-						continue;
+				//std::cout << id << " : ";
+				//session[id].GetTempObject(objID)->Transform(keyInput, keyState);
 
-					if (player->GetID() == id)
-						player->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, session->GetMyObject());
-					else
-						player->SendTransformPacket(id, ProtocolID::WR_TRANSFORM_ACK, session->GetMyObject());
-				}
+				//// 모든 세션에 대해 이동 패킷 전송
+				//for (auto& player : m_sessions)
+				//{
+				//	if (player->GetState() != STATE::INGAME)
+				//		continue;
 
-				if (pl->IsJumping() == true)
-				{
-					network::OVERLAPPEDEX* pOverEx{ new network::OVERLAPPEDEX };
-					pOverEx->type = network::COMPLETION::JUMP;
+				//	if (player->GetID() == id)
+				//		player->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, session->GetTempObject(objID));
+				//	else
+				//		player->SendTransformPacket(id, ProtocolID::WR_TRANSFORM_ACK, session->GetTempObject(objID));
+				//}
 
-					PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
-				}
+				//if (pl->IsJumping() == true)
+				//{
+				//	network::OVERLAPPEDEX* pOverEx{ new network::OVERLAPPEDEX };
+				//	pOverEx->type = network::COMPLETION::JUMP;
+
+				//	PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
+				//}
 			}
 			break;
 			case ProtocolID::MY_ANI_REQ:
 			{
-				int32_t index{ packet.Read<int32_t>() };
-				float aniFrame{ packet.Read<float>() };
-				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
-
-				pl->SetAniIndex(index);
-				pl->SetAniFrame(aniFrame);
-
-				for (auto& player : m_sessions)
-				{
-					if (player->GetState() != STATE::INGAME)
-						continue;
-
-					if (player->GetID() == id)
-						player->SendAniIndexPacket(id, ProtocolID::MY_ANI_ACK, pl);
-					else
-						player->SendAniIndexPacket(id, ProtocolID::WR_ANI_ACK, pl);
-				}
+				//int32_t index{ packet.Read<int32_t>() };
+				//float aniFrame{ packet.Read<float>() };
+				//auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
+				//
+				//pl->SetAniIndex(index);
+				//pl->SetAniFrame(aniFrame);
+				//
+				//for (auto& player : m_sessions)
+				//{
+				//	if (player->GetState() != STATE::INGAME)
+				//		continue;
+				//
+				//	if (player->GetID() == id)
+				//		player->SendAniIndexPacket(id, ProtocolID::MY_ANI_ACK, pl);
+				//	else
+				//		player->SendAniIndexPacket(id, ProtocolID::WR_ANI_ACK, pl);
+				//}
 			}
 			break;
 			default:
@@ -505,58 +557,71 @@ namespace game
 		// concurrent_hash_map의 정보에 안전하게 접근하기 위해서는 사용 필수
 		//Accessor<uint16_t, CObject*> access;
 		auto session{ m_sessions[id] };
+		auto objId{ GET_SCENE->NewObjectID() };
 
-		// 세션의 델타 타임 읽기
-		float deltaTime{ packet.Read<float>() };
+		//float x{ (m_activeSessionNum - 1) * 25.f };
 
-		float x{ (m_activeSessionNum - 1) * 25.f };
-		// 해당 세션의 델타 타임 설정
 		session->SetState(STATE::INGAME);
-		session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);
+		session->CreateObject(objId, packet);
 
-		auto pObject{ session->GetMyObject() };
-
-		auto aniIndex{ packet.Read<int32_t>() };
-		dynamic_cast<CPlayer*>(pObject)->SetAniIndex(aniIndex);
-
-		session->SendLoginPacket(id, pObject);
+		GET_SCENE->EnterScene(session);
 
 		for (auto& player : m_sessions)
 		{
-			// 접속 중이지 않은 세션은 패스
 			if (player->GetState() != STATE::INGAME)
 				continue;
 
-			// 다른 클라이언트에 오브젝트 추가 명령을 보내는 것이므로 자기 자신 제외
 			if (player->GetID() == id)
 				continue;
 
-			// 해당 클라이언트에 로그인 완료 패킷 전송
-			player->SendAddPacket(id, pObject);
-			session->SendAddPacket(player->GetID(), player->GetMyObject());
+			player->SendAddTempPacket(objId, session->GetTempObject(objId));
 		}
+
+		//session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);
+
+		//auto pObject{ session->GetMyObject() };
+
+		//auto aniIndex{ packet.Read<int32_t>() };
+		//dynamic_cast<CPlayer*>(pObject)->SetAniIndex(aniIndex);
+
+		//session->SendLoginPacket(id, pObject);
+
+		//for (auto& player : m_sessions)
+		//{
+		//	// 접속 중이지 않은 세션은 패스
+		//	if (player->GetState() != STATE::INGAME)
+		//		continue;
+
+		//	// 다른 클라이언트에 오브젝트 추가 명령을 보내는 것이므로 자기 자신 제외
+		//	if (player->GetID() == id)
+		//		continue;
+
+		//	// 해당 클라이언트에 로그인 완료 패킷 전송
+		//	player->SendAddPacket(id, pObject);
+		//	session->SendAddPacket(player->GetID(), player->GetMyObject());
+		//}
 	}
 
 	void CServer::Jump(int32_t id, network::OVERLAPPEDEX* pOverEx)
 	{
-		auto pl{ dynamic_cast<CPlayer*>(m_sessions[id]->GetMyObject()) };
-
-		pl->Jump();
-
-		for (auto& player : m_sessions)
-		{
-			if (player->GetState() != STATE::INGAME)
-				continue;
-
-			if (player->GetID() == id)
-				player->SendTransformPacket(id, ProtocolID::MY_JUMP_ACK, pl);
-			else
-				player->SendTransformPacket(id, ProtocolID::WR_JUMP_ACK, pl);
-		}
-
-		if (pl->IsJumping() == true)
-		{
-			PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
-		}
+		//auto pl{ dynamic_cast<CPlayer*>(m_sessions[id]->GetMyObject()) };
+		//
+		//pl->Jump();
+		//
+		//for (auto& player : m_sessions)
+		//{
+		//	if (player->GetState() != STATE::INGAME)
+		//		continue;
+		//
+		//	if (player->GetID() == id)
+		//		player->SendTransformPacket(id, ProtocolID::MY_JUMP_ACK, pl);
+		//	else
+		//		player->SendTransformPacket(id, ProtocolID::WR_JUMP_ACK, pl);
+		//}
+		//
+		//if (pl->IsJumping() == true)
+		//{
+		//	PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
+		//}
 	}
 }
