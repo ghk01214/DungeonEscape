@@ -71,8 +71,5 @@ void Monster_Dragon::Update(void)
 			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
 			state = server::KEY_STATE::PRESS;
 		}
-
-		if (input != 0 and state == server::KEY_STATE::PRESS)
-			GetNetwork()->SendTransformPacket(input, state);
 	}
 }

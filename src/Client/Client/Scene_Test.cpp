@@ -157,7 +157,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	objectDesc.strName = L"moon";
 	objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
 	//objectDesc.strPath = L"..\\Resources\\FBX\\Dragon\\Dragon.fbx";
-	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
+	objectDesc.vPostion = Vec3(0.f, 0.f, 300.f);
 	objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
 	objectDesc.script = nullptr;// std::make_shared<Monster_Dragon>();
 

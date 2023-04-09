@@ -24,7 +24,7 @@ namespace game
 		void RemoveObject(int32_t id);
 		int32_t NewObjectID();
 
-		void DecodeKeyInput(int32_t id, int32_t objID, uint8_t keyInput, server::KEY_STATE keyState);
+		void DecodeKeyInput(int32_t id, int32_t objID, unsigned long keyInput);
 
 		void SendTransformPacket(int32_t objID);
 

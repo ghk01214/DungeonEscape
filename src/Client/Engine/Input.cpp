@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Input.h"
 #include "Engine.h"
 
@@ -25,12 +25,12 @@ void Input::Update()
 
 	for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
 	{
-		// Å°°¡ ´­·Á ÀÖÀ¸¸é true
+		// í‚¤ê°€ ëˆŒë ¤ ìžˆìœ¼ë©´ true
 		if (asciiKeys[key] & 0x80)
 		{
 			KEY_STATE& state = m_states[key];
 
-			// ÀÌÀü ÇÁ·¹ÀÓ¿¡ Å°¸¦ ´©¸¥ »óÅÂ¶ó¸é PRESS
+			// ì´ì „ í”„ë ˆìž„ì— í‚¤ë¥¼ ëˆ„ë¥¸ ìƒíƒœë¼ë©´ PRESS
 			if (state == KEY_STATE::PRESS || state == KEY_STATE::DOWN)
 				state = KEY_STATE::PRESS;
 			else
@@ -40,12 +40,21 @@ void Input::Update()
 		{
 			KEY_STATE& state = m_states[key];
 
-			// ÀÌÀü ÇÁ·¹ÀÓ¿¡ Å°¸¦ ´©¸¥ »óÅÂ¶ó¸é UP
+			// ì´ì „ í”„ë ˆìž„ì— í‚¤ë¥¼ ëˆ„ë¥¸ ìƒíƒœë¼ë©´ UP
 			if (state == KEY_STATE::PRESS || state == KEY_STATE::DOWN)
 				state = KEY_STATE::UP;
 			else
 				state = KEY_STATE::NONE;
 		}
+	}
+
+	// ëª¨ë“  ë¹„íŠ¸ 0ìœ¼ë¡œ ì´ˆê¸°í™”
+	m_keyInput.reset();
+
+	for (int32_t i = 0; i < KEY_USE_COUNT; ++i)
+	{
+		if (GetState(static_cast<KEY_TYPE>(i)) == KEY_STATE::PRESS)
+			m_keyInput[i] = true;
 	}
 
 	::GetCursorPos(&m_mousePos);

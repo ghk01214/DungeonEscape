@@ -402,6 +402,11 @@ namespace game
 						continue;
 
 					player->SendAddTempPacket(objId, session->GetTempObject(objId));
+
+					for (auto& [key, obj] : player->GetTempObject())
+					{
+						session->SendAddTempPacket(key, obj);
+					}
 				}
 			}
 			break;
@@ -439,10 +444,9 @@ namespace game
 #pragma endregion
 				auto objID{ packet.ReadID() };
 				// 타깃의 이동방향 읽기
-				uint8_t keyInput{ packet.Read<uint8_t>() };
-				server::KEY_STATE keyState{ packet.Read<server::KEY_STATE>() };
+				unsigned long keyInput{ packet.Read<unsigned long>() };
 
-				GET_SCENE->DecodeKeyInput(id, objID, keyInput, keyState);
+				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
 				GET_SCENE->SendTransformPacket(objID);
 
 				//auto pl{ dynamic_cast<CPlayer*>(session->GetTempObject(objID)) };
@@ -469,6 +473,15 @@ namespace game
 
 				//	PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
 				//}
+			}
+			break;
+			case ProtocolID::MY_KEYINPUT_REQ:
+			{
+				auto objID{ packet.ReadID() };
+				// 타깃의 이동방향 읽기
+				unsigned long keyInput{ packet.Read<unsigned long>() };
+
+				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
 			}
 			break;
 			case ProtocolID::MY_ANI_REQ:
@@ -566,6 +579,8 @@ namespace game
 
 		GET_SCENE->EnterScene(session);
 
+		session->SendLoginPacket(objId, nullptr);
+
 		for (auto& player : m_sessions)
 		{
 			if (player->GetState() != STATE::INGAME)
@@ -575,6 +590,11 @@ namespace game
 				continue;
 
 			player->SendAddTempPacket(objId, session->GetTempObject(objId));
+
+			for (auto& [key, obj] : player->GetTempObject())
+			{
+				session->SendAddTempPacket(key, obj);
+			}
 		}
 
 		//session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);

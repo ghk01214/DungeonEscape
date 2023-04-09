@@ -11,6 +11,7 @@
 #include "Animator.h"
 #include "MeshRenderer.h"
 #include "Network.h"
+#include "Input.h"
 
 namespace network
 {
@@ -48,9 +49,9 @@ namespace network
 	//	m_objects.insert(std::make_pair(objectID, object));
 	}
 
-	void NetworkManager::RegisterObject(Object object)
+	void NetworkManager::RegisterObject(std::vector<std::shared_ptr<CGameObject>> object)
 	{
-		Object objs;
+		std::vector<std::shared_ptr<CGameObject>> objs;
 
 		for (auto& obj : object)
 		{
@@ -174,6 +175,16 @@ namespace network
 		// 패킷 전송
 		Send(packet);
 		Recv();
+	}
+
+	void NetworkManager::SendKeyInputPacket()
+	{
+		network::CPacket packet;
+
+		packet.WriteProtocol(ProtocolID::MY_KEYINPUT_REQ);
+		packet.Write<unsigned long>(GET_SINGLE(Input)->GetKeyInput().to_ulong());
+
+		Send(packet);
 	}
 #pragma endregion
 
@@ -329,7 +340,14 @@ namespace network
 			{
 				m_id = m_packet.ReadID();
 
-				AddPlayer(m_id);
+				m_objects.insert(std::make_pair(m_id, GET_PLAYER));
+
+				for (auto& object : m_objects[m_id])
+				{
+					object->GetNetwork()->SetID(m_id);
+				}
+
+				//AddPlayer(m_id);
 
 				std::cout << "ADD ME" << std::endl << std::endl;
 			}
@@ -454,14 +472,16 @@ namespace network
 		scale.y = m_packet.Read<float>();
 		scale.z = m_packet.Read<float>();
 
+		std::wstring newName{ fbxName + std::to_wstring(id) };
+
 		std::cout << std::format("ID : {}\n", id);
-		std::wcout << std::format(L"name : {}\n", fbxName);
+		std::wcout << std::format(L"name : {}\n", newName);
 		std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
 		std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
 		std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
 
 		ObjectDesc objectDesc;
-		objectDesc.strName = fbxName;
+		objectDesc.strName = newName;
 		objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\" + fbxName + L".fbx";
 		//objectDesc.strPath = L"..\\Resources\\FBX\\Dragon\\Dragon.fbx";
 		objectDesc.vPostion = pos;
@@ -469,7 +489,7 @@ namespace network
 		objectDesc.script = nullptr;// std::make_shared<Monster_Dragon>();
 
 		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
-		Object gameObjects{ meshData->Instantiate() };
+		std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
 		std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>() };
 
 		for (auto& gameObject : gameObjects)

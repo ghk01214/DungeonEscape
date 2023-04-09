@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include "SceneManager.h"
 
+#include <bitset>
+
 namespace game
 {
 	void CSceneManager::Init()
@@ -17,6 +19,7 @@ namespace game
 
 	void CSceneManager::LateUpdate()
 	{
+		// 매 프레임마다 Transform packet을 클라이언트로 전송
 		//m_objectLock.lock_shared();
 
 		for (auto& [key, obj] : m_objects)
@@ -30,7 +33,7 @@ namespace game
 
 			for (auto& [key, obj] : sessionObj)
 			{
-				player->SendTransformTempPacket(key, ProtocolID::WR_TRANSFORM_REQ, obj);
+				player->SendTransformTempPacket(key, ProtocolID::WR_TRANSFORM_ACK, obj);
 			}
 		}
 
@@ -95,8 +98,9 @@ namespace game
 		}
 	}
 
-	void CSceneManager::DecodeKeyInput(int32_t id, int32_t objID, uint8_t keyInput, server::KEY_STATE keyState)
+	void CSceneManager::DecodeKeyInput(int32_t id, int32_t objID, unsigned long keyInput)
 	{
+		// 매 프레임마다 클라이언트로부터 키 정보를 받아옴
 		//m_currentScene->DecodeKeyInput(keyInput, keyState);
 		CSession* session{ nullptr };
 
@@ -109,26 +113,27 @@ namespace game
 			}
 		}
 
-		auto ks{ static_cast<uint8_t>(keyState) };
+		const int32_t useKeyCount{ static_cast<int32_t>(server::KEY_TYPE::MAX) };
 
-		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::LEFT)) != 0x00)
-		{
-			// 오브젝트 검색 방식
-			//session->GetTempObject(objID);
-		}
-		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::RIGHT)) != 0x00)
+		std::bitset<useKeyCount> input{ keyInput };
+
+		if (input[static_cast<int32_t>(server::KEY_TYPE::LEFT)] == true)
 		{
 
 		}
-		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::UP)) != 0x00)
+		if (input[static_cast<int32_t>(server::KEY_TYPE::RIGHT)] == true)
 		{
 
 		}
-		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::DOWN)) != 0x00)
+		if (input[static_cast<int32_t>(server::KEY_TYPE::UP)] == true)
 		{
 
 		}
-		if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::SPACE)) != 0x00)
+		if (input[static_cast<int32_t>(server::KEY_TYPE::DOWN)] == true)
+		{
+
+		}
+		if (input[static_cast<int32_t>(server::KEY_TYPE::SPACE)] == true)
 		{
 
 		}

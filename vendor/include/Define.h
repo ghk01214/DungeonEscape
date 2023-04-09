@@ -9,33 +9,33 @@
 
 #define MAX_SCENE 3
 
-	enum class KEY_TYPE : uint8_t
+	enum class KEY_TYPE
 	{
 		NONE = 0x00,
 
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT,
-		SPACE,
+		UP = VK_UP,
+		DOWN = VK_DOWN,
+		LEFT = VK_LEFT,
+		RIGHT = VK_RIGHT,
+		SPACE = VK_SPACE,
 
-		W,
-		A,
-		S,
-		D,
+		W = 'W',
+		A = 'A',
+		S = 'S',
+		D = 'D',
 
-		Q,
-		E,
-		Z,
-		C,
+		Q = 'Q',
+		E = 'E',
+		Z = 'Z',
+		C = 'C',
 
-		KEY_1,
-		KEY_2,
-		KEY_3,
-		KEY_4,
+		KEY_1 = '1',
+		KEY_2 = '2',
+		KEY_3 = '3',
+		KEY_4 = '4',
 
-		LBUTTON,
-		RBUTTON,
+		LBUTTON = VK_LBUTTON,
+		RBUTTON = VK_RBUTTON,
 
 		MAX
 	};

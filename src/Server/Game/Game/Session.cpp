@@ -66,21 +66,21 @@ namespace game
 	void CSession::SendLoginPacket(int32_t id, CObject* obj)
 	{
 		network::CPacket packet;
-		Trans trans{ obj->GetTransform() };
+		//Trans trans{ obj->GetTransform() };
 
 		// 패킷을 전송할 클라이언트 id 작성
 		packet.WriteID(id);
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_ACK);
 
-		packet.Write<float>(trans.p.x);
-		packet.Write<float>(trans.p.y);
-		packet.Write<float>(trans.p.z);
-
-		packet.Write<float>(trans.q.x);
-		packet.Write<float>(trans.q.y);
-		packet.Write<float>(trans.q.z);
-		packet.Write<float>(trans.q.w);
+		//packet.Write<float>(trans.p.x);
+		//packet.Write<float>(trans.p.y);
+		//packet.Write<float>(trans.p.z);
+		//
+		//packet.Write<float>(trans.q.x);
+		//packet.Write<float>(trans.q.y);
+		//packet.Write<float>(trans.q.z);
+		//packet.Write<float>(trans.q.w);
 
 		// 패킷 전송
 		Send(packet);

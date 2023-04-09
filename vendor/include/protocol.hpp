@@ -43,6 +43,9 @@ enum class ProtocolID : unsigned short
 	MY_ANI_REQ,
 	MY_ANI_ACK,
 
+	MY_KEYINPUT_REQ,
+	MY_KEYINPUT_ACK,
+
 	PROTOCOL_MY_END = ProtocolBase::PROTOCOL_OFFSET_WR,
 #pragma endregion
 

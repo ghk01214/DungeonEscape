@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include <bitset>
+
 enum class KEY_TYPE
 {
 	UP = VK_UP,
@@ -25,6 +27,8 @@ enum class KEY_TYPE
 
 	LBUTTON = VK_LBUTTON,
 	RBUTTON = VK_RBUTTON,
+
+	MAX
 };
 
 enum class KEY_STATE
@@ -40,6 +44,7 @@ enum
 {
 	KEY_TYPE_COUNT = static_cast<int32>(UINT8_MAX + 1),
 	KEY_STATE_COUNT = static_cast<int32>(KEY_STATE::END),
+	KEY_USE_COUNT = static_cast<int32_t>(KEY_TYPE::MAX)
 };
 
 class Input
@@ -58,6 +63,7 @@ public:
 	bool GetButtonUp(KEY_TYPE key) { return GetState(key) == KEY_STATE::UP; }
 
 	const POINT& GetMousePos() { return m_mousePos; }
+	constexpr std::bitset<KEY_USE_COUNT>& GetKeyInput() { return m_keyInput; }
 
 private:
 	inline KEY_STATE GetState(KEY_TYPE key) { return m_states[static_cast<uint8>(key)]; }
@@ -66,5 +72,7 @@ private:
 	HWND m_hWnd;
 	vector<KEY_STATE> m_states;
 	POINT m_mousePos = {};
+
+	std::bitset<KEY_USE_COUNT> m_keyInput;
 };
 
