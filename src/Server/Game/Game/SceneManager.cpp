@@ -71,11 +71,15 @@ namespace game
 		m_objects.insert(access, objID);
 
 		access->second = tempObject;
+
+		SendAddTempPacket(tempObject);
 	}
 
 	void CSceneManager::RemoveObject(int32_t id)
 	{
-
+		m_objects.erase(id);
+		m_reusableObjectID.push(id);
+		--m_objectsNum;
 	}
 
 	int32_t CSceneManager::NewObjectID()
@@ -136,6 +140,17 @@ namespace game
 		if (input[static_cast<int32_t>(server::KEY_TYPE::SPACE)] == true)
 		{
 
+		}
+	}
+
+	void CSceneManager::SendAddTempPacket(CTempObject* obj)
+	{
+		for (auto& player : m_session)
+		{
+			if (player->GetState() != STATE::INGAME)
+				continue;
+
+			player->SendAddTempPacket(obj->GetID(), obj);
 		}
 	}
 

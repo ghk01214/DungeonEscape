@@ -26,6 +26,7 @@ namespace game
 
 		void DecodeKeyInput(int32_t id, int32_t objID, unsigned long keyInput);
 
+		void SendAddTempPacket(CTempObject* obj);
 		void SendTransformPacket(int32_t objID);
 
 	private:
