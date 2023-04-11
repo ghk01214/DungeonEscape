@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "physx_utils.h"
+#include "physx_define.h"
 
 class ControllerWrapper;
 

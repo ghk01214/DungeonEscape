@@ -1,5 +1,9 @@
 ﻿#include "pch.h"
 #include "ControllerManagerWrapper.h"
+#include "PhysDevice.h"
+#include "ControllerWrapper.h"
+
+using namespace physx;
 
 void ControllerManagerWrapper::Init()
 {
@@ -17,22 +21,22 @@ void ControllerManagerWrapper::CreateController()
     m_scene = phys->GetScene();
 
     // Create the capsule controller
-    physx::PxCapsuleControllerDesc capsuleDesc;
+    PxCapsuleControllerDesc capsuleDesc;
     capsuleDesc.height = 4.5f;
     capsuleDesc.radius = 2.0f;
     capsuleDesc.material = phys->GetDefaultMaterial();
-    capsuleDesc.position = physx::PxExtendedVec3(0.f, 35.f, 0.f);
-    capsuleDesc.upDirection = physx::PxVec3(0.0f, 1.0f, 0.0f);
-    capsuleDesc.slopeLimit = cosf(physx::PxPi / 3.0f);        //60degress
+    capsuleDesc.position = PxExtendedVec3(0.f, 35.f, 0.f);
+    capsuleDesc.upDirection = PxVec3(0.0f, 1.0f, 0.0f);
+    capsuleDesc.slopeLimit = cosf(PxPi / 3.0f);        //60degress
     capsuleDesc.contactOffset = 0.001f;
     capsuleDesc.stepOffset = 0.1f;
 
     // CreateController + SetFlags
-    physx::PxCapsuleController* controller = static_cast<physx::PxCapsuleController*>(m_manager->createController(capsuleDesc));
-    physx::PxRigidDynamic* controllerActor = controller->getActor();
-    controllerActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, false);
+   PxCapsuleController* controller = static_cast<PxCapsuleController*>(m_manager->createController(capsuleDesc));
+   PxRigidDynamic* controllerActor = controller->getActor();
+    controllerActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, false);
     //controllerActor->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
-    controller->setNonWalkableMode(physx::PxControllerNonWalkableMode::ePREVENT_CLIMBING_AND_FORCE_SLIDING);
+    controller->setNonWalkableMode(PxControllerNonWalkableMode::ePREVENT_CLIMBING_AND_FORCE_SLIDING);
 
     // Lock the rotation of the actor along the axis perpendicular to the up direction
     //controllerActor->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, true);
@@ -61,7 +65,7 @@ void ControllerManagerWrapper::UpdateControllers()
     }
 }
 
-physx::PxControllerManager* ControllerManagerWrapper::GetControllerManager()
+PxControllerManager* ControllerManagerWrapper::GetControllerManager()
 {
     return m_manager;
 }

@@ -1,7 +1,9 @@
 ﻿#include "pch.h"
 #include "BoxCollider.h"
 
-physx::PxGeometryHolder BoxCollider::CreateGeometry()
+using namespace physx;
+
+PxGeometryHolder BoxCollider::CreateGeometry()
 {
 	return CreateBoxGeometry();
 }

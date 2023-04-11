@@ -1,10 +1,19 @@
 ﻿#include "pch.h"
 #include "PhysDevice.h"
-#include "SphereCollider.h"
-#include "BoxCollider.h"
-#include "CapsuleCollider.h"
 #include "CustomFilterShader.h"
-#include "Player.h"
+#include "CustomSimulationEventCallback.h"
+#include "RigidBody.h"
+#include "Collider.h"
+#include "BoxCollider.h"
+#include "SphereCollider.h"
+#include "CapsuleCollider.h"
+#include "CustomController.h"
+#include "ControllerManagerWrapper.h"
+#include "ControllerWrapper.h"
+#include "PhysQuery.h"
+#include "CollisionPairInfo.h"
+
+using namespace physx;
 
 ImplementSingletone(PhysDevice);
 
@@ -25,14 +34,14 @@ void PhysDevice::Init()
 	m_Foundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
 
 	m_Pvd = PxCreatePvd(*m_Foundation);
-	physx::PxPvdTransport* transport = physx::PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-	m_Pvd->connect(*transport, physx::PxPvdInstrumentationFlag::eALL);
+	PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
+	m_Pvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
 
-	m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, physx::PxTolerancesScale(), true, m_Pvd);
+	m_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_Foundation, PxTolerancesScale(), true, m_Pvd);
 
-	physx::PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
-	sceneDesc.gravity = physx::PxVec3(0.0f, -9.81f, 0.0f);
-	m_Dispatcher = physx::PxDefaultCpuDispatcherCreate(2);
+	PxSceneDesc sceneDesc(m_Physics->getTolerancesScale());
+	sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
+	m_Dispatcher = PxDefaultCpuDispatcherCreate(2);
 	sceneDesc.cpuDispatcher = m_Dispatcher;
 
 
@@ -45,12 +54,12 @@ void PhysDevice::Init()
 
 #pragma region pvd
 
-	physx::PxPvdSceneClient* pvdClient = m_Scene->getScenePvdClient();
+	PxPvdSceneClient* pvdClient = m_Scene->getScenePvdClient();
 	if (pvdClient)
 	{
-		pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
-		pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
-		pvdClient->setScenePvdFlag(physx::PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+		pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
 	}
 
 #pragma endregion pvd
@@ -83,6 +92,7 @@ void PhysDevice::LateUpdate()
 	ClearEventCallback();
 	StepSim();
 }
+
 void PhysDevice::Release()
 {
 	PX_RELEASE(m_Scene);
@@ -90,8 +100,9 @@ void PhysDevice::Release()
 	PX_RELEASE(m_Physics);
 	if (m_Pvd)
 	{
-		physx::PxPvdTransport* transport = m_Pvd->getTransport();
-		m_Pvd->release();	m_Pvd = NULL;
+		PxPvdTransport* transport = m_Pvd->getTransport();
+		m_Pvd->release();
+		m_Pvd = NULL;
 		PX_RELEASE(transport);
 	}
 	PX_RELEASE(m_Foundation);
@@ -99,17 +110,17 @@ void PhysDevice::Release()
 	printf("SnippetHelloWorld done.\n");
 }
 
-physx::PxPhysics* PhysDevice::GetPhysics() const
+PxPhysics* PhysDevice::GetPhysics() const
 {
 	return m_Physics;
 }
 
-physx::PxMaterial* PhysDevice::GetDefaultMaterial() const
+PxMaterial* PhysDevice::GetDefaultMaterial() const
 {
 	return m_Material;
 }
 
-physx::PxScene* PhysDevice::GetScene() const
+PxScene* PhysDevice::GetScene() const
 {
 	return m_Scene;
 }
@@ -124,35 +135,35 @@ PhysQuery* PhysDevice::GetQuery() const
 	return m_query;
 }
 
-physx::PxCooking* PhysDevice::GetCooking() const
+PxCooking* PhysDevice::GetCooking() const
 {
 	return m_cooking;
 }
 
-void PhysDevice::CreateHelloWorldStack(const physx::PxTransform& t, physx::PxU32 size, physx::PxReal halfExtent, bool attributeStatic)
+void PhysDevice::CreateHelloWorldStack(const PxTransform& t, PxU32 size, PxReal halfExtent, bool attributeStatic)
 {
-	physx::PxShape* shape = m_Physics->createShape(physx::PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
+	PxShape* shape = m_Physics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
 
-	for (physx::PxU32 i = 0; i < size; i++)
+	for (PxU32 i = 0; i < size; i++)
 	{
-		for (physx::PxU32 j = 0; j < size - i; j++)
+		for (PxU32 j = 0; j < size - i; j++)
 		{
-			physx::PxTransform localTm(physx::PxVec3(physx::PxReal(j * 2) - physx::PxReal(size - i), physx::PxReal(i * 2 + 1), 0) * halfExtent);
+			PxTransform localTm(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
 
 			if (!attributeStatic)
 			{
-				physx::PxRigidDynamic* body = m_Physics->createRigidDynamic(t.transform(localTm));
+				PxRigidDynamic* body = m_Physics->createRigidDynamic(t.transform(localTm));
 
-				body->setSleepThreshold(physx::PxReal(5.f));						//Sleep 상태 전환을 위한 임계값 설정
-				body->setWakeCounter(physx::PxReal(5.f));							//Wake 상태 전환을 위한 임계값 설정
+				body->setSleepThreshold(PxReal(5.f));						//Sleep 상태 전환을 위한 임계값 설정
+				body->setWakeCounter(PxReal(5.f));							//Wake 상태 전환을 위한 임계값 설정
 
 				body->attachShape(*shape);
-				physx::PxRigidBodyExt::updateMassAndInertia(*body, 100.0f);		//dynamic actor 질량 계산에 필요한 요소 : 질량, 관성값, 무게중심(관성축 위치 결정)
+				PxRigidBodyExt::updateMassAndInertia(*body, 100.0f);		//dynamic actor 질량 계산에 필요한 요소 : 질량, 관성값, 무게중심(관성축 위치 결정)
 				m_Scene->addActor(*body);									//updateMassAndInertia 등의 도우미 함수를 사용하면 dynamic actor의 질량계산을 쉽게할 수 있다.
 			}
 			else
 			{
-				physx::PxRigidStatic* body = m_Physics->createRigidStatic(t.transform(localTm));
+				PxRigidStatic* body = m_Physics->createRigidStatic(t.transform(localTm));
 				body->attachShape(*shape);
 				m_Scene->addActor(*body);
 			}
@@ -165,18 +176,17 @@ void PhysDevice::InitialPlacement()
 {
 	CreateDynamic(ColliderShape::COLLIDER_BOX, 0, 2, 0);				//plane = 0
 	CreateDynamic(ColliderShape::COLLIDER_SPHERE, 20, 20, 20);			//ball = 1
-	CreateDynamic(ColliderShape::COLLIDER_BOX, 20, 9.5, 0);			//box1 = 2
+	CreateDynamic(ColliderShape::COLLIDER_BOX, 20, 9.5, 0);				//box1 = 2
 	CreateDynamic(ColliderShape::COLLIDER_BOX, 10, 5.5, 0);				//box1 = 3
-
-	//custom controller 제작이었다.
 
 	m_RigidBodies[2]->SetRotation(45.f, PhysicsAxis::Y);
 	m_RigidBodies[3]->SetRotation(-45.f, PhysicsAxis::X);
 
 #pragma region plane 크기 조정
-	RigidBody* planeBody = m_RigidBodies[0];
+	RigidBody* planeBody = m_RigidBodies[0].get();
 	planeBody->SetCCDFlag(false);
 	planeBody->SetKinematic(true);
+
 	BoxCollider* plane = dynamic_cast<BoxCollider*>(m_RigidBodies[0]->GetCollider(0));
 	if (plane == nullptr)
 		return;
@@ -190,7 +200,7 @@ void PhysDevice::InitialPlacement()
 		return;
 	sphere->SetRadius(2.f);
 
-	physx::PxRigidBody* body = m_RigidBodies[1]->GetBody();
+	PxRigidBody* body = m_RigidBodies[1]->GetBody();
 	body->setAngularDamping(0.00001f);
 	body->setLinearDamping(0.15f);
 	body->setMass(body->getMass() * 0.20f);
@@ -198,7 +208,7 @@ void PhysDevice::InitialPlacement()
 #pragma endregion
 
 #pragma region Box1크기 변경
-	RigidBody* box1Body = m_RigidBodies[2];
+	RigidBody* box1Body = m_RigidBodies[2].get();
 	box1Body->SetCCDFlag(false);
 	box1Body->SetKinematic(true);
 	BoxCollider* box1 = dynamic_cast<BoxCollider*>(m_RigidBodies[2]->GetCollider(0));
@@ -208,7 +218,7 @@ void PhysDevice::InitialPlacement()
 #pragma endregion
 
 #pragma region Box2크기 변경
-	RigidBody* box2Body = m_RigidBodies[3];
+	RigidBody* box2Body = m_RigidBodies[3].get();
 	box2Body->SetCCDFlag(false);
 	box2Body->SetKinematic(true);
 	BoxCollider* box2 = dynamic_cast<BoxCollider*>(m_RigidBodies[3]->GetCollider(0));
@@ -218,8 +228,6 @@ void PhysDevice::InitialPlacement()
 	//box2->GetPxShape()->setFlag(PxShapeFlag::eSIMULATION_SHAPE, true);
 	//box2->GetPxShape()->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
 #pragma endregion
-
-	//m_controllerManagerWrapper->CreateController();
 }
 
 RigidBody* PhysDevice::CreateDynamic(ColliderShape shape, float posX, float posY, float posZ)
@@ -232,47 +240,30 @@ RigidBody* PhysDevice::CreateDynamic(ColliderShape shape, float posX, float posY
 	return body;
 }
 
-void PhysDevice::SetLinearVelocity()
+CustomController* PhysDevice::CreateCustomController(PxVec3 pos)
+{
+	CustomController* controller = new CustomController;
+	controller->Init(pos);
+	m_customControllers.emplace_back(controller);
+
+	return controller;
+}
+
+void PhysDevice::SetLinearVelocity(int containerIdx, PxVec3 linearVel)
 {
 	//velocity을 매 업데이트에 적용하면 일정한 속도로 계속 나아간다. (명령을 내리는 순간 가속도를 해당 값으로 설정)
-
-	physx::PxRigidDynamic* body = m_RigidBodies[0]->GetBody();
-	if (body == nullptr)
+	if (containerIdx > m_RigidBodies.size() - 1)
 		return;
 
-	//if (InputDevice::GetInstance()->GetKey(Key::Left))
-	//	body->setLinearVelocity(PxVec3(-10, 0, 0));
+	m_RigidBodies[containerIdx]->SetVelocity(linearVel);
 }
 
-void PhysDevice::SetGlobalPoseRotation()
+void PhysDevice::SetGlobalPoseRotation(int containerIdx, PhysicsAxis axis, float degree)
 {
-	static float value = 0.f;
-
-	//if (InputDevice::GetInstance()->GetKeyDown(Key::R))
-	//{
-	//physx::PxTransform pose = m_RigidBodies[0]->GetBody()->getGlobalPose();
-	//value += 5.f;
-	//pose.q = physx::PxQuat(value, physx::PxVec3(0.f, 1.f, 0.f));		//axis는 normalized 된 값
-	//m_RigidBodies[0]->GetBody()->setGlobalPose(pose);
-	//}
-}
-
-void PhysDevice::AddForce()
-{
-	float moveStrength = 0.05f;
-	float jumpStrength = 3.f;
-
-	physx::PxRigidDynamic* body = m_RigidBodies[0]->GetBody();
-
-	if (body == nullptr)
+	if (containerIdx > m_RigidBodies.size() - 1)
 		return;
 
-	//addTorque : 정의된 축을 기준으로 오브젝트를 회전
-	//if (InputDevice::GetInstance()->GetKey(Key::Left))
-	//	body->addForce(physx::PxVec3(-moveStrength, 0, 0), physx::PxForceMode::eFORCE);
-
-	//if (InputDevice::GetInstance()->GetKeyDown(Key::Space))
-	//	body->addForce(physx::PxVec3(0, jumpStrength, 0), physx::PxForceMode::eIMPULSE);
+	m_RigidBodies[containerIdx]->SetRotation(degree, axis);
 }
 
 void PhysDevice::GameLogic()
@@ -280,10 +271,10 @@ void PhysDevice::GameLogic()
 	m_eventCallback->Notify();
 
 	//codeblocks of colliders using the information (move is one of them)
-	for(auto& controller : m_customControllers)
-		controller->Update();
+	//for(auto& controller : m_customControllers)
+	//	controller->Update(keyinput);
 
-	m_controllerManagerWrapper->UpdateControllers();
+	//m_controllerManagerWrapper->UpdateControllers();
 }
 
 void PhysDevice::ClearEventCallback()

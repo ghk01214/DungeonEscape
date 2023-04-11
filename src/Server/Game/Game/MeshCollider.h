@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include "physx_utils.h"
 
-class Collider;
+#include "physx_define.h"
+#include "Collider.h"
 
 class MeshCollider : public Collider
 {

@@ -1,16 +1,18 @@
 ﻿#include "pch.h"
 #include "RigidBody.h"
-
+#include "PhysDevice.h"
 #include "BoxCollider.h"
 #include "SphereCollider.h"
 #include "CapsuleCollider.h"
 #include "MeshCollider.h"
 
+using namespace physx;
+
 void RigidBody::Init(ColliderShape shape)
 {
 	auto device = PhysDevice::GetInstance();
 
-	physx::PxTransform pose(physx::PxIdentity);
+	PxTransform pose(PxIdentity);
 
 	m_body = device->GetPhysics()->createRigidDynamic(pose);
 	m_body->setMass(10);
@@ -59,13 +61,13 @@ void RigidBody::ApplyFlags()
 {
 	// 연속 충돌 감지 모드를 설정
 	bool continousFlag = m_continuous && !isKinematic();
-	m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, continousFlag);
+	m_body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, continousFlag);
 
 	// 연속 충돌 모드 사용시 마찰을 사용합니다.
-	m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD_FRICTION, continousFlag);
+	m_body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD_FRICTION, continousFlag);
 
 	// SceneQuery에 현재 오브젝트의 위치가 아닌 Kinematic Traget Transform을 사용
-	m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES, true);
+	m_body->setRigidBodyFlag(PxRigidBodyFlag::eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES, true);
 }
 
 void RigidBody::AttachAll()
@@ -80,11 +82,11 @@ void RigidBody::AttachAll()
 
 void RigidBody::DetachAll()
 {
-	physx::PxU32 nb = m_body->getNbShapes();
-	physx::PxShape** shapes = new physx::PxShape * [nb];
-	m_body->getShapes(shapes, sizeof(physx::PxShape*) * nb);
+	PxU32 nb = m_body->getNbShapes();
+	PxShape** shapes = new PxShape * [nb];
+	m_body->getShapes(shapes, sizeof(PxShape*) * nb);
 
-	for (physx::PxU32 i = 0; i < nb; ++i)
+	for (PxU32 i = 0; i < nb; ++i)
 	{
 		m_body->detachShape(*shapes[i]);
 	}
@@ -110,7 +112,7 @@ void RigidBody::Detach(Collider* collider)
 	UpdateMassAndInertia();
 }
 
-physx::PxRigidDynamic* RigidBody::GetBody()
+PxRigidDynamic* RigidBody::GetBody()
 {
 	return m_body;
 }
@@ -127,14 +129,14 @@ Collider* RigidBody::GetCollider(int index)
 	}
 }
 
-physx::PxVec3 RigidBody::GetPosition()
+PxVec3 RigidBody::GetPosition()
 {
 	return m_body->getGlobalPose().p;
 }
 
 void RigidBody::SetPosition(const float x, const float y, const float z, bool sleep)
 {
-	physx::PxTransform t = m_body->getGlobalPose();
+	PxTransform t = m_body->getGlobalPose();
 	t.p.x = x;
 	t.p.y = y;
 	t.p.z = z;
@@ -145,51 +147,37 @@ void RigidBody::SetPosition(const float x, const float y, const float z, bool sl
 void RigidBody::SetRotation(float degrees, PhysicsAxis axis)
 {
 	// Get the current rotation of the rigid dynamic object
-	physx::PxTransform currentPose = m_body->getGlobalPose();
+	PxTransform currentPose = m_body->getGlobalPose();
 
 	// convert degree->radian
-	float radians = physx::PxPi * degrees / 180.0f;
+	float radians = PxPi * degrees / 180.0f;
 
 
 	//quaternion representing rotation around axis
-	physx::PxQuat rotation(radians, physx::PxVec3(0.f, 0.f, 0.f));
+	PxQuat rotation(radians, PxVec3(0.f, 0.f, 0.f));
 	switch (axis)
 	{
 		case PhysicsAxis::X:
-		rotation = physx::PxQuat(radians, physx::PxVec3(1.f, 0.f, 0.f));
+		rotation = PxQuat(radians, PxVec3(1.f, 0.f, 0.f));
 		break;
 		case PhysicsAxis::Y:
-		rotation = physx::PxQuat(radians, physx::PxVec3(0.f, 1.f, 0.f));
+		rotation = PxQuat(radians, PxVec3(0.f, 1.f, 0.f));
 		break;
 		case PhysicsAxis::Z:
-		rotation = physx::PxQuat(radians, physx::PxVec3(0.f, 0.f, 1.f));
+		rotation = PxQuat(radians, PxVec3(0.f, 0.f, 1.f));
 		break;
 	}
 	currentPose.q = rotation;
 	currentPose.q.normalize();  // ensure the quaternion is normalized
 	m_body->setGlobalPose(currentPose);
-
-#pragma region 혹시 몰라서 남겨둔다
-	//Get the current rotation of the rigid dynamic object
-	//PxTransform currentPose = m_body->getGlobalPose();
-
-	//static float angle = 90.f;
-	////angle += 0.1f;
-
-	//float radian = PxPi * angle / 180.0f;
-	//currentPose.q = PxQuat(radian, PxVec3(0.f,0.f,1.f));
-	//m_body->setGlobalPose(currentPose);
-#pragma endregion
 }
 
-
-
-physx::PxVec3 RigidBody::GetVelocity() const
+PxVec3 RigidBody::GetVelocity() const
 {
 	return m_body->getLinearVelocity();
 }
 
-void RigidBody::SetVelocity(const physx::PxVec3& velocity)
+void RigidBody::SetVelocity(const PxVec3& velocity)
 {
 	if (isKinematic())
 	{
@@ -211,7 +199,7 @@ void RigidBody::SetMass(float value)
 
 void RigidBody::UpdateMassAndInertia()
 {
-	physx::PxRigidBodyExt::setMassAndUpdateInertia(*m_body, m_body->getMass());
+	PxRigidBodyExt::setMassAndUpdateInertia(*m_body, m_body->getMass());
 }
 
 bool RigidBody::IsRigidbodySleep() const
@@ -242,22 +230,22 @@ void RigidBody::SetSleepThresholder(float value)
 
 void RigidBody::SetRotationLockAxis(PhysicsAxis axes, bool value)
 {
-	physx::PxU32 flag = (physx::PxU32)axes << 3;
-	m_body->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum(flag), value);
+	PxU32 flag = (PxU32)axes << 3;
+	m_body->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::Enum(flag), value);
 }
 
 void RigidBody::SetKinematic(bool value)
 {
-	m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, value);
+	m_body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, value);
 }
 
 void RigidBody::SetCCDFlag(bool value)
 {
-	m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, value);
-	m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD_FRICTION, value);
+	m_body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, value);
+	m_body->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD_FRICTION, value);
 }
 
 bool RigidBody::isKinematic() const
 {
-	return m_body->getRigidBodyFlags().isSet(physx::PxRigidBodyFlag::eKINEMATIC);
+	return m_body->getRigidBodyFlags().isSet(PxRigidBodyFlag::eKINEMATIC);
 }

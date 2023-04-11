@@ -1,7 +1,9 @@
 ﻿#include "pch.h"
 #include "SphereCollider.h"
 
-physx::PxGeometryHolder SphereCollider::CreateGeometry()
+using namespace physx;
+
+PxGeometryHolder SphereCollider::CreateGeometry()
 {
     return CreateSphereGeometry();
 }
@@ -25,9 +27,9 @@ void SphereCollider::SetRadius(float value)
     ResetShape();
 }
 
-physx::PxSphereGeometry SphereCollider::CreateSphereGeometry() const
+PxSphereGeometry SphereCollider::CreateSphereGeometry() const
 {
-    physx::PxSphereGeometry sphere;
+    PxSphereGeometry sphere;
     //transform scale 생긴이후
     sphere.radius = m_radius;                           //* GetBiggestLengthFromAbsVec3(transform->scale);
     return sphere;

@@ -1,7 +1,11 @@
 ﻿#include "pch.h"
 #include "MeshCollider.h"
+#include "PhysDevice.h"
+#include "RigidBody.h"
 
-physx::PxGeometryHolder MeshCollider::CreateGeometry()
+using namespace physx;
+
+PxGeometryHolder MeshCollider::CreateGeometry()
 {
     return CreateTriangleMeshGeometry();
 }
@@ -19,7 +23,7 @@ void MeshCollider::Init(RigidBody* body)
     auto phys = PhysDevice::GetInstance()->GetPhysics();
     auto cooking = PhysDevice::GetInstance()->GetCooking();
 
-    std::vector<physx::PxVec3> vertices = {
+    std::vector<PxVec3> vertices = {
         // Base vertices
         {-1, 0, -1}, {1, 0, -1}, {1, 0, 1}, {-1, 0, 1},
         // Apex
@@ -32,36 +36,36 @@ void MeshCollider::Init(RigidBody* body)
         0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4,
     };
 
-    physx::PxConvexMeshDesc  desc;
+    PxConvexMeshDesc  desc;
     desc.points.count = vertices.size();
-    desc.points.stride = sizeof(physx::PxVec3);
+    desc.points.stride = sizeof(PxVec3);
     desc.points.data = vertices.data();
 
     desc.indices.count = indices.size(); //numface
-    desc.indices.stride = sizeof(physx::PxVec3);
+    desc.indices.stride = sizeof(PxVec3);
     desc.indices.data = indices.data();
 
-    desc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX;
+    desc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
 
-    physx::PxDefaultMemoryOutputStream writeBuffer;
-    physx::PxConvexMeshCookingResult::Enum result;
+    PxDefaultMemoryOutputStream writeBuffer;
+    PxConvexMeshCookingResult::Enum result;
     bool cookingTriangleStatus = cooking->cookConvexMesh(desc, writeBuffer, &result);
     assert(cookingTriangleStatus);
 
-    physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+    PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
 
     m_mesh = phys->createConvexMesh(readBuffer);
 
     body->SetKinematic(true);
-    body->GetBody()->setRigidBodyFlag(physx::PxRigidBodyFlag::eENABLE_CCD, false);
+    body->GetBody()->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, false);
 
     Collider::Init(body);
 }
 
-physx::PxConvexMeshGeometry MeshCollider::CreateTriangleMeshGeometry()
+PxConvexMeshGeometry MeshCollider::CreateTriangleMeshGeometry()
 {
-    physx::PxMeshScale scale;
-    scale.rotation = physx::PxQuat(physx::PxIdentity);
-    scale.scale = physx::PxVec3(10.f, 10.f, 10.f);
-    return physx::PxConvexMeshGeometry(m_mesh, scale);
+    PxMeshScale scale;
+    scale.rotation = PxQuat(PxIdentity);
+    scale.scale = PxVec3(10.f, 10.f, 10.f);
+    return PxConvexMeshGeometry(m_mesh, scale);
 }

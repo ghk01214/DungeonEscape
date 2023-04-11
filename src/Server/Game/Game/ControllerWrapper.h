@@ -1,7 +1,6 @@
 ﻿#pragma once
-#include "physx_utils.h"
 
-enum class PhysicsAxis;
+#include "physx_define.h"
 
 class ControllerWrapper
 {

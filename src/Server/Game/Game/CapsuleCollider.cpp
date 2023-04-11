@@ -1,7 +1,9 @@
 ﻿#include "pch.h"
 #include "CapsuleCollider.h"
 
-physx::PxGeometryHolder CapsuleCollider::CreateGeometry()
+using namespace physx;
+
+PxGeometryHolder CapsuleCollider::CreateGeometry()
 {
     return CreateCapsuleGeometry(m_radius, m_halfHeight);
 }
@@ -36,9 +38,9 @@ void CapsuleCollider::SetHalfHeight(float value)
     ResetShape();
 }
 
-physx::PxCapsuleGeometry CapsuleCollider::CreateCapsuleGeometry(float radius, float halfHeight)
+PxCapsuleGeometry CapsuleCollider::CreateCapsuleGeometry(float radius, float halfHeight)
 {
-    physx::PxCapsuleGeometry capsule;
+    PxCapsuleGeometry capsule;
     capsule.radius = m_radius;
     capsule.halfHeight = m_halfHeight;
     return capsule;

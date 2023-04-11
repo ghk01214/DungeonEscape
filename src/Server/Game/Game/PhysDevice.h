@@ -1,7 +1,5 @@
 ﻿#pragma once
-#include "physx_utils.h"
-
-enum class ColliderShape;
+#include "physx_define.h"
 
 class RigidBody;
 class CustomSimulationEventCallback;
@@ -41,10 +39,10 @@ public:
 	void InitialPlacement();
 
 	RigidBody* CreateDynamic(ColliderShape shape, float posX, float posY, float posZ);
+	CustomController* CreateCustomController(physx::PxVec3 pos);
 
-	void SetLinearVelocity();			
-	void SetGlobalPoseRotation();		
-	void AddForce();					
+	void SetLinearVelocity(int containerIdx, physx::PxVec3 linearVel);			
+	void SetGlobalPoseRotation(int containerIdx, PhysicsAxis axis, float degree);			
 private:
 	physx::PxDefaultAllocator				m_Allocator;
 	physx::PxDefaultErrorCallback			m_ErrorCallback;
@@ -65,7 +63,7 @@ private:
 	ControllerManagerWrapper*				m_controllerManagerWrapper = nullptr;
 	PhysQuery*								m_query = nullptr;
 
-	std::vector<RigidBody*>					m_RigidBodies;
-	std::vector<CustomController*>			m_customControllers;
+	std::vector<std::shared_ptr<RigidBody>>				m_RigidBodies;
+	std::vector<std::shared_ptr<CustomController>>		m_customControllers;
 };
 

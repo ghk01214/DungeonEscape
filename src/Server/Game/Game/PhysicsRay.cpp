@@ -1,17 +1,19 @@
 ﻿#include "pch.h"
 #include "PhysicsRay.h"
 
+using namespace physx;
+
 PhysicsRay::PhysicsRay()
 {
 }
 
-PhysicsRay::PhysicsRay(const physx::PxVec3& point, const physx::PxVec3& direction)
+PhysicsRay::PhysicsRay(const PxVec3& point, const PxVec3& direction)
 {
 	this->point = point;
 	this->direction = direction;
 }
 
-PhysicsRay::PhysicsRay(const physx::PxVec3& point, const physx::PxVec3& direction, float distance)
+PhysicsRay::PhysicsRay(const PxVec3& point, const PxVec3& direction, float distance)
 {
 	this->point = point;
 	this->direction = direction;

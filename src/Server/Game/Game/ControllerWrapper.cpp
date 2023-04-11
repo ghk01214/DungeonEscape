@@ -1,5 +1,9 @@
 ﻿#include "pch.h"
 #include "ControllerWrapper.h"
+#include "PhysDevice.h"
+#include "PhysQuery.h"
+
+using namespace physx;
 
 ControllerWrapper::ControllerWrapper()
 {
@@ -32,18 +36,18 @@ void ControllerWrapper::MoveSample()
 {
     float timeStep = 1.0f / PX_SIM_FRAMECNT;
 
-    physx::PxRaycastBuffer buffer;
+    PxRaycastBuffer buffer;
     bool onGround = UpdateOnGround(&buffer);
 
     //jump calculation
-    physx::PxVec3 jumpMovements(0.f, 0.f, 0.f);
+    PxVec3 jumpMovements(0.f, 0.f, 0.f);
     float jumpSpeed = 15.0f;  // adjust this to control the height of the jump
     static float jumpTime = 0.f;
     static bool jump = false;
 
     //if (InputDevice::GetInstance()->GetKey(Key::Space) && onGround)
     //{
-    //    m_controller->move(physx::PxVec3(0.f, 0.1, 0.f), 0.001f, timeStep, physx::PxControllerFilters(), nullptr);
+    //    m_controller->move(PxVec3(0.f, 0.1, 0.f), 0.001f, timeStep, PxControllerFilters(), nullptr);
     //    onGround = false;               // to not fall into if(onGround) immediately
     //    jump = true;
     //    jumpTime = 0.f;
@@ -64,7 +68,7 @@ void ControllerWrapper::MoveSample()
     }
 
 
-    physx::PxVec3 inputMovements(0.f, 0.f, 0.f);
+    PxVec3 inputMovements(0.f, 0.f, 0.f);
     float inputValue = 1.f;
 
     //if (InputDevice::GetInstance()->GetKey(Key::A))
@@ -92,7 +96,7 @@ void ControllerWrapper::MoveSample()
     else if (onGround)
         midAirDuration = 0.f;
 
-    physx::PxVec3 gravity(0.f, 0.f, 0.f);
+    PxVec3 gravity(0.f, 0.f, 0.f);
     if (!jump)
     {
         // only works when falling without jumping.
@@ -107,9 +111,9 @@ void ControllerWrapper::MoveSample()
 
 
     //combine movements
-    physx::PxVec3 displacement = (inputMovements + gravity + jumpMovements) * timeStep;
+    PxVec3 displacement = (inputMovements + gravity + jumpMovements) * timeStep;
 
-    physx::PxControllerCollisionFlags collisionFlags = m_controller->move(displacement, 0.001f, timeStep, physx::PxControllerFilters(), nullptr);
+    PxControllerCollisionFlags collisionFlags = m_controller->move(displacement, 0.001f, timeStep, PxControllerFilters(), nullptr);
 }
 
 void ControllerWrapper::MoveByKinematic()
@@ -156,7 +160,7 @@ void ControllerWrapper::MoveByNonKinematic()
 
 void ControllerWrapper::SlopeMovements()
 {
-    physx::PxVec3 inputMovements(0.f, 0.f, 0.f);
+    PxVec3 inputMovements(0.f, 0.f, 0.f);
     float inputValue = 1.f;
     float timeStep = 1.f / PX_SIM_FRAMECNT;
 
@@ -178,26 +182,26 @@ void ControllerWrapper::SlopeMovements()
     //}
 
     // Check if the controller is on the ground
-    physx::PxControllerState state;
+    PxControllerState state;
     m_controller->getState(state);
-    bool isOnGround = (state.collisionFlags & physx::PxControllerCollisionFlag::eCOLLISION_DOWN) ||
-        (state.collisionFlags & physx::PxControllerCollisionFlag::eCOLLISION_SIDES);
+    bool isOnGround = (state.collisionFlags & PxControllerCollisionFlag::eCOLLISION_DOWN) ||
+        (state.collisionFlags & PxControllerCollisionFlag::eCOLLISION_SIDES);
 
 #pragma region raycastDown
-    physx::PxRaycastBuffer hitBuffer;
-    physx::PxQueryFilterData filterData;
-    physx::PxExtendedVec3 currentFootPos = m_controller->getFootPosition();
+    PxRaycastBuffer hitBuffer;
+    PxQueryFilterData filterData;
+    PxExtendedVec3 currentFootPos = m_controller->getFootPosition();
     //default contact offset of rigidBody
-    physx::PxVec3 origin = physx::PxVec3(currentFootPos.x, currentFootPos.y + 0.2f, currentFootPos.z);
-    physx::PxVec3 direction(0.0f, -1.0f, 0.0f);
-    physx::PxReal distance = 100.0f;
+    PxVec3 origin = PxVec3(currentFootPos.x, currentFootPos.y + 0.2f, currentFootPos.z);
+    PxVec3 direction(0.0f, -1.0f, 0.0f);
+    PxReal distance = 100.0f;
     auto query = PhysDevice::GetInstance()->GetQuery();
     bool hitGround = query->RaycastOld(origin, direction, distance, filterData, &hitBuffer);
 
     // If the raycast hit the ground, set the foot position
     if (hitGround)
     {
-        physx::PxReal hitDistance = hitBuffer.block.distance;
+        PxReal hitDistance = hitBuffer.block.distance;
         std::cout << "raycast : " << hitDistance << "\t flag = " << isOnGround << std::endl;
     }
 #pragma endregion
@@ -214,12 +218,12 @@ void ControllerWrapper::SlopeMovements()
         gravityMagnitude = min(gravityMagnitude, 9.81f);
     }
 
-    physx::PxVec3 gravity(0.f, -gravityMagnitude, 0.f);
+    PxVec3 gravity(0.f, -gravityMagnitude, 0.f);
 
     // movements + grav
-    physx::PxVec3 displacement = (inputMovements + gravity) * timeStep;
+    PxVec3 displacement = (inputMovements + gravity) * timeStep;
 
-    physx::PxControllerCollisionFlags collisionFlags = m_controller->move(displacement, 0.001f, timeStep, physx::PxControllerFilters(), nullptr);
+    PxControllerCollisionFlags collisionFlags = m_controller->move(displacement, 0.001f, timeStep, PxControllerFilters(), nullptr);
 }
 
 void ControllerWrapper::Jump()
@@ -241,33 +245,33 @@ void ControllerWrapper::Jump()
     //}
 }
 
-bool ControllerWrapper::UpdateOnGround(physx::PxRaycastBuffer* buffer)
+bool ControllerWrapper::UpdateOnGround(PxRaycastBuffer* buffer)
 {
     //추후 경사면 추가 실험
     // Check if the controller is on the ground
-    physx::PxControllerState state;
+    PxControllerState state;
     m_controller->getState(state);
-    bool isOnGround = (state.collisionFlags & physx::PxControllerCollisionFlag::eCOLLISION_DOWN) ||
-        (state.collisionFlags & physx::PxControllerCollisionFlag::eCOLLISION_SIDES);
+    bool isOnGround = (state.collisionFlags & PxControllerCollisionFlag::eCOLLISION_DOWN) ||
+        (state.collisionFlags & PxControllerCollisionFlag::eCOLLISION_SIDES);
 
 #pragma region raycastDown
-    physx::PxQueryFilterData filterData;
+    PxQueryFilterData filterData;
 
-    physx::PxExtendedVec3 currentFootPos = m_controller->getFootPosition();
+    PxExtendedVec3 currentFootPos = m_controller->getFootPosition();
 
     // edit y value accordingly. slightly bigger than the capsuleDesc.contactOffset
-    physx::PxReal contactOffset = 0.01f;
+    PxReal contactOffset = 0.01f;
 
-    physx::PxVec3 origin = physx::PxVec3(currentFootPos.x, currentFootPos.y + contactOffset, currentFootPos.z);
-    physx::PxVec3 direction(0.0f, -1.0f, 0.0f);
-    physx::PxReal distance = 100.0f;
+    PxVec3 origin = PxVec3(currentFootPos.x, currentFootPos.y + contactOffset, currentFootPos.z);
+    PxVec3 direction(0.0f, -1.0f, 0.0f);
+    PxReal distance = 100.0f;
     auto query = PhysDevice::GetInstance()->GetQuery();
     bool hitGround = query->RaycastOld(origin, direction, distance, filterData, buffer);
 
     // If the raycast hit the ground, set the foot position
     if (hitGround)
     {
-        physx::PxReal hitDistance = buffer->block.distance;
+        PxReal hitDistance = buffer->block.distance;
         //cout << hitDistance << endl;
         if (isOnGround || hitDistance < 0.01f)
         {
@@ -299,12 +303,12 @@ void ControllerWrapper::Update()
 
 }
 
-physx::PxCapsuleController* ControllerWrapper::GetController()
+PxCapsuleController* ControllerWrapper::GetController()
 {
     return m_controller;
 }
 
-void ControllerWrapper::SetController(physx::PxCapsuleController* controller)
+void ControllerWrapper::SetController(PxCapsuleController* controller)
 {
     m_controller = controller;
 }
@@ -323,7 +327,7 @@ void ControllerWrapper::SetDensity(float density)
         if (actor)
         {
             actor->setMass(density > 0.0f ? 1.0f / density : PX_MAX_F32);
-            actor->setMassSpaceInertiaTensor(physx::PxVec3(1.0f, 1.0f, 1.0f) * actor->getMass());
+            actor->setMassSpaceInertiaTensor(PxVec3(1.0f, 1.0f, 1.0f) * actor->getMass());
         }
     }
 }
@@ -335,22 +339,22 @@ float ControllerWrapper::GetDensity()
 
 void ControllerWrapper::SetRotationLockAxis(PhysicsAxis axes, bool value)
 {
-    physx::PxU32 flag = (physx::PxU32)axes << 3;
+    PxU32 flag = (PxU32)axes << 3;
 
-    physx::PxRigidDynamic* body = m_controller->getActor();
+    PxRigidDynamic* body = m_controller->getActor();
 
-    body->setRigidDynamicLockFlag(physx::PxRigidDynamicLockFlag::Enum(flag), value);
+    body->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::Enum(flag), value);
 }
 
 bool ControllerWrapper::IsKinematic() const
 {
-    physx::PxRigidDynamic* body = m_controller->getActor();
-    return body->getRigidBodyFlags().isSet(physx::PxRigidBodyFlag::eKINEMATIC);
+    PxRigidDynamic* body = m_controller->getActor();
+    return body->getRigidBodyFlags().isSet(PxRigidBodyFlag::eKINEMATIC);
 }
 
 void ControllerWrapper::SetKinematic(bool value)
 {
-    m_body->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, value);
+    m_body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, value);
     if (!value)
         m_body->wakeUp();
 }

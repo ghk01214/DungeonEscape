@@ -38,27 +38,6 @@
     <Filter Include="Utility\Physx">
       <UniqueIdentifier>{f49a2bcd-6629-43d6-bc61-154d6a9a5215}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\PhysDevice">
-      <UniqueIdentifier>{98205cdf-b033-42c0-9f00-3287d050e728}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Physx\PhysDevice\FilterCallback">
-      <UniqueIdentifier>{539b1455-be53-4ba3-82a6-735abd5d0d51}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Physx\PhysDevice\FilterShader">
-      <UniqueIdentifier>{137f7658-6687-4623-895c-16e33e743a8b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Physx\PhysDevice\PhysQuery">
-      <UniqueIdentifier>{53f4d438-2df5-4c78-a2b4-2d85f1db325c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Physx\PhysDevice\PhysQuery\RaycastElements">
-      <UniqueIdentifier>{c3809ef3-54c3-4a0e-9fb1-941efacfe375}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Physx\PhysDevice\EventCallback">
-      <UniqueIdentifier>{432cfab7-0ceb-4f6a-a7a0-62a455e7043b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Physx\PhysDevice\EventCallback\CollisionInfo">
-      <UniqueIdentifier>{578783e8-ea6d-4545-805e-e29ca85dc300}</UniqueIdentifier>
-    </Filter>
     <Filter Include="source\Physx\Collider">
       <UniqueIdentifier>{832f9aae-f013-46fe-b799-8101a423a49b}</UniqueIdentifier>
     </Filter>
@@ -85,6 +64,27 @@
     </Filter>
     <Filter Include="source\Physx\Controller\ControllerManager">
       <UniqueIdentifier>{eeafd0cb-b49d-4857-87bb-b2226eb4e499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice">
+      <UniqueIdentifier>{98205cdf-b033-42c0-9f00-3287d050e728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\FilterCallback">
+      <UniqueIdentifier>{539b1455-be53-4ba3-82a6-735abd5d0d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\FilterShader">
+      <UniqueIdentifier>{137f7658-6687-4623-895c-16e33e743a8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\PhysQuery">
+      <UniqueIdentifier>{53f4d438-2df5-4c78-a2b4-2d85f1db325c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\PhysQuery\RaycastElements">
+      <UniqueIdentifier>{c3809ef3-54c3-4a0e-9fb1-941efacfe375}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\EventCallback">
+      <UniqueIdentifier>{432cfab7-0ceb-4f6a-a7a0-62a455e7043b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Physx\PhysDevice\EventCallback\CollisionInfo">
+      <UniqueIdentifier>{578783e8-ea6d-4545-805e-e29ca85dc300}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

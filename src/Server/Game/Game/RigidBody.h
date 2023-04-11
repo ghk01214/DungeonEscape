@@ -1,10 +1,5 @@
 ﻿#pragma once
-#include "physx_utils.h"
-
-enum class Interpolate;
-enum class PhysicsAxis;
-enum class ForceMode;
-enum class ColliderShape;
+#include "physx_define.h"
 
 class RigidBody
 {
