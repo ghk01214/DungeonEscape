@@ -157,14 +157,19 @@
     <ClCompile Include="CapsuleCollider.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="CollisionPairInfo.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="ControllerManagerWrapper.cpp" />
     <ClCompile Include="ControllerWrapper.cpp" />
     <ClCompile Include="CustomController.cpp" />
     <ClCompile Include="CustomSimulationEventCallback.cpp" />
     <ClCompile Include="CustomFilterShader.cpp" />
     <ClCompile Include="CustomQueryFilterCallback.cpp" />
+    <ClCompile Include="GameInstance.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="MeshCollider.cpp" />
     <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="PhysDevice.cpp" />
     <ClCompile Include="PhysicsRay.cpp" />
     <ClCompile Include="PhysQuery.cpp" />
@@ -180,6 +185,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="TimeDevice.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\vendor\include\Define.h" />
@@ -190,14 +196,20 @@
     <ClInclude Include="CapsuleCollider.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CollisionPairInfo.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="ControllerManagerWrapper.h" />
     <ClInclude Include="ControllerWrapper.h" />
     <ClInclude Include="CustomController.h" />
     <ClInclude Include="CustomSimulationEventCallback.h" />
     <ClInclude Include="CustomFilterShader.h" />
     <ClInclude Include="CustomQueryFilterCallback.h" />
+    <ClInclude Include="GameInstance.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="game_macro.h" />
+    <ClInclude Include="Layer.h" />
     <ClInclude Include="MeshCollider.h" />
     <ClInclude Include="NPC.h" />
+    <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="PhysDevice.h" />
     <ClInclude Include="PhysicsRay.h" />
     <ClInclude Include="PhysQuery.h" />
@@ -211,6 +223,8 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="game_functions.h" />
+    <ClInclude Include="TimeDevice.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

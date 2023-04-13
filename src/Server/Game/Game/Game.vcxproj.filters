@@ -1,259 +1,326 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="source">
+    <Filter Include="01. Server">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Utility">
-      <UniqueIdentifier>{9d7d2d7f-59b8-4a91-9717-7942f34b865f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\OVERLAPPEDEX">
-      <UniqueIdentifier>{fe1b19af-0975-402c-8239-4223bbdf755d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\Packet">
-      <UniqueIdentifier>{8be28791-ca75-4610-98f1-f8360ec68b94}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Utility\pch">
-      <UniqueIdentifier>{d67b4dd7-36f3-490e-b001-fc64e913a602}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Object">
-      <UniqueIdentifier>{d0b8a078-d75a-46bf-8888-7eb3336a738b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Object\Player">
-      <UniqueIdentifier>{e043323a-2a33-4654-abb1-f86456d16984}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Session">
+    <Filter Include="01. Server\Session">
       <UniqueIdentifier>{13427df2-1108-4e0d-a1cb-f30ff0c01e05}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Server">
+    <Filter Include="01. Server\Server">
       <UniqueIdentifier>{d64e419a-141a-454d-bac5-8633adf8f441}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Object\NPC">
+    <Filter Include="01. Server\OLD">
+      <UniqueIdentifier>{8948402b-5167-4f99-8dff-c9ff639652b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Server\OLD\Object">
+      <UniqueIdentifier>{d0b8a078-d75a-46bf-8888-7eb3336a738b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Server\OLD\Object\Player">
+      <UniqueIdentifier>{e043323a-2a33-4654-abb1-f86456d16984}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Server\OLD\Object\NPC">
       <UniqueIdentifier>{f403878b-13ba-49f6-98f5-251a6fe42bcb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx">
+    <Filter Include="02. Physx">
       <UniqueIdentifier>{ba8faa45-b231-480f-b253-74a556939d3d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utility\Physx">
-      <UniqueIdentifier>{f49a2bcd-6629-43d6-bc61-154d6a9a5215}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Physx\Collider">
+    <Filter Include="02. Physx\Collider">
       <UniqueIdentifier>{832f9aae-f013-46fe-b799-8101a423a49b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\Collider\Capsule">
+    <Filter Include="02. Physx\Collider\Capsule">
       <UniqueIdentifier>{45878056-e58f-4da5-b31e-aa9d60c29811}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\Collider\Box">
+    <Filter Include="02. Physx\Collider\Box">
       <UniqueIdentifier>{a8f56ada-4830-47d8-b5b6-9b27be5d3686}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\Collider\Sphere">
+    <Filter Include="02. Physx\Collider\Sphere">
       <UniqueIdentifier>{3414add6-1974-4cd1-948f-22775f14820a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\Collider\Mesh">
+    <Filter Include="02. Physx\Collider\Mesh">
       <UniqueIdentifier>{9f343387-0059-4710-a144-e272f070293f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\RigidBody">
+    <Filter Include="02. Physx\RigidBody">
       <UniqueIdentifier>{6b90fb43-e27f-4515-8f62-8b81614d77df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\CustomController">
+    <Filter Include="02. Physx\CustomController">
       <UniqueIdentifier>{6a258216-4807-4f59-a55b-280ab3648ecf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\Controller">
+    <Filter Include="02. Physx\Controller">
       <UniqueIdentifier>{d9312247-bb3f-40f4-b2b7-dbafa6d30a69}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\Controller\ControllerManager">
-      <UniqueIdentifier>{eeafd0cb-b49d-4857-87bb-b2226eb4e499}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\Physx\PhysDevice">
+    <Filter Include="02. Physx\PhysDevice">
       <UniqueIdentifier>{98205cdf-b033-42c0-9f00-3287d050e728}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\PhysDevice\FilterCallback">
+    <Filter Include="02. Physx\PhysDevice\FilterCallback">
       <UniqueIdentifier>{539b1455-be53-4ba3-82a6-735abd5d0d51}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\PhysDevice\FilterShader">
+    <Filter Include="02. Physx\PhysDevice\FilterShader">
       <UniqueIdentifier>{137f7658-6687-4623-895c-16e33e743a8b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\PhysDevice\PhysQuery">
+    <Filter Include="02. Physx\PhysDevice\PhysQuery">
       <UniqueIdentifier>{53f4d438-2df5-4c78-a2b4-2d85f1db325c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\PhysDevice\PhysQuery\RaycastElements">
+    <Filter Include="02. Physx\PhysDevice\PhysQuery\RaycastElements">
       <UniqueIdentifier>{c3809ef3-54c3-4a0e-9fb1-941efacfe375}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\PhysDevice\EventCallback">
+    <Filter Include="02. Physx\PhysDevice\EventCallback">
       <UniqueIdentifier>{432cfab7-0ceb-4f6a-a7a0-62a455e7043b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Physx\PhysDevice\EventCallback\CollisionInfo">
+    <Filter Include="02. Physx\PhysDevice\EventCallback\CollisionInfo">
       <UniqueIdentifier>{578783e8-ea6d-4545-805e-e29ca85dc300}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Utility">
+      <UniqueIdentifier>{9d7d2d7f-59b8-4a91-9717-7942f34b865f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Utility\OVERLAPPEDEX">
+      <UniqueIdentifier>{fe1b19af-0975-402c-8239-4223bbdf755d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Utility\Packet">
+      <UniqueIdentifier>{8be28791-ca75-4610-98f1-f8360ec68b94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Utility\pch">
+      <UniqueIdentifier>{d67b4dd7-36f3-490e-b001-fc64e913a602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Utility\pch\CodeUtils">
+      <UniqueIdentifier>{9f2b598d-d298-415c-941d-0b3e8b0e59bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. System">
+      <UniqueIdentifier>{d7a932d2-fc6d-4197-a240-41ee9190aaeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. System\Timers">
+      <UniqueIdentifier>{881c00b0-c9bd-4653-bf37-42ffa6785abe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. GameUtility">
+      <UniqueIdentifier>{35e1d11d-8c11-487c-ba66-ae553824c63c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. GameUtility\00. GameInstance">
+      <UniqueIdentifier>{c18632e7-a219-4552-b87f-327db3200b37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\Controller\Manager">
+      <UniqueIdentifier>{eeafd0cb-b49d-4857-87bb-b2226eb4e499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. GameUtility\01. GameObjects">
+      <UniqueIdentifier>{76bf40ab-e1d3-4f91-a9c0-892e714653a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. GameUtility\01. GameObjects\Manager">
+      <UniqueIdentifier>{b38c987d-7311-43f0-a134-4849aa249389}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. GameUtility\01. GameObjects\Layer">
+      <UniqueIdentifier>{7a4be862-55fd-4b2a-9a85-09e54aeea517}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. GameUtility\02. Components">
+      <UniqueIdentifier>{697e3697-cc5e-45d1-85dc-815858f6aa42}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EntryPoint.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>Utility\pch</Filter>
+      <Filter>99. Utility\pch</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
-      <Filter>source\Object</Filter>
+      <Filter>01. Server\OLD\Object</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>source\Object\Player</Filter>
+      <Filter>01. Server\OLD\Object\Player</Filter>
     </ClCompile>
     <ClCompile Include="Session.cpp">
-      <Filter>source\Session</Filter>
+      <Filter>01. Server\Session</Filter>
     </ClCompile>
     <ClCompile Include="Server.cpp">
-      <Filter>source\Server</Filter>
+      <Filter>01. Server\Server</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\vendor\include\OVERLAPPEDEX.cpp">
-      <Filter>Utility\OVERLAPPEDEX</Filter>
+      <Filter>99. Utility\OVERLAPPEDEX</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\vendor\include\Packet.cpp">
-      <Filter>Utility\Packet</Filter>
+      <Filter>99. Utility\Packet</Filter>
     </ClCompile>
     <ClCompile Include="NPC.cpp">
-      <Filter>source\Object\NPC</Filter>
+      <Filter>01. Server\OLD\Object\NPC</Filter>
     </ClCompile>
     <ClCompile Include="PhysDevice.cpp">
-      <Filter>source\Physx\PhysDevice</Filter>
+      <Filter>02. Physx\PhysDevice</Filter>
     </ClCompile>
     <ClCompile Include="CustomQueryFilterCallback.cpp">
-      <Filter>source\Physx\PhysDevice\FilterCallback</Filter>
+      <Filter>02. Physx\PhysDevice\FilterCallback</Filter>
     </ClCompile>
     <ClCompile Include="CustomFilterShader.cpp">
-      <Filter>source\Physx\PhysDevice\FilterShader</Filter>
+      <Filter>02. Physx\PhysDevice\FilterShader</Filter>
     </ClCompile>
     <ClCompile Include="PhysicsRay.cpp">
-      <Filter>source\Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
+      <Filter>02. Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
     </ClCompile>
     <ClCompile Include="RaycastHit.cpp">
-      <Filter>source\Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
+      <Filter>02. Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
     </ClCompile>
     <ClCompile Include="PhysQuery.cpp">
-      <Filter>source\Physx\PhysDevice\PhysQuery</Filter>
+      <Filter>02. Physx\PhysDevice\PhysQuery</Filter>
     </ClCompile>
     <ClCompile Include="CollisionPairInfo.cpp">
-      <Filter>source\Physx\PhysDevice\EventCallback\CollisionInfo</Filter>
+      <Filter>02. Physx\PhysDevice\EventCallback\CollisionInfo</Filter>
     </ClCompile>
     <ClCompile Include="CustomSimulationEventCallback.cpp">
-      <Filter>source\Physx\PhysDevice\EventCallback</Filter>
+      <Filter>02. Physx\PhysDevice\EventCallback</Filter>
     </ClCompile>
     <ClCompile Include="Collider.cpp">
-      <Filter>source\Physx\Collider</Filter>
+      <Filter>02. Physx\Collider</Filter>
     </ClCompile>
     <ClCompile Include="RigidBody.cpp">
-      <Filter>source\Physx\RigidBody</Filter>
+      <Filter>02. Physx\RigidBody</Filter>
     </ClCompile>
     <ClCompile Include="BoxCollider.cpp">
-      <Filter>source\Physx\Collider\Box</Filter>
+      <Filter>02. Physx\Collider\Box</Filter>
     </ClCompile>
     <ClCompile Include="CapsuleCollider.cpp">
-      <Filter>source\Physx\Collider\Capsule</Filter>
+      <Filter>02. Physx\Collider\Capsule</Filter>
     </ClCompile>
     <ClCompile Include="SphereCollider.cpp">
-      <Filter>source\Physx\Collider\Sphere</Filter>
+      <Filter>02. Physx\Collider\Sphere</Filter>
     </ClCompile>
     <ClCompile Include="MeshCollider.cpp">
-      <Filter>source\Physx\Collider\Mesh</Filter>
+      <Filter>02. Physx\Collider\Mesh</Filter>
     </ClCompile>
     <ClCompile Include="CustomController.cpp">
-      <Filter>source\Physx\CustomController</Filter>
+      <Filter>02. Physx\CustomController</Filter>
     </ClCompile>
     <ClCompile Include="ControllerManagerWrapper.cpp">
-      <Filter>source\Physx\Controller\ControllerManager</Filter>
+      <Filter>02. Physx\Controller\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="EntryPoint.cpp" />
+    <ClCompile Include="TimeDevice.cpp">
+      <Filter>97. System\Timers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>98. GameUtility\01. GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>98. GameUtility\02. Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectManager.cpp">
+      <Filter>98. GameUtility\01. GameObjects\Manager</Filter>
     </ClCompile>
     <ClCompile Include="ControllerWrapper.cpp">
-      <Filter>source\Physx\Controller\ControllerManager</Filter>
+      <Filter>02. Physx\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInstance.cpp">
+      <Filter>98. GameUtility\00. GameInstance</Filter>
+    </ClCompile>
+    <ClCompile Include="Layer.cpp">
+      <Filter>98. GameUtility\01. GameObjects\Layer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
-      <Filter>Utility\pch</Filter>
+      <Filter>99. Utility\pch</Filter>
     </ClInclude>
     <ClInclude Include="Object.h">
-      <Filter>source\Object</Filter>
+      <Filter>01. Server\OLD\Object</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>source\Object\Player</Filter>
+      <Filter>01. Server\OLD\Object\Player</Filter>
     </ClInclude>
     <ClInclude Include="Session.h">
-      <Filter>source\Session</Filter>
+      <Filter>01. Server\Session</Filter>
     </ClInclude>
     <ClInclude Include="Server.h">
-      <Filter>source\Server</Filter>
+      <Filter>01. Server\Server</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\OVERLAPPEDEX.h">
-      <Filter>Utility\OVERLAPPEDEX</Filter>
+      <Filter>99. Utility\OVERLAPPEDEX</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\Packet.h">
-      <Filter>Utility\Packet</Filter>
+      <Filter>99. Utility\Packet</Filter>
     </ClInclude>
     <ClInclude Include="NPC.h">
-      <Filter>source\Object\NPC</Filter>
+      <Filter>01. Server\OLD\Object\NPC</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\protocol.hpp">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\vendor\include\Define.h">
-      <Filter>Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="physx_utils.h">
-      <Filter>Utility\Physx</Filter>
-    </ClInclude>
-    <ClInclude Include="physx_define.h">
-      <Filter>Utility\Physx</Filter>
+      <Filter>99. Utility</Filter>
     </ClInclude>
     <ClInclude Include="PhysDevice.h">
-      <Filter>source\Physx\PhysDevice</Filter>
+      <Filter>02. Physx\PhysDevice</Filter>
     </ClInclude>
     <ClInclude Include="CustomQueryFilterCallback.h">
-      <Filter>source\Physx\PhysDevice\FilterCallback</Filter>
+      <Filter>02. Physx\PhysDevice\FilterCallback</Filter>
     </ClInclude>
     <ClInclude Include="CustomFilterShader.h">
-      <Filter>source\Physx\PhysDevice\FilterShader</Filter>
+      <Filter>02. Physx\PhysDevice\FilterShader</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsRay.h">
-      <Filter>source\Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
+      <Filter>02. Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
     </ClInclude>
     <ClInclude Include="RaycastHit.h">
-      <Filter>source\Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
+      <Filter>02. Physx\PhysDevice\PhysQuery\RaycastElements</Filter>
     </ClInclude>
     <ClInclude Include="PhysQuery.h">
-      <Filter>source\Physx\PhysDevice\PhysQuery</Filter>
+      <Filter>02. Physx\PhysDevice\PhysQuery</Filter>
     </ClInclude>
     <ClInclude Include="CollisionPairInfo.h">
-      <Filter>source\Physx\PhysDevice\EventCallback\CollisionInfo</Filter>
+      <Filter>02. Physx\PhysDevice\EventCallback\CollisionInfo</Filter>
     </ClInclude>
     <ClInclude Include="CustomSimulationEventCallback.h">
-      <Filter>source\Physx\PhysDevice\EventCallback</Filter>
+      <Filter>02. Physx\PhysDevice\EventCallback</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h">
-      <Filter>source\Physx\Collider</Filter>
+      <Filter>02. Physx\Collider</Filter>
     </ClInclude>
     <ClInclude Include="RigidBody.h">
-      <Filter>source\Physx\RigidBody</Filter>
+      <Filter>02. Physx\RigidBody</Filter>
     </ClInclude>
     <ClInclude Include="BoxCollider.h">
-      <Filter>source\Physx\Collider\Box</Filter>
+      <Filter>02. Physx\Collider\Box</Filter>
     </ClInclude>
     <ClInclude Include="CapsuleCollider.h">
-      <Filter>source\Physx\Collider\Capsule</Filter>
+      <Filter>02. Physx\Collider\Capsule</Filter>
     </ClInclude>
     <ClInclude Include="SphereCollider.h">
-      <Filter>source\Physx\Collider\Sphere</Filter>
+      <Filter>02. Physx\Collider\Sphere</Filter>
     </ClInclude>
     <ClInclude Include="MeshCollider.h">
-      <Filter>source\Physx\Collider\Mesh</Filter>
+      <Filter>02. Physx\Collider\Mesh</Filter>
     </ClInclude>
     <ClInclude Include="CustomController.h">
-      <Filter>source\Physx\CustomController</Filter>
+      <Filter>02. Physx\CustomController</Filter>
     </ClInclude>
     <ClInclude Include="ControllerManagerWrapper.h">
-      <Filter>source\Physx\Controller\ControllerManager</Filter>
+      <Filter>02. Physx\Controller\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="game_macro.h">
+      <Filter>99. Utility\pch\CodeUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="game_functions.h">
+      <Filter>99. Utility\pch\CodeUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\vendor\include\Define.h">
+      <Filter>99. Utility\pch\CodeUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="physx_utils.h">
+      <Filter>02. Physx</Filter>
+    </ClInclude>
+    <ClInclude Include="physx_define.h">
+      <Filter>02. Physx</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeDevice.h">
+      <Filter>97. System\Timers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>98. GameUtility\01. GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>98. GameUtility\02. Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectManager.h">
+      <Filter>98. GameUtility\01. GameObjects\Manager</Filter>
     </ClInclude>
     <ClInclude Include="ControllerWrapper.h">
-      <Filter>source\Physx\Controller\ControllerManager</Filter>
+      <Filter>02. Physx\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInstance.h">
+      <Filter>98. GameUtility\00. GameInstance</Filter>
+    </ClInclude>
+    <ClInclude Include="Layer.h">
+      <Filter>98. GameUtility\01. GameObjects\Layer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

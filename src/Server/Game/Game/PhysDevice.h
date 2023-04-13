@@ -11,7 +11,7 @@ class CustomController;
 class PhysDevice
 {
 public:
-	DeclareSingletone(PhysDevice);
+	DeclareSingletone(PhysDevice)
 
 private:
 	PhysDevice();
@@ -22,15 +22,16 @@ public:
 	void StepSim();
 	void GameLogic();
 	void ClearEventCallback();
-	void Update();
-	void LateUpdate();		//update와 lateupdate사이 물리 상호작용에 대한 게임 로직 적용
+	void PreUpdate();				//순서를 반드시 지켜주세요.
+	void Update();					//PhysDevice::PreUpdate() > CompMgr::Update() > PhysDevice::Update() > PhysDevice::Late_Update()
+	void LateUpdate();		
 	void Release();
 public:
-	physx::PxPhysics* GetPhysics() const;
-	physx::PxScene* GetScene() const;
-	PhysQuery* GetQuery() const;
-	physx::PxCooking* GetCooking() const;
-	physx::PxMaterial* GetDefaultMaterial() const;
+	physx::PxPhysics*		GetPhysics() const;
+	physx::PxScene*			GetScene() const;
+	PhysQuery*				GetQuery() const;
+	physx::PxCooking*		GetCooking() const;
+	physx::PxMaterial*		GetDefaultMaterial() const;
 	ControllerManagerWrapper* GetControllerManagerWrapper() const;
 
 public:
@@ -58,6 +59,7 @@ private:
 	physx::PxMaterial*						m_Material = NULL;
 
 	physx::PxPvd*							m_Pvd = NULL;
+
 	CustomSimulationEventCallback*			m_eventCallback = nullptr;
 	CustomFilterShader*						m_filterShader = nullptr;
 	ControllerManagerWrapper*				m_controllerManagerWrapper = nullptr;

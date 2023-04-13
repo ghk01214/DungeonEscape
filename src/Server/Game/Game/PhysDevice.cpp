@@ -81,16 +81,21 @@ void PhysDevice::StepSim()
 	m_Scene->fetchResults(true);
 }
 
-void PhysDevice::Update()
+void PhysDevice::PreUpdate()
 {
 	GameLogic();
 	//여기에 상호작용
 }
 
-void PhysDevice::LateUpdate()
+void PhysDevice::Update()
 {
 	ClearEventCallback();
 	StepSim();
+}
+
+void PhysDevice::LateUpdate()
+{
+
 }
 
 void PhysDevice::Release()
@@ -287,6 +292,8 @@ void PhysDevice::ClearEventCallback()
 
 	m_eventCallback->ClearVector();
 }
+
+
 
 
 
