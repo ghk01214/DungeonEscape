@@ -1,18 +1,20 @@
 ﻿#pragma once
 #include "physx_define.h"
+#include "Component.h"
 
 class RigidBody;
 class CapsuleCollider;
 
-class CustomController
+class CustomController : public Component
 {
 public:
-	CustomController();
+	CustomController(GameObject* ownerGameObject, Component* ownerComponent);
 	~CustomController();
 public:
-	void Init(physx::PxVec3 pos);
-	void SetRigidBody(RigidBody* body);
-
+	void Init() override;
+	void Release() override;
+public:
+	//void Init(physx::PxVec3 pos);
 public:
 	void Update(uint8_t keyInput, server::KEY_STATE keyState);
 	bool CheckOnGround(CollisionInfoType type, physx::PxVec3& surfaceNormal);
@@ -29,7 +31,7 @@ private:
 	float	m_degreeThreshold = 49.9f;
 private:
 	RigidBody*			m_body = nullptr;
-	CapsuleCollider*	m_collider = nullptr;
+	CapsuleCollider* m_collider = nullptr;
 };
 
 

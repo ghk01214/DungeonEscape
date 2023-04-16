@@ -10,7 +10,8 @@ PxGeometryHolder MeshCollider::CreateGeometry()
     return CreateTriangleMeshGeometry();
 }
 
-MeshCollider::MeshCollider()
+MeshCollider::MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body)
+    : Collider(ownerGameObject, ownerComponent, body)
 {
 }
 
@@ -18,7 +19,7 @@ MeshCollider::~MeshCollider()
 {
 }
 
-void MeshCollider::Init(RigidBody* body)
+void MeshCollider::Init()
 {
     auto phys = PhysDevice::GetInstance()->GetPhysics();
     auto cooking = PhysDevice::GetInstance()->GetCooking();
@@ -54,12 +55,18 @@ void MeshCollider::Init(RigidBody* body)
 
     PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
 
-    m_mesh = phys->createConvexMesh(readBuffer);
+    m_convexMesh = phys->createConvexMesh(readBuffer);
 
-    body->SetKinematic(true);
-    body->GetBody()->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, false);
+    m_attachedRigidBody->SetKinematic(true);
+    m_attachedRigidBody->GetBody()->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, false);
 
-    Collider::Init(body);
+    Collider::Init();
+}
+
+void MeshCollider::Release()
+{
+    PX_RELEASE(m_convexMesh);
+    Collider::Release();
 }
 
 PxConvexMeshGeometry MeshCollider::CreateTriangleMeshGeometry()
@@ -67,5 +74,5 @@ PxConvexMeshGeometry MeshCollider::CreateTriangleMeshGeometry()
     PxMeshScale scale;
     scale.rotation = PxQuat(PxIdentity);
     scale.scale = PxVec3(10.f, 10.f, 10.f);
-    return PxConvexMeshGeometry(m_mesh, scale);
+    return PxConvexMeshGeometry(m_convexMesh, scale);
 }

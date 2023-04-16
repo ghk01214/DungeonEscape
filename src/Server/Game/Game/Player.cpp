@@ -21,7 +21,7 @@ namespace game
 	{
 	}
 
-	CPlayer::CPlayer(Pos pos, Quat quat) :
+	CPlayer::CPlayer(PosOLD pos, QuatOLD quat) :
 		CObject{ pos, quat },
 		m_aniIndex{ 0 },
 		m_aniFrame{ 0.f },

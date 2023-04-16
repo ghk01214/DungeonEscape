@@ -8,15 +8,16 @@ class MeshCollider : public Collider
 	virtual physx::PxGeometryHolder CreateGeometry() override;
 
 public:
-	MeshCollider();
+	MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body);
 	~MeshCollider();
 public:
-	void Init(RigidBody* body);
+	void Init() override;
+	void Release() override;
 
 protected:
 	physx::PxConvexMeshGeometry CreateTriangleMeshGeometry();
 private:
-	physx::PxConvexMesh* m_mesh;
+	physx::PxConvexMesh* m_convexMesh = nullptr;
 };
 
 

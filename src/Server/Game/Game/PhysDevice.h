@@ -4,7 +4,6 @@
 class RigidBody;
 class CustomSimulationEventCallback;
 class CustomFilterShader;
-class ControllerManagerWrapper;
 class PhysQuery;
 class CustomController;
 
@@ -32,18 +31,14 @@ public:
 	PhysQuery*				GetQuery() const;
 	physx::PxCooking*		GetCooking() const;
 	physx::PxMaterial*		GetDefaultMaterial() const;
-	ControllerManagerWrapper* GetControllerManagerWrapper() const;
 
 public:
 	//Test용 함수
 	void CreateHelloWorldStack(const physx::PxTransform& t, physx::PxU32 size, physx::PxReal halfExtent, bool attributeStatic);
 	void InitialPlacement();
 
-	RigidBody* CreateDynamic(ColliderShape shape, float posX, float posY, float posZ);
-	CustomController* CreateCustomController(physx::PxVec3 pos);
-
-	void SetLinearVelocity(int containerIdx, physx::PxVec3 linearVel);			
-	void SetGlobalPoseRotation(int containerIdx, PhysicsAxis axis, float degree);			
+	void TestCreateDynamic(ColliderShape shape, float posX, float posY, float posZ);
+	//CustomController* CreateCustomController(physx::PxVec3 pos);	
 private:
 	physx::PxDefaultAllocator				m_Allocator;
 	physx::PxDefaultErrorCallback			m_ErrorCallback;
@@ -62,7 +57,6 @@ private:
 
 	CustomSimulationEventCallback*			m_eventCallback = nullptr;
 	CustomFilterShader*						m_filterShader = nullptr;
-	ControllerManagerWrapper*				m_controllerManagerWrapper = nullptr;
 	PhysQuery*								m_query = nullptr;
 
 	std::vector<std::shared_ptr<RigidBody>>				m_RigidBodies;

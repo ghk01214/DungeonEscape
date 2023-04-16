@@ -45,7 +45,7 @@ namespace game
 		void SetSocket(SOCKET socket) { m_socket = socket; }
 		void SetID(int32_t id) { m_id = id; }
 		void SetObject(CObject* pObject) { m_pObject = pObject; }
-		void SetPos(Pos pos) { m_pObject->SetPos(pos); }
+		void SetPos(PosOLD pos) { m_pObject->SetPos(pos); }
 		void SetPos(float x, float y, float z) { m_pObject->SetPos(x, y, z); }
 		void SetKeyInput(uint8_t input) { m_keyInput = input; }
 		void SetKeyState(server::KEY_STATE state) { m_keyState = state; }

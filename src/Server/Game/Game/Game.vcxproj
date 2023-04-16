@@ -173,6 +173,7 @@
     <ClCompile Include="PhysDevice.cpp" />
     <ClCompile Include="PhysicsRay.cpp" />
     <ClCompile Include="PhysQuery.cpp" />
+    <ClCompile Include="Quat.cpp" />
     <ClCompile Include="RaycastHit.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Server.cpp" />
@@ -186,6 +187,8 @@
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="TimeDevice.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\vendor\include\Define.h" />
@@ -215,6 +218,7 @@
     <ClInclude Include="PhysQuery.h" />
     <ClInclude Include="physx_define.h" />
     <ClInclude Include="physx_utils.h" />
+    <ClInclude Include="Quat.h" />
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Server.h" />
@@ -225,6 +229,9 @@
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="game_functions.h" />
     <ClInclude Include="TimeDevice.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="transform_utils.h" />
+    <ClInclude Include="Vec3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

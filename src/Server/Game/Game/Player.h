@@ -4,8 +4,8 @@
 
 namespace game
 {
-	struct Pos;
-	struct Quat;
+	struct PosOLD;
+	struct QuatOLD;
 	struct Trans;
 
 	class CObject;
@@ -15,7 +15,7 @@ namespace game
 	public:
 		CPlayer();
 		CPlayer(Trans trans);
-		CPlayer(Pos pos, Quat quat);
+		CPlayer(PosOLD pos, QuatOLD quat);
 		CPlayer(float x, float y, float z);
 		CPlayer(float x, float y, float z, float w);
 		CPlayer(float px, float py, float pz, float qx, float qy, float qz, float qw);

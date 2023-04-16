@@ -9,12 +9,21 @@
 // Component에 업데이트는 없습니다.
 // Component를 소유한 게임 오브젝트의 업데이트에서 컴포넌트들을 의도대로 조작합니다.
 
+// component을 소유하는 게 GameObject면 GameObject::m_Components에 관리합니다. (* 게임오브젝트가 가지는 컴포넌트는 중복되지 않음)
+// component을 소유하는 게 다른 Component면 해당 Component의 멤버변수로 관리합니다. 
+// m_ownerComponent의 값과 상관없이 m_ownerGameObject는 최상위 게임오브젝트를 가리킵니다.
+// 요약 	:	GameObject는 unordered map에서 컴포넌트를 관리
+//			Component는 각자 멤버함수로 컴포넌트 관리. exampleComp::Init()/Release()에서 별개로 관리한다.
+
+// component마다 transform 소유시키려 했는데 GG칩니다.
+// transform에 상속구조 집어넣으려니까 머리터지겠어요.
+
 class GameObject;
 
 class Component
 {
 public:
-	Component(GameObject* owner);
+	Component(GameObject* ownerGameObject, Component* ownerComponent);
 	virtual ~Component() = default;
 
 public:
@@ -22,5 +31,11 @@ public:
 	virtual void Release() = 0;
 
 public:
-	GameObject* m_Owner = nullptr;
+	template<typename T, typename... Args>
+	T* AddComponent(Args&&... args);
+
+protected:		//해당 컴포넌트를 소유하는 게임오브젝트의 포인터
+	GameObject* m_ownerGameObject = nullptr;
+	Component* m_ownerComponent = nullptr;
+	//Transform* m_transform = nullptr;
 };

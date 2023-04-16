@@ -8,8 +8,12 @@ PxGeometryHolder SphereCollider::CreateGeometry()
     return CreateSphereGeometry();
 }
 
-SphereCollider::SphereCollider()
+
+SphereCollider::SphereCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 size)
+	: Collider(ownerGameObject, ownerComponent, body)
 {
+    int biggerRadius = (size.x > size.y) ? size.x : size.y;
+    m_radius = (biggerRadius > size.z) ? biggerRadius : size.z;
 }
 
 SphereCollider::~SphereCollider()

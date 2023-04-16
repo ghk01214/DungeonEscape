@@ -113,6 +113,15 @@
     <Filter Include="98. GameUtility\02. Components">
       <UniqueIdentifier>{697e3697-cc5e-45d1-85dc-815858f6aa42}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98. GameUtility\02. Components\Transform">
+      <UniqueIdentifier>{09260775-d61b-404c-b227-2556f949a569}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. GameUtility\02. Components\Transform\Vec3">
+      <UniqueIdentifier>{dd6dfa62-25b1-4feb-b991-56862ed57398}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. GameUtility\02. Components\Transform\Quat">
+      <UniqueIdentifier>{f19e1efa-c55c-45d2-900b-eeee9186a125}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -208,6 +217,15 @@
     </ClCompile>
     <ClCompile Include="Layer.cpp">
       <Filter>98. GameUtility\01. GameObjects\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="Vec3.cpp">
+      <Filter>98. GameUtility\02. Components\Transform\Vec3</Filter>
+    </ClCompile>
+    <ClCompile Include="Quat.cpp">
+      <Filter>98. GameUtility\02. Components\Transform\Quat</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>98. GameUtility\02. Components\Transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -321,6 +339,18 @@
     </ClInclude>
     <ClInclude Include="Layer.h">
       <Filter>98. GameUtility\01. GameObjects\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>98. GameUtility\02. Components\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="Vec3.h">
+      <Filter>98. GameUtility\02. Components\Transform\Vec3</Filter>
+    </ClInclude>
+    <ClInclude Include="Quat.h">
+      <Filter>98. GameUtility\02. Components\Transform\Quat</Filter>
+    </ClInclude>
+    <ClInclude Include="transform_utils.h">
+      <Filter>99. Utility\pch\CodeUtils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@
 namespace game
 {
 	CObject::CObject() :
-		m_transform{ Pos{ 0.f, 0.f, 0.f }, Quat{ 0.f, 0.f, 0.f, 0.f } },
+		m_transform{ PosOLD{ 0.f, 0.f, 0.f }, QuatOLD{ 0.f, 0.f, 0.f, 0.f } },
 		m_speed{ 200.f },
 		m_angle{ 2.f },
 		m_deltaTime{ 0.f }
@@ -19,7 +19,7 @@ namespace game
 	{
 	}
 
-	CObject::CObject(Pos pos, Quat quat) :
+	CObject::CObject(PosOLD pos, QuatOLD quat) :
 		m_transform{ pos, quat },
 		m_speed{ 200.f },
 		m_angle{ 2.f },
@@ -28,7 +28,7 @@ namespace game
 	}
 
 	CObject::CObject(float x, float y, float z) :
-		m_transform{ Pos{ x, y, z }, Quat{ 0.f, 0.f, 0.f, 0.f } },
+		m_transform{ PosOLD{ x, y, z }, QuatOLD{ 0.f, 0.f, 0.f, 0.f } },
 		m_speed{ 200.f },
 		m_angle{ 2.f },
 		m_deltaTime{ 0.f }
@@ -36,7 +36,7 @@ namespace game
 	}
 
 	CObject::CObject(float x, float y, float z, float w) :
-		m_transform{ Pos{ 0.f, 0.f, 0.f }, Quat{ x, y, z, w } },
+		m_transform{ PosOLD{ 0.f, 0.f, 0.f }, QuatOLD{ x, y, z, w } },
 		m_speed{ 200.f },
 		m_angle{ 2.f },
 		m_deltaTime{ 0.f }
@@ -44,7 +44,7 @@ namespace game
 	}
 
 	CObject::CObject(float px, float py, float pz, float qx, float qy, float qz, float qw) :
-		m_transform{ Pos{ px, py, pz }, Quat{ qx, qy, qz, qw } },
+		m_transform{ PosOLD{ px, py, pz }, QuatOLD{ qx, qy, qz, qw } },
 		m_speed{ 200.f },
 		m_angle{ 2.f },
 		m_deltaTime{ 0.f }

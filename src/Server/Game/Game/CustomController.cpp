@@ -7,10 +7,13 @@
 #include "PhysicsRay.h"
 #include "RaycastHit.h"
 #include "PhysQuery.h"
+#include "GameObject.h"
+#include "Transform.h"
 
 using namespace physx;
 
-CustomController::CustomController()
+CustomController::CustomController(GameObject* ownerGameObject, Component* ownerComponent)
+	: Component(ownerGameObject, ownerComponent)
 {
 }
 
@@ -18,21 +21,26 @@ CustomController::~CustomController()
 {
 }
 
-void CustomController::Init(PxVec3 pos)
-{																				//5,10,-10
-	m_body = PhysDevice::GetInstance()->CreateDynamic(ColliderShape::COLLIDER_CAPSULE, pos.x, pos.y, pos.z);
-	m_body->SetSleepThresholder(1e-6f);
-	m_body->SetRotation(90, PhysicsAxis::Z);			//capsule is laying by default.
+void CustomController::Init()
+{
+	Transform* t = m_ownerGameObject->getTransform();
+	m_body = AddComponent<RigidBody>(m_ownerGameObject, this);
+
+	//m_body->AddCollider<CapsuleCollider>(m_ownerGameObject, m_body, m_body, t->GetScale());
+	m_body->AddComponent<CapsuleCollider>(m_ownerGameObject, m_body, m_body, t->GetScale());
+	m_collider = m_body->GetCollider<CapsuleCollider>(0);
+
+	m_body->SetRotation(90, PhysicsAxis::Z);				//capsule is laying by default.
 	m_body->SetRotationLockAxis(PhysicsAxis::All, true);
 	m_body->SetSleepThresholder(0.001f);
 
-	m_collider = dynamic_cast<CapsuleCollider*>(m_body->GetCollider(0));
 	m_body->SetKinematic(false);
 }
 
-void CustomController::SetRigidBody(RigidBody* body)
+void CustomController::Release()
 {
-	m_body = body;
+	m_collider = nullptr;
+	SafeRelease(m_body);
 }
 
 void CustomController::Update(uint8_t keyInput, server::KEY_STATE keyState)
@@ -221,7 +229,7 @@ void CustomController::Move(uint8_t keyInput, server::KEY_STATE keyState)
 	if (m_slidingVector.magnitude() > 0)
 	{
 		m_slidingVector.y = m_body->GetVelocity().y;
-		m_body->SetVelocity(m_slidingVector);
+		m_body->SetVelocity(m_slidingVector);	//*movespeed?	
 	}
 	else
 	{

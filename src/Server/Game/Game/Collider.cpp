@@ -5,24 +5,19 @@
 
 using namespace physx;
 
-Collider::Collider()
+Collider::Collider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body)
+	: Component(ownerGameObject, ownerComponent), m_attachedRigidBody(body)
 {
+
 }
 
 Collider::~Collider()
 {
 }
 
-void Collider::Init(RigidBody* body)
+void Collider::Init()
 {
 	auto phys = PhysDevice::GetInstance()->GetPhysics();
-
-#pragma region oldMatManagement
-	//PxMaterial* newMat = phys->createMaterial(1.f, 1.f, 0.f);
-	//newMat->setFrictionCombineMode(PxCombineMode::eMIN);
-	//newMat->setRestitutionCombineMode(PxCombineMode::eMIN);			//apply material flags
-	//ManageDuplicateMaterials(newMat);									//check for duplicates														
-#pragma endregion
 
 	m_material = phys->createMaterial(1.f, 1.f, 0.f);
 	m_material->setFlag(PxMaterialFlag::eDISABLE_FRICTION, false);
@@ -32,8 +27,7 @@ void Collider::Init(RigidBody* body)
 	m_shape = phys->createShape(CreateGeometry().any(), *m_material, true);
 	m_shape->userData = this;
 
-	m_OwnerBody = body;
-	m_OwnerBody->Attach(this);
+	m_attachedRigidBody->Attach(this);
 
 	ApplyShapeFlags();
 	ApplyTransform();
@@ -42,6 +36,16 @@ void Collider::Init(RigidBody* body)
 	SetFrictionCombineMode(PhysicsCombineMode::Min);
 	SetRestitutionCombineMode(PhysicsCombineMode::Min);
 }
+
+void Collider::Release()
+{
+	m_attachedRigidBody->Detach(this);
+	//멤버 함수 정리
+	PX_RELEASE(m_shape);
+	PX_RELEASE(m_material);
+	ClearCollisionInfo();
+}
+
 
 void Collider::ApplyShapeFlags()
 {
