@@ -1,7 +1,8 @@
 ﻿#include "pch.h"
 #include "ObjectManager.h"
-#include "Layer.h"
 #include "GameObject.h"
+
+ImplementSingletone(ObjectManager);
 
 ObjectManager::ObjectManager()
 {
@@ -51,9 +52,14 @@ Layer* ObjectManager::GetLayer(const std::wstring& layerTag) const
 Layer* ObjectManager::AddLayer(const std::wstring& layerTag)
 {
     Layer* newLayer = new Layer();
-    m_Layers.emplace(std::make_pair(std::as_const(layerTag), newLayer));
+    m_Layers.emplace(std::make_pair(layerTag, newLayer));
     
     return newLayer;
+}
+
+const std::unordered_map<std::wstring, Layer*>& ObjectManager::GetLayers() const
+{
+    return m_Layers;
 }
 
 bool ObjectManager::RemoveLayer(const std::wstring& layerTag)
@@ -68,23 +74,7 @@ bool ObjectManager::RemoveLayer(const std::wstring& layerTag)
     return false;
 }
 
-template <typename T, typename... Args>
-T* ObjectManager::AddGameObject(const std::wstring layerTag, Args&&... args)
-{
-    static_assert(std::is_base_of<GameObject, T>::value, "T must be derived from GameObject\n");
-                                                        //부모클래스가 gameObject인지 재확인합니다.
-    Layer* layer = GetLayer(layerTag);
-    if (layer == nullptr)
-    {
-        return nullptr;
-    }
-
-    T* newGameObject = layer->AddGameObject<T>(std::forward<Args>(args)...);
-    return newGameObject;
-}
-    
-
-void ObjectManager::RemoveGameObject(const std::wstring layerTag, GameObject* gameObject)
+void ObjectManager::RemoveGameObjectFromLayer(const std::wstring& layerTag, GameObject* gameObject)
 {
     const auto& layer = GetLayer(layerTag);
     layer->RemoveGameObject(gameObject);

@@ -13,6 +13,10 @@
 #include "PhysQuery.h"
 #include "CollisionPairInfo.h"
 
+#include "ObjectManager.h"
+#include "Layer.h"
+#include "GameObject.h"
+
 using namespace physx;
 
 ImplementSingletone(PhysDevice);
@@ -72,7 +76,7 @@ void PhysDevice::Init()
 	m_query->Init();
 }
 
-void PhysDevice::StepSim()
+void PhysDevice::StepSim(double timeDelta)
 {
 	m_Scene->simulate(1.0f / PX_SIM_FRAMECNT);
 	m_Scene->fetchResults(true);
@@ -80,17 +84,17 @@ void PhysDevice::StepSim()
 
 void PhysDevice::PreUpdate()
 {
-	GameLogic();
-	//여기에 상호작용
+	m_eventCallback->Notify();
+	//pxController/customController updates
 }
 
-void PhysDevice::Update()
+void PhysDevice::Update(double timeDelta)
 {
 	ClearEventCallback();
-	StepSim();
+	StepSim(timeDelta);
 }
 
-void PhysDevice::LateUpdate()
+void PhysDevice::LateUpdate(double timeDelta)
 {
 
 }
@@ -240,32 +244,21 @@ void PhysDevice::TestCreateDynamic(ColliderShape shape, float posX, float posY, 
 	//return body;
 }
 
-//CustomController* PhysDevice::CreateCustomController(PxVec3 pos)
-//{
-//	CustomController* controller = new CustomController;
-//	controller->Init(pos);
-//	m_customControllers.emplace_back(controller);
-//
-//	return controller;
-//}
-
-void PhysDevice::GameLogic()
-{
-	m_eventCallback->Notify();
-
-	//codeblocks of colliders using the information (move is one of them)
-	//for(auto& controller : m_customControllers)
-	//	controller->Update(keyinput);
-
-	//m_controllerManagerWrapper->UpdateControllers();
-}
-
 void PhysDevice::ClearEventCallback()
-{
-	for (auto& body : m_RigidBodies)
+{	
+	//모든 게임오브젝트의 리지드 바디 ClearCollidersCollisionInfo 호출
+
+	const auto& objmgr = ObjectManager::GetInstance();
+	auto& layers = objmgr->GetLayers();
+	for (const auto& layer : layers)
 	{
-		//currently only 1 collider for each body
-		body->GetCollider(0)->ClearCollisionInfo();
+		auto& objectList = layer.second->GetGameObjects();
+		for (auto& object : objectList)
+		{
+			RigidBody* body = object->GetComponent<RigidBody>(L"RigidBody");
+			if (body)
+				body->ClearCollidersCollisionInfo();
+		}
 	}
 
 	m_eventCallback->ClearVector();

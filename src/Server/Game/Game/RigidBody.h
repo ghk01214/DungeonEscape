@@ -20,13 +20,81 @@ public:
 public:
 	//// 의도한 삭제가 진행되었는지 알기 위해서 타입을 명시하도록 합니다.
 	template<typename ColliderType, typename... Args>
-	ColliderType* AddCollider(Args&& ...args);
+	ColliderType* AddCollider(Args&& ...args)
+	{
+		if (!std::is_base_of<Collider, ColliderType>::value)
+		{
+			throw std::runtime_error("ColliderType must inherit from Collider\n");
+		}
+
+		auto newCollider = new ColliderType(m_ownerGameObject, this, std::forward<Args>(args)...);
+		newCollider->Init();
+
+		return newCollider;
+	}
 
 	template<typename ColliderType>
-	ColliderType* GetCollider(int index);
+	ColliderType* GetTypedCollider(int index)
+	{
+		//error check1
+		if (!std::is_base_of<Collider, ColliderType>::value)
+		{
+			throw std::runtime_error("ColliderType must inherit from Collider\n");
+		}
 
+		//error check2
+		if (index < 0 || index >= m_colliders.size())
+		{
+			throw std::runtime_error("Invalid collider index\n");
+		}
+
+		Collider* collider = m_colliders[index];
+
+		//error check3
+		if (dynamic_cast<ColliderType*>(collider))
+		{
+			return static_cast<ColliderType*>(collider);
+		}
+		else
+		{
+			throw std::runtime_error("GetCollider() at index: " + std::to_string(index) + " does not match ColliderType\n");
+		}
+	}
+	
 	template<typename ColliderType>
-	void RemoveCollider(ColliderType* colliderToRemove);
+	void RemoveCollider(ColliderType* colliderToRemove)
+	{
+		if (!colliderToRemove)
+		{
+			throw std::runtime_error("Invalid collider pointer\n");
+		}
+
+		auto it = std::find_if(m_colliders.begin(), m_colliders.end(), [colliderToRemove](const Collider* collider)
+	 {
+			 return collider == colliderToRemove;
+	 });
+
+		if (it != m_colliders.end())
+		{
+			ColliderType* collider = dynamic_cast<ColliderType*>(*it);
+			if (collider)
+			{
+				SafeRelease(collider);
+				m_colliders.erase(it);
+			}
+			else
+			{
+				throw std::runtime_error("ColliderType does not match the type of the collider to remove\n");
+			}
+		}
+		else
+		{
+			throw std::runtime_error("Collider not found in RigidBody colliders\n");
+		}
+	}
+
+public:
+	void ClearCollidersCollisionInfo();
 
 private:
 	//AddComp,RemoveComp에서 작동되는 코드입니다. 외부에서 사용을 금합니다.

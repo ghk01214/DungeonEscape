@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "Session.h"
 #include "Object.h"
-#include "Player.h"
+#include "Player_OLD.h"
 #include "Server.h"
 
 namespace game
@@ -17,7 +17,7 @@ namespace game
 		// 클래스 생성 시 빈 세션 생성
 		for (int32_t i = 0; i < MAX_USER; ++i)
 		{
-			m_sessions[i] = new CSession{ new CPlayer{} };
+			m_sessions[i] = new CSession{ new CPlayer_OLD{} };
 		}
 	}
 
@@ -393,7 +393,7 @@ namespace game
 				uint8_t keyInput{ packet.Read<uint8_t>() };
 				server::KEY_STATE keyState{ packet.Read<server::KEY_STATE>() };
 
-				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
+				auto pl{ dynamic_cast<CPlayer_OLD*>(session->GetMyObject()) };
 
 				std::cout << id << " : ";
 				pl->Transform(keyInput, keyState, deltaTime);
@@ -423,7 +423,7 @@ namespace game
 			{
 				int32_t index{ packet.Read<int32_t>() };
 				float aniFrame{ packet.Read<float>() };
-				auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
+				auto pl{ dynamic_cast<CPlayer_OLD*>(session->GetMyObject()) };
 
 				pl->SetAniIndex(index);
 				pl->SetAniFrame(aniFrame);
@@ -517,7 +517,7 @@ namespace game
 		auto pObject{ session->GetMyObject() };
 
 		auto aniIndex{ packet.Read<int32_t>() };
-		dynamic_cast<CPlayer*>(pObject)->SetAniIndex(aniIndex);
+		dynamic_cast<CPlayer_OLD*>(pObject)->SetAniIndex(aniIndex);
 
 		session->SendLoginPacket(id, pObject);
 
@@ -539,7 +539,7 @@ namespace game
 
 	void CServer::Jump(int32_t id, network::OVERLAPPEDEX* pOverEx)
 	{
-		auto pl{ dynamic_cast<CPlayer*>(m_sessions[id]->GetMyObject()) };
+		auto pl{ dynamic_cast<CPlayer_OLD*>(m_sessions[id]->GetMyObject()) };
 
 		pl->Jump();
 

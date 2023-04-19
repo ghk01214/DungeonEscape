@@ -1,20 +1,20 @@
 ﻿#include "pch.h"
-#include "TimeDevice.h"
+#include "TimeManager.h"
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-ImplementSingletone(TimeDevice);
+ImplementSingletone(TimeManager);
 
-TimeDevice::TimeDevice()
+TimeManager::TimeManager()
 {
 }
 
-TimeDevice::~TimeDevice()
+TimeManager::~TimeManager()
 {
 	Release();
 }
 
-void TimeDevice::Init()
+void TimeManager::Init()
 {
     LARGE_INTEGER frequency;
     QueryPerformanceFrequency(&frequency);
@@ -25,18 +25,18 @@ void TimeDevice::Init()
     m_startTime = currentTime.QuadPart;
 }
 
-void TimeDevice::Release()
+void TimeManager::Release()
 {
 }
 
-double TimeDevice::GetElapsedTime()
+double TimeManager::GetElapsedTime()
 {
     LARGE_INTEGER currentTime;
     QueryPerformanceCounter(&currentTime);
     return (currentTime.QuadPart - m_startTime) * m_invFrequency;
 }
 
-void TimeDevice::Reset()
+void TimeManager::Reset()
 {
     LARGE_INTEGER currentTime;
     QueryPerformanceCounter(&currentTime);

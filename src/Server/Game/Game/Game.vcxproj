@@ -173,6 +173,7 @@
     <ClCompile Include="PhysDevice.cpp" />
     <ClCompile Include="PhysicsRay.cpp" />
     <ClCompile Include="PhysQuery.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="RaycastHit.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -183,10 +184,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Player_OLD.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
-    <ClCompile Include="TimeDevice.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vec3.cpp" />
   </ItemGroup>
@@ -218,17 +219,18 @@
     <ClInclude Include="PhysQuery.h" />
     <ClInclude Include="physx_define.h" />
     <ClInclude Include="physx_utils.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Quat.h" />
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="Player_OLD.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="game_functions.h" />
-    <ClInclude Include="TimeDevice.h" />
+    <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="transform_utils.h" />
     <ClInclude Include="Vec3.h" />

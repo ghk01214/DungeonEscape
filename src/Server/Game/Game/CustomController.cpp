@@ -23,13 +23,12 @@ CustomController::~CustomController()
 
 void CustomController::Init()
 {
-	Transform* t = m_ownerGameObject->getTransform();
-	m_body = AddComponent<RigidBody>(m_ownerGameObject, this);
+	//멤버 component 생성
+	Transform* t = m_ownerGameObject->GetTransform();
+	m_body = AddComponent<RigidBody>();
+	m_collider = m_body->AddCollider<CapsuleCollider>(m_body, t->GetScale());
 
-	//m_body->AddCollider<CapsuleCollider>(m_ownerGameObject, m_body, m_body, t->GetScale());
-	m_body->AddComponent<CapsuleCollider>(m_ownerGameObject, m_body, m_body, t->GetScale());
-	m_collider = m_body->GetCollider<CapsuleCollider>(0);
-
+	//body 초기화
 	m_body->SetRotation(90, PhysicsAxis::Z);				//capsule is laying by default.
 	m_body->SetRotationLockAxis(PhysicsAxis::All, true);
 	m_body->SetSleepThresholder(0.001f);
@@ -43,14 +42,10 @@ void CustomController::Release()
 	SafeRelease(m_body);
 }
 
-void CustomController::Update(uint8_t keyInput, server::KEY_STATE keyState)
+void CustomController::Move(uint8_t keyInput, server::KEY_STATE keyState)
 {
-	m_debugPrint %= 1000;
-
 	DirectionInput(keyInput);
-	Move(keyInput, keyState);
-
-	m_debugPrint += 1;
+	Movement(keyInput, keyState);
 }
 
 bool CustomController::CheckOnGround(CollisionInfoType type, PxVec3& surfaceNormal)
@@ -184,7 +179,7 @@ void CustomController::DirectionInput(uint8_t keyInput)
 	m_moveDirection.normalize();
 }
 
-void CustomController::Move(uint8_t keyInput, server::KEY_STATE keyState)
+void CustomController::Movement(uint8_t keyInput, server::KEY_STATE keyState)
 {
 	if (m_body->isKinematic())
 		return;

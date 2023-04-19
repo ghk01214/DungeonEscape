@@ -138,7 +138,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer* obj)
+	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer_OLD* obj)
 	{
 		network::CPacket packet;
 		int32_t index{ obj->GetAniIndex() };

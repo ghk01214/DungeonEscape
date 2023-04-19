@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-class TimeDevice
+class TimeManager
 {
 public:
-	DeclareSingletone(TimeDevice);
+	DeclareSingletone(TimeManager);
 
 private:
-    TimeDevice();
-	~TimeDevice();
+    TimeManager();
+	~TimeManager();
 public:
 	void Init();
 	void Release();

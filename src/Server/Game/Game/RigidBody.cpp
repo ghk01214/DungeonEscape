@@ -32,7 +32,7 @@ void RigidBody::Init()
 
 	device->GetScene()->addActor(*m_body);
 
-	SetTransfrom(m_ownerGameObject->getTransform());
+	SetTransfrom(m_ownerGameObject->GetTransform());
 }
 
 void RigidBody::Release()
@@ -52,77 +52,77 @@ void RigidBody::Release()
 	PX_RELEASE(m_body);
 }
 
-template<typename ColliderType, typename... Args>
-ColliderType* RigidBody::AddCollider(Args&&... args)
-{
-	if (!std::is_base_of<Collider, ColliderType>::value)
-	{
-		throw std::runtime_error("ColliderType must inherit from Collider\n");
-	}
+//template<typename ColliderType, typename... Args>
+//ColliderType* RigidBody::AddCollider(Args&&... args)
+//{
+//	if (!std::is_base_of<Collider, ColliderType>::value)
+//	{
+//		throw std::runtime_error("ColliderType must inherit from Collider\n");
+//	}
+//
+//	auto newCollider = new ColliderType(m_ownerGameObject, this, std::forward<Args>(args)...);
+//	newCollider->init();
+//
+//	return newCollider;
+//}
 
-	auto newCollider = new ColliderType(m_ownerGameObject, this, this, std::forward<Args>(args)...);
-	newCollider->init();
+//template<typename ColliderType>
+//ColliderType* RigidBody::GetCollider(int index)
+//{
+//	//error check1
+//	if (!std::is_base_of<Collider, ColliderType>::value)
+//	{
+//		throw std::runtime_error("ColliderType must inherit from Collider\n");
+//	}
+//
+//	//error check2
+//	if (index < 0 || index >= m_colliders.size())
+//	{
+//		throw std::runtime_error("Invalid collider index\n");
+//	}
+//
+//	Collider* collider = m_colliders[index];
+//
+//	//error check3
+//	if (dynamic_cast<ColliderType*>(collider))
+//	{
+//		return static_cast<ColliderType*>(collider);
+//	}
+//	else
+//	{
+//		throw std::runtime_error("GetCollider() at index: " + std::to_string(index) + " does not match ColliderType\n");
+//	}
+//}
 
-	return newCollider;
-}
-
-template<typename ColliderType>
-ColliderType* RigidBody::GetCollider(int index)
-{
-	//error check1
-	if (!std::is_base_of<Collider, ColliderType>::value)
-	{
-		throw std::runtime_error("ColliderType must inherit from Collider\n");
-	}
-
-	//error check2
-	if (index < 0 || index >= m_colliders.size())
-	{
-		throw std::runtime_error("Invalid collider index\n");
-	}
-
-	Collider* collider = m_colliders[index];
-
-	//error check3
-	if (dynamic_cast<ColliderType*>(collider))
-	{
-		return static_cast<ColliderType*>(collider);
-	}
-	else
-	{
-		throw std::runtime_error("GetCollider() at index: " + std::to_string(index) + " does not match ColliderType\n");
-	}
-}
-
-template<typename ColliderType>
-void RigidBody::RemoveCollider(ColliderType* colliderToRemove)
-{
-	if (!colliderToRemove)
-	{
-		throw std::runtime_error("Invalid collider pointer\n");
-	}
-
-	auto it = std::find_if(m_colliders.begin(), m_colliders.end(), [colliderToRemove](const Collider* collider) {
-	 return collider == colliderToRemove; });
-
-	if (it != m_colliders.end())
-	{
-		ColliderType* collider = dynamic_cast<ColliderType*>(*it);
-		if (collider)
-		{
-			SafeRelease(collider);
-			m_colliders.erase(it);
-		}
-		else
-		{
-			throw std::runtime_error("ColliderType does not match the type of the collider to remove\n");
-		}
-	}
-	else
-	{
-		throw std::runtime_error("Collider not found in RigidBody colliders\n");
-	}
-}
+//template<typename ColliderType>
+//void RigidBody::RemoveCollider(ColliderType* colliderToRemove)
+//{
+//	if (!colliderToRemove)
+//	{
+//		throw std::runtime_error("Invalid collider pointer\n");
+//	}
+//
+//	auto it = std::find_if(m_colliders.begin(), m_colliders.end(), [colliderToRemove](const Collider* collider) {
+//	 return collider == colliderToRemove; });
+//
+//	if (it != m_colliders.end())
+//	{
+//		ColliderType* collider = dynamic_cast<ColliderType*>(*it);
+//		if (collider)
+//		{
+//			SafeRelease(collider);
+//			m_colliders.erase(it);
+//		}
+//		else
+//		{
+//			throw std::runtime_error("ColliderType does not match the type of the collider to remove\n");
+//		}
+//	}
+//	else
+//	{
+//		throw std::runtime_error("Collider not found in RigidBody colliders\n");
+//	}
+//}
 
 void RigidBody::ApplyFlags()
 {
@@ -135,6 +135,15 @@ void RigidBody::ApplyFlags()
 
 	// SceneQuery에 현재 오브젝트의 위치가 아닌 Kinematic Traget Transform을 사용
 	m_body->setRigidBodyFlag(PxRigidBodyFlag::eUSE_KINEMATIC_TARGET_FOR_SCENE_QUERIES, true);
+}
+
+void RigidBody::ClearCollidersCollisionInfo()
+{
+	//GetCollider(0)->ClearCollisionInfo();
+	for (auto& collider : m_colliders)
+	{
+		collider->ClearCollisionInfo();
+	}
 }
 
 void RigidBody::Attach(Collider* collider)

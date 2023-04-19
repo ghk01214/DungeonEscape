@@ -32,10 +32,16 @@ public:
 
 public:
 	template<typename T, typename... Args>
-	T* AddComponent(Args&&... args);
+	T* AddComponent(Args&&... args)
+	{
+		T* component = new T(m_ownerGameObject, this, std::forward<Args>(args)...);
+		component->Init();
+		return component;
+	}
 
-protected:		//해당 컴포넌트를 소유하는 게임오브젝트의 포인터
+protected:		
 	GameObject* m_ownerGameObject = nullptr;
+		//해당 컴포넌트를 소유하는 게임오브젝트의 포인터
 	Component* m_ownerComponent = nullptr;
-	//Transform* m_transform = nullptr;
+		//해당 컴포넌트를 소유하는 컴포넌트의 포인터
 };

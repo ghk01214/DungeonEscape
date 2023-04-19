@@ -35,9 +35,6 @@
     <Filter Include="02. Physx\Collider\Box">
       <UniqueIdentifier>{a8f56ada-4830-47d8-b5b6-9b27be5d3686}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Physx\Collider\Sphere">
-      <UniqueIdentifier>{3414add6-1974-4cd1-948f-22775f14820a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Physx\Collider\Mesh">
       <UniqueIdentifier>{9f343387-0059-4710-a144-e272f070293f}</UniqueIdentifier>
     </Filter>
@@ -46,9 +43,6 @@
     </Filter>
     <Filter Include="02. Physx\CustomController">
       <UniqueIdentifier>{6a258216-4807-4f59-a55b-280ab3648ecf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Physx\Controller">
-      <UniqueIdentifier>{d9312247-bb3f-40f4-b2b7-dbafa6d30a69}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Physx\PhysDevice">
       <UniqueIdentifier>{98205cdf-b033-42c0-9f00-3287d050e728}</UniqueIdentifier>
@@ -98,9 +92,6 @@
     <Filter Include="98. GameUtility\00. GameInstance">
       <UniqueIdentifier>{c18632e7-a219-4552-b87f-327db3200b37}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Physx\Controller\Manager">
-      <UniqueIdentifier>{eeafd0cb-b49d-4857-87bb-b2226eb4e499}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98. GameUtility\01. GameObjects">
       <UniqueIdentifier>{76bf40ab-e1d3-4f91-a9c0-892e714653a4}</UniqueIdentifier>
     </Filter>
@@ -122,6 +113,21 @@
     <Filter Include="98. GameUtility\02. Components\Transform\Quat">
       <UniqueIdentifier>{f19e1efa-c55c-45d2-900b-eeee9186a125}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Physx\Collider\Sphere">
+      <UniqueIdentifier>{3414add6-1974-4cd1-948f-22775f14820a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\Wrapper">
+      <UniqueIdentifier>{d9312247-bb3f-40f4-b2b7-dbafa6d30a69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\Wrapper\Manager">
+      <UniqueIdentifier>{eeafd0cb-b49d-4857-87bb-b2226eb4e499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game">
+      <UniqueIdentifier>{c5a1fb99-c28d-4260-8fe9-feaaa1c3ab27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\Player">
+      <UniqueIdentifier>{19972ccc-bc07-4a90-92c3-fb0d44a4b4ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -130,7 +136,7 @@
     <ClCompile Include="Object.cpp">
       <Filter>01. Server\OLD\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
+    <ClCompile Include="Player_OLD.cpp">
       <Filter>01. Server\OLD\Object\Player</Filter>
     </ClCompile>
     <ClCompile Include="Session.cpp">
@@ -194,10 +200,10 @@
       <Filter>02. Physx\CustomController</Filter>
     </ClCompile>
     <ClCompile Include="ControllerManagerWrapper.cpp">
-      <Filter>02. Physx\Controller\Manager</Filter>
+      <Filter>02. Physx\Wrapper\Manager</Filter>
     </ClCompile>
     <ClCompile Include="EntryPoint.cpp" />
-    <ClCompile Include="TimeDevice.cpp">
+    <ClCompile Include="TimeManager.cpp">
       <Filter>97. System\Timers</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
@@ -210,7 +216,7 @@
       <Filter>98. GameUtility\01. GameObjects\Manager</Filter>
     </ClCompile>
     <ClCompile Include="ControllerWrapper.cpp">
-      <Filter>02. Physx\Controller</Filter>
+      <Filter>02. Physx\Wrapper</Filter>
     </ClCompile>
     <ClCompile Include="GameInstance.cpp">
       <Filter>98. GameUtility\00. GameInstance</Filter>
@@ -227,6 +233,9 @@
     <ClCompile Include="Transform.cpp">
       <Filter>98. GameUtility\02. Components\Transform</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>03. Game\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -235,7 +244,7 @@
     <ClInclude Include="Object.h">
       <Filter>01. Server\OLD\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
+    <ClInclude Include="Player_OLD.h">
       <Filter>01. Server\OLD\Object\Player</Filter>
     </ClInclude>
     <ClInclude Include="Session.h">
@@ -302,7 +311,7 @@
       <Filter>02. Physx\CustomController</Filter>
     </ClInclude>
     <ClInclude Include="ControllerManagerWrapper.h">
-      <Filter>02. Physx\Controller\Manager</Filter>
+      <Filter>02. Physx\Wrapper\Manager</Filter>
     </ClInclude>
     <ClInclude Include="game_macro.h">
       <Filter>99. Utility\pch\CodeUtils</Filter>
@@ -319,7 +328,7 @@
     <ClInclude Include="physx_define.h">
       <Filter>02. Physx</Filter>
     </ClInclude>
-    <ClInclude Include="TimeDevice.h">
+    <ClInclude Include="TimeManager.h">
       <Filter>97. System\Timers</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
@@ -332,7 +341,7 @@
       <Filter>98. GameUtility\01. GameObjects\Manager</Filter>
     </ClInclude>
     <ClInclude Include="ControllerWrapper.h">
-      <Filter>02. Physx\Controller</Filter>
+      <Filter>02. Physx\Wrapper</Filter>
     </ClInclude>
     <ClInclude Include="GameInstance.h">
       <Filter>98. GameUtility\00. GameInstance</Filter>
@@ -351,6 +360,9 @@
     </ClInclude>
     <ClInclude Include="transform_utils.h">
       <Filter>99. Utility\pch\CodeUtils</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>03. Game\Player</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

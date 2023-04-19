@@ -59,14 +59,19 @@ void Layer::RemoveGameObject(GameObject* gameObject)
 	gameObject->SetRemovalFlag(true);
 }
 
-template <typename T, typename... Args>
-T* Layer::AddGameObject(Args&&... args)
+std::list<GameObject*>& Layer::GetGameObjects()
 {
-	static_assert(std::is_base_of<GameObject, T>::value, "T must be derived from GameObject\n");
-													//부모클래스가 gameObject인지 재확인합니다.
-	T* newGameObject = new T();
-	newGameObject->Init(std::forward<Args>(args)...);
-	m_GameObjects.push_back(newGameObject);
-
-	return newGameObject;
+    return m_GameObjects;
 }
+
+//template <typename T, typename... Args>
+//T* Layer::AddGameObject(Args&&... args)
+//{
+//	static_assert(std::is_base_of<GameObject, T>::value, "T must be derived from GameObject\n");
+//													//부모클래스가 gameObject인지 재확인합니다.
+//	T* newGameObject = new T();
+//	newGameObject->Init(std::forward<Args>(args)...);
+//	m_GameObjects.push_back(newGameObject);
+//
+//	return newGameObject;
+//}

@@ -201,5 +201,9 @@ const std::vector<std::shared_ptr<CollisionPairInfo>>& Collider::GetCollisionInf
 		return m_CollisionStay;
 		case CollisionInfoType::Exit:
 		return m_CollisionExit;
+		
+		
+		default:		//warning 제거용
+		return m_CollisionExit;
 	}
 }

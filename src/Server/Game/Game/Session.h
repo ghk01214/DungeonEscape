@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Object.h"
-#include "Player.h"
+#include "Player_OLD.h"
 
 namespace network
 {
@@ -35,7 +35,7 @@ namespace game
 		void SendAddPacket(int32_t id, CObject* obj);
 		void SendRemovePacket(int32_t id);
 		void SendTransformPacket(int32_t id, ProtocolID protocol, CObject* obj);
-		void SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer* obj);
+		void SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer_OLD* obj);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

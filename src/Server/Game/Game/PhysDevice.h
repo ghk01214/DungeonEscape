@@ -18,12 +18,11 @@ private:
 
 public:
 	void Init();
-	void StepSim();
-	void GameLogic();
-	void ClearEventCallback();
-	void PreUpdate();				//순서를 반드시 지켜주세요.
-	void Update();					//PhysDevice::PreUpdate() > CompMgr::Update() > PhysDevice::Update() > PhysDevice::Late_Update()
-	void LateUpdate();		
+	void PreUpdate();								
+	void StepSim(double timeDelta);
+	void ClearEventCallback();						//순서를 반드시 지켜주세요.
+	void Update(double timeDelta);					//PhysDevice::PreUpdate() > ObjMgr::Update() > PhysDevice::Update() > PhysDevice::Late_Update()
+	void LateUpdate(double timeDelta);
 	void Release();
 public:
 	physx::PxPhysics*		GetPhysics() const;
@@ -58,8 +57,5 @@ private:
 	CustomSimulationEventCallback*			m_eventCallback = nullptr;
 	CustomFilterShader*						m_filterShader = nullptr;
 	PhysQuery*								m_query = nullptr;
-
-	std::vector<std::shared_ptr<RigidBody>>				m_RigidBodies;
-	std::vector<std::shared_ptr<CustomController>>		m_customControllers;
 };
 

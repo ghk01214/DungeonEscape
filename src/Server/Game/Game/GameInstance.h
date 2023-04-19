@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+class TimeManager;
+class ObjectManager;
+class PhysDevice;
+
 class GameInstance
 {
 public:
@@ -15,6 +19,8 @@ public:
 	void LateUpdate(double timeDelta);
 	void Release();
 
-	class TimeDevice* m_TimeDevice = nullptr;
+	ObjectManager*	m_objectManager = nullptr;
+	TimeManager*	m_timeManager = nullptr;
+	PhysDevice*		m_physDevice = nullptr;
 };
 

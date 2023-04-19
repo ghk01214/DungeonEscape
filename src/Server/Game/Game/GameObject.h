@@ -1,6 +1,7 @@
 ﻿#pragma once
 
-class Component;
+#include "Component.h"
+
 class Transform;
 
 
@@ -19,28 +20,56 @@ public:
 	virtual ~GameObject();
 
 public:
-	virtual void Init() = 0;
+	virtual void Init();
 	virtual void Update(double timeDelta) = 0;
 	virtual void LateUpdate(double timeDelta) = 0;
-	virtual void Release() = 0;
+	virtual void Release();
 
 public:
 	template<typename T>
-	T* GetComponent(const std::wstring componentName);
+	T* GetComponent(const std::wstring componentName)
+	{
+		auto it = m_components.find(componentName);
+		if (it == m_components.end())
+		{
+			return nullptr;
+		}
+		return static_cast<T*>(it->second);
+	}
 
 	template<typename T, typename... Args>
-	T* AddComponent(const std::wstring componentName, Args&&... args);
+	T* AddComponent(const std::wstring componentName, Args&&... args)
+	{
+		if (GetComponent<T>(componentName) != nullptr)
+		{
+			throw std::runtime_error("Component already exists\n");
+		}
 
-	void RemoveComponent(const std::wstring componentName);
+		T* component = new T(this, nullptr, std::forward<Args>(args)...);
+		m_components[componentName] = component;
+		component->Init();
+		return component;
+	}
 
+	void RemoveComponent(const std::wstring componentName)
+	{
+		auto it = m_components.find(componentName);
+		if (it != m_components.end())
+		{
+			SafeRelease(it->second);
+			m_components.erase(it);
+		}
+	}
 public:
-	Transform* getTransform();
 	bool GetRemovalFlag();
 	void SetRemovalFlag(bool value);
 
+public:
+	Transform* GetTransform();
+
 private:
-	bool m_removalFlag = false;		//update()에 수집, lateUpdate()에 실제 삭제 진행
+	bool m_removalFlag = false;			//update()에 수집, lateUpdate()에 실제 삭제 진행
     std::unordered_map<std::wstring, Component*> m_components;
 	
-	Transform* m_transform = nullptr;
+	Transform* m_transform = nullptr;	//편의상 멤버변수로도 추가. m_components에 디폴트로 생성된다.			
 };
