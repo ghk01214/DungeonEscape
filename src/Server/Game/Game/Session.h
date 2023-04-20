@@ -1,8 +1,9 @@
-﻿#pragma once
+#pragma once
 
 #include "Object.h"
 #include "TempObject.h"
 #include "Player.h"
+#include "Player_OLD.h"
 
 namespace network
 {
@@ -36,7 +37,7 @@ namespace game
 		void SendAddPacket(int32_t id, CObject* obj);
 		void SendRemovePacket(int32_t id);
 		void SendTransformPacket(int32_t id, ProtocolID protocol, CObject* obj);
-		void SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer* obj);
+		void SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer_OLD* obj);
 
 		void CreateObject(int32_t objID, network::CPacket& packet);
 		void AddObject(int32_t id, const std::wstring& name, TempTrans& trans);

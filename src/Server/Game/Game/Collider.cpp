@@ -1,43 +1,51 @@
 ﻿#include "pch.h"
 #include "Collider.h"
+#include "PhysDevice.h"
+#include "RigidBody.h"
 
-Collider::Collider()
+using namespace physx;
+
+Collider::Collider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body)
+	: Component(ownerGameObject, ownerComponent), m_attachedRigidBody(body), m_shape(nullptr)
 {
+
 }
 
 Collider::~Collider()
 {
 }
 
-void Collider::Init(RigidBody* body)
+void Collider::Init()
 {
 	auto phys = PhysDevice::GetInstance()->GetPhysics();
 
-#pragma region oldMatManagement
-	//PxMaterial* newMat = phys->createMaterial(1.f, 1.f, 0.f);
-	//newMat->setFrictionCombineMode(PxCombineMode::eMIN);
-	//newMat->setRestitutionCombineMode(PxCombineMode::eMIN);			//apply material flags
-	//ManageDuplicateMaterials(newMat);								//check for duplicates														
-#pragma endregion
-
 	m_material = phys->createMaterial(1.f, 1.f, 0.f);
-	m_material->setFlag(physx::PxMaterialFlag::eDISABLE_FRICTION, false);
-	m_material->setFlag(physx::PxMaterialFlag::eDISABLE_STRONG_FRICTION, false);
+	m_material->setFlag(PxMaterialFlag::eDISABLE_FRICTION, false);
+	m_material->setFlag(PxMaterialFlag::eDISABLE_STRONG_FRICTION, false);
 
 	//shape
 	m_shape = phys->createShape(CreateGeometry().any(), *m_material, true);
 	m_shape->userData = this;
 
-	m_OwnerBody = body;
-	m_OwnerBody->Attach(this);
+	m_attachedRigidBody->Attach(this);
 
 	ApplyShapeFlags();
-	ApplyTransform();
+	//ApplyTransform();
 	ApplyLayer();
 
 	SetFrictionCombineMode(PhysicsCombineMode::Min);
 	SetRestitutionCombineMode(PhysicsCombineMode::Min);
 }
+
+void Collider::Release()
+{
+	m_attachedRigidBody->Detach(this);
+	//멤버 함수 정리
+	PX_RELEASE(m_shape);
+	PX_RELEASE(m_material);
+	ClearCollisionInfo();
+}
+
 
 void Collider::ApplyShapeFlags()
 {
@@ -50,15 +58,15 @@ void Collider::ApplyShapeFlags()
 	bool queryFlag = true;
 
 	// eTRIGGER_SHAPE 플래그를 활성화 하기 전에는 반드시 eSIMULATION_SHAPE 플래그가 비활성화 상태여야 합니다.
-	m_shape->setFlag(physx::PxShapeFlag::eSIMULATION_SHAPE, simulationFlag);
-	m_shape->setFlag(physx::PxShapeFlag::eTRIGGER_SHAPE, triggerFlag);
-	m_shape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, queryFlag);
+	m_shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, simulationFlag);
+	m_shape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, triggerFlag);
+	m_shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, queryFlag);
 }
 
 void Collider::ApplyTransform()
 {
-	physx::PxTransform t = GetRigidBody()->GetBody()->getGlobalPose();
-	physx::PxTransform t2(physx::PxIdentity);
+	PxTransform t = GetRigidBody()->GetBody()->getGlobalPose();
+	PxTransform t2(PxIdentity);
 	m_shape->setLocalPose(t);
 }
 
@@ -74,7 +82,7 @@ void Collider::ApplyLayer()
 	// 무시할 레이어를 제외한 모든 비트를 켭니다.
 	uint32_t unignoreBits = ~m_ignoreLayerBits;
 
-	physx::PxFilterData filter{};
+	PxFilterData filter{};
 
 	// 레이어 비트를 켭니다.
 	filter.word0 = (1 << m_layerIndex);
@@ -83,38 +91,6 @@ void Collider::ApplyLayer()
 	filter.word1 = unignoreBits;
 
 	m_shape->setSimulationFilterData(filter);
-}
-
-bool Collider::CheckIfSameMaterial(physx::PxMaterial* mat1, physx::PxMaterial* mat2)
-{
-	if (mat1->getDynamicFriction() != mat2->getDynamicFriction()) return false;
-	if (mat1->getStaticFriction() != mat2->getStaticFriction()) return false;
-	if (mat1->getRestitution() != mat2->getRestitution()) return false;
-	if (mat1->getFrictionCombineMode() != mat2->getFrictionCombineMode()) return false;
-	if (mat1->getRestitutionCombineMode() != mat2->getRestitutionCombineMode()) return false;
-
-	return true;
-}
-
-void Collider::ManageDuplicateMaterials(physx::PxMaterial*& newMat)
-{
-	bool found = false;
-	for (size_t i = 0; i < m_materials.size(); i++)
-	{
-		if (CheckIfSameMaterial(m_materials[i], newMat))
-		{
-			newMat->release();
-			newMat = m_materials[i];
-			m_materialIndex = i;
-			found = true;
-			break;
-		}
-	}
-	if (!found)
-	{
-		m_materialIndex = m_materials.size();
-		m_materials.push_back(newMat);
-	}
 }
 
 void Collider::ResetShape()
@@ -144,14 +120,14 @@ void Collider::SetLayerIndex(uint8_t layerIndex)
 
 RigidBody* Collider::GetRigidBody() const
 {
-	physx::PxRigidActor* actor = m_shape->getActor();
+	PxRigidActor* actor = m_shape->getActor();
 	if (!actor)
 		return nullptr;
 
 	return (RigidBody*)actor->userData;
 }
 
-physx::PxShape* Collider::GetPxShape() const
+PxShape* Collider::GetPxShape() const
 {
 	return m_shape;
 }
@@ -174,7 +150,7 @@ PhysicsCombineMode Collider::GetFrictionCombineMode() const
 
 void Collider::SetFrictionCombineMode(PhysicsCombineMode value)
 {
-	m_material->setFrictionCombineMode((physx::PxCombineMode::Enum)value);
+	m_material->setFrictionCombineMode((PxCombineMode::Enum)value);
 }
 
 PhysicsCombineMode Collider::GetRestitutionCombineMode() const
@@ -184,10 +160,10 @@ PhysicsCombineMode Collider::GetRestitutionCombineMode() const
 
 void Collider::SetRestitutionCombineMode(PhysicsCombineMode value)
 {
-	m_material->setRestitutionCombineMode((physx::PxCombineMode::Enum)value);
+	m_material->setRestitutionCombineMode((PxCombineMode::Enum)value);
 }
 
-void Collider::SetMaterialFlag(physx::PxMaterialFlag::Enum flag, bool value)
+void Collider::SetMaterialFlag(PxMaterialFlag::Enum flag, bool value)
 {
 	m_material->setFlag(flag, value);
 }
@@ -225,5 +201,7 @@ const std::vector<std::shared_ptr<CollisionPairInfo>>& Collider::GetCollisionInf
 		return m_CollisionStay;
 		case CollisionInfoType::Exit:
 		return m_CollisionExit;
+		default:
+		throw std::runtime_error("Invalid CollisionInfoType value");
 	}
 }

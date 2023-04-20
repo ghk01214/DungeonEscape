@@ -1,9 +1,11 @@
 ﻿#include "pch.h"
 #include "Session.h"
 #include "Object.h"
-#include "Player.h"
+#include "Player_OLD.h"
+#include "GameInstance.h"
 #include "Server.h"
 #include "SceneManager.h"
+#include "TimeManager.h"
 
 namespace game
 {
@@ -18,8 +20,7 @@ namespace game
 		// 클래스 생성 시 빈 세션 생성
 		for (int32_t i = 0; i < MAX_USER; ++i)
 		{
-			//m_sessions[i] = new CSession{ new CPlayer{} };
-			m_sessions[i] = new CSession{};
+			m_sessions[i] = new CSession{ new CPlayer_OLD{} };
 		}
 	}
 
@@ -36,6 +37,9 @@ namespace game
 				client = nullptr;
 			}
 		}
+
+		GameInstance::GetInstance()->DestroyInstance();
+		m_gameInstance = nullptr;
 	}
 
 	void CServer::Run()
@@ -79,6 +83,9 @@ namespace game
 		{
 			ErrorQuit(L"listen function error");
 		}
+
+		m_gameInstance = GameInstance::GetInstance();
+		m_gameInstance->Init();
 	}
 
 	// accept 등록
@@ -101,14 +108,14 @@ namespace game
 			m_workerThreads.emplace_back(&CServer::WorkerThread, this);
 		}
 
-		m_physxThreads = std::thread{ &CServer::PhysxThread, this };
+		m_gameThreads = std::thread{ &CServer::GameThread, this };
 
 		for (auto& thread : m_workerThreads)
 		{
 			thread.join();
 		}
 
-		m_physxThreads.join();
+		m_gameThreads.join();
 	}
 
 	void CServer::WorkerThread()
@@ -165,11 +172,13 @@ namespace game
 		}
 	}
 
-	void CServer::PhysxThread()
+	void CServer::GameThread()
 	{
 		while (true)
 		{
-
+			double timeDelta = TimeManager::GetInstance()->GetElapsedTime();
+			m_gameInstance->Update(timeDelta);
+			m_gameInstance->LateUpdate(timeDelta);
 		}
 	}
 
@@ -386,6 +395,7 @@ namespace game
 			{
 				auto objId{ GET_SCENE->NewObjectID() };
 
+				//auto pl{ dynamic_cast<CPlayer_OLD*>(session->GetMyObject()) };
 				session->CreateObject(objId, packet);
 
 				for (auto& player : m_sessions)

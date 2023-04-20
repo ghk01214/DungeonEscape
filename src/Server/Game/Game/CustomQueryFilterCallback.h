@@ -1,8 +1,7 @@
 ﻿#pragma once
-#include "physx_utils.h"
+#include "physx_define.h"
 
 class RigidBody;
-enum class PhysicsQueryType;
 
 class CustomQueryFilterCallback : public physx::PxQueryFilterCallback {
 public:

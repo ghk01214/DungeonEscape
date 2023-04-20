@@ -1,22 +1,23 @@
 ﻿#pragma once
-#include "physx_utils.h"
 
-class Collider;
+#include "physx_define.h"
+#include "Collider.h"
 
 class MeshCollider : public Collider
 {
 	virtual physx::PxGeometryHolder CreateGeometry() override;
 
 public:
-	MeshCollider();
+	MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent);
 	~MeshCollider();
 public:
-	void Init(RigidBody* body);
+	void Init() override;
+	void Release() override;
 
 protected:
 	physx::PxConvexMeshGeometry CreateTriangleMeshGeometry();
 private:
-	physx::PxConvexMesh* m_mesh;
+	physx::PxConvexMesh* m_convexMesh = nullptr;
 };
 
 

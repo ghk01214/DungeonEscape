@@ -157,17 +157,26 @@
     <ClCompile Include="CapsuleCollider.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="CollisionPairInfo.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="ControllerManagerWrapper.cpp" />
     <ClCompile Include="ControllerWrapper.cpp" />
     <ClCompile Include="CustomController.cpp" />
     <ClCompile Include="CustomSimulationEventCallback.cpp" />
     <ClCompile Include="CustomFilterShader.cpp" />
     <ClCompile Include="CustomQueryFilterCallback.cpp" />
+    <ClCompile Include="GameInstance.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="MapObject.cpp" />
     <ClCompile Include="MeshCollider.cpp" />
     <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="PhysDevice.cpp" />
     <ClCompile Include="PhysicsRay.cpp" />
     <ClCompile Include="PhysQuery.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Quat.cpp" />
     <ClCompile Include="RaycastHit.cpp" />
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -179,9 +188,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Player_OLD.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="TestLevel.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\vendor\include\Define.h" />
@@ -192,19 +205,29 @@
     <ClInclude Include="CapsuleCollider.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="CollisionPairInfo.h" />
+    <ClInclude Include="Component.h" />
     <ClInclude Include="ControllerManagerWrapper.h" />
     <ClInclude Include="ControllerWrapper.h" />
     <ClInclude Include="CustomController.h" />
     <ClInclude Include="CustomSimulationEventCallback.h" />
     <ClInclude Include="CustomFilterShader.h" />
     <ClInclude Include="CustomQueryFilterCallback.h" />
+    <ClInclude Include="GameInstance.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="game_macro.h" />
+    <ClInclude Include="Layer.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="MapObject.h" />
     <ClInclude Include="MeshCollider.h" />
     <ClInclude Include="NPC.h" />
+    <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="PhysDevice.h" />
     <ClInclude Include="PhysicsRay.h" />
     <ClInclude Include="PhysQuery.h" />
     <ClInclude Include="physx_define.h" />
     <ClInclude Include="physx_utils.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Quat.h" />
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Scene.h" />
@@ -212,9 +235,15 @@
     <ClInclude Include="Server.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="Player_OLD.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="game_functions.h" />
+    <ClInclude Include="TestLevel.h" />
+    <ClInclude Include="TimeManager.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="transform_utils.h" />
+    <ClInclude Include="Vec3.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

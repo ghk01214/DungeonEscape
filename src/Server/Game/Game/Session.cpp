@@ -103,9 +103,9 @@ namespace game
 		packet.Write<float>(trans.q.w);
 		packet.Write<float>(trans.q.z);
 
-		packet.Write<float>(trans.s.x);
-		packet.Write<float>(trans.s.y);
-		packet.Write<float>(trans.s.z);
+		//packet.Write<float>(trans.s.x);
+		//packet.Write<float>(trans.s.y);
+		//packet.Write<float>(trans.s.z);
 
 		Send(packet);
 	}
@@ -143,7 +143,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer* obj)
+	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer_OLD* obj)
 	{
 		network::CPacket packet;
 		int32_t index{ obj->GetAniIndex() };

@@ -1,7 +1,10 @@
 ﻿#include "pch.h"
 #include "CollisionPairInfo.h"
+#include "Collider.h"
 
-CollisionPairInfo::CollisionPairInfo(const physx::PxContactPair* pairs, bool inverse)
+using namespace physx;
+
+CollisionPairInfo::CollisionPairInfo(const PxContactPair* pairs, bool inverse)
 {
 	// =====================================================================================================
 	// pairs.normal 방향은 shape1-> shape0의 방향

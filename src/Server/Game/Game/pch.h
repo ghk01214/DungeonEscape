@@ -17,6 +17,8 @@
 #include <set>
 #include <unordered_set>
 #include <unordered_map>
+#include <functional>
+#include <algorithm>
 
 #include <thread>
 #include <atomic>
@@ -34,6 +36,10 @@
 #include <OVERLAPPEDEX.h>
 
 #include <PxPhysicsAPI.h>
+
+#include "game_macro.h"
+#include "game_functions.h"
+#include "transform_utils.h"
 
 #pragma comment(lib, "WS2_32")
 #pragma comment(lib, "MSWSock")

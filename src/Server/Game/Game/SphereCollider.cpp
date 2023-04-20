@@ -1,13 +1,19 @@
 ﻿#include "pch.h"
 #include "SphereCollider.h"
 
-physx::PxGeometryHolder SphereCollider::CreateGeometry()
+using namespace physx;
+
+PxGeometryHolder SphereCollider::CreateGeometry()
 {
     return CreateSphereGeometry();
 }
 
-SphereCollider::SphereCollider()
+
+SphereCollider::SphereCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent)
+	: Collider(ownerGameObject, ownerComponent, body)
 {
+    int biggerRadius = (extent.x > extent.y) ? extent.x : extent.y;
+    m_radius = (biggerRadius > extent.z) ? biggerRadius : extent.z;
 }
 
 SphereCollider::~SphereCollider()
@@ -25,9 +31,9 @@ void SphereCollider::SetRadius(float value)
     ResetShape();
 }
 
-physx::PxSphereGeometry SphereCollider::CreateSphereGeometry() const
+PxSphereGeometry SphereCollider::CreateSphereGeometry() const
 {
-    physx::PxSphereGeometry sphere;
+    PxSphereGeometry sphere;
     //transform scale 생긴이후
     sphere.radius = m_radius;                           //* GetBiggestLengthFromAbsVec3(transform->scale);
     return sphere;

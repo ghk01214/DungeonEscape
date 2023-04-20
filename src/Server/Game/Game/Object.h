@@ -2,14 +2,14 @@
 
 namespace game
 {
-	struct Vec3
+	struct PosOLD
 	{
 		float x;
 		float y;
 		float z;
 	};
 
-	struct Vec4
+	struct QuatOLD
 	{
 		float x;
 		float y;
@@ -18,14 +18,13 @@ namespace game
 	};
 
 	using Pos = Vec3;
-	using Quat = Vec4;
+	//using Quat = Vec4;
 	using Scale = Vec3;
 
 	struct Trans
 	{
-		Pos p;
-		Quat q;
-		Scale s;
+		PosOLD p;
+		QuatOLD q;
 	};
 
 	class CObject
@@ -33,7 +32,7 @@ namespace game
 	public:
 		CObject();
 		CObject(Trans trans);
-		CObject(Pos pos, Quat quat);
+		CObject(PosOLD pos, QuatOLD quat);
 		CObject(float x, float y, float z);
 		CObject(float x, float y, float z, float w);
 		CObject(float px, float py, float pz, float qx, float qy, float qz, float qw);
@@ -46,11 +45,11 @@ namespace game
 		const Trans& GetTransform() const { return m_transform; }
 
 		void SetTransform(Trans transform) { m_transform = transform; }
-		void SetTransform(Pos pos, Quat quat) { SetTransform(Trans{ pos, quat }); }
-		void SetPos(Pos pos) { m_transform.p = pos; }
-		void SetPos(float x, float y, float z) { SetPos(Pos{ x, y, z }); }
-		void SetQuat(Quat quat) { m_transform.q = quat; }
-		void SetQuat(float x, float y, float z, float w) { SetQuat(Quat{ x, y, z, w }); }
+		void SetTransform(PosOLD pos, QuatOLD quat) { SetTransform(Trans{ pos, quat }); }
+		void SetPos(PosOLD pos) { m_transform.p = pos; }
+		void SetPos(float x, float y, float z) { SetPos(PosOLD{ x, y, z }); }
+		void SetQuat(QuatOLD quat) { m_transform.q = quat; }
+		void SetQuat(float x, float y, float z, float w) { SetQuat(QuatOLD{ x, y, z, w }); }
 		void SetDeltaTime(float deltaTime) { m_deltaTime = deltaTime; }
 		void SetSpeed(float speed) { m_speed = speed; }
 		void SetAngle(float angle) { m_angle = angle; }

@@ -11,7 +11,7 @@
 
 	enum class KEY_TYPE
 	{
-		NONE = 0,
+		NONE = 0x00,
 
 		UP,
 		DOWN,

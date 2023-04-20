@@ -2,9 +2,10 @@
 
 namespace network
 {
-	//enum class COMPLETION;
 	class OVERLAPPEDEX;
 }
+
+class GameInstance;
 
 namespace game
 {
@@ -26,7 +27,7 @@ namespace game
 		void CreateThread();
 
 		void WorkerThread();
-		void PhysxThread();
+		void GameThread();
 		void AcceptClient(network::OVERLAPPEDEX* pOverEx);
 		void Recv(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 		void Send(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
@@ -55,7 +56,7 @@ namespace game
 		int32_t m_key;
 
 		std::vector<std::thread> m_workerThreads;
-		std::thread m_physxThreads;
+		std::thread m_gameThreads;
 		std::array<CSession*, MAX_USER> m_sessions;
 		std::atomic_int32_t m_activeSessionNum;
 
@@ -66,5 +67,7 @@ namespace game
 
 		// 멀티스레드용 map
 		HashMap<uint16_t, class CObject*> m_objects;
+
+		GameInstance* m_gameInstance;
 	};
 }

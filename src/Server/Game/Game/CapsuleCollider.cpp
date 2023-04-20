@@ -1,12 +1,15 @@
 ﻿#include "pch.h"
 #include "CapsuleCollider.h"
 
-physx::PxGeometryHolder CapsuleCollider::CreateGeometry()
+using namespace physx;
+
+PxGeometryHolder CapsuleCollider::CreateGeometry()
 {
-    return CreateCapsuleGeometry(m_radius, m_halfHeight);
+    return CreateCapsuleGeometry();
 }
 
-CapsuleCollider::CapsuleCollider()
+CapsuleCollider::CapsuleCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent)
+    : Collider(ownerGameObject, ownerComponent, body), m_radius((extent.x > extent.y) ? extent.x : extent.y), m_halfHeight(extent.z)
 {
 }
 
@@ -36,10 +39,16 @@ void CapsuleCollider::SetHalfHeight(float value)
     ResetShape();
 }
 
-physx::PxCapsuleGeometry CapsuleCollider::CreateCapsuleGeometry(float radius, float halfHeight)
+void CapsuleCollider::SetExtent(Vec3 extent)
 {
-    physx::PxCapsuleGeometry capsule;
-    capsule.radius = m_radius;
-    capsule.halfHeight = m_halfHeight;
+    m_radius = (extent.x > extent.y) ? extent.x : extent.y;
+    m_halfHeight = extent.z;
+}
+
+PxCapsuleGeometry CapsuleCollider::CreateCapsuleGeometry()
+{
+    PxCapsuleGeometry capsule;
+    capsule.radius = PxReal(m_radius);
+    capsule.halfHeight = PxReal(m_halfHeight);
     return capsule;
 }

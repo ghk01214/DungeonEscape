@@ -1,5 +1,7 @@
 ﻿#pragma once
-#include "physx_utils.h"
+
+#include "physx_define.h"
+#include "Collider.h"
 
 class Collider;
 
@@ -8,7 +10,7 @@ class SphereCollider : public Collider
 	virtual physx::PxGeometryHolder CreateGeometry() override;
 
 public:
-	SphereCollider();
+	SphereCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent);
 	~SphereCollider();
 
 public:

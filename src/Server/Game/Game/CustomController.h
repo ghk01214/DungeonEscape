@@ -1,36 +1,37 @@
 ﻿#pragma once
-#include "physx_utils.h"
+#include "physx_define.h"
+#include "Component.h"
 
 class RigidBody;
 class CapsuleCollider;
 
-enum class CollisionInfoType;
-
-class CustomController
+class CustomController : public Component
 {
 public:
-	CustomController();
+	CustomController(GameObject* ownerGameObject, Component* ownerComponent);
 	~CustomController();
 public:
-	void Init();
-	void SetRigidBody(RigidBody* body);
-
+	void Init() override;
+	void Release() override;
 public:
-	void Update();
+	//CustomController 컴포넌트를 사용하는 게임오브젝트는 Move()를 GameObject::Update()에서 반드시 호출
+	void Move(uint8_t keyType, server::KEY_STATE keyState);
 	bool CheckOnGround(CollisionInfoType type, physx::PxVec3& surfaceNormal);
 	void GetSlidingVector(CollisionInfoType type);
 	bool CheckOnGround_Raycast();
-	void DirectionInput();
-	void Move();
+	void DirectionInput(uint8_t keyType);
+	void Movement(uint8_t keyType, server::KEY_STATE keyState);
+
+public:
+	void ClearControllerCollisionInfo();
 private:
 	physx::PxVec3	m_moveDirection{ 0.f };
 	physx::PxVec3	m_slidingVector{ 0.f };
 
 	bool	m_onGround = false;
-	int		m_debugPrint = 0;
 	float	m_degreeThreshold = 49.9f;
 private:
-	RigidBody* m_body = nullptr;
+	RigidBody*			m_body = nullptr;
 	CapsuleCollider* m_collider = nullptr;
 };
 

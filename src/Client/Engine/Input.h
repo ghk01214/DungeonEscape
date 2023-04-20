@@ -104,7 +104,7 @@ public:
 
 private:
 	inline KEY_STATE GetState(KEY_TYPE key) { return m_states[static_cast<uint8>(key)]; }
-	void ChangeKeyInput(void);
+	void EncodeKeyInput(void);
 
 private:
 	HWND m_hWnd;

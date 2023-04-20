@@ -1,12 +1,15 @@
 ﻿#include "pch.h"
 #include "BoxCollider.h"
 
-physx::PxGeometryHolder BoxCollider::CreateGeometry()
+using namespace physx;
+
+PxGeometryHolder BoxCollider::CreateGeometry()
 {
 	return CreateBoxGeometry();
 }
 
-BoxCollider::BoxCollider()
+BoxCollider::BoxCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent)
+	: Collider(ownerGameObject, ownerComponent, body), m_extent(extent)
 {
 }
 
@@ -14,26 +17,14 @@ BoxCollider::~BoxCollider()
 {
 }
 
-float BoxCollider::GetExtentX()
+Vec3 BoxCollider::GetExtent()
 {
-	return m_extentX;
+	return m_extent;
 }
 
-float BoxCollider::GetExtentY()
+void BoxCollider::SetExtents(Vec3 extent)
 {
-	return m_extentY;
-}
-
-float BoxCollider::GetExtentZ()
-{
-	return m_extentZ;
-}
-
-void BoxCollider::SetExtents(float extentX, float extentY, float extentZ)
-{
-	m_extentX = extentX;
-	m_extentY = extentY;
-	m_extentZ = extentZ;
+	m_extent = extent;
 
 	ResetShape();
 }
@@ -41,6 +32,6 @@ void BoxCollider::SetExtents(float extentX, float extentY, float extentZ)
 physx::PxBoxGeometry BoxCollider::CreateBoxGeometry() const
 {
 	physx::PxBoxGeometry box;
-	box.halfExtents = physx::PxVec3(m_extentX, m_extentY, m_extentZ) * 0.5;
+	box.halfExtents = physx::PxVec3(m_extent.x, m_extent.y, m_extent.z) * 0.5;
 	return box;
 }

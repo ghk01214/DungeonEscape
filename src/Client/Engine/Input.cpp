@@ -51,13 +51,13 @@ void Input::Update()
 	}
 
 	// 모든 키 정보들에 대해 확인해줄 것
-	ChangeKeyInput();
+	EncodeKeyInput();
 
 	::GetCursorPos(&m_mousePos);
 	::ScreenToClient(GEngine->GetWindow().hWnd, &m_mousePos);
 }
 
-void Input::ChangeKeyInput(void)
+void Input::EncodeKeyInput(void)
 {
 	/*
 		현재 사용되고 있는 키 정보들

@@ -1,11 +1,9 @@
 ﻿#pragma once
-#include "physx_utils.h"
+#include "physx_define.h"
 
 class RigidBody;
 class PhysicsRay;
 class RaycastHit;
-
-enum class PhysicsQueryType;
 
 class PhysQuery
 {
