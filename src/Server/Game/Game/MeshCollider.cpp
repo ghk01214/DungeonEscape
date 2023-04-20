@@ -10,7 +10,7 @@ PxGeometryHolder MeshCollider::CreateGeometry()
     return CreateTriangleMeshGeometry();
 }
 
-MeshCollider::MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body)
+MeshCollider::MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent)
     : Collider(ownerGameObject, ownerComponent, body)
 {
 }

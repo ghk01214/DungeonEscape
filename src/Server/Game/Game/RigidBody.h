@@ -27,7 +27,7 @@ public:
 			throw std::runtime_error("ColliderType must inherit from Collider\n");
 		}
 
-		auto newCollider = new ColliderType(m_ownerGameObject, this, std::forward<Args>(args)...);
+		auto newCollider = new ColliderType(m_ownerGameObject, this, this, std::forward<Args>(args)...);
 		newCollider->Init();
 
 		return newCollider;
@@ -120,6 +120,10 @@ public:
 	void SetVelocity(const physx::PxVec3& velocity);
 	float GetMass() const;
 	void SetMass(float value);
+
+public:
+	void SetAngularDamping(float value);
+	void SetLinearDamping(float value);
 
 public:
 	void UpdateMassAndInertia();

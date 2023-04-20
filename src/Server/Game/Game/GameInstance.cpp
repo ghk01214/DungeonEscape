@@ -3,8 +3,17 @@
 #include "ObjectManager.h"
 #include "TimeManager.h"
 #include "PhysDevice.h"
+#include "TestLevel.h"
 
 ImplementSingletone(GameInstance);
+
+GameInstance::GameInstance()
+{
+}
+
+GameInstance::~GameInstance()
+{
+}
 
 void GameInstance::Init()
 {
@@ -16,6 +25,12 @@ void GameInstance::Init()
 
 	m_physDevice = PhysDevice::GetInstance();
 	m_physDevice->Init();
+
+
+	//추후 levelManager로 대체
+	m_testLevel = new TestLevel;
+	m_testLevel->Init();
+
 }
 
 void GameInstance::Update(double timeDelta)
@@ -25,8 +40,13 @@ void GameInstance::Update(double timeDelta)
 		nullptr == m_physDevice)
 		return;
 
+	//collect pxPairContact
 	m_physDevice->PreUpdate();
+
+	m_testLevel->Update(timeDelta);
 	m_objectManager->Update(timeDelta);
+
+	//step simulation + clear Eventcallback
 	m_physDevice->Update(timeDelta);
 }
 
@@ -35,6 +55,7 @@ void GameInstance::LateUpdate(double timeDelta)
 	if (nullptr == m_objectManager)
 		return;
 
+	m_testLevel->LateUpdate(timeDelta);
 	m_objectManager->LateUpdate(timeDelta);
 	m_physDevice->LateUpdate(timeDelta);
 }
@@ -49,4 +70,6 @@ void GameInstance::Release()
 
 	PhysDevice::GetInstance()->DestroyInstance();
 	m_physDevice = nullptr;
+
+	SafeRelease(m_testLevel);
 }

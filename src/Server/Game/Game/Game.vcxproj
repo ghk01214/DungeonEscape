@@ -167,6 +167,8 @@
     <ClCompile Include="GameInstance.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="Level.cpp" />
+    <ClCompile Include="MapObject.cpp" />
     <ClCompile Include="MeshCollider.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
@@ -187,6 +189,7 @@
     <ClCompile Include="Player_OLD.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
+    <ClCompile Include="TestLevel.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vec3.cpp" />
@@ -211,6 +214,8 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="game_macro.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="Level.h" />
+    <ClInclude Include="MapObject.h" />
     <ClInclude Include="MeshCollider.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="ObjectManager.h" />
@@ -230,6 +235,7 @@
     <ClInclude Include="Session.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="game_functions.h" />
+    <ClInclude Include="TestLevel.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="transform_utils.h" />

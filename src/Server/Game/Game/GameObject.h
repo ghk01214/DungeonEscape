@@ -67,9 +67,10 @@ public:
 public:
 	Transform* GetTransform();
 
-private:
+protected:
 	bool m_removalFlag = false;			//update()에 수집, lateUpdate()에 실제 삭제 진행
     std::unordered_map<std::wstring, Component*> m_components;
 	
-	Transform* m_transform = nullptr;	//편의상 멤버변수로도 추가. m_components에 디폴트로 생성된다.			
+	Transform* m_transform = nullptr;	//생성자에서 제작하여 m_components안에 보관
+										//편의상 멤버변수로도 보관
 };

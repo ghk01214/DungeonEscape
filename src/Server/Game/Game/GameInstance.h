@@ -3,6 +3,7 @@
 class TimeManager;
 class ObjectManager;
 class PhysDevice;
+class TestLevel;
 
 class GameInstance
 {
@@ -11,7 +12,7 @@ public:
 
 private:
 	GameInstance();
-	virtual ~GameInstance() = default;
+	~GameInstance();
 
 public:
 	void Init();
@@ -22,5 +23,8 @@ public:
 	ObjectManager*	m_objectManager = nullptr;
 	TimeManager*	m_timeManager = nullptr;
 	PhysDevice*		m_physDevice = nullptr;
+
+	//추후 levelManager로 대체
+	TestLevel*		m_testLevel = nullptr;
 };
 

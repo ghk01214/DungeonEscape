@@ -26,7 +26,7 @@ void CustomController::Init()
 	//멤버 component 생성
 	Transform* t = m_ownerGameObject->GetTransform();
 	m_body = AddComponent<RigidBody>();
-	m_collider = m_body->AddCollider<CapsuleCollider>(m_body, t->GetScale());
+	m_collider = m_body->AddCollider<CapsuleCollider>(m_ownerGameObject->GetTransform()->GetScale());
 
 	//body 초기화
 	m_body->SetRotation(90, PhysicsAxis::Z);				//capsule is laying by default.
@@ -42,10 +42,10 @@ void CustomController::Release()
 	SafeRelease(m_body);
 }
 
-void CustomController::Move(uint8_t keyInput, server::KEY_STATE keyState)
+void CustomController::Move(uint8_t keyType, server::KEY_STATE keyState)
 {
-	DirectionInput(keyInput);
-	Movement(keyInput, keyState);
+	//DirectionInput(keyType);
+	//Movement(keyType, keyState);
 }
 
 bool CustomController::CheckOnGround(CollisionInfoType type, PxVec3& surfaceNormal)
@@ -163,23 +163,32 @@ bool CustomController::CheckOnGround_Raycast()
 	return false;
 }
 
-void CustomController::DirectionInput(uint8_t keyInput)
+void CustomController::DirectionInput(uint8_t keyType)
 {
 	m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
-	if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::LEFT)) != 0)
+	//if ((keyType & static_cast<uint8_t>(server::KEY_TYPE::LEFT)) != 0)
+	//	m_moveDirection.x = -1.f;
+	//else if ((keyType & static_cast<uint8_t>(server::KEY_TYPE::RIGHT)) != 0)
+	//	m_moveDirection.x = 1.f;
+	//if ((keyType & static_cast<uint8_t>(server::KEY_TYPE::UP)) != 0)
+	//	m_moveDirection.z = 1.f;
+	//else if ((keyType & static_cast<uint8_t>(server::KEY_TYPE::DOWN)) != 0)
+	//	m_moveDirection.z = -1.f;
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		m_moveDirection.x = -1.f;
-	else if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::RIGHT)) != 0)
+	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
 		m_moveDirection.x = 1.f;
-	if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::UP)) != 0)
+	if (GetAsyncKeyState(VK_UP) & 0x8000)
 		m_moveDirection.z = 1.f;
-	else if ((keyInput & static_cast<uint8_t>(server::KEY_TYPE::DOWN)) != 0)
+	else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 		m_moveDirection.z = -1.f;
+	
 
 	m_moveDirection.normalize();
 }
 
-void CustomController::Movement(uint8_t keyInput, server::KEY_STATE keyState)
+void CustomController::Movement(uint8_t keyType, server::KEY_STATE keyState)
 {
 	if (m_body->isKinematic())
 		return;
@@ -193,7 +202,8 @@ void CustomController::Movement(uint8_t keyInput, server::KEY_STATE keyState)
 	PxVec3 a{ 0.f };
 	CheckOnGround(CollisionInfoType::Stay, a);
 
-	if (((keyInput & static_cast<uint8_t>(server::KEY_TYPE::SPACE)) != 0) && keyState == server::KEY_STATE::DOWN && m_onGround)
+	//if (((keyType & static_cast<uint8_t>(server::KEY_TYPE::SPACE)) != 0) && keyState == server::KEY_STATE::DOWN && m_onGround)
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
@@ -203,9 +213,10 @@ void CustomController::Movement(uint8_t keyInput, server::KEY_STATE keyState)
 		velocity.y = jumpSpeed;
 		m_body->SetVelocity(velocity);
 
-		//choice 2 : add force
+		#pragma region choice2 add force
 		//PxVec3 force = m_moveDirection * m_body->GetMass() * deltaTime * adjustmentValue;
 		//m_body->GetBody()->addForce(force, PxForceMode::eIMPULSE);
+		#pragma endregion
 
 		m_onGround = false;
 	}
@@ -224,7 +235,7 @@ void CustomController::Movement(uint8_t keyInput, server::KEY_STATE keyState)
 	if (m_slidingVector.magnitude() > 0)
 	{
 		m_slidingVector.y = m_body->GetVelocity().y;
-		m_body->SetVelocity(m_slidingVector);	//*movespeed?	
+		m_body->SetVelocity(m_slidingVector);	// * movespeed?	
 	}
 	else
 	{

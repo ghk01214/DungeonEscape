@@ -27,35 +27,26 @@ public:
 public:
 	physx::PxPhysics*		GetPhysics() const;
 	physx::PxScene*			GetScene() const;
-	PhysQuery*				GetQuery() const;
 	physx::PxCooking*		GetCooking() const;
-	physx::PxMaterial*		GetDefaultMaterial() const;
+
+	PhysQuery*				GetQuery() const;
 
 public:
-	//Test용 함수
-	void CreateHelloWorldStack(const physx::PxTransform& t, physx::PxU32 size, physx::PxReal halfExtent, bool attributeStatic);
 	void InitialPlacement();
 
-	void TestCreateDynamic(ColliderShape shape, float posX, float posY, float posZ);
-	//CustomController* CreateCustomController(physx::PxVec3 pos);	
 private:
 	physx::PxDefaultAllocator				m_Allocator;
 	physx::PxDefaultErrorCallback			m_ErrorCallback;
 
-	physx::PxFoundation*					m_Foundation = NULL;
-	physx::PxPhysics*						m_Physics = NULL;
-
-	physx::PxDefaultCpuDispatcher*			m_Dispatcher = NULL;
-	physx::PxScene*							m_Scene = NULL;
-
-	physx::PxCooking*						m_cooking = NULL;
-
-	physx::PxMaterial*						m_Material = NULL;
-
-	physx::PxPvd*							m_Pvd = NULL;
+	physx::PxFoundation*					m_Foundation	= nullptr;
+	physx::PxPhysics*						m_Physics		= nullptr;
+	physx::PxDefaultCpuDispatcher*			m_Dispatcher	= nullptr;
+	physx::PxScene*							m_Scene			= nullptr;
+	physx::PxCooking*						m_Cooking		= nullptr;
+	physx::PxPvd*							m_Pvd			= nullptr;
 
 	CustomSimulationEventCallback*			m_eventCallback = nullptr;
-	CustomFilterShader*						m_filterShader = nullptr;
-	PhysQuery*								m_query = nullptr;
+	CustomFilterShader*						m_filterShader	= nullptr;
+	PhysQuery*								m_query			= nullptr;
 };
 

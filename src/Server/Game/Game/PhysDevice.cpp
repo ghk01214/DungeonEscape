@@ -67,11 +67,14 @@ void PhysDevice::Init()
 	}
 
 #pragma endregion pvd
+	PxTolerancesScale scale;
+	PxCookingParams cookingParams(scale);
+	cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eWELD_VERTICES;
+	cookingParams.meshWeldTolerance = 0.001f;
 
-	m_Material = m_Physics->createMaterial(0.5f, 0.5f, 0.6f);
-	//PxRigidStatic* groundPlane = PxCreatePlane(*m_Physics, PxPlane(0, 1, 0, 0), *m_Material);
-	//m_Scene->addActor(*groundPlane);
+	m_Cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, cookingParams);
 
+	//this is a custom physxQuery
 	m_query = new PhysQuery;
 	m_query->Init();
 }
@@ -101,29 +104,35 @@ void PhysDevice::LateUpdate(double timeDelta)
 
 void PhysDevice::Release()
 {
-	PX_RELEASE(m_Scene);
-	PX_RELEASE(m_Dispatcher);
-	PX_RELEASE(m_Physics);
+	// 1. custom objects
+	SafeDelete(m_query);
+	SafeDelete(m_eventCallback);
+	SafeDelete(m_filterShader);
+
+	// 2. physx objects (in order)
+	PX_RELEASE(m_Scene);          // Scene should be released before dispatcher, physics, and foundation
+	PX_RELEASE(m_Dispatcher);     // Dispatcher should be released before physics and foundation
+	PX_RELEASE(m_Physics);        // Physics should be released before foundation
+	PX_RELEASE(m_Cooking);        // Cooking should be released before foundation
+
+	// 3. PVD, attached transport
 	if (m_Pvd)
 	{
 		PxPvdTransport* transport = m_Pvd->getTransport();
-		m_Pvd->release();
-		m_Pvd = NULL;
-		PX_RELEASE(transport);
+		m_Pvd->release();          // Release the PVD object before releasing the transport and foundation
+		m_Pvd = nullptr;
+		PX_RELEASE(transport);     // Release the transport before releasing the foundation
 	}
+
+	// 4. Release the foundation object last
 	PX_RELEASE(m_Foundation);
 
-	printf("SnippetHelloWorld done.\n");
+	printf("PhysDevice Release done.\n");
 }
 
 PxPhysics* PhysDevice::GetPhysics() const
 {
 	return m_Physics;
-}
-
-PxMaterial* PhysDevice::GetDefaultMaterial() const
-{
-	return m_Material;
 }
 
 PxScene* PhysDevice::GetScene() const
@@ -138,39 +147,7 @@ PhysQuery* PhysDevice::GetQuery() const
 
 PxCooking* PhysDevice::GetCooking() const
 {
-	return m_cooking;
-}
-
-void PhysDevice::CreateHelloWorldStack(const PxTransform& t, PxU32 size, PxReal halfExtent, bool attributeStatic)
-{
-	PxShape* shape = m_Physics->createShape(PxBoxGeometry(halfExtent, halfExtent, halfExtent), *m_Material);
-
-	for (PxU32 i = 0; i < size; i++)
-	{
-		for (PxU32 j = 0; j < size - i; j++)
-		{
-			PxTransform localTm(PxVec3(PxReal(j * 2) - PxReal(size - i), PxReal(i * 2 + 1), 0) * halfExtent);
-
-			if (!attributeStatic)
-			{
-				PxRigidDynamic* body = m_Physics->createRigidDynamic(t.transform(localTm));
-
-				body->setSleepThreshold(PxReal(5.f));						//Sleep 상태 전환을 위한 임계값 설정
-				body->setWakeCounter(PxReal(5.f));							//Wake 상태 전환을 위한 임계값 설정
-
-				body->attachShape(*shape);
-				PxRigidBodyExt::updateMassAndInertia(*body, 100.0f);		//dynamic actor 질량 계산에 필요한 요소 : 질량, 관성값, 무게중심(관성축 위치 결정)
-				m_Scene->addActor(*body);									//updateMassAndInertia 등의 도우미 함수를 사용하면 dynamic actor의 질량계산을 쉽게할 수 있다.
-			}
-			else
-			{
-				PxRigidStatic* body = m_Physics->createRigidStatic(t.transform(localTm));
-				body->attachShape(*shape);
-				m_Scene->addActor(*body);
-			}
-		}
-	}
-	shape->release();
+	return m_Cooking;
 }
 
 void PhysDevice::InitialPlacement()
@@ -234,20 +211,9 @@ void PhysDevice::InitialPlacement()
 #pragma endregion
 }
 
-void PhysDevice::TestCreateDynamic(ColliderShape shape, float posX, float posY, float posZ)
-{
-	//RigidBody* body = new RigidBody();
-	//body->Init(shape);
-	//body->SetPosition(posX, posY, posZ, true);
-	//m_RigidBodies.emplace_back(body);
-
-	//return body;
-}
-
 void PhysDevice::ClearEventCallback()
 {	
 	//모든 게임오브젝트의 리지드 바디 ClearCollidersCollisionInfo 호출
-
 	const auto& objmgr = ObjectManager::GetInstance();
 	auto& layers = objmgr->GetLayers();
 	for (const auto& layer : layers)

@@ -125,8 +125,20 @@
     <Filter Include="03. Game">
       <UniqueIdentifier>{c5a1fb99-c28d-4260-8fe9-feaaa1c3ab27}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Game\Player">
+    <Filter Include="98. GameUtility\03. Level">
+      <UniqueIdentifier>{c29b474e-9a9c-48e2-b7ae-e93e4b48b393}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject">
+      <UniqueIdentifier>{0da3c51b-6a78-4d3c-9863-c7590b2f8e13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\Player">
       <UniqueIdentifier>{19972ccc-bc07-4a90-92c3-fb0d44a4b4ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\MapObject">
+      <UniqueIdentifier>{5fa9efbb-ed4a-4f00-a8ac-58e79c6c82e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\00. Level">
+      <UniqueIdentifier>{e2cb405e-61cd-4e6b-842e-4dd61c2c804a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -234,7 +246,16 @@
       <Filter>98. GameUtility\02. Components\Transform</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
-      <Filter>03. Game\Player</Filter>
+      <Filter>03. Game\01. GameObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="MapObject.cpp">
+      <Filter>03. Game\01. GameObject\MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>98. GameUtility\03. Level</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLevel.cpp">
+      <Filter>03. Game\00. Level</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -362,7 +383,16 @@
       <Filter>99. Utility\pch\CodeUtils</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>03. Game\Player</Filter>
+      <Filter>03. Game\01. GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="MapObject.h">
+      <Filter>03. Game\01. GameObject\MapObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>98. GameUtility\03. Level</Filter>
+    </ClInclude>
+    <ClInclude Include="TestLevel.h">
+      <Filter>03. Game\00. Level</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

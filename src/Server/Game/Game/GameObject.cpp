@@ -10,7 +10,7 @@ GameObject::GameObject(const Vec3& position, const Quat& rotation, const Vec3& s
 
 GameObject::~GameObject()
 {
-    Release();
+    //Release();
 }
 
 void GameObject::Init()
@@ -18,7 +18,7 @@ void GameObject::Init()
 }
 
 void GameObject::Release()
-{
+{   
     for (auto& kv : m_components)
     {
         SafeRelease(kv.second);

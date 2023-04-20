@@ -8,7 +8,7 @@ class MeshCollider : public Collider
 	virtual physx::PxGeometryHolder CreateGeometry() override;
 
 public:
-	MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body);
+	MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent);
 	~MeshCollider();
 public:
 	void Init() override;
