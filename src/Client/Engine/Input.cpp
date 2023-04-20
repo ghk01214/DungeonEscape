@@ -50,24 +50,8 @@ void Input::Update()
 		}
 	}
 
-	// 모든 비트 0으로 초기화
-	m_keyInput.reset();
-
 	// 모든 키 정보들에 대해 확인해줄 것
 	ChangeKeyInput();
-
-	for (int32_t i = 0; i < KEY_USE_COUNT; ++i)
-	{
-		if (m_keyInput[i])
-		{
-			//m_keyInput[i] = true;
-			std::cout << i << ", ";
-		}
-
-		std::cout << std::endl;
-	}
-
-	//std::cout << std::endl;
 
 	::GetCursorPos(&m_mousePos);
 	::ScreenToClient(GEngine->GetWindow().hWnd, &m_mousePos);
@@ -109,26 +93,30 @@ void Input::ChangeKeyInput(void)
 		MAX
 	*/
 
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::UP)] = GetButton(KEY_TYPE::UP);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::DOWN)] = GetButton(KEY_TYPE::DOWN);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::LEFT)] = GetButton(KEY_TYPE::LEFT);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::RIGHT)] = GetButton(KEY_TYPE::RIGHT);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::SPACE)] = GetButton(KEY_TYPE::SPACE);
+	// 모든 비트 0으로 초기화
+	m_keyInput.reset();
 
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::W)] = GetButton(KEY_TYPE::W);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::A)] = GetButton(KEY_TYPE::A);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::S)] = GetButton(KEY_TYPE::S);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::D)] = GetButton(KEY_TYPE::D);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::Q)] = GetButton(KEY_TYPE::Q);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::E)] = GetButton(KEY_TYPE::E);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::Z)] = GetButton(KEY_TYPE::Z);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::C)] = GetButton(KEY_TYPE::C);
+	// KEY_STATE::PRESS 정보만 전송 가능
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::UP)] = GetButton(KEY_TYPE::UP);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::DOWN)] = GetButton(KEY_TYPE::DOWN);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::LEFT)] = GetButton(KEY_TYPE::LEFT);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RIGHT)] = GetButton(KEY_TYPE::RIGHT);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::SPACE)] = GetButton(KEY_TYPE::SPACE);
 
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::KEY_1)] = GetButton(KEY_TYPE::KEY_1);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::KEY_2)] = GetButton(KEY_TYPE::KEY_2);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::KEY_3)] = GetButton(KEY_TYPE::KEY_3);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::KEY_4)] = GetButton(KEY_TYPE::KEY_4);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::W)] = GetButton(KEY_TYPE::W);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::A)] = GetButton(KEY_TYPE::A);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::S)] = GetButton(KEY_TYPE::S);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::D)] = GetButton(KEY_TYPE::D);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Q)] = GetButton(KEY_TYPE::Q);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::E)] = GetButton(KEY_TYPE::E);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Z)] = GetButton(KEY_TYPE::Z);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::C)] = GetButton(KEY_TYPE::C);
 
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::LBUTTON)] = GetButton(KEY_TYPE::LBUTTON);
-	m_keyInput[static_cast<uint32>(TEMP_KEY_TYPE::RBUTTON)] = GetButton(KEY_TYPE::RBUTTON);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_1)] = GetButton(KEY_TYPE::KEY_1);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_2)] = GetButton(KEY_TYPE::KEY_2);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_3)] = GetButton(KEY_TYPE::KEY_3);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_4)] = GetButton(KEY_TYPE::KEY_4);
+
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::LBUTTON)] = GetButton(KEY_TYPE::LBUTTON);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RBUTTON)] = GetButton(KEY_TYPE::RBUTTON);
 }

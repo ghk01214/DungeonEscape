@@ -114,98 +114,59 @@ namespace game
 		}
 
 		const int32_t useKeyCount{ static_cast<int32_t>(server::KEY_TYPE::MAX) };
-
 		std::bitset<useKeyCount> input{ keyInput };
-		bool press{ false };
 
 		if (input[static_cast<int32_t>(server::KEY_TYPE::LEFT)] == true)
 		{
-			std::cout << std::format("Left, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::RIGHT)] == true)
 		{
-			std::cout << std::format("Right, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::UP)] == true)
 		{
-			std::cout << std::format("Up, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::DOWN)] == true)
 		{
-			std::cout << std::format("Down, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::SPACE)] == true)
 		{
-			std::cout << std::format("SPace, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::W)] == true)
 		{
-			std::cout << std::format("W, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::A)] == true)
 		{
-			std::cout << std::format("A, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::S)] == true)
 		{
-			std::cout << std::format("S, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::D)] == true)
 		{
-			std::cout << std::format("D, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::Q)] == true)
 		{
-			std::cout << std::format("Q, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::E)] == true)
 		{
-			std::cout << std::format("E, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::Z)] == true)
 		{
-			std::cout << std::format("Z, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::C)] == true)
 		{
-			std::cout << std::format("C, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::KEY_1)] == true)
 		{
-			std::cout << std::format("KEY_1, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::KEY_2)] == true)
 		{
-			std::cout << std::format("KEY_2, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::KEY_3)] == true)
 		{
-			std::cout << std::format("KEY_3, ");
-			press = true;
 		}
 		if (input[static_cast<int32_t>(server::KEY_TYPE::KEY_4)] == true)
 		{
-			std::cout << std::format("KEY_4, ");
-			press = true;
 		}
-
-		if (press == true)
-			std::cout << std::format("\n");
 	}
 
 	void CSceneManager::SendAddTempPacket(CTempObject* obj)

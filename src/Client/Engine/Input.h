@@ -33,8 +33,10 @@ enum class KEY_TYPE
 	MAX = UINT8_MAX + 1
 };
 
-enum class TEMP_KEY_TYPE : uint32
+enum class BITSET_KEY_TYPE : uint32
 {
+	NONE = 0,
+
 	UP,
 	DOWN,
 	LEFT,
@@ -78,7 +80,7 @@ enum
 	KEY_TYPE_COUNT = static_cast<int32>(UINT8_MAX + 1),
 	KEY_STATE_COUNT = static_cast<int32>(KEY_STATE::END),
 	KEY_USE_COUNT = static_cast<int32_t>(KEY_TYPE::MAX),
-	KEY_TEMP_USE_COUNT = static_cast<int32_t>(TEMP_KEY_TYPE::MAX)
+	KEY_TEMP_USE_COUNT = static_cast<int32_t>(BITSET_KEY_TYPE::MAX)
 };
 
 class Input
