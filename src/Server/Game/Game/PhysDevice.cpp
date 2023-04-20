@@ -4,6 +4,7 @@
 #include "BoxCollider.h"
 #include "CapsuleCollider.h"
 #include "CustomFilterShader.h"
+#include "Object.h"
 #include "Player.h"
 
 ImplementSingletone(PhysDevice);

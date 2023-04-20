@@ -86,6 +86,9 @@
     <Filter Include="source\Physx\Controller\ControllerManager">
       <UniqueIdentifier>{eeafd0cb-b49d-4857-87bb-b2226eb4e499}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\Scene">
+      <UniqueIdentifier>{631d2f4a-4c6e-4a18-9dcb-6e98a5f874cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EntryPoint.cpp">
@@ -165,6 +168,12 @@
     </ClCompile>
     <ClCompile Include="ControllerWrapper.cpp">
       <Filter>source\Physx\Controller\ControllerManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>source\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>source\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -254,6 +263,12 @@
     </ClInclude>
     <ClInclude Include="ControllerWrapper.h">
       <Filter>source\Physx\Controller\ControllerManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>source\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>source\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -180,9 +180,10 @@ namespace network
 	void NetworkManager::SendKeyInputPacket()
 	{
 		network::CPacket packet;
+		auto input{ GET_SINGLE(Input)->GetKeyInput() };
 
 		packet.WriteProtocol(ProtocolID::MY_KEYINPUT_REQ);
-		packet.Write<unsigned long>(GET_SINGLE(Input)->GetKeyInput().to_ulong());
+		packet.Write<unsigned long>(input);
 
 		Send(packet);
 	}

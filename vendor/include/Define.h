@@ -11,31 +11,31 @@
 
 	enum class KEY_TYPE
 	{
-		NONE = 0x00,
+		NONE = 0,
 
-		UP = VK_UP,
-		DOWN = VK_DOWN,
-		LEFT = VK_LEFT,
-		RIGHT = VK_RIGHT,
-		SPACE = VK_SPACE,
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
+		SPACE,
 
-		W = 'W',
-		A = 'A',
-		S = 'S',
-		D = 'D',
+		W,
+		A,
+		S,
+		D,
 
-		Q = 'Q',
-		E = 'E',
-		Z = 'Z',
-		C = 'C',
+		Q,
+		E,
+		Z,
+		C,
 
-		KEY_1 = '1',
-		KEY_2 = '2',
-		KEY_3 = '3',
-		KEY_4 = '4',
+		KEY_1,
+		KEY_2,
+		KEY_3,
+		KEY_4,
 
-		LBUTTON = VK_LBUTTON,
-		RBUTTON = VK_RBUTTON,
+		LBUTTON,
+		RBUTTON,
 
 		MAX
 	};

@@ -110,32 +110,6 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAddTempPacket(int32_t id, CTempObject* obj)
-	{
-		network::CPacket packet;
-		TempTrans trans{ obj->GetTrans() };
-
-		packet.WriteID(id);
-		packet.WriteProtocol(ProtocolID::WR_ADD_ACK);
-
-		packet.WriteWString(obj->GetName());
-
-		packet.Write<float>(trans.p.x);
-		packet.Write<float>(trans.p.y);
-		packet.Write<float>(trans.p.z);
-
-		packet.Write<float>(trans.q.x);
-		packet.Write<float>(trans.q.y);
-		packet.Write<float>(trans.q.z);
-		packet.Write<float>(trans.q.w);
-
-		packet.Write<float>(trans.s.x);
-		packet.Write<float>(trans.s.y);
-		packet.Write<float>(trans.s.z);
-
-		Send(packet);
-	}
-
 	void CSession::SendRemovePacket(int32_t id)
 	{
 		network::CPacket packet;
@@ -150,29 +124,6 @@ namespace game
 	{
 		network::CPacket packet;
 		Trans trans{ obj->GetTransform() };
-
-		// 타깃 id 작성
-		packet.WriteID(id);
-		// 프로토콜 종류 작성
-		packet.WriteProtocol(protocol);
-		// 타깃 렌더링 좌표 작성
-		packet.Write<float>(trans.p.x);
-		packet.Write<float>(trans.p.y);
-		packet.Write<float>(trans.p.z);
-
-		packet.Write<float>(trans.q.x);
-		packet.Write<float>(trans.q.y);
-		packet.Write<float>(trans.q.z);
-		packet.Write<float>(trans.q.w);
-
-		// 패킷 전송
-		Send(packet);
-	}
-
-	void CSession::SendTransformTempPacket(int32_t id, ProtocolID protocol, CTempObject* obj)
-	{
-		network::CPacket packet;
-		TempTrans trans{ obj->GetTrans() };
 
 		// 타깃 id 작성
 		packet.WriteID(id);
@@ -237,19 +188,9 @@ namespace game
 	void CSession::AddObject(int32_t id, const std::wstring& name, TempTrans& trans)
 	{
 		Accessor<int32_t, CTempObject*> access;
-		CTempObject* newObject{ new CTempObject{ name, trans } };
-		newObject->SetID(id);
+		//newObject->SetID(id);
 
-		m_pTempObject.insert(access, id);
-		access->second = newObject;
-	}
 
-	CTempObject* CSession::GetTempObject(int32_t id)
-	{
-		ConstAccessor<int32_t, CTempObject*> access;
-
-		m_pTempObject.find(access, id);
-
-		return access->second;
+		//access->second = newObject;
 	}
 }

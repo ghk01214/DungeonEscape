@@ -4,29 +4,31 @@
 
 enum class KEY_TYPE
 {
-	UP = VK_UP,
-	DOWN = VK_DOWN,
-	LEFT = VK_LEFT,
-	RIGHT = VK_RIGHT,
-	SPACE = VK_SPACE,
+	NONE = 0,
 
-	W = 'W',
-	A = 'A',
-	S = 'S',
-	D = 'D',
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT,
+	SPACE,
 
-	Q = 'Q',
-	E = 'E',
-	Z = 'Z',
-	C = 'C',
+	W,
+	A,
+	S,
+	D,
 
-	KEY_1 = '1',
-	KEY_2 = '2',
-	KEY_3 = '3',
-	KEY_4 = '4',
+	Q,
+	E,
+	Z,
+	C,
 
-	LBUTTON = VK_LBUTTON,
-	RBUTTON = VK_RBUTTON,
+	KEY_1,
+	KEY_2,
+	KEY_3,
+	KEY_4,
+
+	LBUTTON,
+	RBUTTON,
 
 	MAX
 };
@@ -63,7 +65,8 @@ public:
 	bool GetButtonUp(KEY_TYPE key) { return GetState(key) == KEY_STATE::UP; }
 
 	const POINT& GetMousePos() { return m_mousePos; }
-	constexpr std::bitset<KEY_USE_COUNT>& GetKeyInput() { return m_keyInput; }
+	//constexpr std::bitset<KEY_USE_COUNT>& GetKeyInput() { return m_keyInput; }
+	const unsigned long GetKeyInput() const { return m_keyInput.to_ulong(); }
 
 private:
 	inline KEY_STATE GetState(KEY_TYPE key) { return m_states[static_cast<uint8>(key)]; }

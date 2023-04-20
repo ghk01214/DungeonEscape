@@ -34,10 +34,8 @@ namespace game
 
 		void SendLoginPacket(int32_t id, CObject* obj);
 		void SendAddPacket(int32_t id, CObject* obj);
-		void SendAddTempPacket(int32_t id, CTempObject* obj);
 		void SendRemovePacket(int32_t id);
 		void SendTransformPacket(int32_t id, ProtocolID protocol, CObject* obj);
-		void SendTransformTempPacket(int32_t id, ProtocolID protocol, CTempObject* obj);
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer* obj);
 
 		void CreateObject(int32_t objID, network::CPacket& packet);
@@ -46,8 +44,7 @@ namespace game
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }
 		//CObject* GetMyObject() { return m_pObject; }
-		CTempObject* GetTempObject(int32_t id);
-		HashMap<int32_t, CTempObject*>& GetTempObject() { return m_pTempObject; }
+
 
 		void SetState(STATE state) { m_state = state; }
 		void SetSocket(SOCKET socket) { m_socket = socket; }
@@ -67,8 +64,8 @@ namespace game
 		std::atomic<STATE> m_state;
 		std::atomic_int32_t m_id;
 
-		//HashMap<int32_t, std::vector<CObject*>> m_pObject;
-		HashMap<int32_t, CTempObject*> m_pTempObject;
+		//CObject* m_pObject;
+		HashMap<int32_t, std::vector<CObject*>> m_pObject;
 
 		uint8_t m_keyInput;
 		server::KEY_STATE m_keyState;

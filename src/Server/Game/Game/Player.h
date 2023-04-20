@@ -4,10 +4,6 @@
 
 namespace game
 {
-	struct Pos;
-	struct Quat;
-	struct Trans;
-
 	class CObject;
 
 	class CPlayer : public CObject

@@ -13,8 +13,7 @@ void Input::Update()
 	HWND hWnd = ::GetActiveWindow();
 	if (m_hWnd != hWnd)
 	{
-		for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
-			m_states[key] = KEY_STATE::NONE;
+		m_states.resize(KEY_TYPE_COUNT, KEY_STATE::NONE);
 
 		return;
 	}
@@ -54,8 +53,13 @@ void Input::Update()
 	for (int32_t i = 0; i < KEY_USE_COUNT; ++i)
 	{
 		if (GetState(static_cast<KEY_TYPE>(i)) == KEY_STATE::PRESS)
+		{
 			m_keyInput[i] = true;
+			std::cout << i << ", ";
+		}
 	}
+
+	//std::cout << std::endl;
 
 	::GetCursorPos(&m_mousePos);
 	::ScreenToClient(GEngine->GetWindow().hWnd, &m_mousePos);

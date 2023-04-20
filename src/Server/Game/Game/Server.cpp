@@ -159,11 +159,6 @@ namespace game
 					Send(id, bytes, pOverEx);
 				}
 				break;
-				case network::COMPLETION::JUMP:
-				{
-					Jump(id, pOverEx);
-				}
-				break;
 				default:
 				break;
 			}
@@ -401,12 +396,7 @@ namespace game
 					if (player->GetID() == id)
 						continue;
 
-					player->SendAddTempPacket(objId, session->GetTempObject(objId));
 
-					for (auto& [key, obj] : player->GetTempObject())
-					{
-						session->SendAddTempPacket(key, obj);
-					}
 				}
 			}
 			break;
@@ -448,61 +438,19 @@ namespace game
 
 				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
 				GET_SCENE->SendTransformPacket(objID);
-
-				//auto pl{ dynamic_cast<CPlayer*>(session->GetTempObject(objID)) };
-
-				//std::cout << id << " : ";
-				//session[id].GetTempObject(objID)->Transform(keyInput, keyState);
-
-				//// 모든 세션에 대해 이동 패킷 전송
-				//for (auto& player : m_sessions)
-				//{
-				//	if (player->GetState() != STATE::INGAME)
-				//		continue;
-
-				//	if (player->GetID() == id)
-				//		player->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, session->GetTempObject(objID));
-				//	else
-				//		player->SendTransformPacket(id, ProtocolID::WR_TRANSFORM_ACK, session->GetTempObject(objID));
-				//}
-
-				//if (pl->IsJumping() == true)
-				//{
-				//	network::OVERLAPPEDEX* pOverEx{ new network::OVERLAPPEDEX };
-				//	pOverEx->type = network::COMPLETION::JUMP;
-
-				//	PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
-				//}
 			}
 			break;
 			case ProtocolID::MY_KEYINPUT_REQ:
 			{
 				auto objID{ packet.ReadID() };
 				// 타깃의 이동방향 읽기
-				unsigned long keyInput{ packet.Read<unsigned long>() };
+				auto keyInput{ packet.Read<unsigned long long>() };
 
 				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
 			}
 			break;
 			case ProtocolID::MY_ANI_REQ:
 			{
-				//int32_t index{ packet.Read<int32_t>() };
-				//float aniFrame{ packet.Read<float>() };
-				//auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
-				//
-				//pl->SetAniIndex(index);
-				//pl->SetAniFrame(aniFrame);
-				//
-				//for (auto& player : m_sessions)
-				//{
-				//	if (player->GetState() != STATE::INGAME)
-				//		continue;
-				//
-				//	if (player->GetID() == id)
-				//		player->SendAniIndexPacket(id, ProtocolID::MY_ANI_ACK, pl);
-				//	else
-				//		player->SendAniIndexPacket(id, ProtocolID::WR_ANI_ACK, pl);
-				//}
 			}
 			break;
 			default:
@@ -589,12 +537,7 @@ namespace game
 			if (player->GetID() == id)
 				continue;
 
-			player->SendAddTempPacket(objId, session->GetTempObject(objId));
 
-			for (auto& [key, obj] : player->GetTempObject())
-			{
-				session->SendAddTempPacket(key, obj);
-			}
 		}
 
 		//session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);
@@ -619,29 +562,6 @@ namespace game
 		//	// 해당 클라이언트에 로그인 완료 패킷 전송
 		//	player->SendAddPacket(id, pObject);
 		//	session->SendAddPacket(player->GetID(), player->GetMyObject());
-		//}
-	}
-
-	void CServer::Jump(int32_t id, network::OVERLAPPEDEX* pOverEx)
-	{
-		//auto pl{ dynamic_cast<CPlayer*>(m_sessions[id]->GetMyObject()) };
-		//
-		//pl->Jump();
-		//
-		//for (auto& player : m_sessions)
-		//{
-		//	if (player->GetState() != STATE::INGAME)
-		//		continue;
-		//
-		//	if (player->GetID() == id)
-		//		player->SendTransformPacket(id, ProtocolID::MY_JUMP_ACK, pl);
-		//	else
-		//		player->SendTransformPacket(id, ProtocolID::WR_JUMP_ACK, pl);
-		//}
-		//
-		//if (pl->IsJumping() == true)
-		//{
-		//	PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
 		//}
 	}
 }
