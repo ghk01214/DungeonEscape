@@ -13,9 +13,13 @@ int32_t main()
 	game->Init();
 	while (1)
 	{
+		//정보를 받는다.(키보드)
+
 		double timeDelta = TimeManager::GetInstance()->GetElapsedTime();
 		game->Update(timeDelta);
 		game->LateUpdate(timeDelta);
+
+		//session 클라에 정보 전달
 	}
 	GameInstance::GetInstance()->DestroyInstance();
 	game = nullptr;
