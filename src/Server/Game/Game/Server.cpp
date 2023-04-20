@@ -457,6 +457,7 @@ namespace game
 				auto keyInput{ packet.Read<unsigned long>() };
 
 				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
+				// 용섭 : 플레이어 키보드 입력(id, objID, keyInput)
 			}
 			break;
 			case ProtocolID::MY_ANI_REQ:
@@ -533,18 +534,18 @@ namespace game
 		//float x{ (m_activeSessionNum - 1) * 25.f };
 
 		session->SetState(STATE::INGAME);
-		session->CreateObject(objId, packet);
 
-		GET_SCENE->EnterScene(session);
+		session->CreateObject(objId, packet);
+		// 용섭 : 플레이어 생성(objId, packet)
 
 		session->SendLoginPacket(objId, nullptr);
 
-		for (auto& player : m_sessions)
+		for (auto& sess : m_sessions)
 		{
-			if (player->GetState() != STATE::INGAME)
+			if (sess->GetState() != STATE::INGAME)
 				continue;
 
-			if (player->GetID() == id)
+			if (sess->GetID() == id)
 				continue;
 
 
