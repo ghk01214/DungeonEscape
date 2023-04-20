@@ -19,7 +19,7 @@ void GameInstance::Init()
 {
 	m_timeManager = TimeManager::GetInstance();
 	m_timeManager->Init();
-	
+
 	m_objectManager = ObjectManager::GetInstance();
 	m_objectManager->Init();
 
@@ -64,7 +64,7 @@ void GameInstance::Release()
 {
 	ObjectManager::GetInstance()->DestroyInstance();
 	m_objectManager = nullptr;
-	
+
 	TimeManager::GetInstance()->DestroyInstance();
 	m_objectManager = nullptr;
 

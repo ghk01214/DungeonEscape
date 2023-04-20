@@ -31,6 +31,9 @@ enum class ProtocolID : unsigned short
 #pragma region [MY]
 	PROTOCOL_MY_BEGIN = PROTOCOL_AU_END,
 
+	MY_ADD_REQ,
+	MY_ADD_ACK,
+
 	MY_TRANSFORM_REQ,	// 플레이어 이동 요청
 	MY_TRANSFORM_ACK,	// 플레이어 이동 응답
 
@@ -39,6 +42,9 @@ enum class ProtocolID : unsigned short
 
 	MY_ANI_REQ,
 	MY_ANI_ACK,
+
+	MY_KEYINPUT_REQ,
+	MY_KEYINPUT_ACK,
 
 	PROTOCOL_MY_END = ProtocolBase::PROTOCOL_OFFSET_WR,
 #pragma endregion

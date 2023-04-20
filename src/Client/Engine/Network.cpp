@@ -33,6 +33,34 @@ namespace network
 	}
 
 #pragma region [SEND PACKET]
+	void CNetwork::SendAddObjectPacket()
+	{
+		network::CPacket packet;
+		auto pos{ GetTransform()->GetLocalPosition() };
+		auto quat{ GetTransform()->GetLocalRotation() };
+		auto scale{ GetTransform()->GetLocalScale() };
+
+		packet.WriteID(m_networkID);
+		packet.WriteProtocol(ProtocolID::MY_ADD_REQ);
+
+		packet.WriteWString(GetName());
+
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
+
+		packet.Write<float>(quat.x);
+		packet.Write<float>(quat.y);
+		packet.Write<float>(quat.z);
+		packet.Write<float>(1.f);
+
+		packet.Write<float>(scale.x);
+		packet.Write<float>(scale.y);
+		packet.Write<float>(scale.z);
+
+		GET_NETWORK->Send(packet);
+	}
+
 	void CNetwork::SendTransformPacket(uint8_t key, server::KEY_STATE state)
 	{
 		network::CPacket packet;
@@ -40,8 +68,6 @@ namespace network
 		packet.WriteID(m_networkID);
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::MY_TRANSFORM_REQ);
-		// 델타 타임 작성
-		packet.Write<float>(DELTA_TIME);
 		packet.Write<uint8_t>(key);
 		packet.Write<server::KEY_STATE>(state);
 

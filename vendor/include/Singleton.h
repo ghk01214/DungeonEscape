@@ -5,8 +5,6 @@ template<typename T>
 class Singleton
 {
 protected:
-#define inst instance()
-protected:
 	Singleton() = default;
 	virtual ~Singleton() = default;
 
@@ -15,7 +13,7 @@ protected:
 public:
 	virtual void Init() {}
 
-	static std::unique_ptr<T>& instance()
+	static std::unique_ptr<T>& inst()
 	{
 		std::call_once(_once, []{ _inst = std::make_unique<T>(); });
 

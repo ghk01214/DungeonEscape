@@ -506,3 +506,4 @@ src/Server/*/out/
 
 bin/
 bin-int/
+hooks/

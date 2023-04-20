@@ -179,6 +179,8 @@
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="RaycastHit.cpp" />
     <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -228,6 +230,8 @@
     <ClInclude Include="Quat.h" />
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />

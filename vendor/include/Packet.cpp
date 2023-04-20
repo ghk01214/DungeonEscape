@@ -42,11 +42,13 @@ namespace network
 	void CPacket::WriteID(int32_t id)
 	{
 		std::memcpy(m_data.data(), &id, sizeof(id));
+		WriteSize();
 	}
 
 	void CPacket::WriteProtocol(ProtocolID protocol)
 	{
 		std::memcpy(m_data.data() + PROTOCOL_ID_OFFSET, &protocol, sizeof(protocol));
+		WriteSize();
 	}
 
 	// 패킷을 전송한 클라이언트 id 읽기
@@ -120,7 +122,7 @@ namespace network
 		m_id = ReadID();
 		m_size = ReadSize();
 		m_readOffset = 0;
-		m_writeOffset = 0; 
+		m_writeOffset = 0;
 	}
 
 	// string 작성 메서드 별도 작성(채팅 프로그램 구현 시 사용)

@@ -7,9 +7,9 @@
 #define MAX_LENGTH 4086
 #define MAX_USER 2000
 
-#define GRAVITY 9.8f
+#define MAX_SCENE 3
 
-	enum class KEY_TYPE : uint8_t
+	enum class KEY_TYPE
 	{
 		NONE = 0x00,
 

@@ -100,19 +100,6 @@ namespace game
 
 	void CPlayer_OLD::Jump()
 	{
-		if (m_jump == false)
-			m_jump = true;
 
-		if (m_transform.p.y + m_jumpSpeed * m_deltaTime < 0.f)
-		{
-			m_jump = false;
-			m_transform.p.y = 0.f;
-			m_jumpSpeed = 4.f;
-
-			return;
-		}
-
-		m_transform.p.y += m_jumpSpeed * m_deltaTime;
-		m_jumpSpeed -= GRAVITY * m_deltaTime;
 	}
 }

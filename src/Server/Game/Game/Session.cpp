@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Session.h"
+#include "SceneManager.h"
 
 namespace game
 {
@@ -9,7 +10,7 @@ namespace game
 		m_state{ STATE::FREE },
 		m_socket{ INVALID_SOCKET },
 		m_id{ -1 },
-		m_pObject{ nullptr },
+		//m_pObject{ nullptr },
 		m_prevRemain{ 0 },
 		m_keyInput{ 0 },
 		m_keyState{ server::KEY_STATE::NONE }
@@ -22,7 +23,7 @@ namespace game
 		m_state{ STATE::FREE },
 		m_socket{ INVALID_SOCKET },
 		m_id{ -1 },
-		m_pObject{ obj },
+		//m_pObject{ obj },
 		m_prevRemain{ 0 },
 		m_keyInput{ 0 },
 		m_keyState{ server::KEY_STATE::NONE }
@@ -65,21 +66,21 @@ namespace game
 	void CSession::SendLoginPacket(int32_t id, CObject* obj)
 	{
 		network::CPacket packet;
-		Trans trans{ obj->GetTransform() };
+		//Trans trans{ obj->GetTransform() };
 
 		// 패킷을 전송할 클라이언트 id 작성
 		packet.WriteID(id);
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_ACK);
 
-		packet.Write<float>(trans.p.x);
-		packet.Write<float>(trans.p.y);
-		packet.Write<float>(trans.p.z);
-
-		packet.Write<float>(trans.q.x);
-		packet.Write<float>(trans.q.y);
-		packet.Write<float>(trans.q.z);
-		packet.Write<float>(trans.q.w);
+		//packet.Write<float>(trans.p.x);
+		//packet.Write<float>(trans.p.y);
+		//packet.Write<float>(trans.p.z);
+		//
+		//packet.Write<float>(trans.q.x);
+		//packet.Write<float>(trans.q.y);
+		//packet.Write<float>(trans.q.z);
+		//packet.Write<float>(trans.q.w);
 
 		// 패킷 전송
 		Send(packet);
@@ -99,8 +100,12 @@ namespace game
 
 		packet.Write<float>(trans.q.x);
 		packet.Write<float>(trans.q.y);
-		packet.Write<float>(trans.q.z);
 		packet.Write<float>(trans.q.w);
+		packet.Write<float>(trans.q.z);
+
+		//packet.Write<float>(trans.s.x);
+		//packet.Write<float>(trans.s.y);
+		//packet.Write<float>(trans.s.z);
 
 		Send(packet);
 	}
@@ -150,5 +155,42 @@ namespace game
 		packet.Write<float>(frame);
 
 		Send(packet);
+	}
+
+	void CSession::CreateObject(int32_t objID, network::CPacket& packet)
+	{
+		std::wstring name{};
+		packet.ReadWString(name);
+
+		TempTrans trans;
+		trans.p.x = packet.Read<float>();
+		trans.p.y = packet.Read<float>();
+		trans.p.z = packet.Read<float>();
+
+		trans.q.x = packet.Read<float>();
+		trans.q.y = packet.Read<float>();
+		trans.q.z = packet.Read<float>();
+		trans.q.w = packet.Read<float>();
+
+		trans.s.x = packet.Read<float>();
+		trans.s.y = packet.Read<float>();
+		trans.s.z = packet.Read<float>();
+
+		std::cout << std::format("Create Object\n");
+		std::wcout << std::format(L"name : {}\n", name);
+		std::cout << std::format("pos : {}, {}, {}\n", trans.p.x, trans.p.y, trans.p.z);
+		std::cout << std::format("quat : {}, {}, {}, {}\n", trans.q.x, trans.q.y, trans.q.z, trans.q.w);
+		std::cout << std::format("scale : {}, {}, {}\n\n", trans.s.x, trans.s.y, trans.s.z);
+
+		AddObject(objID, name, trans);
+	}
+
+	void CSession::AddObject(int32_t id, const std::wstring& name, TempTrans& trans)
+	{
+		Accessor<int32_t, CTempObject*> access;
+		//newObject->SetID(id);
+
+
+		//access->second = newObject;
 	}
 }

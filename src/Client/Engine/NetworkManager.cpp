@@ -11,6 +11,7 @@
 #include "Animator.h"
 #include "MeshRenderer.h"
 #include "Network.h"
+#include "Input.h"
 
 namespace network
 {
@@ -48,9 +49,9 @@ namespace network
 	//	m_objects.insert(std::make_pair(objectID, object));
 	}
 
-	void NetworkManager::RegisterObject(Object object)
+	void NetworkManager::RegisterObject(std::vector<std::shared_ptr<CGameObject>> object)
 	{
-		Object objs;
+		std::vector<std::shared_ptr<CGameObject>> objs;
 
 		for (auto& obj : object)
 		{
@@ -147,17 +148,44 @@ namespace network
 	void NetworkManager::SendLoginPacket()
 	{
 		network::CPacket packet;
+		auto pos{ GET_PLAYER[0]->GetTransform()->GetLocalPosition() };
+		auto quat{ GET_PLAYER[0]->GetTransform()->GetLocalRotation() };
+		auto scale{ GET_PLAYER[0]->GetTransform()->GetLocalScale() };
 
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_REQ);
-		// 델타 타임 작성
-		packet.Write<float>(DELTA_TIME);
 		// 애니메이션 인덱스 작성
-		packet.Write<int32_t>(0);
+		//packet.Write<int32_t>(0);
+
+		packet.WriteWString(GET_PLAYER[0]->GetName());
+
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
+
+		packet.Write<float>(quat.x);
+		packet.Write<float>(quat.y);
+		packet.Write<float>(quat.z);
+		packet.Write<float>(1.f);
+
+		packet.Write<float>(scale.x);
+		packet.Write<float>(scale.y);
+		packet.Write<float>(scale.z);
 
 		// 패킷 전송
 		Send(packet);
 		Recv();
+	}
+
+	void NetworkManager::SendKeyInputPacket()
+	{
+		network::CPacket packet;
+		auto input{ GET_SINGLE(Input)->GetKeyInput() };
+
+		packet.WriteProtocol(ProtocolID::MY_KEYINPUT_REQ);
+		packet.Write<unsigned long>(input);
+
+		Send(packet);
 	}
 #pragma endregion
 
@@ -313,7 +341,14 @@ namespace network
 			{
 				m_id = m_packet.ReadID();
 
-				AddPlayer(m_id);
+				m_objects.insert(std::make_pair(m_id, GET_PLAYER));
+
+				for (auto& object : m_objects[m_id])
+				{
+					object->GetNetwork()->SetID(m_id);
+				}
+
+				//AddPlayer(m_id);
 
 				std::cout << "ADD ME" << std::endl << std::endl;
 			}
@@ -418,23 +453,44 @@ namespace network
 
 	void NetworkManager::AddPlayer(int32_t id)
 	{
+		std::wstring fbxName{};
+
+		m_packet.ReadWString(fbxName);
+
 		Vec3 pos{};
 		pos.x = m_packet.Read<float>();
 		pos.y = m_packet.Read<float>();
 		pos.z = m_packet.Read<float>();
 
+		Vec4 quat{};
+		quat.x = m_packet.Read<float>();
+		quat.y = m_packet.Read<float>();
+		quat.z = m_packet.Read<float>();
+		quat.w = m_packet.Read<float>();
+
+		Vec3 scale{};
+		scale.x = m_packet.Read<float>();
+		scale.y = m_packet.Read<float>();
+		scale.z = m_packet.Read<float>();
+
+		std::wstring newName{ fbxName + std::to_wstring(id) };
+
+		std::cout << std::format("ID : {}\n", id);
+		std::wcout << std::format(L"name : {}\n", newName);
+		std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
+		std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
+		std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
+
 		ObjectDesc objectDesc;
-		objectDesc.strName = L"Dragon" + std::to_wstring(id);
-		objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
+		objectDesc.strName = newName;
+		objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\" + fbxName + L".fbx";
 		//objectDesc.strPath = L"..\\Resources\\FBX\\Dragon\\Dragon.fbx";
 		objectDesc.vPostion = pos;
-
-		std::cout << objectDesc.vPostion.x << std::endl;
-		objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
+		objectDesc.vScale = scale;
 		objectDesc.script = nullptr;// std::make_shared<Monster_Dragon>();
 
 		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
-		Object gameObjects{ meshData->Instantiate() };
+		std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
 		std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>() };
 
 		for (auto& gameObject : gameObjects)

@@ -1,20 +1,19 @@
 ﻿#pragma once
 
+#include <bitset>
+
 class CGameObject;
 
 namespace network
 {
 	class NetworkManager
 	{
-	private:
-		using Object = std::vector<std::shared_ptr<CGameObject>>;
-
 		DECLARE_SINGLE(NetworkManager);
 
 	public:
 		void Init();
 		void RegisterObject(std::shared_ptr<CGameObject> object);
-		void RegisterObject(Object object);
+		void RegisterObject(std::vector<std::shared_ptr<CGameObject>> object);
 
 		void Connect();
 		void EndThreadProcess();
@@ -24,6 +23,7 @@ namespace network
 		void Send(network::CPacket& packet);
 
 		void SendLoginPacket();
+		void SendKeyInputPacket();
 
 		constexpr uint32_t GetID() const { return m_id; }
 	private:
@@ -66,6 +66,6 @@ namespace network
 		int32_t m_remainSize;
 
 		int32_t m_id;
-		std::unordered_map<int32_t, Object> m_objects;
+		std::unordered_map<int32_t, std::vector<std::shared_ptr<CGameObject>>> m_objects;
 	};
 }

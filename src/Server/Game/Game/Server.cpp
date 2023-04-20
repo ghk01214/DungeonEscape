@@ -2,7 +2,10 @@
 #include "Session.h"
 #include "Object.h"
 #include "Player_OLD.h"
+#include "GameInstance.h"
 #include "Server.h"
+#include "SceneManager.h"
+#include "TimeManager.h"
 
 namespace game
 {
@@ -34,6 +37,9 @@ namespace game
 				client = nullptr;
 			}
 		}
+
+		GameInstance::GetInstance()->DestroyInstance();
+		m_gameInstance = nullptr;
 	}
 
 	void CServer::Run()
@@ -77,6 +83,9 @@ namespace game
 		{
 			ErrorQuit(L"listen function error");
 		}
+
+		m_gameInstance = GameInstance::GetInstance();
+		m_gameInstance->Init();
 	}
 
 	// accept 등록
@@ -97,18 +106,16 @@ namespace game
 		for (int32_t i = 0; i < 3; ++i)
 		{
 			m_workerThreads.emplace_back(&CServer::WorkerThread, this);
-			m_physxThreads.emplace_back(&CServer::PhysxThread, this);
 		}
+
+		m_gameThreads = std::thread{ &CServer::GameThread, this };
 
 		for (auto& thread : m_workerThreads)
 		{
 			thread.join();
 		}
 
-		for (auto& thread : m_physxThreads)
-		{
-			thread.join();
-		}
+		m_gameThreads.join();
 	}
 
 	void CServer::WorkerThread()
@@ -159,22 +166,19 @@ namespace game
 					Send(id, bytes, pOverEx);
 				}
 				break;
-				case network::COMPLETION::JUMP:
-				{
-					Jump(id, pOverEx);
-				}
-				break;
 				default:
 				break;
 			}
 		}
 	}
 
-	void CServer::PhysxThread()
+	void CServer::GameThread()
 	{
 		while (true)
 		{
-
+			double timeDelta = TimeManager::GetInstance()->GetElapsedTime();
+			m_gameInstance->Update(timeDelta);
+			m_gameInstance->LateUpdate(timeDelta);
 		}
 	}
 
@@ -271,8 +275,10 @@ namespace game
 		// 활성 세션수 증가
 		++m_activeSessionNum;
 
+		bool issueNewID{ m_reusableID.empty() };
+
 		// 재사용 가능 id가 없으면 최고 숫자 발급
-		if (bool issueNewID{ m_reusableID.empty() }; issueNewID == true)
+		if (issueNewID == true)
 			return m_userID++;
 
 		int32_t newID{ -1 };
@@ -385,59 +391,76 @@ namespace game
 
 		switch (protocol)
 		{
-			case ProtocolID::MY_TRANSFORM_REQ:
+			case ProtocolID::MY_ADD_REQ:
 			{
-				// 세션의 델타 타임 읽기
-				float deltaTime{ packet.Read<float>() };
-				// 타깃의 이동방향 읽기
-				uint8_t keyInput{ packet.Read<uint8_t>() };
-				server::KEY_STATE keyState{ packet.Read<server::KEY_STATE>() };
+				auto objId{ GET_SCENE->NewObjectID() };
 
-				auto pl{ dynamic_cast<CPlayer_OLD*>(session->GetMyObject()) };
+				//auto pl{ dynamic_cast<CPlayer_OLD*>(session->GetMyObject()) };
+				session->CreateObject(objId, packet);
 
-				std::cout << id << " : ";
-				pl->Transform(keyInput, keyState, deltaTime);
-
-				// 모든 세션에 대해 이동 패킷 전송
 				for (auto& player : m_sessions)
 				{
 					if (player->GetState() != STATE::INGAME)
 						continue;
 
 					if (player->GetID() == id)
-						player->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, session->GetMyObject());
-					else
-						player->SendTransformPacket(id, ProtocolID::WR_TRANSFORM_ACK, session->GetMyObject());
-				}
+						continue;
 
-				if (pl->IsJumping() == true)
-				{
-					network::OVERLAPPEDEX* pOverEx{ new network::OVERLAPPEDEX };
-					pOverEx->type = network::COMPLETION::JUMP;
 
-					PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
 				}
+			}
+			break;
+			case ProtocolID::MY_TRANSFORM_REQ:
+			{
+#pragma region
+				//// 타깃의 이동방향 읽기
+				//uint8_t keyInput{ packet.Read<uint8_t>() };
+				//server::KEY_STATE keyState{ packet.Read<server::KEY_STATE>() };
+
+				//auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
+
+				//std::cout << id << " : ";
+				//pl->Transform(keyInput, keyState);
+
+				//// 모든 세션에 대해 이동 패킷 전송
+				//for (auto& player : m_sessions)
+				//{
+				//	if (player->GetState() != STATE::INGAME)
+				//		continue;
+
+				//	if (player->GetID() == id)
+				//		player->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, session->GetMyObject());
+				//	else
+				//		player->SendTransformPacket(id, ProtocolID::WR_TRANSFORM_ACK, session->GetMyObject());
+				//}
+
+				//if (pl->IsJumping() == true)
+				//{
+				//	network::OVERLAPPEDEX* pOverEx{ new network::OVERLAPPEDEX };
+				//	pOverEx->type = network::COMPLETION::JUMP;
+
+				//	PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
+				//}
+#pragma endregion
+				auto objID{ packet.ReadID() };
+				// 타깃의 이동방향 읽기
+				unsigned long keyInput{ packet.Read<unsigned long>() };
+
+				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
+				GET_SCENE->SendTransformPacket(objID);
+			}
+			break;
+			case ProtocolID::MY_KEYINPUT_REQ:
+			{
+				auto objID{ packet.ReadID() };
+				// 타깃의 이동방향 읽기
+				auto keyInput{ packet.Read<unsigned long>() };
+
+				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
 			}
 			break;
 			case ProtocolID::MY_ANI_REQ:
 			{
-				int32_t index{ packet.Read<int32_t>() };
-				float aniFrame{ packet.Read<float>() };
-				auto pl{ dynamic_cast<CPlayer_OLD*>(session->GetMyObject()) };
-
-				pl->SetAniIndex(index);
-				pl->SetAniFrame(aniFrame);
-
-				for (auto& player : m_sessions)
-				{
-					if (player->GetState() != STATE::INGAME)
-						continue;
-
-					if (player->GetID() == id)
-						player->SendAniIndexPacket(id, ProtocolID::MY_ANI_ACK, pl);
-					else
-						player->SendAniIndexPacket(id, ProtocolID::WR_ANI_ACK, pl);
-				}
 			}
 			break;
 			default:
@@ -505,43 +528,16 @@ namespace game
 		// concurrent_hash_map의 정보에 안전하게 접근하기 위해서는 사용 필수
 		//Accessor<uint16_t, CObject*> access;
 		auto session{ m_sessions[id] };
+		auto objId{ GET_SCENE->NewObjectID() };
 
-		// 세션의 델타 타임 읽기
-		float deltaTime{ packet.Read<float>() };
+		//float x{ (m_activeSessionNum - 1) * 25.f };
 
-		float x{ (m_activeSessionNum - 1) * 25.f };
-		// 해당 세션의 델타 타임 설정
 		session->SetState(STATE::INGAME);
-		session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);
+		session->CreateObject(objId, packet);
 
-		auto pObject{ session->GetMyObject() };
+		GET_SCENE->EnterScene(session);
 
-		auto aniIndex{ packet.Read<int32_t>() };
-		dynamic_cast<CPlayer_OLD*>(pObject)->SetAniIndex(aniIndex);
-
-		session->SendLoginPacket(id, pObject);
-
-		for (auto& player : m_sessions)
-		{
-			// 접속 중이지 않은 세션은 패스
-			if (player->GetState() != STATE::INGAME)
-				continue;
-
-			// 다른 클라이언트에 오브젝트 추가 명령을 보내는 것이므로 자기 자신 제외
-			if (player->GetID() == id)
-				continue;
-
-			// 해당 클라이언트에 로그인 완료 패킷 전송
-			player->SendAddPacket(id, pObject);
-			session->SendAddPacket(player->GetID(), player->GetMyObject());
-		}
-	}
-
-	void CServer::Jump(int32_t id, network::OVERLAPPEDEX* pOverEx)
-	{
-		auto pl{ dynamic_cast<CPlayer_OLD*>(m_sessions[id]->GetMyObject()) };
-
-		pl->Jump();
+		session->SendLoginPacket(objId, nullptr);
 
 		for (auto& player : m_sessions)
 		{
@@ -549,14 +545,33 @@ namespace game
 				continue;
 
 			if (player->GetID() == id)
-				player->SendTransformPacket(id, ProtocolID::MY_JUMP_ACK, pl);
-			else
-				player->SendTransformPacket(id, ProtocolID::WR_JUMP_ACK, pl);
+				continue;
+
+
 		}
 
-		if (pl->IsJumping() == true)
-		{
-			PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
-		}
+		//session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);
+
+		//auto pObject{ session->GetMyObject() };
+
+		//auto aniIndex{ packet.Read<int32_t>() };
+		//dynamic_cast<CPlayer*>(pObject)->SetAniIndex(aniIndex);
+
+		//session->SendLoginPacket(id, pObject);
+
+		//for (auto& player : m_sessions)
+		//{
+		//	// 접속 중이지 않은 세션은 패스
+		//	if (player->GetState() != STATE::INGAME)
+		//		continue;
+
+		//	// 다른 클라이언트에 오브젝트 추가 명령을 보내는 것이므로 자기 자신 제외
+		//	if (player->GetID() == id)
+		//		continue;
+
+		//	// 해당 클라이언트에 로그인 완료 패킷 전송
+		//	player->SendAddPacket(id, pObject);
+		//	session->SendAddPacket(player->GetID(), player->GetMyObject());
+		//}
 	}
 }

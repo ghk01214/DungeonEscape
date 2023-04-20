@@ -45,7 +45,7 @@ void Engine::Update()
 	GET_SINGLE(Timer)->Update();
 	GET_SINGLE(SceneManager)->Update();
 	GET_SINGLE(InstancingManager)->ClearBuffer();
-
+	GET_NETWORK->SendKeyInputPacket();
 
 	Render();
 

@@ -17,6 +17,10 @@ namespace game
 		float w;
 	};
 
+	using Pos = Vec3;
+	//using Quat = Vec4;
+	using Scale = Vec3;
+
 	struct Trans
 	{
 		PosOLD p;
@@ -36,9 +40,9 @@ namespace game
 
 		virtual void Init() {}
 
-		virtual void Transform(uint8_t keyInput, server::KEY_STATE keyState, float deltaTime);
+		virtual void Transform(uint8_t keyInput, server::KEY_STATE keyState);
 
-		const Trans GetTransform() const { return m_transform; }
+		const Trans& GetTransform() const { return m_transform; }
 
 		void SetTransform(Trans transform) { m_transform = transform; }
 		void SetTransform(PosOLD pos, QuatOLD quat) { SetTransform(Trans{ pos, quat }); }

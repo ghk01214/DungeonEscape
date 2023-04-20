@@ -3,7 +3,6 @@
 #include "Component.h"
 
 // 네트워크
-
 namespace network
 {
 	class CNetwork : public Component
@@ -16,6 +15,7 @@ namespace network
 		virtual void FinalUpdate() override;
 
 #pragma region [SEND PACKET]
+		void SendAddObjectPacket();
 		void SendTransformPacket(uint8_t key, server::KEY_STATE state);
 		void SendAniIndexPacket(int32_t index, float updateTime);
 #pragma endregion
