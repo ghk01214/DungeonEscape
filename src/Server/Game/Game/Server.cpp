@@ -454,7 +454,7 @@ namespace game
 			{
 				auto objID{ packet.ReadID() };
 				// 타깃의 이동방향 읽기
-				auto keyInput{ packet.Read<unsigned long long>() };
+				auto keyInput{ packet.Read<unsigned long>() };
 
 				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
 			}

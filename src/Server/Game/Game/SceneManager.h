@@ -24,7 +24,7 @@ namespace game
 		void RemoveObject(int32_t id);
 		int32_t NewObjectID();
 
-		void DecodeKeyInput(int32_t id, int32_t objID, unsigned long long keyInput);
+		void DecodeKeyInput(int32_t id, int32_t objID, unsigned long keyInput);
 
 		void SendAddTempPacket(CTempObject* obj);
 		void SendTransformPacket(int32_t objID);

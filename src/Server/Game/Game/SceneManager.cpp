@@ -98,7 +98,7 @@ namespace game
 		return 0;
 	}
 
-	void CSceneManager::DecodeKeyInput(int32_t id, int32_t objID, unsigned long long keyInput)
+	void CSceneManager::DecodeKeyInput(int32_t id, int32_t objID, unsigned long keyInput)
 	{
 		// 매 프레임마다 클라이언트로부터 키 정보를 받아옴
 		//m_currentScene->DecodeKeyInput(keyInput, keyState);
