@@ -22,7 +22,9 @@ void RigidBody::Init()
 {
 	auto device = PhysDevice::GetInstance();
 
-	PxTransform pose(PxIdentity);
+	auto trans = m_ownerGameObject->GetTransform();
+	auto pos = trans->GetPosition();
+	PxTransform pose(pos.x, pos.y, pos.z, PxIdentity);
 
 	m_body = device->GetPhysics()->createRigidDynamic(pose);
 	m_body->setMass(10);
@@ -32,7 +34,7 @@ void RigidBody::Init()
 
 	device->GetScene()->addActor(*m_body);
 
-	SetTransfrom(m_ownerGameObject->GetTransform());
+	//원래 여기서 collider 생성, init, 부착까지 완료
 }
 
 void RigidBody::Release()
@@ -238,7 +240,7 @@ bool RigidBody::IsRigidbodySleep() const
 	return m_body->isSleeping();
 }
 
-void RigidBody::SetRigidbodySleep(bool value)
+void RigidBody::SetRigidBodySleep(bool value)
 {
 	if (isKinematic())
 	{

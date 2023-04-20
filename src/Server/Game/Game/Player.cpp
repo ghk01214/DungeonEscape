@@ -26,6 +26,7 @@ void Player::Update(double timeDelta)
 
 void Player::LateUpdate(double timeDelta)
 {
+	m_controller->ClearControllerCollisionInfo();
 }
 
 void Player::Release()

@@ -128,7 +128,7 @@ public:
 public:
 	void UpdateMassAndInertia();
 	bool IsRigidbodySleep() const;
-	void SetRigidbodySleep(bool value);
+	void SetRigidBodySleep(bool value);
 	float GetSleepThresholder() const;
 	void SetSleepThresholder(float value);
 

@@ -5,9 +5,13 @@
 #include "MapObject.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
+#include "CapsuleCollider.h"
 #include "SphereCollider.h"
 #include "MeshCollider.h"
 #include "Transform.h"
+#include "GameObject.h"
+#include "CustomController.h"
+#include "Component.h"
 
 TestLevel::TestLevel()
 {
@@ -35,6 +39,7 @@ void TestLevel::Init()
 	auto SphereBody = SphereObject->GetComponent<RigidBody>(L"RigidBody");
 	SphereBody->SetKinematic(false);
 	SphereBody->SetCCDFlag(true);
+	SphereBody->SetRigidBodySleep(false);
 	SphereBody->AddCollider<SphereCollider>(SphereObject->GetTransform()->GetScale());
 
 	SphereBody->SetAngularDamping(0.00001f);
@@ -44,7 +49,7 @@ void TestLevel::Init()
 #pragma endregion
 
 #pragma region Box1
-	auto Box1Object = objmgr->AddGameObjectToLayer<MapObject>(L"TestLayer", Vec3(20, 9.5, 0), Quat(0, 0, 0, 1), Vec3(15, 15, 15));
+	auto Box1Object = objmgr->AddGameObjectToLayer<MapObject>(L"TestLayer", Vec3(20, 10, 0), Quat(0, 0, 0, 1), Vec3(15, 15, 15));
 	auto Box1Body = Box1Object->GetComponent<RigidBody>(L"RigidBody");
 	Box1Body->AddCollider<BoxCollider>(Box1Object->GetTransform()->GetScale());
 	Box1Body->SetRotation(45.f, PhysicsAxis::Y);

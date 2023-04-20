@@ -46,7 +46,7 @@ void GameInstance::Update(double timeDelta)
 	m_testLevel->Update(timeDelta);
 	m_objectManager->Update(timeDelta);
 
-	//step simulation + clear Eventcallback
+	//clear Eventcallback > fetch/simulate
 	m_physDevice->Update(timeDelta);
 }
 

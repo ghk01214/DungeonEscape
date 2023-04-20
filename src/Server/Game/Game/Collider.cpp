@@ -30,7 +30,7 @@ void Collider::Init()
 	m_attachedRigidBody->Attach(this);
 
 	ApplyShapeFlags();
-	ApplyTransform();
+	//ApplyTransform();
 	ApplyLayer();
 
 	SetFrictionCombineMode(PhysicsCombineMode::Min);

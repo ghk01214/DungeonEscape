@@ -28,6 +28,7 @@ void MapObject::Update(double timeDelta)
 
 void MapObject::LateUpdate(double timeDelta)
 {
+	m_body->ClearCollidersCollisionInfo();
 }
 
 void MapObject::Release()

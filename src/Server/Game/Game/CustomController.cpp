@@ -26,9 +26,11 @@ void CustomController::Init()
 	//멤버 component 생성
 	Transform* t = m_ownerGameObject->GetTransform();
 	m_body = AddComponent<RigidBody>();
-	m_collider = m_body->AddCollider<CapsuleCollider>(m_ownerGameObject->GetTransform()->GetScale());
-
-	//body 초기화
+	//m_collider = m_body->AddCollider<CapsuleCollider>(m_ownerGameObject->GetTransform()->GetScale());
+	m_collider = m_body->AddComponent<CapsuleCollider>(m_body, m_ownerGameObject->GetTransform()->GetScale());
+	
+		//body 초기화
+	m_body->SetSleepThresholder(1e-6f);
 	m_body->SetRotation(90, PhysicsAxis::Z);				//capsule is laying by default.
 	m_body->SetRotationLockAxis(PhysicsAxis::All, true);
 	m_body->SetSleepThresholder(0.001f);
@@ -44,8 +46,8 @@ void CustomController::Release()
 
 void CustomController::Move(uint8_t keyType, server::KEY_STATE keyState)
 {
-	//DirectionInput(keyType);
-	//Movement(keyType, keyState);
+	DirectionInput(keyType);
+	Movement(keyType, keyState);
 }
 
 bool CustomController::CheckOnGround(CollisionInfoType type, PxVec3& surfaceNormal)
@@ -199,8 +201,8 @@ void CustomController::Movement(uint8_t keyType, server::KEY_STATE keyState)
 	//check onGround
 
 	GetSlidingVector(CollisionInfoType::Stay);
-	PxVec3 a{ 0.f };
-	CheckOnGround(CollisionInfoType::Stay, a);
+	PxVec3 surfaceNormal{ 0.f };
+	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
 	//if (((keyType & static_cast<uint8_t>(server::KEY_TYPE::SPACE)) != 0) && keyState == server::KEY_STATE::DOWN && m_onGround)
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_onGround)
@@ -245,4 +247,9 @@ void CustomController::Movement(uint8_t keyType, server::KEY_STATE keyState)
 
 	m_slidingVector = PxVec3(0.f);
 	m_moveDirection = PxVec3(0.f);
+}
+
+void CustomController::ClearControllerCollisionInfo()
+{
+	m_body->ClearCollidersCollisionInfo();
 }

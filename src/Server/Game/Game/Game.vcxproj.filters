@@ -44,27 +44,6 @@
     <Filter Include="02. Physx\CustomController">
       <UniqueIdentifier>{6a258216-4807-4f59-a55b-280ab3648ecf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Physx\PhysDevice">
-      <UniqueIdentifier>{98205cdf-b033-42c0-9f00-3287d050e728}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Physx\PhysDevice\FilterCallback">
-      <UniqueIdentifier>{539b1455-be53-4ba3-82a6-735abd5d0d51}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Physx\PhysDevice\FilterShader">
-      <UniqueIdentifier>{137f7658-6687-4623-895c-16e33e743a8b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Physx\PhysDevice\PhysQuery">
-      <UniqueIdentifier>{53f4d438-2df5-4c78-a2b4-2d85f1db325c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Physx\PhysDevice\PhysQuery\RaycastElements">
-      <UniqueIdentifier>{c3809ef3-54c3-4a0e-9fb1-941efacfe375}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Physx\PhysDevice\EventCallback">
-      <UniqueIdentifier>{432cfab7-0ceb-4f6a-a7a0-62a455e7043b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. Physx\PhysDevice\EventCallback\CollisionInfo">
-      <UniqueIdentifier>{578783e8-ea6d-4545-805e-e29ca85dc300}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. Utility">
       <UniqueIdentifier>{9d7d2d7f-59b8-4a91-9717-7942f34b865f}</UniqueIdentifier>
     </Filter>
@@ -139,6 +118,27 @@
     </Filter>
     <Filter Include="03. Game\00. Level">
       <UniqueIdentifier>{e2cb405e-61cd-4e6b-842e-4dd61c2c804a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\PhysDevice">
+      <UniqueIdentifier>{98205cdf-b033-42c0-9f00-3287d050e728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\PhysDevice\FilterCallback">
+      <UniqueIdentifier>{539b1455-be53-4ba3-82a6-735abd5d0d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\PhysDevice\FilterShader">
+      <UniqueIdentifier>{137f7658-6687-4623-895c-16e33e743a8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\PhysDevice\PhysQuery">
+      <UniqueIdentifier>{53f4d438-2df5-4c78-a2b4-2d85f1db325c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\PhysDevice\PhysQuery\RaycastElements">
+      <UniqueIdentifier>{c3809ef3-54c3-4a0e-9fb1-941efacfe375}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\PhysDevice\EventCallback">
+      <UniqueIdentifier>{432cfab7-0ceb-4f6a-a7a0-62a455e7043b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Physx\PhysDevice\EventCallback\CollisionInfo">
+      <UniqueIdentifier>{578783e8-ea6d-4545-805e-e29ca85dc300}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

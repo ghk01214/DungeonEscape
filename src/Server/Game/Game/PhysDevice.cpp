@@ -74,9 +74,21 @@ void PhysDevice::Init()
 
 	m_Cooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_Foundation, cookingParams);
 
-	//this is a custom physxQuery
 	m_query = new PhysQuery;
 	m_query->Init();
+
+#pragma region error searching
+	//PxMaterial* mat = m_Physics->createMaterial(0.5f, 0.5f, 0.6f);
+	//PxRigidStatic * groundPlane = PxCreatePlane(*m_Physics, PxPlane(0, 1, 0, 0), *mat);
+	//m_Scene->addActor(*groundPlane);
+
+	//PxRigidDynamic* testDynamic = m_Physics->createRigidDynamic(PxTransform(0, 10, 0));
+
+	//PxShape* shape = m_Physics->createShape(PxBoxGeometry(5.0f, 5.0f, 5.0f), *mat);
+	//testDynamic->attachShape(*shape);
+	//m_Scene->addActor(*testDynamic);
+	//testDynamic->wakeUp();
+#pragma endregion
 }
 
 void PhysDevice::StepSim(double timeDelta)
@@ -88,7 +100,6 @@ void PhysDevice::StepSim(double timeDelta)
 void PhysDevice::PreUpdate()
 {
 	m_eventCallback->Notify();
-	//pxController/customController updates
 }
 
 void PhysDevice::Update(double timeDelta)
@@ -223,7 +234,17 @@ void PhysDevice::ClearEventCallback()
 		{
 			RigidBody* body = object->GetComponent<RigidBody>(L"RigidBody");
 			if (body)
+			{
 				body->ClearCollidersCollisionInfo();
+			}
+			else
+			{
+				CustomController* controller = object->GetComponent<CustomController>(L"CustomController");
+				if (controller)
+				{
+					controller->ClearControllerCollisionInfo();
+				}
+			}
 		}
 	}
 

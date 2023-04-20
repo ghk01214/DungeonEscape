@@ -21,6 +21,9 @@ public:
 	bool CheckOnGround_Raycast();
 	void DirectionInput(uint8_t keyType);
 	void Movement(uint8_t keyType, server::KEY_STATE keyState);
+
+public:
+	void ClearControllerCollisionInfo();
 private:
 	physx::PxVec3	m_moveDirection{ 0.f };
 	physx::PxVec3	m_slidingVector{ 0.f };

@@ -48,7 +48,7 @@ void CapsuleCollider::SetExtent(Vec3 extent)
 PxCapsuleGeometry CapsuleCollider::CreateCapsuleGeometry()
 {
     PxCapsuleGeometry capsule;
-    capsule.radius = m_radius;
-    capsule.halfHeight = m_halfHeight;
+    capsule.radius = PxReal(m_radius);
+    capsule.halfHeight = PxReal(m_halfHeight);
     return capsule;
 }

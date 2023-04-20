@@ -70,10 +70,6 @@ protected:
 	uint8_t m_layerIndex = 0;
 	uint32_t m_ignoreLayerBits = 0x00000000;
 
-	float scaleX = 1.f;
-	float scaleY = 1.f;
-	float scaleZ = 1.f;
-
 public:
 	std::vector<std::shared_ptr<CollisionPairInfo>> m_CollisionEnter;
 	std::vector<std::shared_ptr<CollisionPairInfo>> m_CollisionExit;
