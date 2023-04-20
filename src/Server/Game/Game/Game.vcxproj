@@ -153,10 +153,23 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="TempObject.cpp" />
+    <ClCompile Include="BoxCollider.cpp" />
+    <ClCompile Include="CapsuleCollider.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="CollisionPairInfo.cpp" />
+    <ClCompile Include="ControllerManagerWrapper.cpp" />
+    <ClCompile Include="ControllerWrapper.cpp" />
+    <ClCompile Include="CustomController.cpp" />
+    <ClCompile Include="CustomSimulationEventCallback.cpp" />
+    <ClCompile Include="CustomFilterShader.cpp" />
+    <ClCompile Include="CustomQueryFilterCallback.cpp" />
+    <ClCompile Include="MeshCollider.cpp" />
     <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="PhysDevice.cpp" />
+    <ClCompile Include="PhysicsRay.cpp" />
+    <ClCompile Include="PhysQuery.cpp" />
+    <ClCompile Include="RaycastHit.cpp" />
+    <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -166,22 +179,38 @@
     </ClCompile>
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Session.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\vendor\include\Define.h" />
     <ClInclude Include="..\..\..\..\vendor\include\OVERLAPPEDEX.h" />
     <ClInclude Include="..\..\..\..\vendor\include\Packet.h" />
     <ClInclude Include="..\..\..\..\vendor\include\protocol.hpp" />
-    <ClInclude Include="..\..\..\..\vendor\include\Singleton.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="TempObject.h" />
+    <ClInclude Include="BoxCollider.h" />
+    <ClInclude Include="CapsuleCollider.h" />
+    <ClInclude Include="Collider.h" />
+    <ClInclude Include="CollisionPairInfo.h" />
+    <ClInclude Include="ControllerManagerWrapper.h" />
+    <ClInclude Include="ControllerWrapper.h" />
+    <ClInclude Include="CustomController.h" />
+    <ClInclude Include="CustomSimulationEventCallback.h" />
+    <ClInclude Include="CustomFilterShader.h" />
+    <ClInclude Include="CustomQueryFilterCallback.h" />
+    <ClInclude Include="MeshCollider.h" />
     <ClInclude Include="NPC.h" />
+    <ClInclude Include="PhysDevice.h" />
+    <ClInclude Include="PhysicsRay.h" />
+    <ClInclude Include="PhysQuery.h" />
+    <ClInclude Include="physx_define.h" />
+    <ClInclude Include="physx_utils.h" />
+    <ClInclude Include="RaycastHit.h" />
+    <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Session.h" />
+    <ClInclude Include="SphereCollider.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

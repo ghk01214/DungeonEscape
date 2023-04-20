@@ -1,11 +1,15 @@
 ﻿#pragma once
 
+#define _SILENCE_CXX20_CISO646_REMOVED_WARNING
+
 #include <iostream>
 #include <format>
 #include <string>
 #include <chrono>
 #include <algorithm>
 #include <random>
+#include <memory.h>
+#include <assert.h>
 
 #include <array>
 #include <vector>
@@ -28,6 +32,8 @@
 #include <protocol.hpp>
 #include <Packet.h>
 #include <OVERLAPPEDEX.h>
+
+#include <PxPhysicsAPI.h>
 
 #pragma comment(lib, "WS2_32")
 #pragma comment(lib, "MSWSock")
