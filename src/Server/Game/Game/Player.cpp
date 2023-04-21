@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Player.h"
 #include "CustomController.h"
 
@@ -33,4 +33,23 @@ void Player::Release()
 {
 	m_controller = nullptr;
 	GameObject::Release();
+}
+
+unsigned int Player::GetPlayerID()
+{
+	return m_playerID;
+}
+
+bool Player::SetPlayerID(unsigned int playerID)
+{
+	static bool IDSet = false;
+
+	if (!IDSet)
+	{
+		m_playerID = playerID;
+		IDSet = true;
+		return true;
+	}
+
+	return false;
 }

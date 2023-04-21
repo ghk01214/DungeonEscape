@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "GameObject.h"
 
@@ -17,5 +17,12 @@ public:
 	virtual void Release();
 
 public:
+	unsigned int GetPlayerID();
+	//최초 아이디 배정만 true값을 리턴한다.
+	bool SetPlayerID(unsigned int playerID);
+
+public:
 	CustomController* m_controller = nullptr;
+
+	unsigned int m_playerID = 4294967295U;
 };

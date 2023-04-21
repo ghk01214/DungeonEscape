@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "PhysDevice.h"
 #include "CustomFilterShader.h"
 #include "CustomSimulationEventCallback.h"
@@ -159,67 +159,6 @@ PhysQuery* PhysDevice::GetQuery() const
 PxCooking* PhysDevice::GetCooking() const
 {
 	return m_Cooking;
-}
-
-void PhysDevice::InitialPlacement()
-{
-#pragma region oldCode
-//	TestCreateDynamic(ColliderShape::COLLIDER_BOX, 0, 2, 0);				//plane = 0
-//	TestCreateDynamic(ColliderShape::COLLIDER_SPHERE, 20, 20, 20);			//ball = 1
-//	TestCreateDynamic(ColliderShape::COLLIDER_BOX, 20, 9.5, 0);				//box1 = 2
-//	TestCreateDynamic(ColliderShape::COLLIDER_BOX, 10, 5.5, 0);				//box1 = 3
-//
-//	m_RigidBodies[2]->SetRotation(45.f, PhysicsAxis::Y);
-//	m_RigidBodies[3]->SetRotation(-45.f, PhysicsAxis::X);
-//
-//#pragma region plane 크기 조정
-//	RigidBody* planeBody = m_RigidBodies[0].get();
-//	planeBody->SetCCDFlag(false);
-//	planeBody->SetKinematic(true);
-//
-//	BoxCollider* plane = dynamic_cast<BoxCollider*>(m_RigidBodies[0]->GetCollider(0));
-//	if (plane == nullptr)
-//		return;
-//	plane->SetExtents(plane->GetExtentX() * 100.f, plane->GetExtentX() * 2.f, plane->GetExtentX() * 100.f);
-//
-//#pragma endregion
-//
-//#pragma region Sphere크기 조정
-//	SphereCollider* sphere = dynamic_cast<SphereCollider*>(m_RigidBodies[1]->GetCollider(0));
-//	if (sphere == nullptr)
-//		return;
-//	sphere->SetRadius(2.f);
-//
-//	PxRigidBody* body = m_RigidBodies[1]->GetBody();
-//	body->setAngularDamping(0.00001f);
-//	body->setLinearDamping(0.15f);
-//	body->setMass(body->getMass() * 0.20f);
-//	m_RigidBodies[0]->UpdateMassAndInertia();
-//#pragma endregion
-//
-//#pragma region Box1크기 변경
-//	RigidBody* box1Body = m_RigidBodies[2].get();
-//	box1Body->SetCCDFlag(false);
-//	box1Body->SetKinematic(true);
-//	BoxCollider* box1 = dynamic_cast<BoxCollider*>(m_RigidBodies[2]->GetCollider(0));
-//	if (box1 == nullptr)
-//		return;
-//	box1->SetExtents(box1->GetExtentX() * 15.f, box1->GetExtentY() * 15.f, box1->GetExtentZ() * 15.f);
-//#pragma endregion
-//
-//#pragma region Box2크기 변경
-//	RigidBody* box2Body = m_RigidBodies[3].get();
-//	box2Body->SetCCDFlag(false);
-//	box2Body->SetKinematic(true);
-//	BoxCollider* box2 = dynamic_cast<BoxCollider*>(m_RigidBodies[3]->GetCollider(0));
-//	if (box2 == nullptr)
-//		return;
-//	box2->SetExtents(box2->GetExtentX() * 10.f, box2->GetExtentY() * 1.f, box2->GetExtentZ() * 10.f);
-//	//box2->GetPxShape()->setFlag(PxShapeFlag::eSIMULATION_SHAPE, true);
-//	//box2->GetPxShape()->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-//#pragma endregion
-
-#pragma endregion
 }
 
 void PhysDevice::ClearEventCallback()

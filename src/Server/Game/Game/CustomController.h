@@ -24,6 +24,11 @@ public:
 
 public:
 	void ClearControllerCollisionInfo();
+
+public:
+	void keyboardReceive(unsigned long key);
+	void KeyboardClear();
+
 private:
 	physx::PxVec3	m_moveDirection{ 0.f };
 	physx::PxVec3	m_slidingVector{ 0.f };
@@ -33,6 +38,14 @@ private:
 private:
 	RigidBody*			m_body = nullptr;
 	CapsuleCollider* m_collider = nullptr;
+
+#pragma region keyboardVariable
+	bool			m_keyboardLeft = false;
+	bool			m_keyboardRight = false;
+	bool			m_keyboardUp = false;
+	bool			m_keyboardDown = false;
+	bool			m_keyboardSpace = false;
+#pragma endregion
 };
 
 

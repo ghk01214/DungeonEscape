@@ -6,6 +6,11 @@
 #include "Server.h"
 #include "SceneManager.h"
 #include "TimeManager.h"
+#include "ObjectManager.h"
+#include "Layer.h"
+#include "Object.h"
+#include "Player.h"
+#include "CustomController.h"
 
 namespace game
 {
@@ -458,6 +463,18 @@ namespace game
 
 				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
 				// 용섭 : 플레이어 키보드 입력(id, objID, keyInput)
+				auto playerLayer = ObjectManager::GetInstance()->GetLayer(L"Layer_Player");
+				for (auto& playerObject : playerLayer->GetGameObjects())
+				{
+					auto player = dynamic_cast<Player*>(playerObject);
+					if (player->GetPlayerID() == objID)
+					{
+						auto customController = player->GetComponent<CustomController>(L"CustomController");
+						customController->keyboardReceive(keyInput);
+					}
+					
+				}
+
 			}
 			break;
 			case ProtocolID::MY_ANI_REQ:
@@ -535,8 +552,15 @@ namespace game
 
 		session->SetState(STATE::INGAME);
 
-		session->CreateObject(objId, packet);
+		//session->CreateObject(objId, packet);
 		// 용섭 : 플레이어 생성(objId, packet)
+		auto playerLayer = ObjectManager::GetInstance()->GetLayer(L"Layer_Player");
+		for (auto& playerObject : playerLayer->GetGameObjects())
+		{
+			bool result = dynamic_cast<Player*>(playerObject)->SetPlayerID(objId);
+			if (result)
+				break;
+		}
 
 		session->SendLoginPacket(objId, nullptr);
 

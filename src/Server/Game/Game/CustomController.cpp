@@ -9,6 +9,7 @@
 #include "PhysQuery.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include <bitset>
 
 using namespace physx;
 
@@ -169,23 +170,15 @@ void CustomController::DirectionInput(uint8_t keyType)
 {
 	m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
-	//if ((keyType & static_cast<uint8_t>(server::KEY_TYPE::LEFT)) != 0)
-	//	m_moveDirection.x = -1.f;
-	//else if ((keyType & static_cast<uint8_t>(server::KEY_TYPE::RIGHT)) != 0)
-	//	m_moveDirection.x = 1.f;
-	//if ((keyType & static_cast<uint8_t>(server::KEY_TYPE::UP)) != 0)
-	//	m_moveDirection.z = 1.f;
-	//else if ((keyType & static_cast<uint8_t>(server::KEY_TYPE::DOWN)) != 0)
-	//	m_moveDirection.z = -1.f;
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	if (m_keyboardLeft)
 		m_moveDirection.x = -1.f;
-	else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	else if (m_keyboardRight)
 		m_moveDirection.x = 1.f;
-	if (GetAsyncKeyState(VK_UP) & 0x8000)
+
+	if (m_keyboardUp)
 		m_moveDirection.z = 1.f;
-	else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	else if (m_keyboardDown)
 		m_moveDirection.z = -1.f;
-	
 
 	m_moveDirection.normalize();
 }
@@ -205,7 +198,7 @@ void CustomController::Movement(uint8_t keyType, server::KEY_STATE keyState)
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
 	//if (((keyType & static_cast<uint8_t>(server::KEY_TYPE::SPACE)) != 0) && keyState == server::KEY_STATE::DOWN && m_onGround)
-	if (GetAsyncKeyState(VK_SPACE) & 0x8000 && m_onGround)
+	if (m_keyboardSpace && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
@@ -225,13 +218,9 @@ void CustomController::Movement(uint8_t keyType, server::KEY_STATE keyState)
 
 	//friction adjustment
 	if (!m_onGround)
-	{
 		m_collider->SetFriction(0.f);
-	}
 	else
-	{
 		m_collider->SetFriction(1.f);
-	}
 
 	// Apply the adjusted vector to the character's velocity
 	if (m_slidingVector.magnitude() > 0)
@@ -247,9 +236,43 @@ void CustomController::Movement(uint8_t keyType, server::KEY_STATE keyState)
 
 	m_slidingVector = PxVec3(0.f);
 	m_moveDirection = PxVec3(0.f);
+	KeyboardClear();
 }
 
 void CustomController::ClearControllerCollisionInfo()
 {
 	m_body->ClearCollidersCollisionInfo();
+}
+
+void CustomController::keyboardReceive(unsigned long key)
+{
+	const int32_t useKeyCount{ static_cast<int32_t>(server::KEY_TYPE::MAX) };
+	std::bitset<useKeyCount> input{ key };
+
+	m_keyboardLeft = false;
+	m_keyboardRight = false;
+	m_keyboardUp = false;
+	m_keyboardDown = false;
+	m_keyboardSpace = false;
+
+	if (input[static_cast<int32_t>(server::KEY_TYPE::LEFT)] == true)
+		m_keyboardLeft = true;
+	else if (input[static_cast<int32_t>(server::KEY_TYPE::RIGHT)] == true)
+		m_keyboardRight = true;
+	if (input[static_cast<int32_t>(server::KEY_TYPE::UP)] == true)
+		m_keyboardUp = true;
+	else if (input[static_cast<int32_t>(server::KEY_TYPE::DOWN)] == true)
+		m_keyboardDown = true;
+
+	if (input[static_cast<int32_t>(server::KEY_TYPE::SPACE)] == true)
+		m_keyboardSpace = true;
+}
+
+void CustomController::KeyboardClear()
+{
+	m_keyboardLeft	= false;
+	m_keyboardRight = false;
+	m_keyboardUp	= false;
+	m_keyboardDown	= false;
+	m_keyboardSpace	= false;
 }

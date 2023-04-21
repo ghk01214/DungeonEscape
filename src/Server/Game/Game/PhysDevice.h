@@ -31,9 +31,6 @@ public:
 
 	PhysQuery*				GetQuery() const;
 
-public:
-	void InitialPlacement();
-
 private:
 	physx::PxDefaultAllocator				m_Allocator;
 	physx::PxDefaultErrorCallback			m_ErrorCallback;
