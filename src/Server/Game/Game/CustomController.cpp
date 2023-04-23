@@ -29,7 +29,7 @@ void CustomController::Init()
 	m_body = AddComponent<RigidBody>();
 	//m_collider = m_body->AddCollider<CapsuleCollider>(m_ownerGameObject->GetTransform()->GetScale());
 	m_collider = m_body->AddComponent<CapsuleCollider>(m_body, m_ownerGameObject->GetTransform()->GetScale());
-	
+
 		//body 초기화
 	m_body->SetSleepThresholder(1e-6f);
 	m_body->SetRotation(90, PhysicsAxis::Z);				//capsule is laying by default.
@@ -226,7 +226,7 @@ void CustomController::Movement(uint8_t keyType, server::KEY_STATE keyState)
 	if (m_slidingVector.magnitude() > 0)
 	{
 		m_slidingVector.y = m_body->GetVelocity().y;
-		m_body->SetVelocity(m_slidingVector);	// * movespeed?	
+		m_body->SetVelocity(m_slidingVector);	// * movespeed?
 	}
 	else
 	{
@@ -244,7 +244,7 @@ void CustomController::ClearControllerCollisionInfo()
 	m_body->ClearCollidersCollisionInfo();
 }
 
-void CustomController::keyboardReceive(unsigned long key)
+void CustomController::KeyboardReceive(unsigned long key)
 {
 	const int32_t useKeyCount{ static_cast<int32_t>(server::KEY_TYPE::MAX) };
 	std::bitset<useKeyCount> input{ key };

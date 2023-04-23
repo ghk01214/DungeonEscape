@@ -9,6 +9,7 @@ namespace game
 {
 	void CSceneManager::Init()
 	{
+		m_objectsNum = 3;
 		m_activeSessionNum = 0;
 	}
 
@@ -55,8 +56,8 @@ namespace game
 		m_sceneLock.unlock();*/
 	}
 
-	void CSceneManager::CreateObject(const std::wstring& fbxName, TempTrans trans)
-	{
+	//void CSceneManager::CreateObject(const std::wstring& fbxName, TempTrans trans)
+	//{
 		//auto objID{ NewObjectID() };
 		//CTempObject* tempObject{ new CTempObject{ fbxName, trans } };
 		//tempObject->SetID(objID);
@@ -67,7 +68,7 @@ namespace game
 		//access->second = tempObject;
 		//
 		//SendAddTempPacket(tempObject);
-	}
+	//}
 
 	void CSceneManager::RemoveObject(int32_t id)
 	{
@@ -78,22 +79,22 @@ namespace game
 
 	int32_t CSceneManager::NewObjectID()
 	{
-		//bool issueNewID{ m_reusableObjectID.empty() };
+		bool issueNewID{ m_reusableObjectID.empty() };
 
-		//// 재사용 가능 id가 없으면 최고 숫자 발급
-		//if (issueNewID == true)
-		//	return m_objectsNum++;
+		// 재사용 가능 id가 없으면 최고 숫자 발급
+		if (issueNewID == true)
+			return ++m_objectsNum;
 
-		//int32_t newID{ -1 };
+		int32_t newID{ -1 };
 
-		//// 재사용 가능한 id가 있으면 재사용 가능한 id 중 가장 낮은 id 발급
-		//while (true)
-		//{
-		//	bool issueReuseID{ m_reusableObjectID.try_pop(newID) };
+		// 재사용 가능한 id가 있으면 재사용 가능한 id 중 가장 낮은 id 발급
+		while (true)
+		{
+			bool issueReuseID{ m_reusableObjectID.try_pop(newID) };
 
-		//	if (issueReuseID == true)
-		//		return newID;
-		//}
+			if (issueReuseID == true)
+				return newID;
+		}
 
 		return 0;
 	}

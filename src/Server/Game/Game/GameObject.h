@@ -66,11 +66,16 @@ public:
 
 public:
 	Transform* GetTransform();
+	int32_t GetID() { return m_id; }
+
+	void SetID(int32_t id) { m_id = id; }
 
 protected:
 	bool m_removalFlag = false;			//update()에 수집, lateUpdate()에 실제 삭제 진행
     std::unordered_map<std::wstring, Component*> m_components;
-	
+
 	Transform* m_transform = nullptr;	//생성자에서 제작하여 m_components안에 보관
 										//편의상 멤버변수로도 보관
+
+	int32_t m_id;
 };
