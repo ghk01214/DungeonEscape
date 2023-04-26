@@ -67,6 +67,7 @@ void PhysDevice::Init()
 	}
 
 #pragma endregion pvd
+
 	PxTolerancesScale scale;
 	PxCookingParams cookingParams(scale);
 	cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eWELD_VERTICES;

@@ -18,6 +18,7 @@ Collider::~Collider()
 void Collider::Init()
 {
 	auto phys = PhysDevice::GetInstance()->GetPhysics();
+	auto cooking = PhysDevice::GetInstance()->GetCooking();
 
 	m_material = phys->createMaterial(1.f, 1.f, 0.f);
 	m_material->setFlag(PxMaterialFlag::eDISABLE_FRICTION, false);

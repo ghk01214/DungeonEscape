@@ -28,7 +28,7 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Player");
 
 
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
 
 #pragma region Plane
 	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
@@ -65,9 +65,9 @@ void TestLevel::Init()
 #pragma endregion
 
 #pragma region Mesh
-	auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(-10, 2, 0), Quat(0, 0, 0, 1), Vec3(1, 1, 1));
-	auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
-	MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale());
+	//auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(-10, 2, 0), Quat(0, 0, 0, 1), Vec3(1, 1, 1));
+	//auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+	//MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), L"Moon", L"..\\Resources\\FBX\\Moon\\moon.fbx");
 #pragma endregion
 }
 
