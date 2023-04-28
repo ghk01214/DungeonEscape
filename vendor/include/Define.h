@@ -5,8 +5,7 @@
 
 #define MAX_STR_SIZE 100
 #define MAX_LENGTH 4086
-#define MAX_USER 2000
-
+#define MAX_USER 3
 #define MAX_SCENE 3
 
 	enum class KEY_TYPE

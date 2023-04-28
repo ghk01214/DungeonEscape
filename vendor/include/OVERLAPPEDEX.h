@@ -13,7 +13,7 @@ namespace network
 		ACCEPT,
 		RECV,
 		SEND,
-		JUMP,
+		BROADCAST,
 		QUIT,
 		MAX
 	};

@@ -1,16 +1,16 @@
 ﻿#include "pch.h"
 #include "Session.h"
-#include "Object.h"
-#include "Player_OLD.h"
 #include "GameInstance.h"
 #include "Server.h"
-#include "SceneManager.h"
 #include "TimeManager.h"
 #include "ObjectManager.h"
 #include "Layer.h"
-#include "Object.h"
 #include "Player.h"
 #include "CustomController.h"
+#include "MapObject.h"
+#include "RigidBody.h"
+#include "BoxCollider.h"
+#include "Transform.h"
 
 namespace game
 {
@@ -25,7 +25,7 @@ namespace game
 		// 클래스 생성 시 빈 세션 생성
 		for (int32_t i = 0; i < MAX_USER; ++i)
 		{
-			m_sessions[i] = new CSession{ new CPlayer_OLD{} };
+			m_sessions[i] = new CSession{ new Player{} };
 		}
 	}
 
@@ -171,6 +171,10 @@ namespace game
 					Send(id, bytes, pOverEx);
 				}
 				break;
+				case network::COMPLETION::BROADCAST:
+				{
+					BroadcastResult(id);
+				}
 				default:
 				break;
 			}
@@ -179,11 +183,18 @@ namespace game
 
 	void CServer::GameThread()
 	{
+		network::OVERLAPPEDEX overEX{ network::COMPLETION::BROADCAST };
+
 		while (true)
 		{
 			double timeDelta = TimeManager::GetInstance()->GetElapsedTime();
 			m_gameInstance->Update(timeDelta);
 			m_gameInstance->LateUpdate(timeDelta);
+
+			for (auto& client : m_sessions)
+			{
+				PostQueuedCompletionStatus(m_iocp, 1, client->GetID(), &overEX.over);
+			}
 		}
 	}
 
@@ -298,12 +309,45 @@ namespace game
 		}
 	}
 
+	int32_t CServer::NewObjectID()
+	{
+		bool issueNewID{ m_reusableObjectID.empty() };
+
+		// 재사용 가능 id가 없으면 최고 숫자 발급
+		if (issueNewID == true)
+			return ++m_objectsNum;
+
+		int32_t newID{ -1 };
+
+		// 재사용 가능한 id가 있으면 재사용 가능한 id 중 가장 낮은 id 발급
+		while (true)
+		{
+			bool issueReuseID{ m_reusableObjectID.try_pop(newID) };
+
+			if (issueReuseID == true)
+				return newID;
+		}
+
+		return 0;
+	}
+
 	void CServer::Disconnect(uint32_t id)
 	{
 		if (m_sessions[id]->GetState() == STATE::FREE)
 		{
 			std::cout << std::format("Already disconnected\n");
 			return;
+		}
+
+		for (auto& session : m_sessions)
+		{
+			if (session->GetState() != STATE::INGAME)
+				continue;
+
+			if (session->GetID() == id)
+				continue;
+
+			session->SendRemovePacket(id);
 		}
 
 		m_sessions[id]->Reset();
@@ -398,86 +442,40 @@ namespace game
 		{
 			case ProtocolID::MY_ADD_REQ:
 			{
-				auto objId{ GET_SCENE->NewObjectID() };
+				auto objId{ NewObjectID() };
 
-				//auto pl{ dynamic_cast<CPlayer_OLD*>(session->GetMyObject()) };
-				session->CreateObject(objId, packet);
+				MapObject* object{ CreateObject<MapObject>(packet) };
 
-				for (auto& player : m_sessions)
+				// 클라이언트 별로 사전 생성 오브젝트가 다를 시 추가 작성
+				/*for (auto& client : m_sessions)
 				{
-					if (player->GetState() != STATE::INGAME)
+					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					if (player->GetID() == id)
+					if (client->GetID() == id)
 						continue;
 
-
-				}
-			}
-			break;
-			case ProtocolID::MY_TRANSFORM_REQ:
-			{
-#pragma region
-				//// 타깃의 이동방향 읽기
-				//uint8_t keyInput{ packet.Read<uint8_t>() };
-				//server::KEY_STATE keyState{ packet.Read<server::KEY_STATE>() };
-
-				//auto pl{ dynamic_cast<CPlayer*>(session->GetMyObject()) };
-
-				//std::cout << id << " : ";
-				//pl->Transform(keyInput, keyState);
-
-				//// 모든 세션에 대해 이동 패킷 전송
-				//for (auto& player : m_sessions)
-				//{
-				//	if (player->GetState() != STATE::INGAME)
-				//		continue;
-
-				//	if (player->GetID() == id)
-				//		player->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, session->GetMyObject());
-				//	else
-				//		player->SendTransformPacket(id, ProtocolID::WR_TRANSFORM_ACK, session->GetMyObject());
-				//}
-
-				//if (pl->IsJumping() == true)
-				//{
-				//	network::OVERLAPPEDEX* pOverEx{ new network::OVERLAPPEDEX };
-				//	pOverEx->type = network::COMPLETION::JUMP;
-
-				//	PostQueuedCompletionStatus(m_iocp, 1, id, &pOverEx->over);
-				//}
-#pragma endregion
-				auto objID{ packet.ReadID() };
-				// 타깃의 이동방향 읽기
-				unsigned long keyInput{ packet.Read<unsigned long>() };
-
-				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
-				GET_SCENE->SendTransformPacket(objID);
+					client->SendAddPacket(id, object);
+					session->SendAddPacket(client->GetID(), client->GetMyObject());
+				}*/
 			}
 			break;
 			case ProtocolID::MY_KEYINPUT_REQ:
 			{
-				auto objID{ packet.ReadID() };
 				// 타깃의 이동방향 읽기
 				auto keyInput{ packet.Read<unsigned long>() };
+				auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
 
-				GET_SCENE->DecodeKeyInput(id, objID, keyInput);
+				for (auto& playerObject : playerLayer->GetGameObjects())
+				{
+					auto player{ dynamic_cast<Player*>(playerObject) };
 
-				// 용섭 : 플레이어 키보드 입력(id, objID, keyInput)
-				//auto playerLayer = ObjectManager::GetInstance()->GetLayer(L"Layer_Player");
-				//for (auto& playerObject : playerLayer->GetGameObjects())
-				//{
-				//	auto player = dynamic_cast<Player*>(playerObject);
-				//	if (player->GetPlayerID() == objID)
-				//	{
-				//		auto customController = player->GetComponent<CustomController>(L"CustomController");
-				//		customController->keyboardReceive(keyInput);
-				//	}
-				//}
-			}
-			break;
-			case ProtocolID::MY_ANI_REQ:
-			{
+					if (player->GetPlayerID() == id)
+					{
+						auto customController{ player->GetComponent<CustomController>(L"CustomController") };
+						customController->KeyboardReceive(keyInput);
+					}
+				}
 			}
 			break;
 			default:
@@ -540,60 +538,95 @@ namespace game
 
 	void CServer::Login(uint32_t id, network::CPacket& packet)
 	{
-		// Access<T, U> == tbb::concurrent_hash_map<T, U>::accessor
-		// concurrent_hash_map에 접근하기 위한 일종의 shared pointer
-		// concurrent_hash_map의 정보에 안전하게 접근하기 위해서는 사용 필수
-		//Accessor<uint16_t, CObject*> access;
 		auto session{ m_sessions[id] };
-		auto objId{ GET_SCENE->NewObjectID() };
-
-		//float x{ (m_activeSessionNum - 1) * 25.f };
 
 		session->SetState(STATE::INGAME);
 
-		//session->CreateObject(objId, packet);
+		auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
+		Player* player{ nullptr };
 
-		// 용섭 : 플레이어 생성(objId, packet)
-	
-		//auto objmgr = ObjectManager::GetInstance();
-		//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
-		//PlayerObject->SetPlayerID(id);
-
-		session->SendLoginPacket(objId, nullptr);
-
-		for (auto& sess : m_sessions)
+		for (auto& playerObject : playerLayer->GetGameObjects())
 		{
-			if (sess->GetState() != STATE::INGAME)
-				continue;
+			auto pl{ dynamic_cast<Player*>(playerObject) };
+			bool result{ pl->SetPlayerID(id) };
 
-			if (sess->GetID() == id)
-				continue;
-
-
+			if (result == true)
+			{
+				player = pl;
+				session->SetObject(player);
+				break;
+			}
 		}
 
-		//session->SetPos((m_activeSessionNum - 1) * 25.f, 0.f, 300.f);
+		session->SendLoginPacket(player);
 
-		//auto pObject{ session->GetMyObject() };
+		for (auto& client : m_sessions)
+		{
+			if (client->GetState() != STATE::INGAME)
+				continue;
 
-		//auto aniIndex{ packet.Read<int32_t>() };
-		//dynamic_cast<CPlayer*>(pObject)->SetAniIndex(aniIndex);
+			if (client->GetID() == id)
+				continue;
 
-		//session->SendLoginPacket(id, pObject);
+			client->SendAddPacket(id, player);
+			session->SendAddPacket(client->GetID(), client->GetMyObject());
+		}
+	}
 
-		//for (auto& player : m_sessions)
-		//{
-		//	// 접속 중이지 않은 세션은 패스
-		//	if (player->GetState() != STATE::INGAME)
-		//		continue;
+	void CServer::BroadcastResult(int32_t id)
+	{
+		auto session{ m_sessions[id] };
 
-		//	// 다른 클라이언트에 오브젝트 추가 명령을 보내는 것이므로 자기 자신 제외
-		//	if (player->GetID() == id)
-		//		continue;
+		if (session->GetState() != STATE::INGAME)
+			return;
 
-		//	// 해당 클라이언트에 로그인 완료 패킷 전송
-		//	player->SendAddPacket(id, pObject);
-		//	session->SendAddPacket(player->GetID(), player->GetMyObject());
-		//}
+		auto playerObjects{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects() };
+		auto mapObjects{ ObjectManager::GetInstance()->GetLayer(L"Layer_Map")->GetGameObjects() };
+
+		for (auto& player : playerObjects)
+		{
+			auto pl{ dynamic_cast<Player*>(player) };
+
+			if (pl->GetPlayerID() == id)
+				session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, player);
+			else
+				session->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, player);
+		}
+
+		for (auto& object : mapObjects)
+		{
+			// TODO : 오브젝트는 위치 변화가 있는 경우에만 전송하도록
+			session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);
+		}
+	}
+
+	template<typename T>
+	T* CServer::CreateObject(network::CPacket& packet)
+	{
+		Vec3 pos{};
+		pos.x = packet.Read<float>();
+		pos.y = packet.Read<float>();
+		pos.z = packet.Read<float>();
+
+		Quat rotate{};
+		rotate.x = packet.Read<float>();
+		rotate.y = packet.Read<float>();
+		rotate.z = packet.Read<float>();
+		rotate.w = packet.Read<float>();
+
+		Vec3 scale{};
+		scale.x = packet.Read<float>();
+		scale.y = packet.Read<float>();
+		scale.z = packet.Read<float>();
+
+		auto objMgr = ObjectManager::GetInstance();
+		auto object = objMgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", pos, rotate, scale);
+		auto objectBody = object->GetComponent<RigidBody>(L"RigidBody");
+		objectBody->AddCollider<BoxCollider>(scale);
+
+		auto objID{ NewObjectID() };
+		object->SetID(objID);
+
+		return object;
 	}
 }

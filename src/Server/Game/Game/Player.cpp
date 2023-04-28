@@ -35,12 +35,7 @@ void Player::Release()
 	GameObject::Release();
 }
 
-unsigned int Player::GetPlayerID()
-{
-	return m_playerID;
-}
-
-bool Player::SetPlayerID(unsigned int playerID)
+bool Player::SetPlayerID(uint32_t playerID)
 {
 	static bool IDSet = false;
 

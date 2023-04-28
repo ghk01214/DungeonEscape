@@ -20,7 +20,7 @@ namespace game
 		void EnterScene(CSession* session);
 		void ChangeScene(int8_t id);
 
-		void CreateObject(const std::wstring& fbxName, TempTrans trans);
+		//void CreateObject(const std::wstring& fbxName, TempTrans trans);
 		void RemoveObject(int32_t id);
 		int32_t NewObjectID();
 
