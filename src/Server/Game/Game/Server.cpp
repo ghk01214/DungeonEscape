@@ -193,6 +193,9 @@ namespace game
 
 			for (auto& client : m_sessions)
 			{
+				if (client->GetID() == -1)
+					continue;
+
 				PostQueuedCompletionStatus(m_iocp, 1, client->GetID(), &overEX.over);
 			}
 		}
@@ -542,21 +545,26 @@ namespace game
 
 		session->SetState(STATE::INGAME);
 
-		auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
-		Player* player{ nullptr };
+		// 용섭 : Player 오브젝트 새로 생성
+		auto objMgr{ ObjectManager::GetInstance() };
+		Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5)) };
+		//auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
 
-		for (auto& playerObject : playerLayer->GetGameObjects())
-		{
-			auto pl{ dynamic_cast<Player*>(playerObject) };
-			bool result{ pl->SetPlayerID(id) };
+		player->SetPlayerID(id);
+		session->SetObject(player);
 
-			if (result == true)
-			{
-				player = pl;
-				session->SetObject(player);
-				break;
-			}
-		}
+		//for (auto& playerObject : playerLayer->GetGameObjects())
+		//{
+		//	auto pl{ dynamic_cast<Player*>(playerObject) };
+		//	bool result{ pl->SetPlayerID(id) };
+
+		//	if (result == true)
+		//	{
+		//		player = pl;
+		//		session->SetObject(player);
+		//		break;
+		//	}
+		//}
 
 		session->SendLoginPacket(player);
 
