@@ -19,6 +19,7 @@ enum ProtocolBase : unsigned short
 
 enum class ProtocolID : unsigned short
 {
+	PROTOCOL_NONE,
 #pragma region [AUTORIZATION]
 	PROTOCOL_AU_BEGIN = ProtocolBase::PROTOCOL_OFFSET_AU,
 
@@ -36,9 +37,6 @@ enum class ProtocolID : unsigned short
 
 	MY_TRANSFORM_REQ,	// 플레이어 이동 요청
 	MY_TRANSFORM_ACK,	// 플레이어 이동 응답
-
-	MY_JUMP_REQ,
-	MY_JUMP_ACK,
 
 	MY_ANI_REQ,
 	MY_ANI_ACK,
@@ -60,9 +58,6 @@ enum class ProtocolID : unsigned short
 
 	WR_TRANSFORM_REQ,
 	WR_TRANSFORM_ACK,
-
-	WR_JUMP_REQ,
-	WR_JUMP_ACK,
 
 	WR_ANI_REQ,
 	WR_ANI_ACK,

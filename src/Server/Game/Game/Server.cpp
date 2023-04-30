@@ -552,20 +552,20 @@ namespace game
 		//player->SetPlayerID(id);
 		//session->SetObject(player);
 		//session->SendLoginPacket(player);
-		MessageHandler::GetInstance()->InsertMessage(id, MessageType::LOGIN);
-		
+		ProtocolID protocol{ packet.ReadProtocol() };
+		MessageHandler::GetInstance()->InsertRecvMessage(id, protocol);
 
-		for (auto& client : m_sessions)
-		{
-			if (client->GetState() != STATE::INGAME)
-				continue;
-
-			if (client->GetID() == id)
-				continue;
-
-			//client->SendAddPacket(id, player);
-			session->SendAddPacket(client->GetID(), client->GetMyObject());
-		}
+		//for (auto& client : m_sessions)
+		//{
+		//	if (client->GetState() != STATE::INGAME)
+		//		continue;
+		//
+		//	if (client->GetID() == id)
+		//		continue;
+		//
+		//	//client->SendAddPacket(id, player);
+		//	session->SendAddPacket(client->GetID(), client->GetMyObject());
+		//}
 	}
 
 	void CServer::BroadcastResult(int32_t id)
@@ -575,34 +575,86 @@ namespace game
 		if (session->GetState() != STATE::INGAME)
 			return;
 
-		auto playerObjects{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects() };
-		auto mapObjects{ ObjectManager::GetInstance()->GetLayer(L"Layer_Map")->GetGameObjects() };
+		auto msgHandler{ MessageHandler::GetInstance() };
+		// Reference나 pointer가 아닌 copy constructor로 가져온다
+		// 현재까지 들어있는 메세지만 보내기 위해
+		int32_t size{};
+		auto sendQueue{ msgHandler->GetSendQueue(size) };
 
-		for (auto& player : playerObjects)
+		auto objMgr{ ObjectManager::GetInstance() };
+		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
+		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
+
+		while (sendQueue.empty() == false)
 		{
-			auto pl{ dynamic_cast<Player*>(player) };
+			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
+			bool success{ sendQueue.try_pop(msg) };
 
-			if (pl->GetPlayerID() == id)
-				session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, player);
-			else
-				session->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, player);
-		}
+			if (success == false)
+				continue;
 
-		for (auto& object : mapObjects)
-		{
-			// TODO : 오브젝트는 위치 변화가 있는 경우에만 전송하도록
-			session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);
+			switch (msg.msgProtocol)
+			{
+				case ProtocolID::AU_LOGIN_ACK:
+				{
+					Player* playerObj{ nullptr };
+
+					for (auto& player : playerObjects)
+					{
+						auto pl{ dynamic_cast<Player*>(player) };
+
+						if (pl->GetPlayerID() == id)
+						{
+							playerObj = pl;
+							break;
+						}
+					}
+
+					session->SetObject(playerObj);
+					session->SendLoginPacket(playerObj);
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (client->GetID() == id)
+							continue;
+
+						client->SendAddPacket(id, playerObj);
+						session->SendAddPacket(client->GetID(), client->GetMyObject());
+					}
+				}
+				break;
+				case ProtocolID::MY_TRANSFORM_ACK:
+				case ProtocolID::WR_TRANSFORM_ACK:
+				{
+					for (auto& player : playerObjects)
+					{
+						auto pl{ dynamic_cast<Player*>(player) };
+
+						if (pl->GetPlayerID() == id)
+							session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, player);
+						else
+							session->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, player);
+					}
+
+					for (auto& object : mapObjects)
+					{
+						// TODO : 오브젝트는 위치 변화가 있는 경우에만 전송하도록
+						session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);
+					}
+				}
+				break;
+			}
 		}
 	}
 
 	template<typename T>
 	T* CServer::CreateObject(network::CPacket& packet)
 	{
-
-
-
 		//나중에 실제로 쓸 때 연락해줘
-	
+
 		Vec3 pos{};
 		pos.x = packet.Read<float>();
 		pos.y = packet.Read<float>();
