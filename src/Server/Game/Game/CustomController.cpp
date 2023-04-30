@@ -45,10 +45,10 @@ void CustomController::Release()
 	SafeRelease(m_body);
 }
 
-void CustomController::Move(uint8_t keyType, server::KEY_STATE keyState)
+void CustomController::Move()
 {
-	DirectionInput(keyType);
-	Movement(keyType, keyState);
+	DirectionInput();
+	Movement();
 }
 
 bool CustomController::CheckOnGround(CollisionInfoType type, PxVec3& surfaceNormal)
@@ -166,7 +166,7 @@ bool CustomController::CheckOnGround_Raycast()
 	return false;
 }
 
-void CustomController::DirectionInput(uint8_t keyType)
+void CustomController::DirectionInput()
 {
 	m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
@@ -183,7 +183,7 @@ void CustomController::DirectionInput(uint8_t keyType)
 	m_moveDirection.normalize();
 }
 
-void CustomController::Movement(uint8_t keyType, server::KEY_STATE keyState)
+void CustomController::Movement()
 {
 	if (m_body->isKinematic())
 		return;

@@ -11,6 +11,7 @@
 #include "RigidBody.h"
 #include "BoxCollider.h"
 #include "Transform.h"
+#include "MessageHandler.h"
 
 namespace game
 {
@@ -546,27 +547,13 @@ namespace game
 		session->SetState(STATE::INGAME);
 
 		// 용섭 : Player 오브젝트 새로 생성
-		auto objMgr{ ObjectManager::GetInstance() };
-		Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5)) };
-		//auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
-
-		player->SetPlayerID(id);
-		session->SetObject(player);
-
-		//for (auto& playerObject : playerLayer->GetGameObjects())
-		//{
-		//	auto pl{ dynamic_cast<Player*>(playerObject) };
-		//	bool result{ pl->SetPlayerID(id) };
-
-		//	if (result == true)
-		//	{
-		//		player = pl;
-		//		session->SetObject(player);
-		//		break;
-		//	}
-		//}
-
-		session->SendLoginPacket(player);
+		//auto objMgr{ ObjectManager::GetInstance() };
+		//Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5)) };
+		//player->SetPlayerID(id);
+		//session->SetObject(player);
+		//session->SendLoginPacket(player);
+		MessageHandler::GetInstance()->InsertMessage(id, MessageType::LOGIN);
+		
 
 		for (auto& client : m_sessions)
 		{
@@ -576,7 +563,7 @@ namespace game
 			if (client->GetID() == id)
 				continue;
 
-			client->SendAddPacket(id, player);
+			//client->SendAddPacket(id, player);
 			session->SendAddPacket(client->GetID(), client->GetMyObject());
 		}
 	}
@@ -611,6 +598,11 @@ namespace game
 	template<typename T>
 	T* CServer::CreateObject(network::CPacket& packet)
 	{
+
+
+
+		//나중에 실제로 쓸 때 연락해줘
+	
 		Vec3 pos{};
 		pos.x = packet.Read<float>();
 		pos.y = packet.Read<float>();

@@ -15,12 +15,12 @@ public:
 	void Release() override;
 public:
 	//CustomController 컴포넌트를 사용하는 게임오브젝트는 Move()를 GameObject::Update()에서 반드시 호출
-	void Move(uint8_t keyType, server::KEY_STATE keyState);
+	void Move();
 	bool CheckOnGround(CollisionInfoType type, physx::PxVec3& surfaceNormal);
 	void GetSlidingVector(CollisionInfoType type);
 	bool CheckOnGround_Raycast();
-	void DirectionInput(uint8_t keyType);
-	void Movement(uint8_t keyType, server::KEY_STATE keyState);
+	void DirectionInput();
+	void Movement();
 
 public:
 	void ClearControllerCollisionInfo();

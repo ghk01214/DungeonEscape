@@ -152,6 +152,9 @@
     <Filter Include="02. Physx\Collider\Mesh\ConvexMeshWrapper">
       <UniqueIdentifier>{44e9c305-0de6-439a-8cb8-aeba2ae7782c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Server\MessageHandler">
+      <UniqueIdentifier>{c894ece9-7035-4490-bd61-68dd90edaab6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -269,12 +272,6 @@
     <ClCompile Include="TestLevel.cpp">
       <Filter>03. Game\00. Level</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>01. Server</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>01. Server</Filter>
-    </ClCompile>
     <ClCompile Include="SimpleMath.cpp">
       <Filter>02. Physx\Collider\Mesh\BinaryLoad\Math</Filter>
     </ClCompile>
@@ -283,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="ConvexMeshWrapper.cpp">
       <Filter>02. Physx\Collider\Mesh\ConvexMeshWrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageHandler.cpp">
+      <Filter>01. Server\MessageHandler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -421,12 +421,6 @@
     <ClInclude Include="TestLevel.h">
       <Filter>03. Game\00. Level</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>01. Server</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>01. Server</Filter>
-    </ClInclude>
     <ClInclude Include="SimpleMath.h">
       <Filter>02. Physx\Collider\Mesh\BinaryLoad\Math</Filter>
     </ClInclude>
@@ -438,6 +432,9 @@
     </ClInclude>
     <ClInclude Include="ConvexMeshWrapper.h">
       <Filter>02. Physx\Collider\Mesh\ConvexMeshWrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageHandler.h">
+      <Filter>01. Server\MessageHandler</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

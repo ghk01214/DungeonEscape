@@ -174,6 +174,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="MapObject.cpp" />
     <ClCompile Include="MeshCollider.cpp" />
+    <ClCompile Include="MessageHandler.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="PhysDevice.cpp" />
@@ -183,8 +184,6 @@
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="RaycastHit.cpp" />
     <ClCompile Include="RigidBody.cpp" />
-    <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -227,6 +226,7 @@
     <ClInclude Include="Level.h" />
     <ClInclude Include="MapObject.h" />
     <ClInclude Include="MeshCollider.h" />
+    <ClInclude Include="MessageHandler.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="PhysDevice.h" />
@@ -238,8 +238,6 @@
     <ClInclude Include="Quat.h" />
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="RigidBody.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />

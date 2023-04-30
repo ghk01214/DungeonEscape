@@ -188,20 +188,6 @@ inline T loadStructData(const HANDLE& hFile)
 #pragma comment(lib, "WS2_32")
 #pragma comment(lib, "MSWSock")
 
-#define SINGLE(type)				\
-private:							\
-	type() {}						\
-	~type() {}						\
-public:								\
-	static type* GetInstance()		\
-	{								\
-		static type instance;		\
-		return &instance;			\
-	}								\
-
-#define GET_SINGLE(type)	type::GetInstance()
-#define GET_SCENE			GET_SINGLE(game::CSceneManager)
-
 using int8 = char;
 using uchar_t = unsigned char;
 

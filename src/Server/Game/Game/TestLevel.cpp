@@ -12,6 +12,7 @@
 #include "GameObject.h"
 #include "CustomController.h"
 #include "Component.h"
+#include "MessageHandler.h"
 
 TestLevel::TestLevel()
 {
@@ -27,7 +28,8 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Map");
 	objmgr->AddLayer(L"Layer_Player");
 
-
+	//messagehandler->executeOrder()
+	//Player* player{ objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5)) };
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
 
 #pragma region Plane
@@ -73,6 +75,7 @@ void TestLevel::Init()
 
 void TestLevel::Update(double timeDelta)
 {
+	MessageHandler::GetInstance()->ExecuteMessage();
 }
 
 void TestLevel::LateUpdate(double timeDelta)
