@@ -22,9 +22,9 @@ public:
 public:
 	void InsertRecvMessage(int32_t playerID, ProtocolID msgProtocol);
 	void InsertSendMessage(int32_t playerID, ProtocolID msgProtocol);
+	void CopySendQueue();
 	void ExecuteMessage();
-
-	tbb::concurrent_queue<Message> GetSendQueue(int32_t& size);
+	void SendPacketMessage(HANDLE iocp, network::OVERLAPPEDEX& over);
 
 private:
 	void PopRecvQueue(int32_t size);
@@ -33,8 +33,11 @@ private:
 private:
 	tbb::concurrent_queue<Message> m_recvQueue;
 	tbb::concurrent_queue<Message> m_sendQueue;
+	tbb::concurrent_queue<Message> m_sendBufferQueue;
+
 	std::atomic_int32_t m_recvQueueSize;
 	std::atomic_int32_t m_sendQueueSize;
+	std::atomic_int32_t m_sendBufferQueueSize;
 };
 
 

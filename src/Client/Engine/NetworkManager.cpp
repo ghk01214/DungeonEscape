@@ -363,7 +363,6 @@ namespace network
 		switch (type)
 		{
 			case ProtocolID::MY_TRANSFORM_ACK:
-			case ProtocolID::MY_JUMP_ACK:
 			{
 				TransformPlayer(m_id);
 			}
@@ -398,7 +397,6 @@ namespace network
 			}
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
-			case ProtocolID::WR_JUMP_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
 

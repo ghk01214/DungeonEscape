@@ -53,7 +53,7 @@ namespace game
 		void Login(uint32_t id, network::CPacket& packet);
 		template<typename T>
 		T* CreateObject(network::CPacket& packet);
-		void BroadcastResult(int32_t id);
+		void BroadcastResult(int32_t id, ProtocolID msgProtocol);
 
 	private:
 		HANDLE m_iocp;

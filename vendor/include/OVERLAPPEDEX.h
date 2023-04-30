@@ -32,7 +32,8 @@ namespace network
 		OVERLAPPED over;
 		WSABUF wsa;
 		COMPLETION type;
-		int targetID;
+		int32_t targetID;
+		ProtocolID msgProtocol;
 		char data[network::CPacket::BUFF_SIZE];
 	};
 }

@@ -175,7 +175,6 @@
     <ClCompile Include="MapObject.cpp" />
     <ClCompile Include="MeshCollider.cpp" />
     <ClCompile Include="MessageHandler.cpp" />
-    <ClCompile Include="NPC.cpp" />
     <ClCompile Include="ObjectManager.cpp" />
     <ClCompile Include="PhysDevice.cpp" />
     <ClCompile Include="PhysicsRay.cpp" />
@@ -186,12 +185,10 @@
     <ClCompile Include="RigidBody.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
-    <ClCompile Include="Object.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Player_OLD.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
@@ -227,7 +224,6 @@
     <ClInclude Include="MapObject.h" />
     <ClInclude Include="MeshCollider.h" />
     <ClInclude Include="MessageHandler.h" />
-    <ClInclude Include="NPC.h" />
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="PhysDevice.h" />
     <ClInclude Include="PhysicsRay.h" />
@@ -239,9 +235,7 @@
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Server.h" />
-    <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Player_OLD.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SimpleMath.h" />
     <ClInclude Include="SphereCollider.h" />

@@ -11,18 +11,6 @@
     <Filter Include="01. Server\Server">
       <UniqueIdentifier>{d64e419a-141a-454d-bac5-8633adf8f441}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Server\OLD">
-      <UniqueIdentifier>{8948402b-5167-4f99-8dff-c9ff639652b8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Server\OLD\Object">
-      <UniqueIdentifier>{d0b8a078-d75a-46bf-8888-7eb3336a738b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Server\OLD\Object\Player">
-      <UniqueIdentifier>{e043323a-2a33-4654-abb1-f86456d16984}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Server\OLD\Object\NPC">
-      <UniqueIdentifier>{f403878b-13ba-49f6-98f5-251a6fe42bcb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Physx">
       <UniqueIdentifier>{ba8faa45-b231-480f-b253-74a556939d3d}</UniqueIdentifier>
     </Filter>
@@ -160,12 +148,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>99. Utility\pch</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>01. Server\OLD\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Player_OLD.cpp">
-      <Filter>01. Server\OLD\Object\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Session.cpp">
       <Filter>01. Server\Session</Filter>
     </ClCompile>
@@ -177,9 +159,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\vendor\include\Packet.cpp">
       <Filter>99. Utility\Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="NPC.cpp">
-      <Filter>01. Server\OLD\Object\NPC</Filter>
     </ClCompile>
     <ClCompile Include="PhysDevice.cpp">
       <Filter>02. Physx\PhysDevice</Filter>
@@ -289,12 +268,6 @@
     <ClInclude Include="pch.h">
       <Filter>99. Utility\pch</Filter>
     </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>01. Server\OLD\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Player_OLD.h">
-      <Filter>01. Server\OLD\Object\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Session.h">
       <Filter>01. Server\Session</Filter>
     </ClInclude>
@@ -306,9 +279,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\Packet.h">
       <Filter>99. Utility\Packet</Filter>
-    </ClInclude>
-    <ClInclude Include="NPC.h">
-      <Filter>01. Server\OLD\Object\NPC</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\vendor\include\protocol.hpp">
       <Filter>99. Utility</Filter>

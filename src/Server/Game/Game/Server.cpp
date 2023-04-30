@@ -174,7 +174,7 @@ namespace game
 				break;
 				case network::COMPLETION::BROADCAST:
 				{
-					BroadcastResult(id);
+					BroadcastResult(id, pOverEx->msgProtocol);
 				}
 				default:
 				break;
@@ -191,14 +191,16 @@ namespace game
 			double timeDelta = TimeManager::GetInstance()->GetElapsedTime();
 			m_gameInstance->Update(timeDelta);
 			m_gameInstance->LateUpdate(timeDelta);
+			MessageHandler::GetInstance()->CopySendQueue();
+			MessageHandler::GetInstance()->SendPacketMessage(m_iocp, overEX);
 
-			for (auto& client : m_sessions)
-			{
-				if (client->GetID() == -1)
-					continue;
+			//for (auto& client : m_sessions)
+			//{
+			//	if (client->GetID() == -1)
+			//		continue;
 
-				PostQueuedCompletionStatus(m_iocp, 1, client->GetID(), &overEX.over);
-			}
+			//	PostQueuedCompletionStatus(m_iocp, 1, client->GetID(), &overEX.over);
+			//}
 		}
 	}
 
@@ -568,85 +570,76 @@ namespace game
 		//}
 	}
 
-	void CServer::BroadcastResult(int32_t id)
+	void CServer::BroadcastResult(int32_t id, ProtocolID msgProtocol)
 	{
 		auto session{ m_sessions[id] };
 
 		if (session->GetState() != STATE::INGAME)
 			return;
 
-		auto msgHandler{ MessageHandler::GetInstance() };
+		//auto msgHandler{ MessageHandler::GetInstance() };
 		// Reference나 pointer가 아닌 copy constructor로 가져온다
 		// 현재까지 들어있는 메세지만 보내기 위해
-		int32_t size{};
-		auto sendQueue{ msgHandler->GetSendQueue(size) };
+		//int32_t size{};
+		//auto sendQueue{ msgHandler->GetSendQueue(size) };
 
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
 
-		while (sendQueue.empty() == false)
+		switch (msgProtocol)
 		{
-			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
-			bool success{ sendQueue.try_pop(msg) };
-
-			if (success == false)
-				continue;
-
-			switch (msg.msgProtocol)
+			case ProtocolID::AU_LOGIN_ACK:
 			{
-				case ProtocolID::AU_LOGIN_ACK:
+				Player* playerObj{ nullptr };
+
+				for (auto& player : playerObjects)
 				{
-					Player* playerObj{ nullptr };
+					auto pl{ dynamic_cast<Player*>(player) };
 
-					for (auto& player : playerObjects)
+					if (pl->GetPlayerID() == id)
 					{
-						auto pl{ dynamic_cast<Player*>(player) };
-
-						if (pl->GetPlayerID() == id)
-						{
-							playerObj = pl;
-							break;
-						}
-					}
-
-					session->SetObject(playerObj);
-					session->SendLoginPacket(playerObj);
-
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						if (client->GetID() == id)
-							continue;
-
-						client->SendAddPacket(id, playerObj);
-						session->SendAddPacket(client->GetID(), client->GetMyObject());
+						playerObj = pl;
+						break;
 					}
 				}
-				break;
-				case ProtocolID::MY_TRANSFORM_ACK:
-				case ProtocolID::WR_TRANSFORM_ACK:
+
+				session->SetObject(playerObj);
+				session->SendLoginPacket(playerObj);
+
+				for (auto& client : m_sessions)
 				{
-					for (auto& player : playerObjects)
-					{
-						auto pl{ dynamic_cast<Player*>(player) };
+					if (client->GetState() != STATE::INGAME)
+						continue;
 
-						if (pl->GetPlayerID() == id)
-							session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, player);
-						else
-							session->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, player);
-					}
+					if (client->GetID() == id)
+						continue;
 
-					for (auto& object : mapObjects)
-					{
-						// TODO : 오브젝트는 위치 변화가 있는 경우에만 전송하도록
-						session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);
-					}
+					client->SendAddPacket(id, playerObj);
+					session->SendAddPacket(client->GetID(), client->GetMyObject());
 				}
-				break;
 			}
+			break;
+			case ProtocolID::MY_TRANSFORM_ACK:
+			case ProtocolID::WR_TRANSFORM_ACK:
+			{
+				for (auto& player : playerObjects)
+				{
+					auto pl{ dynamic_cast<Player*>(player) };
+
+					if (pl->GetPlayerID() == id)
+						session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, player);
+					else
+						session->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, player);
+				}
+
+				for (auto& object : mapObjects)
+				{
+					// TODO : 오브젝트는 위치 변화가 있는 경우에만 전송하도록
+					session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);
+				}
+			}
+			break;
 		}
 	}
 
