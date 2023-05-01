@@ -7,7 +7,7 @@ class CustomController;
 class Player : public GameObject
 {
 public:
-	Player(uint32_t playerID = -1, const Vec3& position = Vec3(), const Quat& rotation = Quat(), const Vec3& scale = Vec3(1.f, 1.f, 1.f));
+	Player(int32_t playerID = -1, const Vec3& position = Vec3(), const Quat& rotation = Quat(), const Vec3& scale = Vec3(1.f, 1.f, 1.f));
 	~Player() override;
 
 public:
@@ -22,5 +22,5 @@ public:
 public:
 	CustomController* m_controller = nullptr;
 
-	uint32_t m_playerID = 4294967295U;
+	int32_t m_playerID = 4294967295U;
 };

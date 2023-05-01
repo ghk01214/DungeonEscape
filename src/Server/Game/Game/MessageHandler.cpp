@@ -135,8 +135,7 @@ void MessageHandler::ExecuteMessage()
 			case ProtocolID::AU_LOGIN_REQ:
 			{
 				objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.id, Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
-				//피직스 시뮬레이션에서 오브젝트를 추가하는거랑 sesssion의 명령 두개가 아주 약간의 시간차는 둬도 되지않나?
-				//상관없으면 저 두 라인은 server.cpp에 그대로 냅두는것도 괜찮을듯. 일단 냄겨둠
+				std::cout << std::format("{} : Create player\n", msg.id);
 
 				Message sendMsg{ msg.id, ProtocolID::AU_LOGIN_ACK };
 				m_sendQueue.push(sendMsg);

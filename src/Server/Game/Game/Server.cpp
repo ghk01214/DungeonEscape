@@ -128,11 +128,15 @@ namespace game
 	{
 		DWORD bytes;
 		ULONG_PTR clientID;
-		network::OVERLAPPEDEX* pOverEx{ nullptr };
+		//pOverEx{ nullptr };
 
 		while (true)
 		{
-			if (GetQueuedCompletionStatus(m_iocp, &bytes, &clientID, reinterpret_cast<LPOVERLAPPED*>(&pOverEx), INFINITE) == FALSE)
+			OVERLAPPED* over{ nullptr };
+			BOOL ret{ GetQueuedCompletionStatus(m_iocp, &bytes, &clientID, &over, INFINITE) };
+			network::OVERLAPPEDEX* pOverEx{ reinterpret_cast<network::OVERLAPPEDEX*>(over) };
+
+			if (ret == FALSE)
 			{
 				if (pOverEx->type == network::COMPLETION::ACCEPT)
 				{
@@ -147,10 +151,27 @@ namespace game
 					{
 						ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
 						pOverEx = nullptr;
+						//if (pOverEx != nullptr)
+						//	delete pOverEx;
 					}
 
 					continue;
 				}
+			}
+
+			if (bytes == 0 and (pOverEx->type == network::COMPLETION::RECV or pOverEx->type == network::COMPLETION::SEND))
+			{
+				Disconnect(static_cast<uint32_t>(clientID));
+
+				if (pOverEx->type == network::COMPLETION::SEND)
+				{
+					ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+					pOverEx = nullptr;
+					//if (pOverEx != nullptr)
+					//	delete pOverEx;
+				}
+
+				continue;
 			}
 
 			uint32_t id{ static_cast<uint32_t>(clientID) };
@@ -174,6 +195,9 @@ namespace game
 				break;
 				case network::COMPLETION::BROADCAST:
 				{
+					if (id == 3)
+						break;
+
 					BroadcastResult(id, pOverEx->msgProtocol);
 				}
 				default:
@@ -275,14 +299,15 @@ namespace game
 
 	void CServer::Send(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx)
 	{
-		if (bytes == 0)
-		{
-			Disconnect(id);
-		}
+		//if (bytes == 0)
+		//{
+		//	Disconnect(id);
+		//}
 
 		ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
 		pOverEx = nullptr;
-		//delete pOverEx;
+		//if (pOverEx != nullptr)
+		//	delete pOverEx;
 	}
 
 	int32_t CServer::NewPlayerID()
@@ -339,12 +364,6 @@ namespace game
 
 	void CServer::Disconnect(uint32_t id)
 	{
-		if (m_sessions[id]->GetState() == STATE::FREE)
-		{
-			std::cout << std::format("Already disconnected\n");
-			return;
-		}
-
 		for (auto& session : m_sessions)
 		{
 			if (session->GetState() != STATE::INGAME)
@@ -635,7 +654,7 @@ namespace game
 
 				for (auto& object : mapObjects)
 				{
-					// TODO : 오브젝트는 위치 변화가 있는 경우에만 전송하도록
+					// 용섭 : Awake
 					session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);
 				}
 			}

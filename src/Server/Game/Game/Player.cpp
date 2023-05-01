@@ -3,7 +3,7 @@
 #include "CustomController.h"
 #include "MessageHandler.h"
 
-Player::Player(uint32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale)
+Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale)
 	: m_playerID(playerID), GameObject(position, rotation, scale)
 {
 }
