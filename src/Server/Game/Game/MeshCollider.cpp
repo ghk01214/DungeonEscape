@@ -32,6 +32,31 @@ MeshCollider::MeshCollider(GameObject* ownerGameObject, Component* ownerComponen
     }
 }
 
+MeshCollider::MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent, std::wstring meshName, const FBXMeshInfomation& info)
+    : Collider(ownerGameObject, ownerComponent, body), m_meshName(meshName)
+{
+    ConvexMeshWrapper* convexwrapper = GetMyConvexWrapper();
+    if (convexwrapper)
+    {
+        convexwrapper->AddReference();                          //container에 해당 mesh가 존재한다면 reference만 증가
+        return;
+    }
+    else
+    {
+        std::vector<PxVec3> vertices;
+
+        for (const auto& vertice : info.m_vertices)
+        {
+            vertices.push_back(PxVec3(vertice.x, vertice.y, vertice.z));
+        }
+
+        convexwrapper = new ConvexMeshWrapper(vertices, info.m_indicies);
+        convexwrapper->Init(vertices, info.m_indicies);                                  //wrapper를 생성, 초기화, reference 증가 후 container에 보관
+        convexwrapper->AddReference();
+        m_convexContainer.emplace(meshName, convexwrapper);
+    }
+}
+
 MeshCollider::~MeshCollider()
 {
 }

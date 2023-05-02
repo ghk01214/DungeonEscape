@@ -168,6 +168,7 @@
     <ClCompile Include="CustomFilterShader.cpp" />
     <ClCompile Include="CustomQueryFilterCallback.cpp" />
     <ClCompile Include="FBXLoader.cpp" />
+    <ClCompile Include="FBXMapLoader.cpp" />
     <ClCompile Include="GameInstance.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Layer.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="CustomQueryFilterCallback.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="FBXLoader.h" />
+    <ClInclude Include="FBXMapLoader.h" />
     <ClInclude Include="GameInstance.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="game_macro.h" />

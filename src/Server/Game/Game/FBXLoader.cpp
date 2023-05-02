@@ -23,6 +23,7 @@ void FBXLoader::LoadFbx(const std::wstring& path)
 
 	// Animation	
 	LoadBones(m_scene->GetRootNode());
+	// LoadAnimationInfo(); // -> 나중에 추가
 
 	// 로드된 데이터 파싱 (Mesh/Material/Skin)
 	ParseNode(m_scene->GetRootNode());
