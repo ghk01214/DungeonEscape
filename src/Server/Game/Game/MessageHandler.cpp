@@ -4,6 +4,9 @@
 #include "GameObject.h"
 #include "MapObject.h"
 #include "Player.h"
+#include "RigidBody.h"
+#include "BoxCollider.h"
+#include "Transform.h"
 
 ImplementSingletone(MessageHandler);
 
@@ -24,6 +27,10 @@ MessageHandler::~MessageHandler()
 
 void MessageHandler::Init()
 {
+	m_recvQueueSize = 0;
+	m_sendQueueSize = 0;
+	m_sendBufferQueueSize = 0;
+	m_objectsNum = 0;
 }
 
 void MessageHandler::Release()
@@ -95,7 +102,15 @@ void MessageHandler::SendPacketMessage(HANDLE iocp, network::OVERLAPPEDEX& over)
 
 		over.msgProtocol = msg.msgProtocol;
 		over.targetID = msg.objID;
-		PostQueuedCompletionStatus(iocp, 1, msg.id, &over.over);
+
+		if (msg.id == -1)
+		{
+			std::uniform_int_distribution<int32_t> uid{ 0, 2 };
+			PostQueuedCompletionStatus(iocp, 1, uid(dre), &over.over);
+		}
+		else
+			PostQueuedCompletionStatus(iocp, 1, msg.id, &over.over);
+
 		++i;
 	}
 }
@@ -150,13 +165,19 @@ void MessageHandler::ExecuteMessage()
 			break;
 			case ProtocolID::MY_ADD_REQ:
 			{
-				// 오브젝트 추가 작업
-
 				int32_t objID{ NewObjectID() };
+
+				// 오브젝트 추가 작업 후 id 세팅
+				auto MapPlaneObject = objMgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
+				MapPlaneObject->SetID(objID);
+				std::cout << "obj id : " << objID << std::endl;
+				auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+				MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+
 				Message sendMsg{ -1, ProtocolID::WR_ADD_ACK };
 				sendMsg.objID = objID;
 
-				m_sendQueue.push(sendMsg);
+				//m_sendQueue.push(sendMsg);
 			}
 			break;
 		}
@@ -199,7 +220,7 @@ int32_t MessageHandler::NewObjectID()
 
 	// 재사용 가능 id가 없으면 최고 숫자 발급
 	if (issueNewID == true)
-		return ++m_objectsNum;
+		return (m_objectsNum++) + 3;
 
 	int32_t newID{ -1 };
 

@@ -435,7 +435,7 @@ namespace game
 			case ProtocolID::MY_ADD_REQ:
 			{
 				ProtocolID protocol{ packet.ReadProtocol() };
-				MessageHandler::GetInstance()->InsertRecvMessage(id, protocol);
+				InputCommandMessage(id, protocol);
 			}
 			break;
 			case ProtocolID::MY_KEYINPUT_REQ:
@@ -527,7 +527,7 @@ namespace game
 		//session->SetObject(player);
 		//session->SendLoginPacket(player);
 		ProtocolID protocol{ packet.ReadProtocol() };
-		MessageHandler::GetInstance()->InsertRecvMessage(id, protocol);
+		InputCommandMessage(id, protocol);
 
 		//for (auto& client : m_sessions)
 		//{
@@ -648,5 +648,10 @@ namespace game
 			}
 			break;
 		}
+	}
+
+	void CServer::InputCommandMessage(int32_t id, ProtocolID type)
+	{
+		MessageHandler::GetInstance()->InsertRecvMessage(id, type);
 	}
 }

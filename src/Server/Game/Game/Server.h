@@ -50,9 +50,8 @@ namespace game
 #pragma endregion
 
 		void Login(uint32_t id, network::CPacket& packet);
-		template<typename T>
-		T* CreateObject(network::CPacket& packet);
 		void BroadcastResult(int32_t id, network::OVERLAPPEDEX* over);
+		void InputCommandMessage(int32_t id, ProtocolID type);
 
 	private:
 		HANDLE m_iocp;
