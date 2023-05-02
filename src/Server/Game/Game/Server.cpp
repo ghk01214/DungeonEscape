@@ -195,10 +195,7 @@ namespace game
 				break;
 				case network::COMPLETION::BROADCAST:
 				{
-					if (id == 3)
-						break;
-
-					BroadcastResult(id, pOverEx->msgProtocol);
+					BroadcastResult(id, pOverEx);
 				}
 				default:
 				break;
@@ -217,14 +214,6 @@ namespace game
 			m_gameInstance->LateUpdate(timeDelta);
 			MessageHandler::GetInstance()->CopySendQueue();
 			MessageHandler::GetInstance()->SendPacketMessage(m_iocp, overEX);
-
-			//for (auto& client : m_sessions)
-			//{
-			//	if (client->GetID() == -1)
-			//		continue;
-
-			//	PostQueuedCompletionStatus(m_iocp, 1, client->GetID(), &overEX.over);
-			//}
 		}
 	}
 
@@ -340,28 +329,6 @@ namespace game
 		}
 	}
 
-	int32_t CServer::NewObjectID()
-	{
-		bool issueNewID{ m_reusableObjectID.empty() };
-
-		// 재사용 가능 id가 없으면 최고 숫자 발급
-		if (issueNewID == true)
-			return ++m_objectsNum;
-
-		int32_t newID{ -1 };
-
-		// 재사용 가능한 id가 있으면 재사용 가능한 id 중 가장 낮은 id 발급
-		while (true)
-		{
-			bool issueReuseID{ m_reusableObjectID.try_pop(newID) };
-
-			if (issueReuseID == true)
-				return newID;
-		}
-
-		return 0;
-	}
-
 	void CServer::Disconnect(uint32_t id)
 	{
 		for (auto& session : m_sessions)
@@ -467,22 +434,8 @@ namespace game
 		{
 			case ProtocolID::MY_ADD_REQ:
 			{
-				auto objId{ NewObjectID() };
-
-				MapObject* object{ CreateObject<MapObject>(packet) };
-
-				// 클라이언트 별로 사전 생성 오브젝트가 다를 시 추가 작성
-				/*for (auto& client : m_sessions)
-				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
-
-					if (client->GetID() == id)
-						continue;
-
-					client->SendAddPacket(id, object);
-					session->SendAddPacket(client->GetID(), client->GetMyObject());
-				}*/
+				ProtocolID protocol{ packet.ReadProtocol() };
+				MessageHandler::GetInstance()->InsertRecvMessage(id, protocol);
 			}
 			break;
 			case ProtocolID::MY_KEYINPUT_REQ:
@@ -589,7 +542,7 @@ namespace game
 		//}
 	}
 
-	void CServer::BroadcastResult(int32_t id, ProtocolID msgProtocol)
+	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* over)
 	{
 		auto session{ m_sessions[id] };
 
@@ -606,7 +559,7 @@ namespace game
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
 
-		switch (msgProtocol)
+		switch (over->msgProtocol)
 		{
 			case ProtocolID::AU_LOGIN_ACK:
 			{
@@ -614,13 +567,10 @@ namespace game
 
 				for (auto& player : playerObjects)
 				{
-					auto pl{ dynamic_cast<Player*>(player) };
+					playerObj = dynamic_cast<Player*>(player);
 
-					if (pl->GetPlayerID() == id)
-					{
-						playerObj = pl;
+					if (playerObj->GetPlayerID() == id)
 						break;
-					}
 				}
 
 				session->SetObject(playerObj);
@@ -636,6 +586,17 @@ namespace game
 
 					client->SendAddPacket(id, playerObj);
 					session->SendAddPacket(client->GetID(), client->GetMyObject());
+				}
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					for (auto& obj : mapObjects)
+					{
+						session->SendAddPacket(obj->GetID(), obj);
+					}
 				}
 			}
 			break;
@@ -655,47 +616,37 @@ namespace game
 				for (auto& object : mapObjects)
 				{
 					// 용섭 : Awake
-					auto map = dynamic_cast<MapObject*>(object);
-					if (map->GetRequireFlagTransmit())		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
-					{										
+					auto map{ dynamic_cast<MapObject*>(object) };
+
+					if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
+					{
 						session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);	//트랜스폼 갱신
 						map->SetRequireFlagTransmit(false);														//플래그 체크
 					}
 				}
 			}
 			break;
+			case ProtocolID::WR_ADD_ACK:
+			{
+				GameObject* object{ nullptr };
+
+				for (auto& obj : mapObjects)
+				{
+					if (obj->GetID() != over->targetID)
+						continue;
+
+					object = obj;
+				}
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendAddPacket(over->targetID, object);
+				}
+			}
+			break;
 		}
-	}
-
-	template<typename T>
-	T* CServer::CreateObject(network::CPacket& packet)
-	{
-		//나중에 실제로 쓸 때 연락해줘
-
-		Vec3 pos{};
-		pos.x = packet.Read<float>();
-		pos.y = packet.Read<float>();
-		pos.z = packet.Read<float>();
-
-		Quat rotate{};
-		rotate.x = packet.Read<float>();
-		rotate.y = packet.Read<float>();
-		rotate.z = packet.Read<float>();
-		rotate.w = packet.Read<float>();
-
-		Vec3 scale{};
-		scale.x = packet.Read<float>();
-		scale.y = packet.Read<float>();
-		scale.z = packet.Read<float>();
-
-		auto objMgr = ObjectManager::GetInstance();
-		auto object = objMgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", pos, rotate, scale);
-		auto objectBody = object->GetComponent<RigidBody>(L"RigidBody");
-		objectBody->AddCollider<BoxCollider>(scale);
-
-		auto objID{ NewObjectID() };
-		object->SetID(objID);
-
-		return object;
 	}
 }

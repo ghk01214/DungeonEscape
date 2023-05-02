@@ -2,6 +2,7 @@
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
+#include "MapObject.h"
 #include "Player.h"
 
 ImplementSingletone(MessageHandler);
@@ -87,7 +88,13 @@ void MessageHandler::SendPacketMessage(HANDLE iocp, network::OVERLAPPEDEX& over)
 		if (success == false)
 			continue;
 
+		if (msg.msgProtocol == ProtocolID::AU_LOGIN_ACK)
+		{
+			std::cout << "session[" << msg.id << "] log in\n";
+		}
+
 		over.msgProtocol = msg.msgProtocol;
+		over.targetID = msg.objID;
 		PostQueuedCompletionStatus(iocp, 1, msg.id, &over.over);
 		++i;
 	}
@@ -141,6 +148,17 @@ void MessageHandler::ExecuteMessage()
 				m_sendQueue.push(sendMsg);
 			}
 			break;
+			case ProtocolID::MY_ADD_REQ:
+			{
+				// 오브젝트 추가 작업
+
+				int32_t objID{ NewObjectID() };
+				Message sendMsg{ -1, ProtocolID::WR_ADD_ACK };
+				sendMsg.objID = objID;
+
+				m_sendQueue.push(sendMsg);
+			}
+			break;
 		}
 	}
 }
@@ -173,4 +191,26 @@ void MessageHandler::PopSendQueue(int32_t size)
 			++i;
 		}
 	}
+}
+
+int32_t MessageHandler::NewObjectID()
+{
+	bool issueNewID{ m_reusableObjectID.empty() };
+
+	// 재사용 가능 id가 없으면 최고 숫자 발급
+	if (issueNewID == true)
+		return ++m_objectsNum;
+
+	int32_t newID{ -1 };
+
+	// 재사용 가능한 id가 있으면 재사용 가능한 id 중 가장 낮은 id 발급
+	while (true)
+	{
+		bool issueReuseID{ m_reusableObjectID.try_pop(newID) };
+
+		if (issueReuseID == true)
+			return newID;
+	}
+
+	return 0;
 }

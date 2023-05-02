@@ -4,6 +4,7 @@ struct Message
 {
 	ProtocolID	msgProtocol;
 	int32_t		id;
+	int32_t		objID;
 
 	Message(int32_t _id = -1, ProtocolID _msgProtocol = ProtocolID::PROTOCOL_NONE);
 };
@@ -29,6 +30,7 @@ public:
 private:
 	void PopRecvQueue(int32_t size);
 	void PopSendQueue(int32_t size);
+	int32_t NewObjectID();
 
 private:
 	tbb::concurrent_queue<Message> m_recvQueue;
@@ -38,6 +40,9 @@ private:
 	std::atomic_int32_t m_recvQueueSize;
 	std::atomic_int32_t m_sendQueueSize;
 	std::atomic_int32_t m_sendBufferQueueSize;
+
+	std::atomic_int32_t m_objectsNum;
+	tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableObjectID;
 };
 
 
