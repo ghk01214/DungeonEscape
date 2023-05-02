@@ -7,6 +7,7 @@
 #include "RigidBody.h"
 #include "BoxCollider.h"
 #include "Transform.h"
+#include "RoomManager.h"
 
 ImplementSingletone(MessageHandler);
 
@@ -82,8 +83,12 @@ void MessageHandler::CopySendQueue()
 	}
 }
 
-void MessageHandler::SendPacketMessage(HANDLE iocp, network::OVERLAPPEDEX& over)
+void MessageHandler::SendPacketMessage()
 {
+	CopySendQueue();
+
+	network::OVERLAPPEDEX overEX{ network::COMPLETION::BROADCAST };
+
 	if (m_sendBufferQueue.empty() == true)
 		return;
 
@@ -100,16 +105,16 @@ void MessageHandler::SendPacketMessage(HANDLE iocp, network::OVERLAPPEDEX& over)
 			std::cout << "session[" << msg.id << "] log in\n";
 		}
 
-		over.msgProtocol = msg.msgProtocol;
-		over.targetID = msg.objID;
+		overEX.msgProtocol = msg.msgProtocol;
+		overEX.targetID = msg.objID;
 
 		if (msg.id == -1)
 		{
 			std::uniform_int_distribution<int32_t> uid{ 0, 2 };
-			PostQueuedCompletionStatus(iocp, 1, uid(dre), &over.over);
+			PostQueuedCompletionStatus(m_iocp, 1, uid(dre), &overEX.over);
 		}
 		else
-			PostQueuedCompletionStatus(iocp, 1, msg.id, &over.over);
+			PostQueuedCompletionStatus(m_iocp, 1, msg.id, &overEX.over);
 
 		++i;
 	}
@@ -156,8 +161,13 @@ void MessageHandler::ExecuteMessage()
 		{
 			case ProtocolID::AU_LOGIN_REQ:
 			{
-				objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.id, Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
-				std::cout << std::format("{} : Create player\n", msg.id);
+				Player* playerObj{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.id, Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5)) };
+				std::cout << msg.id << " : Create player\n";
+
+				if (game::CRoomManager::GetInstance()->IsRoomCreated() == false)
+					game::CRoomManager::GetInstance()->CreateRoom();
+				else
+					game::CRoomManager::GetInstance()->Enter(0, playerObj);
 
 				Message sendMsg{ msg.id, ProtocolID::AU_LOGIN_ACK };
 				m_sendQueue.push(sendMsg);
@@ -170,18 +180,22 @@ void MessageHandler::ExecuteMessage()
 				// 오브젝트 추가 작업 후 id 세팅
 				auto MapPlaneObject = objMgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
 				MapPlaneObject->SetID(objID);
-				std::cout << "obj id : " << objID << std::endl;
 				auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 				MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 
 				Message sendMsg{ -1, ProtocolID::WR_ADD_ACK };
 				sendMsg.objID = objID;
 
-				//m_sendQueue.push(sendMsg);
+				m_sendQueue.push(sendMsg);
 			}
 			break;
 		}
 	}
+}
+
+void MessageHandler::SetIOCPHandle(HANDLE iocp)
+{
+	m_iocp = iocp;
 }
 
 void MessageHandler::PopRecvQueue(int32_t size)

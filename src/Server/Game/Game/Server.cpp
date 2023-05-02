@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Session.h"
 #include "GameInstance.h"
+#include "RoomManager.h"
 #include "Server.h"
 #include "TimeManager.h"
 #include "ObjectManager.h"
@@ -20,8 +21,7 @@ namespace game
 		m_socket{ INVALID_SOCKET },
 		m_key{ 99999 },
 		m_activeSessionNum{ 0 },
-		m_userID{ 0 },
-		m_randomID{ 0, 999999999 }
+		m_userID{ 0 }
 	{
 		// 클래스 생성 시 빈 세션 생성
 		for (int32_t i = 0; i < MAX_USER; ++i)
@@ -90,7 +90,11 @@ namespace game
 			ErrorQuit(L"listen function error");
 		}
 
+		m_roomManager = CRoomManager::GetInstance();
 		m_gameInstance = GameInstance::GetInstance();
+		MessageHandler::GetInstance()->SetIOCPHandle(m_iocp);
+
+		m_roomManager->Init();
 		m_gameInstance->Init();
 	}
 
@@ -205,15 +209,12 @@ namespace game
 
 	void CServer::GameThread()
 	{
-		network::OVERLAPPEDEX overEX{ network::COMPLETION::BROADCAST };
-
 		while (true)
 		{
-			double timeDelta = TimeManager::GetInstance()->GetElapsedTime();
+			double timeDelta{ TimeManager::GetInstance()->GetElapsedTime() };
 			m_gameInstance->Update(timeDelta);
 			m_gameInstance->LateUpdate(timeDelta);
-			MessageHandler::GetInstance()->CopySendQueue();
-			MessageHandler::GetInstance()->SendPacketMessage(m_iocp, overEX);
+			MessageHandler::GetInstance()->SendPacketMessage();
 		}
 	}
 
@@ -549,12 +550,6 @@ namespace game
 		if (session->GetState() != STATE::INGAME)
 			return;
 
-		//auto msgHandler{ MessageHandler::GetInstance() };
-		// Reference나 pointer가 아닌 copy constructor로 가져온다
-		// 현재까지 들어있는 메세지만 보내기 위해
-		//int32_t size{};
-		//auto sendQueue{ msgHandler->GetSendQueue(size) };
-
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
@@ -615,7 +610,6 @@ namespace game
 
 				for (auto& object : mapObjects)
 				{
-					// 용섭 : Awake
 					auto map{ dynamic_cast<MapObject*>(object) };
 
 					if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?

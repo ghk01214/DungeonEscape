@@ -143,6 +143,12 @@
     <Filter Include="01. Server\MessageHandler">
       <UniqueIdentifier>{c894ece9-7035-4490-bd61-68dd90edaab6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Server\Room">
+      <UniqueIdentifier>{447779a7-ddef-46ab-a42b-8076829462cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Server\Room\RoomManager">
+      <UniqueIdentifier>{138ecda7-c9f9-4453-babd-570b7b91a347}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -262,6 +268,12 @@
     </ClCompile>
     <ClCompile Include="MessageHandler.cpp">
       <Filter>01. Server\MessageHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
+      <Filter>01. Server\Room\RoomManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>01. Server\Room</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -405,6 +417,12 @@
     </ClInclude>
     <ClInclude Include="RigidBody.h">
       <Filter>02. Physx\Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>01. Server\Room\RoomManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>01. Server\Room</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
