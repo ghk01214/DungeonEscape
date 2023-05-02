@@ -107,6 +107,8 @@ public:
 	Collider* GetCollider(int index);
 
 public:
+	physx::PxTransform GetGlobalPose();
+
 	// 프레임워크 구현되는대로 맞게 인자 수정
 	physx::PxVec3 GetPosition();
 	void SetPosition(const Vec3 position, bool sleep);

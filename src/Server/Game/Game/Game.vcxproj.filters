@@ -310,9 +310,6 @@
     <ClInclude Include="Collider.h">
       <Filter>02. Physx\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="RigidBody.h">
-      <Filter>02. Physx\RigidBody</Filter>
-    </ClInclude>
     <ClInclude Include="BoxCollider.h">
       <Filter>02. Physx\Collider\Box</Filter>
     </ClInclude>
@@ -405,6 +402,9 @@
     </ClInclude>
     <ClInclude Include="MessageHandler.h">
       <Filter>01. Server\MessageHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>02. Physx\Wrapper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

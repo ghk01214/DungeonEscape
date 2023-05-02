@@ -97,3 +97,15 @@ DirectX::XMFLOAT4X4 Transform::GetWorldMatrix() const
         DirectX::XMMatrixTranslation(m_Pos.x, m_Pos.y, m_Pos.z));
     return worldMatrix;
 }
+
+void Transform::ConvertPX(physx::PxTransform pose)
+{
+    m_Pos.x = pose.p.x;
+    m_Pos.y = pose.p.y;
+    m_Pos.z = pose.p.z;
+
+    m_Rot.x = pose.q.x;
+    m_Rot.y = pose.q.y;
+    m_Rot.z = pose.q.z;
+    m_Rot.w = pose.q.w;
+}

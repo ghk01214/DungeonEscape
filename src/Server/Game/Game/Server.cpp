@@ -655,7 +655,12 @@ namespace game
 				for (auto& object : mapObjects)
 				{
 					// 용섭 : Awake
-					session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);
+					auto map = dynamic_cast<MapObject*>(object);
+					if (map->GetRequireFlagTransmit())		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
+					{										
+						session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);	//트랜스폼 갱신
+						map->SetRequireFlagTransmit(false);														//플래그 체크
+					}
 				}
 			}
 			break;

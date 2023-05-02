@@ -36,6 +36,9 @@ public:
     // Get world matrix
     DirectX::XMFLOAT4X4 GetWorldMatrix() const;
 
+public:
+    void ConvertPX(physx::PxTransform pose);
+
 private:
     Vec3 m_Pos{};
     Quat m_Rot{};   //default 0,0,0,1

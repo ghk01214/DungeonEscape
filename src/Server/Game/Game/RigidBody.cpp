@@ -117,6 +117,11 @@ Collider* RigidBody::GetCollider(int index)
 	}
 }
 
+physx::PxTransform RigidBody::GetGlobalPose()
+{
+	return m_body->getGlobalPose();
+}
+
 PxVec3 RigidBody::GetPosition()
 {
 	return m_body->getGlobalPose().p;

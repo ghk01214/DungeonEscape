@@ -164,29 +164,29 @@ PxCooking* PhysDevice::GetCooking() const
 
 void PhysDevice::ClearEventCallback()
 {	
-	//모든 게임오브젝트의 리지드 바디 ClearCollidersCollisionInfo 호출
-	const auto& objmgr = ObjectManager::GetInstance();
-	auto& layers = objmgr->GetLayers();
-	for (const auto& layer : layers)
-	{
-		auto& objectList = layer.second->GetGameObjects();
-		for (auto& object : objectList)
-		{
-			RigidBody* body = object->GetComponent<RigidBody>(L"RigidBody");
-			if (body)
-			{
-				body->ClearCollidersCollisionInfo();
-			}
-			else
-			{
-				CustomController* controller = object->GetComponent<CustomController>(L"CustomController");
-				if (controller)
-				{
-					controller->ClearControllerCollisionInfo();
-				}
-			}
-		}
-	}
+	////모든 게임오브젝트의 리지드 바디 ClearCollidersCollisionInfo 호출
+	//const auto& objmgr = ObjectManager::GetInstance();
+	//auto& layers = objmgr->GetLayers();
+	//for (const auto& layer : layers)
+	//{
+	//	auto& objectList = layer.second->GetGameObjects();
+	//	for (auto& object : objectList)
+	//	{
+	//		RigidBody* body = object->GetComponent<RigidBody>(L"RigidBody");
+	//		if (body)
+	//		{
+	//			body->ClearCollidersCollisionInfo();
+	//		}
+	//		else
+	//		{
+	//			CustomController* controller = object->GetComponent<CustomController>(L"CustomController");
+	//			if (controller)
+	//			{
+	//				controller->ClearControllerCollisionInfo();
+	//			}
+	//		}
+	//	}
+	//}
 
 	m_eventCallback->ClearVector();
 }

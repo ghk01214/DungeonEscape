@@ -16,8 +16,15 @@ public:
 	virtual void LateUpdate(double timeDelta) override;
 	virtual void Release();
 
+public:		//server
+	bool GetRequireFlagTransmit();
+	void SetRequireFlagTransmit(bool value);
+
 private:
 	RigidBody* m_body = nullptr;
+
+private:	//server
+	bool m_requiresPacketTransmit = true;
 };
 
 

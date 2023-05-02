@@ -33,22 +33,22 @@ void TestLevel::Init()
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
 
 #pragma region Plane
-	/*auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
-	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
-	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());*/
+	//auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
+	//auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+	//MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 #pragma endregion
 
 #pragma region Sphere
-	/*auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(20, 20, 20), Quat(0, 0, 0, 1), Vec3(2,2,2));
-	auto SphereBody = SphereObject->GetComponent<RigidBody>(L"RigidBody");
-	SphereBody->SetKinematic(false);
-	SphereBody->SetCCDFlag(true);
-	SphereBody->SetRigidBodySleep(false);
-	SphereBody->AddCollider<SphereCollider>(SphereObject->GetTransform()->GetScale());
-
-	SphereBody->SetAngularDamping(0.00001f);
-	SphereBody->SetLinearDamping(0.15f);
-	SphereBody->SetMass(SphereBody->GetMass() * 0.20f);*/
+	//auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(20, 20, 20), Quat(0, 0, 0, 1), Vec3(2,2,2));
+	//auto SphereBody = SphereObject->GetComponent<RigidBody>(L"RigidBody");
+	//SphereBody->SetKinematic(false);
+	//SphereBody->SetCCDFlag(true);
+	//SphereBody->SetRigidBodySleep(false);
+	//SphereBody->AddCollider<SphereCollider>(SphereObject->GetTransform()->GetScale());
+	//
+	//SphereBody->SetAngularDamping(0.00001f);
+	//SphereBody->SetLinearDamping(0.15f);
+	//SphereBody->SetMass(SphereBody->GetMass() * 0.20f);
 #pragma endregion
 
 #pragma region Box1
@@ -66,9 +66,9 @@ void TestLevel::Init()
 #pragma endregion
 
 #pragma region Mesh
-	/*auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(-10, 2, 0), Quat(0, 0, 0, 1), Vec3(1, 1, 1));
-	auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
-	MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), L"Moon", L"..\\Resources\\FBX\\Moon\\moon.fbx");*/
+	//auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(-10, 25, 0), Quat(0, 0, 0, 1), Vec3(1, 1, 1));
+	//auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+	//MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), L"Moon", L"..\\Resources\\FBX\\Moon\\moon.fbx");
 #pragma endregion
 
 #pragma region MAP

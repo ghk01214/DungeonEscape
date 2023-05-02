@@ -4,13 +4,13 @@
 #include "GameObject.h"
 #include "Player.h"
 
+ImplementSingletone(MessageHandler);
+
 Message::Message(int32_t _id, ProtocolID _msgProtocol) :
 	id{ _id },
 	msgProtocol{ _msgProtocol }
 {
 }
-
-ImplementSingletone(MessageHandler);
 
 MessageHandler::MessageHandler()
 {
