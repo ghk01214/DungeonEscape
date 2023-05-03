@@ -26,7 +26,7 @@ MeshCollider::MeshCollider(GameObject* ownerGameObject, Component* ownerComponen
     else
     {
         convexwrapper = new ConvexMeshWrapper(path);            //container에 해당 mesh가 없다면 
-        convexwrapper->Init();                                  //wrapper를 생성, 초기화, reference 증가 후 container에 보관
+        convexwrapper->Init(extent);                            //wrapper를 생성, 초기화, reference 증가 후 container에 보관
         convexwrapper->AddReference();
         m_convexContainer.emplace(meshName, convexwrapper);
     }
@@ -51,7 +51,7 @@ MeshCollider::MeshCollider(GameObject* ownerGameObject, Component* ownerComponen
         }
 
         convexwrapper = new ConvexMeshWrapper(vertices, info.m_indicies);
-        convexwrapper->Init(vertices, info.m_indicies);                                  //wrapper를 생성, 초기화, reference 증가 후 container에 보관
+        convexwrapper->Init(vertices, info.m_indicies, extent);                                  //wrapper를 생성, 초기화, reference 증가 후 container에 보관
         convexwrapper->AddReference();
         m_convexContainer.emplace(meshName, convexwrapper);
     }
