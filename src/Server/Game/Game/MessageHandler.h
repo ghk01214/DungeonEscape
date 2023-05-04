@@ -23,13 +23,13 @@ public:
 public:
 	void InsertRecvMessage(int32_t playerID, ProtocolID msgProtocol);
 	void InsertSendMessage(int32_t playerID, ProtocolID msgProtocol);
+	void InsertSendMessage(Message msg);
 	void ExecuteMessage();
 	void SendPacketMessage();
 
 	void SetIOCPHandle(HANDLE iocp);
 
 private:
-	void CopySendQueue();
 	void PopRecvQueue(int32_t size);
 	void PopSendQueue(int32_t size);
 	int32_t NewObjectID();

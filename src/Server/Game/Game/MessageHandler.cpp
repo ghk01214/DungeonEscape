@@ -64,46 +64,23 @@ void MessageHandler::Release()
 	}
 }
 
-void MessageHandler::CopySendQueue()
+void MessageHandler::SendPacketMessage()
 {
 	int32_t size{ m_sendQueueSize.load() };
-	m_sendBufferQueueSize = size;
+	tbb::concurrent_queue<Message> queue{ m_sendQueue };
+
+	if (size == 0)
+		return;
+
+	network::OVERLAPPEDEX overEX{ network::COMPLETION::BROADCAST };
 
 	for (int32_t i = 0; i < size;)
 	{
 		Message msg{ -1, ProtocolID::PROTOCOL_NONE };
-		bool success{ m_sendQueue.try_pop(msg) };
+		bool success{ queue.try_pop(msg) };
 
 		if (success == false)
 			continue;
-
-		m_sendBufferQueue.push(msg);
-		--m_sendQueueSize;
-		++i;
-	}
-}
-
-void MessageHandler::SendPacketMessage()
-{
-	CopySendQueue();
-
-	network::OVERLAPPEDEX overEX{ network::COMPLETION::BROADCAST };
-
-	if (m_sendBufferQueue.empty() == true)
-		return;
-
-	for (int32_t i = 0; i < m_sendBufferQueueSize;)
-	{
-		Message msg{ -1, ProtocolID::PROTOCOL_NONE };
-		bool success{ m_sendBufferQueue.try_pop(msg) };
-
-		if (success == false)
-			continue;
-
-		if (msg.msgProtocol == ProtocolID::AU_LOGIN_ACK)
-		{
-			std::cout << "session[" << msg.id << "] log in\n";
-		}
 
 		overEX.msgProtocol = msg.msgProtocol;
 		overEX.targetID = msg.objID;
@@ -118,6 +95,8 @@ void MessageHandler::SendPacketMessage()
 
 		++i;
 	}
+
+	PopSendQueue(size);
 }
 
 void MessageHandler::InsertRecvMessage(int32_t playerID, ProtocolID msgProtocol)
@@ -134,22 +113,23 @@ void MessageHandler::InsertSendMessage(int32_t playerID, ProtocolID msgProtocol)
 	++m_sendQueueSize;
 }
 
+void MessageHandler::InsertSendMessage(Message msg)
+{
+	m_sendQueue.push(msg);
+	++m_sendQueueSize;
+}
+
 void MessageHandler::ExecuteMessage()
 {
-	bool empty{ m_recvQueue.empty() };
-
-	if (empty == true)
-		return;
-
-	tbb::concurrent_queue<Message> queue{ m_recvQueue };
 	int32_t size{ m_recvQueueSize.load() };
+	tbb::concurrent_queue<Message> queue{ m_recvQueue };
 
-	if (queue.empty() == false)
-		PopRecvQueue(size);
+	if (size == 0)
+		return;
 
 	auto objMgr{ ObjectManager::GetInstance() };
 
-	while (queue.empty() == false)
+	for (int32_t i = 0; i < size;)
 	{
 		Message msg{ -1, ProtocolID::PROTOCOL_NONE };
 		bool success{ queue.try_pop(msg) };
@@ -166,11 +146,12 @@ void MessageHandler::ExecuteMessage()
 
 				if (game::CRoomManager::GetInstance()->IsRoomCreated() == false)
 					game::CRoomManager::GetInstance()->CreateRoom();
-				else
-					game::CRoomManager::GetInstance()->Enter(0, playerObj);
+
+				game::CRoomManager::GetInstance()->Enter(0, playerObj);
 
 				Message sendMsg{ msg.id, ProtocolID::AU_LOGIN_ACK };
-				m_sendQueue.push(sendMsg);
+				//m_sendQueue.push(sendMsg);
+				InsertSendMessage(sendMsg);
 			}
 			break;
 			case ProtocolID::MY_ADD_REQ:
@@ -186,11 +167,16 @@ void MessageHandler::ExecuteMessage()
 				Message sendMsg{ -1, ProtocolID::WR_ADD_ACK };
 				sendMsg.objID = objID;
 
-				m_sendQueue.push(sendMsg);
+				//m_sendQueue.push(sendMsg);
+				InsertSendMessage(sendMsg);
 			}
 			break;
 		}
+
+		++i;
 	}
+
+	PopRecvQueue(size);
 }
 
 void MessageHandler::SetIOCPHandle(HANDLE iocp)

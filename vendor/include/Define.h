@@ -1,7 +1,7 @@
 ﻿namespace server
 {
 #define CHAT_SERVER_PORT 5000
-#define GAME_SERVER_PORT 5000
+#define GAME_SERVER_PORT 6000
 
 #define MAX_STR_SIZE 100
 #define MAX_LENGTH 4086

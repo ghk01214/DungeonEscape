@@ -20,7 +20,7 @@ void Player::Init()
 void Player::Update(double timeDelta)
 {
 	m_controller->Move();
-	MessageHandler::GetInstance()->InsertSendMessage(m_playerID, ProtocolID::MY_TRANSFORM_ACK);
+	//MessageHandler::GetInstance()->InsertSendMessage(m_playerID, ProtocolID::MY_TRANSFORM_ACK);
 }
 
 void Player::LateUpdate(double timeDelta)

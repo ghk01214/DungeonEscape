@@ -32,6 +32,7 @@ namespace game
 			filled = true;
 			pl = player;
 			++m_occupation;
+			break;
 		}
 	}
 

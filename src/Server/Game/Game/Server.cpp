@@ -583,16 +583,16 @@ namespace game
 					session->SendAddPacket(client->GetID(), client->GetMyObject());
 				}
 
-				for (auto& client : m_sessions)
-				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
-
-					for (auto& obj : mapObjects)
-					{
-						session->SendAddPacket(obj->GetID(), obj);
-					}
-				}
+				//for (auto& client : m_sessions)
+				//{
+				//	if (client->GetState() != STATE::INGAME)
+				//		continue;
+				//
+				//	for (auto& obj : mapObjects)
+				//	{
+				//		session->SendAddPacket(obj->GetID(), obj);
+				//	}
+				//}
 			}
 			break;
 			case ProtocolID::MY_TRANSFORM_ACK:
