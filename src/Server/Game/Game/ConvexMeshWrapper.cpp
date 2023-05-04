@@ -69,7 +69,7 @@ void ConvexMeshWrapper::PrepareVerticesIndices(std::vector<physx::PxVec3>& verti
     CloseHandle(hFile);
 }
 
-void ConvexMeshWrapper::Init()
+void ConvexMeshWrapper::Init(Vec3 extent)
 {
 #pragma region vertices/indices 초기화
     vector<PxVec3> vertices;
@@ -80,14 +80,14 @@ void ConvexMeshWrapper::Init()
 #pragma endregion
 
 #pragma region pxConvexMesh 생성
-    CreatePxConvexMesh(vertices, indices);
+    CreatePxConvexMesh(vertices, indices, extent);
 #pragma endregion
 }
 
-void ConvexMeshWrapper::Init(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices)
+void ConvexMeshWrapper::Init(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices, Vec3 extent)
 {
 #pragma region pxConvexMesh 생성
-    CreatePxConvexMesh(vertices, indices);
+    CreatePxConvexMesh(vertices, indices, extent);
 #pragma endregion
 }
 
@@ -115,15 +115,26 @@ bool ConvexMeshWrapper::Release()
     return false;                   //RefCnt 감소
 }
 
-void ConvexMeshWrapper::CreatePxConvexMesh(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices)
+void ConvexMeshWrapper::CreatePxConvexMesh(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices, Vec3 extent)
 {
     auto phys = PhysDevice::GetInstance()->GetPhysics();
     auto cooking = PhysDevice::GetInstance()->GetCooking();
 
+
+    // Apply scale to vertices
+    float scaleFactor = 0.01f; // 1/100
+    std::vector<physx::PxVec3> scaledVertices(vertices.size());
+    for (size_t i = 0; i < vertices.size(); ++i)
+    {
+        scaledVertices[i].x = vertices[i].x * extent.x * 0.01f;
+        scaledVertices[i].y = vertices[i].y * extent.y * 0.01f;
+        scaledVertices[i].z = vertices[i].z * extent.z * 0.01f;      //0.01 unit interval between unreal and physx
+    }
+
     PxConvexMeshDesc  desc;
-    desc.points.count = vertices.size();
+    desc.points.count = scaledVertices.size();
     desc.points.stride = sizeof(PxVec3);
-    desc.points.data = vertices.data();
+    desc.points.data = scaledVertices.data();
 
     desc.indices.count = indices.size(); //numface
     desc.indices.stride = sizeof(PxVec3);
