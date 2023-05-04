@@ -60,7 +60,7 @@ struct FbxKeyFrameInfo
 
 struct FbxBoneInfo
 {
-	std::wstring					boneName;
+	std::wstring			boneName;
 	int32					parentIndex;
 	FbxAMatrix				matOffset;
 };

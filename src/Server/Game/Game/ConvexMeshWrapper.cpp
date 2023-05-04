@@ -11,6 +11,11 @@ ConvexMeshWrapper::ConvexMeshWrapper(std::wstring path):
 {
 }
 
+ConvexMeshWrapper::ConvexMeshWrapper(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices)
+{
+
+}
+
 ConvexMeshWrapper::~ConvexMeshWrapper()
 {
 }
@@ -48,8 +53,6 @@ void ConvexMeshWrapper::PrepareVerticesIndices(std::vector<physx::PxVec3>& verti
     // 메쉬 정보 가져오기
     auto& meshInfo = loader.GetMeshInfo();
 
-    meshInfo.size();
-
     // 현재는 다수의 메쉬가 있더라도 하나의 정보만 가공된 형태
     for (auto& mesh : meshInfo)
     {
@@ -63,60 +66,28 @@ void ConvexMeshWrapper::PrepareVerticesIndices(std::vector<physx::PxVec3>& verti
         }
     }
 
-    //CloseHandle(hFile)?
+    CloseHandle(hFile);
 }
 
-void ConvexMeshWrapper::Init()
+void ConvexMeshWrapper::Init(Vec3 extent)
 {
 #pragma region vertices/indices 초기화
     vector<PxVec3> vertices;
     vector<uint32_t> indices;
+
     PrepareVerticesIndices(vertices, indices);
-
-    if (vertices.empty() && indices.empty())
-    {
-        std::vector<physx::PxVec3> verticesExample = {
-            // Base vertices
-            {-1, 0, -1}, {1, 0, -1}, {1, 0, 1}, {-1, 0, 1},
-            // Apex
-            {0, 2, 0},
-        };
-        vertices = verticesExample;
-
-        std::vector<uint32_t> indicesExample = {
-            // Base
-            0, 1, 2, 0, 2, 3,
-            // Sides
-            0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4,
-        };
-        indices = indicesExample;
-    }
+    CheckEmptyMesh(vertices, indices);
 #pragma endregion
 
 #pragma region pxConvexMesh 생성
+    CreatePxConvexMesh(vertices, indices, extent);
+#pragma endregion
+}
 
-    auto phys = PhysDevice::GetInstance()->GetPhysics();
-    auto cooking = PhysDevice::GetInstance()->GetCooking();
-
-    PxConvexMeshDesc  desc;
-    desc.points.count = vertices.size();
-    desc.points.stride = sizeof(PxVec3);
-    desc.points.data = vertices.data();
-
-    desc.indices.count = indices.size(); //numface
-    desc.indices.stride = sizeof(PxVec3);
-    desc.indices.data = indices.data();
-
-    desc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
-
-    PxDefaultMemoryOutputStream writeBuffer;
-    PxConvexMeshCookingResult::Enum result;
-    bool cookingTriangleStatus = cooking->cookConvexMesh(desc, writeBuffer, &result);
-    assert(cookingTriangleStatus);
-
-    PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-
-    m_convexMesh = phys->createConvexMesh(readBuffer);
+void ConvexMeshWrapper::Init(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices, Vec3 extent)
+{
+#pragma region pxConvexMesh 생성
+    CreatePxConvexMesh(vertices, indices, extent);
 #pragma endregion
 }
 
@@ -142,6 +113,65 @@ bool ConvexMeshWrapper::Release()
     }
 
     return false;                   //RefCnt 감소
+}
+
+void ConvexMeshWrapper::CreatePxConvexMesh(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices, Vec3 extent)
+{
+    auto phys = PhysDevice::GetInstance()->GetPhysics();
+    auto cooking = PhysDevice::GetInstance()->GetCooking();
+
+
+    // Apply scale to vertices
+    float scaleFactor = 0.01f; // 1/100
+    std::vector<physx::PxVec3> scaledVertices(vertices.size());
+    for (size_t i = 0; i < vertices.size(); ++i)
+    {
+        scaledVertices[i].x = vertices[i].x * extent.x * 0.01f;
+        scaledVertices[i].y = vertices[i].y * extent.y * 0.01f;
+        scaledVertices[i].z = vertices[i].z * extent.z * 0.01f;      //0.01 unit interval between unreal and physx
+    }
+
+    PxConvexMeshDesc  desc;
+    desc.points.count = scaledVertices.size();
+    desc.points.stride = sizeof(PxVec3);
+    desc.points.data = scaledVertices.data();
+
+    desc.indices.count = indices.size(); //numface
+    desc.indices.stride = sizeof(PxVec3);
+    desc.indices.data = indices.data();
+
+    desc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+
+    PxDefaultMemoryOutputStream writeBuffer;
+    PxConvexMeshCookingResult::Enum result;
+    bool cookingTriangleStatus = cooking->cookConvexMesh(desc, writeBuffer, &result);
+    assert(cookingTriangleStatus);
+
+    PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+
+    m_convexMesh = phys->createConvexMesh(readBuffer);
+}
+
+void ConvexMeshWrapper::CheckEmptyMesh(std::vector<physx::PxVec3>& vertices, std::vector<uint32_t>& indices)
+{
+    if (vertices.empty() && indices.empty())
+    {
+        std::vector<physx::PxVec3> verticesExample = {
+            // Base vertices
+            {-1, 0, -1}, {1, 0, -1}, {1, 0, 1}, {-1, 0, 1},
+            // Apex
+            {0, 2, 0},
+        };
+        vertices = verticesExample;
+
+        std::vector<uint32_t> indicesExample = {
+            // Base
+            0, 1, 2, 0, 2, 3,
+            // Sides
+            0, 1, 4, 1, 2, 4, 2, 3, 4, 3, 0, 4,
+        };
+        indices = indicesExample;
+    }
 }
 
 std::wstring ConvexMeshWrapper::GetCurrentPath()

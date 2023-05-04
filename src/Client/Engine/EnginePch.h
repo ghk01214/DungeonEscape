@@ -13,6 +13,7 @@
 #include <array>
 #include <list>
 #include <map>
+#include <fstream>
 
 // 디버깅용 io header
 //#if _DEBUG

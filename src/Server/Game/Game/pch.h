@@ -10,6 +10,7 @@
 #include <random>
 #include <memory.h>
 #include <assert.h>
+#include <fstream>
 
 #include <array>
 #include <vector>
@@ -18,7 +19,6 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <functional>
-#include <algorithm>
 
 #include <thread>
 #include <atomic>

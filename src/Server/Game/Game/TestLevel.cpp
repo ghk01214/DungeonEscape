@@ -13,6 +13,7 @@
 #include "CustomController.h"
 #include "Component.h"
 #include "MessageHandler.h"
+#include "FBXMapLoader.h"
 
 TestLevel::TestLevel()
 {
@@ -33,9 +34,9 @@ void TestLevel::Init()
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
 
 #pragma region Plane
-	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
-	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
-	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+	//auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
+	//auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+	//MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 #pragma endregion
 
 #pragma region Sphere
@@ -72,7 +73,47 @@ void TestLevel::Init()
 #pragma endregion
 
 #pragma region MAP
-	// 성욱
+	// static Mesh 정보 로드
+
+	/*
+		1. static Mesh 오브젝트를 로드한다. -> 로드해서 어디 넣지?
+		2. MeshCollider가 가지고 있는 static ConvexMeshWrapper 변수에 staticMesh 오브젝트의 정보를 넣는다.
+		3. 맵 fbx 파일을 로드한다.
+		4. 로드한 맵 정보로부터 actor가 사용하는 staticMesh 오브젝트의 정보와 위치를 받아 맵 오브젝트를 생성한다.
+		5. 생성된 맵 오브젝트는 오브젝트 매니저에 넣는다.
+	*/
+
+	FBXMapLoader mapLoader;
+
+	// static Mesh 정보 로드
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
+
+
+	// actor 정보 로드
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\StageTest(ascii).FBX");
+
+	auto& mapInfo = mapLoader.GetMapObjectInfo();
+	for (auto& info : mapInfo)
+	{
+		const objectLocationInfo& locationInfo = info.second;
+
+		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
+			Vec3(locationInfo.Position.x, locationInfo.Position.y, locationInfo.Position.z),
+			Quat(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z, 1),
+			Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+		);
+
+		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
+		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+	}
 #pragma endregion
 }
 
@@ -85,6 +126,6 @@ void TestLevel::LateUpdate(double timeDelta)
 {
 }
 
-void TestLevel::Release()
+void TestLevel::Release(void)
 {
 }

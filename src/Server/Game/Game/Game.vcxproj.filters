@@ -131,9 +131,6 @@
     <Filter Include="02. Physx\Collider\Mesh\BinaryLoad">
       <UniqueIdentifier>{bde348d8-e04c-4b8b-bd60-9e3c7cdd9886}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Physx\Collider\Mesh\BinaryLoad\FBXLoader">
-      <UniqueIdentifier>{b3a104df-1b10-4dd8-a1c4-c57f83e1a2cd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Physx\Collider\Mesh\BinaryLoad\Math">
       <UniqueIdentifier>{471be298-f4c7-430d-a27f-016fb90f22bd}</UniqueIdentifier>
     </Filter>
@@ -148,6 +145,12 @@
     </Filter>
     <Filter Include="01. Server\Room\RoomManager">
       <UniqueIdentifier>{138ecda7-c9f9-4453-babd-570b7b91a347}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Utility\FBXLoader">
+      <UniqueIdentifier>{b3a104df-1b10-4dd8-a1c4-c57f83e1a2cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Utility\FBXLoader\MapLoader">
+      <UniqueIdentifier>{bf8deb4f-81f8-4f9e-9003-1126fbb81e53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -261,13 +264,16 @@
       <Filter>02. Physx\Collider\Mesh\BinaryLoad\Math</Filter>
     </ClCompile>
     <ClCompile Include="FBXLoader.cpp">
-      <Filter>02. Physx\Collider\Mesh\BinaryLoad\FBXLoader</Filter>
+      <Filter>99. Utility\FBXLoader</Filter>
     </ClCompile>
     <ClCompile Include="ConvexMeshWrapper.cpp">
       <Filter>02. Physx\Collider\Mesh\ConvexMeshWrapper</Filter>
     </ClCompile>
     <ClCompile Include="MessageHandler.cpp">
       <Filter>01. Server\MessageHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="FBXMapLoader.cpp">
+      <Filter>99. Utility\FBXLoader\MapLoader</Filter>
     </ClCompile>
     <ClCompile Include="RoomManager.cpp">
       <Filter>01. Server\Room\RoomManager</Filter>
@@ -407,7 +413,7 @@
       <Filter>02. Physx\Collider\Mesh\BinaryLoad</Filter>
     </ClInclude>
     <ClInclude Include="FBXLoader.h">
-      <Filter>02. Physx\Collider\Mesh\BinaryLoad\FBXLoader</Filter>
+      <Filter>99. Utility\FBXLoader</Filter>
     </ClInclude>
     <ClInclude Include="ConvexMeshWrapper.h">
       <Filter>02. Physx\Collider\Mesh\ConvexMeshWrapper</Filter>
@@ -423,6 +429,9 @@
     </ClInclude>
     <ClInclude Include="Room.h">
       <Filter>01. Server\Room</Filter>
+    </ClInclude>
+    <ClInclude Include="FBXMapLoader.h">
+      <Filter>99. Utility\FBXLoader\MapLoader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
