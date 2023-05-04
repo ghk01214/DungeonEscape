@@ -1,4 +1,4 @@
-
+﻿
 #include "pch.h"
 #include "Camera_Script.h"
 #include "Transform.h"
@@ -15,6 +15,7 @@ void Camera_Basic::Update(void)
 void Camera_Basic::LateUpdate()
 {
 	Vec3 pos = GetTransform()->GetLocalPosition();
+	Vec3 rotation = GetTransform()->GetLocalRotation();
 
 	if (INPUT->GetButton(KEY_TYPE::W))
 		pos += GetTransform()->GetLook() * _speed * DELTA_TIME;
@@ -30,30 +31,22 @@ void Camera_Basic::LateUpdate()
 
 	if (INPUT->GetButton(KEY_TYPE::Q))
 	{
-		Vec3 rotation = GetTransform()->GetLocalRotation();
-		rotation.x += DELTA_TIME * 0.5f;
-		GetTransform()->SetLocalRotation(rotation);
+		rotation.x += DELTA_TIME * 90.f;
 	}
 
 	if (INPUT->GetButton(KEY_TYPE::E))
 	{
-		Vec3 rotation = GetTransform()->GetLocalRotation();
-		rotation.x -= DELTA_TIME * 0.5f;
-		GetTransform()->SetLocalRotation(rotation);
+		rotation.x -= DELTA_TIME * 90.f;
 	}
 
 	if (INPUT->GetButton(KEY_TYPE::Z))
 	{
-		Vec3 rotation = GetTransform()->GetLocalRotation();
-		rotation.y += DELTA_TIME * 0.5f;
-		GetTransform()->SetLocalRotation(rotation);
+		rotation.y += DELTA_TIME * 90.f;
 	}
 
 	if (INPUT->GetButton(KEY_TYPE::C))
 	{
-		Vec3 rotation = GetTransform()->GetLocalRotation();
-		rotation.y -= DELTA_TIME * 0.5f;
-		GetTransform()->SetLocalRotation(rotation);
+		rotation.y -= DELTA_TIME * 90.f;
 	}
 
 	if (INPUT->GetButtonDown(KEY_TYPE::RBUTTON))
@@ -63,4 +56,5 @@ void Camera_Basic::LateUpdate()
 	}
 
 	GetTransform()->SetLocalPosition(pos);
+	GetTransform()->SetLocalRotation(rotation);
 }

@@ -70,6 +70,10 @@ public:
 	shared_ptr<StructuredBuffer>	GetBoneFrameDataBuffer(int32 index = 0) { return m_frameBuffer[index]; } // 전체 본 프레임 정보
 	shared_ptr<StructuredBuffer>	GetBoneOffsetBuffer() { return  m_offsetBuffer; }
 
+public:
+	std::wstring GetName(void) { return m_name; }
+	void SetName(std::wstring name) { m_name = name; }
+
 private:
 	ComPtr<ID3D12Resource>		m_vertexBuffer;
 	D3D12_VERTEX_BUFFER_VIEW	m_vertexBufferView = {};
@@ -83,5 +87,7 @@ private:
 
 	shared_ptr<StructuredBuffer>	m_offsetBuffer; // 각 뼈의 offset 행렬
 	vector<shared_ptr<StructuredBuffer>> m_frameBuffer; // 전체 본 프레임 정보
+
+	std::wstring m_name;
 };
 

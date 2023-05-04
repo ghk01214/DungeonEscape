@@ -68,6 +68,9 @@
     <ClInclude Include="Scene_Test.h">
       <Filter>소스 파일\Script\00. Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Player_Script.h">
+      <Filter>소스 파일\Script\04. Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -100,6 +103,9 @@
     </ClCompile>
     <ClCompile Include="Scene_Test.cpp">
       <Filter>소스 파일\Script\00. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Player_Script.cpp">
+      <Filter>소스 파일\Script\04. Player</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

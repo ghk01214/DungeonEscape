@@ -350,7 +350,7 @@ namespace network
 
 				//AddPlayer(m_id);
 
-				std::cout << "ADD ME" << std::endl << std::endl;
+				std::cout << "ADD ME[" << m_id << "]" << std::endl << std::endl;
 			}
 			break;
 			default:
@@ -386,7 +386,7 @@ namespace network
 				int32_t id{ m_packet.ReadID() };
 				AddPlayer(id);
 
-				std::cout << "ADD REMOTE" << std::endl << std::endl;
+				std::cout << "ADD REMOTE[" << id << "]" << std::endl << std::endl;
 			}
 			break;
 			case ProtocolID::WR_REMOVE_ACK:

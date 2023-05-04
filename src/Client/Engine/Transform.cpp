@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Transform.h"
 #include "Engine.h"
 #include "Camera.h"
@@ -16,9 +16,9 @@ Transform::~Transform()
 void Transform::FinalUpdate()
 {
 	Matrix matScale = Matrix::CreateScale(m_localScale);
-	Matrix matRotation = Matrix::CreateRotationX(m_localRotation.x);
-	matRotation *= Matrix::CreateRotationY(m_localRotation.y);
-	matRotation *= Matrix::CreateRotationZ(m_localRotation.z);
+	Matrix matRotation = Matrix::CreateRotationX(XMConvertToRadians(m_localRotation.x));
+	matRotation *= Matrix::CreateRotationY(XMConvertToRadians(m_localRotation.y));
+	matRotation *= Matrix::CreateRotationZ(XMConvertToRadians(m_localRotation.z));
 	Matrix matTranslation = Matrix::CreateTranslation(m_localPosition);
 
 	m_matLocal = matScale * matRotation * matTranslation;

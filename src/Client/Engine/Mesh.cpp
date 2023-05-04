@@ -64,6 +64,9 @@ shared_ptr<Mesh> Mesh::CreateFromFBX(const FbxMeshInfo* meshInfo, FBXLoader& loa
 
 	if (meshInfo->hasAnimation)
 		mesh->CreateBonesAndAnimations(loader);
+
+	// 이름 부여
+	mesh->SetName(meshInfo->name);
 	
 	return mesh;
 }
@@ -142,6 +145,8 @@ void Mesh::LoadDataBinary(HANDLE hFile, const FbxMeshInfo* meshInfo)
 		bone.matOffset = loadMatrix(hFile);
 	}
 
+	// 이름 로드
+	m_name = meshInfo->name;
 
 
 	// 로드된 정보를 가지고 객체 초기화

@@ -33,7 +33,6 @@ namespace game
 		void Send(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 
 		int32_t NewPlayerID();
-		int32_t NewObjectID();
 		void Disconnect(uint32_t id);
 
 #pragma region [PROCESS PACKET]
@@ -51,9 +50,8 @@ namespace game
 #pragma endregion
 
 		void Login(uint32_t id, network::CPacket& packet);
-		template<typename T>
-		T* CreateObject(network::CPacket& packet);
-		void BroadcastResult(int32_t id, ProtocolID msgProtocol);
+		void BroadcastResult(int32_t id, network::OVERLAPPEDEX* over);
+		void InputCommandMessage(int32_t id, ProtocolID type);
 
 	private:
 		HANDLE m_iocp;
@@ -69,10 +67,6 @@ namespace game
 		std::uniform_int_distribution<int32_t> m_randomID;
 		// 멀티스레드용 priority queue
 		tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableID;
-
-		std::atomic_int32_t m_objectsNum;
-		tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableObjectID;
-
 
 		GameInstance* m_gameInstance;
 	};

@@ -17,17 +17,24 @@ public:
 	MeshData();
 	virtual ~MeshData();
 
+protected:
+	friend class Resources;
+	virtual void Load(const wstring& path) override;
+	virtual void Save(const wstring& path) override;
+
+public:
+	const vector<MeshRenderInfo>& GetMeshRenderInfo(void) { return m_meshRenders; }
+
 public:
 	static shared_ptr<MeshData> LoadFromFBX(const wstring& path);
-
-	virtual void Load(const wstring& path);
-	virtual void Save(const wstring& path);
 
 	vector<shared_ptr<CGameObject>> Instantiate();
 
 private:
-	HANDLE CreateFileWrite(const wstring& path);
-	HANDLE CreateFileRead(const wstring& path);
+	friend class Resources;
+	friend class FBXMapLoader;
+	static HANDLE CreateFileWrite(const wstring& path);
+	static HANDLE CreateFileRead(const wstring& path);
 
 private:
 	vector<MeshRenderInfo> m_meshRenders;

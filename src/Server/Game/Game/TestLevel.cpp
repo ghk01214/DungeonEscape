@@ -1,4 +1,5 @@
-﻿#include "pch.h"
+﻿
+#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -74,9 +75,9 @@ void TestLevel::Init()
 
 #pragma region MAP
 	// static Mesh 정보 로드
-	
+
 	/*
-		1. static Mesh 오브젝트를 로드한다. -> 로드해서 어디 넣지? 
+		1. static Mesh 오브젝트를 로드한다. -> 로드해서 어디 넣지?
 		2. MeshCollider가 가지고 있는 static ConvexMeshWrapper 변수에 staticMesh 오브젝트의 정보를 넣는다.
 		3. 맵 fbx 파일을 로드한다.
 		4. 로드한 맵 정보로부터 actor가 사용하는 staticMesh 오브젝트의 정보와 위치를 받아 맵 오브젝트를 생성한다.
@@ -94,16 +95,16 @@ void TestLevel::Init()
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
-	
-	
+
+
 	// actor 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1(ascii).FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\StageTest(ascii).FBX");
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)
 	{
 		const objectLocationInfo& locationInfo = info.second;
-		
+
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
 			Vec3(locationInfo.Position.x, locationInfo.Position.y, locationInfo.Position.z),
 			Quat(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z, 1),
@@ -126,6 +127,6 @@ void TestLevel::LateUpdate(double timeDelta)
 {
 }
 
-void TestLevel::Release()
+void TestLevel::Release(void)
 {
 }
