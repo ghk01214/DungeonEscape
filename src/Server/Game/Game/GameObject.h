@@ -64,13 +64,21 @@ public:
 	bool GetRemovalFlag();
 	void SetRemovalFlag(bool value);
 
+	constexpr server::SCRIPT_TYPE GetScriptType() const { return m_scriptType; }
+
+	void SetScriptType(server::SCRIPT_TYPE scriptType);
+
 public:
 	Transform* GetTransform();
 	constexpr int32_t GetID() const { return m_id; }
+	constexpr std::wstring& GetName() { return m_name; }
 	constexpr int32_t GetAniIndex() const { return m_aniIndex; }
 	constexpr float GetAniFrame() const { return m_aniFrame; }
 
 	void SetID(int32_t id);
+	void SetName(const std::wstring& name);
+	void SetAniIndex(int32_t aniIndex);
+	void SetAniFrame(float aniFrame);
 
 protected:
 	bool m_removalFlag = false;			//update()에 수집, lateUpdate()에 실제 삭제 진행
@@ -80,6 +88,8 @@ protected:
 										//편의상 멤버변수로도 보관
 
 	int32_t m_id;
+	std::wstring m_name;
 	int32_t m_aniIndex;
 	float m_aniFrame;
+	server::SCRIPT_TYPE m_scriptType;
 };

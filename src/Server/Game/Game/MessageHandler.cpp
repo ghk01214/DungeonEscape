@@ -42,7 +42,7 @@ namespace game
 
 		while (empty == false)
 		{
-			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
+			Message msg{};
 			m_recvQueue.try_pop(msg);
 			empty = m_recvQueue.empty();
 		}
@@ -51,7 +51,7 @@ namespace game
 
 		while (empty == false)
 		{
-			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
+			Message msg{};
 			m_sendQueue.try_pop(msg);
 			empty = m_sendQueue.empty();
 		}
@@ -65,27 +65,27 @@ namespace game
 		if (size == 0)
 			return;
 
-		network::PostOVERLAPPEDEX postOver{};
-
 		for (int32_t i = 0; i < size;)
 		{
-			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
+			Message msg{};
 			bool success{ queue.try_pop(msg) };
 
 			if (success == false)
 				continue;
 
+			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
 			postOver.msgProtocol = msg.msgProtocol;
+			postOver.playerID = msg.playerID;
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
 
 			if (msg.playerID == -1)
 			{
 				std::uniform_int_distribution<int32_t> uid{ 0, 2 };
-				PostQueuedCompletionStatus(m_iocp, 1, uid(dre), &postOver.GetOVERLAPPED());
+				PostQueuedCompletionStatus(m_iocp, 1, uid(dre), &postOver.over);
 			}
 			else
-				PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.GetOVERLAPPED());
+				PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 
 			++i;
 		}
@@ -93,18 +93,10 @@ namespace game
 		PopSendQueue(size);
 	}
 
-	void MessageHandler::InsertRecvMessage(int32_t playerID, ProtocolID msgProtocol)
+	void MessageHandler::InsertRecvMessage(Message msg)
 	{
-		Message msg{ playerID, msgProtocol };
 		m_recvQueue.push(msg);
 		++m_recvQueueSize;
-	}
-
-	void MessageHandler::InsertSendMessage(int32_t playerID, ProtocolID msgProtocol)
-	{
-		Message msg{ playerID, msgProtocol };
-		m_sendQueue.push(msg);
-		++m_sendQueueSize;
 	}
 
 	void MessageHandler::InsertSendMessage(Message msg)
@@ -126,7 +118,7 @@ namespace game
 
 		for (int32_t i = 0; i < size;)
 		{
-			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
+			Message msg{};
 			bool success{ queue.try_pop(msg) };
 
 			if (success == false)
@@ -136,7 +128,8 @@ namespace game
 			{
 				case ProtocolID::AU_LOGIN_REQ:
 				{
-					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5)) };
+					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20, 0.f, 0.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
+					player->SetName(L"Mistic");
 
 					Login(msg.playerID, player);
 				}
@@ -157,7 +150,7 @@ namespace game
 					}
 				}
 				break;
-				case ProtocolID::MY_ADD_REQ:
+				case ProtocolID::MY_ADD_OBJ_REQ:
 				{
 					int32_t objID{ NewObjectID() };
 
@@ -167,15 +160,15 @@ namespace game
 					auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 					MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 
-					Message sendMsg{ -1, ProtocolID::WR_ADD_ACK };
-					sendMsg.objID = objID;
+					Message msg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
+					msg.objID = objID;
 
-					InsertSendMessage(sendMsg);
+					InsertSendMessage(msg);
 				}
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:
 				{
-					auto keyInput{ msg.keyInput };
+
 					auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
 
 					for (auto& playerObject : playerLayer->GetGameObjects())
@@ -185,10 +178,31 @@ namespace game
 						if (player->GetPlayerID() == msg.playerID)
 						{
 							auto customController{ player->GetComponent<CustomController>(L"CustomController") };
-							customController->KeyboardReceive(keyInput);
+							customController->KeyboardReceive(msg.keyInput);
 						}
 					}
 				}
+				break;
+				case ProtocolID::MY_ANI_REQ:
+				{
+					for (auto& playerObj : playerObjects)
+					{
+						auto player{ dynamic_cast<Player*>(playerObj) };
+
+						if (player->GetPlayerID() == msg.playerID)
+						{
+							player->SetAniIndex(msg.aniIndex);
+							player->SetAniFrame(msg.aniFrame);
+							break;
+						}
+					}
+
+					Message sendMsg{ msg.playerID, ProtocolID::MY_ANI_ACK };
+
+					InsertSendMessage(sendMsg);
+				}
+				break;
+				default:
 				break;
 			}
 
@@ -207,7 +221,7 @@ namespace game
 	{
 		for (int32_t i = 0; i < size;)
 		{
-			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
+			Message msg{};
 			bool success{ m_recvQueue.try_pop(msg) };
 
 			if (success == true)
@@ -222,7 +236,7 @@ namespace game
 	{
 		for (int32_t i = 0; i < size;)
 		{
-			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
+			Message msg{};
 			bool success{ m_sendQueue.try_pop(msg) };
 
 			if (success == true)
@@ -255,7 +269,7 @@ namespace game
 		return 0;
 	}
 
-	void MessageHandler::Login(int32_t id, Player* player)
+	void MessageHandler::Login(int32_t playerID, Player* player)
 	{
 		int32_t roomID{};
 		if (game::CRoomManager::GetInstance()->IsRoomCreated() == false)
@@ -263,19 +277,18 @@ namespace game
 
 		game::CRoomManager::GetInstance()->Enter(roomID, player);
 
-		Message sendMsg{ id, ProtocolID::AU_LOGIN_ACK };
-		sendMsg.roomID = roomID;
+		Message msg{ playerID, ProtocolID::AU_LOGIN_ACK };
+		msg.roomID = roomID;
 
-		InsertSendMessage(sendMsg);
+		InsertSendMessage(msg);
 	}
 
 	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player)
 	{
 		game::CRoomManager::GetInstance()->Exit(roomID, player);
 
-		Message sendMsg{ playerID, ProtocolID::AU_LOGOUT_ACK };
-		sendMsg.roomID = roomID;
+		Message msg{ playerID, ProtocolID::AU_LOGOUT_ACK };
 
-		InsertSendMessage(sendMsg);
+		InsertSendMessage(msg);
 	}
 }

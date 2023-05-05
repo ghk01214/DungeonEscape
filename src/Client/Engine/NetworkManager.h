@@ -3,6 +3,7 @@
 #include <bitset>
 
 class CGameObject;
+class MonoBehaviour;
 
 namespace network
 {
@@ -20,17 +21,21 @@ namespace network
 		void CloseThread();
 
 		void Recv();
-		void Send(network::CPacket& packet);
+		void Send(CPacket& packet);
 
 		void SendLoginPacket();
 		void SendKeyInputPacket();
 
-		constexpr uint32_t GetID() const { return m_id; }
+		constexpr int32_t GetID() const { return m_id; }
+
+		void AddScript(server::SCRIPT_TYPE scriptType, std::shared_ptr<MonoBehaviour> script);
 	private:
 		void ProcessThread();
 
-		void Recv(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
-		void Send(DWORD bytes, network::OVERLAPPEDEX* pOverEx);
+		void Recv(DWORD bytes, OVERLAPPEDEX* pOverEx);
+		void Send(DWORD bytes, OVERLAPPEDEX* pOverEx);
+
+		void SendLogoutPacket();
 
 #pragma region [PROCESS PACKET]
 		void ProcessPacket();
@@ -62,10 +67,12 @@ namespace network
 		OVERLAPPEDEX m_sendEx;
 
 		int8* m_pRecvPacket;
-		network::CPacket m_packet;
+		CPacket m_packet;
 		int32_t m_remainSize;
 
 		int32_t m_id;
 		std::unordered_map<int32_t, std::vector<std::shared_ptr<CGameObject>>> m_objects;
+
+		std::unordered_map<int8_t, std::shared_ptr<MonoBehaviour>> m_scripts;
 	};
 }

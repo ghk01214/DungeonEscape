@@ -6,6 +6,7 @@
 
 #include "GameInstance.h"
 #include "Scene_Test.h"
+#include "Player_Script.h"
 
 void CGame::Init(const WindowInfo& Info)
 {
@@ -13,6 +14,7 @@ void CGame::Init(const WindowInfo& Info)
 
 	GET_SINGLE(SceneManager)->LoadScene(Scene_Test::GetInstance()->TestScene());
 
+	GET_NETWORK->AddScript(server::SCRIPT_TYPE::MISTIC, std::make_shared<Player_Mistic>());
 	GET_NETWORK->SendLoginPacket();
 }
 

@@ -1,7 +1,7 @@
 ﻿namespace server
 {
 #define CHAT_SERVER_PORT 5000
-#define GAME_SERVER_PORT 6000
+#define GAME_SERVER_PORT 5000
 
 #define MAX_STR_SIZE 100
 #define MAX_LENGTH 4086
@@ -72,6 +72,15 @@
 		Y_DECREASE,
 		Z_INCREASE,
 		Z_DECREASE,
+
+		MAX
+	};
+
+	enum class SCRIPT_TYPE : uint8_t
+	{
+		NONE = 0,
+
+		MISTIC,
 
 		MAX
 	};

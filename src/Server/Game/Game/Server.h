@@ -12,6 +12,7 @@ namespace game
 {
 	class CSession;
 	class CRoomManager;
+	struct Message;
 
 	class CServer
 	{
@@ -54,7 +55,7 @@ namespace game
 		void Login(int32_t id, CSession* session, Player* player, int32_t roomID);
 		void Logout(int32_t id);
 		void BroadcastResult(int32_t id, network::OVERLAPPEDEX* over);
-		void InputCommandMessage(int32_t id, ProtocolID type);
+		void InputCommandMessage(Message msg);
 
 	private:
 		HANDLE m_iocp;

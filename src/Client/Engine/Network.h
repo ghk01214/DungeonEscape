@@ -8,7 +8,7 @@ namespace network
 	class CNetwork : public Component
 	{
 	public:
-		CNetwork();
+		CNetwork(int32_t id = -1);
 		virtual ~CNetwork();
 
 		virtual void Awake() override;
@@ -16,7 +16,6 @@ namespace network
 
 #pragma region [SEND PACKET]
 		void SendAddObjectPacket();
-		void SendTransformPacket(uint8_t key, server::KEY_STATE state);
 		void SendAniIndexPacket(int32_t index, float updateTime);
 #pragma endregion
 

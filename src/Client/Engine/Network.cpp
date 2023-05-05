@@ -12,9 +12,9 @@
 
 namespace network
 {
-	CNetwork::CNetwork() :
+	CNetwork::CNetwork(int32_t id) :
 		Component{ COMPONENT_TYPE::NETWORK },
-		m_networkID{ -1 }
+		m_networkID{ id }
 	{
 	}
 
@@ -35,13 +35,13 @@ namespace network
 #pragma region [SEND PACKET]
 	void CNetwork::SendAddObjectPacket()
 	{
-		network::CPacket packet;
+		CPacket packet;
 		auto pos{ GetTransform()->GetLocalPosition() };
 		auto quat{ GetTransform()->GetLocalRotation() };
 		auto scale{ GetTransform()->GetLocalScale() };
 
 		packet.WriteID(m_networkID);
-		packet.WriteProtocol(ProtocolID::MY_ADD_REQ);
+		packet.WriteProtocol(ProtocolID::MY_ADD_OBJ_REQ);
 
 		packet.WriteWString(GetName());
 
@@ -61,23 +61,9 @@ namespace network
 		GET_NETWORK->Send(packet);
 	}
 
-	void CNetwork::SendTransformPacket(uint8_t key, server::KEY_STATE state)
-	{
-		network::CPacket packet;
-
-		packet.WriteID(m_networkID);
-		// 프로토콜 종류 작성
-		packet.WriteProtocol(ProtocolID::MY_TRANSFORM_REQ);
-		packet.Write<uint8_t>(key);
-		packet.Write<server::KEY_STATE>(state);
-
-		// 패킷 전송
-		GET_NETWORK->Send(packet);
-	}
-
 	void CNetwork::SendAniIndexPacket(int32_t index, float updateTime)
 	{
-		network::CPacket packet;
+		CPacket packet;
 
 		packet.WriteID(m_networkID);
 		packet.WriteProtocol(ProtocolID::MY_ANI_REQ);

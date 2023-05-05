@@ -17,7 +17,7 @@ public:
 	virtual void Release();
 
 public:
-	int32_t GetPlayerID() { return m_playerID; }
+	constexpr int32_t GetPlayerID() const { return m_playerID; }
 
 public:
 	CustomController* m_controller = nullptr;

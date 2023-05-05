@@ -11,6 +11,8 @@ namespace game
 		int32_t		objID;
 		int32_t		roomID;
 		ulong32_t	keyInput;
+		int32_t		aniIndex;
+		float		aniFrame;
 
 		Message(int32_t id = -1, ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE);
 	};
@@ -27,8 +29,7 @@ namespace game
 		void Init();
 		void Release();
 	public:
-		void InsertRecvMessage(int32_t playerID, ProtocolID msgProtocol);
-		void InsertSendMessage(int32_t playerID, ProtocolID msgProtocol);
+		void InsertRecvMessage(Message msg);
 		void InsertSendMessage(Message msg);
 		void ExecuteMessage();
 		void SendPacketMessage();
@@ -40,7 +41,7 @@ namespace game
 		void PopSendQueue(int32_t size);
 		int32_t NewObjectID();
 
-		void Login(int32_t id, Player* player);
+		void Login(int32_t playerID, Player* player);
 		void Logout(int32_t playerID, int32_t roomID, Player* player);
 
 	private:

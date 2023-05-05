@@ -42,7 +42,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	CreateLights();
 	CreateMap();
 	CreateMapObjects();
-	CreatePlayer();
+	//CreatePlayer();
 
 	return scene;
 }

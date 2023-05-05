@@ -18,14 +18,6 @@ namespace network
 		MAX
 	};
 
-	enum class POST_COMPLETION
-	{
-		NONE = 0,
-		BROADCAST,
-		QUIT,
-		MAX
-	};
-
 	class OVERLAPPEDEX
 	{
 	public:
@@ -40,25 +32,10 @@ namespace network
 		OVERLAPPED over;
 		WSABUF wsa;
 		COMPLETION type;
-		int32_t targetID;
-		char data[CPacket::BUFF_SIZE];
-	};
-
-	class PostOVERLAPPEDEX : private OVERLAPPEDEX
-	{
-	public:
-		PostOVERLAPPEDEX(POST_COMPLETION type = POST_COMPLETION::BROADCAST);
-		~PostOVERLAPPEDEX() = default;
-
-		void PostReset();
-
-		OVERLAPPED& GetOVERLAPPED() { return over; }
-
-	public:
-		POST_COMPLETION type;
 		ProtocolID msgProtocol;
+		int32_t playerID;
 		int32_t objID;
 		int32_t roomID;
-		unsigned long keyInput;
+		char data[CPacket::BUFF_SIZE];
 	};
 }

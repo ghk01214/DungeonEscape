@@ -12,6 +12,7 @@
 #include "MeshRenderer.h"
 #include "Network.h"
 #include "Input.h"
+#include "MonoBehaviour.h"
 
 namespace network
 {
@@ -114,7 +115,7 @@ namespace network
 	void NetworkManager::EndThreadProcess()
 	{
 		// 스레드 종료를 위한 QUIT 명령을 PQCS로 작업 예약
-		OVERLAPPEDEX overEx{ network::COMPLETION::QUIT };
+		OVERLAPPEDEX overEx{ COMPLETION::QUIT };
 
 		PostQueuedCompletionStatus(m_iocp, 1, m_serverKey, &overEx.over);
 	}
@@ -132,13 +133,13 @@ namespace network
 		DWORD flag{};
 		ZeroMemory(&m_recvEx.over, sizeof(m_recvEx.over));
 
-		m_recvEx.wsa.len = network::CPacket::BUFF_SIZE + m_remainSize;
+		m_recvEx.wsa.len = CPacket::BUFF_SIZE + m_remainSize;
 		m_recvEx.wsa.buf = m_recvEx.data + m_remainSize;
 
 		WSARecv(m_socket, &m_recvEx.wsa, 1, 0, &flag, &m_recvEx.over, nullptr);
 	}
 
-	void NetworkManager::Send(network::CPacket& packet)
+	void NetworkManager::Send(CPacket& packet)
 	{
 		m_sendEx.Set(packet);
 
@@ -147,30 +148,31 @@ namespace network
 
 	void NetworkManager::SendLoginPacket()
 	{
-		network::CPacket packet;
-		auto pos{ GET_PLAYER[0]->GetTransform()->GetLocalPosition() };
-		auto quat{ GET_PLAYER[0]->GetTransform()->GetLocalRotation() };
-		auto scale{ GET_PLAYER[0]->GetTransform()->GetLocalScale() };
+		CPacket packet;
+		//auto pos{ GET_PLAYER[0]->GetTransform()->GetLocalPosition() };
+		//auto quat{ GET_PLAYER[0]->GetTransform()->GetLocalRotation() };
+		//auto scale{ GET_PLAYER[0]->GetTransform()->GetLocalScale() };
 
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_REQ);
-		// 애니메이션 인덱스 작성
+		//packet.WriteWString(GET_PLAYER[0]->GetName());
+
+		//packet.Write<float>(pos.x);
+		//packet.Write<float>(pos.y);
+		//packet.Write<float>(pos.z);
+		//
+		//packet.Write<float>(quat.x);
+		//packet.Write<float>(quat.y);
+		//packet.Write<float>(quat.z);
+		//packet.Write<float>(1.f);
+		//
+		//packet.Write<float>(scale.x);
+		//packet.Write<float>(scale.y);
+		//packet.Write<float>(scale.z);
+
+		// 애니메이션 인덱스&프레임
 		//packet.Write<int32_t>(0);
-
-		packet.WriteWString(GET_PLAYER[0]->GetName());
-
-		packet.Write<float>(pos.x);
-		packet.Write<float>(pos.y);
-		packet.Write<float>(pos.z);
-
-		packet.Write<float>(quat.x);
-		packet.Write<float>(quat.y);
-		packet.Write<float>(quat.z);
-		packet.Write<float>(1.f);
-
-		packet.Write<float>(scale.x);
-		packet.Write<float>(scale.y);
-		packet.Write<float>(scale.z);
+		//packet.Write<float>(0.f);
 
 		// 패킷 전송
 		Send(packet);
@@ -179,13 +181,27 @@ namespace network
 
 	void NetworkManager::SendKeyInputPacket()
 	{
-		network::CPacket packet;
+		CPacket packet;
 		auto input{ GET_SINGLE(Input)->GetKeyInput() };
 
 		packet.WriteProtocol(ProtocolID::MY_KEYINPUT_REQ);
 		packet.Write<unsigned long>(input);
 
 		Send(packet);
+	}
+
+	void NetworkManager::SendLogoutPacket()
+	{
+		CPacket packet;
+
+		packet.WriteProtocol(ProtocolID::AU_LOGOUT_REQ);
+
+		Send(packet);
+	}
+
+	void NetworkManager::AddScript(server::SCRIPT_TYPE scriptType, std::shared_ptr<MonoBehaviour> script)
+	{
+		m_scripts[static_cast<int8_t>(scriptType)] = script;
 	}
 #pragma endregion
 
@@ -218,6 +234,7 @@ namespace network
 				break;
 				case COMPLETION::QUIT:
 				{
+					SendLogoutPacket();
 					return;
 				}
 				default:
@@ -226,7 +243,7 @@ namespace network
 		}
 	}
 
-	void NetworkManager::Recv(DWORD bytes, network::OVERLAPPEDEX* pOverEx)
+	void NetworkManager::Recv(DWORD bytes, OVERLAPPEDEX* pOverEx)
 	{
 		// 기존에 남아있던 패킷 + 새로 받은 패킷을 합친 사이즈
 		int32_t remainSize{ static_cast<int32_t>(bytes) + m_remainSize };
@@ -263,7 +280,7 @@ namespace network
 		Recv();
 	}
 
-	void NetworkManager::Send(DWORD bytes, network::OVERLAPPEDEX* pOverEx)
+	void NetworkManager::Send(DWORD bytes, OVERLAPPEDEX* pOverEx)
 	{
 		ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
 		pOverEx = nullptr;
@@ -348,9 +365,14 @@ namespace network
 					object->GetNetwork()->SetID(m_id);
 				}
 
-				//AddPlayer(m_id);
+				AddPlayer(m_id);
 
 				std::cout << "ADD ME[" << m_id << "]" << std::endl << std::endl;
+			}
+			break;
+			case ProtocolID::AU_LOGOUT_ACK:
+			{
+
 			}
 			break;
 			default:
@@ -381,7 +403,7 @@ namespace network
 	{
 		switch (type)
 		{
-			case ProtocolID::WR_ADD_ACK:
+			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
 				AddPlayer(id);
@@ -471,6 +493,11 @@ namespace network
 		scale.y = m_packet.Read<float>();
 		scale.z = m_packet.Read<float>();
 
+		server::SCRIPT_TYPE scriptType{ m_packet.Read<server::SCRIPT_TYPE>() };
+
+		int32_t aniIndex{ m_packet.Read<int32_t>() };
+		float aniFrame{ m_packet.Read<float>() };
+
 		std::wstring newName{ fbxName + std::to_wstring(id) };
 
 		std::cout << std::format("ID : {}\n", id);
@@ -481,15 +508,14 @@ namespace network
 
 		ObjectDesc objectDesc;
 		objectDesc.strName = newName;
-		objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\" + fbxName + L".fbx";
-		//objectDesc.strPath = L"..\\Resources\\FBX\\Dragon\\Dragon.fbx";
+		objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
 		objectDesc.vPostion = pos;
 		objectDesc.vScale = scale;
-		objectDesc.script = nullptr;// std::make_shared<Monster_Dragon>();
+		objectDesc.script = m_scripts[static_cast<int8_t>(scriptType)];
 
 		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
 		std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
-		std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>() };
+		std::shared_ptr<CNetwork> networkComponent{ std::make_shared<CNetwork>(id) };
 
 		for (auto& gameObject : gameObjects)
 		{
@@ -497,19 +523,16 @@ namespace network
 			gameObject->SetCheckFrustum(false);
 			gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
 			gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
-			//gameObject->AddComponent(objectDesc.script);
-			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
+			gameObject->AddComponent(objectDesc.script);
+			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
 			gameObject->AddComponent(networkComponent);
+			gameObject->GetAnimator()->Play(aniIndex, aniFrame);
 		}
 
 		GET_SCENE->AddPlayer(gameObjects);
 
-		m_objects.insert(std::make_pair(id, gameObjects));
-
-		for (auto& object : m_objects[id])
-		{
-			object->GetNetwork()->SetID(id);
-		}
+		//m_objects.insert(std::make_pair(id, gameObjects));
+		m_objects[id] = gameObjects;
 	}
 
 	void NetworkManager::RemovePlayer(int32_t id)

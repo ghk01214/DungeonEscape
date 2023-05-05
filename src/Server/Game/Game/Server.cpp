@@ -419,14 +419,18 @@ namespace game
 		{
 			case ProtocolID::AU_LOGIN_REQ:
 			{
-				InputCommandMessage(id, protocol);
+				session->SetState(STATE::INGAME);
+
+				Message msg{ id, protocol };
+				InputCommandMessage(msg);
 
 				std::cout << std::format("session[{}] login complete\n", id);
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_REQ:
 			{
-				InputCommandMessage(id, protocol);
+				Message msg{ id, protocol };
+				InputCommandMessage(msg);
 
 				std::cout << std::format("session[{}] logout complete\n", id);
 			}
@@ -442,28 +446,42 @@ namespace game
 
 		switch (protocol)
 		{
-			case ProtocolID::MY_ADD_REQ:
+			case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 			{
-				InputCommandMessage(id, protocol);
+				Message msg{ id, protocol };
+				InputCommandMessage(msg);
 			}
 			break;
 			case ProtocolID::MY_KEYINPUT_REQ:
 			{
 				// 타깃의 이동방향 읽기
-				//auto keyInput{ packet.Read<ulong32_t>() };
-				//auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
-				//
-				//for (auto& playerObject : playerLayer->GetGameObjects())
-				//{
-				//	auto player{ dynamic_cast<Player*>(playerObject) };
-				//
-				//	if (player->GetPlayerID() == id)
-				//	{
-				//		auto customController{ player->GetComponent<CustomController>(L"CustomController") };
-				//		customController->KeyboardReceive(keyInput);
-				//	}
-				//}
-				InputCommandMessage(id, protocol);
+				auto keyInput{ packet.Read<ulong32_t>() };
+				auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
+
+				for (auto& playerObject : playerLayer->GetGameObjects())
+				{
+					auto player{ dynamic_cast<Player*>(playerObject) };
+
+					if (player->GetPlayerID() == id)
+					{
+						auto customController{ player->GetComponent<CustomController>(L"CustomController") };
+						customController->KeyboardReceive(keyInput);
+					}
+				}
+				// keyinput을 매번 handler로 보내면 다른 명령들이 작동을 안 한다.
+				//Message msg{ id, protocol };
+				//msg.keyInput = packet.Read<ulong32_t>();
+
+				//InputCommandMessage(msg);
+			}
+			break;
+			case ProtocolID::MY_ANI_REQ:
+			{
+				Message msg{ id, protocol };
+				msg.aniIndex = packet.Read<int32_t>();
+				msg.aniFrame = packet.Read<float>();
+
+				InputCommandMessage(msg);
 			}
 			break;
 			default:
@@ -477,7 +495,7 @@ namespace game
 
 		switch (protocol)
 		{
-			case ProtocolID::WR_ADD_REQ:
+			case ProtocolID::WR_ADD_ANIMATE_OBJ_REQ:
 			{
 
 			}
@@ -526,9 +544,8 @@ namespace game
 
 	void CServer::Login(int32_t id, CSession* session, Player* player, int32_t roomID)
 	{
-		session->SetState(STATE::INGAME);
 		session->SetRoomID(roomID);
-		session->SetObject(player);
+		session->SetPlayer(player);
 		session->SendLoginPacket(player);
 
 		for (auto& client : m_sessions)
@@ -539,8 +556,8 @@ namespace game
 			if (client->GetID() == id)
 				continue;
 
-			client->SendAddPacket(id, player);
-			session->SendAddPacket(client->GetID(), client->GetMyObject());
+			client->SendAddAnimateObjPacket(id, player);
+			session->SendAddAnimateObjPacket(client->GetID(), client->GetMyObject());
 		}
 
 		//for (auto& client : m_sessions)
@@ -563,7 +580,8 @@ namespace game
 	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* over)
 	{
 		auto session{ m_sessions[id] };
-		auto postOver{ reinterpret_cast<network::PostOVERLAPPEDEX*>(over) };
+		//auto postOver{ reinterpret_cast<network::POST_OVERLAPPEDEX*>(over) };
+		auto postOver{ over };
 
 		if (session->GetState() != STATE::INGAME)
 			return;
@@ -572,6 +590,10 @@ namespace game
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
 
+		//network::CPacket packet{};
+		//packet.SetData(over->data);
+
+		//switch (packet.ReadProtocol())
 		switch (postOver->msgProtocol)
 		{
 			case ProtocolID::AU_LOGIN_ACK:
@@ -586,7 +608,10 @@ namespace game
 						break;
 				}
 
-				Login(id, session, player, postOver->roomID);
+				//int32_t roomID{ packet.Read<int32_t>() };
+				int32_t roomID{ postOver->roomID };
+
+				Login(id, session, player, roomID);
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_ACK:
@@ -619,13 +644,15 @@ namespace game
 				}
 			}
 			break;
-			case ProtocolID::WR_ADD_ACK:
+			case ProtocolID::WR_ADD_OBJ_ACK:
 			{
 				GameObject* object{ nullptr };
+				//int32_t objID{ packet.Read<int32_t>() };
+				int32_t objID{ postOver->objID };
 
 				for (auto& obj : mapObjects)
 				{
-					if (obj->GetID() != over->targetID)
+					if (obj->GetID() != objID)
 						continue;
 
 					object = obj;
@@ -636,15 +663,46 @@ namespace game
 					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					client->SendAddPacket(over->targetID, object);
+					client->SendAddObjPacket(objID, object);
 				}
 			}
+			break;
+			case ProtocolID::MY_ANI_ACK:
+			{
+				//int32_t aniIndex{ packet.Read<int32_t>() };
+				//float aniFrame{ packet.Read<float>() };
+				ProtocolID protocol{ ProtocolID::PROTOCOL_NONE };
+				Player* player{ nullptr };
+
+				for (auto& playerObj : playerObjects)
+				{
+					player = dynamic_cast<Player*>(playerObj);
+
+					if (player->GetPlayerID() == id)
+						break;
+				}
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					if (client->GetID() == id)
+						protocol = ProtocolID::MY_ANI_ACK;
+					else
+						protocol = ProtocolID::WR_ANI_ACK;
+
+					client->SendAniIndexPacket(id, protocol, player);
+				}
+			}
+			break;
+			default:
 			break;
 		}
 	}
 
-	void CServer::InputCommandMessage(int32_t id, ProtocolID type)
+	void CServer::InputCommandMessage(Message msg)
 	{
-		MessageHandler::GetInstance()->InsertRecvMessage(id, type);
+		MessageHandler::GetInstance()->InsertRecvMessage(msg);
 	}
 }

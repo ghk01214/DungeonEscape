@@ -35,8 +35,11 @@ enum class ProtocolID : unsigned short
 #pragma region [MY]
 	PROTOCOL_MY_BEGIN = PROTOCOL_AU_END,
 
-	MY_ADD_REQ,
-	MY_ADD_ACK,
+	MY_ADD_ANIMATE_OBJ_REQ,
+	MY_ADD_ANIMATE_OBJ_ACK,
+
+	MY_ADD_OBJ_REQ,
+	MY_ADD_OBJ_ACK,
 
 	MY_TRANSFORM_REQ,	// 플레이어 이동 요청
 	MY_TRANSFORM_ACK,	// 플레이어 이동 응답
@@ -53,8 +56,11 @@ enum class ProtocolID : unsigned short
 #pragma region [WORLD]
 	PROTOCOL_WR_BEGIN = PROTOCOL_MY_END,
 
-	WR_ADD_REQ,		// 오브젝트 추가 요청
-	WR_ADD_ACK,		// 오브젝트 추가 응답
+	WR_ADD_ANIMATE_OBJ_REQ,
+	WR_ADD_ANIMATE_OBJ_ACK,
+
+	WR_ADD_OBJ_REQ,
+	WR_ADD_OBJ_ACK,
 
 	WR_REMOVE_REQ,	// 오브젝트 삭제 요청
 	WR_REMOVE_ACK,	// 오브젝트 삭제 응답

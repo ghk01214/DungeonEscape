@@ -38,38 +38,5 @@ void Monster_Dragon::Update(void)
 
 			GetNetwork()->SendAniIndexPacket(index, GetAnimator()->GetUpdateTime());
 		}
-
-		uint8_t input{};
-		server::KEY_STATE state{ server::KEY_STATE::NONE };
-
-		if (INPUT->GetButton(KEY_TYPE::LEFT))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::PRESS;
-		}
-
-		if (INPUT->GetButton(KEY_TYPE::RIGHT))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::PRESS;
-		}
-
-		if (INPUT->GetButton(KEY_TYPE::UP))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::PRESS;
-		}
-
-		if (INPUT->GetButton(KEY_TYPE::DOWN))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::PRESS;
-		}
-
-		if (INPUT->GetButton(KEY_TYPE::SPACE))
-		{
-			input |= static_cast<uint8_t>(server::KEY_TYPE::LEFT);
-			state = server::KEY_STATE::PRESS;
-		}
 	}
 }

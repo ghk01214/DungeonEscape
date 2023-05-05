@@ -22,7 +22,7 @@ namespace game
 	{
 	public:
 		CSession();
-		CSession(GameObject* obj);
+		CSession(Player* obj);
 		~CSession();
 
 		void Reset();
@@ -31,10 +31,12 @@ namespace game
 		void Send(network::CPacket& packet);
 
 		void SendLoginPacket(GameObject* obj);
-		void SendAddPacket(int32_t id, GameObject* obj);
+		void SendAddAnimateObjPacket(int32_t id, GameObject* obj);
+		void SendAddObjPacket(int32_t id, GameObject* obj);
 		void SendRemovePacket(int32_t id);
 		void SendTransformPacket(int32_t id, ProtocolID protocol, GameObject* obj);
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, GameObject* obj);
+		void SendAniIndexPacket(int32_t id, ProtocolID protocol, int32_t index, float frame);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }
@@ -44,7 +46,7 @@ namespace game
 		void SetState(STATE state) { m_state = state; }
 		void SetSocket(SOCKET socket) { m_socket = socket; }
 		void SetID(int32_t id) { m_id = id; }
-		void SetObject(GameObject* pObject) { m_pObject = pObject; }
+		void SetPlayer(Player* pObject) { m_pObject = pObject; }
 		void SetRoomID(int32_t id) { m_roomID = id; }
 
 	private:
@@ -57,7 +59,7 @@ namespace game
 		std::atomic_int32_t m_id;
 		int32_t m_roomID;
 
-		GameObject* m_pObject;
+		Player* m_pObject;
 	public:
 		int32_t m_prevRemain;
 	};

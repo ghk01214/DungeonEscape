@@ -15,7 +15,7 @@ namespace game
 	{
 	}
 
-	CSession::CSession(GameObject* obj) :
+	CSession::CSession(Player* obj) :
 		m_recvEx{},
 		m_sendEx{},
 		m_state{ STATE::FREE },
@@ -71,6 +71,8 @@ namespace game
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_ACK);
 
+		packet.WriteWString(obj->GetName());
+
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
 		packet.Write<float>(pos.z);
@@ -84,11 +86,53 @@ namespace game
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
 
+		packet.Write<server::SCRIPT_TYPE>(obj->GetScriptType());
+		packet.Write<int32_t>(obj->GetAniIndex());
+		packet.Write<float>(obj->GetAniFrame());
+
+		std::cout << obj->GetAniIndex() << "\n";
+
 		// 패킷 전송
 		Send(packet);
 	}
 
-	void CSession::SendAddPacket(int32_t id, GameObject* obj)
+	void CSession::SendAddAnimateObjPacket(int32_t id, GameObject* obj)
+	{
+		network::CPacket packet;
+		Transform* trans{ obj->GetTransform() };
+		auto pos{ trans->GetPosition() };
+		auto quat{ trans->GetRotation() };
+		auto scale{ trans->GetScale() };
+		auto scriptType{ obj->GetScriptType() };
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
+
+		packet.WriteWString(obj->GetName());
+
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
+
+		packet.Write<float>(quat.x);
+		packet.Write<float>(quat.y);
+		packet.Write<float>(quat.w);
+		packet.Write<float>(quat.z);
+
+		packet.Write<float>(scale.x);
+		packet.Write<float>(scale.y);
+		packet.Write<float>(scale.z);
+
+		packet.Write<server::SCRIPT_TYPE>(obj->GetScriptType());
+		packet.Write<int32_t>(obj->GetAniIndex());
+		packet.Write<float>(obj->GetAniFrame());
+
+		std::cout << obj->GetAniIndex() << "\n";
+
+		Send(packet);
+	}
+
+	void CSession::SendAddObjPacket(int32_t id, GameObject* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -97,7 +141,9 @@ namespace game
 		auto scale{ trans->GetScale() };
 
 		packet.WriteID(id);
-		packet.WriteProtocol(ProtocolID::WR_ADD_ACK);
+		packet.WriteProtocol(ProtocolID::WR_ADD_OBJ_ACK);
+
+		packet.WriteWString(obj->GetName());
 
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
@@ -155,8 +201,22 @@ namespace game
 	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, GameObject* obj)
 	{
 		network::CPacket packet;
-		int32_t index{ obj->GetAniIndex() };
-		float frame{ obj->GetAniFrame() };
+		int32_t aniIndex{ obj->GetAniIndex() };
+		float aniFrame{ obj->GetAniFrame() };
+
+		packet.WriteID(id);
+		packet.WriteProtocol(protocol);
+		packet.Write<int32_t>(aniIndex);
+		packet.Write<float>(aniFrame);
+
+		std::cout << aniIndex << "\n";
+
+		Send(packet);
+	}
+
+	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, int32_t index, float frame)
+	{
+		network::CPacket packet;
 
 		packet.WriteID(id);
 		packet.WriteProtocol(protocol);

@@ -7,8 +7,7 @@ namespace network
 {
 	OVERLAPPEDEX::OVERLAPPEDEX(COMPLETION type) :
 		wsa{ 0, nullptr },
-		type{ type },
-		targetID{ -1 }
+		type{ type }
 	{
 		ZeroMemory(&over, sizeof(over));
 	}
@@ -38,26 +37,8 @@ namespace network
 		wsa.len = 0;
 		wsa.buf = nullptr;
 		type = COMPLETION::RECV;
-		targetID = -1;
 
+		ZeroMemory(data, CPacket::BUFF_SIZE);
 		ZeroMemory(&over, sizeof(over));
-	}
-
-	PostOVERLAPPEDEX::PostOVERLAPPEDEX(POST_COMPLETION type) :
-		OVERLAPPEDEX{},
-		msgProtocol{ ProtocolID::PROTOCOL_NONE },
-		objID{ -1 },
-		roomID{ -1 }
-	{
-	}
-
-	void PostOVERLAPPEDEX::PostReset()
-	{
-		this->type = POST_COMPLETION::BROADCAST;
-		msgProtocol = ProtocolID::PROTOCOL_NONE;
-		objID = -1;
-		roomID = -1;
-
-		OVERLAPPEDEX::Reset();
 	}
 }
