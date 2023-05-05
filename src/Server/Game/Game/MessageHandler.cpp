@@ -33,7 +33,6 @@ namespace game
 	{
 		m_recvQueueSize = 0;
 		m_sendQueueSize = 0;
-		m_sendBufferQueueSize = 0;
 		m_objectsNum = 0;
 	}
 
@@ -55,15 +54,6 @@ namespace game
 			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
 			m_sendQueue.try_pop(msg);
 			empty = m_sendQueue.empty();
-		}
-
-		empty = m_sendBufferQueue.empty();
-
-		while (empty == false)
-		{
-			Message msg{ -1, ProtocolID::PROTOCOL_NONE };
-			m_sendBufferQueue.try_pop(msg);
-			empty = m_sendBufferQueue.empty();
 		}
 	}
 

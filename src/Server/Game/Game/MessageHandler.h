@@ -48,11 +48,9 @@ namespace game
 
 		tbb::concurrent_queue<Message> m_recvQueue;
 		tbb::concurrent_queue<Message> m_sendQueue;
-		tbb::concurrent_queue<Message> m_sendBufferQueue;
 
 		std::atomic_int32_t m_recvQueueSize;
 		std::atomic_int32_t m_sendQueueSize;
-		std::atomic_int32_t m_sendBufferQueueSize;
 
 		std::atomic_int32_t m_objectsNum;
 		tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableObjectID;
