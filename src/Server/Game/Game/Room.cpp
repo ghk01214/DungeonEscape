@@ -36,7 +36,7 @@ namespace game
 		}
 	}
 
-	void CRoom::Leave(Player* player)
+	void CRoom::Exit(Player* player)
 	{
 		for (auto& [pl, filled] : m_players)
 		{
@@ -47,6 +47,8 @@ namespace game
 			{
 				pl == nullptr;
 				filled = false;
+				--m_occupation;
+				break;
 			}
 		}
 	}

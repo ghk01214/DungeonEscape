@@ -152,7 +152,7 @@ namespace game
 		Send(packet);
 	}
 
-	/*void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer_OLD* obj)
+	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, GameObject* obj)
 	{
 		network::CPacket packet;
 		int32_t index{ obj->GetAniIndex() };
@@ -164,5 +164,5 @@ namespace game
 		packet.Write<float>(frame);
 
 		Send(packet);
-	}*/
+	}
 }

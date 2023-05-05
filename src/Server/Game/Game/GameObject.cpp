@@ -15,10 +15,12 @@ GameObject::~GameObject()
 
 void GameObject::Init()
 {
+    m_aniIndex = 0;
+    m_aniFrame = 0.f;
 }
 
 void GameObject::Release()
-{   
+{
     for (auto& kv : m_components)
     {
         SafeRelease(kv.second);
@@ -40,4 +42,9 @@ void GameObject::SetRemovalFlag(bool value)
 Transform* GameObject::GetTransform()
 {
     return m_transform;
+}
+
+void GameObject::SetID(int32_t id)
+{
+    m_id = id;
 }

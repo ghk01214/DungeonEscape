@@ -191,6 +191,8 @@ inline T loadStructData(const HANDLE& hFile)
 
 using int8 = char;
 using uchar_t = unsigned char;
+using long32_t = long;
+using ulong32_t = unsigned long;
 
 template<typename T, typename U>
 using Accessor = tbb::concurrent_hash_map<T, U>::accessor;

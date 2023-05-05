@@ -26,6 +26,9 @@ enum class ProtocolID : unsigned short
 	AU_LOGIN_REQ,
 	AU_LOGIN_ACK,
 
+	AU_LOGOUT_REQ,
+	AU_LOGOUT_ACK,
+
 	PROTOCOL_AU_END = ProtocolBase::PROTOCOL_OFFSET_MY,
 #pragma endregion
 

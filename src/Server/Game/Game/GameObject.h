@@ -66,9 +66,11 @@ public:
 
 public:
 	Transform* GetTransform();
-	int32_t GetID() { return m_id; }
+	constexpr int32_t GetID() const { return m_id; }
+	constexpr int32_t GetAniIndex() const { return m_aniIndex; }
+	constexpr float GetAniFrame() const { return m_aniFrame; }
 
-	void SetID(int32_t id) { m_id = id; }
+	void SetID(int32_t id);
 
 protected:
 	bool m_removalFlag = false;			//update()에 수집, lateUpdate()에 실제 삭제 진행
@@ -78,4 +80,6 @@ protected:
 										//편의상 멤버변수로도 보관
 
 	int32_t m_id;
+	int32_t m_aniIndex;
+	float m_aniFrame;
 };

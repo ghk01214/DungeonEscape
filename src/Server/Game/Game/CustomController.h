@@ -26,7 +26,7 @@ public:
 	void ClearControllerCollisionInfo();
 
 public:
-	void KeyboardReceive(unsigned long key);
+	void KeyboardReceive(ulong32_t key);
 	void KeyboardClear();
 
 private:

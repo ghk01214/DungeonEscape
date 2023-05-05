@@ -244,7 +244,7 @@ void CustomController::ClearControllerCollisionInfo()
 	m_body->ClearCollidersCollisionInfo();
 }
 
-void CustomController::KeyboardReceive(unsigned long key)
+void CustomController::KeyboardReceive(ulong32_t key)
 {
 	const int32_t useKeyCount{ static_cast<int32_t>(server::KEY_TYPE::MAX) };
 	std::bitset<useKeyCount> input{ key };

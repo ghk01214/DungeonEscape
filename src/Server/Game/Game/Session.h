@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "GameObject.h"
 #include "Player.h"
 
 namespace network
@@ -35,16 +34,18 @@ namespace game
 		void SendAddPacket(int32_t id, GameObject* obj);
 		void SendRemovePacket(int32_t id);
 		void SendTransformPacket(int32_t id, ProtocolID protocol, GameObject* obj);
-		//void SendAniIndexPacket(int32_t id, ProtocolID protocol, CPlayer_OLD* obj);
+		void SendAniIndexPacket(int32_t id, ProtocolID protocol, GameObject* obj);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }
 		GameObject* GetMyObject() { return m_pObject; }
+		constexpr int32_t GetRoomID() const { return m_roomID; }
 
 		void SetState(STATE state) { m_state = state; }
 		void SetSocket(SOCKET socket) { m_socket = socket; }
 		void SetID(int32_t id) { m_id = id; }
 		void SetObject(GameObject* pObject) { m_pObject = pObject; }
+		void SetRoomID(int32_t id) { m_roomID = id; }
 
 	private:
 		SOCKET m_socket;
@@ -54,6 +55,7 @@ namespace game
 
 		std::atomic<STATE> m_state;
 		std::atomic_int32_t m_id;
+		int32_t m_roomID;
 
 		GameObject* m_pObject;
 	public:

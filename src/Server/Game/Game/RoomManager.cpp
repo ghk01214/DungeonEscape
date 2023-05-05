@@ -24,24 +24,24 @@ namespace game
 	{
 	}
 
-	void CRoomManager::CreateRoom()
+	int32_t CRoomManager::CreateRoom()
 	{
 		int32_t roomID{ NewRoomID() };
 
 		CRoom newRoom;
 		Accessor<int32_t, CRoom> access;
 
-		bool flag{ false };
-
-		while (flag == false)
+		while (true)
 		{
-			flag = m_rooms.insert(access, roomID);
+			bool flag{ m_rooms.insert(access, roomID) };
 
 			if (flag == true)
 			{
 				newRoom.SetID(roomID);
 				access->second = newRoom;
 				tempRoomCreated = true;
+
+				return roomID;
 			}
 		}
 	}
@@ -50,10 +50,10 @@ namespace game
 	{
 		bool flag{ false };
 
-		while (flag == false)
+		do
 		{
 			flag = m_rooms.erase(roomID);
-		}
+		} while (flag == false);
 	}
 
 	int32_t CRoomManager::NewRoomID()
@@ -81,25 +81,25 @@ namespace game
 		Accessor<int32_t, CRoom> access;
 		bool flag{ false };
 
-		while (flag == false)
+		do
 		{
 			flag = m_rooms.find(access, roomID);
-		}
+		} while (flag == false);
 
 		access->second.Enter(player);
 	}
 
-	void CRoomManager::Leave(int32_t roomID, Player* player)
+	void CRoomManager::Exit(int32_t roomID, Player* player)
 	{
 		Accessor<int32_t, CRoom> access;
 		bool flag{ false };
 
-		while (flag == false)
+		do
 		{
 			flag = m_rooms.find(access, roomID);
-		}
+		} while (flag == false);
 
-		access->second.Leave(player);
+		access->second.Exit(player);
 	}
 
 	const bool CRoomManager::IsRoomCreated() const

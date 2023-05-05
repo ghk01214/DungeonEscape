@@ -1,6 +1,7 @@
 ﻿#include "Packet.h"
 #include <WS2tcpip.h>
 #include "OVERLAPPEDEX.h"
+#include <protocol.hpp>
 
 namespace network
 {
@@ -40,5 +41,23 @@ namespace network
 		targetID = -1;
 
 		ZeroMemory(&over, sizeof(over));
+	}
+
+	PostOVERLAPPEDEX::PostOVERLAPPEDEX(POST_COMPLETION type) :
+		OVERLAPPEDEX{},
+		msgProtocol{ ProtocolID::PROTOCOL_NONE },
+		objID{ -1 },
+		roomID{ -1 }
+	{
+	}
+
+	void PostOVERLAPPEDEX::Reset()
+	{
+		this->type = POST_COMPLETION::BROADCAST;
+		msgProtocol = ProtocolID::PROTOCOL_NONE;
+		objID = -1;
+		roomID = -1;
+
+		OVERLAPPEDEX::Reset();
 	}
 }

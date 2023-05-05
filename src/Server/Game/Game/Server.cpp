@@ -149,7 +149,7 @@ namespace game
 				else
 				{
 					ErrorDisplay(L"GQCS Error on session[" + std::to_wstring(clientID) + L"] :");
-					Disconnect(static_cast<uint32_t>(clientID));
+					Disconnect(static_cast<int32_t>(clientID));
 
 					if (pOverEx->type == network::COMPLETION::SEND)
 					{
@@ -165,7 +165,7 @@ namespace game
 
 			if (bytes == 0 and (pOverEx->type == network::COMPLETION::RECV or pOverEx->type == network::COMPLETION::SEND))
 			{
-				Disconnect(static_cast<uint32_t>(clientID));
+				Disconnect(static_cast<int32_t>(clientID));
 
 				if (pOverEx->type == network::COMPLETION::SEND)
 				{
@@ -248,7 +248,7 @@ namespace game
 		AcceptEx(m_socket, clientSocket, pOverEx->data, 0, sizeof(sockaddr_in) + 16, sizeof(sockaddr_in) + 16, 0, &pOverEx->over);
 	}
 
-	void CServer::Recv(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx)
+	void CServer::Recv(int32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx)
 	{
 		if (bytes == 0)
 		{
@@ -287,7 +287,7 @@ namespace game
 		m_sessions[id]->Recv();
 	}
 
-	void CServer::Send(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx)
+	void CServer::Send(int32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx)
 	{
 		//if (bytes == 0)
 		//{
@@ -330,7 +330,7 @@ namespace game
 		}
 	}
 
-	void CServer::Disconnect(uint32_t id)
+	void CServer::Disconnect(int32_t id)
 	{
 		for (auto& session : m_sessions)
 		{
@@ -350,7 +350,7 @@ namespace game
 		std::cout << std::format("session[{}] disconnected\n", id);
 	}
 
-	void CServer::ProcessPacket(uint32_t id, network::CPacket& packet)
+	void CServer::ProcessPacket(int32_t id, network::CPacket& packet)
 	{
 		// 프로토콜 종류 읽기
 		ProtocolID protocol{ packet.ReadProtocol() };
@@ -411,15 +411,24 @@ namespace game
 		}
 	}
 
-	void CServer::ProcessAUPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessAUPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
+		auto session{ m_sessions[id] };
+
 		switch (protocol)
 		{
 			case ProtocolID::AU_LOGIN_REQ:
 			{
-				Login(id, packet);
+				InputCommandMessage(id, protocol);
 
-				std::cout << std::format("session[{}] login Complete\n", id);
+				std::cout << std::format("session[{}] login complete\n", id);
+			}
+			break;
+			case ProtocolID::AU_LOGOUT_REQ:
+			{
+				InputCommandMessage(id, protocol);
+
+				std::cout << std::format("session[{}] logout complete\n", id);
 			}
 			break;
 			default:
@@ -427,7 +436,7 @@ namespace game
 		}
 	}
 
-	void CServer::ProcessMYPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessMYPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		auto session{ m_sessions[id] };
 
@@ -435,26 +444,26 @@ namespace game
 		{
 			case ProtocolID::MY_ADD_REQ:
 			{
-				ProtocolID protocol{ packet.ReadProtocol() };
 				InputCommandMessage(id, protocol);
 			}
 			break;
 			case ProtocolID::MY_KEYINPUT_REQ:
 			{
 				// 타깃의 이동방향 읽기
-				auto keyInput{ packet.Read<unsigned long>() };
-				auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
-
-				for (auto& playerObject : playerLayer->GetGameObjects())
-				{
-					auto player{ dynamic_cast<Player*>(playerObject) };
-
-					if (player->GetPlayerID() == id)
-					{
-						auto customController{ player->GetComponent<CustomController>(L"CustomController") };
-						customController->KeyboardReceive(keyInput);
-					}
-				}
+				//auto keyInput{ packet.Read<ulong32_t>() };
+				//auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
+				//
+				//for (auto& playerObject : playerLayer->GetGameObjects())
+				//{
+				//	auto player{ dynamic_cast<Player*>(playerObject) };
+				//
+				//	if (player->GetPlayerID() == id)
+				//	{
+				//		auto customController{ player->GetComponent<CustomController>(L"CustomController") };
+				//		customController->KeyboardReceive(keyInput);
+				//	}
+				//}
+				InputCommandMessage(id, protocol);
 			}
 			break;
 			default:
@@ -462,7 +471,7 @@ namespace game
 		}
 	}
 
-	void CServer::ProcessWRPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessWRPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		auto session{ m_sessions[id] };
 
@@ -483,69 +492,78 @@ namespace game
 		}
 	}
 
-	void CServer::ProcessBTPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessBTPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		// TODO : 추후 전투 관련 패킷 프로세스 처리
 	}
 
-	void CServer::ProcessIFPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessIFPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 	}
 
-	void CServer::ProcessITPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessITPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		// TODO : 추후 아이템 관련 패킷 프로세스 처리
 	}
 
-	void CServer::ProcessCMPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessCMPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		// TODO : 추후 커뮤니티(eg. 채팅) 관련 패킷 프로세스 처리
 	}
 
-	void CServer::ProcessECPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessECPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 	}
 
-	void CServer::ProcessGMPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessGMPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 	}
 
-	void CServer::ProcessTTPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol)
+	void CServer::ProcessTTPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
 	}
 
-	void CServer::Login(uint32_t id, network::CPacket& packet)
+	void CServer::Login(int32_t id, CSession* session, Player* player, int32_t roomID)
 	{
-		auto session{ m_sessions[id] };
-
 		session->SetState(STATE::INGAME);
+		session->SetRoomID(roomID);
+		session->SetObject(player);
+		session->SendLoginPacket(player);
 
-		// 용섭 : Player 오브젝트 새로 생성
-		//auto objMgr{ ObjectManager::GetInstance() };
-		//Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5)) };
-		//player->SetPlayerID(id);
-		//session->SetObject(player);
-		//session->SendLoginPacket(player);
-		ProtocolID protocol{ packet.ReadProtocol() };
-		InputCommandMessage(id, protocol);
+		for (auto& client : m_sessions)
+		{
+			if (client->GetState() != STATE::INGAME)
+				continue;
+
+			if (client->GetID() == id)
+				continue;
+
+			client->SendAddPacket(id, player);
+			session->SendAddPacket(client->GetID(), client->GetMyObject());
+		}
 
 		//for (auto& client : m_sessions)
 		//{
 		//	if (client->GetState() != STATE::INGAME)
 		//		continue;
 		//
-		//	if (client->GetID() == id)
-		//		continue;
-		//
-		//	//client->SendAddPacket(id, player);
-		//	session->SendAddPacket(client->GetID(), client->GetMyObject());
+		//	for (auto& obj : mapObjects)
+		//	{
+		//		session->SendAddPacket(obj->GetID(), obj);
+		//	}
 		//}
+	}
+
+	void CServer::Logout(int32_t id)
+	{
+		Disconnect(id);
 	}
 
 	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* over)
 	{
 		auto session{ m_sessions[id] };
+		auto postOver{ dynamic_cast<network::PostOVERLAPPEDEX*>(over) };
 
 		if (session->GetState() != STATE::INGAME)
 			return;
@@ -554,45 +572,26 @@ namespace game
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
 
-		switch (over->msgProtocol)
+		switch (postOver->msgProtocol)
 		{
 			case ProtocolID::AU_LOGIN_ACK:
 			{
-				Player* playerObj{ nullptr };
+				Player* player{ nullptr };
 
-				for (auto& player : playerObjects)
+				for (auto& playerObj : playerObjects)
 				{
-					playerObj = dynamic_cast<Player*>(player);
+					player = dynamic_cast<Player*>(playerObj);
 
-					if (playerObj->GetPlayerID() == id)
+					if (player->GetPlayerID() == id)
 						break;
 				}
 
-				session->SetObject(playerObj);
-				session->SendLoginPacket(playerObj);
-
-				for (auto& client : m_sessions)
-				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
-
-					if (client->GetID() == id)
-						continue;
-
-					client->SendAddPacket(id, playerObj);
-					session->SendAddPacket(client->GetID(), client->GetMyObject());
-				}
-
-				//for (auto& client : m_sessions)
-				//{
-				//	if (client->GetState() != STATE::INGAME)
-				//		continue;
-				//
-				//	for (auto& obj : mapObjects)
-				//	{
-				//		session->SendAddPacket(obj->GetID(), obj);
-				//	}
-				//}
+				Login(id, session, player, postOver->roomID);
+			}
+			break;
+			case ProtocolID::AU_LOGOUT_ACK:
+			{
+				Logout(id);
 			}
 			break;
 			case ProtocolID::MY_TRANSFORM_ACK:

@@ -119,7 +119,7 @@ void TestLevel::Init()
 
 void TestLevel::Update(double timeDelta)
 {
-	MessageHandler::GetInstance()->ExecuteMessage();
+	game::MessageHandler::GetInstance()->ExecuteMessage();
 }
 
 void TestLevel::LateUpdate(double timeDelta)

@@ -6,6 +6,7 @@ namespace network
 }
 
 class GameInstance;
+class Player;
 
 namespace game
 {
@@ -30,27 +31,28 @@ namespace game
 		void WorkerThread();
 		void GameThread();
 		void AcceptClient(network::OVERLAPPEDEX* pOverEx);
-		void Recv(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
-		void Send(uint32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
+		void Recv(int32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
+		void Send(int32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 
 		int32_t NewPlayerID();
-		void Disconnect(uint32_t id);
+		void Disconnect(int32_t id);
 
 #pragma region [PROCESS PACKET]
-		void ProcessPacket(uint32_t id, network::CPacket& packet);
-		void ProcessAUPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
-		void ProcessMYPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
-		void ProcessWRPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
-		void ProcessBTPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
-		void ProcessIFPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
-		void ProcessITPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
-		void ProcessCMPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
-		void ProcessECPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
-		void ProcessGMPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
-		void ProcessTTPacket(uint32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessPacket(int32_t id, network::CPacket& packet);
+		void ProcessAUPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessMYPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessWRPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessBTPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessIFPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessITPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessCMPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessECPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessGMPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
+		void ProcessTTPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
 #pragma endregion
 
-		void Login(uint32_t id, network::CPacket& packet);
+		void Login(int32_t id, CSession* session, Player* player, int32_t roomID);
+		void Logout(int32_t id);
 		void BroadcastResult(int32_t id, network::OVERLAPPEDEX* over);
 		void InputCommandMessage(int32_t id, ProtocolID type);
 

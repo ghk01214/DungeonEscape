@@ -12,7 +12,7 @@ namespace game
 		~CRoom();
 
 		void Enter(Player* player);
-		void Leave(Player* player);
+		void Exit(Player* player);
 
 		void StartGame();
 		void GameLogicThread();
