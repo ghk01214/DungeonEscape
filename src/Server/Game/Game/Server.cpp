@@ -563,7 +563,7 @@ namespace game
 	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* over)
 	{
 		auto session{ m_sessions[id] };
-		auto postOver{ dynamic_cast<network::PostOVERLAPPEDEX*>(over) };
+		auto postOver{ reinterpret_cast<network::PostOVERLAPPEDEX*>(over) };
 
 		if (session->GetState() != STATE::INGAME)
 			return;

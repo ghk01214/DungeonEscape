@@ -34,7 +34,7 @@ namespace network
 
 		void Set(CPacket& packet);
 		void Set(char* packet);
-		virtual void Reset();
+		void Reset();
 
 	public:
 		OVERLAPPED over;
@@ -50,7 +50,7 @@ namespace network
 		PostOVERLAPPEDEX(POST_COMPLETION type = POST_COMPLETION::BROADCAST);
 		~PostOVERLAPPEDEX() = default;
 
-		void Reset() override;
+		void PostReset();
 
 		OVERLAPPED& GetOVERLAPPED() { return over; }
 

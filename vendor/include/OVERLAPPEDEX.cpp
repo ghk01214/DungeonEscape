@@ -51,7 +51,7 @@ namespace network
 	{
 	}
 
-	void PostOVERLAPPEDEX::Reset()
+	void PostOVERLAPPEDEX::PostReset()
 	{
 		this->type = POST_COMPLETION::BROADCAST;
 		msgProtocol = ProtocolID::PROTOCOL_NONE;
