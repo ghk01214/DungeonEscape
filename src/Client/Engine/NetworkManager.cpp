@@ -511,7 +511,9 @@ namespace network
 		objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
 		objectDesc.vPostion = pos;
 		objectDesc.vScale = scale;
-		objectDesc.script = m_scripts[static_cast<int8_t>(scriptType)];
+
+		if (m_id == id)
+			objectDesc.script = m_scripts[static_cast<int8_t>(scriptType)];
 
 		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
 		std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
@@ -523,7 +525,8 @@ namespace network
 			gameObject->SetCheckFrustum(false);
 			gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
 			gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
-			gameObject->AddComponent(objectDesc.script);
+			if (m_id == id)
+				gameObject->AddComponent(objectDesc.script);
 			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
 			gameObject->AddComponent(networkComponent);
 			gameObject->GetAnimator()->Play(aniIndex, aniFrame);

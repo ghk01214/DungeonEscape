@@ -209,8 +209,6 @@ namespace game
 		packet.Write<int32_t>(aniIndex);
 		packet.Write<float>(aniFrame);
 
-		std::cout << aniIndex << "\n";
-
 		Send(packet);
 	}
 
