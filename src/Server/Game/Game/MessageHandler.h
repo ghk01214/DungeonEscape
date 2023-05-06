@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+class ObjectManager;
 class Player;
 
 namespace game
@@ -42,7 +43,7 @@ namespace game
 		int32_t NewObjectID();
 
 		void Login(int32_t playerID, Player* player);
-		void Logout(int32_t playerID, int32_t roomID, Player* player);
+		void Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr);
 
 	private:
 		HANDLE m_iocp;

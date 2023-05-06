@@ -144,7 +144,7 @@ namespace game
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
-							Logout(msg.playerID, msg.roomID, player);
+							Logout(msg.playerID, msg.roomID, player, objMgr);
 							break;
 						}
 					}
@@ -283,9 +283,10 @@ namespace game
 		InsertSendMessage(msg);
 	}
 
-	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player)
+	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr)
 	{
 		game::CRoomManager::GetInstance()->Exit(roomID, player);
+		objMgr->RemoveGameObjectFromLayer(L"Layer_Player", player);
 
 		Message msg{ playerID, ProtocolID::AU_LOGOUT_ACK };
 

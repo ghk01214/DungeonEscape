@@ -140,6 +140,8 @@ namespace game
 			BOOL ret{ GetQueuedCompletionStatus(m_iocp, &bytes, &clientID, &over, INFINITE) };
 			network::OVERLAPPEDEX* pOverEx{ reinterpret_cast<network::OVERLAPPEDEX*>(over) };
 
+			int32_t id{ static_cast<int32_t>(clientID) };
+
 			if (ret == FALSE)
 			{
 				if (pOverEx->type == network::COMPLETION::ACCEPT)
@@ -149,7 +151,10 @@ namespace game
 				else
 				{
 					ErrorDisplay(L"GQCS Error on session[" + std::to_wstring(clientID) + L"] :");
-					Disconnect(static_cast<int32_t>(clientID));
+					//Logout(static_cast<int32_t>(clientID));
+
+					Message msg{ id, ProtocolID::AU_LOGOUT_REQ };
+					InputCommandMessage(msg);
 
 					if (pOverEx->type == network::COMPLETION::SEND)
 					{
@@ -165,7 +170,9 @@ namespace game
 
 			if (bytes == 0 and (pOverEx->type == network::COMPLETION::RECV or pOverEx->type == network::COMPLETION::SEND))
 			{
-				Disconnect(static_cast<int32_t>(clientID));
+				//Logout(static_cast<int32_t>(clientID));
+				Message msg{ id, ProtocolID::AU_LOGOUT_REQ };
+				InputCommandMessage(msg);
 
 				if (pOverEx->type == network::COMPLETION::SEND)
 				{
@@ -177,8 +184,6 @@ namespace game
 
 				continue;
 			}
-
-			uint32_t id{ static_cast<uint32_t>(clientID) };
 
 			switch (pOverEx->type)
 			{
@@ -252,7 +257,7 @@ namespace game
 	{
 		if (bytes == 0)
 		{
-			Disconnect(id);
+			Logout(id);
 			return;
 		}
 
