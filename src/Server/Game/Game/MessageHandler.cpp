@@ -3,7 +3,7 @@
 #include "ObjectManager.h"
 #include "GameObject.h"
 #include "MapObject.h"
-#include "Player.h"
+#include "UnitObject.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
 #include "Transform.h"
@@ -128,7 +128,7 @@ namespace game
 			{
 				case ProtocolID::AU_LOGIN_REQ:
 				{
-					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20, 0.f, 0.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
+					UnitObject* player{ objMgr->AddGameObjectToLayer<UnitObject>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20.f, 10.f, -5.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
 					player->SetName(L"Mistic");
 
 					Login(msg.playerID, player);
@@ -136,11 +136,11 @@ namespace game
 				break;
 				case ProtocolID::AU_LOGOUT_REQ:
 				{
-					Player* player{ nullptr };
+					UnitObject* player{ nullptr };
 
 					for (auto& playerObj : playerObjects)
 					{
-						player = dynamic_cast<Player*>(playerObj);
+						player = dynamic_cast<UnitObject*>(playerObj);
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
@@ -168,12 +168,11 @@ namespace game
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:
 				{
-
 					auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
 
 					for (auto& playerObject : playerLayer->GetGameObjects())
 					{
-						auto player{ dynamic_cast<Player*>(playerObject) };
+						auto player{ dynamic_cast<UnitObject*>(playerObject) };
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
@@ -181,13 +180,15 @@ namespace game
 							customController->KeyboardReceive(msg.keyInput);
 						}
 					}
+
+					//std::cout << "recv\n";
 				}
 				break;
 				case ProtocolID::MY_ANI_REQ:
 				{
 					for (auto& playerObj : playerObjects)
 					{
-						auto player{ dynamic_cast<Player*>(playerObj) };
+						auto player{ dynamic_cast<UnitObject*>(playerObj) };
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
@@ -198,7 +199,6 @@ namespace game
 					}
 
 					Message sendMsg{ msg.playerID, ProtocolID::MY_ANI_ACK };
-
 					InsertSendMessage(sendMsg);
 				}
 				break;
@@ -269,7 +269,7 @@ namespace game
 		return 0;
 	}
 
-	void MessageHandler::Login(int32_t playerID, Player* player)
+	void MessageHandler::Login(int32_t playerID, UnitObject* player)
 	{
 		int32_t roomID{};
 		if (game::CRoomManager::GetInstance()->IsRoomCreated() == false)
@@ -283,7 +283,7 @@ namespace game
 		InsertSendMessage(msg);
 	}
 
-	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr)
+	void MessageHandler::Logout(int32_t playerID, int32_t roomID, UnitObject* player, ObjectManager* objMgr)
 	{
 		game::CRoomManager::GetInstance()->Exit(roomID, player);
 		objMgr->RemoveGameObjectFromLayer(L"Layer_Player", player);

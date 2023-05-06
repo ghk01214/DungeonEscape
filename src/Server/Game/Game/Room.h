@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-//#include "Player.h"
-class Player;
+//#include "UnitObject.h"
+class UnitObject;
 
 namespace game
 {
@@ -11,8 +11,8 @@ namespace game
 		CRoom();
 		~CRoom();
 
-		void Enter(Player* player);
-		void Exit(Player* player);
+		void Enter(UnitObject* player);
+		void Exit(UnitObject* player);
 
 		void StartGame();
 		void GameLogicThread();
@@ -24,7 +24,7 @@ namespace game
 	private:
 		int32_t m_id;
 
-		std::array<std::pair<Player*, bool>, 3> m_players;
+		std::array<std::pair<UnitObject*, bool>, 3> m_players;
 		int32_t m_occupation;
 
 		class GameInstance* m_gameInstance;

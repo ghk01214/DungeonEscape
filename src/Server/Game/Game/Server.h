@@ -6,7 +6,7 @@ namespace network
 }
 
 class GameInstance;
-class Player;
+class UnitObject;
 
 namespace game
 {
@@ -52,7 +52,7 @@ namespace game
 		void ProcessTTPacket(int32_t id, network::CPacket& packet, ProtocolID protocol);
 #pragma endregion
 
-		void Login(int32_t id, CSession* session, Player* player, int32_t roomID);
+		void Login(int32_t id, CSession* session, UnitObject* player, int32_t roomID);
 		void Logout(int32_t id);
 		void BroadcastResult(int32_t id, network::OVERLAPPEDEX* over);
 		void InputCommandMessage(Message msg);

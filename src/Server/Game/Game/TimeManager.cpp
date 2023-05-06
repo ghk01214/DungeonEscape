@@ -5,7 +5,13 @@
 
 ImplementSingletone(TimeManager);
 
-TimeManager::TimeManager()
+TimeManager::TimeManager() :
+    m_frameCount{ 0 },
+    m_frameCountIn1s{ 0 },
+    m_frameTime{0.f},
+    m_prevCount{0},
+    m_deltaTime{0.f},
+    m_fps{0}
 {
 }
 
@@ -29,13 +35,6 @@ void TimeManager::Release()
 {
 }
 
-double TimeManager::GetElapsedTime()
-{
-    LARGE_INTEGER currentTime;
-    QueryPerformanceCounter(&currentTime);
-    return (currentTime.QuadPart - m_startTime) * m_invFrequency;
-}
-
 void TimeManager::Reset()
 {
     LARGE_INTEGER currentTime;
@@ -43,7 +42,36 @@ void TimeManager::Reset()
     m_startTime = currentTime.QuadPart;
 }
 
+void TimeManager::Update()
+{
+    uint64_t currentCount;
+    QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&currentCount));
 
+    m_deltaTime = (currentCount - m_prevCount) * m_invFrequency;
+    m_prevCount = currentCount;
 
+    ++m_frameCount;
+    ++m_frameCountIn1s;
+    m_frameTime += m_deltaTime;
 
+    if (m_frameTime > 1.f)
+    {
+        m_fps = static_cast<uint32_t>(m_frameCountIn1s / m_frameTime);
+
+        m_frameTime = 0.f;
+        m_frameCount = 0;
+        m_frameCountIn1s = 0;
+    }
+}
+
+const bool TimeManager::Is1FrameIn60F()
+{
+    if (m_fps > 0.f and m_frameCount > m_fps / 20)
+    {
+        m_frameCount = 0;
+        return true;
+    }
+
+    return false;
+}
 

@@ -29,6 +29,7 @@ namespace network
 		constexpr int32_t GetID() const { return m_id; }
 
 		void AddScript(server::SCRIPT_TYPE scriptType, std::shared_ptr<MonoBehaviour> script);
+		constexpr bool IsSuccessfullyLoggedIn() const { return m_login; }
 	private:
 		void ProcessThread();
 
@@ -71,6 +72,9 @@ namespace network
 		int32_t m_remainSize;
 
 		int32_t m_id;
+
+		bool m_login;
+
 		std::unordered_map<int32_t, std::vector<std::shared_ptr<CGameObject>>> m_objects;
 
 		std::unordered_map<int8_t, std::shared_ptr<MonoBehaviour>> m_scripts;

@@ -6,8 +6,6 @@
 GameObject::GameObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
 {
     m_transform = AddComponent<Transform>(L"Transform" , position, rotation, scale);
-    m_aniIndex = 0;
-    m_aniFrame = 0.f;
 }
 
 GameObject::~GameObject()
@@ -39,11 +37,6 @@ void GameObject::SetRemovalFlag(bool value)
     m_removalFlag = value;
 }
 
-void GameObject::SetScriptType(server::SCRIPT_TYPE scriptType)
-{
-    m_scriptType = scriptType;
-}
-
 Transform* GameObject::GetTransform()
 {
     return m_transform;
@@ -59,12 +52,7 @@ void GameObject::SetName(const std::wstring& name)
     m_name = name;
 }
 
-void GameObject::SetAniIndex(int32_t aniIndex)
+void GameObject::StartSendTransform()
 {
-    m_aniIndex = aniIndex;
-}
-
-void GameObject::SetAniFrame(float aniFrame)
-{
-    m_aniFrame = aniFrame;
+    m_startSendTransform = true;
 }

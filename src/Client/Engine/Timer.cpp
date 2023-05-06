@@ -1,10 +1,10 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Timer.h"
 
 void Timer::Init()
 {
 	::QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&_frequency));
-	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&_prevCount)); // CPU Ŭ��
+	::QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&_prevCount)); // CPU 클럭
 }
 
 void Timer::Update()
@@ -15,6 +15,7 @@ void Timer::Update()
 	_deltaTime = (currentCount - _prevCount) / static_cast<float>(_frequency);
 	_prevCount = currentCount;
 
+	_frameTick++;
 	_frameCount++;
 	_frameTime += _deltaTime;
 
@@ -24,5 +25,17 @@ void Timer::Update()
 
 		_frameTime = 0.f;
 		_frameCount = 0;
+		_frameTick = 0;
 	}
+}
+
+const bool Timer::Is1FrameIn60F()
+{
+	if (_fps > 0.f and _frameTick > _fps / 60)
+	{
+		_frameTick = 0;
+		return true;
+	}
+
+	return false;
 }

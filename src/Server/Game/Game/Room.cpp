@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Player.h"
+#include "UnitObject.h"
 #include "GameInstance.h"
 #include "Room.h"
 #include "TimeManager.h"
@@ -16,7 +16,7 @@ namespace game
 	{
 	}
 
-	void CRoom::Enter(Player* player)
+	void CRoom::Enter(UnitObject* player)
 	{
 		if (m_occupation >= 3)
 		{
@@ -36,7 +36,7 @@ namespace game
 		}
 	}
 
-	void CRoom::Exit(Player* player)
+	void CRoom::Exit(UnitObject* player)
 	{
 		for (auto& [pl, filled] : m_players)
 		{
@@ -62,10 +62,13 @@ namespace game
 	{
 		while (true)
 		{
-			double timeDelta{ TimeManager::GetInstance()->GetElapsedTime() };
+			TimeManager::GetInstance()->Update();
+			double timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
 			m_gameInstance->Update(timeDelta);
 			m_gameInstance->LateUpdate(timeDelta);
-			MessageHandler::GetInstance()->SendPacketMessage();
+
+			if (TimeManager::GetInstance()->Is1FrameIn60F() == true)
+				MessageHandler::GetInstance()->SendPacketMessage();
 		}
 	}
 

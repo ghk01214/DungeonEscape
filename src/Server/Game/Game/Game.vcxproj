@@ -184,7 +184,7 @@
     <ClCompile Include="PhysDevice.cpp" />
     <ClCompile Include="PhysicsRay.cpp" />
     <ClCompile Include="PhysQuery.cpp" />
-    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="UnitObject.cpp" />
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="RaycastHit.cpp" />
     <ClCompile Include="RigidBody.cpp" />
@@ -238,7 +238,7 @@
     <ClInclude Include="PhysQuery.h" />
     <ClInclude Include="physx_define.h" />
     <ClInclude Include="physx_utils.h" />
-    <ClInclude Include="Player.h" />
+    <ClInclude Include="UnitObject.h" />
     <ClInclude Include="Quat.h" />
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="RigidBody.h" />

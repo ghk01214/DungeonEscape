@@ -103,20 +103,20 @@ void Input::EncodeKeyInput(void)
 	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RIGHT)] = GetButton(KEY_TYPE::RIGHT);
 	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::SPACE)] = GetButton(KEY_TYPE::SPACE);
 
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::W)] = GetButton(KEY_TYPE::W);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::A)] = GetButton(KEY_TYPE::A);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::S)] = GetButton(KEY_TYPE::S);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::D)] = GetButton(KEY_TYPE::D);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Q)] = GetButton(KEY_TYPE::Q);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::E)] = GetButton(KEY_TYPE::E);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Z)] = GetButton(KEY_TYPE::Z);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::C)] = GetButton(KEY_TYPE::C);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::W)] = GetButton(KEY_TYPE::W);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::A)] = GetButton(KEY_TYPE::A);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::S)] = GetButton(KEY_TYPE::S);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::D)] = GetButton(KEY_TYPE::D);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Q)] = GetButton(KEY_TYPE::Q);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::E)] = GetButton(KEY_TYPE::E);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Z)] = GetButton(KEY_TYPE::Z);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::C)] = GetButton(KEY_TYPE::C);
 
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_1)] = GetButton(KEY_TYPE::KEY_1);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_2)] = GetButton(KEY_TYPE::KEY_2);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_3)] = GetButton(KEY_TYPE::KEY_3);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_4)] = GetButton(KEY_TYPE::KEY_4);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_1)] = GetButton(KEY_TYPE::KEY_1);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_2)] = GetButton(KEY_TYPE::KEY_2);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_3)] = GetButton(KEY_TYPE::KEY_3);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_4)] = GetButton(KEY_TYPE::KEY_4);
 
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::LBUTTON)] = GetButton(KEY_TYPE::LBUTTON);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RBUTTON)] = GetButton(KEY_TYPE::RBUTTON);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::LBUTTON)] = GetButton(KEY_TYPE::LBUTTON);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RBUTTON)] = GetButton(KEY_TYPE::RBUTTON);
 }

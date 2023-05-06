@@ -25,6 +25,7 @@ namespace network
 		m_pRecvPacket = nullptr;
 		m_remainSize = 0;
 		m_id = 0;
+		m_login = false;
 
 		Connect();
 	}
@@ -368,6 +369,7 @@ namespace network
 				AddPlayer(m_id);
 
 				std::cout << "ADD ME[" << m_id << "]" << std::endl << std::endl;
+				m_login = true;
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_ACK:
@@ -558,6 +560,11 @@ namespace network
 		quat.y = m_packet.Read<float>();
 		quat.z = m_packet.Read<float>();
 		quat.w = m_packet.Read<float>();
+
+		Vec3 scale;
+		scale.x = m_packet.Read<float>();
+		scale.y = m_packet.Read<float>();
+		scale.z = m_packet.Read<float>();
 
 		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
 		for (auto& object : m_objects[id])

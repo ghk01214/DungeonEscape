@@ -29,15 +29,15 @@ void UnitObject::Update(double timeDelta)
 {
 	m_controller->Move();
 
-	Vec3 trans{ m_transform->GetPosition() };
-
-	if (m_startSendTransform == true and TimeManager::GetInstance()->Is1FrameIn60F() == true)
-	{
-		//if (trans.x != 0.f and trans.z != 0.f)
-			std::cout << trans.x << ", " << trans.y << ", " << trans.z << "\n";
-		game::Message msg{ m_playerID, ProtocolID::MY_TRANSFORM_ACK };
-		//game::MessageHandler::GetInstance()->InsertSendMessage(msg);
-	}
+	//Vec3 trans{ m_transform->GetPosition() };
+	//
+	//if (m_startSendTransform == true and TimeManager::GetInstance()->Is1FrameIn60F() == true)
+	//{
+	//	//if (trans.x != 0.f and trans.z != 0.f)
+	//		std::cout << trans.x << ", " << trans.y << ", " << trans.z << "\n";
+	//	game::Message msg{ m_playerID, ProtocolID::MY_TRANSFORM_ACK };
+	//	//game::MessageHandler::GetInstance()->InsertSendMessage(msg);
+	//}
 }
 
 void UnitObject::LateUpdate(double timeDelta)

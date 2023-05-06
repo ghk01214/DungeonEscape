@@ -2,7 +2,7 @@
 
 #include "Room.h"
 
-class Player;
+class UnitObject;
 
 namespace game
 {
@@ -20,8 +20,8 @@ namespace game
 		int32_t CreateRoom();
 		void DeleteRoom(int32_t roomID);
 
-		void Enter(int32_t roomID, Player* player);
-		void Exit(int32_t roomID, Player* player);
+		void Enter(int32_t roomID, UnitObject* player);
+		void Exit(int32_t roomID, UnitObject* player);
 
 		const bool IsRoomCreated() const;
 

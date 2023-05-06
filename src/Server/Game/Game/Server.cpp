@@ -6,13 +6,14 @@
 #include "TimeManager.h"
 #include "ObjectManager.h"
 #include "Layer.h"
-#include "Player.h"
+#include "UnitObject.h"
 #include "CustomController.h"
 #include "MapObject.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
 #include "Transform.h"
 #include "MessageHandler.h"
+#include <bitset>
 
 namespace game
 {
@@ -26,7 +27,7 @@ namespace game
 		// 클래스 생성 시 빈 세션 생성
 		for (int32_t i = 0; i < MAX_USER; ++i)
 		{
-			m_sessions[i] = new CSession{ new Player{} };
+			m_sessions[i] = new CSession{ new UnitObject{} };
 		}
 	}
 
@@ -216,9 +217,11 @@ namespace game
 	{
 		while (true)
 		{
-			double timeDelta{ TimeManager::GetInstance()->GetElapsedTime() };
+			TimeManager::GetInstance()->Update();
+			float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
 			m_gameInstance->Update(timeDelta);
 			m_gameInstance->LateUpdate(timeDelta);
+
 			MessageHandler::GetInstance()->SendPacketMessage();
 		}
 	}
@@ -428,16 +431,12 @@ namespace game
 
 				Message msg{ id, protocol };
 				InputCommandMessage(msg);
-
-				std::cout << std::format("session[{}] login complete\n", id);
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_REQ:
 			{
 				Message msg{ id, protocol };
 				InputCommandMessage(msg);
-
-				std::cout << std::format("session[{}] logout complete\n", id);
 			}
 			break;
 			default:
@@ -460,7 +459,7 @@ namespace game
 			case ProtocolID::MY_KEYINPUT_REQ:
 			{
 				// 타깃의 이동방향 읽기
-				auto keyInput{ packet.Read<ulong32_t>() };
+				/*auto keyInput{ packet.Read<ulong32_t>() };
 				auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
 
 				for (auto& playerObject : playerLayer->GetGameObjects())
@@ -472,12 +471,18 @@ namespace game
 						auto customController{ player->GetComponent<CustomController>(L"CustomController") };
 						customController->KeyboardReceive(keyInput);
 					}
-				}
+				}*/
 				// keyinput을 매번 handler로 보내면 다른 명령들이 작동을 안 한다.
-				//Message msg{ id, protocol };
-				//msg.keyInput = packet.Read<ulong32_t>();
+				Message msg{ id, protocol };
+				msg.keyInput = packet.Read<ulong32_t>();
+				//std::bitset<20> key{ msg.keyInput };
+				//
+				//if (key.none() == true)
+				//	break;
 
-				//InputCommandMessage(msg);
+				InputCommandMessage(msg);
+
+				//std::cout << "input\n";
 			}
 			break;
 			case ProtocolID::MY_ANI_REQ:
@@ -547,7 +552,7 @@ namespace game
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
 	}
 
-	void CServer::Login(int32_t id, CSession* session, Player* player, int32_t roomID)
+	void CServer::Login(int32_t id, CSession* session, UnitObject* player, int32_t roomID)
 	{
 		session->SetRoomID(roomID);
 		session->SetPlayer(player);
@@ -561,8 +566,10 @@ namespace game
 			if (client->GetID() == id)
 				continue;
 
+			auto pl{ dynamic_cast<UnitObject*>(client->GetMyObject()) };
+
 			client->SendAddAnimateObjPacket(id, player);
-			session->SendAddAnimateObjPacket(client->GetID(), client->GetMyObject());
+			session->SendAddAnimateObjPacket(client->GetID(), pl);
 		}
 
 		//for (auto& client : m_sessions)
@@ -603,11 +610,11 @@ namespace game
 		{
 			case ProtocolID::AU_LOGIN_ACK:
 			{
-				Player* player{ nullptr };
+				UnitObject* player{ nullptr };
 
 				for (auto& playerObj : playerObjects)
 				{
-					player = dynamic_cast<Player*>(playerObj);
+					player = dynamic_cast<UnitObject*>(playerObj);
 
 					if (player->GetPlayerID() == id)
 						break;
@@ -617,11 +624,16 @@ namespace game
 				int32_t roomID{ postOver->roomID };
 
 				Login(id, session, player, roomID);
+				player->StartSendTransform();
+
+				std::cout << std::format("session[{}] login complete\n", id);
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_ACK:
 			{
 				Logout(id);
+
+				std::cout << std::format("session[{}] logout complete\n", id);
 			}
 			break;
 			case ProtocolID::MY_TRANSFORM_ACK:
@@ -629,12 +641,15 @@ namespace game
 			{
 				for (auto& player : playerObjects)
 				{
-					auto pl{ dynamic_cast<Player*>(player) };
+					auto pl{ dynamic_cast<UnitObject*>(player) };
 
 					if (pl->GetPlayerID() == id)
-						session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, player);
+					{
+						session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, pl);
+						//std::cout << pl->GetTransform()->GetPosition().x << ", " << pl->GetTransform()->GetPosition().y << ", " << pl->GetTransform()->GetPosition().z << "\n";
+					}
 					else
-						session->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, player);
+						session->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, pl);
 				}
 
 				for (auto& object : mapObjects)
@@ -647,6 +662,8 @@ namespace game
 						map->SetRequireFlagTransmit(false);														//플래그 체크
 					}
 				}
+
+				//std::cout << "send\n";
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
@@ -677,11 +694,11 @@ namespace game
 				//int32_t aniIndex{ packet.Read<int32_t>() };
 				//float aniFrame{ packet.Read<float>() };
 				ProtocolID protocol{ ProtocolID::PROTOCOL_NONE };
-				Player* player{ nullptr };
+				UnitObject* player{ nullptr };
 
 				for (auto& playerObj : playerObjects)
 				{
-					player = dynamic_cast<Player*>(playerObj);
+					player = dynamic_cast<UnitObject*>(playerObj);
 
 					if (player->GetPlayerID() == id)
 						break;

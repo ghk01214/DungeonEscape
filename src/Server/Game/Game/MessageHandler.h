@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 class ObjectManager;
-class Player;
+class UnitObject;
 
 namespace game
 {
@@ -42,8 +42,8 @@ namespace game
 		void PopSendQueue(int32_t size);
 		int32_t NewObjectID();
 
-		void Login(int32_t playerID, Player* player);
-		void Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr);
+		void Login(int32_t playerID, UnitObject* player);
+		void Logout(int32_t playerID, int32_t roomID, UnitObject* player, ObjectManager* objMgr);
 
 	private:
 		HANDLE m_iocp;

@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
-#include "Player.h"
+#include "UnitObject.h"
 #include "MapObject.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
@@ -30,8 +30,8 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Player");
 
 	//messagehandler->executeOrder()
-	//Player* player{ objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5)) };
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
+	//UnitObject* player{ objmgr->AddGameObjectToLayer<UnitObject>(L"Layer_Player", Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5)) };
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<UnitObject>(L"Layer_Player", 3, Vec3(5, 10, -10), Quat(0, 0, 0, 1), Vec3(0.5, 0.5, 0.5));
 
 #pragma region Plane
 	//auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));

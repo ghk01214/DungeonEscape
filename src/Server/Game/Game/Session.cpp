@@ -15,7 +15,7 @@ namespace game
 	{
 	}
 
-	CSession::CSession(Player* obj) :
+	CSession::CSession(UnitObject* obj) :
 		m_recvEx{},
 		m_sendEx{},
 		m_state{ STATE::FREE },
@@ -58,7 +58,7 @@ namespace game
 		WSASend(m_socket, &m_sendEx.wsa, 1, 0, 0, &m_sendEx.over, nullptr);
 	}
 
-	void CSession::SendLoginPacket(GameObject* obj)
+	void CSession::SendLoginPacket(UnitObject* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -90,13 +90,11 @@ namespace game
 		packet.Write<int32_t>(obj->GetAniIndex());
 		packet.Write<float>(obj->GetAniFrame());
 
-		std::cout << obj->GetAniIndex() << "\n";
-
 		// 패킷 전송
 		Send(packet);
 	}
 
-	void CSession::SendAddAnimateObjPacket(int32_t id, GameObject* obj)
+	void CSession::SendAddAnimateObjPacket(int32_t id, UnitObject* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -126,8 +124,6 @@ namespace game
 		packet.Write<server::SCRIPT_TYPE>(obj->GetScriptType());
 		packet.Write<int32_t>(obj->GetAniIndex());
 		packet.Write<float>(obj->GetAniFrame());
-
-		std::cout << obj->GetAniIndex() << "\n";
 
 		Send(packet);
 	}
@@ -194,11 +190,15 @@ namespace game
 		packet.Write<float>(quat.w);
 		packet.Write<float>(quat.z);
 
+		packet.Write<float>(scale.x);
+		packet.Write<float>(scale.y);
+		packet.Write<float>(scale.z);
+
 		// 패킷 전송
 		Send(packet);
 	}
 
-	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, GameObject* obj)
+	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, UnitObject* obj)
 	{
 		network::CPacket packet;
 		int32_t aniIndex{ obj->GetAniIndex() };

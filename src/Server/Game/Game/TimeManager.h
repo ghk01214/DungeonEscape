@@ -12,13 +12,23 @@ public:
 	void Init();
 	void Release();
 public:
-    double GetElapsedTime();
+	float GetDeltaTime() { return m_deltaTime; }
     void Reset();
 
+	void Update();
+	constexpr uint32_t GetFPS() const { return m_fps; }
 
+	const bool Is1FrameIn60F();
 
 private:
 	LONGLONG m_startTime;
-	double m_invFrequency;
+	float m_invFrequency;
+
+	float m_deltaTime;
+	uint64_t m_prevCount;
+	uint32_t m_frameCount;
+	uint32_t m_frameCountIn1s;
+	float m_frameTime;
+	uint32_t m_fps;
 };
 
