@@ -168,6 +168,7 @@ bool CustomController::CheckOnGround_Raycast()
 
 void CustomController::DirectionInput()
 {
+#pragma region Original
 	m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
 	if (m_keyboardLeft)
@@ -181,6 +182,23 @@ void CustomController::DirectionInput()
 		m_moveDirection.z = -1.f;
 
 	m_moveDirection.normalize();
+#pragma endregion
+
+#pragma region ForDebugging
+	//m_moveDirection = PxVec3(0.f, 0.f, 0.f);
+
+	//if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	//	m_moveDirection.x = -1.f;
+	//else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	//	m_moveDirection.x = 1.f;
+
+	//if (GetAsyncKeyState(VK_UP) & 0x8000)
+	//	m_moveDirection.z = 1.f;
+	//else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	//	m_moveDirection.z = -1.f;
+
+	//m_moveDirection.normalize();
+#pragma endregion
 }
 
 void CustomController::Movement()
@@ -197,8 +215,8 @@ void CustomController::Movement()
 	PxVec3 surfaceNormal{ 0.f };
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	//if (((keyType & static_cast<uint8_t>(server::KEY_TYPE::SPACE)) != 0) && keyState == server::KEY_STATE::DOWN && m_onGround)
-	if (m_keyboardSpace && m_onGround)
+	if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
+	//if (m_keyboardSpace && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;

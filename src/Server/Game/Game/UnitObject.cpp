@@ -23,6 +23,9 @@ void UnitObject::Init()
 {
 	m_controller = AddComponent<CustomController>(L"CustomController");
 	m_scriptType = server::SCRIPT_TYPE::MISTIC;
+
+	auto body = m_controller->GetBody();
+	body->SetMass(body->GetMass() * 0.7f);
 }
 
 void UnitObject::Update(double timeDelta)

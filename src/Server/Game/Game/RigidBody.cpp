@@ -223,6 +223,16 @@ void RigidBody::SetMass(float value)
 	UpdateMassAndInertia();
 }
 
+void RigidBody::AddForce(ForceMode mode, const PxVec3& forceVector)
+{
+	if (isKinematic())
+	{
+		return;
+	}
+
+	m_body->addForce(forceVector, (PxForceMode::Enum)mode);
+}
+
 void RigidBody::SetAngularDamping(float value)
 {
 	if (m_body)
