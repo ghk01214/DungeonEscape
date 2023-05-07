@@ -421,9 +421,6 @@
     <ClInclude Include="MessageHandler.h">
       <Filter>01. Server\MessageHandler</Filter>
     </ClInclude>
-    <ClInclude Include="RigidBody.h">
-      <Filter>02. Physx\Wrapper</Filter>
-    </ClInclude>
     <ClInclude Include="RoomManager.h">
       <Filter>01. Server\Room\RoomManager</Filter>
     </ClInclude>
@@ -432,6 +429,9 @@
     </ClInclude>
     <ClInclude Include="FBXMapLoader.h">
       <Filter>99. Utility\FBXLoader\MapLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>02. Physx\RigidBody</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -122,6 +122,8 @@ public:
 	void SetVelocity(const physx::PxVec3& velocity);
 	float GetMass() const;
 	void SetMass(float value);
+public:
+	void AddForce(ForceMode mode, const physx::PxVec3& forceVector);
 
 public:
 	void SetAngularDamping(float value);

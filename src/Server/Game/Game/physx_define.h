@@ -72,5 +72,5 @@ enum class CollisionInfoType
 	Exit = 2
 };
 
-#define PX_SIM_FRAMECNT 120.0f
+#define PX_SIM_FRAMECNT 180.0f
 #define PX_RELEASE(x)	if(x)	{ x->release(); x = NULL;	}
