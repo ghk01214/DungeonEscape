@@ -32,6 +32,9 @@ public:
 	Quat operator / (float s) const;
 
 public:
+	Vec3 ToEuler();
+
+public:
 	float SqrMagnitude() const;
 	float Magnitude() const;
 	Quat Normalized() const;

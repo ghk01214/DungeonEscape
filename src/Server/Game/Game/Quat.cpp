@@ -107,6 +107,35 @@ Quat Quat::operator/(float s) const
     return Quat(x / s, y / s, z / s, w / s);
 }
 
+Vec3 Quat::ToEuler()
+{
+    Vec3 euler;
+
+    // Roll (X-Axis)
+    float sinr_cosp = 2.0f * (w * x + y * z);
+    float cosr_cosp = 1.0f - 2.0f * (x * x + y * y);
+    euler.x = std::atan2(sinr_cosp, cosr_cosp);
+
+    // Pitch (Y-Axis)
+    float sinp = 2.0f * (w * y - z * x);
+    if (std::abs(sinp) >= 1)
+        euler.y = std::copysign(M_PI / 2, sinp); // Use 90 degrees if out of range
+    else
+        euler.y = std::asin(sinp);
+
+    // Yaw (Z-Axis)
+    float siny_cosp = 2.0f * (w * z + x * y);
+    float cosy_cosp = 1.0f - 2.0f * (y * y + z * z);
+    euler.z = std::atan2(siny_cosp, cosy_cosp);
+
+    //angle > degree
+    euler.x *= 180.0f / static_cast<float>(M_PI);
+    euler.y *= 180.0f / static_cast<float>(M_PI);
+    euler.z *= 180.0f / static_cast<float>(M_PI);
+
+    return euler;
+}
+
 float Quat::SqrMagnitude() const
 {
     return DirectX::XMVectorGetX(DirectX::XMQuaternionLengthSq(XMLoadFloat4(this)));
