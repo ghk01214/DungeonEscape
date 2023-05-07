@@ -3,7 +3,7 @@
 #include "ObjectManager.h"
 #include "GameObject.h"
 #include "MapObject.h"
-#include "UnitObject.h"
+#include "Player.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
 #include "Transform.h"
@@ -123,7 +123,7 @@ namespace game
 			{
 				case ProtocolID::AU_LOGIN_REQ:
 				{
-					UnitObject* player{ objMgr->AddGameObjectToLayer<UnitObject>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 2.f, 10.f, -5.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
+					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 2.f, 10.f, -5.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
 					player->SetName(L"Mistic");
 
 					Login(msg.playerID, player);
@@ -131,11 +131,11 @@ namespace game
 				break;
 				case ProtocolID::AU_LOGOUT_REQ:
 				{
-					UnitObject* player{ nullptr };
+					Player* player{ nullptr };
 
 					for (auto& playerObj : playerObjects)
 					{
-						player = dynamic_cast<UnitObject*>(playerObj);
+						player = dynamic_cast<Player*>(playerObj);
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
@@ -167,7 +167,7 @@ namespace game
 
 					for (auto& playerObject : playerLayer->GetGameObjects())
 					{
-						auto player{ dynamic_cast<UnitObject*>(playerObject) };
+						auto player{ dynamic_cast<Player*>(playerObject) };
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
@@ -182,7 +182,7 @@ namespace game
 				{
 					for (auto& playerObj : playerObjects)
 					{
-						auto player{ dynamic_cast<UnitObject*>(playerObj) };
+						auto player{ dynamic_cast<Player*>(playerObj) };
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
@@ -248,7 +248,7 @@ namespace game
 		return 0;
 	}
 
-	void MessageHandler::Login(int32_t playerID, UnitObject* player)
+	void MessageHandler::Login(int32_t playerID, Player* player)
 	{
 		int32_t roomID{};
 		if (game::CRoomManager::GetInstance()->IsRoomCreated() == false)
@@ -262,7 +262,7 @@ namespace game
 		InsertSendMessage(msg);
 	}
 
-	void MessageHandler::Logout(int32_t playerID, int32_t roomID, UnitObject* player, ObjectManager* objMgr)
+	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr)
 	{
 		game::CRoomManager::GetInstance()->Exit(roomID, player);
 		objMgr->RemoveGameObjectFromLayer(L"Layer_Player", player);

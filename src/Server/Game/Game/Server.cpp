@@ -6,7 +6,7 @@
 #include "TimeManager.h"
 #include "ObjectManager.h"
 #include "Layer.h"
-#include "UnitObject.h"
+#include "Player.h"
 #include "CustomController.h"
 #include "MapObject.h"
 #include "RigidBody.h"
@@ -554,7 +554,7 @@ namespace game
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
 	}
 
-	void CServer::Login(int32_t id, CSession* session, UnitObject* player, int32_t roomID)
+	void CServer::Login(int32_t id, CSession* session, Player* player, int32_t roomID)
 	{
 		session->SetRoomID(roomID);
 		session->SetPlayer(player);
@@ -568,7 +568,7 @@ namespace game
 			if (client->GetID() == id)
 				continue;
 
-			auto pl{ dynamic_cast<UnitObject*>(client->GetMyObject()) };
+			auto pl{ dynamic_cast<Player*>(client->GetMyObject()) };
 
 			client->SendAddAnimateObjPacket(id, player);
 			session->SendAddAnimateObjPacket(client->GetID(), pl);
@@ -612,11 +612,11 @@ namespace game
 		{
 			case ProtocolID::AU_LOGIN_ACK:
 			{
-				UnitObject* player{ nullptr };
+				Player* player{ nullptr };
 
 				for (auto& playerObj : playerObjects)
 				{
-					player = dynamic_cast<UnitObject*>(playerObj);
+					player = dynamic_cast<Player*>(playerObj);
 
 					if (player->GetPlayerID() == id)
 						break;
@@ -648,7 +648,7 @@ namespace game
 
 					for (auto& player : playerObjects)
 					{
-						auto pl{ dynamic_cast<UnitObject*>(player) };
+						auto pl{ dynamic_cast<Player*>(player) };
 
 						//if (pl->GetPlayerID() == id)	// client->GetID() == id
 						//{
@@ -701,11 +701,11 @@ namespace game
 				//int32_t aniIndex{ packet.Read<int32_t>() };
 				//float aniFrame{ packet.Read<float>() };
 				ProtocolID protocol{ ProtocolID::PROTOCOL_NONE };
-				UnitObject* player{ nullptr };
+				Player* player{ nullptr };
 
 				for (auto& playerObj : playerObjects)
 				{
-					player = dynamic_cast<UnitObject*>(playerObj);
+					player = dynamic_cast<Player*>(playerObj);
 
 					if (player->GetPlayerID() == id)
 						break;

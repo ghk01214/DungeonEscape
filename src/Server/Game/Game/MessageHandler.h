@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 class ObjectManager;
-class UnitObject;
+class Player;
 
 namespace game
 {
@@ -41,8 +41,8 @@ namespace game
 		void PopConcurrentQueue(std::queue<Message>& queue, tbb::concurrent_queue<Message>& concurrentQueue, int32_t size, std::atomic_int32_t& queueSiuze);
 		int32_t NewObjectID();
 
-		void Login(int32_t playerID, UnitObject* player);
-		void Logout(int32_t playerID, int32_t roomID, UnitObject* player, ObjectManager* objMgr);
+		void Login(int32_t playerID, Player* player);
+		void Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr);
 
 	private:
 		HANDLE m_iocp;

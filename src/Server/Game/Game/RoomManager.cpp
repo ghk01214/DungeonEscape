@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "UnitObject.h"
+#include "Player.h"
 #include "RoomManager.h"
 
 namespace game
@@ -76,7 +76,7 @@ namespace game
 		}
 	}
 
-	void CRoomManager::Enter(int32_t roomID, UnitObject* player)
+	void CRoomManager::Enter(int32_t roomID, Player* player)
 	{
 		Accessor<int32_t, CRoom> access;
 		bool flag{ false };
@@ -89,7 +89,7 @@ namespace game
 		access->second.Enter(player);
 	}
 
-	void CRoomManager::Exit(int32_t roomID, UnitObject* player)
+	void CRoomManager::Exit(int32_t roomID, Player* player)
 	{
 		Accessor<int32_t, CRoom> access;
 		bool flag{ false };

@@ -248,7 +248,7 @@
     <ClCompile Include="Transform.cpp">
       <Filter>98. GameUtility\02. Components\Transform</Filter>
     </ClCompile>
-    <ClCompile Include="UnitObject.cpp">
+    <ClCompile Include="Player.cpp">
       <Filter>03. Game\01. GameObject\Player</Filter>
     </ClCompile>
     <ClCompile Include="MapObject.cpp">
@@ -394,7 +394,7 @@
     <ClInclude Include="transform_utils.h">
       <Filter>99. Utility\pch\CodeUtils</Filter>
     </ClInclude>
-    <ClInclude Include="UnitObject.h">
+    <ClInclude Include="Player.h">
       <Filter>03. Game\01. GameObject\Player</Filter>
     </ClInclude>
     <ClInclude Include="MapObject.h">

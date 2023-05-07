@@ -15,7 +15,7 @@ namespace game
 	{
 	}
 
-	CSession::CSession(UnitObject* obj) :
+	CSession::CSession(Player* obj) :
 		m_recvEx{},
 		m_sendEx{},
 		m_state{ STATE::FREE },
@@ -58,7 +58,7 @@ namespace game
 		WSASend(m_socket, &m_sendEx.wsa, 1, 0, 0, &m_sendEx.over, nullptr);
 	}
 
-	void CSession::SendLoginPacket(UnitObject* obj)
+	void CSession::SendLoginPacket(Player* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -94,7 +94,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAddAnimateObjPacket(int32_t id, UnitObject* obj)
+	void CSession::SendAddAnimateObjPacket(int32_t id, Player* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -198,7 +198,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, UnitObject* obj)
+	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, Player* obj)
 	{
 		network::CPacket packet;
 		int32_t aniIndex{ obj->GetAniIndex() };

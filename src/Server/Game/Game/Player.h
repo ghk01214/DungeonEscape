@@ -4,11 +4,11 @@
 
 class CustomController;
 
-class UnitObject : public GameObject
+class Player : public GameObject
 {
 public:
-	UnitObject(int32_t playerID = -1, const Vec3& position = Vec3(), const Quat& rotation = Quat(), const Vec3& scale = Vec3(1.f, 1.f, 1.f));
-	~UnitObject() override;
+	Player(int32_t playerID = -1, const Vec3& position = Vec3(), const Quat& rotation = Quat(), const Vec3& scale = Vec3(1.f, 1.f, 1.f));
+	~Player() override;
 
 public:
 	virtual void Init();

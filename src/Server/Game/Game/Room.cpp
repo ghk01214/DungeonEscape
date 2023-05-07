@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "UnitObject.h"
+#include "Player.h"
 #include "GameInstance.h"
 #include "Room.h"
 #include "TimeManager.h"
@@ -16,7 +16,7 @@ namespace game
 	{
 	}
 
-	void CRoom::Enter(UnitObject* player)
+	void CRoom::Enter(Player* player)
 	{
 		if (m_occupation >= 3)
 		{
@@ -36,7 +36,7 @@ namespace game
 		}
 	}
 
-	void CRoom::Exit(UnitObject* player)
+	void CRoom::Exit(Player* player)
 	{
 		for (auto& [pl, filled] : m_players)
 		{

@@ -1,12 +1,12 @@
 ﻿#include "pch.h"
-#include "UnitObject.h"
+#include "Player.h"
 #include "CustomController.h"
 #include "MessageHandler.h"
 #include "TimeManager.h"
 #include "RigidBody.h"
 #include "Transform.h"
 
-UnitObject::UnitObject(int32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
+Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
 	m_playerID{ playerID },
 	m_aniIndex{ 0 },
@@ -15,11 +15,11 @@ UnitObject::UnitObject(int32_t playerID, const Vec3& position, const Quat& rotat
 {
 }
 
-UnitObject::~UnitObject()
+Player::~Player()
 {
 }
 
-void UnitObject::Init()
+void Player::Init()
 {
 	m_controller = AddComponent<CustomController>(L"CustomController");
 	m_scriptType = server::SCRIPT_TYPE::MISTIC;
@@ -28,7 +28,7 @@ void UnitObject::Init()
 	body->SetMass(body->GetMass() * 0.7f);
 }
 
-void UnitObject::Update(double timeDelta)
+void Player::Update(double timeDelta)
 {
 	m_controller->Move();
 
@@ -39,29 +39,29 @@ void UnitObject::Update(double timeDelta)
 	}
 }
 
-void UnitObject::LateUpdate(double timeDelta)
+void Player::LateUpdate(double timeDelta)
 {
 	m_controller->ClearControllerCollisionInfo();
 	m_transform->ConvertPX(m_controller->GetBody()->GetGlobalPose());
 }
 
-void UnitObject::Release()
+void Player::Release()
 {
 	m_controller = nullptr;
 	GameObject::Release();
 }
 
-void UnitObject::SetAniIndex(int32_t aniIndex)
+void Player::SetAniIndex(int32_t aniIndex)
 {
 	m_aniIndex = aniIndex;
 }
 
-void UnitObject::SetAniFrame(float aniFrame)
+void Player::SetAniFrame(float aniFrame)
 {
 	m_aniFrame = aniFrame;
 }
 
-void UnitObject::SetScriptType(server::SCRIPT_TYPE scriptType)
+void Player::SetScriptType(server::SCRIPT_TYPE scriptType)
 {
 	m_scriptType = scriptType;
 }
