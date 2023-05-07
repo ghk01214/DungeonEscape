@@ -27,7 +27,7 @@ namespace game
 		// 클래스 생성 시 빈 세션 생성
 		for (int32_t i = 0; i < MAX_USER; ++i)
 		{
-			m_sessions[i] = new CSession{ new UnitObject{} };
+			m_sessions[i] = new CSession{};
 		}
 	}
 
@@ -114,7 +114,7 @@ namespace game
 	// Worker thread용 멀티스레드 생성
 	void CServer::CreateThread()
 	{
-		for (int32_t i = 0; i < 3; ++i)
+		for (int32_t i = 0; i < 6; ++i)
 		{
 			m_workerThreads.emplace_back(&CServer::WorkerThread, this);
 		}

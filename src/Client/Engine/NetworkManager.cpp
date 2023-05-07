@@ -566,12 +566,15 @@ namespace network
 		scale.y = m_packet.Read<float>();
 		scale.z = m_packet.Read<float>();
 
+		std::cout << id << " : " << pos.x << ", " << pos.z << "\n";
+
 		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
 		for (auto& object : m_objects[id])
 		{
 			object->GetTransform()->SetLocalPosition(pos);
 			// w좌표 수정 필요
 			//object->GetTransform()->SetLocalRotation(quat);
+			object->GetTransform()->SetLocalScale(scale);
 		}
 	}
 
