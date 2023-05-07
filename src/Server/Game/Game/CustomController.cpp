@@ -276,3 +276,13 @@ void CustomController::KeyboardClear()
 	m_keyboardDown	= false;
 	m_keyboardSpace	= false;
 }
+
+RigidBody* CustomController::GetBody()
+{
+	return m_body;
+}
+
+CapsuleCollider* CustomController::GetCollider()
+{
+	return m_collider;
+}

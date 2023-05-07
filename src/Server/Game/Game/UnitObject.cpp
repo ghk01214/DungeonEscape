@@ -43,6 +43,10 @@ void UnitObject::Update(double timeDelta)
 void UnitObject::LateUpdate(double timeDelta)
 {
 	m_controller->ClearControllerCollisionInfo();
+
+	static auto body = m_controller->GetBody();
+	m_transform->ConvertPX(body->GetGlobalPose());
+	
 }
 
 void UnitObject::Release()

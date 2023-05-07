@@ -29,6 +29,10 @@ public:
 	void KeyboardReceive(ulong32_t key);
 	void KeyboardClear();
 
+public:
+	RigidBody* GetBody();
+	CapsuleCollider* GetCollider();
+
 private:
 	physx::PxVec3	m_moveDirection{ 0.f };
 	physx::PxVec3	m_slidingVector{ 0.f };
