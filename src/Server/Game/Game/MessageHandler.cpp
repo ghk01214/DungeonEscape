@@ -60,18 +60,16 @@ namespace game
 	void MessageHandler::SendPacketMessage()
 	{
 		int32_t size{ m_sendQueueSize.load() };
-		tbb::concurrent_queue<Message> queue{ m_sendQueue };
 
 		if (size == 0)
 			return;
 
+		std::queue<Message> queue;
+		PopConcurrentQueue(queue, m_sendQueue, size, m_sendQueueSize);
+
 		for (int32_t i = 0; i < size;)
 		{
-			Message msg{};
-			bool success{ queue.try_pop(msg) };
-
-			if (success == false)
-				continue;
+			Message msg{ queue.front() };
 
 			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
 			postOver.msgProtocol = msg.msgProtocol;
@@ -88,9 +86,8 @@ namespace game
 				PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 
 			++i;
+			queue.pop();
 		}
-
-		PopSendQueue(size);
 	}
 
 	void MessageHandler::InsertRecvMessage(Message msg)
@@ -108,29 +105,27 @@ namespace game
 	void MessageHandler::ExecuteMessage()
 	{
 		int32_t size{ m_recvQueueSize.load() };
-		tbb::concurrent_queue<Message> queue{ m_recvQueue };
 
 		if (size == 0)
 			return;
+
+		std::queue<Message> queue;
+		PopConcurrentQueue(queue, m_recvQueue, size, m_recvQueueSize);
 
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 
 		for (int32_t i = 0; i < size;)
 		{
-			Message msg{};
-			bool success{ queue.try_pop(msg) };
-
-			if (success == false)
-				continue;
+			Message msg{ queue.front() };
 
 			switch (msg.msgProtocol)
 			{
 				case ProtocolID::AU_LOGIN_REQ:
 				{
-					UnitObject* player{ objMgr->AddGameObjectToLayer<UnitObject>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20.f, 10.f, -5.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
+					UnitObject* player{ objMgr->AddGameObjectToLayer<UnitObject>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 2.f, 10.f, -5.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
 					player->SetName(L"Mistic");
-					
+
 					Login(msg.playerID, player);
 				}
 				break;
@@ -178,13 +173,9 @@ namespace game
 						{
 							auto customController{ player->GetComponent<CustomController>(L"CustomController") };
 							customController->KeyboardReceive(msg.keyInput);
-							if (msg.playerID == 1)
-								std::cout << "1 input\n";
 							break;
 						}
 					}
-
-					//std::cout << "recv\n";
 				}
 				break;
 				case ProtocolID::MY_ANI_REQ:
@@ -210,9 +201,8 @@ namespace game
 			}
 
 			++i;
+			queue.pop();
 		}
-
-		PopRecvQueue(size);
 	}
 
 	void MessageHandler::SetIOCPHandle(HANDLE iocp)
@@ -220,31 +210,17 @@ namespace game
 		m_iocp = iocp;
 	}
 
-	void MessageHandler::PopRecvQueue(int32_t size)
+	void MessageHandler::PopConcurrentQueue(std::queue<Message>& queue, tbb::concurrent_queue<Message>& concurrentQueue, int32_t size, std::atomic_int32_t& queueSize)
 	{
 		for (int32_t i = 0; i < size;)
 		{
 			Message msg{};
-			bool success{ m_recvQueue.try_pop(msg) };
+			bool success{ concurrentQueue.try_pop(msg) };
 
 			if (success == true)
 			{
-				--m_recvQueueSize;
-				++i;
-			}
-		}
-	}
-
-	void MessageHandler::PopSendQueue(int32_t size)
-	{
-		for (int32_t i = 0; i < size;)
-		{
-			Message msg{};
-			bool success{ m_sendQueue.try_pop(msg) };
-
-			if (success == true)
-			{
-				--m_sendQueueSize;
+				queue.push(msg);
+				--queueSize;
 				++i;
 			}
 		}
@@ -292,6 +268,7 @@ namespace game
 		objMgr->RemoveGameObjectFromLayer(L"Layer_Player", player);
 
 		Message msg{ playerID, ProtocolID::AU_LOGOUT_ACK };
+		msg.roomID = roomID;
 
 		InsertSendMessage(msg);
 	}

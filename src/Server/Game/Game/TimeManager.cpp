@@ -52,6 +52,7 @@ void TimeManager::Update()
 
     ++m_frameCount;
     ++m_frameCountIn1s;
+    ++m_oneSecFrameCount;
     m_frameTime += m_deltaTime;
 
     if (m_frameTime > 1.f)
@@ -61,12 +62,13 @@ void TimeManager::Update()
         m_frameTime = 0.f;
         m_frameCount = 0;
         m_frameCountIn1s = 0;
+        m_oneSecFrameCount = 0;
     }
 }
 
-const bool TimeManager::Is1FrameIn60F()
+const bool TimeManager::Is1FrameInVar()
 {
-    if (m_fps > 0.f and m_frameCount > m_fps / 20)
+    if (m_fps > 0.f and m_frameCount > m_fps / 60)
     {
         m_frameCount = 0;
         return true;
@@ -75,3 +77,13 @@ const bool TimeManager::Is1FrameIn60F()
     return false;
 }
 
+const bool TimeManager::IsOneSec()
+{
+    if (m_fps > 0.f and m_oneSecFrameCount > m_fps / 10)
+    {
+        m_oneSecFrameCount = 0;
+        return true;
+    }
+
+    return false;
+}

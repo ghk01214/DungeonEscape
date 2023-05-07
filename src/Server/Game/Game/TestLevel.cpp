@@ -108,10 +108,6 @@ void TestLevel::Init()
 			Vec3(locationInfo.Position.x * 0.1f, locationInfo.Position.y * 0.1f, locationInfo.Position.z * 0.1f),
 			Quat(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z, 1),
 			Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
-		/*auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
-			Vec3(locationInfo.Position.x, locationInfo.Position.y, locationInfo.Position.z),
-			Quat(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z, 1),
-			Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)*/
 		);
 
 		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");

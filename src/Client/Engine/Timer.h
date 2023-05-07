@@ -12,7 +12,7 @@ public:
 	uint32 GetFps() { return _fps; }
 	float GetDeltaTime() { return _deltaTime; }
 
-	const bool Is1FrameIn60F();
+	const bool Is1FrameInVar();
 
 private:
 	uint64	_frequency = 0;

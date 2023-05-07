@@ -29,10 +29,8 @@ void UnitObject::Update(double timeDelta)
 {
 	m_controller->Move();
 
-	if (m_startSendTransform == true and TimeManager::GetInstance()->Is1FrameIn60F() == true)
+	if (m_startSendTransform == true and TimeManager::GetInstance()->Is1FrameInVar() == true)
 	{
-		Vec3 transform{ m_transform->GetPosition() };
-		//std::cout << m_playerID << " : " << transform.x << ", " << transform.z << "\n";
 		game::Message msg{ m_playerID, ProtocolID::MY_TRANSFORM_ACK };
 		game::MessageHandler::GetInstance()->InsertSendMessage(msg);
 	}
@@ -41,10 +39,7 @@ void UnitObject::Update(double timeDelta)
 void UnitObject::LateUpdate(double timeDelta)
 {
 	m_controller->ClearControllerCollisionInfo();
-
-	static auto body = m_controller->GetBody();
-	m_transform->ConvertPX(body->GetGlobalPose());
-	
+	m_transform->ConvertPX(m_controller->GetBody()->GetGlobalPose());
 }
 
 void UnitObject::Release()

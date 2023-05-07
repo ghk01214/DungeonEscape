@@ -29,7 +29,7 @@ void Timer::Update()
 	}
 }
 
-const bool Timer::Is1FrameIn60F()
+const bool Timer::Is1FrameInVar()
 {
 	if (_fps > 0.f and _frameTick > _fps / 60)
 	{

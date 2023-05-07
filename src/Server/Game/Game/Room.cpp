@@ -67,7 +67,7 @@ namespace game
 			m_gameInstance->Update(timeDelta);
 			m_gameInstance->LateUpdate(timeDelta);
 
-			if (TimeManager::GetInstance()->Is1FrameIn60F() == true)
+			if (TimeManager::GetInstance()->Is1FrameInVar() == true)
 				MessageHandler::GetInstance()->SendPacketMessage();
 		}
 	}

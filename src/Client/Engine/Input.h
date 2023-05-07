@@ -101,6 +101,7 @@ public:
 	const POINT& GetMousePos() { return m_mousePos; }
 	//constexpr std::bitset<KEY_USE_COUNT>& GetKeyInput() { return m_keyInput; }
 	const unsigned long GetKeyInput() const { return m_keyInput.to_ulong(); }
+	const bool IsNoInput() const { return m_keyInput.none(); }
 
 private:
 	inline KEY_STATE GetState(KEY_TYPE key) { return m_states[static_cast<uint8>(key)]; }

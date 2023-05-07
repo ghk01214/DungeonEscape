@@ -114,7 +114,7 @@ namespace game
 	// Worker thread용 멀티스레드 생성
 	void CServer::CreateThread()
 	{
-		for (int32_t i = 0; i < 6; ++i)
+		for (int32_t i = 0; i < 3; ++i)
 		{
 			m_workerThreads.emplace_back(&CServer::WorkerThread, this);
 		}
@@ -152,10 +152,18 @@ namespace game
 				else
 				{
 					ErrorDisplay(L"GQCS Error on session[" + std::to_wstring(clientID) + L"] :");
-					//Logout(static_cast<int32_t>(clientID));
 
-					Message msg{ id, ProtocolID::AU_LOGOUT_REQ };
-					InputCommandMessage(msg);
+					if (m_sessions[id]->GetState() == STATE::INGAME)
+					{
+						Message msg{ id, ProtocolID::AU_LOGOUT_REQ };
+						msg.roomID = m_sessions[id]->GetRoomID();
+
+						InputCommandMessage(msg);
+					}
+					else
+					{
+						Logout(id);
+					}
 
 					if (pOverEx->type == network::COMPLETION::SEND)
 					{
@@ -171,9 +179,17 @@ namespace game
 
 			if (bytes == 0 and (pOverEx->type == network::COMPLETION::RECV or pOverEx->type == network::COMPLETION::SEND))
 			{
-				//Logout(static_cast<int32_t>(clientID));
-				Message msg{ id, ProtocolID::AU_LOGOUT_REQ };
-				InputCommandMessage(msg);
+				if (m_sessions[id]->GetState() == STATE::INGAME)
+				{
+					Message msg{ id, ProtocolID::AU_LOGOUT_REQ };
+					msg.roomID = m_sessions[id]->GetRoomID();
+
+					InputCommandMessage(msg);
+				}
+				else
+				{
+					Logout(id);
+				}
 
 				if (pOverEx->type == network::COMPLETION::SEND)
 				{
@@ -221,7 +237,6 @@ namespace game
 			float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
 			m_gameInstance->Update(timeDelta);
 			m_gameInstance->LateUpdate(timeDelta);
-
 			MessageHandler::GetInstance()->SendPacketMessage();
 		}
 	}
@@ -340,6 +355,12 @@ namespace game
 
 	void CServer::Disconnect(int32_t id)
 	{
+		if (m_sessions[id]->GetState() != STATE::INGAME)
+		{
+			std::cout << std::format("session[{}] already disconnected\n", id);
+			return;
+		}
+
 		for (auto& session : m_sessions)
 		{
 			if (session->GetState() != STATE::INGAME)
@@ -436,6 +457,8 @@ namespace game
 			case ProtocolID::AU_LOGOUT_REQ:
 			{
 				Message msg{ id, protocol };
+				msg.roomID = session->GetRoomID();
+
 				InputCommandMessage(msg);
 			}
 			break;
@@ -458,31 +481,10 @@ namespace game
 			break;
 			case ProtocolID::MY_KEYINPUT_REQ:
 			{
-				// 타깃의 이동방향 읽기
-				/*auto keyInput{ packet.Read<ulong32_t>() };
-				auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
-
-				for (auto& playerObject : playerLayer->GetGameObjects())
-				{
-					auto player{ dynamic_cast<Player*>(playerObject) };
-
-					if (player->GetPlayerID() == id)
-					{
-						auto customController{ player->GetComponent<CustomController>(L"CustomController") };
-						customController->KeyboardReceive(keyInput);
-					}
-				}*/
-				// keyinput을 매번 handler로 보내면 다른 명령들이 작동을 안 한다.
 				Message msg{ id, protocol };
 				msg.keyInput = packet.Read<ulong32_t>();
-				//std::bitset<20> key{ msg.keyInput };
-				//
-				//if (key.none() == true)
-				//	break;
 
 				InputCommandMessage(msg);
-
-				//std::cout << "input\n";
 			}
 			break;
 			case ProtocolID::MY_ANI_REQ:
@@ -639,31 +641,36 @@ namespace game
 			case ProtocolID::MY_TRANSFORM_ACK:
 			case ProtocolID::WR_TRANSFORM_ACK:
 			{
-				for (auto& player : playerObjects)
+				for (auto& client : m_sessions)
 				{
-					auto pl{ dynamic_cast<UnitObject*>(player) };
+					if (client->GetState() != STATE::INGAME)
+						continue;
 
-					if (pl->GetPlayerID() == id)
+					for (auto& player : playerObjects)
 					{
-						session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, pl);
-						//std::cout << pl->GetTransform()->GetPosition().x << ", " << pl->GetTransform()->GetPosition().y << ", " << pl->GetTransform()->GetPosition().z << "\n";
+						auto pl{ dynamic_cast<UnitObject*>(player) };
+
+						//if (pl->GetPlayerID() == id)	// client->GetID() == id
+						//{
+						//	//session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, pl);
+						//	client->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, pl);
+						//}
+						//else
+						//	client->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, pl);
+						client->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, pl);
 					}
-					else
-						session->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, pl);
-				}
 
-				for (auto& object : mapObjects)
-				{
-					auto map{ dynamic_cast<MapObject*>(object) };
-
-					if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
+					for (auto& object : mapObjects)
 					{
-						session->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);	//트랜스폼 갱신
-						map->SetRequireFlagTransmit(false);														//플래그 체크
+						auto map{ dynamic_cast<MapObject*>(object) };
+
+						if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
+						{
+							client->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);	//트랜스폼 갱신
+							map->SetRequireFlagTransmit(false);														//플래그 체크
+						}
 					}
 				}
-
-				//std::cout << "send\n";
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:

@@ -18,7 +18,8 @@ public:
 	void Update();
 	constexpr uint32_t GetFPS() const { return m_fps; }
 
-	const bool Is1FrameIn60F();
+	const bool Is1FrameInVar();
+	const bool IsOneSec();
 
 private:
 	LONGLONG m_startTime;
@@ -30,5 +31,7 @@ private:
 	uint32_t m_frameCountIn1s;
 	float m_frameTime;
 	uint32_t m_fps;
-};
 
+	// 임시 변수
+	uint32_t m_oneSecFrameCount;
+};

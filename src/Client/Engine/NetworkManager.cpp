@@ -536,7 +536,6 @@ namespace network
 
 		GET_SCENE->AddPlayer(gameObjects);
 
-		//m_objects.insert(std::make_pair(id, gameObjects));
 		m_objects[id] = gameObjects;
 	}
 
@@ -565,8 +564,6 @@ namespace network
 		scale.x = m_packet.Read<float>();
 		scale.y = m_packet.Read<float>();
 		scale.z = m_packet.Read<float>();
-
-		std::cout << id << " : " << pos.x << ", " << pos.z << "\n";
 
 		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
 		for (auto& object : m_objects[id])

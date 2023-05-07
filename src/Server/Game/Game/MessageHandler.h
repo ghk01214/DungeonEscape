@@ -38,8 +38,7 @@ namespace game
 		void SetIOCPHandle(HANDLE iocp);
 
 	private:
-		void PopRecvQueue(int32_t size);
-		void PopSendQueue(int32_t size);
+		void PopConcurrentQueue(std::queue<Message>& queue, tbb::concurrent_queue<Message>& concurrentQueue, int32_t size, std::atomic_int32_t& queueSiuze);
 		int32_t NewObjectID();
 
 		void Login(int32_t playerID, UnitObject* player);
