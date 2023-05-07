@@ -685,6 +685,7 @@ namespace game
 						continue;
 
 					object = obj;
+					break;
 				}
 
 				for (auto& client : m_sessions)
