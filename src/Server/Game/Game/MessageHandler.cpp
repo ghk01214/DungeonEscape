@@ -128,10 +128,10 @@ namespace game
 			{
 				case ProtocolID::AU_LOGIN_REQ:
 				{
-					UnitObject* player{ objMgr->AddGameObjectToLayer<UnitObject>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20.f, 10.f, -5.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
-					player->SetName(L"Mistic");
-
-					Login(msg.playerID, player);
+					//UnitObject* player{ objMgr->AddGameObjectToLayer<UnitObject>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20.f, 10.f, -5.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
+					//player->SetName(L"Mistic");
+					//
+					//Login(msg.playerID, player);
 				}
 				break;
 				case ProtocolID::AU_LOGOUT_REQ:

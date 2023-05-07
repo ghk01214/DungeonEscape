@@ -40,16 +40,16 @@ void TestLevel::Init()
 #pragma endregion
 
 #pragma region Sphere
-	//auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(20, 20, 20), Quat(0, 0, 0, 1), Vec3(2,2,2));
-	//auto SphereBody = SphereObject->GetComponent<RigidBody>(L"RigidBody");
-	//SphereBody->SetKinematic(false);
-	//SphereBody->SetCCDFlag(true);
-	//SphereBody->SetRigidBodySleep(false);
-	//SphereBody->AddCollider<SphereCollider>(SphereObject->GetTransform()->GetScale());
-	//
-	//SphereBody->SetAngularDamping(0.00001f);
-	//SphereBody->SetLinearDamping(0.15f);
-	//SphereBody->SetMass(SphereBody->GetMass() * 0.20f);
+	auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(5, 10, 5), Quat(0, 0, 0, 1), Vec3(2,2,2));
+	auto SphereBody = SphereObject->GetComponent<RigidBody>(L"RigidBody");
+	SphereBody->SetKinematic(false);
+	SphereBody->SetCCDFlag(true);
+	SphereBody->SetRigidBodySleep(false);
+	SphereBody->AddCollider<SphereCollider>(SphereObject->GetTransform()->GetScale());
+	
+	SphereBody->SetAngularDamping(0.00001f);
+	SphereBody->SetLinearDamping(0.15f);
+	SphereBody->SetMass(SphereBody->GetMass() * 0.20f);
 #pragma endregion
 
 #pragma region Box1
@@ -105,9 +105,9 @@ void TestLevel::Init()
 		const objectLocationInfo& locationInfo = info.second;
 
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
-			Vec3(locationInfo.Position.x, locationInfo.Position.y, locationInfo.Position.z),
+			Vec3(locationInfo.Position.x * 0.1f, locationInfo.Position.y * 0.1f, locationInfo.Position.z * 0.1f),
 			Quat(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z, 1),
-			Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+			Vec3(locationInfo.Scale.x * 0.01f, locationInfo.Scale.y * 0.01f, locationInfo.Scale.z * 0.01f)
 		);
 
 		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
