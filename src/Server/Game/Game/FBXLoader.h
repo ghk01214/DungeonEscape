@@ -45,6 +45,7 @@ struct BoneWeight
 struct FbxMeshInfo
 {
 	std::wstring						name;
+	FBXTransformInfo					transform;
 	std::vector<Vertex>					vertices;
 	std::vector<std::vector<uint32>>	indices;
 	std::vector<FbxMaterialInfo>		materials;
@@ -99,6 +100,7 @@ private:
 
 	void ParseNode(FbxNode* root);
 	void LoadMesh(FbxMesh* mesh);
+	void LoadPosition(FbxNode* pNode);
 	void LoadMaterial(FbxSurfaceMaterial* surfaceMaterial);
 
 	void		GetNormal(FbxMesh* mesh, FbxMeshInfo* container, int32 idx, int32 vertexCounter);

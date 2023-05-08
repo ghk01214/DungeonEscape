@@ -41,6 +41,34 @@ void FBXLoader::LoadFbxFromBinary(const HANDLE& hFile)
 		uint32 num = 0;
 		mesh.m_vertices = loadVecData<FBXVec3>(hFile);
 		mesh.m_indicies = loadVecData<uint32>(hFile);
+
+		// FBXTransformInfo 위치 정보 저장
+		FBXTransformInfo& transform = mesh.m_transformInfo;
+
+		transform.translation[0] = loadDouble(hFile);
+		transform.translation[1] = loadDouble(hFile);
+		transform.translation[2] = loadDouble(hFile);
+		transform.translation[3] = loadDouble(hFile);
+
+		transform.scaling[0] = loadDouble(hFile);
+		transform.scaling[1] = loadDouble(hFile);
+		transform.scaling[2] = loadDouble(hFile);
+		transform.scaling[3] = loadDouble(hFile);
+
+		transform.rotation[0] = loadDouble(hFile);
+		transform.rotation[1] = loadDouble(hFile);
+		transform.rotation[2] = loadDouble(hFile);
+		transform.rotation[3] = loadDouble(hFile);
+
+		transform.qLocal[0] = loadDouble(hFile);
+		transform.qLocal[1] = loadDouble(hFile);
+		transform.qLocal[2] = loadDouble(hFile);
+		transform.qLocal[3] = loadDouble(hFile);
+
+		transform.qWorld[0] = loadDouble(hFile);
+		transform.qWorld[1] = loadDouble(hFile);
+		transform.qWorld[2] = loadDouble(hFile);
+		transform.qWorld[3] = loadDouble(hFile);
 	}
 }
 
@@ -75,6 +103,33 @@ void FBXLoader::SaveFbxToBinary(const HANDLE& hFile)
 			}
 		}
 		saveVecData(hFile, indicies);
+
+
+		// FBXTransformInfo 위치 정보 저장
+		saveDouble(hFile, iter.transform.translation[0]);
+		saveDouble(hFile, iter.transform.translation[1]);
+		saveDouble(hFile, iter.transform.translation[2]);
+		saveDouble(hFile, iter.transform.translation[3]);
+
+		saveDouble(hFile, iter.transform.scaling[0]);
+		saveDouble(hFile, iter.transform.scaling[1]);
+		saveDouble(hFile, iter.transform.scaling[2]);
+		saveDouble(hFile, iter.transform.scaling[3]);
+
+		saveDouble(hFile, iter.transform.rotation[0]);
+		saveDouble(hFile, iter.transform.rotation[1]);
+		saveDouble(hFile, iter.transform.rotation[2]);
+		saveDouble(hFile, iter.transform.rotation[3]);
+
+		saveDouble(hFile, iter.transform.qLocal[0]);
+		saveDouble(hFile, iter.transform.qLocal[1]);
+		saveDouble(hFile, iter.transform.qLocal[2]);
+		saveDouble(hFile, iter.transform.qLocal[3]);
+
+		saveDouble(hFile, iter.transform.qWorld[0]);
+		saveDouble(hFile, iter.transform.qWorld[1]);
+		saveDouble(hFile, iter.transform.qWorld[2]);
+		saveDouble(hFile, iter.transform.qWorld[3]);
 	}
 }
 
@@ -137,6 +192,9 @@ void FBXLoader::ParseNode(FbxNode* node)
 		{
 		case FbxNodeAttribute::eMesh:
 			LoadMesh(node->GetMesh());
+
+			// 노드의 위치 정보 추출
+			LoadPosition(node);
 			break;
 		}
 	}
@@ -201,6 +259,18 @@ void FBXLoader::LoadMesh(FbxMesh* mesh)
 
 	// Animation
 	LoadAnimationData(mesh, &meshInfo);
+}
+
+void FBXLoader::LoadPosition(FbxNode* pNode)
+{
+	FBXTransformInfo& transform = m_meshes.back().transform;
+
+	transform.qLocal = pNode->EvaluateLocalTransform().GetQ();
+	transform.qWorld = pNode->EvaluateGlobalTransform().GetQ();
+
+	transform.translation = pNode->LclTranslation.Get();
+	transform.rotation = pNode->LclRotation.Get();
+	transform.scaling = pNode->LclScaling.Get();
 }
 
 void FBXLoader::LoadMaterial(FbxSurfaceMaterial* surfaceMaterial)

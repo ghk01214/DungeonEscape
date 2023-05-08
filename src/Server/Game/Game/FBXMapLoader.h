@@ -30,8 +30,13 @@ public:
 
 	const FBXMeshInfomation& FindVertexIndicesInfo(std::wstring statisMeshName);
 
+public:
+	static DirectX::XMFLOAT4 ConvertFbxToDirectQuaternion(const FbxQuaternion& q);
+	static Vec3 ConvertFbxDouble3ToVector3(const FbxDouble3& v);
+
 private:
-	void ExtractObjectInfoFromFBXAscii(std::wstring path);
+	void ExtractObjectInfoFromFBX(std::wstring path);
+
 
 private:
 	std::unordered_map<std::wstring, FBXMeshInfomation> m_assetInfo;	// 맵에서 사용되는 staticMesh 오브젝트들에 대한 정보

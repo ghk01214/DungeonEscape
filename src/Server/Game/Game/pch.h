@@ -99,10 +99,20 @@ struct Vertex
 	FBXVec4 indices;
 };
 
+struct FBXTransformInfo
+{
+	FbxDouble3 translation;
+	FbxDouble3 rotation;
+	FbxDouble3 scaling;
+	FbxQuaternion qLocal;
+	FbxQuaternion qWorld;
+};
+
 struct FBXMeshInfomation
 {
 	std::vector<FBXVec3> m_vertices;
 	std::vector<uint32> m_indicies;
+	FBXTransformInfo m_transformInfo;
 };
 
 
