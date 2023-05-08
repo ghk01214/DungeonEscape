@@ -122,13 +122,14 @@ void ConvexMeshWrapper::CreatePxConvexMesh(const std::vector<physx::PxVec3>& ver
 
 
     // Apply scale to vertices
-    float scaleFactor = 0.01f; // 1/100
+    float scaleFactor = 1.f; // 1/100
     std::vector<physx::PxVec3> scaledVertices(vertices.size());
+  
     for (size_t i = 0; i < vertices.size(); ++i)
     {
-        scaledVertices[i].x = vertices[i].x * extent.x * 0.01f;
-        scaledVertices[i].y = vertices[i].y * extent.y * 0.01f;
-        scaledVertices[i].z = vertices[i].z * extent.z * 0.01f;      //0.01 unit interval between unreal and physx
+        scaledVertices[i].x = (vertices[i].x) * scaleFactor;
+        scaledVertices[i].y = (vertices[i].y) * scaleFactor;
+        scaledVertices[i].z = (vertices[i].z) * scaleFactor;      //0.01 unit interval between unreal and physx
     }
 
     PxConvexMeshDesc  desc;
@@ -150,6 +151,8 @@ void ConvexMeshWrapper::CreatePxConvexMesh(const std::vector<physx::PxVec3>& ver
     PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
 
     m_convexMesh = phys->createConvexMesh(readBuffer);
+
+    scaledVertices.clear();
 }
 
 void ConvexMeshWrapper::CheckEmptyMesh(std::vector<physx::PxVec3>& vertices, std::vector<uint32_t>& indices)

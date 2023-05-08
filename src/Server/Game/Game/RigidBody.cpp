@@ -24,13 +24,14 @@ void RigidBody::Init()
 
 	auto trans = m_ownerGameObject->GetTransform();
 	auto pos = trans->GetPosition();
-	PxTransform pose(pos.x, pos.y, pos.z, PxIdentity);
+	PxTransform pose(PxIdentity);
 
 	m_body = device->GetPhysics()->createRigidDynamic(pose);
 	m_body->setMass(10);
 	m_body->userData = this;
 
 	ApplyFlags();
+	SetTransform(trans);
 
 	device->GetScene()->addActor(*m_body);
 
@@ -179,7 +180,7 @@ void RigidBody::SetRotation(const float degrees, PhysicsAxis axis)
 	m_body->setGlobalPose(currentPose);
 }
 
-void RigidBody::SetTransfrom(const Transform* transform)
+void RigidBody::SetTransform(const Transform* transform)
 {
 	PxTransform t = m_body->getGlobalPose();
 	Vec3 position = transform->GetPosition();

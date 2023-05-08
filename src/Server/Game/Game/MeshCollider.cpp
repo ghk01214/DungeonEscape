@@ -4,6 +4,8 @@
 #include "RigidBody.h"
 #include "FBXLoader.h"
 #include "ConvexMeshWrapper.h"
+#include "GameObject.h"
+#include "Transform.h"
 
 using namespace physx;
 
@@ -35,26 +37,42 @@ MeshCollider::MeshCollider(GameObject* ownerGameObject, Component* ownerComponen
 MeshCollider::MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent, std::wstring meshName, const FBXMeshInfomation& info)
     : Collider(ownerGameObject, ownerComponent, body), m_meshName(meshName)
 {
-    ConvexMeshWrapper* convexwrapper = GetMyConvexWrapper();
-    if (convexwrapper)
-    {
-        convexwrapper->AddReference();                          //container에 해당 mesh가 존재한다면 reference만 증가
-        return;
-    }
-    else
-    {
-        std::vector<PxVec3> vertices;
+#pragma region OriginalCode
+    //ConvexMeshWrapper* convexwrapper = GetMyConvexWrapper();
+    //if (convexwrapper)
+    //{
+    //    convexwrapper->AddReference();                          //container에 해당 mesh가 존재한다면 reference만 증가
+    //    return;
+    //}
+    //else
+    //{
+    //    std::vector<PxVec3> vertices;
 
-        for (const auto& vertice : info.m_vertices)
-        {
-            vertices.push_back(PxVec3(vertice.x, vertice.y, vertice.z));
-        }
+    //    for (const auto& vertice : info.m_vertices)
+    //    {
+    //        vertices.push_back(PxVec3(vertice.x, vertice.y, vertice.z));
+    //    }
 
-        convexwrapper = new ConvexMeshWrapper(vertices, info.m_indicies);
-        convexwrapper->Init(vertices, info.m_indicies, extent);                                  //wrapper를 생성, 초기화, reference 증가 후 container에 보관
-        convexwrapper->AddReference();
-        m_convexContainer.emplace(meshName, convexwrapper);
-    }
+    //    convexwrapper = new ConvexMeshWrapper(vertices, info.m_indicies);
+    //    convexwrapper->Init(vertices, info.m_indicies, extent);                                  //wrapper를 생성, 초기화, reference 증가 후 container에 보관
+    //    convexwrapper->AddReference();
+    //    m_convexContainer.emplace(meshName, convexwrapper);
+    //}
+#pragma endregion
+
+#pragma region 임시코드
+	std::vector<PxVec3> vertices;
+
+	for (const auto& vertice : info.m_vertices)
+	{
+		vertices.push_back(PxVec3(vertice.x, vertice.y, vertice.z));
+	}
+
+	ConvexMeshWrapper* convexwrapper = new ConvexMeshWrapper(vertices, info.m_indicies);
+	convexwrapper->Init(vertices, info.m_indicies, extent);                                  //wrapper를 생성, 초기화, reference 증가 후 container에 보관
+	convexwrapper->AddReference();
+	m_convexContainer.emplace(meshName, convexwrapper);
+#pragma endregion
 }
 
 MeshCollider::~MeshCollider()
@@ -88,8 +106,11 @@ void MeshCollider::Release()
 PxConvexMeshGeometry MeshCollider::CreateTriangleMeshGeometry()
 {
     PxMeshScale scale;
+
+    auto trans = m_ownerGameObject->GetTransform();
+    auto size = trans->GetScale();
     scale.rotation = PxQuat(PxIdentity);
-    scale.scale = PxVec3(10.f, 10.f, 10.f);
+    scale.scale = PxVec3(size.x, size.y, size.z);
     return PxConvexMeshGeometry(GetMyConvexWrapper()->GetConvexMesh(), scale);
 }
 

@@ -99,17 +99,15 @@ void TestLevel::Init()
 
 
 	// actor 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage2.FBX");
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)
 	{
 		const objectLocationInfo& locationInfo = info.second;
-		Quat q = FBXMapLoader::ConvertFbxToDirectQuaternion(locationInfo.qWorld);
-
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
-			Vec3(-locationInfo.Position.x * 0.1f, locationInfo.Position.y * 0.1f, locationInfo.Position.z * 0.1f),
-			q,
+			Vec3(locationInfo.Position.x , locationInfo.Position.y , locationInfo.Position.z ),
+			Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
 			Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
 		);
 

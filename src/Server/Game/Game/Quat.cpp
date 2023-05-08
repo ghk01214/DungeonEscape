@@ -136,6 +136,30 @@ Vec3 Quat::ToEuler()
     return euler;
 }
 
+Quat Quat::FromEuler(float x, float y, float z)
+{
+    float Deg2Rad = (M_PI / 180.0f);
+
+    float xOver2 = x * Deg2Rad * 0.5f;
+    float yOver2 = y * Deg2Rad * 0.5f;
+    float zOver2 = z * Deg2Rad * 0.5f;
+
+    float sinXOver2 = sinf(xOver2);
+    float cosXOver2 = cosf(xOver2);
+    float sinYOver2 = sinf(yOver2);
+    float cosYOver2 = cosf(yOver2);
+    float sinZOver2 = sinf(zOver2);
+    float cosZOver2 = cosf(zOver2);
+
+    Quat result;
+    result.x = cosYOver2 * sinXOver2 * cosZOver2 + sinYOver2 * cosXOver2 * sinZOver2;
+    result.y = sinYOver2 * cosXOver2 * cosZOver2 - cosYOver2 * sinXOver2 * sinZOver2;
+    result.z = cosYOver2 * cosXOver2 * sinZOver2 - sinYOver2 * sinXOver2 * cosZOver2;
+    result.w = cosYOver2 * cosXOver2 * cosZOver2 + sinYOver2 * sinXOver2 * sinZOver2;
+
+    return result;
+}
+
 float Quat::SqrMagnitude() const
 {
     return DirectX::XMVectorGetX(DirectX::XMQuaternionLengthSq(XMLoadFloat4(this)));

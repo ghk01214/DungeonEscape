@@ -115,7 +115,7 @@ public:
 	void SetRotation(const Quat rotation);
 	void SetRotation(const float degree, PhysicsAxis axis);
 
-	void SetTransfrom(const Transform* transform);
+	void SetTransform(const Transform* transform);
 
 public:
 	physx::PxVec3 GetVelocity() const;

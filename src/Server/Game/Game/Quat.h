@@ -33,6 +33,7 @@ public:
 
 public:
 	Vec3 ToEuler();
+	static Quat FromEuler(float x, float y, float z);
 
 public:
 	float SqrMagnitude() const;
