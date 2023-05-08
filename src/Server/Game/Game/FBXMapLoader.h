@@ -13,6 +13,8 @@ struct objectLocationInfo
 	FBXVec4 Position;
 	FBXVec4 Rotation;
 	FBXVec4 Scale;
+	FbxQuaternion qLocal;
+	FbxQuaternion qWorld;
 };
 
 // FBXLoader를 사용해, 맵의 정보와 관련된 정보를 입력

@@ -148,6 +148,8 @@ void FBXMapLoader::ExtractObjectInfoFromFBX(std::wstring path)
         locationInfo.Position = ConvertFbxDouble3ToVector3(loader.GetMesh(i).transform.translation);
         locationInfo.Rotation = ConvertFbxDouble3ToVector3(loader.GetMesh(i).transform.rotation);
         locationInfo.Scale = ConvertFbxDouble3ToVector3(loader.GetMesh(i).transform.scaling);
+        locationInfo.qLocal = loader.GetMesh(i).transform.qLocal;
+        locationInfo.qWorld = loader.GetMesh(i).transform.qWorld;
 
         m_mapDeployedObjectInfo[wstrName].push_back(locationInfo);
     }
