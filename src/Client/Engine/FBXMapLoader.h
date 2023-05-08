@@ -30,7 +30,7 @@ public:
 	vector<shared_ptr<CGameObject>> GetMapObjectInfo(void) { return m_MapObjectInfo; }
 
 private:
-	void ExtractObjectInfoFromFBXAscii(std::wstring path);
+	void ExtractObjectInfoFromFBX(std::wstring path);
 
 private:
 	unordered_map<std::wstring, MeshRenderInfo> m_assetInfo;	// 맵에서 사용되는 staticMesh 오브젝트들에 대한 정보

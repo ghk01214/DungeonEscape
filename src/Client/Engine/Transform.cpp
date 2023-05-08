@@ -2,6 +2,7 @@
 #include "Transform.h"
 #include "Engine.h"
 #include "Camera.h"
+#include "Timer.h"
 
 Transform::Transform() : Component(COMPONENT_TYPE::TRANSFORM)
 {
@@ -15,35 +16,37 @@ Transform::~Transform()
 
 void Transform::FinalUpdate()
 {
-	Matrix matScale = Matrix::CreateScale(m_localScale);
-	Matrix matRotation = Matrix::CreateRotationX(XMConvertToRadians(m_localRotation.x));
-	matRotation *= Matrix::CreateRotationY(XMConvertToRadians(m_localRotation.y));
-	matRotation *= Matrix::CreateRotationZ(XMConvertToRadians(m_localRotation.z));
-	Matrix matTranslation = Matrix::CreateTranslation(m_localPosition);
+	Matrix matScale = Matrix::CreateScale(_localScale);
+	Matrix matRotation = Matrix::CreateRotationX(XMConvertToRadians(_localRotation.x));
+	matRotation *= Matrix::CreateRotationY(XMConvertToRadians(_localRotation.y));
+	matRotation *= Matrix::CreateRotationZ(XMConvertToRadians(_localRotation.z));
+	Matrix matTranslation = Matrix::CreateTranslation(_localPosition);
 
-	m_matLocal = matScale * matRotation * matTranslation;
-	m_matWorld = m_matLocal;
+	_matLocal = matScale * matRotation * matTranslation;
+
+	_matLocalMulWorld = _matLocal * _matWorld;
 
 	shared_ptr<Transform> parent = GetParent().lock();
 	if (parent != nullptr)
 	{
-		m_matWorld *= parent->GetLocalToWorldMatrix();
+		_matLocalMulWorld *= parent->GetLocalToWorldMatrix();
 	}
 }
 
 void Transform::PushData()
 {
+	Matrix world = _matLocalMulWorld;
+
 	TransformParams transformParams = {};
-	transformParams.matWorld = m_matWorld;
+	transformParams.matWorld = world;
 	transformParams.matView = Camera::S_MatView;
 	transformParams.matProjection = Camera::S_MatProjection;
-	transformParams.matWV = m_matWorld * Camera::S_MatView;
-	transformParams.matWVP = m_matWorld * Camera::S_MatView * Camera::S_MatProjection;
+	transformParams.matWV = world * Camera::S_MatView;
+	transformParams.matWVP = world * Camera::S_MatView * Camera::S_MatProjection;
 	transformParams.matViewInv = Camera::S_MatView.Invert();
 
 	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushGraphicsData(&transformParams, sizeof(transformParams));
 }
-
 
 void Transform::LookAt(const Vec3& dir)
 {
@@ -64,7 +67,10 @@ void Transform::LookAt(const Vec3& dir)
 	matrix.Up(up);
 	matrix.Backward(front);
 
-	m_localRotation = DecomposeRotationMatrix(matrix);
+	Vec3 temp = DecomposeRotationMatrix(matrix);
+	_localRotation.x = XMConvertToDegrees(temp.x);
+	_localRotation.y = XMConvertToDegrees(temp.y);
+	_localRotation.z = XMConvertToDegrees(temp.z);
 }
 
 bool Transform::CloseEnough(const float& a, const float& b, const float& epsilon)
@@ -117,4 +123,25 @@ Vec3 Transform::DecomposeRotationMatrix(const Matrix& rotation)
 	}
 
 	return ret;
+}
+
+void Transform::TurnAxisY(bool clockWise)
+{
+	XMVECTOR vRight = GetRight();
+	XMVECTOR vUp = GetUp();
+	XMVECTOR vLook = GetLook();
+
+	Matrix matRotation;
+	if (clockWise)
+		matRotation = XMMatrixRotationY(DELTA_TIME * m_transformDesc.RotationPerSec);
+	else
+		matRotation = XMMatrixRotationY(-DELTA_TIME * m_transformDesc.RotationPerSec);
+
+	vRight = XMVector3TransformNormal(vRight, matRotation);
+	vUp = XMVector3TransformNormal(vUp, matRotation);
+	vLook = XMVector3TransformNormal(vLook, matRotation);
+
+	SetRight(vRight);
+	SetUp(vUp);
+	SetLook(vLook);
 }

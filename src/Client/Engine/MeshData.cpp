@@ -169,6 +169,20 @@ vector<shared_ptr<CGameObject>> MeshData::Instantiate()
 	{
 		shared_ptr<CGameObject> gameObject = make_shared<CGameObject>();
 		gameObject->AddComponent(make_shared<Transform>());
+
+		FBXTransformInfo transformInfo = info.mesh->GetTransformInfo();
+
+		SimpleMath::Quaternion quat = ConvertFbxToDirectQuaternion(transformInfo.qWorld);
+
+		Vec3 vPos = ConvertFbxDouble3ToVector3(transformInfo.translation);
+		Vec3 vRotate = ConvertFbxDouble3ToVector3(transformInfo.rotation);
+		Vec3 vScaling = ConvertFbxDouble3ToVector3(transformInfo.scaling);
+
+		gameObject->GetTransform()->SetLocalPosition(vPos);
+		gameObject->GetTransform()->SetLocalRotation(vRotate);
+		gameObject->GetTransform()->SetLocalScale(vScaling);
+
+
 		gameObject->AddComponent(make_shared<MeshRenderer>());
 		gameObject->GetMeshRenderer()->SetMesh(info.mesh);
 
@@ -188,6 +202,44 @@ vector<shared_ptr<CGameObject>> MeshData::Instantiate()
 
 
 	return v;
+}
+
+vector<shared_ptr<CGameObject>> MeshData::Instantiate_Player()
+{
+	vector<shared_ptr<CGameObject>> v;
+
+	for (MeshRenderInfo& info : m_meshRenders)
+	{
+		shared_ptr<CGameObject> gameObject = make_shared<CGameObject>();
+		gameObject->AddComponent(make_shared<Transform>());
+		gameObject->AddComponent(make_shared<MeshRenderer>());
+		gameObject->GetMeshRenderer()->SetMesh(info.mesh);
+
+		for (uint32 i = 0; i < info.materials.size(); i++)
+			gameObject->GetMeshRenderer()->SetMaterial(info.materials[i], i);
+
+		if (info.mesh->IsAnimMesh())
+		{
+			shared_ptr<Animator> animator = make_shared<Animator>();
+			gameObject->AddComponent(animator);
+			animator->SetBones(info.mesh->GetBones());
+			animator->SetAnimClip(info.mesh->GetAnimClip());
+		}
+
+		v.push_back(gameObject);
+	}
+
+	return v;
+}
+
+SimpleMath::Quaternion MeshData::ConvertFbxToDirectQuaternion(const FbxQuaternion& q)
+{
+	return SimpleMath::Quaternion(static_cast<float>(q[0]), static_cast<float>(q[1]), static_cast<float>(q[2]), static_cast<float>(q[3]));
+}
+
+SimpleMath::Vector3 MeshData::ConvertFbxDouble3ToVector3(const FbxDouble3& v)
+{
+	return SimpleMath::Vector3(static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
 }
 
 HANDLE MeshData::CreateFileWrite(const wstring& path)

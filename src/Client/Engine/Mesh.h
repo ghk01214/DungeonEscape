@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Object.h"
+#include "FBXLoader.h"
 
 class Material;
 class StructuredBuffer;
@@ -74,6 +75,10 @@ public:
 	std::wstring GetName(void) { return m_name; }
 	void SetName(std::wstring name) { m_name = name; }
 
+public:
+	const FBXTransformInfo& GetTransformInfo(void) { return transformInfo; }
+	void SetTransformInfo(FBXTransformInfo info) { transformInfo = info; }
+
 private:
 	ComPtr<ID3D12Resource>		m_vertexBuffer;
 	D3D12_VERTEX_BUFFER_VIEW	m_vertexBufferView = {};
@@ -89,5 +94,6 @@ private:
 	vector<shared_ptr<StructuredBuffer>> m_frameBuffer; // 전체 본 프레임 정보
 
 	std::wstring m_name;
+	FBXTransformInfo transformInfo;
 };
 

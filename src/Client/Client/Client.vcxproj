@@ -165,6 +165,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="MainPlayer.h" />
     <ClInclude Include="Monster_Script.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Player_Script.h" />
@@ -176,6 +177,7 @@
     <ClCompile Include="Camera_Script.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="MainPlayer.cpp" />
     <ClCompile Include="Monster_Script.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

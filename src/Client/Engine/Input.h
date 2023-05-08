@@ -98,7 +98,7 @@ public:
 	// 맨 처음 눌렀다 뗐을 때
 	bool GetButtonUp(KEY_TYPE key) { return GetState(key) == KEY_STATE::UP; }
 
-	const POINT& GetMousePos() { return m_mousePos; }
+	const POINT& GetMousePos() { return m_curMousePos; }
 	//constexpr std::bitset<KEY_USE_COUNT>& GetKeyInput() { return m_keyInput; }
 	const unsigned long GetKeyInput() const { return m_keyInput.to_ulong(); }
 	const bool IsNoInput() const { return m_keyInput.none(); }
@@ -107,10 +107,14 @@ private:
 	inline KEY_STATE GetState(KEY_TYPE key) { return m_states[static_cast<uint8>(key)]; }
 	void EncodeKeyInput(void);
 
+public:
+	Vec2 GetMouseMove(void);	// 이전 프레임과 현재 프레임의 마우스의 x,y 좌표의 움직이는 정도를 반환하는 함수 
+
 private:
 	HWND m_hWnd;
 	vector<KEY_STATE> m_states;
-	POINT m_mousePos = {};
+	POINT m_curMousePos = POINT{ 0, 0 };
+	POINT m_preMousePos = POINT{ 0, 0 };
 
 	std::bitset<KEY_TEMP_USE_COUNT> m_keyInput;
 };

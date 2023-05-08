@@ -29,6 +29,11 @@ public:
 	static shared_ptr<MeshData> LoadFromFBX(const wstring& path);
 
 	vector<shared_ptr<CGameObject>> Instantiate();
+	vector<shared_ptr<CGameObject>> Instantiate_Player();
+
+public:
+	static SimpleMath::Quaternion ConvertFbxToDirectQuaternion(const FbxQuaternion& q);
+	static SimpleMath::Vector3 ConvertFbxDouble3ToVector3(const FbxDouble3& v);
 
 private:
 	friend class Resources;

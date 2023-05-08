@@ -39,6 +39,9 @@
     <Filter Include="소스 파일\Utils\pch">
       <UniqueIdentifier>{1dd5411e-af12-4be8-9197-d747ef6b4f76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Script\04. Player\Script">
+      <UniqueIdentifier>{aaf5488c-ece7-40c8-8fb2-42a0e9ca5ae2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -69,6 +72,9 @@
       <Filter>소스 파일\Script\00. Scene</Filter>
     </ClInclude>
     <ClInclude Include="Player_Script.h">
+      <Filter>소스 파일\Script\04. Player\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="MainPlayer.h">
       <Filter>소스 파일\Script\04. Player</Filter>
     </ClInclude>
   </ItemGroup>
@@ -105,6 +111,9 @@
       <Filter>소스 파일\Script\00. Scene</Filter>
     </ClCompile>
     <ClCompile Include="Player_Script.cpp">
+      <Filter>소스 파일\Script\04. Player\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="MainPlayer.cpp">
       <Filter>소스 파일\Script\04. Player</Filter>
     </ClCompile>
   </ItemGroup>

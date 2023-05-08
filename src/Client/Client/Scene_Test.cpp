@@ -42,6 +42,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	CreateLights();
 	CreateMap();
 	CreateMapObjects();
+
 	//CreatePlayer();
 
 	return scene;
@@ -204,14 +205,14 @@ void Scene_Test::CreateMap(void)
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
 
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\StageTest(ascii).FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage1.FBX");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 
 	for (auto& mapObject : mapObjects)
 	{
 		mapObject->SetCheckFrustum(false);
-		mapObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
+		scene->AddGameObject(mapObject);
 		scene->AddGameObject(mapObject);
 	}
 }
@@ -250,7 +251,7 @@ void Scene_Test::CreatePlayer(void)
 	objectDesc.strName = L"Mistic";
 	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
 	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
-	objectDesc.vScale = Vec3(0.3f, 0.3f, 0.3f);
+	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
 	objectDesc.script = std::make_shared<Player_Mistic>();
 
 	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);

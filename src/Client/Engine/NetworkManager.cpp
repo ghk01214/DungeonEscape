@@ -511,8 +511,8 @@ namespace network
 		ObjectDesc objectDesc;
 		objectDesc.strName = newName;
 		objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
-		objectDesc.vPostion = pos;
-		objectDesc.vScale = scale;
+		objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);	// pos;
+		objectDesc.vScale = Vec3(1.f, 1.f, 1.f);	// scale;
 
 		if (m_id == id)
 			objectDesc.script = m_scripts[static_cast<int8_t>(scriptType)];
@@ -527,6 +527,7 @@ namespace network
 			gameObject->SetCheckFrustum(false);
 			gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
 			gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
+			gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
 			if (m_id == id)
 				gameObject->AddComponent(objectDesc.script);
 			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
@@ -568,10 +569,9 @@ namespace network
 		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
 		for (auto& object : m_objects[id])
 		{
-			object->GetTransform()->SetLocalPosition(pos);
-			// w좌표 수정 필요
-			//object->GetTransform()->SetLocalRotation(quat);
-			object->GetTransform()->SetLocalScale(scale);
+			auto transform = object->GetTransform();
+
+			transform->SetWorldVec3Position(pos);
 		}
 	}
 

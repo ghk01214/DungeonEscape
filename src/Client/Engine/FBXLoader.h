@@ -42,9 +42,19 @@ struct BoneWeight
 	}
 };
 
+struct FBXTransformInfo
+{
+	FbxDouble3 translation;
+	FbxDouble3 rotation;
+	FbxDouble3 scaling;
+	FbxQuaternion qLocal;
+	FbxQuaternion qWorld;
+};
+
 struct FbxMeshInfo
 {
 	wstring								name;
+	FBXTransformInfo					transform;
 	vector<Vertex>						vertices;
 	vector<vector<uint32>>				indices;
 	vector<FbxMaterialInfo>				materials;
@@ -99,6 +109,7 @@ private:
 
 	void ParseNode(FbxNode* root);
 	void LoadMesh(FbxMesh* mesh);
+	void LoadPosition(FbxNode* pNode);
 	void LoadMaterial(FbxSurfaceMaterial* surfaceMaterial);
 
 	void		GetNormal(FbxMesh* mesh, FbxMeshInfo* container, int32 idx, int32 vertexCounter);

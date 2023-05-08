@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Light.h"
 #include "Transform.h"
 #include "Engine.h"
@@ -14,7 +14,7 @@ Light::Light() : Component(COMPONENT_TYPE::LIGHT)
 	m_shadowCamera->AddComponent(make_shared<Transform>());
 	m_shadowCamera->AddComponent(make_shared<Camera>());
 	uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
-	m_shadowCamera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI´Â ¾È ÂïÀ½
+	m_shadowCamera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UIï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 }
 
 Light::~Light()

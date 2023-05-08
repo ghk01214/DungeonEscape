@@ -6,6 +6,12 @@ void Input::Init(HWND hWnd)
 {
 	m_hWnd = hWnd;
 	m_states.resize(KEY_TYPE_COUNT, KEY_STATE::NONE);
+
+	::GetCursorPos(&m_curMousePos);
+	::ScreenToClient(GEngine->GetWindow().hWnd, &m_curMousePos);
+	m_preMousePos = m_curMousePos;
+
+	SetCursor(nullptr);
 }
 
 void Input::Update()
@@ -53,8 +59,12 @@ void Input::Update()
 	// 모든 키 정보들에 대해 확인해줄 것
 	EncodeKeyInput();
 
-	::GetCursorPos(&m_mousePos);
-	::ScreenToClient(GEngine->GetWindow().hWnd, &m_mousePos);
+	// 이전 프레임의 마우스 좌표 저장
+	m_preMousePos = m_curMousePos;
+
+	// 현재 프레임의 마우스 좌표 계산
+	::GetCursorPos(&m_curMousePos);
+	::ScreenToClient(GEngine->GetWindow().hWnd, &m_curMousePos);
 }
 
 void Input::EncodeKeyInput(void)
@@ -119,4 +129,13 @@ void Input::EncodeKeyInput(void)
 
 	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::LBUTTON)] = GetButton(KEY_TYPE::LBUTTON);
 	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RBUTTON)] = GetButton(KEY_TYPE::RBUTTON);
+}
+
+Vec2 Input::GetMouseMove(void)
+{
+	Vec2 move;
+	move.x = m_curMousePos.x - m_preMousePos.x;
+	move.y = m_curMousePos.y - m_curMousePos.y;
+
+	return move;
 }

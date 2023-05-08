@@ -148,6 +148,9 @@ void Mesh::LoadDataBinary(HANDLE hFile, const FbxMeshInfo* meshInfo)
 	// 이름 로드
 	m_name = meshInfo->name;
 
+	// 위치 정보 로드
+	transformInfo = meshInfo->transform;
+
 
 	// 로드된 정보를 가지고 객체 초기화
 	CreateVertexBuffer(meshInfo->vertices);
