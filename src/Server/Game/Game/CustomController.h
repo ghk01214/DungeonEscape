@@ -30,6 +30,12 @@ public:
 	void KeyboardClear();
 
 public:
+	void SetMoveSpeed(float value);
+	float GetMoveSpeed();
+	void SetJumpSpeed(float value);
+	float GetJumpSpeed();
+
+public:
 	RigidBody* GetBody();
 	CapsuleCollider* GetCollider();
 
@@ -39,6 +45,8 @@ private:
 
 	bool	m_onGround = false;
 	float	m_degreeThreshold = 49.9f;
+	float	m_moveSpeed = 20.f;
+	float	m_jumpSpeed = 70.f;
 private:
 	RigidBody*			m_body = nullptr;
 	CapsuleCollider* m_collider = nullptr;

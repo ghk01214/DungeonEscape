@@ -27,6 +27,11 @@ public:
 	void SetScriptType(server::SCRIPT_TYPE scriptType);
 
 public:
+	void SetControllerMoveSpeed(float value);
+	float GetControllerMoveSpeed();
+	void SetControllerJumpSpeed(float value);
+	float GetControllerJumpSpeed();
+public:
 	CustomController* m_controller = nullptr;
 
 	int32_t m_playerID = 4294967295U;

@@ -65,3 +65,23 @@ void Player::SetScriptType(server::SCRIPT_TYPE scriptType)
 {
 	m_scriptType = scriptType;
 }
+
+void Player::SetControllerMoveSpeed(float value)
+{
+	m_controller->SetMoveSpeed(value);
+}
+
+float Player::GetControllerMoveSpeed()
+{
+	return m_controller->GetMoveSpeed();
+}
+
+void Player::SetControllerJumpSpeed(float value)
+{
+	m_controller->SetJumpSpeed(value);
+}
+
+float Player::GetControllerJumpSpeed()
+{
+	return m_controller->GetJumpSpeed();
+}

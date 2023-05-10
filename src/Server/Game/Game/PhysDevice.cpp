@@ -94,7 +94,7 @@ void PhysDevice::Init()
 
 void PhysDevice::StepSim(double timeDelta)
 {
-	m_Scene->simulate(1.0f / 240);
+	m_Scene->simulate(1.0f / 60);
 	m_Scene->fetchResults(true);
 }
 

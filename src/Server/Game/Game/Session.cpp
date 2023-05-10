@@ -175,6 +175,11 @@ namespace game
 		auto quat{ trans->GetRotation() };
 		auto scale{ trans->GetScale() };
 
+		// 오른손 > 왼손
+		pos.z = -pos.z;
+		quat.z = -quat.z;
+		quat.Normalize();
+
 		// 타깃 id 작성
 		packet.WriteID(id);
 		// 프로토콜 종류 작성

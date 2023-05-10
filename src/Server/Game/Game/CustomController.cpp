@@ -168,46 +168,47 @@ bool CustomController::CheckOnGround_Raycast()
 
 void CustomController::DirectionInput()
 {
-#pragma region Original
-	m_moveDirection = PxVec3(0.f, 0.f, 0.f);
+	bool serverConnected = true;
 
-	if (m_keyboardLeft)
-		m_moveDirection.x = -1.f;
-	else if (m_keyboardRight)
-		m_moveDirection.x = 1.f;
+	if (serverConnected)
+	{
+		m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
-	if (m_keyboardUp)
-		m_moveDirection.z = 1.f;
-	else if (m_keyboardDown)
-		m_moveDirection.z = -1.f;
+		if (m_keyboardLeft)
+			m_moveDirection.x = -1.f;
+		else if (m_keyboardRight)
+			m_moveDirection.x = 1.f;
 
-	m_moveDirection.normalize();
-#pragma endregion
+		if (m_keyboardUp)
+			m_moveDirection.z = 1.f;
+		else if (m_keyboardDown)
+			m_moveDirection.z = -1.f;
 
-#pragma region ForDebugging
-	//m_moveDirection = PxVec3(0.f, 0.f, 0.f);
+		m_moveDirection.normalize();
+	}
 
-	//if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-	//	m_moveDirection.x = -1.f;
-	//else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-	//	m_moveDirection.x = 1.f;
+	else
+	{
+		m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
-	//if (GetAsyncKeyState(VK_UP) & 0x8000)
-	//	m_moveDirection.z = 1.f;
-	//else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
-	//	m_moveDirection.z = -1.f;
+		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+			m_moveDirection.x = -1.f;
+		else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+			m_moveDirection.x = 1.f;
 
-	//m_moveDirection.normalize();
-#pragma endregion
+		if (GetAsyncKeyState(VK_UP) & 0x8000)
+			m_moveDirection.z = 1.f;
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+			m_moveDirection.z = -1.f;
+
+		m_moveDirection.normalize();
+	}
 }
 
 void CustomController::Movement()
 {
 	if (m_body->isKinematic())
 		return;
-
-	float jumpSpeed = 10.f;
-	float moveSpeed = 1.f;
 
 	//check onGround
 
@@ -223,7 +224,7 @@ void CustomController::Movement()
 
 		//choice 1 : add velocity
 		PxVec3 velocity = m_body->GetVelocity();
-		velocity.y = jumpSpeed;
+		velocity.y = m_jumpSpeed;
 		m_body->SetVelocity(velocity);
 
 		#pragma region choice2 add force
@@ -243,11 +244,13 @@ void CustomController::Movement()
 	// Apply the adjusted vector to the character's velocity
 	if (m_slidingVector.magnitude() > 0)
 	{
+		m_slidingVector *= m_moveSpeed;
 		m_slidingVector.y = m_body->GetVelocity().y;
 		m_body->SetVelocity(m_slidingVector);	// * movespeed?
 	}
 	else
 	{
+		m_moveDirection *= m_moveSpeed;
 		m_moveDirection.y = m_body->GetVelocity().y;
 		m_body->SetVelocity(m_moveDirection);
 	}
@@ -293,6 +296,26 @@ void CustomController::KeyboardClear()
 	m_keyboardUp	= false;
 	m_keyboardDown	= false;
 	m_keyboardSpace	= false;
+}
+
+void CustomController::SetMoveSpeed(float value)
+{
+	m_moveSpeed = value;
+}
+
+float CustomController::GetMoveSpeed()
+{
+	return m_moveSpeed;
+}
+
+void CustomController::SetJumpSpeed(float value)
+{
+	m_jumpSpeed = value;
+}
+
+float CustomController::GetJumpSpeed()
+{
+	return m_moveSpeed;
 }
 
 RigidBody* CustomController::GetBody()

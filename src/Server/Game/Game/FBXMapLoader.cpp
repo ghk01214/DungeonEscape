@@ -90,20 +90,6 @@ void FBXMapLoader::MakeMap(void)
     {
         for (auto& objectInfo : info.second)
         {
-            // 위치 넣어주기
-            /*
-                ue
-                정면 x
-                우측 y
-                상단 z
-
-                directx
-                정면 z
-                우측 x
-                상단 y
-
-                x -> z, y -> x, z -> y
-            */
             objectLocationInfo locationInfo;
 
             locationInfo.Position = FBXVec4(objectInfo.Position.x, objectInfo.Position.z, objectInfo.Position.y, 1.f);
