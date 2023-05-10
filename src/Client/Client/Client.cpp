@@ -7,9 +7,9 @@
 #include "Game.h"
 #include <NetworkManager.h>
 
-#if _DEBUG
+//#if _DEBUG
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
-#endif
+//#endif
 
 #define MAX_LOADSTRING 100
 

@@ -425,6 +425,8 @@ namespace network
 				int32_t id{ m_packet.ReadID() };
 
 				TransformPlayer(id);
+
+				//std::cout << id << std::endl;
 			}
 			break;
 			case ProtocolID::WR_ANI_ACK:
@@ -549,6 +551,42 @@ namespace network
 
 	void NetworkManager::TransformPlayer(int32_t id)
 	{
+		if (m_objects[id].empty())
+		{
+			ObjectDesc objectDesc;
+			objectDesc.strName = L"Mistic";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
+			objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);	// pos;
+			objectDesc.vScale = Vec3(1.f, 1.f, 1.f);	// scale;
+
+			//if (m_id == id)
+			//	objectDesc.script = m_scripts[static_cast<int8_t>(scriptType)];
+
+			std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
+			std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
+			std::shared_ptr<CNetwork> networkComponent{ std::make_shared<CNetwork>(id) };
+
+			for (auto& gameObject : gameObjects)
+			{
+				gameObject->SetName(objectDesc.strName);
+				gameObject->SetCheckFrustum(false);
+				gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
+				gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
+				gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
+				//if (m_id == id)
+				//	gameObject->AddComponent(objectDesc.script);
+				gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
+				gameObject->AddComponent(networkComponent);
+				gameObject->GetAnimator()->Play(0, 0.f);
+			}
+
+			GET_SCENE->AddPlayer(gameObjects);
+
+			m_objects[id] = gameObjects;
+
+			std::cout << "create\n";
+		}
+
 		// 패킷에서 오브젝트를 렌더링할 좌표 읽기
 		Vec3 pos;
 		pos.x = m_packet.Read<float>();
@@ -566,12 +604,16 @@ namespace network
 		scale.y = m_packet.Read<float>();
 		scale.z = m_packet.Read<float>();
 
+
 		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
 		for (auto& object : m_objects[id])
 		{
 			auto transform = object->GetTransform();
 
 			transform->SetWorldVec3Position(pos);
+			auto mat{ Matrix::CreateTranslation(pos) };
+			transform->SetWorldMatrix(mat);
+			std::cout << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
 		}
 	}
 

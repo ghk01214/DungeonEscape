@@ -45,8 +45,8 @@ private:
 
 	bool	m_onGround = false;
 	float	m_degreeThreshold = 49.9f;
-	float	m_moveSpeed = 20.f;
-	float	m_jumpSpeed = 70.f;
+	float	m_moveSpeed = 100.f;
+	float	m_jumpSpeed = 100.f;
 private:
 	RigidBody*			m_body = nullptr;
 	CapsuleCollider* m_collider = nullptr;

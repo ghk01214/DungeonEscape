@@ -46,9 +46,9 @@ void Engine::Update()
 	GET_SINGLE(SceneManager)->Update();
 	GET_SINGLE(InstancingManager)->ClearBuffer();
 
-	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true
+	if (//GET_NETWORK->IsSuccessfullyLoggedIn() == true
 		//and GET_SINGLE(Input)->IsNoInput() == false
-		and GET_SINGLE(Timer)->Is1FrameInVar() == true)
+		GET_SINGLE(Timer)->Is1FrameInVar() == true)
 	{
 		GET_NETWORK->SendKeyInputPacket();
 	}
