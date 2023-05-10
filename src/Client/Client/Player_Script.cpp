@@ -88,35 +88,40 @@ void Player_Mistic::MovePlayerCameraLook(void)
 	// 카메라가 존재할 경우
 	if (nullptr != camera)
 	{
-		Vec3 pos = GetTransform()->GetWorldPosition();
+		//Vec3 pos = GetTransform()->GetWorldPosition();
 
-		const shared_ptr<Transform>& cameraTransform = camera->GetTransform();
+		//const shared_ptr<Transform>& cameraTransform = camera->GetTransform();
 
-		// 초당 이동 속도
-		if (INPUT->GetButton(KEY_TYPE::W))
-		{
-			pos.x += cameraTransform->GetLook().x * _speed * DELTA_TIME;
-			pos.z += cameraTransform->GetLook().z * _speed * DELTA_TIME;
-			TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Forward());
-		}
-		if (INPUT->GetButton(KEY_TYPE::S))
-		{
-			pos.x -= cameraTransform->GetLook().x * _speed * DELTA_TIME;
-			pos.z -= cameraTransform->GetLook().z * _speed * DELTA_TIME;
-			TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Backward());
-		}
-		if (INPUT->GetButton(KEY_TYPE::A))
-		{
-			pos.x -= cameraTransform->GetRight().x * _speed * DELTA_TIME;
-			pos.z -= cameraTransform->GetRight().z * _speed * DELTA_TIME;
-			TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Right());
-		}
-		if (INPUT->GetButton(KEY_TYPE::D))
-		{
-			pos.x += cameraTransform->GetRight().x * _speed * DELTA_TIME;
-			pos.z += cameraTransform->GetRight().z * _speed * DELTA_TIME;
-			TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Left());
-		}
+		//// 초당 이동 속도
+		//if (INPUT->GetButton(KEY_TYPE::W))
+		//{
+		//	pos.x += cameraTransform->GetLook().x * _speed * DELTA_TIME;
+		//	pos.z += cameraTransform->GetLook().z * _speed * DELTA_TIME;
+		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Forward());
+		//}
+		//if (INPUT->GetButton(KEY_TYPE::S))
+		//{
+		//	pos.x -= cameraTransform->GetLook().x * _speed * DELTA_TIME;
+		//	pos.z -= cameraTransform->GetLook().z * _speed * DELTA_TIME;
+		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Backward());
+		//}
+		//if (INPUT->GetButton(KEY_TYPE::A))
+		//{
+		//	pos.x -= cameraTransform->GetRight().x * _speed * DELTA_TIME;
+		//	pos.z -= cameraTransform->GetRight().z * _speed * DELTA_TIME;
+		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Right());
+		//}
+		//if (INPUT->GetButton(KEY_TYPE::D))
+		//{
+		//	pos.x += cameraTransform->GetRight().x * _speed * DELTA_TIME;
+		//	pos.z += cameraTransform->GetRight().z * _speed * DELTA_TIME;
+		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Left());
+		//}
+		//Matrix matWorld = GetTransform()->GetWorldMatrix();
+		//matWorld.Translation(pos);
+		//GetTransform()->SetWorldMatrix(matWorld);
+
+		Vec3 pos = GetTransform()->GetWorldVec3Position();
 		Matrix matWorld = GetTransform()->GetWorldMatrix();
 		matWorld.Translation(pos);
 		GetTransform()->SetWorldMatrix(matWorld);
