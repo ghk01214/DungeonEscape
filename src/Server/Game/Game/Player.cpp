@@ -34,8 +34,8 @@ void Player::Update(double timeDelta)
 
 	if (m_startSendTransform == true)
 	{
-		game::Message msg{ m_playerID, ProtocolID::MY_TRANSFORM_ACK };
-		game::MessageHandler::GetInstance()->InsertSendMessage(msg);
+		game::Message msg{ m_playerID, ProtocolID::WR_TRANSFORM_ACK };
+		//game::MessageHandler::GetInstance()->InsertSendMessage(msg);
 	}
 }
 

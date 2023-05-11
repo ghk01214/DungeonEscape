@@ -221,7 +221,9 @@ namespace game
 				break;
 				case network::COMPLETION::BROADCAST:
 				{
-					BroadcastResult(id, pOverEx);
+					auto postOver{ *pOverEx };
+					std::cout << "send : " << clientID << ", " << std::this_thread::get_id() << " - " << magic_enum::enum_name(postOver.msgProtocol) << ", " << magic_enum::enum_integer(postOver.msgProtocol) << "\n";
+					BroadcastResult(id, &postOver);
 				}
 				default:
 				break;
@@ -383,7 +385,7 @@ namespace game
 
 		std::cout << std::format("session[{}] disconnected\n", id);
 	}
-
+#pragma region [PROCESS PACKET]
 	void CServer::ProcessPacket(int32_t id, network::CPacket& packet)
 	{
 		// 프로토콜 종류 읽기
@@ -448,6 +450,7 @@ namespace game
 	void CServer::ProcessAUPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		auto session{ m_sessions[id] };
+		Message msg{ id, protocol };
 
 		switch (protocol)
 		{
@@ -455,13 +458,11 @@ namespace game
 			{
 				session->SetState(STATE::INGAME);
 
-				Message msg{ id, protocol };
 				InputCommandMessage(msg);
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_REQ:
 			{
-				Message msg{ id, protocol };
 				msg.roomID = session->GetRoomID();
 
 				InputCommandMessage(msg);
@@ -475,18 +476,21 @@ namespace game
 	void CServer::ProcessMYPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		auto session{ m_sessions[id] };
+		Message msg{ id, protocol };
 
 		switch (protocol)
 		{
+			case ProtocolID::MY_ISSUE_PLAYER_ID_REQ:
+			{
+				InputCommandMessage(msg);
+			}
 			case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 			{
-				Message msg{ id, protocol };
 				InputCommandMessage(msg);
 			}
 			break;
 			case ProtocolID::MY_KEYINPUT_REQ:
 			{
-				Message msg{ id, protocol };
 				msg.keyInput = packet.Read<ulong32_t>();
 
 				InputCommandMessage(msg);
@@ -494,7 +498,6 @@ namespace game
 			break;
 			case ProtocolID::MY_ANI_REQ:
 			{
-				Message msg{ id, protocol };
 				msg.aniIndex = packet.Read<int32_t>();
 				msg.aniFrame = packet.Read<float>();
 
@@ -509,6 +512,7 @@ namespace game
 	void CServer::ProcessWRPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		auto session{ m_sessions[id] };
+		Message msg{ id, protocol };
 
 		switch (protocol)
 		{
@@ -558,26 +562,26 @@ namespace game
 	{
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
 	}
-
+#pragma endregion
 	void CServer::Login(int32_t id, CSession* session, Player* player, int32_t roomID)
 	{
-		session->SetRoomID(roomID);
-		session->SetPlayer(player);
+		//session->SetRoomID(roomID);
+		//session->SetPlayer(player);
 		session->SendLoginPacket(player);
 
-		for (auto& client : m_sessions)
-		{
-			if (client->GetState() != STATE::INGAME)
-				continue;
+		//for (auto& client : m_sessions)
+		//{
+		//	if (client->GetState() != STATE::INGAME)
+		//		continue;
 
-			if (client->GetID() == id)
-				continue;
+		//	if (client->GetID() == id)
+		//		continue;
 
-			auto pl{ dynamic_cast<Player*>(client->GetMyObject()) };
+		//	auto pl{ dynamic_cast<Player*>(client->GetMyObject()) };
 
-			client->SendAddAnimateObjPacket(id, player);
-			session->SendAddAnimateObjPacket(client->GetID(), pl);
-		}
+		//	client->SendAddAnimateObjPacket(id, player);
+		//	session->SendAddAnimateObjPacket(client->GetID(), pl);
+		//}
 
 		//for (auto& client : m_sessions)
 		//{
@@ -596,11 +600,11 @@ namespace game
 		Disconnect(id);
 	}
 
-	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* over)
+	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* postOver)
 	{
-		auto session{ m_sessions[id] };
 		//auto postOver{ reinterpret_cast<network::POST_OVERLAPPEDEX*>(over) };
-		auto postOver{ over };
+		//auto postOver{ *over };
+		auto session{ m_sessions[postOver->playerID] };
 
 		if (session->GetState() != STATE::INGAME)
 			return;
@@ -609,15 +613,18 @@ namespace game
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
 
+		//std::cout << "send : " << magic_enum::enum_name(postOver->msgProtocol) << ", " << magic_enum::enum_integer(postOver->msgProtocol) << "\n";
+
 		//network::CPacket packet{};
 		//packet.SetData(over->data);
 
 		//switch (packet.ReadProtocol())
 		switch (postOver->msgProtocol)
 		{
+#pragma region [AU]
 			case ProtocolID::AU_LOGIN_ACK:
 			{
-				Player* player{ nullptr };
+				/*Player* player{ nullptr };
 
 				for (auto& playerObj : playerObjects)
 				{
@@ -625,13 +632,13 @@ namespace game
 
 					if (player->GetPlayerID() == id)
 						break;
-				}
+				}*/
 
 				//int32_t roomID{ packet.Read<int32_t>() };
-				int32_t roomID{ postOver->roomID };
+				//int32_t roomID{ postOver->roomID };
 
-				Login(id, session, player, roomID);
-				player->StartSendTransform();
+				Login(id, session, nullptr, 0);
+				//player->StartSendTransform();
 
 				std::cout << std::format("session[{}] login complete\n", id);
 			}
@@ -643,8 +650,16 @@ namespace game
 				std::cout << std::format("session[{}] logout complete\n", id);
 			}
 			break;
+#pragma endregion
+#pragma region[MY]
+			case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
+			{
+				session->SendPlayerIDIssuePacket(postOver->playerID);
+
+				std::cout << "My player id(" << postOver->playerID << ") issue complete!\n";
+			}
+			break;
 			case ProtocolID::MY_TRANSFORM_ACK:
-			case ProtocolID::WR_TRANSFORM_ACK:
 			{
 				for (auto& client : m_sessions)
 				{
@@ -671,11 +686,28 @@ namespace game
 
 						if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
 						{
-							client->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);	//트랜스폼 갱신
+							client->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);		//트랜스폼 갱신
 							map->SetRequireFlagTransmit(false);														//플래그 체크
 						}
 					}
 				}
+			}
+			break;
+#pragma endregion
+#pragma region[WR]
+			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
+			{
+				Player* player{ FindPlayer(playerObjects, postOver->playerID) };
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendAddAnimateObjPacket(player->GetPlayerID(), player);
+				}
+
+				std::cout << "Adding new animate object(" << player->GetPlayerID() << ") complete\n";
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
@@ -702,35 +734,40 @@ namespace game
 				}
 			}
 			break;
-			case ProtocolID::MY_ANI_ACK:
+			case ProtocolID::WR_TRANSFORM_ACK:
 			{
-				//int32_t aniIndex{ packet.Read<int32_t>() };
-				//float aniFrame{ packet.Read<float>() };
-				ProtocolID protocol{ ProtocolID::PROTOCOL_NONE };
-				Player* player{ nullptr };
-
-				for (auto& playerObj : playerObjects)
-				{
-					player = dynamic_cast<Player*>(playerObj);
-
-					if (player->GetPlayerID() == id)
-						break;
-				}
+				Player* player{ FindPlayer(playerObjects, postOver->playerID) };
 
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					if (client->GetID() == id)
-						protocol = ProtocolID::MY_ANI_ACK;
-					else
-						protocol = ProtocolID::WR_ANI_ACK;
-
-					client->SendAniIndexPacket(id, protocol, player);
+					client->SendTransformPacket(player->GetID(), postOver->msgProtocol, player);
 				}
 			}
 			break;
+			case ProtocolID::WR_ANI_ACK:
+			{
+				//int32_t aniIndex{ packet.Read<int32_t>() };
+				//float aniFrame{ packet.Read<float>() };
+				Player* player{ FindPlayer(playerObjects, postOver->playerID) };
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					if (client->GetID() == postOver->playerID)
+						continue;
+
+					client->SendAniIndexPacket(player->GetID(), postOver->msgProtocol, player);
+				}
+
+				std::cout << "changing player(" << player->GetID() << ") animation complete\n";
+			}
+			break;
+#pragma endregion
 			default:
 			break;
 		}
@@ -739,5 +776,20 @@ namespace game
 	void CServer::InputCommandMessage(Message msg)
 	{
 		MessageHandler::GetInstance()->InsertRecvMessage(msg);
+	}
+
+	Player* CServer::FindPlayer(std::list<GameObject*>& playerObjects, int32_t playerID)
+	{
+		Player* player{ nullptr };
+
+		for (auto& playerObj : playerObjects)
+		{
+			player = dynamic_cast<Player*>(playerObj);
+
+			if (player->GetPlayerID() == playerID)
+				break;
+		}
+
+		return player;
 	}
 }

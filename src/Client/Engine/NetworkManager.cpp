@@ -30,7 +30,7 @@ namespace network
 		Connect();
 	}
 
-	void NetworkManager::RegisterObject(std::shared_ptr<CGameObject> object)
+	void NetworkManager::RegisterObject(OBJECT_TYPE type, std::shared_ptr<CGameObject> object)
 	{
 		// 해당 오브젝트가 기존에 존재하는 오브젝트인지 검사
 		// 초기값인 -1이 아니라면 등록됬다는 뜻
@@ -41,20 +41,13 @@ namespace network
 			return;
 		}
 
-		// 0번부터 순서대로 ObjectID 부여
-		uint32 objectID = m_objects.size();
-
-		// 인자로 받은 게임 오브젝트의 네트워크 컴포넌트에 objectID 부여
-		object->GetNetwork()->SetID(objectID);
-
-		// 멤버 관리 변수에 추가
-	//	m_objects.insert(std::make_pair(objectID, object));
+		NetworkGameObject obj{ object };
+		NetworkComponent component{ type, obj };
+		m_unregisterdObjects.push_back(component);
 	}
 
-	void NetworkManager::RegisterObject(std::vector<std::shared_ptr<CGameObject>> object)
+	void NetworkManager::RegisterObject(OBJECT_TYPE type, NetworkGameObject object)
 	{
-		std::vector<std::shared_ptr<CGameObject>> objs;
-
 		for (auto& obj : object)
 		{
 			// 해당 오브젝트가 기존에 존재하는 오브젝트인지 검사
@@ -65,21 +58,12 @@ namespace network
 				MSG_BOX(TEXT("Failed : NetworkManager::RegisterObject - Already exist Object"));
 				return;
 			}
-
-			// 0번부터 순서대로 ObjectID 부여
-			uint32 objectID = m_objects.size();
-
-			// 인자로 받은 게임 오브젝트의 네트워크 컴포넌트에 objectID 부여
-			obj->GetNetwork()->SetID(objectID);
-
-			objs.push_back(obj);
 		}
 
-		// 멤버 관리 변수에 추가
-		//m_objects.insert(std::make_pair(objectID, objs));
+		NetworkComponent component{ type, object };
+		m_unregisterdObjects.push_back(component);
 	}
 
-	// 기본 초기화 작업
 	void NetworkManager::Connect()
 	{
 		if (WSADATA wsa; WSAStartup(MAKEWORD(2, 2), &wsa) != NOERROR)
@@ -150,30 +134,9 @@ namespace network
 	void NetworkManager::SendLoginPacket()
 	{
 		CPacket packet;
-		//auto pos{ GET_PLAYER[0]->GetTransform()->GetLocalPosition() };
-		//auto quat{ GET_PLAYER[0]->GetTransform()->GetLocalRotation() };
-		//auto scale{ GET_PLAYER[0]->GetTransform()->GetLocalScale() };
 
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_REQ);
-		//packet.WriteWString(GET_PLAYER[0]->GetName());
-
-		//packet.Write<float>(pos.x);
-		//packet.Write<float>(pos.y);
-		//packet.Write<float>(pos.z);
-		//
-		//packet.Write<float>(quat.x);
-		//packet.Write<float>(quat.y);
-		//packet.Write<float>(quat.z);
-		//packet.Write<float>(1.f);
-		//
-		//packet.Write<float>(scale.x);
-		//packet.Write<float>(scale.y);
-		//packet.Write<float>(scale.z);
-
-		// 애니메이션 인덱스&프레임
-		//packet.Write<int32_t>(0);
-		//packet.Write<float>(0.f);
 
 		// 패킷 전송
 		Send(packet);
@@ -200,9 +163,32 @@ namespace network
 		Send(packet);
 	}
 
-	void NetworkManager::AddScript(server::SCRIPT_TYPE scriptType, std::shared_ptr<MonoBehaviour> script)
+	void NetworkManager::SendIDIssueRequest()
 	{
-		m_scripts[static_cast<int8_t>(scriptType)] = script;
+		for (auto& component : m_unregisterdObjects)
+		{
+			ProtocolID protocol{ ProtocolID::PROTOCOL_NONE };
+
+			switch (component.type)
+			{
+				case OBJECT_TYPE::PLAYER:
+				{
+					protocol = ProtocolID::MY_ISSUE_PLAYER_ID_REQ;
+				}
+				break;
+				case OBJECT_TYPE::OBJECT:
+				{
+					protocol = ProtocolID::WR_ISSUE_OBJ_ID_REQ;
+				}
+				break;
+				default:
+				break;
+			}
+
+			CPacket packet;
+			packet.WriteProtocol(protocol);
+			Send(packet);
+		}
 	}
 #pragma endregion
 
@@ -357,7 +343,7 @@ namespace network
 		{
 			case ProtocolID::AU_LOGIN_ACK:
 			{
-				m_id = m_packet.ReadID();
+				/*m_id = m_packet.ReadID();
 
 				m_objects.insert(std::make_pair(m_id, GET_PLAYER));
 
@@ -368,8 +354,9 @@ namespace network
 
 				AddPlayer(m_id);
 
-				std::cout << "ADD ME[" << m_id << "]" << std::endl << std::endl;
+				std::cout << "ADD ME[" << m_id << "]" << std::endl << std::endl;*/
 				m_login = true;
+				std::cout << std::format("Login Success!") << std::endl;
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_ACK:
@@ -386,17 +373,37 @@ namespace network
 	{
 		switch (type)
 		{
-			case ProtocolID::MY_TRANSFORM_ACK:
+			case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
 			{
-				TransformPlayer(m_id);
+				std::list<NetworkComponent>::iterator iter;
+				for (iter = m_unregisterdObjects.begin(); iter != m_unregisterdObjects.end(); ++iter)
+				{
+					if (iter->type == OBJECT_TYPE::PLAYER)
+						break;
+				}
+
+				m_id = m_packet.ReadID();
+				m_objects[m_id] = iter->object;
+
+				for (auto& obj : m_objects[m_id])
+				{
+					obj->GetNetwork()->SetID(m_id);
+				}
+
+				m_unregisterdObjects.erase(iter);
 			}
 			break;
-			case ProtocolID::MY_ANI_ACK:
+			/*case ProtocolID::MY_TRANSFORM_ACK:
 			{
-				PlayAni(m_id);
 			}
-			break;
+			break;*/
 			default:
+			{
+				for (auto& obj : m_objects[m_id])
+				{
+					obj->GetNetwork()->InsertPackets(m_packet);
+				}
+			}
 			break;
 		}
 	}
@@ -405,14 +412,14 @@ namespace network
 	{
 		switch (type)
 		{
-			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
+			/*case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
 				AddPlayer(id);
 
 				std::cout << "ADD REMOTE[" << id << "]" << std::endl << std::endl;
 			}
-			break;
+			break;*/
 			case ProtocolID::WR_REMOVE_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
@@ -420,7 +427,7 @@ namespace network
 				RemovePlayer(id);
 			}
 			break;
-			case ProtocolID::WR_TRANSFORM_ACK:
+			/*case ProtocolID::WR_TRANSFORM_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
 
@@ -433,8 +440,16 @@ namespace network
 
 				PlayAni(id);
 			}
-			break;
+			break;*/
 			default:
+			{
+				int32_t id{ m_packet.ReadID() };
+
+				for (auto& obj : m_objects[id])
+				{
+					obj->GetNetwork()->InsertPackets(m_packet);
+				}
+			}
 			break;
 		}
 	}
@@ -511,16 +526,13 @@ namespace network
 		ObjectDesc objectDesc;
 		objectDesc.strName = newName;
 		objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
-		//objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);	// pos;
 		objectDesc.vPostion = pos;	// pos;
-		objectDesc.vScale = Vec3(1.f, 1.f, 1.f);	// scale;
-
-		if (m_id == id)
-			objectDesc.script = m_scripts[static_cast<int8_t>(scriptType)];
+		objectDesc.vScale = scale;	// scale;
+		objectDesc.script = nullptr;
 
 		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
 		std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
-		std::shared_ptr<CNetwork> networkComponent{ std::make_shared<CNetwork>(id) };
+		std::shared_ptr<CNetwork> networkComponent{ std::make_shared<CNetwork>(OBJECT_TYPE::PLAYER, id) };
 
 		for (auto& gameObject : gameObjects)
 		{
@@ -529,8 +541,7 @@ namespace network
 			gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
 			gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
 			gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
-			if (m_id == id)
-				gameObject->AddComponent(objectDesc.script);
+			gameObject->AddComponent(objectDesc.script);
 			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
 			gameObject->AddComponent(networkComponent);
 			gameObject->GetAnimator()->Play(aniIndex, aniFrame);

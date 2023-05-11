@@ -77,13 +77,9 @@ namespace game
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
 
-			if (msg.playerID == -1)
-			{
-				std::uniform_int_distribution<int32_t> uid{ 0, 2 };
-				PostQueuedCompletionStatus(m_iocp, 1, uid(dre), &postOver.over);
-			}
-			else
-				PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
+			//std::cout << "post : " << magic_enum::enum_name(postOver.msgProtocol) << ", " << magic_enum::enum_integer(postOver.msgProtocol) << "\n";
+
+			PostQueuedCompletionStatus(m_iocp, 1, 0, &postOver.over);
 
 			++i;
 			queue.pop();
@@ -121,12 +117,15 @@ namespace game
 
 			switch (msg.msgProtocol)
 			{
+#pragma region [AU]
 				case ProtocolID::AU_LOGIN_REQ:
 				{
-					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(150.f, 200.f, -150.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-					player->SetName(L"Mistic");
-
-					Login(msg.playerID, player);
+					//Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20.f, 0.f, 0.f), Quat(0, 0, 0, 1), Vec3(1.f, 1.f, 1.f)) };
+					//player->SetName(L"Mistic");
+					//
+					//Login(msg.playerID, player);
+					Message sendMsg{ msg.playerID, ProtocolID::AU_LOGIN_ACK };
+					InsertSendMessage(sendMsg);
 				}
 				break;
 				case ProtocolID::AU_LOGOUT_REQ:
@@ -143,6 +142,25 @@ namespace game
 							break;
 						}
 					}
+				}
+				break;
+#pragma endregion
+#pragma region [MY]
+				case ProtocolID::MY_ISSUE_PLAYER_ID_REQ:
+				{
+					Message sendMsg{ msg.playerID, ProtocolID::MY_ISSUE_PLAYER_ID_ACK };
+					InsertSendMessage(sendMsg);
+				}
+				break;
+				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
+				{
+					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20.f, 0.f, 0.f), Quat(0, 0, 0, 1), Vec3(1.f, 1.f, 1.f)) };
+					player->SetName(L"Mistic");
+
+					//Login(msg.playerID, player);
+
+					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
+					InsertSendMessage(sendMsg);
 				}
 				break;
 				case ProtocolID::MY_ADD_OBJ_REQ:
@@ -192,10 +210,11 @@ namespace game
 						}
 					}
 
-					Message sendMsg{ msg.playerID, ProtocolID::MY_ANI_ACK };
+					Message sendMsg{ msg.playerID, ProtocolID::WR_ANI_ACK };
 					InsertSendMessage(sendMsg);
 				}
 				break;
+#pragma endregion
 				default:
 				break;
 			}

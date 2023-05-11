@@ -18,6 +18,11 @@
 #include "SphereCollider.h"
 #include "MeshData.h"
 
+void SceneManager::Start()
+{
+	m_activeScene->Start();
+}
+
 void SceneManager::Update()
 {
 	if (m_activeScene == nullptr)
@@ -40,7 +45,7 @@ void SceneManager::LoadScene(std::shared_ptr<CScene> scene)
 	m_activeScene = scene;
 
 	m_activeScene->Awake();
-	m_activeScene->Start();
+	//m_activeScene->Start();
 }
 
 void SceneManager::SetLayerName(uint8 index, const wstring& name)

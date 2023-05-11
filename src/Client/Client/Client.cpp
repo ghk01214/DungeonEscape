@@ -58,6 +58,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	GET_NETWORK->Init();
 	std::unique_ptr<CGame> pGame = std::make_unique<CGame>();
 	pGame->Init(g_windowInfo);
+	pGame->Start();
 
 	while (true)
 	{

@@ -42,6 +42,7 @@ class Player_Mistic : public MonoBehaviour
 	};
 
 public:
+	virtual void Start() override;
 	virtual void Update() override;
 	virtual void LateUpdate() override;
 
@@ -51,6 +52,11 @@ private:
 
 private:
 	void MovePlayerCameraLook(void);
+	void ParsePackets();
+
+	void StartRender(network::CPacket& packet);		// 임시 함수
+	void Transform(network::CPacket& packet);
+	void ChangeAnimation(network::CPacket& packet);
 
 private:
 	float		_speed = 500.f;

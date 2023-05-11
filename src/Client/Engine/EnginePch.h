@@ -14,6 +14,7 @@
 #include <list>
 #include <map>
 #include <fstream>
+#include <deque>
 
 // 디버깅용 io header
 //#if _DEBUG
@@ -297,6 +298,9 @@ inline T loadStructData(const HANDLE& hFile)
 #include <Define.h>
 #include <protocol.hpp>
 #include <OVERLAPPEDEX.h>
+#include <magic_enum_format.hpp>
+#include <magic_enum_fuse.hpp>
+#include <magic_enum_switch.hpp>
 
 #pragma comment(lib, "WS2_32")
 #pragma comment(lib, "MSWSock")
