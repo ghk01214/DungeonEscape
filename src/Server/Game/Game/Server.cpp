@@ -234,10 +234,15 @@ namespace game
 		while (true)
 		{
 			TimeManager::GetInstance()->Update();
-			float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
-			m_gameInstance->Update(timeDelta);
-			m_gameInstance->LateUpdate(timeDelta);
-			MessageHandler::GetInstance()->SendPacketMessage();
+
+			if (TimeManager::GetInstance()->Is1FrameInVar() == true)
+			{
+				float timeDelta{ TimeManager::GetInstance()->GetDeltaTimeInVar() };
+				m_gameInstance->Update(timeDelta);
+				m_gameInstance->LateUpdate(timeDelta);
+				MessageHandler::GetInstance()->SendPacketMessage();
+				TimeManager::GetInstance()->ClearDeltaTimeInVar();
+			}
 		}
 	}
 

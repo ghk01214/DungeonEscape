@@ -29,7 +29,7 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Map");
 	objmgr->AddLayer(L"Layer_Player");
 
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(150, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(150, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 
 #pragma region Sphere
 	//auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(5, 10, 5), Quat(0, 0, 0, 1), Vec3(2,2,2));
@@ -112,7 +112,7 @@ void TestLevel::Init()
 	//auto testObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(-50, 200, 0), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 	//auto testBody = testObj->GetComponent<RigidBody>(L"RigidBody");
 	//testBody->AddCollider<BoxCollider>(testObj->GetTransform()->GetScale());
-#pragma endregion 
+#pragma endregion
 
 #pragma region Plane
 	//auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(1000, 2, 1000));

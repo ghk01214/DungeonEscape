@@ -13,9 +13,13 @@ public:
 	void Release();
 public:
 	float GetDeltaTime() { return m_deltaTime; }
+	float GetDeltaTimeInVar() { return m_deltaTimeInVar; }
     void Reset();
 
 	void Update();
+
+	void ClearDeltaTimeInVar() { m_deltaTimeInVar = 0.f; }
+
 	constexpr uint32_t GetFPS() const { return m_fps; }
 
 	const bool Is1FrameInVar();
@@ -31,6 +35,8 @@ private:
 	uint32_t m_frameCountIn1s;
 	float m_frameTime;
 	uint32_t m_fps;
+
+	float m_deltaTimeInVar;
 
 	// 임시 변수
 	uint32_t m_oneSecFrameCount;

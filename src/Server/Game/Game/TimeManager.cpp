@@ -54,6 +54,7 @@ void TimeManager::Update()
     ++m_frameCountIn1s;
     ++m_oneSecFrameCount;
     m_frameTime += m_deltaTime;
+    m_deltaTimeInVar += m_deltaTime;
 
     if (m_frameTime > 1.f)
     {

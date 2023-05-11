@@ -205,7 +205,7 @@ void Scene_Test::CreateMap(void)
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
 
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage1.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage2.FBX");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 

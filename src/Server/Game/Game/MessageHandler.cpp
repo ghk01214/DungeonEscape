@@ -123,7 +123,7 @@ namespace game
 			{
 				case ProtocolID::AU_LOGIN_REQ:
 				{
-					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 2.f, 10.f, -5.f), Quat(0, 0, 0, 1), Vec3(0.3f, 0.3f, 0.3f)) };
+					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(150.f, 200.f, -150.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 					player->SetName(L"Mistic");
 
 					Login(msg.playerID, player);

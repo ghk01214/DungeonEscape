@@ -32,7 +32,7 @@ void Player::Update(double timeDelta)
 {
 	m_controller->Move();
 
-	if (m_startSendTransform == true and TimeManager::GetInstance()->Is1FrameInVar() == true)
+	if (m_startSendTransform == true)
 	{
 		game::Message msg{ m_playerID, ProtocolID::MY_TRANSFORM_ACK };
 		game::MessageHandler::GetInstance()->InsertSendMessage(msg);

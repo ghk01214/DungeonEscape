@@ -94,7 +94,7 @@ void PhysDevice::Init()
 
 void PhysDevice::StepSim(double timeDelta)
 {
-	m_Scene->simulate(1.0f / 60);
+	m_Scene->simulate(timeDelta * 10.f);
 	m_Scene->fetchResults(true);
 }
 
@@ -163,7 +163,7 @@ PxCooking* PhysDevice::GetCooking() const
 }
 
 void PhysDevice::ClearEventCallback()
-{	
+{
 	////모든 게임오브젝트의 리지드 바디 ClearCollidersCollisionInfo 호출
 	//const auto& objmgr = ObjectManager::GetInstance();
 	//auto& layers = objmgr->GetLayers();

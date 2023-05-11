@@ -45,7 +45,7 @@ private:
 
 	bool	m_onGround = false;
 	float	m_degreeThreshold = 49.9f;
-	float	m_moveSpeed = 20.f;
+	float	m_moveSpeed = 50.f;
 	float	m_jumpSpeed = 70.f;
 private:
 	RigidBody*			m_body = nullptr;

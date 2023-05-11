@@ -511,7 +511,8 @@ namespace network
 		ObjectDesc objectDesc;
 		objectDesc.strName = newName;
 		objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
-		objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);	// pos;
+		//objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);	// pos;
+		objectDesc.vPostion = pos;	// pos;
 		objectDesc.vScale = Vec3(1.f, 1.f, 1.f);	// scale;
 
 		if (m_id == id)
@@ -572,6 +573,8 @@ namespace network
 			auto transform = object->GetTransform();
 
 			transform->SetWorldVec3Position(pos);
+			auto mat{ Matrix::CreateTranslation(pos) };
+			transform->SetWorldMatrix(mat);
 		}
 	}
 
