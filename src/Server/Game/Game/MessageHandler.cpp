@@ -9,6 +9,7 @@
 #include "Transform.h"
 #include "RoomManager.h"
 #include "CustomController.h"
+#include "TimeManager.h"
 
 namespace game
 {
@@ -64,8 +65,10 @@ namespace game
 		if (size == 0)
 			return;
 
+
 		std::queue<Message> queue;
 		PopConcurrentQueue(queue, m_sendQueue, size, m_sendQueueSize);
+
 
 		for (int32_t i = 0; i < size;)
 		{
@@ -77,16 +80,32 @@ namespace game
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
 
-			if (msg.playerID == -1)
-			{
-				std::uniform_int_distribution<int32_t> uid{ 0, 2 };
-				PostQueuedCompletionStatus(m_iocp, 1, uid(dre), &postOver.over);
-			}
-			else
-				PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
+			/*if (TimeManager::GetInstance()->Is1FrameInVar() == true)
+			{*/
+			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 
 			++i;
 			queue.pop();
+			//TimeManager::GetInstance()->ClearDeltaTimeInVar();
+	/*	}
+		else
+			return;*/
+		}
+	}
+
+	Message MessageHandler::PopMessage()
+	{
+		Message msg{};
+
+		while (true)
+		{
+			bool success{ m_sendQueue.try_pop(msg) };
+
+			if (success == true)
+			{
+				--m_sendQueueSize;
+				return msg;
+			}
 		}
 	}
 

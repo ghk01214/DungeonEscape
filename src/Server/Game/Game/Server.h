@@ -14,6 +14,18 @@ namespace game
 	class CRoomManager;
 	struct Message;
 
+	struct TIMER_EVENT
+	{
+		//int32_t objectID;
+		std::chrono::steady_clock::time_point wakeUpTime;
+		bool empty;
+
+		constexpr bool operator<(const TIMER_EVENT& left) const
+		{
+			return left.wakeUpTime < wakeUpTime;
+		}
+	};
+
 	class CServer
 	{
 	public:
@@ -31,6 +43,8 @@ namespace game
 
 		void WorkerThread();
 		void GameThread();
+		void TimerThread();
+
 		void AcceptClient(network::OVERLAPPEDEX* pOverEx);
 		void Recv(int32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
 		void Send(int32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
@@ -63,14 +77,15 @@ namespace game
 		int32_t m_key;
 
 		std::vector<std::thread> m_workerThreads;
-		std::thread m_gameThreads;
+		std::thread m_gameThread;
+		std::thread m_timerThread;
 		std::array<CSession*, MAX_USER> m_sessions;
 		std::atomic_int32_t m_activeSessionNum;
 
 		std::atomic_int32_t m_userID;
-		//std::uniform_int_distribution<int32_t> m_randomID;
-		// 멀티스레드용 priority queue
 		tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableID;
+
+		tbb::concurrent_priority_queue<TIMER_EVENT> m_eventQueue;
 
 		CRoomManager* m_roomManager;
 		GameInstance* m_gameInstance;

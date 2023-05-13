@@ -35,6 +35,8 @@ namespace game
 		void ExecuteMessage();
 		void SendPacketMessage();
 
+		Message PopMessage();
+
 		void SetIOCPHandle(HANDLE iocp);
 
 	private:

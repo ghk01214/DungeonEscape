@@ -215,6 +215,7 @@ namespace game
 		packet.Write<float>(aniFrame);
 
 		Send(packet);
+		//std::cout << "send : " << id << "\n";
 	}
 
 	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, int32_t index, float frame)

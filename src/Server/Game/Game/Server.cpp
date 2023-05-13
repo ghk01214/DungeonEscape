@@ -114,19 +114,21 @@ namespace game
 	// Worker thread용 멀티스레드 생성
 	void CServer::CreateThread()
 	{
-		for (int32_t i = 0; i < 3; ++i)
+		for (int32_t i = 0; i < 6; ++i)
 		{
 			m_workerThreads.emplace_back(&CServer::WorkerThread, this);
 		}
 
-		m_gameThreads = std::thread{ &CServer::GameThread, this };
+		m_gameThread = std::thread{ &CServer::GameThread, this };
+		m_timerThread = std::thread{ &CServer::TimerThread, this };
 
 		for (auto& thread : m_workerThreads)
 		{
 			thread.join();
 		}
 
-		m_gameThreads.join();
+		m_gameThread.join();
+		m_timerThread.join();
 	}
 
 	void CServer::WorkerThread()
@@ -222,6 +224,9 @@ namespace game
 				case network::COMPLETION::BROADCAST:
 				{
 					BroadcastResult(id, pOverEx);
+
+					ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+					pOverEx = nullptr;
 				}
 				default:
 				break;
@@ -240,9 +245,50 @@ namespace game
 				float timeDelta{ TimeManager::GetInstance()->GetDeltaTimeInVar() };
 				m_gameInstance->Update(timeDelta);
 				m_gameInstance->LateUpdate(timeDelta);
-				MessageHandler::GetInstance()->SendPacketMessage();
 				TimeManager::GetInstance()->ClearDeltaTimeInVar();
 			}
+		}
+	}
+
+	void CServer::TimerThread()
+	{
+		using namespace std::chrono_literals;
+		auto msgHandle{ MessageHandler::GetInstance() };
+		TIMER_EVENT ev;
+
+		while (true)
+		{
+			auto currentTime{ std::chrono::steady_clock::now() };
+
+			if (ev.empty == true)
+			{
+				bool success{ m_eventQueue.try_pop(ev) };
+
+				if (success == false)
+				{
+					//std::this_thread::sleep_for(1ms);
+					continue;
+				}
+			}
+
+			if (ev.wakeUpTime > currentTime)
+			{
+				m_eventQueue.push(ev);
+				//std::this_thread::sleep_for(1ms);
+				continue;
+			}
+
+			Message msg{ msgHandle->PopMessage() };
+
+			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
+			network::CPacket packet;
+			postOver.msgProtocol = msg.msgProtocol;
+			postOver.playerID = msg.playerID;
+			postOver.objID = msg.objID;
+			postOver.roomID = msg.roomID;
+
+			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
+			ev.empty = true;
 		}
 	}
 
@@ -598,9 +644,10 @@ namespace game
 
 	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* over)
 	{
-		auto session{ m_sessions[id] };
-		//auto postOver{ reinterpret_cast<network::POST_OVERLAPPEDEX*>(over) };
+		using namespace std::chrono_literals;
+
 		auto postOver{ over };
+		auto session{ m_sessions[postOver->playerID] };
 
 		if (session->GetState() != STATE::INGAME)
 			return;
@@ -609,10 +656,6 @@ namespace game
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
 
-		//network::CPacket packet{};
-		//packet.SetData(over->data);
-
-		//switch (packet.ReadProtocol())
 		switch (postOver->msgProtocol)
 		{
 			case ProtocolID::AU_LOGIN_ACK:
@@ -627,7 +670,6 @@ namespace game
 						break;
 				}
 
-				//int32_t roomID{ packet.Read<int32_t>() };
 				int32_t roomID{ postOver->roomID };
 
 				Login(id, session, player, roomID);
@@ -655,14 +697,8 @@ namespace game
 					{
 						auto pl{ dynamic_cast<Player*>(player) };
 
-						//if (pl->GetPlayerID() == id)	// client->GetID() == id
-						//{
-						//	//session->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, pl);
-						//	client->SendTransformPacket(id, ProtocolID::MY_TRANSFORM_ACK, pl);
-						//}
-						//else
-						//	client->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, pl);
-						client->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, pl);
+						if (pl != nullptr)
+							client->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, pl);
 					}
 
 					for (auto& object : mapObjects)
@@ -704,9 +740,6 @@ namespace game
 			break;
 			case ProtocolID::MY_ANI_ACK:
 			{
-				//int32_t aniIndex{ packet.Read<int32_t>() };
-				//float aniFrame{ packet.Read<float>() };
-				ProtocolID protocol{ ProtocolID::PROTOCOL_NONE };
 				Player* player{ nullptr };
 
 				for (auto& playerObj : playerObjects)
@@ -723,17 +756,18 @@ namespace game
 						continue;
 
 					if (client->GetID() == id)
-						protocol = ProtocolID::MY_ANI_ACK;
-					else
-						protocol = ProtocolID::WR_ANI_ACK;
+						continue;
 
-					client->SendAniIndexPacket(id, protocol, player);
+					client->SendAniIndexPacket(postOver->playerID, ProtocolID::WR_ANI_ACK, player);
 				}
 			}
 			break;
 			default:
 			break;
 		}
+
+		TIMER_EVENT ev{ std::chrono::steady_clock::now(), true };
+		m_eventQueue.push(ev);
 	}
 
 	void CServer::InputCommandMessage(Message msg)

@@ -587,6 +587,8 @@ namespace network
 		{
 			object->GetAnimator()->Play(aniIndex, aniFrame);
 		}
+
+		std::cout << "changed player[" << id << "] animation to " << aniIndex << std::endl;
 	}
 #pragma endregion
 }

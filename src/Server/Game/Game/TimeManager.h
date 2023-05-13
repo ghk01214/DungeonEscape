@@ -23,7 +23,6 @@ public:
 	constexpr uint32_t GetFPS() const { return m_fps; }
 
 	const bool Is1FrameInVar();
-	const bool IsOneSec();
 
 private:
 	LONGLONG m_startTime;
@@ -37,7 +36,4 @@ private:
 	uint32_t m_fps;
 
 	float m_deltaTimeInVar;
-
-	// 임시 변수
-	uint32_t m_oneSecFrameCount;
 };

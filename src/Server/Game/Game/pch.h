@@ -37,6 +37,10 @@
 #include <Packet.h>
 #include <OVERLAPPEDEX.h>
 
+#include <magic_enum_format.hpp>
+#include <magic_enum_fuse.hpp>
+#include <magic_enum_switch.hpp>
+
 #pragma region FBX
 // Utils
 std::wstring s2ws(const std::string& s);
