@@ -97,7 +97,7 @@ void TestLevel::Init()
 	{
 		const objectLocationInfo& locationInfo = info.second;
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
-			Vec3(locationInfo.Position.x , locationInfo.Position.y + 100 , locationInfo.Position.z ),
+			Vec3(locationInfo.Position.x , locationInfo.Position.y , locationInfo.Position.z ),
 			Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
 			Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
 		);

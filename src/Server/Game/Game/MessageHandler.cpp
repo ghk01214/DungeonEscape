@@ -123,7 +123,7 @@ namespace game
 			{
 				case ProtocolID::AU_LOGIN_REQ:
 				{
-					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(150.f, 200.f, -150.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20.f, 200.f, 0.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 					player->SetName(L"Mistic");
 
 					Login(msg.playerID, player);
@@ -150,10 +150,6 @@ namespace game
 					int32_t objID{ NewObjectID() };
 
 					// 오브젝트 추가 작업 후 id 세팅
-					auto MapPlaneObject = objMgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
-					MapPlaneObject->SetID(objID);
-					auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
-					MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 
 					Message msg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
 					msg.objID = objID;

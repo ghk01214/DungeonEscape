@@ -276,13 +276,13 @@ void CustomController::KeyboardReceive(ulong32_t key)
 	m_keyboardDown = false;
 	m_keyboardSpace = false;
 
-	if (input[static_cast<int32_t>(server::KEY_TYPE::LEFT)] == true)
+	if (input[static_cast<int32_t>(server::KEY_TYPE::A)] == true)
 		m_keyboardLeft = true;
-	else if (input[static_cast<int32_t>(server::KEY_TYPE::RIGHT)] == true)
+	else if (input[static_cast<int32_t>(server::KEY_TYPE::D)] == true)
 		m_keyboardRight = true;
-	if (input[static_cast<int32_t>(server::KEY_TYPE::UP)] == true)
+	if (input[static_cast<int32_t>(server::KEY_TYPE::W)] == true)
 		m_keyboardUp = true;
-	else if (input[static_cast<int32_t>(server::KEY_TYPE::DOWN)] == true)
+	else if (input[static_cast<int32_t>(server::KEY_TYPE::S)] == true)
 		m_keyboardDown = true;
 
 	if (input[static_cast<int32_t>(server::KEY_TYPE::SPACE)] == true)

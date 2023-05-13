@@ -239,7 +239,7 @@ void Scene_Test::CreateMapObjects(void)
 	//	gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
 	//	//gameObject->AddComponent(objectDesc.script);
 	//	gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
-	//	gameObject->AddComponent(networkComponent);
+	//	gameObject->AddComponent(networkComponent)15
 	//}
 
 	//scene->AddPlayer(gameObjects);
