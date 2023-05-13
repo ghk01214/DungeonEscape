@@ -91,12 +91,12 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendPlayerIDIssuePacket(int32_t id)
+	void CSession::SendPlayerIDIssuePacket(int32_t id, ProtocolID protocol)
 	{
 		network::CPacket packet;
 
 		packet.WriteID(id);
-		packet.WriteProtocol(ProtocolID::MY_ISSUE_PLAYER_ID_ACK);
+		packet.WriteProtocol(protocol);
 
 		Send(packet);
 	}
@@ -122,8 +122,6 @@ namespace game
 
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
-
-		packet.WriteWString(obj->GetName());
 
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);

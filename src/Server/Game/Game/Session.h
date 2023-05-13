@@ -31,7 +31,7 @@ namespace game
 		void Send(network::CPacket& packet);
 
 		void SendLoginPacket(Player* obj);
-		void SendPlayerIDIssuePacket(int32_t id);
+		void SendPlayerIDIssuePacket(int32_t id, ProtocolID protocol);
 		void SendIDIssuePacket(GameObject* obj);
 		void SendAddAnimateObjPacket(int32_t id, Player* obj);
 		void SendAddObjPacket(int32_t id, GameObject* obj);

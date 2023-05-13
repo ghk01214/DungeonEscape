@@ -107,16 +107,16 @@ void Input::EncodeKeyInput(void)
 	m_keyInput.reset();
 
 	// KEY_STATE::PRESS 정보만 전송 가능
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::UP)] = GetButton(KEY_TYPE::UP);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::DOWN)] = GetButton(KEY_TYPE::DOWN);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::LEFT)] = GetButton(KEY_TYPE::LEFT);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RIGHT)] = GetButton(KEY_TYPE::RIGHT);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::UP)] = GetButton(KEY_TYPE::UP);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::DOWN)] = GetButton(KEY_TYPE::DOWN);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::LEFT)] = GetButton(KEY_TYPE::LEFT);
+	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RIGHT)] = GetButton(KEY_TYPE::RIGHT);
 	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::SPACE)] = GetButton(KEY_TYPE::SPACE);
 
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::W)] = GetButton(KEY_TYPE::W);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::A)] = GetButton(KEY_TYPE::A);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::S)] = GetButton(KEY_TYPE::S);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::D)] = GetButton(KEY_TYPE::D);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::W)] = GetButton(KEY_TYPE::W);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::A)] = GetButton(KEY_TYPE::A);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::S)] = GetButton(KEY_TYPE::S);
+	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::D)] = GetButton(KEY_TYPE::D);
 	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Q)] = GetButton(KEY_TYPE::Q);
 	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::E)] = GetButton(KEY_TYPE::E);
 	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Z)] = GetButton(KEY_TYPE::Z);

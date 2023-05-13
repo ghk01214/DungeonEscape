@@ -161,7 +161,6 @@ void Player_Mistic::ParsePackets()
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
 				StartRender(packet);
-				std::cout << "change position" << std::endl;
 			}
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
@@ -234,6 +233,8 @@ void Player_Mistic::Transform(network::CPacket& packet)
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
 
+	//if (id == 0)
+	//	std::cout << std::format("id : {} - {}, {}, {}\n", id, pos.x, pos.y, pos.z);
 	GetTransform()->SetWorldVec3Position(pos);
 	auto mat{ Matrix::CreateTranslation(pos) };
 	GetTransform()->SetWorldMatrix(mat);

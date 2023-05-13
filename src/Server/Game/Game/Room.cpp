@@ -62,13 +62,7 @@ namespace game
 	{
 		while (true)
 		{
-			TimeManager::GetInstance()->Update();
-			double timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
-			m_gameInstance->Update(timeDelta);
-			m_gameInstance->LateUpdate(timeDelta);
 
-			if (TimeManager::GetInstance()->Is1FrameInVar() == true)
-				MessageHandler::GetInstance()->SendPacketMessage();
 		}
 	}
 

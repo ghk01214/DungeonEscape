@@ -119,21 +119,23 @@ namespace game
 			m_workerThreads.emplace_back(&CServer::WorkerThread, this);
 		}
 
-		m_gameThreads = std::thread{ &CServer::GameThread, this };
+		m_gameThread = std::thread{ &CServer::GameThread, this };
+		MessageHandler::GetInstance()->CreateThreads(m_timerThread, m_transformThread);
 
 		for (auto& thread : m_workerThreads)
 		{
 			thread.join();
 		}
 
-		m_gameThreads.join();
+		m_gameThread.join();
+		m_timerThread.join();
+		m_transformThread.join();
 	}
 
 	void CServer::WorkerThread()
 	{
 		DWORD bytes;
 		ULONG_PTR clientID;
-		//pOverEx{ nullptr };
 
 		while (true)
 		{
@@ -221,9 +223,10 @@ namespace game
 				break;
 				case network::COMPLETION::BROADCAST:
 				{
-					auto postOver{ *pOverEx };
-					std::cout << "send : " << clientID << ", " << std::this_thread::get_id() << " - " << magic_enum::enum_name(postOver.msgProtocol) << ", " << magic_enum::enum_integer(postOver.msgProtocol) << "\n";
-					BroadcastResult(id, &postOver);
+					BroadcastResult(id, pOverEx);
+
+					ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+					pOverEx = nullptr;
 				}
 				default:
 				break;
@@ -242,7 +245,6 @@ namespace game
 				float timeDelta{ TimeManager::GetInstance()->GetDeltaTimeInVar() };
 				m_gameInstance->Update(timeDelta);
 				m_gameInstance->LateUpdate(timeDelta);
-				MessageHandler::GetInstance()->SendPacketMessage();
 				TimeManager::GetInstance()->ClearDeltaTimeInVar();
 			}
 		}
@@ -484,6 +486,7 @@ namespace game
 			{
 				InputCommandMessage(msg);
 			}
+			break;
 			case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 			{
 				InputCommandMessage(msg);
@@ -602,8 +605,6 @@ namespace game
 
 	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* postOver)
 	{
-		//auto postOver{ reinterpret_cast<network::POST_OVERLAPPEDEX*>(over) };
-		//auto postOver{ *over };
 		auto session{ m_sessions[postOver->playerID] };
 
 		if (session->GetState() != STATE::INGAME)
@@ -654,9 +655,27 @@ namespace game
 #pragma region[MY]
 			case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
 			{
-				session->SendPlayerIDIssuePacket(postOver->playerID);
+				//session->SendPlayerIDIssuePacket(postOver->playerID);
 
-				std::cout << "My player id(" << postOver->playerID << ") issue complete!\n";
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					for (auto& player : playerObjects)
+					{
+						auto pl{ dynamic_cast<Player*>(player) };
+
+						ProtocolID proto{ ProtocolID::PROTOCOL_NONE };
+
+						if (client->GetID() == postOver->playerID)
+							proto = ProtocolID::MY_ISSUE_PLAYER_ID_ACK;
+						else
+							proto = ProtocolID::WR_ISSUE_PLAYER_ID_ACK;
+
+						client->SendPlayerIDIssuePacket(pl->GetPlayerID(), proto);
+					}
+				}
 			}
 			break;
 			case ProtocolID::MY_TRANSFORM_ACK:
@@ -697,17 +716,19 @@ namespace game
 #pragma region[WR]
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
-				Player* player{ FindPlayer(playerObjects, postOver->playerID) };
-
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					client->SendAddAnimateObjPacket(player->GetPlayerID(), player);
-				}
+					for (auto& player : playerObjects)
+					{
+						auto pl{ dynamic_cast<Player*>(player) };
 
-				std::cout << "Adding new animate object(" << player->GetPlayerID() << ") complete\n";
+						client->SendAddAnimateObjPacket(pl->GetPlayerID(), pl);
+						player->StartSendTransform();
+					}
+				}
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
@@ -736,14 +757,30 @@ namespace game
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
 			{
-				Player* player{ FindPlayer(playerObjects, postOver->playerID) };
+				//Player* player{ FindPlayer(playerObjects, postOver->playerID) };
 
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					client->SendTransformPacket(player->GetID(), postOver->msgProtocol, player);
+					for (auto& player : playerObjects)
+					{
+						auto pl{ dynamic_cast<Player*>(player) };
+
+						client->SendTransformPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
+					}
+
+					for (auto& object : mapObjects)
+					{
+						auto map{ dynamic_cast<MapObject*>(object) };
+
+						if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
+						{
+							client->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);	//트랜스폼 갱신
+							map->SetRequireFlagTransmit(false);														//플래그 체크
+						}
+					}
 				}
 			}
 			break;
@@ -751,7 +788,7 @@ namespace game
 			{
 				//int32_t aniIndex{ packet.Read<int32_t>() };
 				//float aniFrame{ packet.Read<float>() };
-				Player* player{ FindPlayer(playerObjects, postOver->playerID) };
+				//Player* player{ FindPlayer(playerObjects, postOver->playerID) };
 
 				for (auto& client : m_sessions)
 				{
@@ -761,10 +798,15 @@ namespace game
 					if (client->GetID() == postOver->playerID)
 						continue;
 
-					client->SendAniIndexPacket(player->GetID(), postOver->msgProtocol, player);
+					for (auto& player : playerObjects)
+					{
+						auto pl{ dynamic_cast<Player*>(player) };
+
+						client->SendAniIndexPacket(pl->GetID(), postOver->msgProtocol, pl);
+					}
 				}
 
-				std::cout << "changing player(" << player->GetID() << ") animation complete\n";
+				//std::cout << "changing player(" << player->GetID() << ") animation complete\n";
 			}
 			break;
 #pragma endregion
@@ -775,7 +817,7 @@ namespace game
 
 	void CServer::InputCommandMessage(Message msg)
 	{
-		MessageHandler::GetInstance()->InsertRecvMessage(msg);
+		MessageHandler::GetInstance()->PushRecvMessage(msg);
 	}
 
 	Player* CServer::FindPlayer(std::list<GameObject*>& playerObjects, int32_t playerID)
@@ -787,7 +829,7 @@ namespace game
 			player = dynamic_cast<Player*>(playerObj);
 
 			if (player->GetPlayerID() == playerID)
-				break;
+				return player;
 		}
 
 		return player;

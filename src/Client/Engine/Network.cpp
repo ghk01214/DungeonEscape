@@ -37,6 +37,7 @@ namespace network
 	void CNetwork::InsertPackets(CPacket& packet)
 	{
 		m_recvPackets.push_back(packet);
+		++m_recvQueueSize;
 	}
 
 	void CNetwork::ClearRecvQueue(int32_t size)
@@ -50,6 +51,7 @@ namespace network
 			}
 
 			m_recvPackets.pop_front();
+			--m_recvQueueSize;
 		}
 	}
 

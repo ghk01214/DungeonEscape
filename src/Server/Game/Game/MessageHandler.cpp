@@ -57,19 +57,43 @@ namespace game
 		}
 	}
 
-	void MessageHandler::SendPacketMessage()
+	void MessageHandler::CreateThreads(std::thread& timer, std::thread& transform)
 	{
-		int32_t size{ m_sendQueueSize.load() };
+		timer = std::thread{ &MessageHandler::TimerThread, this };
+		transform = std::thread{ &MessageHandler::TransformThread, this };
+	}
 
-		if (size == 0)
-			return;
-
-		std::queue<Message> queue;
-		PopConcurrentQueue(queue, m_sendQueue, size, m_sendQueueSize);
-
-		for (int32_t i = 0; i < size;)
+	void MessageHandler::TimerThread()
+	{
+		using namespace std::chrono_literals;
+		while (true)
 		{
-			Message msg{ queue.front() };
+			TIMER_EVENT ev;
+			auto currentTime{ std::chrono::steady_clock::now() };
+			bool success{ m_eventQueue.try_pop(ev) };
+
+			if (success == false)
+				continue;
+
+			if (ev.wakeUpTime > currentTime)
+			{
+				m_eventQueue.push(ev);
+				continue;
+			}
+
+			std::this_thread::sleep_for(1ms);
+
+			Message msg{};
+			while (true)
+			{
+				bool success{ m_sendQueue.try_pop(msg) };
+
+				if (success == true)
+				{
+					--m_sendQueueSize;
+					break;
+				}
+			}
 
 			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
 			postOver.msgProtocol = msg.msgProtocol;
@@ -77,25 +101,52 @@ namespace game
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
 
-			//std::cout << "post : " << magic_enum::enum_name(postOver.msgProtocol) << ", " << magic_enum::enum_integer(postOver.msgProtocol) << "\n";
-
-			PostQueuedCompletionStatus(m_iocp, 1, 0, &postOver.over);
-
-			++i;
-			queue.pop();
+			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 		}
 	}
 
-	void MessageHandler::InsertRecvMessage(Message msg)
+	void MessageHandler::TransformThread()
 	{
-		m_recvQueue.push(msg);
-		++m_recvQueueSize;
-	}
+		using namespace std::chrono_literals;
 
-	void MessageHandler::InsertSendMessage(Message msg)
-	{
-		m_sendQueue.push(msg);
-		++m_sendQueueSize;
+		while (true)
+		{
+			TIMER_EVENT ev;
+			auto currentTime{ std::chrono::steady_clock::now() };
+			bool success{ m_transformEvent.try_pop(ev) };
+
+			if (success == false)
+			{
+				std::this_thread::sleep_for(1ms);
+				continue;
+			}
+
+			if (ev.wakeUpTime > currentTime)
+			{
+				m_transformEvent.push(ev);
+				std::this_thread::sleep_for(1ms);
+				continue;
+			}
+
+			std::this_thread::sleep_for(1ms);
+
+			Message msg{};
+			while (true)
+			{
+				bool success{ m_transformMessage.try_pop(msg) };
+
+				if (success == true)
+					break;
+			}
+
+			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
+			postOver.msgProtocol = msg.msgProtocol;
+			postOver.playerID = msg.playerID;
+			postOver.objID = msg.objID;
+			postOver.roomID = msg.roomID;
+
+			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
+		}
 	}
 
 	void MessageHandler::ExecuteMessage()
@@ -106,7 +157,24 @@ namespace game
 			return;
 
 		std::queue<Message> queue;
-		PopConcurrentQueue(queue, m_recvQueue, size, m_recvQueueSize);
+
+		for (int32_t i = 0; i < size;)
+		{
+			bool empty{ m_recvQueue.empty() };
+
+			if (empty == true)
+				break;
+
+			Message msg{};
+			bool success{ m_recvQueue.try_pop(msg) };
+
+			if (success == true)
+			{
+				queue.push(msg);
+				--m_recvQueueSize;
+				++i;
+			}
+		}
 
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
@@ -125,7 +193,10 @@ namespace game
 					//
 					//Login(msg.playerID, player);
 					Message sendMsg{ msg.playerID, ProtocolID::AU_LOGIN_ACK };
-					InsertSendMessage(sendMsg);
+					PushSendMessage(sendMsg);
+
+					TIMER_EVENT ev{ CURRENT_TIME };
+					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::AU_LOGOUT_REQ:
@@ -139,6 +210,10 @@ namespace game
 						if (player->GetPlayerID() == msg.playerID)
 						{
 							Logout(msg.playerID, msg.roomID, player, objMgr);
+
+							TIMER_EVENT ev{ CURRENT_TIME };
+							m_eventQueue.push(ev);
+
 							break;
 						}
 					}
@@ -149,18 +224,24 @@ namespace game
 				case ProtocolID::MY_ISSUE_PLAYER_ID_REQ:
 				{
 					Message sendMsg{ msg.playerID, ProtocolID::MY_ISSUE_PLAYER_ID_ACK };
-					InsertSendMessage(sendMsg);
+					PushSendMessage(sendMsg);
+
+					TIMER_EVENT ev{ CURRENT_TIME };
+					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 				{
-					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 20.f, 0.f, 0.f), Quat(0, 0, 0, 1), Vec3(1.f, 1.f, 1.f)) };
+					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 40.f, 150.f, msg.playerID * 40.f), Quat(0, 0, 0, 1), Vec3(1.f, 1.f, 1.f)) };
 					player->SetName(L"Mistic");
 
 					//Login(msg.playerID, player);
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
-					InsertSendMessage(sendMsg);
+					PushSendMessage(sendMsg);
+
+					TIMER_EVENT ev{ CURRENT_TIME };
+					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::MY_ADD_OBJ_REQ:
@@ -168,15 +249,18 @@ namespace game
 					int32_t objID{ NewObjectID() };
 
 					// 오브젝트 추가 작업 후 id 세팅
-					auto MapPlaneObject = objMgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
-					MapPlaneObject->SetID(objID);
-					auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
-					MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+					//auto MapPlaneObject = objMgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
+					//MapPlaneObject->SetID(objID);
+					//auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+					//MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 
 					Message msg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
 					msg.objID = objID;
 
-					InsertSendMessage(msg);
+					PushSendMessage(msg);
+
+					TIMER_EVENT ev{ CURRENT_TIME };
+					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:
@@ -211,7 +295,10 @@ namespace game
 					}
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ANI_ACK };
-					InsertSendMessage(sendMsg);
+					PushSendMessage(sendMsg);
+
+					TIMER_EVENT ev{ CURRENT_TIME };
+					m_eventQueue.push(ev);
 				}
 				break;
 #pragma endregion
@@ -224,25 +311,36 @@ namespace game
 		}
 	}
 
+	void MessageHandler::PushRecvMessage(Message& msg)
+	{
+		m_recvQueue.push(msg);
+		++m_recvQueueSize;
+	}
+
+	void MessageHandler::PushSendMessage(Message& msg)
+	{
+		m_sendQueue.push(msg);
+		++m_sendQueueSize;
+	}
+
+	void MessageHandler::PushEvent(TIMER_EVENT& ev)
+	{
+		m_eventQueue.push(ev);
+	}
+
+	void MessageHandler::PushTransformEvent(TIMER_EVENT& ev)
+	{
+		m_transformEvent.push(ev);
+	}
+
+	void MessageHandler::PushTransformMessage(Message& msg)
+	{
+		m_transformMessage.push(msg);
+	}
+
 	void MessageHandler::SetIOCPHandle(HANDLE iocp)
 	{
 		m_iocp = iocp;
-	}
-
-	void MessageHandler::PopConcurrentQueue(std::queue<Message>& queue, tbb::concurrent_queue<Message>& concurrentQueue, int32_t size, std::atomic_int32_t& queueSize)
-	{
-		for (int32_t i = 0; i < size;)
-		{
-			Message msg{};
-			bool success{ concurrentQueue.try_pop(msg) };
-
-			if (success == true)
-			{
-				queue.push(msg);
-				--queueSize;
-				++i;
-			}
-		}
 	}
 
 	int32_t MessageHandler::NewObjectID()
@@ -278,7 +376,7 @@ namespace game
 		Message msg{ playerID, ProtocolID::AU_LOGIN_ACK };
 		msg.roomID = roomID;
 
-		InsertSendMessage(msg);
+		PushSendMessage(msg);
 	}
 
 	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr)
@@ -289,6 +387,6 @@ namespace game
 		Message msg{ playerID, ProtocolID::AU_LOGOUT_ACK };
 		msg.roomID = roomID;
 
-		InsertSendMessage(msg);
+		PushSendMessage(msg);
 	}
 }

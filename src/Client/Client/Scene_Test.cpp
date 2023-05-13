@@ -44,6 +44,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	CreateMapObjects();
 
 	CreatePlayer();
+	CreatePlayer();
 
 	return scene;
 }
@@ -250,7 +251,7 @@ void Scene_Test::CreatePlayer(void)
 	ObjectDesc objectDesc;
 	objectDesc.strName = L"Mistic";
 	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
-	objectDesc.vPostion = Vec3(-00.f, -00.f, -00.f);
+	objectDesc.vPostion = Vec3(-100.f, -100.f, -100.f);
 	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
 	objectDesc.script = std::make_shared<Player_Mistic>();
 
@@ -286,6 +287,7 @@ std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateAnimatedObject(Objec
 	for (auto& gameObject : gameObjects)
 	{
 		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
+		gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
 		gameObject->GetAnimator()->Play(2);
 	}
 

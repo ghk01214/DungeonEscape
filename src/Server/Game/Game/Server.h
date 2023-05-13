@@ -65,7 +65,10 @@ namespace game
 		int32_t m_key;
 
 		std::vector<std::thread> m_workerThreads;
-		std::thread m_gameThreads;
+		std::thread m_gameThread;
+		std::thread m_timerThread;
+		std::thread m_transformThread;
+
 		std::array<CSession*, MAX_USER> m_sessions;
 		std::atomic_int32_t m_activeSessionNum;
 

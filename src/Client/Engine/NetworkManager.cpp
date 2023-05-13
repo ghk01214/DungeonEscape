@@ -375,6 +375,8 @@ namespace network
 		{
 			case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
 			{
+				m_id = m_packet.ReadID();
+
 				std::list<NetworkComponent>::iterator iter;
 				for (iter = m_unregisterdObjects.begin(); iter != m_unregisterdObjects.end(); ++iter)
 				{
@@ -382,15 +384,19 @@ namespace network
 						break;
 				}
 
-				m_id = m_packet.ReadID();
-				m_objects[m_id] = iter->object;
-
-				for (auto& obj : m_objects[m_id])
+				if (iter != m_unregisterdObjects.end())
 				{
-					obj->GetNetwork()->SetID(m_id);
-				}
+					m_objects[m_id] = iter->object;
 
-				m_unregisterdObjects.erase(iter);
+					for (auto& obj : m_objects[m_id])
+					{
+						obj->GetNetwork()->SetID(m_id);
+					}
+
+					m_unregisterdObjects.erase(iter);
+
+					std::cout << std::format("My id is {}\n", m_id);
+				}
 			}
 			break;
 			/*case ProtocolID::MY_TRANSFORM_ACK:
@@ -412,6 +418,32 @@ namespace network
 	{
 		switch (type)
 		{
+			case ProtocolID::WR_ISSUE_PLAYER_ID_ACK:
+			{
+				int32_t id{ m_packet.ReadID() };
+
+				std::list<NetworkComponent>::iterator iter;
+				for (iter = m_unregisterdObjects.begin(); iter != m_unregisterdObjects.end(); ++iter)
+				{
+					if (iter->type == OBJECT_TYPE::PLAYER)
+						break;
+				}
+
+				if (iter != m_unregisterdObjects.end())
+				{
+					m_objects[id] = iter->object;
+
+					for (auto& obj : m_objects[id])
+					{
+						obj->GetNetwork()->SetID(id);
+					}
+
+					m_unregisterdObjects.erase(iter);
+
+					std::cout << std::format("My id is {}\n", id);
+				}
+			}
+			break;
 			/*case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
