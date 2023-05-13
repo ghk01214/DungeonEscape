@@ -219,5 +219,7 @@ using HashMap = tbb::concurrent_hash_map<T, U>;
 
 extern std::default_random_engine dre;
 
+#define CURRENT_TIME std::chrono::steady_clock::now()
+
 void ErrorQuit(const std::wstring_view& msg);
 void ErrorDisplay(const std::wstring_view& msg);

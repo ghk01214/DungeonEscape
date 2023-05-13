@@ -58,38 +58,77 @@ namespace game
 		}
 	}
 
-	void MessageHandler::SendPacketMessage()
+	void MessageHandler::CreateThreads(std::thread& timer, std::thread& transform)
 	{
-		int32_t size{ m_sendQueueSize.load() };
+		timer = std::thread{ &MessageHandler::TimerThread, this };
+		transform = std::thread{ &MessageHandler::TransformThread, this };
+	}
 
-		if (size == 0)
-			return;
+	void MessageHandler::TimerThread()
+	{
+		using namespace std::chrono_literals;
+		auto msgHandle{ MessageHandler::GetInstance() };
 
-
-		std::queue<Message> queue;
-		PopConcurrentQueue(queue, m_sendQueue, size, m_sendQueueSize);
-
-
-		for (int32_t i = 0; i < size;)
+		while (true)
 		{
-			Message msg{ queue.front() };
+			TIMER_EVENT ev;
+			auto currentTime{ std::chrono::steady_clock::now() };
+			bool success{ m_eventQueue.try_pop(ev) };
+
+			if (success == false)
+				continue;
+
+			if (ev.wakeUpTime > currentTime)
+			{
+				m_eventQueue.push(ev);
+				continue;
+			}
+
+			Message msg{ PopMessage() };
 
 			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
+			network::CPacket packet;
 			postOver.msgProtocol = msg.msgProtocol;
 			postOver.playerID = msg.playerID;
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
 
-			/*if (TimeManager::GetInstance()->Is1FrameInVar() == true)
-			{*/
 			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
+		}
+	}
 
-			++i;
-			queue.pop();
-			//TimeManager::GetInstance()->ClearDeltaTimeInVar();
-	/*	}
-		else
-			return;*/
+	void MessageHandler::TransformThread()
+	{
+		using namespace std::chrono_literals;
+		auto msgHandle{ MessageHandler::GetInstance() };
+
+		while (true)
+		{
+			TIMER_EVENT ev;
+			auto currentTime{ std::chrono::steady_clock::now() };
+			bool success{ m_transformEvent.try_pop(ev) };
+
+			if (success == false)
+				continue;
+
+			if (ev.wakeUpTime > currentTime)
+			{
+				m_transformEvent.push(ev);
+				continue;
+			}
+
+			std::this_thread::sleep_for(1ms);
+
+			Message msg{ PopTransformMessage() };
+
+			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
+			network::CPacket packet;
+			postOver.msgProtocol = msg.msgProtocol;
+			postOver.playerID = msg.playerID;
+			postOver.objID = msg.objID;
+			postOver.roomID = msg.roomID;
+
+			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 		}
 	}
 
@@ -107,6 +146,46 @@ namespace game
 				return msg;
 			}
 		}
+	}
+
+	void MessageHandler::PushEvent(TIMER_EVENT& ev)
+	{
+		m_eventQueue.push(ev);
+	}
+
+	bool MessageHandler::PopEvent(TIMER_EVENT& ev)
+	{
+		return m_eventQueue.try_pop(ev);
+	}
+
+	void MessageHandler::PushTransformMessage(Message& msg)
+	{
+		m_sendTransform.push(msg);
+	}
+
+	Message MessageHandler::PopTransformMessage()
+	{
+		Message msg{};
+
+		while (true)
+		{
+			bool success{ m_sendTransform.try_pop(msg) };
+
+			if (success == true)
+			{
+				return msg;
+			}
+		}
+	}
+
+	void MessageHandler::PushTransformEvent(TIMER_EVENT& ev)
+	{
+		m_transformEvent.push(ev);
+	}
+
+	bool MessageHandler::PopTransformEvent(TIMER_EVENT& ev)
+	{
+		return m_transformEvent.try_pop(ev);
 	}
 
 	void MessageHandler::InsertRecvMessage(Message msg)
@@ -146,6 +225,9 @@ namespace game
 					player->SetName(L"Mistic");
 
 					Login(msg.playerID, player);
+
+					TIMER_EVENT ev{ CURRENT_TIME };
+					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::AU_LOGOUT_REQ:
@@ -159,6 +241,8 @@ namespace game
 						if (player->GetPlayerID() == msg.playerID)
 						{
 							Logout(msg.playerID, msg.roomID, player, objMgr);
+							TIMER_EVENT ev{ CURRENT_TIME };
+							m_eventQueue.push(ev);
 							break;
 						}
 					}
@@ -174,6 +258,8 @@ namespace game
 					msg.objID = objID;
 
 					InsertSendMessage(msg);
+					TIMER_EVENT ev{ CURRENT_TIME };
+					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:
@@ -209,6 +295,8 @@ namespace game
 
 					Message sendMsg{ msg.playerID, ProtocolID::MY_ANI_ACK };
 					InsertSendMessage(sendMsg);
+					TIMER_EVENT ev{ CURRENT_TIME };
+					m_eventQueue.push(ev);
 				}
 				break;
 				default:

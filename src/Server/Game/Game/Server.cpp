@@ -120,7 +120,7 @@ namespace game
 		}
 
 		m_gameThread = std::thread{ &CServer::GameThread, this };
-		m_timerThread = std::thread{ &CServer::TimerThread, this };
+		MessageHandler::GetInstance()->CreateThreads(m_timerThread, m_transformThread);
 
 		for (auto& thread : m_workerThreads)
 		{
@@ -129,6 +129,7 @@ namespace game
 
 		m_gameThread.join();
 		m_timerThread.join();
+		m_transformThread.join();
 	}
 
 	void CServer::WorkerThread()
@@ -247,48 +248,6 @@ namespace game
 				m_gameInstance->LateUpdate(timeDelta);
 				TimeManager::GetInstance()->ClearDeltaTimeInVar();
 			}
-		}
-	}
-
-	void CServer::TimerThread()
-	{
-		using namespace std::chrono_literals;
-		auto msgHandle{ MessageHandler::GetInstance() };
-		TIMER_EVENT ev;
-
-		while (true)
-		{
-			auto currentTime{ std::chrono::steady_clock::now() };
-
-			if (ev.empty == true)
-			{
-				bool success{ m_eventQueue.try_pop(ev) };
-
-				if (success == false)
-				{
-					//std::this_thread::sleep_for(1ms);
-					continue;
-				}
-			}
-
-			if (ev.wakeUpTime > currentTime)
-			{
-				m_eventQueue.push(ev);
-				//std::this_thread::sleep_for(1ms);
-				continue;
-			}
-
-			Message msg{ msgHandle->PopMessage() };
-
-			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
-			network::CPacket packet;
-			postOver.msgProtocol = msg.msgProtocol;
-			postOver.playerID = msg.playerID;
-			postOver.objID = msg.objID;
-			postOver.roomID = msg.roomID;
-
-			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
-			ev.empty = true;
 		}
 	}
 
@@ -766,8 +725,9 @@ namespace game
 			break;
 		}
 
-		TIMER_EVENT ev{ std::chrono::steady_clock::now(), true };
-		m_eventQueue.push(ev);
+		//TIMER_EVENT ev{ std::chrono::steady_clock::now(), true };
+		//m_eventQueue.push(ev);
+		//MessageHandler::GetInstance()->PushEvent(ev);
 	}
 
 	void CServer::InputCommandMessage(Message msg)

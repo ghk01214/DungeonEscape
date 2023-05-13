@@ -13,18 +13,7 @@ namespace game
 	class CSession;
 	class CRoomManager;
 	struct Message;
-
-	struct TIMER_EVENT
-	{
-		//int32_t objectID;
-		std::chrono::steady_clock::time_point wakeUpTime;
-		bool empty;
-
-		constexpr bool operator<(const TIMER_EVENT& left) const
-		{
-			return left.wakeUpTime < wakeUpTime;
-		}
-	};
+	struct TIMER_EVENT;
 
 	class CServer
 	{
@@ -43,7 +32,6 @@ namespace game
 
 		void WorkerThread();
 		void GameThread();
-		void TimerThread();
 
 		void AcceptClient(network::OVERLAPPEDEX* pOverEx);
 		void Recv(int32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
@@ -79,6 +67,7 @@ namespace game
 		std::vector<std::thread> m_workerThreads;
 		std::thread m_gameThread;
 		std::thread m_timerThread;
+		std::thread m_transformThread;
 		std::array<CSession*, MAX_USER> m_sessions;
 		std::atomic_int32_t m_activeSessionNum;
 
