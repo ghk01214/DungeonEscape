@@ -44,7 +44,8 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	CreateMapObjects();
 
 	CreatePlayer();
-	CreatePlayer();
+	CreateRemotePlayer();
+	CreateRemotePlayer();
 
 	return scene;
 }
@@ -251,12 +252,27 @@ void Scene_Test::CreatePlayer(void)
 	ObjectDesc objectDesc;
 	objectDesc.strName = L"Mistic";
 	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
-	objectDesc.vPostion = Vec3(-100.f, -100.f, -100.f);
+	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
 	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
 	objectDesc.script = std::make_shared<Player_Mistic>();
 
 	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
 	gameObjects = AddNetworkTodObject(gameObjects, network::OBJECT_TYPE::PLAYER);
+
+	scene->AddPlayer(gameObjects);
+}
+
+void Scene_Test::CreateRemotePlayer(void)
+{
+	ObjectDesc objectDesc;
+	objectDesc.strName = L"Mistic";
+	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
+	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
+	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
+	objectDesc.script = std::make_shared<Player_Mistic>();
+
+	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
+	gameObjects = AddNetworkTodObject(gameObjects, network::OBJECT_TYPE::REMOTE_PLAYER);
 
 	scene->AddPlayer(gameObjects);
 }

@@ -169,11 +169,19 @@ namespace network
 		{
 			ProtocolID protocol{ ProtocolID::PROTOCOL_NONE };
 
-			switch (component.type)
+			if (component.type != OBJECT_TYPE::PLAYER)
+				continue;
+
+			/*switch (component.type)
 			{
 				case OBJECT_TYPE::PLAYER:
 				{
 					protocol = ProtocolID::MY_ISSUE_PLAYER_ID_REQ;
+				}
+				break;
+				case OBJECT_TYPE::REMOTE_PLAYER:
+				{
+					protocol = ProtocolID::WR_ISSUE_PLAYER_ID_REQ;
 				}
 				break;
 				case OBJECT_TYPE::OBJECT:
@@ -183,11 +191,13 @@ namespace network
 				break;
 				default:
 				break;
-			}
+			}*/
 
 			CPacket packet;
-			packet.WriteProtocol(protocol);
+			packet.WriteProtocol(ProtocolID::MY_ISSUE_PLAYER_ID_REQ);
 			Send(packet);
+
+			std::cout << "send\n";
 		}
 	}
 #pragma endregion
@@ -221,6 +231,7 @@ namespace network
 				break;
 				case COMPLETION::QUIT:
 				{
+					std::cout << "logout" << std::endl;
 					SendLogoutPacket();
 					return;
 				}
@@ -425,7 +436,7 @@ namespace network
 				std::list<NetworkComponent>::iterator iter;
 				for (iter = m_unregisterdObjects.begin(); iter != m_unregisterdObjects.end(); ++iter)
 				{
-					if (iter->type == OBJECT_TYPE::PLAYER)
+					if (iter->type == OBJECT_TYPE::REMOTE_PLAYER)
 						break;
 				}
 
@@ -440,7 +451,7 @@ namespace network
 
 					m_unregisterdObjects.erase(iter);
 
-					std::cout << std::format("My id is {}\n", id);
+					std::cout << std::format("Remote id is {}\n", id);
 				}
 			}
 			break;

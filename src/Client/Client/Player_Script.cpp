@@ -19,29 +19,33 @@
 
 void Player_Mistic::Start()
 {
-	GetNetwork()->SendAddPlayer();
+	if (GetNetwork()->IsMyPlayer())
+		GetNetwork()->SendAddPlayer();
 }
 
 void Player_Mistic::Update(void)
 {
-	int32 count = GetAnimator()->GetAnimCount();
-	int32 currentIndex = GetAnimator()->GetCurrentClipIndex();
-	int32 index = 0;
-
-	if (INPUT->GetButtonDown(KEY_TYPE::KEY_1))
+	if (GetNetwork()->IsMyPlayer())
 	{
-		index = (currentIndex + 1) % count;
+		int32 count = GetAnimator()->GetAnimCount();
+		int32 currentIndex = GetAnimator()->GetCurrentClipIndex();
+		int32 index = 0;
 
-		GetNetwork()->SendAniIndexPacket(index);
-		GetAnimator()->Play(index);
-	}
+		if (INPUT->GetButtonDown(KEY_TYPE::KEY_1))
+		{
+			index = (currentIndex + 1) % count;
 
-	if (INPUT->GetButtonDown(KEY_TYPE::KEY_2))
-	{
-		index = (currentIndex - 1 + count) % count;
+			GetNetwork()->SendAniIndexPacket(index);
+			GetAnimator()->Play(index);
+		}
 
-		GetNetwork()->SendAniIndexPacket(index);
-		GetAnimator()->Play(index);
+		if (INPUT->GetButtonDown(KEY_TYPE::KEY_2))
+		{
+			index = (currentIndex - 1 + count) % count;
+
+			GetNetwork()->SendAniIndexPacket(index);
+			GetAnimator()->Play(index);
+		}
 	}
 }
 
@@ -183,34 +187,44 @@ void Player_Mistic::StartRender(network::CPacket& packet)
 {
 	int32_t id{ packet.ReadID() };
 
-	Vec3 pos;
-	pos.x = packet.Read<float>();
-	pos.y = packet.Read<float>();
-	pos.z = packet.Read<float>();
+	if (GetNetwork()->GetID() == -1)
+	{
+		std::cout << "new id : " << id << std::endl;
+		GetNetwork()->SetID(id);
+	}
 
-	Vec4 quat;
-	quat.x = packet.Read<float>();
-	quat.y = packet.Read<float>();
-	quat.z = packet.Read<float>();
-	quat.w = packet.Read<float>();
+	if (GetNetwork()->GetID() != -1)
+	{
+		Vec3 pos;
+		pos.x = packet.Read<float>();
+		pos.y = packet.Read<float>();
+		pos.z = packet.Read<float>();
 
-	Vec3 scale;
-	scale.x = packet.Read<float>();
-	scale.y = packet.Read<float>();
-	scale.z = packet.Read<float>();
+		Vec4 quat;
+		quat.x = packet.Read<float>();
+		quat.y = packet.Read<float>();
+		quat.z = packet.Read<float>();
+		quat.w = packet.Read<float>();
 
-	int32_t aniIndex{ packet.Read<int32_t>() };
-	float aniFrame{ packet.Read<float>() };
+		Vec3 scale;
+		scale.x = packet.Read<float>();
+		scale.y = packet.Read<float>();
+		scale.z = packet.Read<float>();
 
-	std::cout << std::format("ID : {}\n", id);
-	std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
-	std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
-	std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
+		int32_t aniIndex{ packet.Read<int32_t>() };
+		float aniFrame{ packet.Read<float>() };
 
-	GetTransform()->SetWorldVec3Position(pos);
-	auto mat{ Matrix::CreateTranslation(pos) };
-	GetTransform()->SetWorldMatrix(mat);
-	GetAnimator()->Play(aniIndex, aniFrame);
+		//std::cout << std::format("ID : {}\n", id);
+		//std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
+		//std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
+		//std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
+		std::cout << std::format("id : {}, index : {}\n", id, aniIndex);
+
+		GetTransform()->SetWorldVec3Position(pos);
+		auto mat{ Matrix::CreateTranslation(pos) };
+		GetTransform()->SetWorldMatrix(mat);
+		GetAnimator()->Play(aniIndex, aniFrame);
+	}
 }
 
 void Player_Mistic::Transform(network::CPacket& packet)
@@ -233,11 +247,16 @@ void Player_Mistic::Transform(network::CPacket& packet)
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
 
-	//if (id == 0)
-	//	std::cout << std::format("id : {} - {}, {}, {}\n", id, pos.x, pos.y, pos.z);
+	//std::cout << std::format("{}, {}, {}\n", pos.x, pos.y, pos.z);
 	GetTransform()->SetWorldVec3Position(pos);
 	auto mat{ Matrix::CreateTranslation(pos) };
 	GetTransform()->SetWorldMatrix(mat);
+
+	auto newVec3Pos{ GetTransform()->GetWorldVec3Position() };
+	auto newPos{ GetTransform()->GetWorldPosition() };
+
+	//std::cout << std::format("{}, {}, {}\n", newVec3Pos.x, newVec3Pos.y, newVec3Pos.z);
+	//std::cout << std::format("{}, {}, {}\n\n", newPos.x, newPos.y, newPos.z);
 }
 
 void Player_Mistic::ChangeAnimation(network::CPacket& packet)
@@ -246,4 +265,5 @@ void Player_Mistic::ChangeAnimation(network::CPacket& packet)
 	float frame{ packet.Read<float>() };
 
 	GetAnimator()->Play(index, frame);
+	std::cout << std::format("id : {}, index : {}\n", packet.ReadID(), index);
 }

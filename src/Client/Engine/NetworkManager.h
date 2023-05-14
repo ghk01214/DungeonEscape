@@ -14,6 +14,7 @@ namespace network
 		NONE = 0,
 
 		PLAYER,
+		REMOTE_PLAYER,
 		OBJECT,
 
 		MAX

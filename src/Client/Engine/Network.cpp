@@ -16,8 +16,11 @@ namespace network
 		Component{ COMPONENT_TYPE::NETWORK },
 		m_networkID{ id },
 		m_objectType{ type },
-		m_recvQueueSize{ 0 }
+		m_recvQueueSize{ 0 },
+		m_myPlayer{ false }
 	{
+		if (m_objectType == OBJECT_TYPE::PLAYER)
+			m_myPlayer = true;
 	}
 
 	CNetwork::~CNetwork()

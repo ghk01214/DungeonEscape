@@ -81,8 +81,6 @@ namespace game
 				continue;
 			}
 
-			std::this_thread::sleep_for(1ms);
-
 			Message msg{};
 			while (true)
 			{
@@ -102,6 +100,8 @@ namespace game
 			postOver.roomID = msg.roomID;
 
 			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
+
+			std::this_thread::sleep_for(1ms);
 		}
 	}
 
@@ -128,8 +128,6 @@ namespace game
 				continue;
 			}
 
-			std::this_thread::sleep_for(1ms);
-
 			Message msg{};
 			while (true)
 			{
@@ -146,6 +144,8 @@ namespace game
 			postOver.roomID = msg.roomID;
 
 			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
+
+			std::this_thread::sleep_for(1ms);
 		}
 	}
 
@@ -222,8 +222,10 @@ namespace game
 #pragma endregion
 #pragma region [MY]
 				case ProtocolID::MY_ISSUE_PLAYER_ID_REQ:
+				case ProtocolID::WR_ISSUE_PLAYER_ID_REQ:
 				{
-					Message sendMsg{ msg.playerID, ProtocolID::MY_ISSUE_PLAYER_ID_ACK };
+					//std::cout << magic_enum::enum_integer(msg.msgProtocol) << "\n";
+					Message sendMsg{ msg.playerID, static_cast<ProtocolID>(magic_enum::enum_integer(msg.msgProtocol) + 1) };
 					PushSendMessage(sendMsg);
 
 					TIMER_EVENT ev{ CURRENT_TIME };
@@ -232,7 +234,7 @@ namespace game
 				break;
 				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 				{
-					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 40.f, 150.f, msg.playerID * 40.f), Quat(0, 0, 0, 1), Vec3(1.f, 1.f, 1.f)) };
+					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 100.f, 150.f, msg.playerID * 100.f), Quat(0, 0, 0, 1), Vec3(1.f, 1.f, 1.f)) };
 					player->SetName(L"Mistic");
 
 					//Login(msg.playerID, player);
@@ -381,7 +383,7 @@ namespace game
 
 	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr)
 	{
-		game::CRoomManager::GetInstance()->Exit(roomID, player);
+		//game::CRoomManager::GetInstance()->Exit(roomID, player);
 		objMgr->RemoveGameObjectFromLayer(L"Layer_Player", player);
 
 		Message msg{ playerID, ProtocolID::AU_LOGOUT_ACK };

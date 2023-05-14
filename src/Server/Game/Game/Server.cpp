@@ -614,12 +614,6 @@ namespace game
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
 
-		//std::cout << "send : " << magic_enum::enum_name(postOver->msgProtocol) << ", " << magic_enum::enum_integer(postOver->msgProtocol) << "\n";
-
-		//network::CPacket packet{};
-		//packet.SetData(over->data);
-
-		//switch (packet.ReadProtocol())
 		switch (postOver->msgProtocol)
 		{
 #pragma region [AU]
@@ -635,11 +629,9 @@ namespace game
 						break;
 				}*/
 
-				//int32_t roomID{ packet.Read<int32_t>() };
 				//int32_t roomID{ postOver->roomID };
 
 				Login(id, session, nullptr, 0);
-				//player->StartSendTransform();
 
 				std::cout << std::format("session[{}] login complete\n", id);
 			}
@@ -655,25 +647,27 @@ namespace game
 #pragma region[MY]
 			case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
 			{
-				//session->SendPlayerIDIssuePacket(postOver->playerID);
-
-				for (auto& client : m_sessions)
+				for (auto& player : playerObjects)
 				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
+					auto pl{ dynamic_cast<Player*>(player) };
 
-					for (auto& player : playerObjects)
+					if (pl->GetPlayerID() != postOver->playerID)
 					{
-						auto pl{ dynamic_cast<Player*>(player) };
+						session->SendPlayerIDIssuePacket(pl->GetPlayerID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
+						continue;
+					}
 
-						ProtocolID proto{ ProtocolID::PROTOCOL_NONE };
+					session->SendPlayerIDIssuePacket(postOver->playerID, postOver->msgProtocol);
 
-						if (client->GetID() == postOver->playerID)
-							proto = ProtocolID::MY_ISSUE_PLAYER_ID_ACK;
-						else
-							proto = ProtocolID::WR_ISSUE_PLAYER_ID_ACK;
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
 
-						client->SendPlayerIDIssuePacket(pl->GetPlayerID(), proto);
+						if (client->GetID() == pl->GetPlayerID())
+							continue;
+
+						client->SendPlayerIDIssuePacket(pl->GetPlayerID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
 					}
 				}
 			}
@@ -716,25 +710,30 @@ namespace game
 #pragma region[WR]
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
-				for (auto& client : m_sessions)
+				for (auto& player : playerObjects)
 				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
+					auto pl{ dynamic_cast<Player*>(player) };
 
-					for (auto& player : playerObjects)
+					session->SendAddAnimateObjPacket(pl->GetPlayerID(), pl);
+
+					for (auto& client : m_sessions)
 					{
-						auto pl{ dynamic_cast<Player*>(player) };
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (client->GetID() == pl->GetPlayerID())
+							continue;
 
 						client->SendAddAnimateObjPacket(pl->GetPlayerID(), pl);
-						player->StartSendTransform();
 					}
+
+					player->StartSendTransform();
 				}
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
 			{
 				GameObject* object{ nullptr };
-				//int32_t objID{ packet.Read<int32_t>() };
 				int32_t objID{ postOver->objID };
 
 				for (auto& obj : mapObjects)
@@ -757,8 +756,6 @@ namespace game
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
 			{
-				//Player* player{ FindPlayer(playerObjects, postOver->playerID) };
-
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
@@ -786,27 +783,24 @@ namespace game
 			break;
 			case ProtocolID::WR_ANI_ACK:
 			{
-				//int32_t aniIndex{ packet.Read<int32_t>() };
-				//float aniFrame{ packet.Read<float>() };
-				//Player* player{ FindPlayer(playerObjects, postOver->playerID) };
-
-				for (auto& client : m_sessions)
+				for (auto& player : playerObjects)
 				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
+					auto pl{ dynamic_cast<Player*>(player) };
 
-					if (client->GetID() == postOver->playerID)
-						continue;
-
-					for (auto& player : playerObjects)
+					for (auto& client : m_sessions)
 					{
-						auto pl{ dynamic_cast<Player*>(player) };
+						if (client->GetState() != STATE::INGAME)
+							continue;
 
-						client->SendAniIndexPacket(pl->GetID(), postOver->msgProtocol, pl);
+						if (client->GetID() == postOver->playerID)
+							continue;
+
+						if (client->GetID() == pl->GetPlayerID())
+							continue;
+
+						client->SendAniIndexPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
 					}
 				}
-
-				//std::cout << "changing player(" << player->GetID() << ") animation complete\n";
 			}
 			break;
 #pragma endregion

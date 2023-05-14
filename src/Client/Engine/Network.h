@@ -28,10 +28,14 @@ namespace network
 
 		void SetID(uint32_t id) { m_networkID = id; }
 
+		constexpr bool IsMyPlayer() const { return m_myPlayer; }
+
 	private:
 		int32_t m_networkID;		// 오브젝트 정보를 담고 있는 ID, 초기값을 -1로 설정한다. 이는 네트워크 매니저에서 값을 채우면 변경된다.
 		OBJECT_TYPE m_objectType;
 		std::deque<CPacket> m_recvPackets;
 		std::atomic_int32_t m_recvQueueSize;
+
+		bool m_myPlayer;
 	};
 }

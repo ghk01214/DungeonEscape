@@ -21,6 +21,7 @@ private:
 	void CreateMap(void);
 	void CreateMapObjects(void);
 	void CreatePlayer(void);
+	void CreateRemotePlayer();
 
 public:
 	std::vector<std::shared_ptr<CGameObject>> CreateMapObject(ObjectDesc& objectDesc);
