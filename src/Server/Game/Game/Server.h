@@ -6,6 +6,7 @@ namespace network
 }
 
 class GameInstance;
+class GameObject;
 class Player;
 
 namespace game
@@ -58,6 +59,7 @@ namespace game
 		void Logout(int32_t id);
 		void BroadcastResult(int32_t id, network::OVERLAPPEDEX* over);
 		void InputCommandMessage(Message msg);
+		Player* FindPlayer(std::list<GameObject*>& playerObjects, int32_t playerID);
 
 	private:
 		HANDLE m_iocp;
@@ -68,6 +70,7 @@ namespace game
 		std::thread m_gameThread;
 		std::thread m_timerThread;
 		std::thread m_transformThread;
+
 		std::array<CSession*, MAX_USER> m_sessions;
 		std::atomic_int32_t m_activeSessionNum;
 

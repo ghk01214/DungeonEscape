@@ -24,6 +24,7 @@ class SceneManager
 	DECLARE_SINGLE(SceneManager);
 
 public:
+	void Start();
 	void Update();
 	void Render();
 	void LoadScene(std::shared_ptr<CScene> scene);

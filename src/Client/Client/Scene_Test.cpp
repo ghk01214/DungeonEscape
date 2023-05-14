@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include <NetworkManager.h>
 #include "Scene_Test.h"
 #include "GameInstance.h"
 #include "SceneManager.h"
@@ -24,7 +25,6 @@
 #include "Camera_Script.h"
 #include "Player_Script.h"
 
-#include <NetworkManager.h>
 #include <Network.h>
 
 #include "FBXMapLoader.h"
@@ -43,7 +43,9 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	CreateMap();
 	CreateMapObjects();
 
-	//CreatePlayer();
+	CreatePlayer();
+	CreateRemotePlayer();
+	CreateRemotePlayer();
 
 	return scene;
 }
@@ -255,6 +257,22 @@ void Scene_Test::CreatePlayer(void)
 	objectDesc.script = std::make_shared<Player_Mistic>();
 
 	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
+	gameObjects = AddNetworkTodObject(gameObjects, network::OBJECT_TYPE::PLAYER);
+
+	scene->AddPlayer(gameObjects);
+}
+
+void Scene_Test::CreateRemotePlayer(void)
+{
+	ObjectDesc objectDesc;
+	objectDesc.strName = L"Mistic";
+	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
+	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
+	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
+	objectDesc.script = std::make_shared<Player_Mistic>();
+
+	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
+	gameObjects = AddNetworkTodObject(gameObjects, network::OBJECT_TYPE::REMOTE_PLAYER);
 
 	scene->AddPlayer(gameObjects);
 }
@@ -285,15 +303,16 @@ std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateAnimatedObject(Objec
 	for (auto& gameObject : gameObjects)
 	{
 		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
+		gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
 		gameObject->GetAnimator()->Play(2);
 	}
 
 	return gameObjects;
 }
 
-std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkTodObject(std::vector<std::shared_ptr<CGameObject>> objects)
+std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkTodObject(std::vector<std::shared_ptr<CGameObject>> objects, network::OBJECT_TYPE objectType)
 {
-	std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>() };
+	std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>(objectType) };
 
 	for (auto& gameObject : objects)
 	{

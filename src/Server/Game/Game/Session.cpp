@@ -61,36 +61,53 @@ namespace game
 	void CSession::SendLoginPacket(Player* obj)
 	{
 		network::CPacket packet;
-		Transform* trans{ obj->GetTransform() };
-		auto pos{ trans->GetPosition() };
-		auto quat{ trans->GetRotation() };
-		auto scale{ trans->GetScale() };
+		//Transform* trans{ obj->GetTransform() };
+		//auto pos{ trans->GetPosition() };
+		//auto quat{ trans->GetRotation() };
+		//auto scale{ trans->GetScale() };
 
-		// 패킷을 전송할 클라이언트 id 작성
 		packet.WriteID(m_id);
-		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_ACK);
 
-		packet.WriteWString(obj->GetName());
+		//packet.WriteWString(obj->GetName());
 
-		packet.Write<float>(pos.x);
-		packet.Write<float>(pos.y);
-		packet.Write<float>(pos.z);
+		//packet.Write<float>(pos.x);
+		//packet.Write<float>(pos.y);
+		//packet.Write<float>(pos.z);
 
-		packet.Write<float>(quat.x);
-		packet.Write<float>(quat.y);
-		packet.Write<float>(quat.w);
-		packet.Write<float>(quat.z);
+		//packet.Write<float>(quat.x);
+		//packet.Write<float>(quat.y);
+		//packet.Write<float>(quat.w);
+		//packet.Write<float>(quat.z);
 
-		packet.Write<float>(scale.x);
-		packet.Write<float>(scale.y);
-		packet.Write<float>(scale.z);
+		//packet.Write<float>(scale.x);
+		//packet.Write<float>(scale.y);
+		//packet.Write<float>(scale.z);
 
-		packet.Write<server::SCRIPT_TYPE>(obj->GetScriptType());
-		packet.Write<int32_t>(obj->GetAniIndex());
-		packet.Write<float>(obj->GetAniFrame());
+		//packet.Write<int32_t>(obj->GetAniIndex());
+		//packet.Write<float>(obj->GetAniFrame());
 
 		// 패킷 전송
+		Send(packet);
+	}
+
+	void CSession::SendPlayerIDIssuePacket(int32_t id, ProtocolID protocol)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(protocol);
+
+		Send(packet);
+	}
+
+	void CSession::SendIDIssuePacket(GameObject* obj)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(obj->GetID());
+		packet.WriteProtocol(ProtocolID::MY_ISSUE_PLAYER_ID_ACK);
+
 		Send(packet);
 	}
 
@@ -106,8 +123,6 @@ namespace game
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
 
-		packet.WriteWString(obj->GetName());
-
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
 		packet.Write<float>(pos.z);
@@ -121,7 +136,6 @@ namespace game
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
 
-		packet.Write<server::SCRIPT_TYPE>(obj->GetScriptType());
 		packet.Write<int32_t>(obj->GetAniIndex());
 		packet.Write<float>(obj->GetAniFrame());
 

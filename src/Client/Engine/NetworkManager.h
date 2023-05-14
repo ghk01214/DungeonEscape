@@ -7,14 +7,36 @@ class MonoBehaviour;
 
 namespace network
 {
+	using NetworkGameObject = std::vector<std::shared_ptr<CGameObject>>;
+
+	enum class OBJECT_TYPE
+	{
+		NONE = 0,
+
+		PLAYER,
+		REMOTE_PLAYER,
+		OBJECT,
+
+		MAX
+	};
+
+	struct NetworkComponent
+	{
+		OBJECT_TYPE type;
+		NetworkGameObject object;
+
+		NetworkComponent(OBJECT_TYPE type, NetworkGameObject object) :
+			type{ type }, object{ object } {}
+	};
+
 	class NetworkManager
 	{
 		DECLARE_SINGLE(NetworkManager);
 
 	public:
 		void Init();
-		void RegisterObject(std::shared_ptr<CGameObject> object);
-		void RegisterObject(std::vector<std::shared_ptr<CGameObject>> object);
+		void RegisterObject(OBJECT_TYPE type, std::shared_ptr<CGameObject> object);
+		void RegisterObject(OBJECT_TYPE type, NetworkGameObject object);
 
 		void Connect();
 		void EndThreadProcess();
@@ -25,18 +47,17 @@ namespace network
 
 		void SendLoginPacket();
 		void SendKeyInputPacket();
+		void SendLogoutPacket();
+		void SendIDIssueRequest();
 
 		constexpr int32_t GetID() const { return m_id; }
 
-		void AddScript(server::SCRIPT_TYPE scriptType, std::shared_ptr<MonoBehaviour> script);
 		constexpr bool IsSuccessfullyLoggedIn() const { return m_login; }
 	private:
 		void ProcessThread();
 
 		void Recv(DWORD bytes, OVERLAPPEDEX* pOverEx);
 		void Send(DWORD bytes, OVERLAPPEDEX* pOverEx);
-
-		void SendLogoutPacket();
 
 #pragma region [PROCESS PACKET]
 		void ProcessPacket();
@@ -75,8 +96,7 @@ namespace network
 
 		bool m_login;
 
-		std::unordered_map<int32_t, std::vector<std::shared_ptr<CGameObject>>> m_objects;
-
-		std::unordered_map<int8_t, std::shared_ptr<MonoBehaviour>> m_scripts;
+		std::unordered_map<int32_t, NetworkGameObject> m_objects;
+		std::list<NetworkComponent> m_unregisterdObjects;
 	};
 }

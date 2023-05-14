@@ -14,8 +14,13 @@ void CGame::Init(const WindowInfo& Info)
 
 	GET_SINGLE(SceneManager)->LoadScene(Scene_Test::GetInstance()->TestScene());
 
-	GET_NETWORK->AddScript(server::SCRIPT_TYPE::MISTIC, std::make_shared<Player_Mistic>());
 	GET_NETWORK->SendLoginPacket();
+}
+
+void CGame::Start()
+{
+	GET_NETWORK->SendIDIssueRequest();
+	GET_SINGLE(SceneManager)->Start();
 }
 
 void CGame::Update()

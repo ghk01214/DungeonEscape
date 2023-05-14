@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "NetworkManager.h"
 #include "Network.h"
 
 #include "Transform.h"
@@ -7,15 +8,19 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "Timer.h"
-
-#include "NetworkManager.h"
+#include "Animator.h"
 
 namespace network
 {
-	CNetwork::CNetwork(int32_t id) :
+	CNetwork::CNetwork(OBJECT_TYPE type, int32_t id) :
 		Component{ COMPONENT_TYPE::NETWORK },
-		m_networkID{ id }
+		m_networkID{ id },
+		m_objectType{ type },
+		m_recvQueueSize{ 0 },
+		m_myPlayer{ false }
 	{
+		if (m_objectType == OBJECT_TYPE::PLAYER)
+			m_myPlayer = true;
 	}
 
 	CNetwork::~CNetwork()
@@ -25,50 +30,62 @@ namespace network
 	void CNetwork::Awake()
 	{
 		// 네트워크 매니저에 자신을 가지고 있는 게임 오브젝트 정보를 넘기면, objectID를 세팅해줌
-		//GET_NETWORK->RegisterObject(m_gameObject.lock());
+		GET_NETWORK->RegisterObject(m_objectType, m_gameObject.lock());
 	}
 
 	void CNetwork::FinalUpdate()
 	{
 	}
 
+	void CNetwork::InsertPackets(CPacket& packet)
+	{
+		m_recvPackets.push_back(packet);
+		++m_recvQueueSize;
+	}
+
+	void CNetwork::ClearRecvQueue(int32_t size)
+	{
+		for (int32_t i = 0; i < size; ++i)
+		{
+			if (m_recvPackets.empty() == true)
+			{
+				m_recvQueueSize = 0;
+				return;
+			}
+
+			m_recvPackets.pop_front();
+			--m_recvQueueSize;
+		}
+	}
+
+	const std::deque<CPacket> CNetwork::GetRecvPackets() const
+	{
+		return m_recvPackets;
+	}
+
+	const int32_t CNetwork::GetRecvQueueSize() const
+	{
+		return m_recvQueueSize.load();
+	}
+
 #pragma region [SEND PACKET]
-	void CNetwork::SendAddObjectPacket()
+	void CNetwork::SendAddPlayer()
 	{
 		CPacket packet;
-		auto pos{ GetTransform()->GetLocalPosition() };
-		auto quat{ GetTransform()->GetLocalRotation() };
-		auto scale{ GetTransform()->GetLocalScale() };
 
-		packet.WriteID(m_networkID);
-		packet.WriteProtocol(ProtocolID::MY_ADD_OBJ_REQ);
-
-		packet.WriteWString(GetName());
-
-		packet.Write<float>(pos.x);
-		packet.Write<float>(pos.y);
-		packet.Write<float>(pos.z);
-
-		packet.Write<float>(quat.x);
-		packet.Write<float>(quat.y);
-		packet.Write<float>(quat.z);
-		packet.Write<float>(1.f);
-
-		packet.Write<float>(scale.x);
-		packet.Write<float>(scale.y);
-		packet.Write<float>(scale.z);
+		packet.WriteProtocol(ProtocolID::MY_ADD_ANIMATE_OBJ_REQ);
 
 		GET_NETWORK->Send(packet);
 	}
 
-	void CNetwork::SendAniIndexPacket(int32_t index, float updateTime)
+	void CNetwork::SendAniIndexPacket(int32_t index)
 	{
 		CPacket packet;
 
 		packet.WriteID(m_networkID);
 		packet.WriteProtocol(ProtocolID::MY_ANI_REQ);
 		packet.Write<int32_t>(index);
-		packet.Write<float>(updateTime);
+		packet.Write<float>(GetAnimator()->GetUpdateTime());
 
 		GET_NETWORK->Send(packet);
 	}
