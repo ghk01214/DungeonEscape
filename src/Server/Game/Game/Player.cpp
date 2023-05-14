@@ -10,8 +10,7 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	GameObject{ position, rotation, scale },
 	m_playerID{ playerID },
 	m_aniIndex{ 0 },
-	m_aniFrame{ 0.f },
-	m_scriptType{ server::SCRIPT_TYPE::NONE }
+	m_aniFrame{ 0.f }
 {
 }
 
@@ -22,7 +21,6 @@ Player::~Player()
 void Player::Init()
 {
 	m_controller = AddComponent<CustomController>(L"CustomController");
-	m_scriptType = server::SCRIPT_TYPE::MISTIC;
 
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);
@@ -62,11 +60,6 @@ void Player::SetAniIndex(int32_t aniIndex)
 void Player::SetAniFrame(float aniFrame)
 {
 	m_aniFrame = aniFrame;
-}
-
-void Player::SetScriptType(server::SCRIPT_TYPE scriptType)
-{
-	m_scriptType = scriptType;
 }
 
 void Player::SetControllerMoveSpeed(float value)

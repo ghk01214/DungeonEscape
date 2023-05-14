@@ -118,7 +118,6 @@ namespace game
 		auto pos{ trans->GetPosition() };
 		auto quat{ trans->GetRotation() };
 		auto scale{ trans->GetScale() };
-		auto scriptType{ obj->GetScriptType() };
 
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
@@ -190,8 +189,8 @@ namespace game
 		auto scale{ trans->GetScale() };
 
 		// 오른손 > 왼손
-		pos.z = -pos.z;
-		quat.z = -quat.z;
+		/*pos.z = -pos.z;
+		quat.z = -quat.z;*/
 		quat.Normalize();
 
 		// 타깃 id 작성
@@ -242,5 +241,8 @@ namespace game
 		packet.Write<float>(frame);
 
 		Send(packet);
+	}
+	void CSession::SendStatePacket(int32_t id, GameObject* obj, int32_t state)
+	{
 	}
 }

@@ -240,13 +240,13 @@ namespace game
 		{
 			TimeManager::GetInstance()->Update();
 
-			if (TimeManager::GetInstance()->Is1FrameInVar() == true)
-			{
-				float timeDelta{ TimeManager::GetInstance()->GetDeltaTimeInVar() };
+			//if (TimeManager::GetInstance()->Is1FrameInVar() == true)
+			//{
+				float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
 				m_gameInstance->Update(timeDelta);
 				m_gameInstance->LateUpdate(timeDelta);
-				TimeManager::GetInstance()->ClearDeltaTimeInVar();
-			}
+				//TimeManager::GetInstance()->ClearDeltaTimeInVar();
+			//}
 		}
 	}
 
@@ -789,8 +789,30 @@ namespace game
 						if (client->GetID() == postOver->playerID)
 							continue;
 
-						if (client->GetID() == pl->GetPlayerID())
+						/*if (client->GetID() == pl->GetPlayerID())
+							continue;*/
+
+						client->SendAniIndexPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
+					}
+				}
+			}
+			break;
+			case ProtocolID::WR_CHANGE_STATE_ACK:
+			{
+				for (auto& player : playerObjects)
+				{
+					auto pl{ dynamic_cast<Player*>(player) };
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
 							continue;
+
+						if (client->GetID() == postOver->playerID)
+							continue;
+
+						/*if (client->GetID() == pl->GetPlayerID())
+							continue;*/
 
 						client->SendAniIndexPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
 					}

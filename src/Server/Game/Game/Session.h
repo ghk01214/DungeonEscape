@@ -39,6 +39,7 @@ namespace game
 		void SendTransformPacket(int32_t id, ProtocolID protocol, GameObject* obj);
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, Player* obj);
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, int32_t index, float frame);
+		void SendStatePacket(int32_t id, GameObject* obj, int32_t state);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

@@ -36,7 +36,7 @@ void Player_Mistic::Update(void)
 			index = (currentIndex + 1) % count;
 
 			GetNetwork()->SendAniIndexPacket(index);
-			GetAnimator()->Play(index);
+			//GetAnimator()->Play(index);
 		}
 
 		if (INPUT->GetButtonDown(KEY_TYPE::KEY_2))
@@ -44,7 +44,7 @@ void Player_Mistic::Update(void)
 			index = (currentIndex - 1 + count) % count;
 
 			GetNetwork()->SendAniIndexPacket(index);
-			GetAnimator()->Play(index);
+			//GetAnimator()->Play(index);
 		}
 	}
 }

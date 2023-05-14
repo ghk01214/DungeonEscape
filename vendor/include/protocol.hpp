@@ -50,6 +50,9 @@ enum class ProtocolID : unsigned short
 	MY_ANI_REQ,
 	MY_ANI_ACK,
 
+	MY_CHANGE_STATE_REQ,
+	MY_CHANGE_STATE_ACK,
+
 	MY_KEYINPUT_REQ,
 	MY_KEYINPUT_ACK,
 
@@ -79,6 +82,9 @@ enum class ProtocolID : unsigned short
 
 	WR_ANI_REQ,
 	WR_ANI_ACK,
+
+	WR_CHANGE_STATE_REQ,
+	WR_CHANGE_STATE_ACK,
 
 	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion

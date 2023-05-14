@@ -235,8 +235,7 @@ namespace game
 				break;
 				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 				{
-					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 50.f, 150.f, msg.playerID * 50.f), Quat(0, 0, 0, 1), Vec3(1.f, 1.f, 1.f)) };
-					player->SetName(L"Mistic");
+					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 100.f, 150.f, msg.playerID * 50.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };					player->SetName(L"Mistic");
 
 					//Login(msg.playerID, player);
 
@@ -304,6 +303,26 @@ namespace game
 					m_eventQueue.push(ev);
 				}
 				break;
+				case ProtocolID::MY_CHANGE_STATE_REQ:
+				{
+					for (auto& playerObj : playerObjects)
+					{
+						auto player{ dynamic_cast<Player*>(playerObj) };
+
+						if (player->GetPlayerID() == msg.playerID)
+						{
+							player->SetAniIndex(msg.aniIndex);
+							player->SetAniFrame(msg.aniFrame);
+							break;
+						}
+					}
+
+					Message sendMsg{ msg.playerID, ProtocolID::WR_CHANGE_STATE_ACK };
+					PushSendMessage(sendMsg);
+
+					TIMER_EVENT ev{ CURRENT_TIME };
+					m_eventQueue.push(ev);
+				}
 #pragma endregion
 				default:
 				break;
