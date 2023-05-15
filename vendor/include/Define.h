@@ -10,33 +10,33 @@
 
 	enum class KEY_TYPE
 	{
-		NONE = 0x00,
+		UP = VK_UP,
+		DOWN = VK_DOWN,
+		LEFT = VK_LEFT,
+		RIGHT = VK_RIGHT,
+		SPACE = VK_SPACE,
 
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT,
-		SPACE,
+		W = 'W',
+		A = 'A',
+		S = 'S',
+		D = 'D',
 
-		W,
-		A,
-		S,
-		D,
+		Q = 'Q',
+		E = 'E',
+		Z = 'Z',
+		C = 'C',
 
-		Q,
-		E,
-		Z,
-		C,
+		// 여기 있는 번호 키는 키보드 영/한 자판 위에 있는 번호 1 ~ 0 사이의 버튼, 오른쪽에 있는 것은 NUMPAD 숫자.
+		KEY_1 = '1',
+		KEY_2 = '2',
+		KEY_3 = '3',
+		KEY_4 = '4',
 
-		KEY_1,
-		KEY_2,
-		KEY_3,
-		KEY_4,
+		// 마우스 왼쪽 오른쪽 버튼
+		LBUTTON = VK_LBUTTON,
+		RBUTTON = VK_RBUTTON,
 
-		LBUTTON,
-		RBUTTON,
-
-		MAX
+		MAX = 19
 	};
 
 	enum class KEY_STATE : uint8_t

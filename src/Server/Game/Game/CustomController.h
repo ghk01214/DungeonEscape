@@ -7,6 +7,15 @@ class CapsuleCollider;
 
 class CustomController : public Component
 {
+	enum KEY_ORDER
+	{
+		W,
+		S,
+		A,
+		D,
+		SPACE,
+		MAX
+	};
 public:
 	CustomController(GameObject* ownerGameObject, Component* ownerComponent);
 	~CustomController();
@@ -52,6 +61,7 @@ private:
 	CapsuleCollider* m_collider = nullptr;
 
 #pragma region keyboardVariable
+	std::vector<server::KEY_TYPE> m_useKeyType;
 	bool			m_keyboardLeft = false;
 	bool			m_keyboardRight = false;
 	bool			m_keyboardUp = false;

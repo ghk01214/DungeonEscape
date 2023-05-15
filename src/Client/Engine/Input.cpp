@@ -14,11 +14,11 @@ void Input::Init(HWND hWnd)
 	SetCursor(nullptr);
 
 	m_useKeyType.clear();
-	m_useKeyType.push_back(KEY_TYPE::SPACE);
 	m_useKeyType.push_back(KEY_TYPE::W);
-	m_useKeyType.push_back(KEY_TYPE::A);
 	m_useKeyType.push_back(KEY_TYPE::S);
+	m_useKeyType.push_back(KEY_TYPE::A);
 	m_useKeyType.push_back(KEY_TYPE::D);
+	m_useKeyType.push_back(KEY_TYPE::SPACE);
 }
 
 void Input::Update()
@@ -92,84 +92,14 @@ void Input::EncodeKeyInput(void)
 
 	// 인코딩
 	m_keyInputState.reset();
+
 	for (int i = 0; i < m_useKeyType.size(); ++i)
 	{
-		int temp = static_cast<int>(GetState(m_useKeyType[i]));
+		int temp = static_cast<int32>(GetState(m_useKeyType[i]));
 
 		temp <<= (i * 2);
 
 		m_keyInputState |= temp;
-	}
-
-	std::cout << m_keyInputState.to_string() << std::endl;
-
-	// 디코딩
-	long long key = m_keyInputState.to_ulong();
-	for (int i = 0; i < m_useKeyType.size(); ++i)
-	{
-		int temp = 3;
-
-		temp <<= (i * 2);
-		temp &= key;
-		temp >>= (i * 2);
-
-		switch (static_cast<KEY_STATE>(temp))
-		{
-			case KEY_STATE::NONE:
-			if (i == 0)
-				std::cout << "UP::None";
-			if (i == 1)
-				std::cout << "DOWN::None";
-			if (i == 2)
-				std::cout << "LEFT::None";
-			if (i == 3)
-				std::cout << "RIGHT::None";
-			if (i == 4)
-				std::cout << "SPACE::None";
-			break;
-			case KEY_STATE::PRESS:
-			if (i == 0)
-				std::cout << "UP::PRESS";
-			if (i == 1)
-				std::cout << "DOWN::PRESS";
-			if (i == 2)
-				std::cout << "LEFT::PRESS";
-			if (i == 3)
-				std::cout << "RIGHT::PRESS";
-			if (i == 4)
-				std::cout << "SPACE::PRESS";
-			break;
-			case KEY_STATE::DOWN:
-			if (i == 0)
-				std::cout << "UP::DOWN";
-			if (i == 1)
-				std::cout << "DOWN::DOWN";
-			if (i == 2)
-				std::cout << "LEFT::DOWN";
-			if (i == 3)
-				std::cout << "RIGHT::DOWN";
-			if (i == 4)
-				std::cout << "SPACE::DOWN";
-			break;
-			case KEY_STATE::UP:
-			if (i == 0)
-				std::cout << "UP::UP";
-			if (i == 1)
-				std::cout << "DOWN::UP";
-			if (i == 2)
-				std::cout << "LEFT::UP";
-			if (i == 3)
-				std::cout << "RIGHT::UP";
-			if (i == 4)
-				std::cout << "SPACE::UP";
-			break;
-			case KEY_STATE::END:
-			break;
-			default:
-			break;
-		}
-
-		std::cout << std::endl;
 	}
 }
 

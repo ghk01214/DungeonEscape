@@ -9,7 +9,6 @@
 #include "PhysQuery.h"
 #include "GameObject.h"
 #include "Transform.h"
-#include <bitset>
 
 using namespace physx;
 
@@ -37,6 +36,21 @@ void CustomController::Init()
 	m_body->SetSleepThresholder(0.001f);
 
 	m_body->SetKinematic(false);
+
+	// 사용할 키 종류를 추가
+	// enum KEY_ORDER 순서에 맞게
+	m_useKeyType.clear();
+	m_useKeyType.push_back(server::KEY_TYPE::W);
+	m_useKeyType.push_back(server::KEY_TYPE::S);
+	m_useKeyType.push_back(server::KEY_TYPE::A);
+	m_useKeyType.push_back(server::KEY_TYPE::D);
+	m_useKeyType.push_back(server::KEY_TYPE::SPACE);
+
+	m_keyboardLeft = false;
+	m_keyboardRight = false;
+	m_keyboardUp = false;
+	m_keyboardDown = false;
+	m_keyboardSpace = false;
 }
 
 void CustomController::Release()
@@ -267,26 +281,116 @@ void CustomController::ClearControllerCollisionInfo()
 
 void CustomController::KeyboardReceive(ulong32_t key)
 {
-	const int32_t useKeyCount{ static_cast<int32_t>(server::KEY_TYPE::MAX) };
-	std::bitset<useKeyCount> input{ key };
+	for (int32_t i = 0; i < m_useKeyType.size(); ++i)
+	{
+		int32_t temp{ 3 };
 
-	m_keyboardLeft = false;
-	m_keyboardRight = false;
-	m_keyboardUp = false;
-	m_keyboardDown = false;
-	m_keyboardSpace = false;
+		temp <<= (i * 2);
+		temp &= key;
+		temp >>= (i * 2);
 
-	if (input[static_cast<int32_t>(server::KEY_TYPE::A)] == true)
-		m_keyboardLeft = true;
-	else if (input[static_cast<int32_t>(server::KEY_TYPE::D)] == true)
-		m_keyboardRight = true;
-	if (input[static_cast<int32_t>(server::KEY_TYPE::W)] == true)
-		m_keyboardUp = true;
-	else if (input[static_cast<int32_t>(server::KEY_TYPE::S)] == true)
-		m_keyboardDown = true;
-
-	if (input[static_cast<int32_t>(server::KEY_TYPE::SPACE)] == true)
-		m_keyboardSpace = true;
+		switch (magic_enum::enum_cast<server::KEY_STATE>(temp).value())
+		{
+			case server::KEY_STATE::NONE:
+			{
+				if (i == W)
+				{
+					//std::cout << "UP::None";
+				}
+				if (i == S)
+				{
+					//std::cout << "DOWN::None";
+				}
+				if (i == A)
+				{
+					//std::cout << "LEFT::None";
+				}
+				if (i == D)
+				{
+					//std::cout << "RIGHT::None";
+				}
+				if (i == SPACE)
+				{
+					//std::cout << "SPACE::None";
+				}
+			}
+			break;
+			case server::KEY_STATE::PRESS:
+			{
+				if (i == W)
+				{
+					m_keyboardUp = true;
+				}
+				if (i == S)
+				{
+					m_keyboardDown = true;
+				}
+				if (i == A)
+				{
+					m_keyboardLeft = true;
+				}
+				if (i == D)
+				{
+					m_keyboardRight = true;
+				}
+				if (i == SPACE)
+				{
+					m_keyboardSpace = true;
+				}
+			}
+			break;
+			case server::KEY_STATE::DOWN:
+			{
+				if (i == W)
+				{
+					m_keyboardUp = true;
+				}
+				if (i == S)
+				{
+					m_keyboardDown = true;
+				}
+				if (i == A)
+				{
+					m_keyboardLeft = true;
+				}
+				if (i == D)
+				{
+					m_keyboardRight = true;
+				}
+				if (i == SPACE)
+				{
+					m_keyboardSpace = true;
+				}
+			}
+			break;
+			case server::KEY_STATE::UP:
+			{
+				if (i == W)
+				{
+					m_keyboardUp = false;
+				}
+				if (i == S)
+				{
+					m_keyboardDown = false;
+				}
+				if (i == A)
+				{
+					m_keyboardLeft = false;
+				}
+				if (i == D)
+				{
+					m_keyboardRight = false;
+				}
+				if (i == SPACE)
+				{
+					m_keyboardSpace = false;
+				}
+			}
+			break;
+			default:
+			break;
+		}
+	}
 }
 
 void CustomController::KeyboardClear()
