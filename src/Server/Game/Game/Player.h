@@ -21,10 +21,7 @@ public:
 	constexpr int32_t GetAniIndex() const { return m_aniIndex; }
 	constexpr float GetAniFrame() const { return m_aniFrame; }
 
-	void SetAniIndex(int32_t aniIndex);
-	void SetAniFrame(float aniFrame);
-	void ClientRequestStateChange(int32_t clientStateRequest, float clientStateFrame);
-	void ClientRequestExcuted();
+	void SetAniInfo(int32_t aniIndex, float aniFrame);
 
 public:
 	void SetControllerMoveSpeed(float value);
@@ -38,9 +35,4 @@ public:
 
 	int32_t m_aniIndex;
 	float m_aniFrame;
-
-	// 클라에서 스테이트 변경 요청이 옴
-	int32_t m_clientRequestState;
-	float m_clientStateFrame;
-	bool m_clientStateChangeRequest;
 };

@@ -17,7 +17,7 @@ namespace network
 #pragma region [SEND PACKET]
 		void SendAddPlayer();
 		void SendAniIndexPacket(int32_t index);
-		void SendCameraLook(Vec3& look);
+		void SendCameraLook(const Vec3& look);
 #pragma endregion
 
 		void InsertPackets(CPacket& packet);

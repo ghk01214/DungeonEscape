@@ -90,7 +90,7 @@ namespace network
 		GET_NETWORK->Send(packet);
 	}
 
-	void CNetwork::SendCameraLook(Vec3& look)
+	void CNetwork::SendCameraLook(const Vec3& look)
 	{
 		network::CPacket packet;
 

@@ -278,9 +278,7 @@ namespace game
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
-							player->ClientRequestStateChange(msg.aniIndex, msg.aniFrame);
-							//player->SetAniIndex(msg.aniIndex);
-							//player->SetAniFrame(msg.aniFrame);
+							player->SetAniInfo(msg.aniIndex, msg.aniFrame);
 							break;
 						}
 					}
@@ -297,8 +295,7 @@ namespace game
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
-							std::cout << msg.playerID << " : " << msg.cameraLook.x << ", " << msg.cameraLook.y << ", " << msg.cameraLook.z << "\n";
-							// 플레이어 카메라 정보
+							// 용섭 : 플레이어 카메라 정보
 							//msg.cameraLook;
 							break;
 						}

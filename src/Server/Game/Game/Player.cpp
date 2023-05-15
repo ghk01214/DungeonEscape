@@ -10,8 +10,7 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	GameObject{ position, rotation, scale },
 	m_playerID{ playerID },
 	m_aniIndex{ 0 },
-	m_aniFrame{ 0.f },
-	m_clientStateChangeRequest{ false }
+	m_aniFrame{ 0.f }
 {
 }
 
@@ -56,26 +55,10 @@ void Player::Release()
 	GameObject::Release();
 }
 
-void Player::SetAniIndex(int32_t aniIndex)
+void Player::SetAniInfo(int32_t aniIndex, float aniFrame)
 {
 	m_aniIndex = aniIndex;
-}
-
-void Player::SetAniFrame(float aniFrame)
-{
 	m_aniFrame = aniFrame;
-}
-
-void Player::ClientRequestStateChange(int32_t clientRequestState, float clientStateFrame)
-{
-	m_clientRequestState = clientRequestState;
-	m_clientStateFrame = clientStateFrame;
-	m_clientStateChangeRequest = true;
-}
-
-void Player::ClientRequestExcuted()
-{
-	m_clientStateChangeRequest = false;
 }
 
 void Player::SetControllerMoveSpeed(float value)

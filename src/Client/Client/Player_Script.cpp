@@ -35,7 +35,7 @@ void Player_Mistic::Update(void)
 		{
 			index = (currentIndex + 1) % count;
 
-			GetNetwork()->SendAniIndexPacket(index);
+			//GetNetwork()->SendAniIndexPacket(index);
 			GetAnimator()->Play(index);
 		}
 
@@ -43,7 +43,7 @@ void Player_Mistic::Update(void)
 		{
 			index = (currentIndex - 1 + count) % count;
 
-			GetNetwork()->SendAniIndexPacket(index);
+			//GetNetwork()->SendAniIndexPacket(index);
 			GetAnimator()->Play(index);
 		}
 	}
@@ -137,8 +137,10 @@ void Player_Mistic::MovePlayerCameraLook(void)
 		matWorld.Translation(pos);
 		GetTransform()->SetWorldMatrix(matWorld);
 
-		auto look{ GetTransform()->GetLook() };
-		GetNetwork()->SendCameraLook(look);
+		auto look{ camera->GetTransform()->GetLook() };
+		GetNetwork()->SendCameraLook(camera->GetTransform()->GetLook());
+
+		std::cout << look.x << ", " << look.y << ", " << look.z << "\n";
 	}
 }
 

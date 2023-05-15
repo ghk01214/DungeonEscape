@@ -6,6 +6,7 @@
 #include "Mesh.h"
 #include "MeshRenderer.h"
 #include "StructuredBuffer.h"
+#include "Network.h"
 
 Animator::Animator() : Component(COMPONENT_TYPE::ANIMATOR)
 {
@@ -67,6 +68,12 @@ void Animator::Play(uint32 idx)
 	assert(idx < m_animClips->size());
 	m_clipIndex = idx;
 	m_updateTime = 0.f;
+
+	auto network{ GetGameObject()->GetNetwork() };
+	if (network != nullptr)
+	{
+		network->SendAniIndexPacket(idx);
+	}
 }
 
 void Animator::Play(uint32 idx, float updateTime)

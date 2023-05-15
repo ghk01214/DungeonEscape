@@ -90,11 +90,16 @@ void TestLevel::Init()
 
 
 	// actor 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage2.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1.FBX");
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
+	int32_t i{ 0 };
 	for (auto& info : mapInfo)
 	{
+		if (i == 944)
+		{
+			std::system("pause");
+		}
 		const objectLocationInfo& locationInfo = info.second;
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
 			Vec3(locationInfo.Position.x , locationInfo.Position.y , locationInfo.Position.z ),
@@ -105,19 +110,20 @@ void TestLevel::Init()
 		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
 		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
 		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+		++i;
 	}
 #pragma endregion
 
 #pragma region CenterBox(0,0,0)
-	auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
-	centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
-#pragma endregion
-
-#pragma region Z100Box(1000,0,0)
-	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
-	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+//	auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+//	auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
+//	centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
+//#pragma endregion
+//
+//#pragma region Z100Box(1000,0,0)
+//	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
+//	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+//	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
 #pragma endregion
 
 #pragma region Plane
@@ -134,7 +140,7 @@ void TestLevel::Update(double timeDelta)
 	game::MessageHandler::GetInstance()->ExecuteMessage();
 
 	//if (GetAsyncKeyState('P') & 0x8000)
-	//{	
+	//{
 	//	auto objMgr = ObjectManager::GetInstance();
 	//	auto playerlist = objMgr->GetLayer(L"Layer_Player")->GetGameObjects();
 	//	for (auto& p : playerlist)
