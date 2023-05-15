@@ -278,9 +278,9 @@ namespace game
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
-							player->SetAniIndex(msg.aniIndex);
-							player->SetAniFrame(msg.aniFrame);
-							player->ClientRequestStateChange();
+							player->ClientRequestStateChange(msg.aniIndex, msg.aniFrame);
+							//player->SetAniIndex(msg.aniIndex);
+							//player->SetAniFrame(msg.aniFrame);
 							break;
 						}
 					}

@@ -23,7 +23,7 @@ public:
 
 	void SetAniIndex(int32_t aniIndex);
 	void SetAniFrame(float aniFrame);
-	void ClientRequestStateChange();
+	void ClientRequestStateChange(int32_t clientStateRequest, float clientStateFrame);
 	void ClientRequestExcuted();
 
 public:
@@ -40,5 +40,7 @@ public:
 	float m_aniFrame;
 
 	// 클라에서 스테이트 변경 요청이 옴
-	bool m_clientStateChangeRequest = false;
+	int32_t m_clientRequestState;
+	float m_clientStateFrame;
+	bool m_clientStateChangeRequest;
 };
