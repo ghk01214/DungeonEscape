@@ -180,9 +180,9 @@ void CustomController::DirectionInput()
 			m_moveDirection.x = 1.f;
 
 		if (m_keyboardUp)
-			m_moveDirection.z = 1.f;
-		else if (m_keyboardDown)
 			m_moveDirection.z = -1.f;
+		else if (m_keyboardDown)
+			m_moveDirection.z = +1.f;
 
 		m_moveDirection.normalize();
 	}

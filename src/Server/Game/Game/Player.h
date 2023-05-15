@@ -6,43 +6,6 @@ class CustomController;
 
 class Player : public GameObject
 {
-	enum PLAYER_STATE
-	{
-		AERT,
-		ATK0,
-		ATK1,
-		ATK2,
-		ATK3,
-		ATK4,
-		BLOACK,
-		DAMAGE,
-		DATH,
-		DIE0,
-		DIE1,
-		DIE2,
-		IDLE_A,
-		IDLE_B,
-		IDLE_C,
-		JUMP,
-		MOVE,
-		MOVE_L,
-		MOVE_R,
-		REST,
-		RUN,
-		RUN_L,
-		RUN_R,
-		SHOOT,
-		SLEEP,
-		SWOON,
-		TIRED,
-		VICTORY_A,
-		VICTORY_B,
-		WALK,
-		WALK_L,
-		WALK_R,
-		END
-	};
-
 public:
 	Player(int32_t playerID = -1, const Vec3& position = Vec3(), const Quat& rotation = Quat(), const Vec3& scale = Vec3(1.f, 1.f, 1.f));
 	~Player() override;
@@ -77,5 +40,5 @@ public:
 	float m_aniFrame;
 
 	// 클라에서 스테이트 변경 요청이 옴
-	bool m_clientStateChangeRequest;
+	bool m_clientStateChangeRequest = false;
 };
