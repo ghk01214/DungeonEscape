@@ -80,7 +80,8 @@ enum
 	KEY_TYPE_COUNT = static_cast<int32>(UINT8_MAX + 1),
 	KEY_STATE_COUNT = static_cast<int32>(KEY_STATE::END),
 	KEY_USE_COUNT = static_cast<int32_t>(KEY_TYPE::MAX),
-	KEY_TEMP_USE_COUNT = static_cast<int32_t>(BITSET_KEY_TYPE::MAX)
+	KEY_TEMP_USE_COUNT = static_cast<int32_t>(BITSET_KEY_TYPE::MAX),
+	KEY_STATE_USE = static_cast<int32_t>(BITSET_KEY_TYPE::MAX) * 2
 };
 
 class Input
@@ -117,5 +118,8 @@ private:
 	POINT m_preMousePos = POINT{ 0, 0 };
 
 	std::bitset<KEY_TEMP_USE_COUNT> m_keyInput;
+	std::bitset<KEY_STATE_USE> m_keyInputState;
+
+	vector<KEY_TYPE> m_useKeyType;
 };
 

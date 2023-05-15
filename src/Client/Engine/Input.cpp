@@ -12,6 +12,13 @@ void Input::Init(HWND hWnd)
 	m_preMousePos = m_curMousePos;
 
 	SetCursor(nullptr);
+
+	m_useKeyType.clear();
+	m_useKeyType.push_back(KEY_TYPE::SPACE);
+	m_useKeyType.push_back(KEY_TYPE::W);
+	m_useKeyType.push_back(KEY_TYPE::A);
+	m_useKeyType.push_back(KEY_TYPE::S);
+	m_useKeyType.push_back(KEY_TYPE::D);
 }
 
 void Input::Update()
@@ -70,65 +77,100 @@ void Input::Update()
 void Input::EncodeKeyInput(void)
 {
 	/*
-		현재 사용되고 있는 키 정보들
+		각 키별로 2bit 씩 정보 전송
+		KEY_STATE 는 총 4가지 ==> NONE, PRESS, DOWN, UP
+		각각 누르지 않았다. 누르는 중이다. 눌렀다. 눌렀다 땠다.
+		이를 00, 01, 10, 11로 표현, 각각 0, 1, 2, 3인 상황.
 
-		NONE = 0,
+		2bit씩 for 문으로 bit를 전송
 
-		UP = VK_UP,
-		DOWN = VK_DOWN,
-		LEFT = VK_LEFT,
-		RIGHT = VK_RIGHT,
-		SPACE = VK_SPACE,
-
-		W = 'W',
-		A = 'A',
-		S = 'S',
-		D = 'D',
-
-		Q = 'Q',
-		E = 'E',
-		Z = 'Z',
-		C = 'C',
-
-		// 여기 있는 번호 키는 키보드 영/한 자판 위에 있는 번호 1 ~ 0 사이의 버튼, 오른쪽에 있는 것은 NUMPAD 숫자.
-		KEY_1 = '1',
-		KEY_2 = '2',
-		KEY_3 = '3',
-		KEY_4 = '4',
-
-		// 마우스 왼쪽 오른쪽 버튼
-		LBUTTON = VK_LBUTTON,
-		RBUTTON = VK_RBUTTON,
-
-		MAX
+		1. 모든 사용하는 키 정보와 상태를 받아온다.
+		2. 상태에 맞게 bit를 추가
 	*/
 
-	// 모든 비트 0으로 초기화
-	m_keyInput.reset();
+	// 사용할 키 정보 설정
 
-	// KEY_STATE::PRESS 정보만 전송 가능
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::UP)] = GetButton(KEY_TYPE::UP);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::DOWN)] = GetButton(KEY_TYPE::DOWN);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::LEFT)] = GetButton(KEY_TYPE::LEFT);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RIGHT)] = GetButton(KEY_TYPE::RIGHT);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::SPACE)] = GetButton(KEY_TYPE::SPACE);
+	// 인코딩
+	m_keyInputState.reset();
+	for (int i = 0; i < m_useKeyType.size(); ++i)
+	{
+		int temp = static_cast<int>(GetState(m_useKeyType[i]));
 
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::W)] = GetButton(KEY_TYPE::W);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::A)] = GetButton(KEY_TYPE::A);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::S)] = GetButton(KEY_TYPE::S);
-	m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::D)] = GetButton(KEY_TYPE::D);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Q)] = GetButton(KEY_TYPE::Q);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::E)] = GetButton(KEY_TYPE::E);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::Z)] = GetButton(KEY_TYPE::Z);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::C)] = GetButton(KEY_TYPE::C);
+		temp <<= (i * 2);
 
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_1)] = GetButton(KEY_TYPE::KEY_1);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_2)] = GetButton(KEY_TYPE::KEY_2);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_3)] = GetButton(KEY_TYPE::KEY_3);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::KEY_4)] = GetButton(KEY_TYPE::KEY_4);
+		m_keyInputState |= temp;
+	}
 
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::LBUTTON)] = GetButton(KEY_TYPE::LBUTTON);
-	//m_keyInput[static_cast<uint32>(BITSET_KEY_TYPE::RBUTTON)] = GetButton(KEY_TYPE::RBUTTON);
+	std::cout << m_keyInputState.to_string() << std::endl;
+
+	// 디코딩
+	long long key = m_keyInputState.to_ulong();
+	for (int i = 0; i < m_useKeyType.size(); ++i)
+	{
+		int temp = 3;
+
+		temp <<= (i * 2);
+		temp &= key;
+		temp >>= (i * 2);
+
+		switch (static_cast<KEY_STATE>(temp))
+		{
+			case KEY_STATE::NONE:
+			if (i == 0)
+				std::cout << "UP::None";
+			if (i == 1)
+				std::cout << "DOWN::None";
+			if (i == 2)
+				std::cout << "LEFT::None";
+			if (i == 3)
+				std::cout << "RIGHT::None";
+			if (i == 4)
+				std::cout << "SPACE::None";
+			break;
+			case KEY_STATE::PRESS:
+			if (i == 0)
+				std::cout << "UP::PRESS";
+			if (i == 1)
+				std::cout << "DOWN::PRESS";
+			if (i == 2)
+				std::cout << "LEFT::PRESS";
+			if (i == 3)
+				std::cout << "RIGHT::PRESS";
+			if (i == 4)
+				std::cout << "SPACE::PRESS";
+			break;
+			case KEY_STATE::DOWN:
+			if (i == 0)
+				std::cout << "UP::DOWN";
+			if (i == 1)
+				std::cout << "DOWN::DOWN";
+			if (i == 2)
+				std::cout << "LEFT::DOWN";
+			if (i == 3)
+				std::cout << "RIGHT::DOWN";
+			if (i == 4)
+				std::cout << "SPACE::DOWN";
+			break;
+			case KEY_STATE::UP:
+			if (i == 0)
+				std::cout << "UP::UP";
+			if (i == 1)
+				std::cout << "DOWN::UP";
+			if (i == 2)
+				std::cout << "LEFT::UP";
+			if (i == 3)
+				std::cout << "RIGHT::UP";
+			if (i == 4)
+				std::cout << "SPACE::UP";
+			break;
+			case KEY_STATE::END:
+			break;
+			default:
+			break;
+		}
+
+		std::cout << std::endl;
+	}
 }
 
 Vec2 Input::GetMouseMove(void)
