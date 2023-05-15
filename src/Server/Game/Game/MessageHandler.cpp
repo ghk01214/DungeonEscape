@@ -196,9 +196,6 @@ namespace game
 					//Login(msg.playerID, player);
 					Message sendMsg{ msg.playerID, ProtocolID::AU_LOGIN_ACK };
 					PushSendMessage(sendMsg);
-
-					TIMER_EVENT ev{ CURRENT_TIME };
-					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::AU_LOGOUT_REQ:
@@ -212,9 +209,6 @@ namespace game
 						if (player->GetPlayerID() == msg.playerID)
 						{
 							Logout(msg.playerID, msg.roomID, player, objMgr);
-
-							TIMER_EVENT ev{ CURRENT_TIME };
-							m_eventQueue.push(ev);
 
 							break;
 						}
@@ -241,9 +235,6 @@ namespace game
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
 					PushSendMessage(sendMsg);
-
-					TIMER_EVENT ev{ CURRENT_TIME };
-					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::MY_ADD_OBJ_REQ:
@@ -260,9 +251,6 @@ namespace game
 					msg.objID = objID;
 
 					PushSendMessage(msg);
-
-					TIMER_EVENT ev{ CURRENT_TIME };
-					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:
@@ -292,18 +280,16 @@ namespace game
 						{
 							player->SetAniIndex(msg.aniIndex);
 							player->SetAniFrame(msg.aniFrame);
+							player->ClientRequestStateChange();
 							break;
 						}
 					}
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ANI_ACK };
 					PushSendMessage(sendMsg);
-
-					TIMER_EVENT ev{ CURRENT_TIME };
-					m_eventQueue.push(ev);
 				}
 				break;
-				case ProtocolID::MY_CHANGE_STATE_REQ:
+				case ProtocolID::MY_CAMERA_LOOK_REQ:
 				{
 					for (auto& playerObj : playerObjects)
 					{
@@ -311,18 +297,14 @@ namespace game
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
-							player->SetAniIndex(msg.aniIndex);
-							player->SetAniFrame(msg.aniFrame);
+							std::cout << msg.playerID << " : " << msg.cameraLook.x << ", " << msg.cameraLook.y << ", " << msg.cameraLook.z << "\n";
+							// 플레이어 카메라 정보
+							//msg.cameraLook;
 							break;
 						}
 					}
-
-					Message sendMsg{ msg.playerID, ProtocolID::WR_CHANGE_STATE_ACK };
-					PushSendMessage(sendMsg);
-
-					TIMER_EVENT ev{ CURRENT_TIME };
-					m_eventQueue.push(ev);
 				}
+				break;
 #pragma endregion
 				default:
 				break;
@@ -343,6 +325,9 @@ namespace game
 	{
 		m_sendQueue.push(msg);
 		++m_sendQueueSize;
+
+		TIMER_EVENT ev{ CURRENT_TIME };
+		m_eventQueue.push(ev);
 	}
 
 	void MessageHandler::PushEvent(TIMER_EVENT& ev)
@@ -358,6 +343,9 @@ namespace game
 	void MessageHandler::PushTransformMessage(Message& msg)
 	{
 		m_transformMessage.push(msg);
+
+		game::TIMER_EVENT ev{ CURRENT_TIME };
+		m_transformEvent.push(ev);
 	}
 
 	void MessageHandler::SetIOCPHandle(HANDLE iocp)

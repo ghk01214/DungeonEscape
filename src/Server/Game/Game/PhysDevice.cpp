@@ -95,9 +95,13 @@ void PhysDevice::Init()
 void PhysDevice::StepSim(double timeDelta)
 {
 	// 디버그 모드
-	m_Scene->simulate(1 / 60.f);
+#if _DEBUG
+	m_Scene->simulate(1 / 240.f);
+#else
 	// 릴리즈 모드
 	//m_Scene->simulate(timeDelta * 10.f);
+	m_Scene->simulate(1 / 360.f);
+#endif
 	m_Scene->fetchResults(true);
 }
 

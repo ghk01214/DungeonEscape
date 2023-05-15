@@ -34,10 +34,13 @@ void Player::Update(double timeDelta)
 	{
 		game::Message msg{ m_playerID, ProtocolID::WR_TRANSFORM_ACK };
 		game::MessageHandler::GetInstance()->PushTransformMessage(msg);
-
-		game::TIMER_EVENT ev{ CURRENT_TIME };
-		game::MessageHandler::GetInstance()->PushTransformEvent(ev);
 	}
+
+	// 스테이트 변경
+	// game::Message msg{ m_playerID, ProtocolID::WR_ANI_ACK };
+	// msg.aniIndex = 애니 인덱스;
+	// msg.aniFrame = 0.f;
+	// game::MessageHandler::GetInstance()->PushTransformMessage(msg);
 }
 
 void Player::LateUpdate(double timeDelta)
@@ -60,6 +63,16 @@ void Player::SetAniIndex(int32_t aniIndex)
 void Player::SetAniFrame(float aniFrame)
 {
 	m_aniFrame = aniFrame;
+}
+
+void Player::ClientRequestStateChange()
+{
+	m_clientStateChangeRequest = true;
+}
+
+void Player::ClientRequestExcuted()
+{
+	m_clientStateChangeRequest = false;
 }
 
 void Player::SetControllerMoveSpeed(float value)

@@ -216,8 +216,8 @@ void CustomController::Movement()
 	PxVec3 surfaceNormal{ 0.f };
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
-	//if (m_keyboardSpace && m_onGround)
+	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
+	if (m_keyboardSpace && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;

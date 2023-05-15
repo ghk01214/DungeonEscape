@@ -89,5 +89,19 @@ namespace network
 
 		GET_NETWORK->Send(packet);
 	}
+
+	void CNetwork::SendCameraLook(Vec3& look)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(GetNetwork()->GetID());
+		packet.WriteProtocol(ProtocolID::MY_CAMERA_LOOK_REQ);
+
+		packet.Write<float>(look.x);
+		packet.Write<float>(look.y);
+		packet.Write<float>(look.z);
+
+		GET_NETWORK->Send(packet);
+	}
 #pragma endregion
 }

@@ -507,6 +507,18 @@ namespace game
 				InputCommandMessage(msg);
 			}
 			break;
+			case ProtocolID::MY_CAMERA_LOOK_REQ:
+			{
+				Vec3 look;
+				look.x = packet.Read<float>();
+				look.y = packet.Read<float>();
+				look.z = packet.Read<float>();
+
+				msg.cameraLook = look;
+
+				InputCommandMessage(msg);
+			}
+			break;
 			default:
 			break;
 		}
@@ -700,6 +712,11 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::MY_CHANGE_STATE_ACK:
+			{
+
+			}
+			break;
 #pragma endregion
 #pragma region[WR]
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
@@ -759,7 +776,8 @@ namespace game
 					{
 						auto pl{ dynamic_cast<Player*>(player) };
 
-						client->SendTransformPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
+						if (pl != nullptr)
+							client->SendTransformPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
 					}
 
 					for (auto& object : mapObjects)
@@ -786,30 +804,8 @@ namespace game
 						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						if (client->GetID() == postOver->playerID)
-							continue;
-
-						/*if (client->GetID() == pl->GetPlayerID())
+						/*if (client->GetID() == postOver->playerID)
 							continue;*/
-
-						client->SendAniIndexPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
-					}
-				}
-			}
-			break;
-			case ProtocolID::WR_CHANGE_STATE_ACK:
-			{
-				for (auto& player : playerObjects)
-				{
-					auto pl{ dynamic_cast<Player*>(player) };
-
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						if (client->GetID() == postOver->playerID)
-							continue;
 
 						/*if (client->GetID() == pl->GetPlayerID())
 							continue;*/

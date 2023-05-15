@@ -56,6 +56,9 @@ enum class ProtocolID : unsigned short
 	MY_KEYINPUT_REQ,
 	MY_KEYINPUT_ACK,
 
+	MY_CAMERA_LOOK_REQ,
+	MY_CAMERA_LOOK_ACK,
+
 	PROTOCOL_MY_END = ProtocolBase::PROTOCOL_OFFSET_WR,
 #pragma endregion
 

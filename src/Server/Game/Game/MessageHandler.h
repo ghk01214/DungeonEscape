@@ -14,6 +14,7 @@ namespace game
 		ulong32_t	keyInput;
 		int32_t		aniIndex;
 		float		aniFrame;
+		Vec3		cameraLook;
 
 		Message(int32_t id = -1, ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE);
 	};
@@ -55,7 +56,6 @@ namespace game
 		void SetIOCPHandle(HANDLE iocp);
 
 	private:
-		void PopRecvQueue(std::queue<Message>& queue, tbb::concurrent_queue<Message>& concurrentQueue, int32_t size, std::atomic_int32_t& queueSiuze);
 		int32_t NewObjectID();
 
 		void Login(int32_t playerID, Player* player);
