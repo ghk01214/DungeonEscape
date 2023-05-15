@@ -335,7 +335,7 @@ void CustomController::KeyboardReceive(ulong32_t key)
 				}
 				if (i == SPACE)
 				{
-					m_keyboardSpace = true;
+					m_keyboardSpace = false;
 				}
 			}
 			break;
