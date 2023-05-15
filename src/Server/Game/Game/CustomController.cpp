@@ -182,7 +182,7 @@ void CustomController::DirectionInput()
 		if (m_keyboardUp)
 			m_moveDirection.z = -1.f;
 		else if (m_keyboardDown)
-			m_moveDirection.z = +1.f;
+			m_moveDirection.z = 1.f;
 
 		m_moveDirection.normalize();
 	}
@@ -197,9 +197,9 @@ void CustomController::DirectionInput()
 			m_moveDirection.x = 1.f;
 
 		if (GetAsyncKeyState(VK_UP) & 0x8000)
-			m_moveDirection.z = 1.f;
-		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 			m_moveDirection.z = -1.f;
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+			m_moveDirection.z = 1.f;
 
 		m_moveDirection.normalize();
 	}

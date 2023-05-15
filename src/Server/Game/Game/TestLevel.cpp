@@ -108,10 +108,16 @@ void TestLevel::Init()
 	}
 #pragma endregion
 
-#pragma region TestBox
-	//auto testObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(-50, 200, 0), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//auto testBody = testObj->GetComponent<RigidBody>(L"RigidBody");
-	//testBody->AddCollider<BoxCollider>(testObj->GetTransform()->GetScale());
+#pragma region CenterBox(0,0,0)
+	auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
+	centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
+#pragma endregion
+
+#pragma region Z100Box(1000,0,0)
+	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
+	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
 #pragma endregion
 
 #pragma region Plane
@@ -126,6 +132,14 @@ void TestLevel::Init()
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
+
+	//if (GetAsyncKeyState('P') & 0x8000)
+	//{	
+	//	auto objMgr = ObjectManager::GetInstance();
+	//	auto playerlist = objMgr->GetLayer(L"Layer_Player")->GetGameObjects();
+	//	for (auto& p : playerlist)
+	//		p->GetComponent<RigidBody>(L"RigidBody")->SetPosition(Vec3(0, 1000, 0), false);
+	//}
 }
 
 void TestLevel::LateUpdate(double timeDelta)

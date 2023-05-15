@@ -152,9 +152,6 @@
     <Filter Include="99. Utility\FBXLoader\MapLoader">
       <UniqueIdentifier>{bf8deb4f-81f8-4f9e-9003-1126fbb81e53}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Game\01. GameObject\Player\Mystic">
-      <UniqueIdentifier>{7b1dee3c-eb06-4b46-880e-e6a7a89ad009}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -283,9 +280,6 @@
     </ClCompile>
     <ClCompile Include="Room.cpp">
       <Filter>01. Server\Room</Filter>
-    </ClCompile>
-    <ClCompile Include="Player_Mystic.cpp">
-      <Filter>03. Game\01. GameObject\Player\Mystic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -438,9 +432,6 @@
     </ClInclude>
     <ClInclude Include="RigidBody.h">
       <Filter>02. Physx\RigidBody</Filter>
-    </ClInclude>
-    <ClInclude Include="Player_Mystic.h">
-      <Filter>03. Game\01. GameObject\Player\Mystic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
