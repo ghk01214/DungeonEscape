@@ -54,8 +54,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	g_windowInfo.height = 600;
 	g_windowInfo.windowed = true;
 
+	std::wstring SERVER_ADDR{};
+	//std::wcout << L"IP ADDRESS : ";
+	//std::wcin >> SERVER_ADDR;
+	SERVER_ADDR = L"127.0.0.1";
+
 	// 네트워크 매니저 생성
-	GET_NETWORK->Init();
+	GET_NETWORK->Init(SERVER_ADDR);
 	std::unique_ptr<CGame> pGame = std::make_unique<CGame>();
 	pGame->Init(g_windowInfo);
 	pGame->Start();
