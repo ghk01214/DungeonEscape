@@ -36,8 +36,8 @@ enum class KEY_TYPE
 enum class KEY_STATE
 {
 	NONE,
-	PRESS,
 	DOWN,
+	PRESS,
 	UP,
 	END
 };

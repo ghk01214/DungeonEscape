@@ -137,10 +137,7 @@ void Player_Mistic::MovePlayerCameraLook(void)
 		matWorld.Translation(pos);
 		GetTransform()->SetWorldMatrix(matWorld);
 
-		auto look{ camera->GetTransform()->GetLook() };
 		GetNetwork()->SendCameraLook(camera->GetTransform()->GetLook());
-
-		std::cout << look.x << ", " << look.y << ", " << look.z << "\n";
 	}
 }
 

@@ -93,7 +93,7 @@ void TestLevel::Init()
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage2.FBX");
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
-	int32_t i{ 0 };
+
 	for (auto& info : mapInfo)
 	{
 		const objectLocationInfo& locationInfo = info.second;
@@ -106,7 +106,6 @@ void TestLevel::Init()
 		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
 		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
 		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
-		++i;
 	}
 #pragma endregion
 
