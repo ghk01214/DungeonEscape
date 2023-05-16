@@ -296,7 +296,7 @@ namespace game
 						if (player->GetPlayerID() == msg.playerID)
 						{
 							// 용섭 : 플레이어 카메라 정보
-							//msg.cameraLook;
+							msg.cameraLook;
 							break;
 						}
 					}

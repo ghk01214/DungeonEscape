@@ -188,21 +188,25 @@ void CustomController::DirectionInput()
 	{
 		m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
+		PxVec3 up = PxVec3(0.f, 1.f, 0.f);
+		PxVec3 right = up.cross(m_cameraLook);
+
 		if (m_keyboardLeft)
-			m_moveDirection.x = -1.f;
+			m_moveDirection -= right;
 		else if (m_keyboardRight)
-			m_moveDirection.x = 1.f;
+			m_moveDirection += right;
 
 		if (m_keyboardUp)
-			m_moveDirection.z = -1.f;
+			m_moveDirection += m_cameraLook;
 		else if (m_keyboardDown)
-			m_moveDirection.z = 1.f;
+			m_moveDirection -= m_cameraLook;
 
 		m_moveDirection.normalize();
 	}
 
 	else
 	{
+		//서버 연결 안할거면 카메라 정보도 없다
 		m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
 		if (GetAsyncKeyState(VK_LEFT) & 0x8000)
@@ -277,6 +281,13 @@ void CustomController::Movement()
 void CustomController::ClearControllerCollisionInfo()
 {
 	m_body->ClearCollidersCollisionInfo();
+}
+
+void CustomController::CameraLookReceive(Vec3 CameraLook)
+{
+	m_cameraLook.x = CameraLook.x;
+	m_cameraLook.y = CameraLook.y;
+	m_cameraLook.z = CameraLook.z;
 }
 
 void CustomController::KeyboardReceive(ulong32_t key)

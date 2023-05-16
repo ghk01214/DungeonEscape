@@ -35,6 +35,7 @@ public:
 	void ClearControllerCollisionInfo();
 
 public:
+	void CameraLookReceive(Vec3 CameraLook);
 	void KeyboardReceive(ulong32_t key);
 	void KeyboardClear();
 
@@ -68,6 +69,8 @@ private:
 	bool			m_keyboardDown = false;
 	bool			m_keyboardSpace = false;
 #pragma endregion
+
+	physx::PxVec3	m_cameraLook;
 };
 
 

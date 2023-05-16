@@ -90,16 +90,12 @@ void TestLevel::Init()
 
 
 	// actor 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage2.FBX");
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	int32_t i{ 0 };
 	for (auto& info : mapInfo)
 	{
-		if (i == 944)
-		{
-			std::system("pause");
-		}
 		const objectLocationInfo& locationInfo = info.second;
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
 			Vec3(locationInfo.Position.x , locationInfo.Position.y , locationInfo.Position.z ),
