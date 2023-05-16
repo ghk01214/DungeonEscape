@@ -283,7 +283,7 @@ void CustomController::ClearControllerCollisionInfo()
 	m_body->ClearCollidersCollisionInfo();
 }
 
-void CustomController::CameraLookReceive(Vec3 CameraLook)
+void CustomController::CameraLookReceive(Vec3& CameraLook)
 {
 	m_cameraLook.x = CameraLook.x;
 	m_cameraLook.y = CameraLook.y;

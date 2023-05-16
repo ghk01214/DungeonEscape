@@ -35,7 +35,7 @@ public:
 	void ClearControllerCollisionInfo();
 
 public:
-	void CameraLookReceive(Vec3 CameraLook);
+	void CameraLookReceive(Vec3& CameraLook);
 	void KeyboardReceive(ulong32_t key);
 	void KeyboardClear();
 

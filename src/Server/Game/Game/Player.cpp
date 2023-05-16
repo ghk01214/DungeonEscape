@@ -80,3 +80,8 @@ float Player::GetControllerJumpSpeed()
 {
 	return m_controller->GetJumpSpeed();
 }
+
+void Player::SetControllerCameraLook(Vec3& value)
+{
+	m_controller->CameraLookReceive(value);
+}

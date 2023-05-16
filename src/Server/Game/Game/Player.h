@@ -24,10 +24,13 @@ public:
 	void SetAniInfo(int32_t aniIndex, float aniFrame);
 
 public:
-	void SetControllerMoveSpeed(float value);
 	float GetControllerMoveSpeed();
-	void SetControllerJumpSpeed(float value);
 	float GetControllerJumpSpeed();
+
+	void SetControllerMoveSpeed(float value);
+	void SetControllerJumpSpeed(float value);
+	void SetControllerCameraLook(Vec3& value);
+
 public:
 	CustomController* m_controller = nullptr;
 
