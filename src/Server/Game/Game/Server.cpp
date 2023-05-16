@@ -659,7 +659,9 @@ namespace game
 #pragma region[MY]
 			case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
 			{
-				for (auto& player : playerObjects)
+				session->SendPlayerIDIssuePacket(postOver->playerID, postOver->msgProtocol);
+
+				/*for (auto& player : playerObjects)
 				{
 					auto pl{ dynamic_cast<Player*>(player) };
 
@@ -668,8 +670,6 @@ namespace game
 						session->SendPlayerIDIssuePacket(pl->GetPlayerID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
 						continue;
 					}
-
-					session->SendPlayerIDIssuePacket(postOver->playerID, postOver->msgProtocol);
 
 					for (auto& client : m_sessions)
 					{
@@ -681,7 +681,7 @@ namespace game
 
 						client->SendPlayerIDIssuePacket(pl->GetPlayerID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
 					}
-				}
+				}*/
 			}
 			break;
 			case ProtocolID::MY_TRANSFORM_ACK:
@@ -732,13 +732,14 @@ namespace game
 						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						if (client->GetID() == pl->GetPlayerID())
+						if (client->GetID() == postOver->playerID)
 							continue;
 
-						client->SendAddAnimateObjPacket(pl->GetPlayerID(), pl);
+						if (pl->GetPlayerID() == postOver->playerID)
+							client->SendAddAnimateObjPacket(pl->GetPlayerID(), pl);
 					}
 
-					player->StartSendTransform();
+					pl->StartSendTransform();
 				}
 			}
 			break;

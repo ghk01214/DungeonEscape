@@ -10,6 +10,8 @@ class Scene_Test
 public:
 	std::shared_ptr<CScene> TestScene(void);
 
+	void LateUpdate();
+
 private:
 	void CreateLayer(void);
 	void CreateComputeShader(void);
@@ -21,12 +23,12 @@ private:
 	void CreateMap(void);
 	void CreateMapObjects(void);
 	void CreatePlayer(void);
-	void CreateRemotePlayer();
+	void CreateRemotePlayer(network::CPacket& packet);
 
 public:
 	std::vector<std::shared_ptr<CGameObject>> CreateMapObject(ObjectDesc& objectDesc);
 	std::vector<std::shared_ptr<CGameObject>> CreateAnimatedObject(ObjectDesc& objectDesc);
-	std::vector<std::shared_ptr<CGameObject>> AddNetworkTodObject(std::vector<std::shared_ptr<CGameObject>> object, network::OBJECT_TYPE objectType);
+	std::vector<std::shared_ptr<CGameObject>> AddNetworkTodObject(std::vector<std::shared_ptr<CGameObject>> object, network::OBJECT_TYPE objectType, int32_t id = -1);
 
 private:
 	shared_ptr<CScene> scene;

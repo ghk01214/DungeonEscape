@@ -200,6 +200,11 @@ namespace network
 			std::cout << "send\n";
 		}
 	}
+
+	void NetworkManager::AddRemoteObject(int32_t id, NetworkGameObject& object)
+	{
+		m_objects[id] = object;
+	}
 #pragma endregion
 
 #pragma region [PRIVATE]
@@ -433,7 +438,7 @@ namespace network
 			{
 				int32_t id{ m_packet.ReadID() };
 
-				std::list<NetworkComponent>::iterator iter;
+				/*std::list<NetworkComponent>::iterator iter;
 				for (iter = m_unregisterdObjects.begin(); iter != m_unregisterdObjects.end(); ++iter)
 				{
 					if (iter->type == OBJECT_TYPE::REMOTE_PLAYER)
@@ -452,17 +457,26 @@ namespace network
 					m_unregisterdObjects.erase(iter);
 
 					std::cout << std::format("Remote id is {}\n", id);
+				}*/
+			}
+			break;
+			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
+			{
+				int32_t id{ m_packet.ReadID() };
+
+				if (id == m_id)
+				{
+					for (auto& obj : m_objects[id])
+					{
+						obj->GetNetwork()->InsertPackets(m_packet);
+					}
+				}
+				else
+				{
+					GET_SCENE->PushServerRequest(m_packet);
 				}
 			}
 			break;
-			/*case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
-			{
-				int32_t id{ m_packet.ReadID() };
-				AddPlayer(id);
-
-				std::cout << "ADD REMOTE[" << id << "]" << std::endl << std::endl;
-			}
-			break;*/
 			case ProtocolID::WR_REMOVE_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
@@ -552,8 +566,6 @@ namespace network
 		scale.x = m_packet.Read<float>();
 		scale.y = m_packet.Read<float>();
 		scale.z = m_packet.Read<float>();
-
-		server::SCRIPT_TYPE scriptType{ m_packet.Read<server::SCRIPT_TYPE>() };
 
 		int32_t aniIndex{ m_packet.Read<int32_t>() };
 		float aniFrame{ m_packet.Read<float>() };

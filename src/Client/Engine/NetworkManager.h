@@ -50,6 +50,8 @@ namespace network
 		void SendLogoutPacket();
 		void SendIDIssueRequest();
 
+		void AddRemoteObject(int32_t id, NetworkGameObject& object);
+
 		constexpr int32_t GetID() const { return m_id; }
 
 		constexpr bool IsSuccessfullyLoggedIn() const { return m_login; }

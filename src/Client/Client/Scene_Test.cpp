@@ -44,10 +44,37 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	CreateMapObjects();
 
 	CreatePlayer();
-	CreateRemotePlayer();
-	CreateRemotePlayer();
 
 	return scene;
+}
+
+void Scene_Test::LateUpdate()
+{
+	auto size{ scene->GetServerRequestQueueSize() };
+	auto queue{ scene->GetServerRequest() };
+
+	for (int32_t i = 0; i < size; ++i)
+	{
+		if (queue.empty() == true)
+			break;
+
+		auto request{ queue.front() };
+
+		switch (request.ReadProtocol())
+		{
+			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
+			{
+				CreateRemotePlayer(request);
+
+				std::cout << "ADD REMOTE[" << request.ReadID() << "]" << std::endl << std::endl;
+			}
+			break;
+		}
+
+		queue.pop_front();
+	}
+
+	scene->PopRequestQueue(size);
 }
 
 void Scene_Test::CreateLayer(void)
@@ -262,19 +289,56 @@ void Scene_Test::CreatePlayer(void)
 	scene->AddPlayer(gameObjects);
 }
 
-void Scene_Test::CreateRemotePlayer(void)
+void Scene_Test::CreateRemotePlayer(network::CPacket& packet)
 {
+	int32_t id{ packet.ReadID() };
+
+	Vec3 pos;
+	pos.x = packet.Read<float>();
+	pos.y = packet.Read<float>();
+	pos.z = packet.Read<float>();
+
+	Vec4 quat;
+	quat.x = packet.Read<float>();
+	quat.y = packet.Read<float>();
+	quat.z = packet.Read<float>();
+	quat.w = packet.Read<float>();
+
+	Vec3 scale;
+	scale.x = packet.Read<float>();
+	scale.y = packet.Read<float>();
+	scale.z = packet.Read<float>();
+
+	int32_t aniIndex{ packet.Read<int32_t>() };
+	float aniFrame{ packet.Read<float>() };
+
+	server::FBX_TYPE type{ packet.Read<server::FBX_TYPE>() };
+
+	std::wstring fbxName{};
+
+	if (type == server::FBX_TYPE::MISTIC)
+		fbxName = L"Mistic";
+
 	ObjectDesc objectDesc;
-	objectDesc.strName = L"Mistic";
-	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
+	objectDesc.strName = fbxName;
+	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
 	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
 	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
 	objectDesc.script = std::make_shared<Player_Mistic>();
 
 	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
-	gameObjects = AddNetworkTodObject(gameObjects, network::OBJECT_TYPE::REMOTE_PLAYER);
+	gameObjects = AddNetworkTodObject(gameObjects, network::OBJECT_TYPE::REMOTE_PLAYER, id);
+
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->GetTransform()->SetWorldVec3Position(pos);
+		auto mat{ Matrix::CreateTranslation(pos) };
+		gameObject->GetTransform()->SetWorldMatrix(mat);
+		gameObject->GetAnimator()->Play(aniIndex, aniFrame);
+	}
 
 	scene->AddPlayer(gameObjects);
+	GET_NETWORK->AddRemoteObject(id, gameObjects);
 }
 
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateMapObject(ObjectDesc& objectDesc)
@@ -304,15 +368,15 @@ std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateAnimatedObject(Objec
 	{
 		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
 		gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
-		gameObject->GetAnimator()->Play(2);
+		gameObject->GetAnimator()->Play(0);
 	}
 
 	return gameObjects;
 }
 
-std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkTodObject(std::vector<std::shared_ptr<CGameObject>> objects, network::OBJECT_TYPE objectType)
+std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkTodObject(std::vector<std::shared_ptr<CGameObject>> objects, network::OBJECT_TYPE objectType, int32_t id)
 {
-	std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>(objectType) };
+	std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>(objectType, id) };
 
 	for (auto& gameObject : objects)
 	{

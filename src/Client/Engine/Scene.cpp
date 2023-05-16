@@ -14,6 +14,9 @@
 
 void CScene::Awake()
 {
+	m_requestQueue.clear();
+	m_requestQueueSize = 0;
+
 	for (const shared_ptr<CGameObject>& gameObject : m_gameObjects)
 	{
 		gameObject->Awake();
@@ -156,6 +159,24 @@ void CScene::RenderForward()
 
 		camera->SortGameObject();
 		camera->Render_Forward();
+	}
+}
+
+void CScene::PushServerRequest(network::CPacket& packet)
+{
+	m_requestQueue.push_back(packet);
+	++m_requestQueueSize;
+}
+
+void CScene::PopRequestQueue(int32_t size)
+{
+	for (int32_t i = 0; i < size; ++i)
+	{
+		if (m_requestQueue.empty() == true)
+			return;
+
+		m_requestQueue.pop_front();
+		--m_requestQueueSize;
 	}
 }
 

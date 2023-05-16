@@ -6,5 +6,6 @@ public:
 	void Init(const WindowInfo& Info);
 	void Start();
 	void Update();
+	void LateUpdate();
 };
 

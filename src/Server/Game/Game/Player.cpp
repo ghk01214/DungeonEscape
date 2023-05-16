@@ -34,6 +34,9 @@ void Player::Update(double timeDelta)
 	{
 		game::Message msg{ m_playerID, ProtocolID::WR_TRANSFORM_ACK };
 		game::MessageHandler::GetInstance()->PushTransformMessage(msg);
+
+		//auto p{ GetTransform()->GetPosition() };
+		//std::cout << m_playerID << " : " << p.x << ", " << p.y << ", " << p.z << "\n";
 	}
 
 	// 스테이트 변경
@@ -59,6 +62,11 @@ void Player::SetAniInfo(int32_t aniIndex, float aniFrame)
 {
 	m_aniIndex = aniIndex;
 	m_aniFrame = aniFrame;
+}
+
+void Player::SetFBXType(server::FBX_TYPE fbxType)
+{
+	m_fbxType = fbxType;
 }
 
 void Player::SetControllerMoveSpeed(float value)

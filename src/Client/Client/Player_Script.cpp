@@ -248,6 +248,9 @@ void Player_Mistic::Transform(network::CPacket& packet)
 	GetTransform()->SetWorldVec3Position(pos);
 	auto mat{ Matrix::CreateTranslation(pos) };
 	GetTransform()->SetWorldMatrix(mat);
+
+	//auto t{ GetTransform()->GetWorldPosition() };
+	//std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
 }
 
 void Player_Mistic::ChangeAnimation(network::CPacket& packet)

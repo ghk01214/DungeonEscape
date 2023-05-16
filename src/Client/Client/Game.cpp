@@ -27,3 +27,8 @@ void CGame::Update()
 {
 	GEngine->Update();
 }
+
+void CGame::LateUpdate()
+{
+	Scene_Test::GetInstance()->LateUpdate();
+}

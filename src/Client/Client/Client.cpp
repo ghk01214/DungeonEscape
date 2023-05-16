@@ -77,6 +77,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		// 게임 로직 추가
 		pGame->Update();
+		pGame->LateUpdate();
 	}
 
 	return (int)msg.wParam;
