@@ -2,7 +2,6 @@
 #include "physx_define.h"
 
 class CollisionPairInfo;
-class Collider;
 
 class CustomSimulationEventCallback : public physx::PxSimulationEventCallback
 {
