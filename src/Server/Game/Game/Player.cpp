@@ -41,6 +41,8 @@ void Player::Update(double timeDelta)
 	// msg.aniIndex = 애니 인덱스;
 	// msg.aniFrame = 0.f;
 	// game::MessageHandler::GetInstance()->PushTransformMessage(msg);
+
+	GameObject::Update(timeDelta);
 }
 
 void Player::LateUpdate(double timeDelta)

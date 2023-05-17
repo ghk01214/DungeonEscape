@@ -4,6 +4,7 @@
 
 class Transform;
 
+#define RESERVED 4
 
 // 오브젝트와 컴포넌트 모두 init()을 통해 초기화됩니다.
 // Gameobject, Component가 초기화에 필요한 인자들은 전부 생성자로 전달됩니다.
@@ -21,9 +22,11 @@ public:
 
 public:
 	virtual void Init();
-	virtual void Update(double timeDelta) = 0;
+	virtual void Update(double timeDelta);
 	virtual void LateUpdate(double timeDelta) = 0;
 	virtual void Release();
+
+	bool AccessAuthorized();
 
 public:
 	template<typename T>
@@ -63,6 +66,7 @@ public:
 public:
 	bool GetRemovalFlag();
 	void SetRemovalFlag(bool value);
+	void SetRemoveReserved();			//직간접적으로 RigidBody를 가지는 게임 오브젝트는 반드시 해당 함수로 삭제
 
 public:
 	Transform* GetTransform();
@@ -77,11 +81,14 @@ public:
 
 protected:
 	bool m_removalFlag = false;			//update()에 수집, lateUpdate()에 실제 삭제 진행
+	
+	int m_removeReserved = -1;			//물리 시뮬레이션 참가 오브젝트만 사용하는 변수.
+										//기본값 -1. 양수가 되는 순간 0까지 감소. 0이 되는 순간 removalFlag를 true로 변환.
+
     std::unordered_map<std::wstring, Component*> m_components;
 
 	Transform* m_transform = nullptr;	//생성자에서 제작하여 m_components안에 보관
 										//편의상 멤버변수로도 보관
-
 	int32_t m_id;
 	std::wstring m_name;
 	bool m_startSendTransform;

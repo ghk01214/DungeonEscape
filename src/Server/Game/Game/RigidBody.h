@@ -142,6 +142,9 @@ public:
 	void SetCCDFlag(bool value);
 	bool isKinematic() const;
 
+public:
+	void ExcludeFromSimulation(bool value);
+
 private:
 	physx::PxRigidDynamic* m_body;
 	bool m_continuous{ true };

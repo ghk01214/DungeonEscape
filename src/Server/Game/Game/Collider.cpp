@@ -2,6 +2,7 @@
 #include "Collider.h"
 #include "PhysDevice.h"
 #include "RigidBody.h"
+#include "CustomSimulationEventCallback.h"
 
 using namespace physx;
 
@@ -40,6 +41,8 @@ void Collider::Init()
 
 void Collider::Release()
 {
+	//SetContactPairInvalid();
+
 	m_attachedRigidBody->Detach(this);
 	//멤버 함수 정리
 	PX_RELEASE(m_shape);
@@ -206,3 +209,4 @@ const std::vector<std::shared_ptr<CollisionPairInfo>>& Collider::GetCollisionInf
 		throw std::runtime_error("Invalid CollisionInfoType value");
 	}
 }
+

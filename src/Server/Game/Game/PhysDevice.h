@@ -30,6 +30,7 @@ public:
 	physx::PxCooking*		GetCooking() const;
 
 	PhysQuery*				GetQuery() const;
+	CustomSimulationEventCallback* GetEventCallback();
 
 private:
 	physx::PxDefaultAllocator				m_Allocator;

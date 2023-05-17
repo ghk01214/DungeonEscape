@@ -41,7 +41,6 @@ void RigidBody::Init()
 void RigidBody::Release()
 {
 	auto device = PhysDevice::GetInstance();
-	device->GetScene()->removeActor(*m_body);
 
 	auto it = m_colliders.begin();
 	while (it != m_colliders.end())
@@ -55,6 +54,9 @@ void RigidBody::Release()
 
 		it = m_colliders.erase(it);
 	}
+
+	device->GetScene()->removeActor(*m_body);
+
 	PX_RELEASE(m_body);
 }
 
@@ -297,4 +299,9 @@ void RigidBody::SetCCDFlag(bool value)
 bool RigidBody::isKinematic() const
 {
 	return m_body->getRigidBodyFlags().isSet(PxRigidBodyFlag::eKINEMATIC);
+}
+
+void RigidBody::ExcludeFromSimulation(bool value)
+{
+	m_body->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
 }

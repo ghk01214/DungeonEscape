@@ -61,6 +61,8 @@ void CustomController::Release()
 
 void CustomController::Move()
 {
+	if (!m_ownerGameObject->AccessAuthorized())
+		return;
 	DirectionInput();
 	Movement();
 }
@@ -182,7 +184,7 @@ bool CustomController::CheckOnGround_Raycast()
 
 void CustomController::DirectionInput()
 {
-	bool serverConnected = true;
+	bool serverConnected = false;
 
 	if (serverConnected)
 	{

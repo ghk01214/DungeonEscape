@@ -28,8 +28,9 @@ void TestLevel::Init()
 	auto objmgr = ObjectManager::GetInstance();
 	objmgr->AddLayer(L"Layer_Map");
 	objmgr->AddLayer(L"Layer_Player");
+	objmgr->AddLayer(L"Layer_Map2");
 
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(150, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(150, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 
 #pragma region Sphere
 	//auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(5, 10, 5), Quat(0, 0, 0, 1), Vec3(2,2,2));
@@ -110,19 +111,19 @@ void TestLevel::Init()
 #pragma endregion
 
 #pragma region CenterBox(0,0,0)
-//	auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-//	auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
-//	centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
-//#pragma endregion
-//
-//#pragma region Z100Box(1000,0,0)
-//	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
-//	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-//	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+	auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(100, 1000, 100));
+	auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
+	centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
+#pragma endregion
+
+#pragma region Z100Box(1000,0,0)
+	//auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
+	//auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+	//Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
 #pragma endregion
 
 #pragma region Plane
-	//auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(1000, 2, 1000));
+	//auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(1000, 2, 1000));
 	//auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 	//MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 #pragma endregion
@@ -134,13 +135,13 @@ void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
 
-	//if (GetAsyncKeyState('P') & 0x8000)
-	//{
-	//	auto objMgr = ObjectManager::GetInstance();
-	//	auto playerlist = objMgr->GetLayer(L"Layer_Player")->GetGameObjects();
-	//	for (auto& p : playerlist)
-	//		p->GetComponent<RigidBody>(L"RigidBody")->SetPosition(Vec3(0, 1000, 0), false);
-	//}
+	if (GetAsyncKeyState('P') & 0x8000)
+	{
+		auto objMgr = ObjectManager::GetInstance();
+		auto map2 = objMgr->GetLayer(L"Layer_Map2")->GetGameObjects();
+		for (auto& p : map2)
+			p->SetRemoveReserved();
+	}
 }
 
 void TestLevel::LateUpdate(double timeDelta)

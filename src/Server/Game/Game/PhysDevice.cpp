@@ -164,6 +164,11 @@ PhysQuery* PhysDevice::GetQuery() const
 	return m_query;
 }
 
+CustomSimulationEventCallback* PhysDevice::GetEventCallback()
+{
+	return m_eventCallback;
+}
+
 PxCooking* PhysDevice::GetCooking() const
 {
 	return m_Cooking;

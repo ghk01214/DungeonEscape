@@ -1,0 +1,28 @@
+(1,2 주의)
+
+1. GameObject 파생 클래스는 자신의 Update()제일 마지막 코드라인에 GameObject::Update()를 반드시 호출해야한다.
+ex)
+ExampleObject::Update(timeDelta)
+{
+	//logic
+
+	GameObject::Update(timeDelta)
+}
+
+2. Rigidbody를 직/간접적으로 보유하고 있는 object는 setRemovalFlag(true)가 아닌 SetRemoveReserved()로 삭제할 것
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(reminder)
+* Controller에 GameObject::AccessAuthorized() 추가됨

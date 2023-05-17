@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "GameObject.h"
 #include "Transform.h"
-
+#include "RigidBody.h"
 
 GameObject::GameObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
 {
@@ -17,6 +17,24 @@ void GameObject::Init()
 {
 }
 
+void GameObject::Update(double timeDelta)
+{
+    if (m_removeReserved < 0)
+        return;
+
+    if (m_removeReserved == RESERVED)
+    {
+        auto body = GetComponent<RigidBody>(L"RigidBody");
+        body->ExcludeFromSimulation(true);
+        std::cout << "실행됨";
+    }
+    
+    m_removeReserved -= 1;
+
+    if (m_removeReserved == 0)
+        SetRemovalFlag(true);
+}
+
 void GameObject::Release()
 {
     for (auto& kv : m_components)
@@ -27,6 +45,14 @@ void GameObject::Release()
     m_transform = nullptr;
 }
 
+bool GameObject::AccessAuthorized()
+{
+    if (m_removeReserved < 0)
+        return true;
+    else
+        false;
+}
+
 bool GameObject::GetRemovalFlag()
 {
     return m_removalFlag;
@@ -35,6 +61,11 @@ bool GameObject::GetRemovalFlag()
 void GameObject::SetRemovalFlag(bool value)
 {
     m_removalFlag = value;
+}
+
+void GameObject::SetRemoveReserved()
+{
+    m_removeReserved = RESERVED;
 }
 
 Transform* GameObject::GetTransform()
