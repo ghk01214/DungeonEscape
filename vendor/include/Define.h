@@ -48,40 +48,12 @@
 		MAX
 	};
 
-	enum class MOVE_DIRECTION : uint8_t
-	{
-		NONE = 0,
-
-		LEFT,
-		RIGHT,
-		FRONT,
-		BACK,
-		UP,
-		DOWN,
-
-		MAX
-	};
-
-	enum class ROTATION : uint8_t
-	{
-		NONE = 0,
-
-		X_INCREASE,
-		X_DECREASE,
-		Y_INCREASE,
-		Y_DECREASE,
-		Z_INCREASE,
-		Z_DECREASE,
-
-		MAX
-	};
-
-	enum class SCRIPT_TYPE : uint8_t
+	enum class FBX_TYPE : uint8_t
 	{
 		NONE = 0,
 
 		MISTIC,
 
-		MAX
+		MAX,
 	};
 }

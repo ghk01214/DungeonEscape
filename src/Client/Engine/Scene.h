@@ -43,9 +43,11 @@ public:
 
 	void RenderForward();
 
+	void PushServerRequest(network::CPacket& packet);
+	void PopRequestQueue(int32_t size);
+
 private:
 	void PushLightData();
-
 
 public:
 	void AddDirectionalLight(LightDesc& lightDesc);
@@ -78,6 +80,9 @@ public:
 	const vector<shared_ptr<CGameObject>>& GetSceneObject(void) { return m_sceneObject; }
 	const shared_ptr<CGameObject>& GetSkyBoxObject(void) { return m_skyBox; }
 
+	const std::deque<network::CPacket>& GetServerRequest() const { return m_requestQueue; }
+	const int32_t GetServerRequestQueueSize() const { return m_requestQueueSize.load(); }
+
 private:
 	vector<shared_ptr<CGameObject>>		m_gameObjects;
 	vector<shared_ptr<class Camera>>	m_cameras;
@@ -90,5 +95,9 @@ private:
 	vector<shared_ptr<CGameObject>>		m_boss;
 	vector<shared_ptr<CGameObject>>		m_sceneObject;
 	shared_ptr<CGameObject>				m_skyBox;
+
+private:
+	std::deque<network::CPacket>		m_requestQueue;
+	std::atomic_int32_t					m_requestQueueSize;
 };
 

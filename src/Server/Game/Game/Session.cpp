@@ -138,6 +138,8 @@ namespace game
 		packet.Write<int32_t>(obj->GetAniIndex());
 		packet.Write<float>(obj->GetAniFrame());
 
+		packet.Write<server::FBX_TYPE>(obj->GetFBXType());
+
 		Send(packet);
 	}
 

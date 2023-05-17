@@ -34,7 +34,7 @@ namespace network
 		DECLARE_SINGLE(NetworkManager);
 
 	public:
-		void Init();
+		void Init(const std::wstring& serverAddr);
 		void RegisterObject(OBJECT_TYPE type, std::shared_ptr<CGameObject> object);
 		void RegisterObject(OBJECT_TYPE type, NetworkGameObject object);
 
@@ -49,6 +49,8 @@ namespace network
 		void SendKeyInputPacket();
 		void SendLogoutPacket();
 		void SendIDIssueRequest();
+
+		void AddRemoteObject(int32_t id, NetworkGameObject& object);
 
 		constexpr int32_t GetID() const { return m_id; }
 
@@ -82,6 +84,7 @@ namespace network
 		HANDLE m_iocp;
 		SOCKET m_socket;
 		int32_t m_serverKey;
+		std::wstring m_serverAddr;
 
 		std::thread m_networkThread;
 

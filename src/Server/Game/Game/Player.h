@@ -20,8 +20,10 @@ public:
 	constexpr int32_t GetPlayerID() const { return m_playerID; }
 	constexpr int32_t GetAniIndex() const { return m_aniIndex; }
 	constexpr float GetAniFrame() const { return m_aniFrame; }
+	constexpr server::FBX_TYPE GetFBXType() const { return m_fbxType; }
 
 	void SetAniInfo(int32_t aniIndex, float aniFrame);
+	void SetFBXType(server::FBX_TYPE fbxType);
 
 public:
 	float GetControllerMoveSpeed();
@@ -38,4 +40,6 @@ public:
 
 	int32_t m_aniIndex;
 	float m_aniFrame;
+
+	server::FBX_TYPE m_fbxType;
 };

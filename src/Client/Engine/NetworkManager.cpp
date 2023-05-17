@@ -17,7 +17,7 @@
 namespace network
 {
 #pragma region [PUBLIC]
-	void NetworkManager::Init()
+	void NetworkManager::Init(const std::wstring& serverAddr)
 	{
 		m_iocp = INVALID_HANDLE_VALUE;
 		m_socket = INVALID_SOCKET;
@@ -26,6 +26,7 @@ namespace network
 		m_remainSize = 0;
 		m_id = 0;
 		m_login = false;
+		m_serverAddr = serverAddr;
 
 		Connect();
 	}
@@ -84,7 +85,7 @@ namespace network
 
 		serverAddr.sin_family = AF_INET;
 		serverAddr.sin_port = htons(GAME_SERVER_PORT);
-		InetPton(AF_INET, L"127.0.0.1", &serverAddr.sin_addr);
+		InetPton(AF_INET, m_serverAddr.c_str(), &serverAddr.sin_addr);
 
 		CreateIoCompletionPort(reinterpret_cast<HANDLE>(m_socket), m_iocp, m_serverKey, 0);
 
@@ -196,9 +197,12 @@ namespace network
 			CPacket packet;
 			packet.WriteProtocol(ProtocolID::MY_ISSUE_PLAYER_ID_REQ);
 			Send(packet);
-
-			std::cout << "send\n";
 		}
+	}
+
+	void NetworkManager::AddRemoteObject(int32_t id, NetworkGameObject& object)
+	{
+		m_objects[id] = object;
 	}
 #pragma endregion
 
@@ -433,7 +437,7 @@ namespace network
 			{
 				int32_t id{ m_packet.ReadID() };
 
-				std::list<NetworkComponent>::iterator iter;
+				/*std::list<NetworkComponent>::iterator iter;
 				for (iter = m_unregisterdObjects.begin(); iter != m_unregisterdObjects.end(); ++iter)
 				{
 					if (iter->type == OBJECT_TYPE::REMOTE_PLAYER)
@@ -452,17 +456,26 @@ namespace network
 					m_unregisterdObjects.erase(iter);
 
 					std::cout << std::format("Remote id is {}\n", id);
+				}*/
+			}
+			break;
+			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
+			{
+				int32_t id{ m_packet.ReadID() };
+
+				if (id == m_id)
+				{
+					for (auto& obj : m_objects[id])
+					{
+						obj->GetNetwork()->InsertPackets(m_packet);
+					}
+				}
+				else
+				{
+					GET_SCENE->PushServerRequest(m_packet);
 				}
 			}
 			break;
-			/*case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
-			{
-				int32_t id{ m_packet.ReadID() };
-				AddPlayer(id);
-
-				std::cout << "ADD REMOTE[" << id << "]" << std::endl << std::endl;
-			}
-			break;*/
 			case ProtocolID::WR_REMOVE_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
@@ -552,8 +565,6 @@ namespace network
 		scale.x = m_packet.Read<float>();
 		scale.y = m_packet.Read<float>();
 		scale.z = m_packet.Read<float>();
-
-		server::SCRIPT_TYPE scriptType{ m_packet.Read<server::SCRIPT_TYPE>() };
 
 		int32_t aniIndex{ m_packet.Read<int32_t>() };
 		float aniFrame{ m_packet.Read<float>() };

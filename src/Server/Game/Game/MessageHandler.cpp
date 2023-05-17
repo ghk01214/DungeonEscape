@@ -230,7 +230,7 @@ namespace game
 				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 				{
 					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 100.f, 150.f, msg.playerID * 50.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };					player->SetName(L"Mistic");
-
+					player->SetFBXType(server::FBX_TYPE::MISTIC);
 					//Login(msg.playerID, player);
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
