@@ -6,3 +6,8 @@ Component::Component(GameObject* ownerGameObject, Component* ownerComponent)
 	: m_ownerGameObject(ownerGameObject), m_ownerComponent(ownerComponent)
 {
 }
+
+GameObject* Component::GetOwnerObject()
+{
+	return m_ownerGameObject;
+}

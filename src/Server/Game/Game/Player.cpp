@@ -20,7 +20,7 @@ Player::~Player()
 
 void Player::Init()
 {
-	m_controller = AddComponent<CustomController>(L"CustomController");
+	m_controller = AddComponent<CustomController>(L"CustomController", true);
 
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);

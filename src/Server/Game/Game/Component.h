@@ -29,6 +29,7 @@ public:
 public:
 	virtual void Init() = 0;
 	virtual void Release() = 0;
+	GameObject* GetOwnerObject();
 
 public:
 	template<typename T, typename... Args>

@@ -2,6 +2,7 @@
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
+#include "Monster.h"
 #include "MapObject.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
@@ -28,9 +29,12 @@ void TestLevel::Init()
 	auto objmgr = ObjectManager::GetInstance();
 	objmgr->AddLayer(L"Layer_Map");
 	objmgr->AddLayer(L"Layer_Player");
+	objmgr->AddLayer(L"Layer_Monster");
 	objmgr->AddLayer(L"Layer_Map2");
 
+
 	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(150, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", 3, Vec3(-170, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 
 #pragma region Sphere
 	//auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(5, 10, 5), Quat(0, 0, 0, 1), Vec3(2,2,2));
@@ -134,13 +138,31 @@ void TestLevel::Init()
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
+	
+	//* mesh 삭제 디버그로 테스트해야한다.
+	//if (GetAsyncKeyState('P') & 0x8000)
+	//{
+	//	auto objMgr = ObjectManager::GetInstance();
+	//	auto map2 = objMgr->GetLayer(L"Layer_Map2")->GetGameObjects();
+	//	for (auto& p : map2)
+	//		p->SetRemoveReserved();
+	//}
 
+	
+	static int testValue = 0;
 	if (GetAsyncKeyState('P') & 0x8000)
 	{
-		auto objMgr = ObjectManager::GetInstance();
-		auto map2 = objMgr->GetLayer(L"Layer_Map2")->GetGameObjects();
-		for (auto& p : map2)
-			p->SetRemoveReserved();
+		if (testValue % 100 == 0)
+		{
+			auto objMgr = ObjectManager::GetInstance();
+			auto monsters = objMgr->GetLayer(L"Layer_Monster")->GetGameObjects();
+			for (auto& m : monsters)
+			{
+				auto testMonster = dynamic_cast<Monster*>(m);
+				testMonster->MonsterPattern_GroundHit();
+			}
+		}
+		testValue += 1;
 	}
 }
 

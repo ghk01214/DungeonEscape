@@ -4,6 +4,7 @@
 
 class RigidBody;
 class CapsuleCollider;
+class Collider;
 
 class CustomController : public Component
 {
@@ -17,7 +18,7 @@ class CustomController : public Component
 		MAX
 	};
 public:
-	CustomController(GameObject* ownerGameObject, Component* ownerComponent);
+	CustomController(GameObject* ownerGameObject, Component* ownerComponent, bool player);
 	~CustomController();
 public:
 	void Init() override;
@@ -28,8 +29,11 @@ public:
 	bool CheckOnGround(CollisionInfoType type, physx::PxVec3& surfaceNormal);
 	void GetSlidingVector(CollisionInfoType type);
 	bool CheckOnGround_Raycast();
-	void DirectionInput();
-	void Movement();
+	Collider* GetColliderBelow();		
+	void DirectionInput_Player();
+	void DirectionInput_Monster();
+	void Movement_Player();
+	void Movement_Monster();
 
 public:
 	void ClearControllerCollisionInfo();
@@ -46,6 +50,9 @@ public:
 	float GetJumpSpeed();
 
 public:
+	void BounceFromAttack();	//호출시키지 않으면 공격넉백 적용이 불가능하다
+
+public:
 	RigidBody* GetBody();
 	CapsuleCollider* GetCollider();
 
@@ -57,6 +64,8 @@ private:
 	float	m_degreeThreshold = 49.9f;
 	float	m_moveSpeed = 300.f;
 	float	m_jumpSpeed = 70.f;
+
+	bool	m_BounceFromAttack = false;
 private:
 	RigidBody*			m_body = nullptr;
 	CapsuleCollider* m_collider = nullptr;
@@ -69,7 +78,7 @@ private:
 	bool			m_keyboardDown = false;
 	bool			m_keyboardSpace = false;
 #pragma endregion
-
+	bool m_isPlayer = false;
 	physx::PxVec3	m_cameraLook;
 };
 

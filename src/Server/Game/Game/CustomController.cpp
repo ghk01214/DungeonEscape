@@ -12,8 +12,8 @@
 
 using namespace physx;
 
-CustomController::CustomController(GameObject* ownerGameObject, Component* ownerComponent)
-	: Component(ownerGameObject, ownerComponent)
+CustomController::CustomController(GameObject* ownerGameObject, Component* ownerComponent, bool player)
+	: Component(ownerGameObject, ownerComponent), m_isPlayer(player)
 {
 }
 
@@ -63,8 +63,20 @@ void CustomController::Move()
 {
 	if (!m_ownerGameObject->AccessAuthorized())
 		return;
-	DirectionInput();
-	Movement();
+
+	m_body->SetRigidBodySleep(false);
+
+	if (m_isPlayer)
+	{
+		DirectionInput_Player();
+		Movement_Player();
+	}
+	else
+	{
+		DirectionInput_Monster();
+		Movement_Monster();
+	}
+
 }
 
 bool CustomController::CheckOnGround(CollisionInfoType type, PxVec3& surfaceNormal)
@@ -92,9 +104,17 @@ bool CustomController::CheckOnGround(CollisionInfoType type, PxVec3& surfaceNorm
 				float angleDegrees = angleRadians * (180.0f / PxPi);
 				if (angleDegrees < m_degreeThreshold)
 				{
-					//floor, slopes
-					surfaceNormal = normal;
-					m_onGround = true;
+					if (type == CollisionInfoType::Stay)
+					{
+						//floor, slopes
+						surfaceNormal = normal;
+						m_onGround = true;
+					}
+
+					if (type == CollisionInfoType::Enter)
+					{
+						m_BounceFromAttack = false;			//땅에 착지했으니 수평 SetVelocity를 다시 활성화 가능한 상태로 
+					}
 					return true;
 				}
 				else
@@ -182,7 +202,33 @@ bool CustomController::CheckOnGround_Raycast()
 	return false;
 }
 
-void CustomController::DirectionInput()
+Collider* CustomController::GetColliderBelow()
+{
+	//Raycast를 통해 아래에 있는 콜라이더의 정보를 불러온다
+	//실패 시 nullptr 반환
+
+	auto device = PhysDevice::GetInstance();
+	auto query = device->GetQuery();
+
+	RaycastHit hit;
+	PhysicsRay ray;
+	ray.direction = PxVec3(0.f, -1.f, 0.f);
+	ray.distance = 0.21f;			//45degree-raycast distance : 0.2
+	ray.point = m_body->GetPosition()
+		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight()), 0.f);
+
+	if (query->Raycast(hit, ray, 1 << (uint8_t)PhysicsLayers::Map, PhysicsQueryType::Collider, m_body))
+	{
+		return hit.collider;
+	}
+
+	else
+	{
+		return nullptr;
+	}
+}
+
+void CustomController::DirectionInput_Player()
 {
 	bool serverConnected = false;
 
@@ -217,15 +263,37 @@ void CustomController::DirectionInput()
 			m_moveDirection.x = 1.f;
 
 		if (GetAsyncKeyState(VK_UP) & 0x8000)
-			m_moveDirection.z = -1.f;
-		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 			m_moveDirection.z = 1.f;
+		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+			m_moveDirection.z = -1.f;
 
 		m_moveDirection.normalize();
 	}
 }
 
-void CustomController::Movement()
+void CustomController::DirectionInput_Monster()
+{
+	m_moveDirection = PxVec3(0.f, 0.f, 0.f);
+
+	//PxVec3 targetDirection = target - m_body->GetPosition()
+	PxVec3 up = PxVec3(0.f, 1.f, 0.f);
+	PxVec3 right = up.cross(m_cameraLook);
+
+	//if (m_keyboardLeft)
+	//	m_moveDirection -= right;
+	//else if (m_keyboardRight)
+	//	m_moveDirection += right;
+
+	//if (m_keyboardUp)
+	//	m_moveDirection += targetDirection;
+	//else if (m_keyboardDown)
+	//	m_moveDirection -= targetDirection;
+
+	m_moveDirection.normalize();
+
+}
+
+void CustomController::Movement_Player()
 {
 	if (m_body->isKinematic())
 		return;
@@ -234,10 +302,14 @@ void CustomController::Movement()
 
 	GetSlidingVector(CollisionInfoType::Stay);
 	PxVec3 surfaceNormal{ 0.f };
+
+	PxVec3 GarbageValue{ 0.f };
+
+	CheckOnGround(CollisionInfoType::Enter, surfaceNormal);
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
-	if (m_keyboardSpace && m_onGround)
+	if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
+	//if (m_keyboardSpace && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
@@ -266,6 +338,73 @@ void CustomController::Movement()
 	{
 		m_slidingVector *= m_moveSpeed;
 		m_slidingVector.y = m_body->GetVelocity().y;
+		if (!m_BounceFromAttack)
+		{	//에어본 공격 당하면 해당 코드 진입 막음
+			m_body->SetVelocity(m_slidingVector);	// * movespeed?
+		}
+		else
+		{
+		}
+	}
+	else
+	{
+		m_moveDirection *= m_moveSpeed;
+		m_moveDirection.y = m_body->GetVelocity().y;
+		if (!m_BounceFromAttack)
+		{	//에어본 공격 당하면 해당 코드 진입 막음
+			m_body->SetVelocity(m_moveDirection);
+		}
+		else
+		{
+		}
+	}
+
+	m_slidingVector = PxVec3(0.f);
+	m_moveDirection = PxVec3(0.f);
+	KeyboardClear();
+}
+
+void CustomController::Movement_Monster()
+{
+	if (m_body->isKinematic())
+		return;
+
+	//check onGround
+
+	GetSlidingVector(CollisionInfoType::Stay);
+	PxVec3 surfaceNormal{ 0.f };
+	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
+
+	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
+	if (m_keyboardSpace && m_onGround)
+	{
+		PxVec3 up{ 0.f, 1.f, 0.f };
+		m_body->GetPosition() += up * 0.05f;
+
+		//choice 1 : add velocity
+		PxVec3 velocity = m_body->GetVelocity();
+		velocity.y = m_jumpSpeed;
+		m_body->SetVelocity(velocity);
+
+#pragma region choice2 add force
+		//PxVec3 force = m_moveDirection * m_body->GetMass() * deltaTime * adjustmentValue;
+		//m_body->GetBody()->addForce(force, PxForceMode::eIMPULSE);
+#pragma endregion
+
+		m_onGround = false;
+	}
+
+	//friction adjustment
+	if (!m_onGround)
+		m_collider->SetFriction(0.f);
+	else
+		m_collider->SetFriction(1.f);
+
+	// Apply the adjusted vector to the character's velocity
+	if (m_slidingVector.magnitude() > 0)
+	{
+		m_slidingVector *= m_moveSpeed;
+		m_slidingVector.y = m_body->GetVelocity().y;
 		m_body->SetVelocity(m_slidingVector);	// * movespeed?
 	}
 	else
@@ -277,7 +416,6 @@ void CustomController::Movement()
 
 	m_slidingVector = PxVec3(0.f);
 	m_moveDirection = PxVec3(0.f);
-	KeyboardClear();
 }
 
 void CustomController::ClearControllerCollisionInfo()
@@ -433,6 +571,15 @@ void CustomController::SetJumpSpeed(float value)
 float CustomController::GetJumpSpeed()
 {
 	return m_moveSpeed;
+}
+
+void CustomController::BounceFromAttack()
+{
+	m_BounceFromAttack = true;
+	auto dynamic = m_body->GetBody();
+	auto curT = dynamic->getGlobalPose();
+	curT.p.y += 10.f;
+	dynamic->setGlobalPose(curT, true);
 }
 
 RigidBody* CustomController::GetBody()
