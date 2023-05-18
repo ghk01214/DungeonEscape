@@ -53,8 +53,6 @@ void Scene_Test::LateUpdate()
 	auto size{ scene->GetServerRequestQueueSize() };
 	auto queue{ scene->GetServerRequest() };
 
-	//std::cout << scene->GetPlayer().size() << std::endl;
-
 	for (int32_t i = 0; i < size; ++i)
 	{
 		if (queue.empty() == true)
@@ -311,8 +309,6 @@ void Scene_Test::CreatePlayer(void)
 	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::PLAYER);
 
 	scene->AddPlayer(gameObjects);
-
-	//std::cout << scene->GetPlayer().size() << std::endl;
 }
 
 void Scene_Test::CreateRemotePlayer(network::CPacket& packet)
@@ -370,8 +366,6 @@ void Scene_Test::CreateRemotePlayer(network::CPacket& packet)
 
 	scene->AddPlayer(gameObjects);
 	GET_NETWORK->AddNetworkObject(id, gameObjects);
-
-	//std::cout << scene->GetPlayer().size() << std::endl;
 }
 
 void Scene_Test::ChangeNetworkObjectID(network::CPacket& packet)

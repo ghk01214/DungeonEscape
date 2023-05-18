@@ -33,7 +33,7 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Map2");
 
 
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(150, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(150, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 	auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", 3, Vec3(-170, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 
 #pragma region Sphere
@@ -138,7 +138,7 @@ void TestLevel::Init()
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
-	
+
 	//* mesh 삭제 디버그로 테스트해야한다.
 	//if (GetAsyncKeyState('P') & 0x8000)
 	//{
@@ -148,7 +148,7 @@ void TestLevel::Update(double timeDelta)
 	//		p->SetRemoveReserved();
 	//}
 
-	
+
 	static int testValue = 0;
 	if (GetAsyncKeyState('P') & 0x8000)
 	{
