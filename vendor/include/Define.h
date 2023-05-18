@@ -48,6 +48,29 @@
 		MAX
 	};
 
+	enum class OBJECT_TYPE
+	{
+		NONE = 0,
+
+		PLAYER,
+		REMOTE_PLAYER,
+		FIREBALL,
+
+		MAX
+	};
+
+	enum class COLLIDER_TYPE
+	{
+		NONE = 0,
+
+		MESH,
+		BOX,
+		SPHERE,
+		CAPSULE,
+
+		MAX
+	};
+
 	enum class FBX_TYPE : uint8_t
 	{
 		NONE = 0,

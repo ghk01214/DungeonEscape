@@ -83,6 +83,16 @@ void GameObject::SetName(const std::wstring& name)
     m_name = name;
 }
 
+void GameObject::SetObjectType(server::OBJECT_TYPE objType)
+{
+    m_objType = objType;
+}
+
+void GameObject::SetFBXType(server::FBX_TYPE fbxType)
+{
+    m_fbxType = fbxType;
+}
+
 void GameObject::StartSendTransform()
 {
     m_startSendTransform = true;

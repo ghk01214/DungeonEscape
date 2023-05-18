@@ -10,6 +10,8 @@
 #include "GameObject.h"
 #include "Transform.h"
 
+#include "MessageHandler.h"
+
 using namespace physx;
 
 CustomController::CustomController(GameObject* ownerGameObject, Component* ownerComponent, bool player)
@@ -51,6 +53,8 @@ void CustomController::Init()
 	m_keyboardUp = false;
 	m_keyboardDown = false;
 	m_keyboardSpace = false;
+
+	m_startJump = false;
 }
 
 void CustomController::Release()
@@ -325,6 +329,7 @@ void CustomController::Movement_Player()
 		#pragma endregion
 
 		m_onGround = false;
+		m_startJump = true;
 	}
 
 	//friction adjustment
@@ -590,4 +595,20 @@ RigidBody* CustomController::GetBody()
 CapsuleCollider* CustomController::GetCollider()
 {
 	return m_collider;
+}
+
+bool CustomController::IsOnGround()
+{
+	return m_onGround;
+}
+
+bool CustomController::IsStartJump()
+{
+	if (m_startJump == true)
+	{
+		m_startJump = false;
+		return true;
+	}
+
+	return false;
 }

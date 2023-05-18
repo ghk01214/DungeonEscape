@@ -242,11 +242,11 @@ namespace game
 
 			//if (TimeManager::GetInstance()->Is1FrameInVar() == true)
 			//{
-				float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
-				m_gameInstance->Update(timeDelta);
-				m_gameInstance->LateUpdate(timeDelta);
-				//TimeManager::GetInstance()->ClearDeltaTimeInVar();
-			//}
+			float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
+			m_gameInstance->Update(timeDelta);
+			m_gameInstance->LateUpdate(timeDelta);
+			//TimeManager::GetInstance()->ClearDeltaTimeInVar();
+		//}
 		}
 	}
 
@@ -489,6 +489,42 @@ namespace game
 			break;
 			case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 			{
+				msg.fbxType = packet.Read<server::FBX_TYPE>();
+
+				InputCommandMessage(msg);
+			}
+			break;
+			case ProtocolID::MY_ADD_OBJ_REQ:
+			{
+				msg.tempObjectID = packet.ReadID();
+				msg.objType = packet.Read<server::OBJECT_TYPE>();
+				msg.fbxType = packet.Read<server::FBX_TYPE>();
+
+				InputCommandMessage(msg);
+			}
+			break;
+			case ProtocolID::MY_ADD_OBJ_COLLIDER_REQ:
+			{
+				msg.objID = packet.ReadID();
+
+				msg.colliderID = packet.Read<int32_t>();
+				msg.colliderType = packet.Read<server::COLLIDER_TYPE>();
+
+				msg.colliderPos.x = packet.Read<float>();
+				msg.colliderPos.y = packet.Read<float>();
+				msg.colliderPos.z = packet.Read<float>();
+
+				msg.colliderQuat.x = packet.Read<float>();
+				msg.colliderQuat.y = packet.Read<float>();
+				msg.colliderQuat.z = packet.Read<float>();
+				msg.colliderQuat.w = packet.Read<float>();
+
+				msg.colliderScale.x = packet.Read<float>();
+				msg.colliderScale.y = packet.Read<float>();
+				msg.colliderScale.z = packet.Read<float>();
+
+				msg.lastCollider = packet.Read<bool>();
+
 				InputCommandMessage(msg);
 			}
 			break;
@@ -503,6 +539,7 @@ namespace game
 			{
 				msg.aniIndex = packet.Read<int32_t>();
 				msg.aniFrame = packet.Read<float>();
+				msg.aniSpeed = packet.Read<float>();
 
 				InputCommandMessage(msg);
 			}
@@ -684,6 +721,11 @@ namespace game
 				}*/
 			}
 			break;
+			case ProtocolID::MY_ADD_OBJ_COLLIDER_ACK:
+			{
+				session->SendAddObjectColliderPacket(postOver->playerID, postOver->objID, postOver->colliderID, postOver->tempColliderID, postOver->lastCollider);
+			}
+			break;
 			case ProtocolID::MY_TRANSFORM_ACK:
 			{
 				for (auto& client : m_sessions)
@@ -746,24 +788,37 @@ namespace game
 			case ProtocolID::WR_ADD_OBJ_ACK:
 			{
 				GameObject* object{ nullptr };
-				int32_t objID{ postOver->objID };
 
 				for (auto& obj : mapObjects)
 				{
-					if (obj->GetID() != objID)
+					if (obj->GetID() != postOver->objID)
 						continue;
 
 					object = obj;
 					break;
 				}
 
+				session->SendObjectIDPacket(postOver->objID, postOver->tempObjectID);
+
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					client->SendAddObjPacket(objID, object);
+					if (client->GetID() == postOver->playerID)
+						continue;
+
+					client->SendAddObjPacket(postOver->objID, object);
 				}
+			}
+			break;
+			case ProtocolID::WR_ADD_OBJ_COLLIDER_ACK:
+			{
+				// TODO : 충돌체 정보 전송
+				// 오브젝트 id : write id
+				// 충돌체 id
+				// 충돌체 종류
+				// 충돌체 위치, 회전, 크기
 			}
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
@@ -800,6 +855,9 @@ namespace game
 				{
 					auto pl{ dynamic_cast<Player*>(player) };
 
+					/*if (pl->GetPlayerID() != postOver->playerID)
+						continue;*/
+
 					for (auto& client : m_sessions)
 					{
 						if (client->GetState() != STATE::INGAME)
@@ -808,11 +866,22 @@ namespace game
 						/*if (client->GetID() == postOver->playerID)
 							continue;*/
 
-						/*if (client->GetID() == pl->GetPlayerID())
-							continue;*/
-
 						client->SendAniIndexPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
 					}
+				}
+			}
+			break;
+			case ProtocolID::WR_JUMP_START_ACK:
+			{
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					if (client->GetID() == postOver->playerID)
+						continue;
+
+					client->SendJumpStartPacket(postOver->playerID);
 				}
 			}
 			break;
@@ -820,10 +889,6 @@ namespace game
 			default:
 			break;
 		}
-
-		//TIMER_EVENT ev{ std::chrono::steady_clock::now(), true };
-		//m_eventQueue.push(ev);
-		//MessageHandler::GetInstance()->PushEvent(ev);
 	}
 
 	void CServer::InputCommandMessage(Message msg)

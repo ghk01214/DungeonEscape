@@ -169,6 +169,11 @@ void Collider::SetMaterialFlag(PxMaterialFlag::Enum flag, bool value)
 	m_material->setFlag(flag, value);
 }
 
+void Collider::SetID(int32_t id)
+{
+	m_id = id;
+}
+
 void Collider::CollectCollisionInfo(CollisionInfoType type, std::shared_ptr<CollisionPairInfo> info)
 {
 	switch (type)

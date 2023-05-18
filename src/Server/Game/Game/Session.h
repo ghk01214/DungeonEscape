@@ -35,11 +35,13 @@ namespace game
 		void SendIDIssuePacket(GameObject* obj);
 		void SendAddAnimateObjPacket(int32_t id, Player* obj);
 		void SendAddObjPacket(int32_t id, GameObject* obj);
+		void SendObjectIDPacket(int32_t objID, int32_t oldObjID);
+		void SendAddObjectColliderPacket(int32_t id, int32_t objID, int32_t colliderID, int32_t tempColliderID, bool last);
 		void SendRemovePacket(int32_t id);
 		void SendTransformPacket(int32_t id, ProtocolID protocol, GameObject* obj);
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, Player* obj);
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, int32_t index, float frame);
-		void SendStatePacket(int32_t id, GameObject* obj, int32_t state);
+		void SendJumpStartPacket(int32_t id);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

@@ -77,6 +77,9 @@
     <ClInclude Include="MainPlayer.h">
       <Filter>소스 파일\Script\04. Player</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerRangeAttack.h">
+      <Filter>소스 파일\Script\04. Player\Script</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -115,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="MainPlayer.cpp">
       <Filter>소스 파일\Script\04. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerRangeAttack.cpp">
+      <Filter>소스 파일\Script\04. Player\Script</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

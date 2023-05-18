@@ -31,7 +31,7 @@ namespace network
 		Connect();
 	}
 
-	void NetworkManager::RegisterObject(OBJECT_TYPE type, std::shared_ptr<CGameObject> object)
+	void NetworkManager::RegisterObject(server::OBJECT_TYPE type, std::shared_ptr<CGameObject> object)
 	{
 		// 해당 오브젝트가 기존에 존재하는 오브젝트인지 검사
 		// 초기값인 -1이 아니라면 등록됬다는 뜻
@@ -47,7 +47,7 @@ namespace network
 		m_unregisterdObjects.push_back(component);
 	}
 
-	void NetworkManager::RegisterObject(OBJECT_TYPE type, NetworkGameObject object)
+	void NetworkManager::RegisterObject(server::OBJECT_TYPE type, NetworkGameObject object)
 	{
 		for (auto& obj : object)
 		{
@@ -170,7 +170,7 @@ namespace network
 		{
 			ProtocolID protocol{ ProtocolID::PROTOCOL_NONE };
 
-			if (component.type != OBJECT_TYPE::PLAYER)
+			if (component.type != server::OBJECT_TYPE::PLAYER)
 				continue;
 
 			/*switch (component.type)
@@ -200,9 +200,22 @@ namespace network
 		}
 	}
 
-	void NetworkManager::AddRemoteObject(int32_t id, NetworkGameObject& object)
+	void NetworkManager::AddNetworkObject(int32_t id, NetworkGameObject& object)
 	{
 		m_objects[id] = object;
+	}
+
+	void NetworkManager::ExchangeObjectID(int32_t oldID, int32_t newID)
+	{
+		auto obj{ m_objects.extract(oldID) };
+		obj.key() = newID;
+
+		m_objects.insert(std::move(obj));
+
+		for (auto& object : m_objects[newID])
+		{
+			object->GetNetwork()->SetID(newID);
+		}
 	}
 #pragma endregion
 
@@ -395,7 +408,7 @@ namespace network
 				std::list<NetworkComponent>::iterator iter;
 				for (iter = m_unregisterdObjects.begin(); iter != m_unregisterdObjects.end(); ++iter)
 				{
-					if (iter->type == OBJECT_TYPE::PLAYER)
+					if (iter->type == server::OBJECT_TYPE::PLAYER)
 						break;
 				}
 
@@ -414,10 +427,12 @@ namespace network
 				}
 			}
 			break;
-			/*case ProtocolID::MY_TRANSFORM_ACK:
+			case ProtocolID::MY_ADD_OBJ_ACK:
+			case ProtocolID::MY_ADD_OBJ_COLLIDER_ACK:
 			{
+				GET_SCENE->PushServerRequest(m_packet);
 			}
-			break;*/
+			break;
 			default:
 			{
 				for (auto& obj : m_objects[m_id])
@@ -586,7 +601,7 @@ namespace network
 
 		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
 		std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
-		std::shared_ptr<CNetwork> networkComponent{ std::make_shared<CNetwork>(OBJECT_TYPE::PLAYER, id) };
+		std::shared_ptr<CNetwork> networkComponent{ std::make_shared<CNetwork>(server::OBJECT_TYPE::PLAYER, id) };
 
 		for (auto& gameObject : gameObjects)
 		{

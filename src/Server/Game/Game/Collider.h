@@ -55,6 +55,7 @@ public:
 	PhysicsCombineMode GetRestitutionCombineMode() const;
 	void SetRestitutionCombineMode(PhysicsCombineMode value);
 	void SetMaterialFlag(physx::PxMaterialFlag::Enum, bool value);
+	void SetID(int32_t id);
 
 public:
 	void CollectCollisionInfo(CollisionInfoType type, std::shared_ptr<CollisionPairInfo> info);
@@ -69,6 +70,8 @@ protected:
 	bool m_isTrigger = false;
 	uint8_t m_layerIndex = 0;
 	uint32_t m_ignoreLayerBits = 0x00000000;
+
+	int32_t m_id;
 
 public:
 	std::vector<std::shared_ptr<CollisionPairInfo>> m_CollisionEnter;

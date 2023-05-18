@@ -16,14 +16,29 @@ public:
 	void SetBones(const vector<BoneInfo>* bones) { m_bones = bones; }
 	void SetAnimClip(const vector<AnimClipInfo>* animClips);
 	void SetPlayInstance(bool playInstance) { m_playInstance = playInstance; }
+	void SetAnimFrame(int32_t frame, int32_t nextFrame);
+	void SetAniSpeed(float speed) { m_aniSpeed = speed; }
 	void PushData();
 
 	int32 GetAnimCount() { return static_cast<uint32>(m_animClips->size()); }
 	int32 GetCurrentClipIndex() { return m_clipIndex; }
 	bool GetPlayInstance() { return m_playInstance; }
 	float GetUpdateTime() { return m_updateTime; }
-	void Play(uint32 idx);
-	void Play(uint32 idx, float updateTime);
+	float GetAnimSpeed() { return m_aniSpeed; }
+	int32_t GetAnimFrame() { return m_frame; }
+	AnimClipInfo GetAniClipInfo(int32_t index) { return m_animClips->at(index); }
+	int32_t GetFramePerSecond() { return m_framePerSecond; }
+
+	void Play(uint32 idx, float speed = 1.f);
+	void PlayFrame(uint32 idx, float updateTime, float speed = 1.f);
+	void PlayAndSend(uint32 idx, float updateTime, float speed = 1.f);
+
+	void CalculateUpdateTime();
+	void PlayNextFrame();
+	void RepeatPlay();
+
+	bool IsAnimationEnd();
+	bool IsAnimationOverFrame(float updateTime);
 
 public:
 	virtual void FinalUpdate() override;
@@ -43,4 +58,8 @@ private:
 	bool							m_boneFinalUpdated = false;
 
 	bool							m_playInstance = false;
+
+	AnimClipInfo					m_aniClipInfo;
+	float							m_aniSpeed;
+	int32_t							m_framePerSecond;
 };

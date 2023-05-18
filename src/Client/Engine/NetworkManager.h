@@ -9,23 +9,12 @@ namespace network
 {
 	using NetworkGameObject = std::vector<std::shared_ptr<CGameObject>>;
 
-	enum class OBJECT_TYPE
-	{
-		NONE = 0,
-
-		PLAYER,
-		REMOTE_PLAYER,
-		OBJECT,
-
-		MAX
-	};
-
 	struct NetworkComponent
 	{
-		OBJECT_TYPE type;
+		server::OBJECT_TYPE type;
 		NetworkGameObject object;
 
-		NetworkComponent(OBJECT_TYPE type, NetworkGameObject object) :
+		NetworkComponent(server::OBJECT_TYPE type, NetworkGameObject object) :
 			type{ type }, object{ object } {}
 	};
 
@@ -35,8 +24,8 @@ namespace network
 
 	public:
 		void Init(const std::wstring& serverAddr);
-		void RegisterObject(OBJECT_TYPE type, std::shared_ptr<CGameObject> object);
-		void RegisterObject(OBJECT_TYPE type, NetworkGameObject object);
+		void RegisterObject(server::OBJECT_TYPE type, std::shared_ptr<CGameObject> object);
+		void RegisterObject(server::OBJECT_TYPE type, NetworkGameObject object);
 
 		void Connect();
 		void EndThreadProcess();
@@ -50,9 +39,11 @@ namespace network
 		void SendLogoutPacket();
 		void SendIDIssueRequest();
 
-		void AddRemoteObject(int32_t id, NetworkGameObject& object);
+		void AddNetworkObject(int32_t id, NetworkGameObject& object);
+		void ExchangeObjectID(int32_t oldID, int32_t newID);
 
 		constexpr int32_t GetID() const { return m_id; }
+		NetworkGameObject GetNetworkObject(int32_t id) const { return m_objects.at(id); }
 
 		constexpr bool IsSuccessfullyLoggedIn() const { return m_login; }
 	private:

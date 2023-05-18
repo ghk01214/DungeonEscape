@@ -19,33 +19,69 @@
 
 void Player_Mistic::Start()
 {
-	if (GetNetwork()->IsMyPlayer())
-		GetNetwork()->SendAddPlayer();
+	m_prevState = IDLE_A;
+	m_currState = IDLE_A;
+
+	if (GetNetwork()->IsMyPlayer() == false)
+		return;
+
+	GetNetwork()->SendAddPlayer(server::FBX_TYPE::MISTIC);
 }
 
 void Player_Mistic::Update(void)
 {
-	if (GetNetwork()->IsMyPlayer())
+	if (GetNetwork()->IsMyPlayer() == false)
+		return;
+
+	switch (m_currState)
 	{
-		int32 count = GetAnimator()->GetAnimCount();
-		int32 currentIndex = GetAnimator()->GetCurrentClipIndex();
-		int32 index = 0;
-
-		if (INPUT->GetButtonDown(KEY_TYPE::KEY_1))
+		case JUMP_START:
+		case JUMPING:
+		case JUMP_END:
+		break;
+		default:
 		{
-			index = (currentIndex + 1) % count;
+			if (INPUT->GetButtonDown(KEY_TYPE::W) == true
+				or INPUT->GetButton(KEY_TYPE::W) == true
+				or INPUT->GetButtonDown(KEY_TYPE::A) == true
+				or INPUT->GetButton(KEY_TYPE::A) == true
+				or INPUT->GetButtonDown(KEY_TYPE::S) == true
+				or INPUT->GetButton(KEY_TYPE::S) == true
+				or INPUT->GetButtonDown(KEY_TYPE::D) == true
+				or INPUT->GetButton(KEY_TYPE::D) == true)
+			{
+				m_currState = MOVE;
+			}
+			else if (INPUT->GetButtonUp(KEY_TYPE::W) == true
+				or INPUT->GetButtonUp(KEY_TYPE::A) == true
+				or INPUT->GetButtonUp(KEY_TYPE::S) == true
+				or INPUT->GetButtonUp(KEY_TYPE::D) == true)
+			{
+				m_currState = IDLE_A;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::SPACE) == true)
+			{
+				m_currState = JUMP_START;
+			}
 
-			//GetNetwork()->SendAniIndexPacket(index);
-			GetAnimator()->Play(index);
+			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_1) == true)
+			{
+				m_currState = ATK0;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_2) == true)
+			{
+				m_currState = ATK1;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_3) == true)
+			{
+				m_currState = ATK2;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_4) == true)
+			{
+				m_currState = ATK3;
+			}
 		}
-
-		if (INPUT->GetButtonDown(KEY_TYPE::KEY_2))
-		{
-			index = (currentIndex - 1 + count) % count;
-
-			//GetNetwork()->SendAniIndexPacket(index);
-			GetAnimator()->Play(index);
-		}
+		break;
 	}
 }
 
@@ -54,7 +90,273 @@ void Player_Mistic::LateUpdate()
 	// 카메라가 바라보고 있는 방향으로 플레이어를 움직임.
 	MovePlayerCameraLook();
 
+	CheckState();
+	UpdateFrameRepeat();
+	UpdateFrameOnce();
+
 	ParsePackets();
+}
+
+void Player_Mistic::CheckState()
+{
+	if (m_prevState == m_currState)
+		return;
+
+	switch (m_currState)
+	{
+		case AERT:
+		{
+
+		}
+		break;
+		case ATK0:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case ATK1:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case ATK2:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case ATK3:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case ATK4:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case BLOCK:
+		{
+
+		}
+		break;
+		case DAMAGE:
+		{
+
+		}
+		break;
+		case DEATH:
+		{
+
+		}
+		break;
+		case DIE0:
+		{
+
+		}
+		break;
+		case DIE1:
+		{
+
+		}
+		break;
+		case DIE2:
+		{
+
+		}
+		break;
+		case IDLE_A:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case IDLE_B:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case IDLE_C:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case JUMP_START:
+		{
+			// 물리 시뮬레이터의 점프 속도가 클라이언트에서 재생되는 점프 속도보다 빨라서
+			// 점프 애니메이션의 속도를 2배로 조정
+			// 점프 애니메이션의 길이 : 1.16
+			GetAnimator()->Play(m_currState, 2.f);
+		}
+		break;
+		case JUMPING:
+		{
+			auto ani{ GetAnimator() };
+			auto updateTime{ 16.f / ani->GetFramePerSecond() };
+
+			ani->PlayFrame(JUMP_START, updateTime, 0.f);
+		}
+		break;
+		case JUMP_END:
+		{
+			GetAnimator()->PlayFrame(JUMP_START, GetAnimator()->GetUpdateTime(), 2.f);
+		}
+		break;
+		case MOVE:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case REST:
+		{
+
+		}
+		break;
+		case RUN:
+		{
+
+		}
+		break;
+		case SHOOT:
+		{
+
+		}
+		break;
+		case SLEEP:
+		{
+
+		}
+		break;
+		case SWOON:
+		{
+
+		}
+		break;
+		case TIRED:
+		{
+
+		}
+		break;
+		case VICTORY_A:
+		{
+
+		}
+		break;
+		case VICTORY_B:
+		{
+
+		}
+		break;
+		/*case WALK:
+		{
+
+		}
+		break;*/
+		default:
+		break;
+	}
+
+	m_prevState = m_currState;
+}
+
+void Player_Mistic::UpdateFrameRepeat()
+{
+	switch (m_currState)
+	{
+		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
+		case DAMAGE: case DIE0: case DIE1: case DIE2:
+		case JUMP_START: case JUMPING: case JUMP_END:
+		case SHOOT: case SLEEP: case SWOON: case TIRED:
+		return;
+		default:
+		break;
+	}
+
+	auto anim{ GetAnimator() };
+
+	GetAnimator()->RepeatPlay();
+}
+
+void Player_Mistic::UpdateFrameOnce()
+{
+	switch (m_currState)
+	{
+		case IDLE_A: case IDLE_B: case IDLE_C:
+		case MOVE: case MOVE_L: case MOVE_R:
+		case RUN: case RUN_L: case RUN_R:
+		case WALK: case WALK_L: case WALK_R:
+		case VICTORY_A: case VICTORY_B:
+		return;
+		default:
+		break;
+	}
+
+	auto anim{ GetAnimator() };
+
+	anim->CalculateUpdateTime();
+
+	if (anim->IsAnimationEnd() == true)
+	{
+		switch (m_currState)
+		{
+			case ATK0:
+			case ATK1:
+			case ATK2:
+			case ATK3:
+			case ATK4:
+			{
+				m_currState = IDLE_A;
+			}
+			break;
+			case DAMAGE:
+			{
+				m_currState = IDLE_A;
+			}
+			break;
+			case DIE0:
+			case DIE1:
+			case DIE2:
+			{
+				m_currState = DEATH;
+			}
+			break;
+			case JUMP_END:
+			{
+				m_currState = IDLE_A;
+			}
+			break;
+			case SHOOT:
+			{
+				m_currState = IDLE_A;
+			}
+			break;
+			case SLEEP:
+			{
+				m_currState = IDLE_A;
+			}
+			break;
+			case SWOON:
+			{
+				m_currState = IDLE_A;
+			}
+			break;
+			case TIRED:
+			{
+				m_currState = IDLE_A;
+			}
+			break;
+		}
+	}
+
+	anim->PlayNextFrame();
+
+	if (m_currState == JUMP_START)
+	{
+		if (anim->GetAnimFrame() == 16)
+		{
+			m_currState = JUMPING;
+		}
+	}
+
+	//std::cout << magic_enum::enum_name(m_currState) << ", " << GetAnimator()->GetAnimFrame() << std::endl;
 }
 
 float Player_Mistic::GetAngleBetweenVector(const XMVECTOR& vector1, const XMVECTOR& vector2)
@@ -87,6 +389,27 @@ void Player_Mistic::TurnPlayer(Vec3 from, Vec3 to)
 		// 반시계방향
 		GetTransform()->TurnAxisY(false);
 	}
+}
+
+void Player_Mistic::RangeAttack()
+{
+	// 오브젝트 생성 로직
+	// 임시 랜덤 id 발급(추후 서버 발급 id로 변경 예정)
+	// std::uniform_int_distribution<int32_t> uidObj{ 100000, 999999 };
+	// std::uniform_int_distribution<int32_t> uidCollider{ 1000000, 9999999 };
+	// int32_t tempObjID{ uidObj(dre) };
+	// int32_t tempColliderID{ uidCollider(dre) };
+	//
+	// TODO : 오브젝트 생성
+	//
+	// for (auto& obj : object)
+	// {
+	//		obj->GetNetwork()->SendAddObject(tempObjID, server::OBJECT_TYPE::FIREBALL);
+	// }
+	//
+	// TODO : 충돌체 추가 및 서버 전송
+	//
+	// GET_NETWORK->AddNetworkObject(tempObjID, object);
 }
 
 void Player_Mistic::MovePlayerCameraLook(void)
@@ -162,6 +485,8 @@ void Player_Mistic::ParsePackets()
 
 		auto packet{ packets.front() };
 
+		//std::cout << packet.ReadID() << ", " << magic_enum::enum_name(packet.ReadProtocol()) << ", " << magic_enum::enum_integer(packet.ReadProtocol()) << "\n";
+
 		switch (packet.ReadProtocol())
 		{
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
@@ -179,9 +504,17 @@ void Player_Mistic::ParsePackets()
 				ChangeAnimation(packet);
 			}
 			break;
+			case ProtocolID::WR_JUMP_START_ACK:
+			{
+				m_currState = JUMP_START;
+			}
+			break;
+
 			default:
 			break;
 		}
+
+		packets.pop_front();
 	}
 }
 
@@ -245,18 +578,63 @@ void Player_Mistic::Transform(network::CPacket& packet)
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
 
+	bool onGround{ packet.Read<bool>() };
+
+	if (onGround == true)
+	{
+		if (m_currState == JUMPING)
+		{
+			m_currState = JUMP_END;
+		}
+	}
+	else
+	{
+		switch (m_currState)
+		{
+			case IDLE_A:
+			case IDLE_B:
+			case IDLE_C:
+			//case MOVE:
+			//case MOVE_L:
+			//case MOVE_R:
+			{
+				m_currState = JUMPING;
+			}
+			break;
+		}
+	}
+
 	GetTransform()->SetWorldVec3Position(pos);
 	auto mat{ Matrix::CreateTranslation(pos) };
 	GetTransform()->SetWorldMatrix(mat);
 
 	//auto t{ GetTransform()->GetWorldPosition() };
-	//std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
+	//if (GET_NETWORK->GetID() != id)
+	//	std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
 }
 
 void Player_Mistic::ChangeAnimation(network::CPacket& packet)
 {
 	int32_t index{ packet.Read<int32_t>() };
 	float frame{ packet.Read<float>() };
+	float speed{ packet.Read<float>() };
 
-	GetAnimator()->Play(index, frame);
+	m_currState = magic_enum::enum_cast<PLAYER_STATE>(index).value();
+	m_prevState = m_currState;
+
+	GetAnimator()->PlayFrame(index, frame, speed);
+}
+
+void Player_Mistic::AddColliderToObject(network::CPacket& packet)
+{
+	int32_t objID{ packet.Read<int32_t>() };
+	int32_t colliderID{ packet.Read<int32_t>() };
+	int32_t tempColliderID{ packet.Read<int32_t>() };
+
+	// 충돌체 추가
+	/*for (auto& obj : m_collisionObjects[objID])
+	{
+		m_tempColliderCont[tempColliderID].id = colliderID;
+		obj->SetCollider(colliderID, m_tempColliderCont[tempColliderID]);
+	}*/
 }

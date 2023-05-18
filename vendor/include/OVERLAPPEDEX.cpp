@@ -1,5 +1,6 @@
 ﻿#include "Packet.h"
 #include <WS2tcpip.h>
+#include <Define.h>
 #include "OVERLAPPEDEX.h"
 #include <protocol.hpp>
 

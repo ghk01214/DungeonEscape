@@ -9,8 +9,9 @@
 Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
 	m_playerID{ playerID },
-	m_aniIndex{ 0 },
-	m_aniFrame{ 0.f }
+	m_aniIndex{ 12 },
+	m_aniFrame{ 0.f },
+	m_aniSpeed{ 1.f }
 {
 }
 
@@ -34,6 +35,12 @@ void Player::Update(double timeDelta)
 	{
 		game::Message msg{ m_playerID, ProtocolID::WR_TRANSFORM_ACK };
 		game::MessageHandler::GetInstance()->PushTransformMessage(msg);
+
+		if (m_controller->IsStartJump() == true)
+		{
+			msg.msgProtocol = ProtocolID::WR_JUMP_START_ACK;
+			game::MessageHandler::GetInstance()->PushSendMessage(msg);
+		}
 
 		//auto p{ GetTransform()->GetPosition() };
 		//std::cout << m_playerID << " : " << p.x << ", " << p.y << ", " << p.z << "\n";
@@ -60,15 +67,16 @@ void Player::Release()
 	GameObject::Release();
 }
 
-void Player::SetAniInfo(int32_t aniIndex, float aniFrame)
+bool Player::IsOnGound()
+{
+	return m_controller->IsOnGround();
+}
+
+void Player::SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed)
 {
 	m_aniIndex = aniIndex;
 	m_aniFrame = aniFrame;
-}
-
-void Player::SetFBXType(server::FBX_TYPE fbxType)
-{
-	m_fbxType = fbxType;
+	m_aniSpeed = aniSpeed;
 }
 
 void Player::SetControllerMoveSpeed(float value)
@@ -89,6 +97,11 @@ void Player::SetControllerJumpSpeed(float value)
 float Player::GetControllerJumpSpeed()
 {
 	return m_controller->GetJumpSpeed();
+}
+
+CustomController* Player::GetController()
+{
+	return m_controller;
 }
 
 void Player::SetControllerCameraLook(Vec3& value)
