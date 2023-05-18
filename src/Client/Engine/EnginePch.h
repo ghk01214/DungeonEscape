@@ -15,6 +15,7 @@
 #include <map>
 #include <fstream>
 #include <deque>
+#include <random>
 
 // 디버깅용 io header
 //#if _DEBUG
@@ -209,6 +210,7 @@ struct AnimFrameParams
 
 extern unique_ptr<class Engine> GEngine;
 extern unique_ptr<class CGameInstance> GGameInstance;
+extern std::default_random_engine dre;
 
 // Utils
 wstring s2ws(const string& s);

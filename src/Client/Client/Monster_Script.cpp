@@ -26,7 +26,7 @@ void Monster_Dragon::Update(void)
 
 			int32 index = (currentIndex + 1) % count;
 
-			GetNetwork()->SendAniIndexPacket(index);
+			GetNetwork()->SendAniIndexPacket();
 		}
 
 		if (INPUT->GetButtonDown(KEY_TYPE::KEY_2))
@@ -36,7 +36,7 @@ void Monster_Dragon::Update(void)
 
 			int32 index = (currentIndex - 1 + count) % count;
 
-			GetNetwork()->SendAniIndexPacket(index);
+			GetNetwork()->SendAniIndexPacket();
 		}
 	}
 }

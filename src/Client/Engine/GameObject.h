@@ -26,6 +26,15 @@ enum class GAME_OBJECT_TYPE : uint8
 	END
 };
 
+struct Collider
+{
+	int32_t id;
+	server::COLLIDER_TYPE type;
+	Vec3 pos;
+	Vec4 quat;
+	Vec3 scale;
+};
+
 class CGameObject : public Object, public enable_shared_from_this<CGameObject>
 {
 public:
@@ -65,6 +74,11 @@ public:
 
 	GAME_OBJECT_TYPE GetType(void) { return m_gameObjectType; }
 
+	Collider& GetCollider(int32_t id) { return m_colliders[id]; }
+	void SetCollider(int32_t id, Collider& collider) { m_colliders[id] = collider; }
+
+	void ChangeColliderID(int32_t oldID, int32_t newID);
+
 private:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> m_components;
 	vector<shared_ptr<MonoBehaviour>> m_scripts;
@@ -74,5 +88,7 @@ private:
 	bool m_static = true;
 
 	GAME_OBJECT_TYPE m_gameObjectType = GAME_OBJECT_TYPE::OBJECT;
+
+	std::unordered_map<int32_t, Collider> m_colliders;
 };
 

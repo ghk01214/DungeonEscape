@@ -44,6 +44,12 @@ enum class ProtocolID : unsigned short
 	MY_ADD_OBJ_REQ,
 	MY_ADD_OBJ_ACK,
 
+	MY_ADD_REMOTE_OBJ_REQ,
+	MY_ADD_REMOTE_OBJ_ACK,
+
+	MY_ADD_OBJ_COLLIDER_REQ,
+	MY_ADD_OBJ_COLLIDER_ACK,
+
 	MY_TRANSFORM_REQ,	// 플레이어 이동 요청
 	MY_TRANSFORM_ACK,	// 플레이어 이동 응답
 
@@ -58,6 +64,9 @@ enum class ProtocolID : unsigned short
 
 	MY_CAMERA_LOOK_REQ,
 	MY_CAMERA_LOOK_ACK,
+
+	MY_JUMP_START_REQ,
+	MY_JUMP_START_ACK,
 
 	PROTOCOL_MY_END = ProtocolBase::PROTOCOL_OFFSET_WR,
 #pragma endregion
@@ -77,6 +86,9 @@ enum class ProtocolID : unsigned short
 	WR_ADD_OBJ_REQ,
 	WR_ADD_OBJ_ACK,
 
+	WR_ADD_OBJ_COLLIDER_REQ,
+	WR_ADD_OBJ_COLLIDER_ACK,
+
 	WR_REMOVE_REQ,	// 오브젝트 삭제 요청
 	WR_REMOVE_ACK,	// 오브젝트 삭제 응답
 
@@ -88,6 +100,9 @@ enum class ProtocolID : unsigned short
 
 	WR_CHANGE_STATE_REQ,
 	WR_CHANGE_STATE_ACK,
+
+	WR_JUMP_START_REQ,
+	WR_JUMP_START_ACK,
 
 	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion

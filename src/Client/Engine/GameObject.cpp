@@ -164,3 +164,11 @@ void CGameObject::AddComponent(shared_ptr<Component> component)
 		m_scripts.push_back(dynamic_pointer_cast<MonoBehaviour>(component));
 	}
 }
+
+void CGameObject::ChangeColliderID(int32_t oldID, int32_t newID)
+{
+	auto collider{ m_colliders.extract(oldID) };
+	collider.key() = newID;
+
+	m_colliders.insert(std::move(collider));
+}

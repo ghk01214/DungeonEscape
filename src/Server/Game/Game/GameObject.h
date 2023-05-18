@@ -68,10 +68,13 @@ public:
 	Transform* GetTransform();
 	constexpr int32_t GetID() const { return m_id; }
 	constexpr std::wstring& GetName() { return m_name; }
+	constexpr server::OBJECT_TYPE GetObjectType() const { return m_objType; }
+	constexpr server::FBX_TYPE GetFBXType() const { return m_fbxType; }
 
 	void SetID(int32_t id);
 	void SetName(const std::wstring& name);
-
+	void SetObjectType(server::OBJECT_TYPE objType);
+	void SetFBXType(server::FBX_TYPE fbxType);
 
 	void StartSendTransform();
 
@@ -85,4 +88,7 @@ protected:
 	int32_t m_id;
 	std::wstring m_name;
 	bool m_startSendTransform;
+
+	server::FBX_TYPE m_fbxType;
+	server::OBJECT_TYPE m_objType;
 };

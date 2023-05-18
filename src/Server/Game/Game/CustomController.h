@@ -48,6 +48,8 @@ public:
 public:
 	RigidBody* GetBody();
 	CapsuleCollider* GetCollider();
+	bool IsOnGround();
+	bool IsStartJump();
 
 private:
 	physx::PxVec3	m_moveDirection{ 0.f };
@@ -71,6 +73,8 @@ private:
 #pragma endregion
 
 	physx::PxVec3	m_cameraLook;
+
+	bool m_startJump;
 };
 
 

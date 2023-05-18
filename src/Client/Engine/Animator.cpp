@@ -12,6 +12,8 @@ Animator::Animator() : Component(COMPONENT_TYPE::ANIMATOR)
 {
 	m_computeMaterial = GET_SINGLE(Resources)->Get<Material>(L"ComputeAnimation");
 	m_boneFinalMatrix = make_shared<StructuredBuffer>();
+	m_aniSpeed = 1.f;
+	m_framePerSecond = 25;
 }
 
 Animator::~Animator()
@@ -20,22 +22,28 @@ Animator::~Animator()
 
 void Animator::FinalUpdate()
 {
-	m_updateTime += DELTA_TIME;
-
-	const AnimClipInfo& animClip = m_animClips->at(m_clipIndex);
-	if (m_updateTime >= animClip.duration)
-		m_updateTime = 0.f;
-
-	const int32 ratio = static_cast<int32>(animClip.frameCount / animClip.duration);
-	m_frame = static_cast<int32>(m_updateTime * ratio);
-	m_frame = min(m_frame, animClip.frameCount - 1);
-	m_nextFrame = min(m_frame + 1, animClip.frameCount - 1);
-	m_frameRatio = static_cast<float>(m_frame - m_frame);
+	//m_updateTime += DELTA_TIME;
+	//
+	////const AnimClipInfo& animClip = m_animClips->at(m_clipIndex);
+	//if (m_updateTime >= m_aniClipInfo.duration)
+	//	m_updateTime = 0.f;
+	//
+	//const int32 ratio = static_cast<int32>(m_aniClipInfo.frameCount / m_aniClipInfo.duration);
+	//m_frame = static_cast<int32>(m_updateTime * ratio);
+	//m_frame = min(m_frame, m_aniClipInfo.frameCount - 1);
+	//m_nextFrame = min(m_frame + 1, m_aniClipInfo.frameCount - 1);
+	//m_frameRatio = static_cast<float>(m_frame - m_frame);
 }
 
 void Animator::SetAnimClip(const vector<AnimClipInfo>* animClips)
 {
 	m_animClips = animClips;
+}
+
+void Animator::SetAnimFrame(int32_t frame, int32_t nextFrame)
+{
+	m_frame = frame;
+	m_nextFrame = nextFrame;
 }
 
 void Animator::PushData()
@@ -63,22 +71,81 @@ void Animator::PushData()
 	m_boneFinalMatrix->PushGraphicsData(SRV_REGISTER::t7);
 }
 
-void Animator::Play(uint32 idx)
+void Animator::Play(uint32 idx, float speed)
 {
 	assert(idx < m_animClips->size());
 	m_clipIndex = idx;
 	m_updateTime = 0.f;
+	m_aniSpeed = speed;
+	m_aniClipInfo = m_animClips->at(idx);
 
 	auto network{ GetGameObject()->GetNetwork() };
 	if (network != nullptr)
 	{
-		network->SendAniIndexPacket(idx);
+		network->SendAniIndexPacket();
 	}
 }
 
-void Animator::Play(uint32 idx, float updateTime)
+void Animator::PlayFrame(uint32 idx, float updateTime, float speed)
 {
 	assert(idx < m_animClips->size());
 	m_clipIndex = idx;
 	m_updateTime = updateTime;
+	m_aniSpeed = speed;
+	m_aniClipInfo = m_animClips->at(idx);
+}
+
+void Animator::PlayAndSend(uint32 idx, float updateTime, float speed)
+{
+	PlayFrame(idx, updateTime, speed);
+
+	auto network{ GetGameObject()->GetNetwork() };
+	if (network != nullptr)
+	{
+		network->SendAniIndexPacket();
+	}
+}
+
+void Animator::CalculateUpdateTime()
+{
+	m_updateTime += (DELTA_TIME * m_aniSpeed);
+}
+
+void Animator::PlayNextFrame()
+{
+	const int32 ratio = static_cast<int32>(m_aniClipInfo.frameCount / m_aniClipInfo.duration);
+	m_frame = static_cast<int32>(m_updateTime * ratio);
+	m_frame = min(m_frame, m_aniClipInfo.frameCount - 1);
+	m_nextFrame = min(m_frame + 1, m_aniClipInfo.frameCount - 1);
+	m_frameRatio = static_cast<float>(m_frame - m_frame);
+}
+
+bool Animator::IsAnimationEnd()
+{
+	if (m_updateTime >= m_aniClipInfo.duration)
+		return true;
+
+	return false;
+}
+
+bool Animator::IsAnimationOverFrame(float updateTime)
+{
+	if (m_updateTime >= updateTime)
+		return true;
+
+	return false;
+}
+
+void Animator::RepeatPlay()
+{
+	m_updateTime += (DELTA_TIME * m_aniSpeed);
+
+	if (m_updateTime >= m_aniClipInfo.duration)
+		m_updateTime = 0.f;
+
+	const int32 ratio = static_cast<int32>(m_aniClipInfo.frameCount / m_aniClipInfo.duration);
+	m_frame = static_cast<int32>(m_updateTime * ratio);
+	m_frame = min(m_frame, m_aniClipInfo.frameCount - 1);
+	m_nextFrame = min(m_frame + 1, m_aniClipInfo.frameCount - 1);
+	m_frameRatio = static_cast<float>(m_frame - m_frame);
 }

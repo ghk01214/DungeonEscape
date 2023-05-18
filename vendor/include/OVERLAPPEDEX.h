@@ -32,10 +32,16 @@ namespace network
 		OVERLAPPED over;
 		WSABUF wsa;
 		COMPLETION type;
+		char data[CPacket::BUFF_SIZE];
+
 		ProtocolID msgProtocol;
 		int32_t playerID;
 		int32_t objID;
 		int32_t roomID;
-		char data[CPacket::BUFF_SIZE];
+		int32_t colliderID;
+
+		int32_t tempObjectID;
+		int32_t tempColliderID;
+		bool lastCollider;
 	};
 }

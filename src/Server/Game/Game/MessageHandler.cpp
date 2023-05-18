@@ -10,6 +10,7 @@
 #include "RoomManager.h"
 #include "CustomController.h"
 #include "TimeManager.h"
+#include "CapsuleCollider.h"
 
 namespace game
 {
@@ -144,6 +145,11 @@ namespace game
 			postOver.playerID = msg.playerID;
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
+			postOver.colliderID = msg.colliderID;
+
+			postOver.tempObjectID = msg.tempObjectID;
+			postOver.tempColliderID = msg.tempColliderID;
+			postOver.lastCollider = msg.lastCollider;
 
 			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 
@@ -229,8 +235,11 @@ namespace game
 				break;
 				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 				{
+					int32_t colliderID{ NewColliderID() };
+
 					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(msg.playerID * 100.f, 150.f, msg.playerID * 50.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };					player->SetName(L"Mistic");
-					player->SetFBXType(server::FBX_TYPE::MISTIC);
+					player->SetFBXType(msg.fbxType);
+					player->GetController()->GetCollider()->SetID(colliderID);
 					//Login(msg.playerID, player);
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
@@ -244,13 +253,43 @@ namespace game
 					// 오브젝트 추가 작업 후 id 세팅
 					//auto MapPlaneObject = objMgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
 					//MapPlaneObject->SetID(objID);
+					//MapPlaneObject->SetObjectType(msg.objType);
+					//MapPlaneObject->SetFBXType(msg.fbxType);
 					//auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 					//MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 
-					Message msg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
-					msg.objID = objID;
+					m_tempIDMap[msg.tempObjectID] = objID;
 
-					PushSendMessage(msg);
+					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_OBJ_ACK };
+					sendMsg.objID = objID;
+					sendMsg.tempObjectID = msg.tempObjectID;
+
+					PushSendMessage(sendMsg);
+				}
+				break;
+				case ProtocolID::MY_ADD_OBJ_COLLIDER_REQ:
+				{
+					int32_t objID{ m_tempIDMap[msg.objID] };
+					int32_t colliderID{ NewColliderID() };
+
+					// 충돌체 추가 작업
+					objID;
+					colliderID;
+					msg.colliderPos;
+					msg.colliderQuat;
+					msg.colliderScale;
+					msg.colliderType;
+
+					Message sendMsg{ msg.playerID, ProtocolID::MY_ADD_OBJ_COLLIDER_ACK };
+					sendMsg.objID = objID;
+					sendMsg.colliderID = colliderID;
+					sendMsg.tempColliderID = msg.colliderID;
+					sendMsg.lastCollider = msg.lastCollider;
+
+					PushSendMessage(sendMsg);
+
+					if (msg.lastCollider == true)
+						m_tempIDMap.erase(msg.objID);
 				}
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:
@@ -278,7 +317,7 @@ namespace game
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
-							player->SetAniInfo(msg.aniIndex, msg.aniFrame);
+							player->SetAniInfo(msg.aniIndex, msg.aniFrame, msg.aniSpeed);
 							break;
 						}
 					}
@@ -328,16 +367,6 @@ namespace game
 		m_eventQueue.push(ev);
 	}
 
-	void MessageHandler::PushEvent(TIMER_EVENT& ev)
-	{
-		m_eventQueue.push(ev);
-	}
-
-	void MessageHandler::PushTransformEvent(TIMER_EVENT& ev)
-	{
-		m_transformEvent.push(ev);
-	}
-
 	void MessageHandler::PushTransformMessage(Message& msg)
 	{
 		m_transformMessage.push(msg);
@@ -371,6 +400,17 @@ namespace game
 		}
 
 		return 0;
+	}
+
+	int32_t MessageHandler::NewColliderID()
+	{
+		if (m_reusableColliderID.empty() == true)
+			return m_colliderNum++;
+
+		int32_t newID{ m_reusableColliderID.top() };
+		m_reusableColliderID.pop();
+
+		return newID;
 	}
 
 	void MessageHandler::Login(int32_t playerID, Player* player)

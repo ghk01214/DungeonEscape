@@ -154,8 +154,6 @@ namespace game
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_ADD_OBJ_ACK);
 
-		packet.WriteWString(obj->GetName());
-
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
 		packet.Write<float>(pos.z);
@@ -168,6 +166,36 @@ namespace game
 		packet.Write<float>(scale.x);
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
+
+		packet.Write<server::OBJECT_TYPE>(obj->GetObjectType());
+		packet.Write<server::FBX_TYPE>(obj->GetFBXType());
+
+		Send(packet);
+	}
+
+	void CSession::SendObjectIDPacket(int32_t objID, int32_t oldObjID)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(objID);
+		packet.WriteProtocol(ProtocolID::MY_ADD_OBJ_ACK);
+
+		packet.Write<int32_t>(oldObjID);
+
+		Send(packet);
+	}
+
+	void CSession::SendAddObjectColliderPacket(int32_t id, int32_t objID, int32_t colliderID, int32_t tempColliderID, bool last)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::MY_ADD_OBJ_COLLIDER_ACK);
+
+		packet.Write<int32_t>(objID);
+		packet.Write<int32_t>(colliderID);
+		packet.Write<int32_t>(tempColliderID);
+		packet.Write<bool>(last);
 
 		Send(packet);
 	}
@@ -214,6 +242,13 @@ namespace game
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
 
+		auto player{ dynamic_cast<Player*>(obj) };
+
+		if (player != nullptr)
+		{
+			packet.Write<bool>(player->IsOnGound());
+		}
+
 		// 패킷 전송
 		Send(packet);
 	}
@@ -223,14 +258,15 @@ namespace game
 		network::CPacket packet;
 		int32_t aniIndex{ obj->GetAniIndex() };
 		float aniFrame{ obj->GetAniFrame() };
+		float aniSpeed{ obj->GetAniSpeed() };
 
 		packet.WriteID(id);
 		packet.WriteProtocol(protocol);
 		packet.Write<int32_t>(aniIndex);
 		packet.Write<float>(aniFrame);
+		packet.Write<float>(aniSpeed);
 
 		Send(packet);
-		//std::cout << "send : " << id << "\n";
 	}
 
 	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, int32_t index, float frame)
@@ -244,7 +280,14 @@ namespace game
 
 		Send(packet);
 	}
-	void CSession::SendStatePacket(int32_t id, GameObject* obj, int32_t state)
+
+	void CSession::SendJumpStartPacket(int32_t id)
 	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_JUMP_START_ACK);
+
+		Send(packet);
 	}
 }

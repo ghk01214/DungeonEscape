@@ -8,16 +8,18 @@ namespace network
 	class CNetwork : public Component
 	{
 	public:
-		CNetwork(OBJECT_TYPE type = OBJECT_TYPE::NONE, int32_t id = -1);
+		CNetwork(server::OBJECT_TYPE type = server::OBJECT_TYPE::NONE, int32_t id = -1);
 		virtual ~CNetwork();
 
 		virtual void Awake() override;
 		virtual void FinalUpdate() override;
 
 #pragma region [SEND PACKET]
-		void SendAddPlayer();
-		void SendAniIndexPacket(int32_t index);
+		void SendAddPlayer(server::FBX_TYPE fbxType);
+		void SendAniIndexPacket();
 		void SendCameraLook(const Vec3& look);
+		void SendAddObject(int32_t tempID, server::OBJECT_TYPE type, server::FBX_TYPE fbxType);
+		void SendAddObjectCollider(int32_t tempID, int32_t tempColliderID, Collider& collider, bool last = false);
 #pragma endregion
 
 		void InsertPackets(CPacket& packet);
@@ -33,7 +35,7 @@ namespace network
 
 	private:
 		int32_t m_networkID;		// 오브젝트 정보를 담고 있는 ID, 초기값을 -1로 설정한다. 이는 네트워크 매니저에서 값을 채우면 변경된다.
-		OBJECT_TYPE m_objectType;
+		server::OBJECT_TYPE m_objectType;
 		std::deque<CPacket> m_recvPackets;
 		std::atomic_int32_t m_recvQueueSize;
 
