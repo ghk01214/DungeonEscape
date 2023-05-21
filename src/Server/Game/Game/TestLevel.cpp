@@ -31,10 +31,13 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Player");
 	objmgr->AddLayer(L"Layer_Monster");
 	objmgr->AddLayer(L"Layer_Map2");
+	objmgr->AddLayer(L"Layer_SkillObject");
 
 
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(1500, 100, -1000), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	//auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", 3, Vec3(-170, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(-300, 200, -200), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+
+	auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", 3, Vec3(-300, 200, 0), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 
 #pragma region Sphere
 	//auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(5, 10, 5), Quat(0, 0, 0, 1), Vec3(2,2,2));
@@ -80,59 +83,59 @@ void TestLevel::Init()
 		5. 생성된 맵 오브젝트는 오브젝트 매니저에 넣는다.
 	*/
 
-	FBXMapLoader mapLoader;
+	//FBXMapLoader mapLoader;
 
-	// static Mesh 정보 로드
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\CUBE.fbx");
+	//// static Mesh 정보 로드
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\CUBE.fbx");
 
 
-	// actor 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage3.FBX");
+	//// actor 정보 로드
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage3.FBX");
 
-	auto& mapInfo = mapLoader.GetMapObjectInfo();
-	int32_t i = 0;
-	for (auto& info : mapInfo)
-	{
-		switch (i)
-		{
-			case 944:
-			case 945:
-			case 1068:
-			case 1069:
-			case 1070:
-			case 1071:
-			//std::wcout << info.first << std::endl;
-			//std::wcout << std::format(L"position : {}, {}, {}", info.second.Position.x, info.second.Position.y, info.second.Position.z) << std::endl;
-			//std::wcout << std::format(L"position : {}, {}, {}", info.second.Rotation.x, info.second.Rotation.y, info.second.Rotation.z) << std::endl;
-			//std::wcout << std::format(L"position : {}, {}, {}", info.second.Scale.x, info.second.Scale.y, info.second.Scale.z) << std::endl << std::endl;
-			++i;
-			continue;
-			break;
-		}
+	//auto& mapInfo = mapLoader.GetMapObjectInfo();
+	//int32_t i = 0;
+	//for (auto& info : mapInfo)
+	//{
+	//	switch (i)
+	//	{
+	//		case 944:
+	//		case 945:
+	//		case 1068:
+	//		case 1069:
+	//		case 1070:
+	//		case 1071:
+	//		//std::wcout << info.first << std::endl;
+	//		//std::wcout << std::format(L"position : {}, {}, {}", info.second.Position.x, info.second.Position.y, info.second.Position.z) << std::endl;
+	//		//std::wcout << std::format(L"position : {}, {}, {}", info.second.Rotation.x, info.second.Rotation.y, info.second.Rotation.z) << std::endl;
+	//		//std::wcout << std::format(L"position : {}, {}, {}", info.second.Scale.x, info.second.Scale.y, info.second.Scale.z) << std::endl << std::endl;
+	//		++i;
+	//		continue;
+	//		break;
+	//	}
 
-		const objectLocationInfo& locationInfo = info.second;
-		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
-			Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
-			Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
-			Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
-		);
+	//	const objectLocationInfo& locationInfo = info.second;
+	//	auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
+	//		Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+	//		Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+	//		Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+	//	);
 
-		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
-		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
-		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+	//	auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+	//	auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
+	//	MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
 
-		++i;
-	}
+	//	++i;
+	//}
 
-	std::cout << "finish\n";
+	//std::cout << "finish\n";
 #pragma endregion
 
 #pragma region CenterBox(0,0,0)
@@ -142,15 +145,15 @@ void TestLevel::Init()
 #pragma endregion
 
 #pragma region Z100Box(1000,0,0)
-	//auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
-	//auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-	//Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
+	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
 #pragma endregion
 
 #pragma region Plane
-	//auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(1000, 2, 1000));
-	//auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
-	//MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
+	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 #pragma endregion
 
 
@@ -160,20 +163,24 @@ void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
 
-	//* mesh 삭제 디버그로 테스트해야한다.
-	//if (GetAsyncKeyState('P') & 0x8000)
-	//{
-	//	auto objMgr = ObjectManager::GetInstance();
-	//	auto map2 = objMgr->GetLayer(L"Layer_Map2")->GetGameObjects();
-	//	for (auto& p : map2)
-	//		p->SetRemoveReserved();
-	//}
 
+	//P K I로 맵 오브젝트 삭제(removalFlag함수 사용후 삭제작업 처리하면 됨), 몬스터 패턴 실행, 플레이어 공 발사 등을 실험 가능
+	//한번 실행했으면 O를 누르면 다시 명령어 실행가능
 
-	static int testValue = 0;
+	 //맵 오브젝트 삭제
 	if (GetAsyncKeyState('P') & 0x8000)
 	{
-		if (testValue % 100 == 0)
+		auto objMgr = ObjectManager::GetInstance();
+		auto map2 = objMgr->GetLayer(L"Layer_Map2")->GetGameObjects();
+		(*map2.begin())->SetRemoveReserved();
+		std::cout << "맵 오브젝트 삭제" << std::endl;
+	}
+
+	static bool once = true;
+	//몬스터 패턴 테스트
+	if (GetAsyncKeyState('K') & 0x8000)
+	{
+		if (once)
 		{
 			auto objMgr = ObjectManager::GetInstance();
 			auto monsters = objMgr->GetLayer(L"Layer_Monster")->GetGameObjects();
@@ -182,9 +189,24 @@ void TestLevel::Update(double timeDelta)
 				auto testMonster = dynamic_cast<Monster*>(m);
 				testMonster->MonsterPattern_GroundHit();
 			}
+			once = false;
 		}
-		testValue += 1;
 	}
+
+	if (GetAsyncKeyState('I') & 0x8000)
+	{
+		if (once)
+		{
+			auto objMgr = ObjectManager::GetInstance();
+			auto players = objMgr->GetLayer(L"Layer_Player")->GetGameObjects();
+			for (auto& p : players)
+				dynamic_cast<Player*>(p)->PlayerPattern_ShootBall(100.f);
+			once = false;
+		}
+	}
+
+	if (GetAsyncKeyState('O') & 0x8000)
+		once = true;
 }
 
 void TestLevel::LateUpdate(double timeDelta)

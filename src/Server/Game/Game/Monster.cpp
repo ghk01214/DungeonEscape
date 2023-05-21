@@ -28,6 +28,8 @@ void Monster::Init()
 
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);
+
+	SetObjectType(server::OBJECT_TYPE::MONSTER);
 }
 
 void Monster::Update(double timeDelta)
@@ -143,6 +145,7 @@ void Monster::MonsterPattern_GroundHit()
 			}
 			playerController->BounceFromAttack();
 			playerbody->AddForce(ForceMode::Impulse, physx::PxVec3(direction.x * horizontalStrength, verticalStrength, direction.z * horizontalStrength));
+			std::cout << "몬스터 패턴 발동, 플레이어 피격 적용" << std::endl;
 			//playerbody->SetVelocity(physx::PxVec3(direction.x * 100, 100, direction.z * 100));
 		}
 	}

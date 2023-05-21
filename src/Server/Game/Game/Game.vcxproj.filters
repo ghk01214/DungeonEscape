@@ -155,6 +155,9 @@
     <Filter Include="03. Game\01. GameObject\Monster">
       <UniqueIdentifier>{0e687708-8c00-4086-b86d-a9dfe5281335}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\SkillObject">
+      <UniqueIdentifier>{aa52c1d9-cf19-49ce-8756-eec3b0777e4c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -286,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="Monster.cpp">
       <Filter>03. Game\01. GameObject\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="SkillObject.cpp">
+      <Filter>03. Game\01. GameObject\SkillObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -441,6 +447,9 @@
     </ClInclude>
     <ClInclude Include="Monster.h">
       <Filter>03. Game\01. GameObject\Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="SkillObject.h">
+      <Filter>03. Game\01. GameObject\SkillObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

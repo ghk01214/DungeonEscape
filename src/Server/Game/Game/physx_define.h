@@ -75,3 +75,6 @@ enum class CollisionInfoType
 #define PX_SIM_FRAMECNT 180.0f
 #define PX_RELEASE(x)	if(x)	{ x->release(); x = NULL;	}
 #define PX_SCALE_FACTOR 1.f
+
+#define FROM_PX(pxVec3) Vec3((pxVec3).x, (pxVec3).y, (pxVec3).z)
+#define TO_PX(vec3) physx::PxVec3((vec3).x, (vec3).y, (vec3).z)

@@ -54,6 +54,8 @@ void CustomController::Init()
 	m_keyboardDown = false;
 	m_keyboardSpace = false;
 
+	m_cameraLook = PxVec3(0.f, 0.f, 1.f);
+
 	m_startJump = false;
 }
 
@@ -234,7 +236,7 @@ Collider* CustomController::GetColliderBelow()
 
 void CustomController::DirectionInput_Player()
 {
-	bool serverConnected = true;
+	bool serverConnected = false;
 
 	if (serverConnected)
 	{
@@ -306,14 +308,13 @@ void CustomController::Movement_Player()
 
 	GetSlidingVector(CollisionInfoType::Stay);
 	PxVec3 surfaceNormal{ 0.f };
-
 	PxVec3 GarbageValue{ 0.f };
 
 	CheckOnGround(CollisionInfoType::Enter, surfaceNormal);
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
-	if (m_keyboardSpace && m_onGround)
+	if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
+	//if (m_keyboardSpace && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
@@ -611,4 +612,9 @@ bool CustomController::IsStartJump()
 	}
 
 	return false;
+}
+
+physx::PxVec3 CustomController::GetCameraLook()
+{
+	return m_cameraLook;
 }

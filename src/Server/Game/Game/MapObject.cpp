@@ -21,6 +21,8 @@ void MapObject::Init()
 	m_body = AddComponent<RigidBody>(L"RigidBody");
 	m_body->SetCCDFlag(false);
 	m_body->SetKinematic(true);
+
+	SetObjectType(server::OBJECT_TYPE::MAP_OBJECT);
 }
 
 void MapObject::Update(double timeDelta)

@@ -197,6 +197,7 @@
     </ClCompile>
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
+    <ClCompile Include="SkillObject.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="TestLevel.cpp" />
     <ClCompile Include="TimeManager.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="SkillObject.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="game_functions.h" />
     <ClInclude Include="TestLevel.h" />

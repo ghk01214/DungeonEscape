@@ -57,6 +57,7 @@ public:
 	CapsuleCollider* GetCollider();
 	bool IsOnGround();
 	bool IsStartJump();
+	physx::PxVec3 GetCameraLook();
 
 private:
 	physx::PxVec3	m_moveDirection{ 0.f };
@@ -64,7 +65,8 @@ private:
 
 	bool	m_onGround = false;
 	float	m_degreeThreshold = 49.9f;
-	float	m_moveSpeed = 300.f;
+	//float	m_moveSpeed = 600.f;
+	float	m_moveSpeed = 65.f;
 	float	m_jumpSpeed = 70.f;
 
 	bool	m_BounceFromAttack = false;

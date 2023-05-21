@@ -2,9 +2,13 @@
 #include "Player.h"
 #include "CustomController.h"
 #include "MessageHandler.h"
+#include "ObjectManager.h"
 #include "TimeManager.h"
 #include "RigidBody.h"
 #include "Transform.h"
+#include "CapsuleCollider.h"
+#include "SkillObject.h"
+#include "SphereCollider.h"
 
 Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
@@ -25,6 +29,7 @@ void Player::Init()
 
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);
+	SetObjectType(server::OBJECT_TYPE::PLAYER);
 }
 
 void Player::Update(double timeDelta)
@@ -107,4 +112,29 @@ CustomController* Player::GetController()
 void Player::SetControllerCameraLook(Vec3& value)
 {
 	m_controller->CameraLookReceive(value);
+}
+
+void Player::PlayerPattern_ShootBall(float power)
+{
+	//투사체 위치 선정
+	physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
+	physx::PxVec3 playerCameraLook = m_controller->GetCameraLook().getNormalized();
+
+	float playerRadius = m_controller->GetCollider()->GetRadius();
+	float skillBallHalfExtent = 50.f;
+	
+	physx::PxVec3 skillBallPosition = playerPos + playerCameraLook * (playerRadius + skillBallHalfExtent + 10);
+	Vec3 ballPos = FROM_PX(skillBallPosition);
+
+	//투사체 생성
+	auto objmgr = ObjectManager::GetInstance();
+	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
+
+
+	auto ballObject = objmgr->AddGameObjectToLayer<SkillObject>(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent));
+	auto ballBody = ballObject->GetComponent<RigidBody>(L"RigidBody");
+	ballBody->SetMass(1.f);
+	ballBody->AddCollider<SphereCollider>(ballObject->GetTransform()->GetScale());
+
+	ballBody->AddForce(ForceMode::Impulse, playerCameraLook * power);
 }

@@ -26,7 +26,7 @@ void GameObject::Update(double timeDelta)
     {
         auto body = GetComponent<RigidBody>(L"RigidBody");
         body->ExcludeFromSimulation(true);
-        std::cout << "실행됨";
+        //std::cout << "실행됨";
     }
     
     m_removeReserved -= 1;

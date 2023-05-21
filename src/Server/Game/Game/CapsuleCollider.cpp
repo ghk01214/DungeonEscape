@@ -11,7 +11,7 @@ PxGeometryHolder CapsuleCollider::CreateGeometry()
 }
 
 CapsuleCollider::CapsuleCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent)
-    : Collider(ownerGameObject, ownerComponent, body), m_radius((extent.x > extent.y) ? extent.x : extent.y), m_halfHeight(extent.z)
+    : Collider(ownerGameObject, ownerComponent, body), m_radius((extent.x > extent.z) ? extent.x : extent.z), m_halfHeight(extent.y)
 {
 }
 
