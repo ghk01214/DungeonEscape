@@ -24,6 +24,8 @@ private:
 	void CreateMapObjects(void);
 	void CreatePlayer(void);
 	void CreateRemotePlayer(network::CPacket& packet);
+	void CreateSphere();
+	void CreateBoss(network::CPacket& packet);
 
 	void ChangeNetworkObjectID(network::CPacket& packet);
 	void CreateRemoteObject(network::CPacket& packet);

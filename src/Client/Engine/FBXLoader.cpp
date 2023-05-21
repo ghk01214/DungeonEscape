@@ -23,7 +23,7 @@ void FBXLoader::LoadFbx(const wstring& path)
 	// 파일 데이터 로드
 	Import(path);
 
-	// Animation	
+	// Animation
 	LoadBones(m_scene->GetRootNode());
 	LoadAnimationInfo();
 
@@ -325,9 +325,9 @@ void FBXLoader::Import(const wstring& path)
 	m_scene = FbxScene::Create(m_manager, "");
 
 	// 나중에 Texture 경로 계산할 때 쓸 것
-	m_resourceDirectory = fs::path(path).parent_path().wstring();// 
-	
-	
+	m_resourceDirectory = fs::path(path).parent_path().wstring();//
+
+
 	L"\\" + fs::path(path).filename().stem().wstring() + L".fbm";
 
 	m_importer = FbxImporter::Create(m_manager, "");
@@ -777,9 +777,9 @@ void FBXLoader::LoadOffsetMatrix(FbxCluster* cluster, const FbxAMatrix& matNodeT
 {
 	FbxAMatrix matClusterTrans;
 	FbxAMatrix matClusterLinkTrans;
-	// The transformation of the mesh at binding time 
+	// The transformation of the mesh at binding time
 	cluster->GetTransformMatrix(matClusterTrans);
-	// The transformation of the cluster(joint) at binding time from joint space to world space 
+	// The transformation of the cluster(joint) at binding time from joint space to world space
 	cluster->GetTransformLinkMatrix(matClusterLinkTrans);
 
 	FbxVector4 V0 = { 1, 0, 0, 0 };

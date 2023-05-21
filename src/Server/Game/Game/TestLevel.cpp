@@ -33,8 +33,8 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Map2");
 
 
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(150, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", 3, Vec3(-170, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(1500, 100, -1000), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	//auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", 3, Vec3(-170, 200, -150), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 
 #pragma region Sphere
 	//auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(5, 10, 5), Quat(0, 0, 0, 1), Vec3(2,2,2));
@@ -95,12 +95,29 @@ void TestLevel::Init()
 
 
 	// actor 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage2.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage3.FBX");
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
-
+	int32_t i = 0;
 	for (auto& info : mapInfo)
 	{
+		switch (i)
+		{
+			case 944:
+			case 945:
+			case 1068:
+			case 1069:
+			case 1070:
+			case 1071:
+			//std::wcout << info.first << std::endl;
+			//std::wcout << std::format(L"position : {}, {}, {}", info.second.Position.x, info.second.Position.y, info.second.Position.z) << std::endl;
+			//std::wcout << std::format(L"position : {}, {}, {}", info.second.Rotation.x, info.second.Rotation.y, info.second.Rotation.z) << std::endl;
+			//std::wcout << std::format(L"position : {}, {}, {}", info.second.Scale.x, info.second.Scale.y, info.second.Scale.z) << std::endl << std::endl;
+			++i;
+			continue;
+			break;
+		}
+
 		const objectLocationInfo& locationInfo = info.second;
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
 			Vec3(locationInfo.Position.x , locationInfo.Position.y , locationInfo.Position.z ),
@@ -111,7 +128,11 @@ void TestLevel::Init()
 		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
 		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
 		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+
+		++i;
 	}
+
+	std::cout << "finish\n";
 #pragma endregion
 
 #pragma region CenterBox(0,0,0)

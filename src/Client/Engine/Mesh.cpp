@@ -67,7 +67,7 @@ shared_ptr<Mesh> Mesh::CreateFromFBX(const FbxMeshInfo* meshInfo, FBXLoader& loa
 
 	// 이름 부여
 	mesh->SetName(meshInfo->name);
-	
+
 	return mesh;
 }
 
@@ -199,7 +199,7 @@ void Mesh::CreateVertexBuffer(const vector<Vertex>& buffer)
 	// Initialize the vertex buffer view.
 	m_vertexBufferView.BufferLocation = m_vertexBuffer->GetGPUVirtualAddress();
 	m_vertexBufferView.StrideInBytes = sizeof(Vertex); // 정점 1개 크기
-	m_vertexBufferView.SizeInBytes = bufferSize; // 버퍼의 크기	
+	m_vertexBufferView.SizeInBytes = bufferSize; // 버퍼의 크기
 }
 
 void Mesh::CreateIndexBuffer(const vector<uint32>& buffer)

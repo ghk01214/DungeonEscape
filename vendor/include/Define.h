@@ -54,6 +54,8 @@
 
 		PLAYER,
 		REMOTE_PLAYER,
+		MONSTER,
+		BOSS,
 		FIREBALL,
 
 		MAX
@@ -76,6 +78,7 @@
 		NONE = 0,
 
 		MISTIC,
+		DRAGON,
 
 		MAX,
 	};

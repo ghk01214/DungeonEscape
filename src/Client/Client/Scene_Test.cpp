@@ -44,6 +44,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	CreateMapObjects();
 
 	CreatePlayer();
+	CreateSphere();
 
 	return scene;
 }
@@ -64,9 +65,12 @@ void Scene_Test::LateUpdate()
 		{
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
-				CreateRemotePlayer(request);
+				auto objType{ request.Read<server::OBJECT_TYPE>() };
 
-				std::cout << "ADD REMOTE[" << request.ReadID() << "]" << std::endl << std::endl;
+				if (objType == server::OBJECT_TYPE::REMOTE_PLAYER)
+					CreateRemotePlayer(request);
+				else if (objType == server::OBJECT_TYPE::BOSS)
+					CreateBoss(request);
 			}
 			break;
 			case ProtocolID::MY_ADD_OBJ_ACK:
@@ -139,7 +143,7 @@ void Scene_Test::CreateMainCamera(void)
 		camera->AddComponent(make_shared<Transform>());
 		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45도
 		camera->AddComponent(make_shared<Camera_Basic>());
-		camera->GetCamera()->SetFar(5000.f);
+		camera->GetCamera()->SetFar(30000.f);
 		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 500.f, -500.f));
 		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
 		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI는 안 찍음
@@ -249,14 +253,17 @@ void Scene_Test::CreateMap(void)
 	FBXMapLoader mapLoader;
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
+	mapLoader.AddBasicObject(L"..\\Resoures\\FBX\\Environments\\Misc.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
 
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage2.FBX");
+	//
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
+
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage3.FBX");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 
@@ -341,11 +348,6 @@ void Scene_Test::CreateRemotePlayer(network::CPacket& packet)
 	if (type == server::FBX_TYPE::MISTIC)
 		fbxName = L"Mistic";
 
-	std::cout << std::format("ID : {}\n", id);
-	std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
-	std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
-	std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
-
 	ObjectDesc objectDesc;
 	objectDesc.strName = fbxName;
 	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
@@ -366,6 +368,89 @@ void Scene_Test::CreateRemotePlayer(network::CPacket& packet)
 
 	scene->AddPlayer(gameObjects);
 	GET_NETWORK->AddNetworkObject(id, gameObjects);
+
+	std::cout << "ADD REMOTE PLAYER[" << id << "]" << std::endl;
+}
+
+void Scene_Test::CreateSphere()
+{
+	ObjectDesc objectDesc;
+	objectDesc.strName = L"Mistic";
+	objectDesc.strPath = L"..\\Resources\\FBX\\Sphere.fbx";
+	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
+	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
+
+	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateMapObject(objectDesc);
+	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::FIREBALL);
+
+	Vec3 pos{ 1500.f, 100.f, -1000.f };
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->GetTransform()->SetWorldVec3Position(pos);
+		auto mat{ Matrix::CreateTranslation(pos) };
+		gameObject->GetTransform()->SetWorldMatrix(mat);
+	}
+
+	scene->AddGameObject(gameObjects);
+}
+
+void Scene_Test::CreateBoss(network::CPacket& packet)
+{
+	int32_t id{ packet.ReadID() };
+
+	Vec3 pos;
+	pos.x = packet.Read<float>();
+	pos.y = packet.Read<float>();
+	pos.z = packet.Read<float>();
+
+	Vec4 quat;
+	quat.x = packet.Read<float>();
+	quat.y = packet.Read<float>();
+	quat.z = packet.Read<float>();
+	quat.w = packet.Read<float>();
+
+	Vec3 scale;
+	scale.x = packet.Read<float>();
+	scale.y = packet.Read<float>();
+	scale.z = packet.Read<float>();
+
+	int32_t aniIndex{ packet.Read<int32_t>() };
+	float aniFrame{ packet.Read<float>() };
+
+	server::FBX_TYPE type{ packet.Read<server::FBX_TYPE>() };
+
+	std::wstring fbxName{};
+
+	if (type == server::FBX_TYPE::DRAGON)
+		fbxName = L"Dragon";
+
+	std::cout << std::format("ID : {}\n", id);
+	std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
+	std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
+	std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
+
+	ObjectDesc objectDesc;
+	objectDesc.strName = fbxName;
+	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
+	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
+	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
+	objectDesc.script = std::make_shared<Monster_Dragon>();
+
+	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
+	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::BOSS, id);
+
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->GetTransform()->SetWorldVec3Position(pos);
+		auto mat{ Matrix::CreateTranslation(pos) };
+		gameObject->GetTransform()->SetWorldMatrix(mat);
+		gameObject->GetAnimator()->Play(aniIndex, aniFrame);
+	}
+
+	scene->AddBoss(gameObjects);
+	GET_NETWORK->AddNetworkObject(id, gameObjects);
+
+	std::cout << "ADD BOSS MONSTER" << std::endl;
 }
 
 void Scene_Test::ChangeNetworkObjectID(network::CPacket& packet)
@@ -501,7 +586,7 @@ std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateAnimatedObject(Objec
 	{
 		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
 		gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
-		gameObject->GetAnimator()->Play(Player_Mistic::IDLE_A);
+		gameObject->GetAnimator()->Play(0);
 	}
 
 	return gameObjects;

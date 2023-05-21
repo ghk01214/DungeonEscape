@@ -122,6 +122,8 @@ namespace game
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
 
+		packet.Write<server::OBJECT_TYPE>(obj->GetObjectType());
+
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
 		packet.Write<float>(pos.z);

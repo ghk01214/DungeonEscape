@@ -117,7 +117,7 @@ bool CustomController::CheckOnGround(CollisionInfoType type, PxVec3& surfaceNorm
 
 					if (type == CollisionInfoType::Enter)
 					{
-						m_BounceFromAttack = false;			//땅에 착지했으니 수평 SetVelocity를 다시 활성화 가능한 상태로 
+						m_BounceFromAttack = false;			//땅에 착지했으니 수평 SetVelocity를 다시 활성화 가능한 상태로
 					}
 					return true;
 				}

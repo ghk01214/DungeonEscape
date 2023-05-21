@@ -4,7 +4,7 @@
 
 class Player_Mistic : public MonoBehaviour
 {
-public:
+private:
 	enum PLAYER_STATE
 	{
 		AERT,

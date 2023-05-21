@@ -25,7 +25,7 @@ void FBXMapLoader::AddBasicObject(std::wstring path)
     {
         m_assetInfo[info.mesh->GetName()] = info;
     }
-     
+
 	// 데이터는 자동으로 Resource에 저장된다.
 	// 이를 가져오려면 GET_SINGLE(Resources)->Get<Mesh>(fbxName); 이렇게 가져오면 된다.
 }
@@ -46,7 +46,7 @@ void FBXMapLoader::ExtractMapInfo(std::wstring _strFilePath)
 	{
         // 없다면 파일이 존재하지 않거나 오류가 생겼다는 의미. 다시 만든다.
         CloseHandle(hFile);
-        
+
         // 파일을 추출
         ExtractObjectInfoFromFBX(_strFilePath);
 	}
@@ -88,9 +88,12 @@ void FBXMapLoader::MakeMap(void)
                 */
 
                 Matrix matScale = Matrix::CreateScale(Vec3(objectInfo.Scale.x, objectInfo.Scale.z, objectInfo.Scale.y));
-                Matrix matRotation = Matrix::CreateRotationX(XMConvertToRadians(objectInfo.Rotation.y));
+                /*Matrix matRotation = Matrix::CreateRotationX(XMConvertToRadians(objectInfo.Rotation.y));
                 matRotation *= Matrix::CreateRotationY(XMConvertToRadians(-objectInfo.Rotation.z));
-                matRotation *= Matrix::CreateRotationZ(XMConvertToRadians(objectInfo.Rotation.x));
+                matRotation *= Matrix::CreateRotationZ(XMConvertToRadians(objectInfo.Rotation.x));*/
+                Matrix matRotation = Matrix::CreateRotationX(XMConvertToRadians(-objectInfo.Rotation.x));
+                matRotation *= Matrix::CreateRotationY(XMConvertToRadians(-objectInfo.Rotation.z));
+                matRotation *= Matrix::CreateRotationZ(XMConvertToRadians(-objectInfo.Rotation.y));
                 Matrix matTranslation = Matrix::CreateTranslation(Vec3(objectInfo.Position.x, objectInfo.Position.z, objectInfo.Position.y));
                 Matrix matWorld = matScale * matRotation * matTranslation;
 

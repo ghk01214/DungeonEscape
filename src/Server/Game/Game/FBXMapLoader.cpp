@@ -93,7 +93,8 @@ void FBXMapLoader::MakeMap(void)
             objectLocationInfo locationInfo;
 
             locationInfo.Position = FBXVec4(objectInfo.Position.x, objectInfo.Position.z, objectInfo.Position.y, 1.f);
-            locationInfo.Rotation = FBXVec4(objectInfo.Rotation.y, -objectInfo.Rotation.z, objectInfo.Rotation.x, 1.f);
+           // locationInfo.Rotation = FBXVec4(objectInfo.Rotation.y, -objectInfo.Rotation.z, objectInfo.Rotation.x, 1.f);
+            locationInfo.Rotation = FBXVec4(-objectInfo.Rotation.x, -objectInfo.Rotation.z, -objectInfo.Rotation.y, 1.f);
             locationInfo.Scale = FBXVec4(objectInfo.Scale.x, objectInfo.Scale.z, objectInfo.Scale.y, 1.f);
             locationInfo.qLocal = objectInfo.qLocal;
             locationInfo.qWorld = objectInfo.qWorld;

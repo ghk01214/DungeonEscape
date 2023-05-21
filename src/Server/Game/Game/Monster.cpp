@@ -104,7 +104,7 @@ void Monster::MonsterPattern_GroundHit()
 		return;
 
 	physx::PxVec3 monsterPos = m_controller->GetBody()->GetPosition();
-	
+
 	auto collisionEnterLists = surfaceCollider->GetCollisionInfo(CollisionInfoType::Enter);
 	auto collisionStayLists = surfaceCollider->GetCollisionInfo(CollisionInfoType::Stay);
 
@@ -126,7 +126,7 @@ void Monster::MonsterPattern_GroundHit()
 			physx::PxVec3 playerPos = playerbody->GetPosition();
 			physx::PxVec3 direction = playerPos - monsterPos;
 			float distance = direction.magnitude();
-			
+
 			direction.normalize();
 
 			float verticalStrength = 1.f;
@@ -146,5 +146,4 @@ void Monster::MonsterPattern_GroundHit()
 			//playerbody->SetVelocity(physx::PxVec3(direction.x * 100, 100, direction.z * 100));
 		}
 	}
-		
 }

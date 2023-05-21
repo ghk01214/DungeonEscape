@@ -184,7 +184,7 @@ void Player_Mistic::CheckState()
 			// 물리 시뮬레이터의 점프 속도가 클라이언트에서 재생되는 점프 속도보다 빨라서
 			// 점프 애니메이션의 속도를 2배로 조정
 			// 점프 애니메이션의 길이 : 1.16
-			GetAnimator()->Play(m_currState, 2.f);
+			GetAnimator()->Play(m_currState, 1.f);
 		}
 		break;
 		case JUMPING:
@@ -197,7 +197,7 @@ void Player_Mistic::CheckState()
 		break;
 		case JUMP_END:
 		{
-			GetAnimator()->PlayFrame(JUMP_START, GetAnimator()->GetUpdateTime(), 2.f);
+			GetAnimator()->PlayFrame(JUMP_START, GetAnimator()->GetUpdateTime(), 1.f);
 		}
 		break;
 		case MOVE:
@@ -485,8 +485,6 @@ void Player_Mistic::ParsePackets()
 
 		auto packet{ packets.front() };
 
-		//std::cout << packet.ReadID() << ", " << magic_enum::enum_name(packet.ReadProtocol()) << ", " << magic_enum::enum_integer(packet.ReadProtocol()) << "\n";
-
 		switch (packet.ReadProtocol())
 		{
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
@@ -520,6 +518,7 @@ void Player_Mistic::ParsePackets()
 
 void Player_Mistic::StartRender(network::CPacket& packet)
 {
+	packet.Read<server::OBJECT_TYPE>();
 	int32_t id{ packet.ReadID() };
 
 	if (GetNetwork()->GetID() == -1)
@@ -545,6 +544,8 @@ void Player_Mistic::StartRender(network::CPacket& packet)
 
 		int32_t aniIndex{ packet.Read<int32_t>() };
 		float aniFrame{ packet.Read<float>() };
+
+		packet.Read<server::FBX_TYPE>();
 
 		std::cout << std::format("ID : {}\n", id);
 		std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
@@ -609,8 +610,7 @@ void Player_Mistic::Transform(network::CPacket& packet)
 	GetTransform()->SetWorldMatrix(mat);
 
 	//auto t{ GetTransform()->GetWorldPosition() };
-	//if (GET_NETWORK->GetID() != id)
-	//	std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
+	//std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
 }
 
 void Player_Mistic::ChangeAnimation(network::CPacket& packet)
