@@ -122,35 +122,40 @@ void ConvexMeshWrapper::CreatePxConvexMesh(const std::vector<physx::PxVec3>& ver
 
 
     // Apply scale to vertices
-    float scaleFactor = 1.f; // 1/100
     std::vector<physx::PxVec3> scaledVertices(vertices.size());
-  
+    
     for (size_t i = 0; i < vertices.size(); ++i)
     {
-        scaledVertices[i].x = (vertices[i].x) * scaleFactor;
-        scaledVertices[i].y = (vertices[i].y) * scaleFactor;
-        scaledVertices[i].z = (vertices[i].z) * scaleFactor;      //0.01 unit interval between unreal and physx
+        scaledVertices[i].x = (vertices[i].x) * PX_SCALE_FACTOR;
+        scaledVertices[i].y = (vertices[i].y) * PX_SCALE_FACTOR;
+        scaledVertices[i].z = (vertices[i].z) * PX_SCALE_FACTOR;      //0.01 unit interval between unreal and physx
     }
 
-    PxConvexMeshDesc  desc;
-    desc.points.count = scaledVertices.size();
-    desc.points.stride = sizeof(PxVec3);
-    desc.points.data = scaledVertices.data();
+    // Create description for triangle mesh
+    physx::PxTriangleMeshDesc meshDesc;
+    meshDesc.points.count = scaledVertices.size();
+    meshDesc.points.stride = sizeof(physx::PxVec3);
+    meshDesc.points.data = scaledVertices.data();
+    
+    meshDesc.triangles.count = indices.size() / 3;
+    meshDesc.triangles.stride = 3 * sizeof(PxU32);
+    meshDesc.triangles.data = indices.data();
 
-    desc.indices.count = indices.size(); //numface
-    desc.indices.stride = sizeof(PxVec3);
-    desc.indices.data = indices.data();
 
-    desc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+    // Validate the description
+    assert(meshDesc.isValid());
 
-    PxDefaultMemoryOutputStream writeBuffer;
-    PxConvexMeshCookingResult::Enum result;
-    bool cookingTriangleStatus = cooking->cookConvexMesh(desc, writeBuffer, &result);
-    assert(cookingTriangleStatus);
+    // Cook the triangle mesh
+    physx::PxDefaultMemoryOutputStream writeBuffer;
+    if (!cooking->cookTriangleMesh(meshDesc, writeBuffer)) {
+        // handle error
+        std::cout << "triangleMeshWraperErr" << std::endl;
+        return;
+    }
 
-    PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-
-    m_convexMesh = phys->createConvexMesh(readBuffer);
+    // Create the triangle mesh
+    physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+    m_convexMesh = phys->createTriangleMesh(readBuffer);
 
     scaledVertices.clear();
 }
@@ -182,7 +187,7 @@ std::wstring ConvexMeshWrapper::GetCurrentPath()
     return m_meshPath;
 }
 
-physx::PxConvexMesh* ConvexMeshWrapper::GetConvexMesh()
+physx::PxTriangleMesh* ConvexMeshWrapper::GetConvexMesh()
 {
 	return m_convexMesh;
 }

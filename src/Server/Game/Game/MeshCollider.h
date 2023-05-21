@@ -24,7 +24,7 @@ public:
 	static std::unordered_map<std::wstring, ConvexMeshWrapper*>& GetConvexContainder(void) { return m_convexContainer; }
 
 protected:
-	physx::PxConvexMeshGeometry CreateTriangleMeshGeometry();
+	physx::PxTriangleMeshGeometry CreateTriangleMeshGeometry();
 
 private:
 	ConvexMeshWrapper* GetMyConvexWrapper();

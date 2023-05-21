@@ -74,3 +74,4 @@ enum class CollisionInfoType
 
 #define PX_SIM_FRAMECNT 180.0f
 #define PX_RELEASE(x)	if(x)	{ x->release(); x = NULL;	}
+#define PX_SCALE_FACTOR 1.f

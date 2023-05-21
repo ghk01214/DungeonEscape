@@ -103,7 +103,7 @@ void MeshCollider::Release()
     Collider::Release();
 }
 
-PxConvexMeshGeometry MeshCollider::CreateTriangleMeshGeometry()
+PxTriangleMeshGeometry MeshCollider::CreateTriangleMeshGeometry()
 {
     PxMeshScale scale;
 
@@ -111,7 +111,7 @@ PxConvexMeshGeometry MeshCollider::CreateTriangleMeshGeometry()
     auto size = trans->GetScale();
     scale.rotation = PxQuat(PxIdentity);
     scale.scale = PxVec3(size.x, size.y, size.z);
-    return PxConvexMeshGeometry(GetMyConvexWrapper()->GetConvexMesh(), scale);
+    return PxTriangleMeshGeometry(GetMyConvexWrapper()->GetConvexMesh(), scale);
 }
 
 ConvexMeshWrapper* MeshCollider::GetMyConvexWrapper()

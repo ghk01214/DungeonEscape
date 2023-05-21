@@ -23,10 +23,10 @@ private:
 
 public:
 	std::wstring GetCurrentPath();
-	physx::PxConvexMesh* GetConvexMesh();
+	physx::PxTriangleMesh* GetConvexMesh();
 
 private:
-	physx::PxConvexMesh* m_convexMesh = nullptr;
+	physx::PxTriangleMesh* m_convexMesh = nullptr;
 	std::wstring m_meshPath = L"";
 
 
