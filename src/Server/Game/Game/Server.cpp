@@ -489,6 +489,7 @@ namespace game
 			break;
 			case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 			{
+				msg.objType = packet.Read<server::OBJECT_TYPE>();
 				msg.fbxType = packet.Read<server::FBX_TYPE>();
 
 				InputCommandMessage(msg);

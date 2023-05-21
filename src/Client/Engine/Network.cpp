@@ -75,6 +75,7 @@ namespace network
 		CPacket packet;
 
 		packet.WriteProtocol(ProtocolID::MY_ADD_ANIMATE_OBJ_REQ);
+		packet.Write<server::OBJECT_TYPE>(m_objectType);
 		packet.Write<server::FBX_TYPE>(fbxType);
 
 		GET_NETWORK->Send(packet);

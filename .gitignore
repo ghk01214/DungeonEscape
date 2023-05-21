@@ -507,3 +507,4 @@ src/Server/*/out/
 bin/
 bin-int/
 hooks/
+src/Client/Resources/FBX/Character/Troll
