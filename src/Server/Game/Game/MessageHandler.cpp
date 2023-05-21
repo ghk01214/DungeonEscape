@@ -237,7 +237,7 @@ namespace game
 				{
 					int32_t colliderID{ NewColliderID() };
 
-					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500, 100, -1000), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };					player->SetName(L"Mistic");
+					Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500 + msg.playerID * 10.f, 150, -1000), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };					player->SetName(L"Mistic");
 					player->SetFBXType(msg.fbxType);
 					player->GetController()->GetCollider()->SetID(colliderID);
 					//Login(msg.playerID, player);

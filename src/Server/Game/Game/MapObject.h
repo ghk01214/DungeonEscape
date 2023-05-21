@@ -24,7 +24,7 @@ private:
 	RigidBody* m_body = nullptr;
 
 private:	//server
-	bool m_requiresPacketTransmit = true;
+	bool m_requiresPacketTransmit = false;
 };
 
 

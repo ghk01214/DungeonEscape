@@ -67,9 +67,9 @@ void Scene_Test::LateUpdate()
 			{
 				auto objType{ request.Read<server::OBJECT_TYPE>() };
 
-				if (objType == server::OBJECT_TYPE::REMOTE_PLAYER)
+				if (objType == server::OBJECT_TYPE::PLAYER)
 					CreateRemotePlayer(request);
-				else if (objType == server::OBJECT_TYPE::BOSS)
+				if (objType == server::OBJECT_TYPE::BOSS)
 					CreateBoss(request);
 			}
 			break;
