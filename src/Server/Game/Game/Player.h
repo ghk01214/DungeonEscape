@@ -35,6 +35,7 @@ public:
 	float GetControllerMoveSpeed();
 	float GetControllerJumpSpeed();
 	CustomController* GetController();
+	Vec3 GetCameraLook();
 
 	void SetControllerMoveSpeed(float value);
 	void SetControllerJumpSpeed(float value);

@@ -44,6 +44,7 @@ namespace game
 		void SendJumpStartPacket(int32_t id);
 		void SendHitPacket(int32_t id);
 		void SendDiePacket(int32_t id);
+		void SendCameraLookPacket(int32_t id, Player* obj);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

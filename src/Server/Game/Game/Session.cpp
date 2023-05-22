@@ -330,4 +330,19 @@ namespace game
 
 		Send(packet);
 	}
+	
+	void CSession::SendCameraLookPacket(int32_t id, Player* obj)
+	{
+		network::CPacket packet;
+		auto look{ obj->GetCameraLook() };
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_CAMERA_LOOK_ACK);
+
+		packet.Write<float>(look.x);
+		packet.Write<float>(look.y);
+		packet.Write<float>(look.z);
+
+		Send(packet);
+	}
 }

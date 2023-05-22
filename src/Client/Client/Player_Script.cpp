@@ -484,8 +484,8 @@ void Player_Mistic::MovePlayerCameraLook(void)
 		//matWorld.Translation(pos);
 		//GetTransform()->SetWorldMatrix(matWorld);
 
-		//if (GetNetwork()->IsMyPlayer() == true)
-		//	TurnPlayer(GetTransform()->GetWorldMatrix().Forward(), camera->GetTransform()->GetLook());
+		if (GetNetwork()->IsMyPlayer() == true)
+			TurnPlayer(GetTransform()->GetWorldMatrix().Forward(), camera->GetTransform()->GetLook());
 
 		Vec3 pos{ GetTransform()->GetWorldVec3Position() };
 		Matrix matWorld{ GetTransform()->GetWorldMatrix() };
@@ -532,6 +532,11 @@ void Player_Mistic::ParsePackets()
 			case ProtocolID::WR_ANI_ACK:
 			{
 				ChangeAnimation(packet);
+			}
+			break;
+			case ProtocolID::MY_CAMERA_LOOK_ACK:
+			{
+				RotateToCameraDirection(packet);
 			}
 			break;
 			case ProtocolID::WR_JUMP_START_ACK:
@@ -687,4 +692,18 @@ void Player_Mistic::AddColliderToObject(network::CPacket& packet)
 		m_tempColliderCont[tempColliderID].id = colliderID;
 		obj->SetCollider(colliderID, m_tempColliderCont[tempColliderID]);
 	}*/
+}
+
+void Player_Mistic::RotateToCameraDirection(network::CPacket& packet)
+{
+	Vec3 look;
+	look.x = packet.Read<float>();
+	look.y = packet.Read<float>();
+	look.z = packet.Read<float>();
+
+	TurnPlayer(GetTransform()->GetWorldMatrix().Forward(), look);
+
+	//Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	//matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
+	//GetTransform()->SetWorldMatrix(matWorld);
 }

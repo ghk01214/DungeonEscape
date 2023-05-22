@@ -360,6 +360,9 @@ namespace game
 							break;
 						}
 					}
+
+					Message sendMsg{ msg.playerID, ProtocolID::WR_CAMERA_LOOK_ACK };
+					PushSendMessage(sendMsg);
 				}
 				break;
 				case ProtocolID::MY_ATTACK_REQ:

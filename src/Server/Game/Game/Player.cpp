@@ -133,6 +133,16 @@ CustomController* Player::GetController()
 	return m_controller;
 }
 
+Vec3 Player::GetCameraLook()
+{
+	Vec3 look;
+	look.x = m_controller->GetCameraLook().x;
+	look.y = m_controller->GetCameraLook().y;
+	look.z = m_controller->GetCameraLook().z;
+
+	return look;
+}
+
 void Player::SetControllerCameraLook(Vec3& value)
 {
 	m_controller->CameraLookReceive(value);

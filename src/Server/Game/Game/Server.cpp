@@ -1046,6 +1046,25 @@ namespace game
 				MessageHandler::GetInstance()->RemoveObject(postOver->objID);
 			}
 			break;
+			case ProtocolID::WR_CAMERA_LOOK_ACK:
+			{
+				for (auto& playerObject : playerObjects)
+				{
+					auto player{ dynamic_cast<Player*>(playerObject) };
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (client->GetID() == postOver->playerID)
+							continue;
+
+						client->SendCameraLookPacket(postOver->playerID, player);
+					}
+				}
+			}
+			break;
 #pragma endregion
 			default:
 			break;
