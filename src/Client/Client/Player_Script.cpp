@@ -484,11 +484,11 @@ void Player_Mistic::MovePlayerCameraLook(void)
 		//matWorld.Translation(pos);
 		//GetTransform()->SetWorldMatrix(matWorld);
 
-		TurnPlayer(GetTransform()->GetWorldMatrix().Forward(), camera->GetTransform()->GetLook());
+		//if (GetNetwork()->IsMyPlayer() == true)
+		//	TurnPlayer(GetTransform()->GetWorldMatrix().Forward(), camera->GetTransform()->GetLook());
 
 		Vec3 pos{ GetTransform()->GetWorldVec3Position() };
 		Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-		//matWorld *= Matrix::CreateRotationY(180.f);
 		matWorld.Translation(pos);
 		GetTransform()->SetWorldMatrix(matWorld);
 

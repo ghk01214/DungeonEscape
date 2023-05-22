@@ -100,7 +100,7 @@ void TestLevel::Init()
 
 
 	// actor 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage3.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage4.FBX");
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	int32_t i = 0;
@@ -202,7 +202,7 @@ void TestLevel::Update(double timeDelta)
 
 		if (prevOnGround != mob->IsOnGround())
 		{
-			mob->MonsterPattern_GroundHit();
+			//mob->MonsterPattern_GroundHit();
 
 			bossSkillEndTime = steady_clock::now();
 		}

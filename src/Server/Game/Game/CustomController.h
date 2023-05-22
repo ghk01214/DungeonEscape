@@ -68,6 +68,7 @@ private:
 	bool	m_onGround = false;
 	float	m_degreeThreshold = 49.9f;
 	//float	m_moveSpeed = 600.f;
+	//float	m_moveSpeed = 65.f;
 	float	m_moveSpeed = 65.f;
 	float	m_jumpSpeed = 70.f;
 
