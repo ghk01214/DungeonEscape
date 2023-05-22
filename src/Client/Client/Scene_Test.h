@@ -28,9 +28,14 @@ private:
 	void CreateBoss(network::CPacket& packet);
 
 	void ChangeNetworkObjectID(network::CPacket& packet);
+	void CreateAnimatedRemoteObject(network::CPacket& packet);
 	void CreateRemoteObject(network::CPacket& packet);
 	void ChangeColliderID(network::CPacket& packet);
 	void AddColliderToObject(network::CPacket& packet);
+	void RemoveObject(network::CPacket& packet);
+
+	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc);
+	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
 
 public:
 	std::vector<std::shared_ptr<CGameObject>> CreateMapObject(ObjectDesc& objectDesc);

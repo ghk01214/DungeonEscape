@@ -15,10 +15,28 @@
 #include <NetworkManager.h>
 #include <Network.h>
 
+Monster_Dragon::Monster_Dragon() :
+	MonoBehaviour{},
+	m_prevState{ END },
+	m_currState{ END },
+	m_skillEndTime{ std::chrono::steady_clock::now() }
+{
+}
+
+Monster_Dragon::~Monster_Dragon()
+{
+}
+
 void Monster_Dragon::Start()
 {
 	m_prevState = IDLE1;
 	m_currState = IDLE1;
+	m_skillEndTime = std::chrono::steady_clock::now();
+	GetAnimator()->SetFramePerSecond(30);
+
+	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
+	GetTransform()->SetWorldMatrix(matWorld);
 }
 
 void Monster_Dragon::Update(void)
@@ -46,64 +64,19 @@ void Monster_Dragon::Update(void)
 		}
 	}*/
 
-	switch (m_currState)
+	using namespace std::chrono;
+
+	//if (m_currState == IDLE1)
+	//{
+	//	if (steady_clock::now() - m_skillEndTime > 5s)
+	//		m_currState = JUMP;
+	//}
+
+	if (m_currState == END)
 	{
-		case JUMP:
-		break;
-		default:
-		{
-			if (INPUT->GetButtonDown(KEY_TYPE::W) == true
-				or INPUT->GetButton(KEY_TYPE::W) == true)
-			{
-				m_currState = WALK;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::A) == true
-				or INPUT->GetButton(KEY_TYPE::A) == true)
-			{
-
-				m_currState = WALK_L;
-
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::S) == true
-				or INPUT->GetButton(KEY_TYPE::S) == true)
-			{
-				m_currState = WALK_B;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::D) == true
-				or INPUT->GetButton(KEY_TYPE::D) == true)
-			{
-				m_currState = WALK_R;
-			}
-			else if (INPUT->GetButtonUp(KEY_TYPE::W) == true
-				or INPUT->GetButtonUp(KEY_TYPE::A) == true
-				or INPUT->GetButtonUp(KEY_TYPE::S) == true
-				or INPUT->GetButtonUp(KEY_TYPE::D) == true)
-			{
-				m_currState = IDLE1;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::SPACE) == true)
-			{
-				m_currState = JUMP;
-			}
-
-			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_1) == true)
-			{
-				m_currState = ATTACK_HAND;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_2) == true)
-			{
-				m_currState = ATTACK_HORN;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_3) == true)
-			{
-				m_currState = ATTACK_MOUTH;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_4) == true)
-			{
-				m_currState = DIE;
-			}
-		}
-		break;
+		m_skillEndTime = steady_clock::now();
+		m_currState = IDLE1;
+		GetAnimator()->SetFramePerSecond(30);
 	}
 }
 
@@ -165,7 +138,7 @@ void Monster_Dragon::CheckState()
 		break;
 		case JUMP:
 		{
-			GetAnimator()->Play(m_currState);
+			GetAnimator()->PlayFrame(m_currState, 20.f / GetAnimator()->GetFramePerSecond());
 		}
 		break;
 		case RUN:
@@ -215,7 +188,7 @@ void Monster_Dragon::UpdateFrameRepeat()
 	switch (m_currState)
 	{
 		case ATTACK_HAND: case ATTACK_HORN: case ATTACK_MOUTH:
-		case DEFEND: case DIE: case GET_HIT:
+		case DEFEND: case DIE: case DEAD: case GET_HIT:
 		case JUMP: case SCREAM: case SLEEP:
 		return;
 		default:
@@ -231,7 +204,7 @@ void Monster_Dragon::UpdateFrameOnce()
 {
 	switch (m_currState)
 	{
-		case IDLE1: case IDLE2: case RUN:
+		case IDLE1: case IDLE2: case RUN: case DEAD:
 		case WALK: case WALK_B: case WALK_L: case WALK_R:
 		return;
 		default:
@@ -260,7 +233,8 @@ void Monster_Dragon::UpdateFrameOnce()
 			break;
 			case DIE:
 			{
-
+				GetNetwork()->SendRemoveObject(server::OBJECT_TYPE::BOSS);
+				m_currState = DEAD;
 			}
 			break;
 			case GET_HIT:
@@ -289,6 +263,10 @@ void Monster_Dragon::UpdateFrameOnce()
 	}
 
 	ani->PlayNextFrame();
+
+	if (m_currState == JUMP)
+	{
+	}
 }
 
 void Monster_Dragon::ParsePackets()
@@ -329,7 +307,21 @@ void Monster_Dragon::ParsePackets()
 				ChangeAnimation(packet);
 			}
 			break;
-
+			case ProtocolID::WR_JUMP_START_ACK:
+			{
+				m_currState = JUMP;
+			}
+			break;
+			case ProtocolID::WR_HIT_ACK:
+			{
+				m_currState = GET_HIT;
+			}
+			break;
+			case ProtocolID::WR_DIE_ACK:
+			{
+				m_currState = DIE;
+			}
+			break;
 			default:
 			break;
 		}
@@ -375,8 +367,9 @@ void Monster_Dragon::StartRender(network::CPacket& packet)
 		std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
 
 		GetTransform()->SetWorldVec3Position(pos);
-		auto mat{ Matrix::CreateTranslation(pos) };
-		GetTransform()->SetWorldMatrix(mat);
+		Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+		matWorld.Translation(pos);
+		GetTransform()->SetWorldMatrix(matWorld);
 
 		GetAnimator()->Play(aniIndex, aniFrame);
 	}
@@ -404,11 +397,20 @@ void Monster_Dragon::Transform(network::CPacket& packet)
 
 	bool onGround{ packet.Read<bool>() };
 
-	GetTransform()->SetWorldVec3Position(pos);
-	auto mat{ Matrix::CreateTranslation(pos) };
-	GetTransform()->SetWorldMatrix(mat);
+	if (onGround == true)
+	{
+		if (m_currState == JUMP)
+		{
+			m_currState = IDLE1;
+		}
+	}
 
-	auto t{ GetTransform()->GetWorldPosition() };
+	GetTransform()->SetWorldVec3Position(pos);
+	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	matWorld.Translation(pos);
+	GetTransform()->SetWorldMatrix(matWorld);
+
+	//auto t{ GetTransform()->GetWorldPosition() };
 	//std::cout << std::format("id - {}, t : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
 }
 

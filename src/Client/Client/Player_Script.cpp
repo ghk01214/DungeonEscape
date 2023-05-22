@@ -26,6 +26,10 @@ void Player_Mistic::Start()
 		return;
 
 	GetNetwork()->SendAddPlayer(server::FBX_TYPE::MISTIC);
+
+	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
+	GetTransform()->SetWorldMatrix(matWorld);
 }
 
 void Player_Mistic::Update(void)
@@ -38,19 +42,33 @@ void Player_Mistic::Update(void)
 		case JUMP_START:
 		case JUMPING:
 		case JUMP_END:
+		case DIE0:
+		case DIE1:
+		case DIE2:
+		case DEAD:
+		case DAMAGE:
 		break;
 		default:
 		{
 			if (INPUT->GetButtonDown(KEY_TYPE::W) == true
-				or INPUT->GetButton(KEY_TYPE::W) == true
-				or INPUT->GetButtonDown(KEY_TYPE::A) == true
-				or INPUT->GetButton(KEY_TYPE::A) == true
-				or INPUT->GetButtonDown(KEY_TYPE::S) == true
-				or INPUT->GetButton(KEY_TYPE::S) == true
-				or INPUT->GetButtonDown(KEY_TYPE::D) == true
-				or INPUT->GetButton(KEY_TYPE::D) == true)
+				or INPUT->GetButton(KEY_TYPE::W) == true)
 			{
 				m_currState = MOVE;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::A) == true
+				or INPUT->GetButton(KEY_TYPE::A) == true)
+			{
+				m_currState = MOVE_L;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::S) == true
+				or INPUT->GetButton(KEY_TYPE::S) == true)
+			{
+				m_currState = MOVE;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::D) == true
+				or INPUT->GetButton(KEY_TYPE::D) == true)
+			{
+				m_currState = MOVE_R;
 			}
 			else if (INPUT->GetButtonUp(KEY_TYPE::W) == true
 				or INPUT->GetButtonUp(KEY_TYPE::A) == true
@@ -64,21 +82,27 @@ void Player_Mistic::Update(void)
 				m_currState = JUMP_START;
 			}
 
-			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_1) == true)
+			if (m_currState != ATK0 or m_currState != ATK1 or m_currState != ATK2
+				or m_currState != ATK3 or m_currState != ATK4)
 			{
-				m_currState = ATK0;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_2) == true)
-			{
-				m_currState = ATK1;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_3) == true)
-			{
-				m_currState = ATK2;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::KEY_4) == true)
-			{
-				m_currState = ATK3;
+				if (INPUT->GetButtonDown(KEY_TYPE::KEY_1) == true)
+				{
+					m_currState = ATK0;
+					GetNetwork()->SendAttack(server::OBJECT_TYPE::FIREBALL);
+				}
+				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_2) == true)
+				{
+					m_currState = ATK1;
+					GetNetwork()->SendAttack(server::OBJECT_TYPE::ICEBALL);
+				}
+				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_3) == true)
+				{
+					m_currState = ATK2;
+				}
+				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_4) == true)
+				{
+					m_currState = ATK3;
+				}
 			}
 		}
 		break;
@@ -141,27 +165,27 @@ void Player_Mistic::CheckState()
 		break;
 		case DAMAGE:
 		{
-
+			GetAnimator()->Play(m_currState);
 		}
 		break;
-		case DEATH:
+		case DASH:
 		{
 
 		}
 		break;
 		case DIE0:
 		{
-
+			GetAnimator()->Play(m_currState);
 		}
 		break;
 		case DIE1:
 		{
-
+			GetAnimator()->Play(m_currState);
 		}
 		break;
 		case DIE2:
 		{
-
+			GetAnimator()->Play(m_currState);
 		}
 		break;
 		case IDLE_A:
@@ -205,6 +229,16 @@ void Player_Mistic::CheckState()
 			GetAnimator()->Play(m_currState);
 		}
 		break;
+		case MOVE_L:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
+		case MOVE_R:
+		{
+			GetAnimator()->Play(m_currState);
+		}
+		break;
 		case REST:
 		{
 
@@ -217,7 +251,7 @@ void Player_Mistic::CheckState()
 		break;
 		case SHOOT:
 		{
-
+			GetAnimator()->Play(m_currState);
 		}
 		break;
 		case SLEEP:
@@ -245,11 +279,6 @@ void Player_Mistic::CheckState()
 
 		}
 		break;
-		/*case WALK:
-		{
-
-		}
-		break;*/
 		default:
 		break;
 	}
@@ -262,7 +291,7 @@ void Player_Mistic::UpdateFrameRepeat()
 	switch (m_currState)
 	{
 		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
-		case DAMAGE: case DIE0: case DIE1: case DIE2:
+		case DAMAGE: case DIE0: case DIE1: case DIE2: case DEAD:
 		case JUMP_START: case JUMPING: case JUMP_END:
 		case SHOOT: case SLEEP: case SWOON: case TIRED:
 		return;
@@ -284,6 +313,7 @@ void Player_Mistic::UpdateFrameOnce()
 		case RUN: case RUN_L: case RUN_R:
 		case WALK: case WALK_L: case WALK_R:
 		case VICTORY_A: case VICTORY_B:
+		case DEAD:
 		return;
 		default:
 		break;
@@ -315,7 +345,8 @@ void Player_Mistic::UpdateFrameOnce()
 			case DIE1:
 			case DIE2:
 			{
-				m_currState = DEATH;
+				m_currState = DEAD;
+				anim->SetAniSpeed(0.f);
 			}
 			break;
 			case JUMP_END:
@@ -355,8 +386,6 @@ void Player_Mistic::UpdateFrameOnce()
 			m_currState = JUMPING;
 		}
 	}
-
-	//std::cout << magic_enum::enum_name(m_currState) << ", " << GetAnimator()->GetAnimFrame() << std::endl;
 }
 
 float Player_Mistic::GetAngleBetweenVector(const XMVECTOR& vector1, const XMVECTOR& vector2)
@@ -455,8 +484,11 @@ void Player_Mistic::MovePlayerCameraLook(void)
 		//matWorld.Translation(pos);
 		//GetTransform()->SetWorldMatrix(matWorld);
 
-		Vec3 pos = GetTransform()->GetWorldVec3Position();
-		Matrix matWorld = GetTransform()->GetWorldMatrix();
+		TurnPlayer(GetTransform()->GetWorldMatrix().Forward(), camera->GetTransform()->GetLook());
+
+		Vec3 pos{ GetTransform()->GetWorldVec3Position() };
+		Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+		//matWorld *= Matrix::CreateRotationY(180.f);
 		matWorld.Translation(pos);
 		GetTransform()->SetWorldMatrix(matWorld);
 
@@ -507,7 +539,23 @@ void Player_Mistic::ParsePackets()
 				m_currState = JUMP_START;
 			}
 			break;
-
+			case ProtocolID::WR_ATTACK_ACK:
+			{
+				m_currState = magic_enum::enum_cast<PLAYER_STATE>(packet.Read<int32_t>()).value();
+			}
+			break;
+			case ProtocolID::WR_HIT_ACK:
+			{
+				if (m_currState != DEAD)
+					m_currState = DAMAGE;
+			}
+			break;
+			case ProtocolID::WR_DIE_ACK:
+			{
+				if (m_currState != DEAD)
+					m_currState = DIE0;
+			}
+			break;
 			default:
 			break;
 		}
@@ -518,7 +566,6 @@ void Player_Mistic::ParsePackets()
 
 void Player_Mistic::StartRender(network::CPacket& packet)
 {
-	packet.Read<server::OBJECT_TYPE>();
 	int32_t id{ packet.ReadID() };
 
 	if (GetNetwork()->GetID() == -1)
@@ -545,16 +592,15 @@ void Player_Mistic::StartRender(network::CPacket& packet)
 		int32_t aniIndex{ packet.Read<int32_t>() };
 		float aniFrame{ packet.Read<float>() };
 
-		packet.Read<server::FBX_TYPE>();
-
 		std::cout << std::format("ID : {}\n", id);
 		std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
 		std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
 		std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
 
 		GetTransform()->SetWorldVec3Position(pos);
-		auto mat{ Matrix::CreateTranslation(pos) };
-		GetTransform()->SetWorldMatrix(mat);
+		Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+		matWorld.Translation(pos);
+		GetTransform()->SetWorldMatrix(matWorld);
 		GetAnimator()->Play(aniIndex, aniFrame);
 	}
 }
@@ -606,8 +652,9 @@ void Player_Mistic::Transform(network::CPacket& packet)
 	}
 
 	GetTransform()->SetWorldVec3Position(pos);
-	auto mat{ Matrix::CreateTranslation(pos) };
-	GetTransform()->SetWorldMatrix(mat);
+	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	matWorld.Translation(pos);
+	GetTransform()->SetWorldMatrix(matWorld);
 
 	//auto t{ GetTransform()->GetWorldPosition() };
 	//std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
@@ -615,14 +662,17 @@ void Player_Mistic::Transform(network::CPacket& packet)
 
 void Player_Mistic::ChangeAnimation(network::CPacket& packet)
 {
-	int32_t index{ packet.Read<int32_t>() };
-	float frame{ packet.Read<float>() };
-	float speed{ packet.Read<float>() };
+	if (m_currState != DEAD)
+	{
+		int32_t index{ packet.Read<int32_t>() };
+		float frame{ packet.Read<float>() };
+		float speed{ packet.Read<float>() };
 
-	m_currState = magic_enum::enum_cast<PLAYER_STATE>(index).value();
-	m_prevState = m_currState;
+		m_currState = magic_enum::enum_cast<PLAYER_STATE>(index).value();
+		m_prevState = m_currState;
 
-	GetAnimator()->PlayFrame(index, frame, speed);
+		GetAnimator()->PlayFrame(index, frame, speed);
+	}
 }
 
 void Player_Mistic::AddColliderToObject(network::CPacket& packet)

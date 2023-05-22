@@ -18,6 +18,7 @@ public:
 	void SetPlayInstance(bool playInstance) { m_playInstance = playInstance; }
 	void SetAnimFrame(int32_t frame, int32_t nextFrame);
 	void SetAniSpeed(float speed) { m_aniSpeed = speed; }
+	void SetFramePerSecond(int32_t framePerSecond) { m_framePerSecond = framePerSecond; }
 	void PushData();
 
 	int32 GetAnimCount() { return static_cast<uint32>(m_animClips->size()); }

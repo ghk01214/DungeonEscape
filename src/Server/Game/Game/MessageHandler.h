@@ -66,10 +66,13 @@ namespace game
 
 		void SetIOCPHandle(HANDLE iocp);
 
-	private:
+	public:
 		int32_t NewObjectID();
 		int32_t NewColliderID();
 
+		void RemoveObject(int32_t objID);
+
+	private:
 		void Login(int32_t playerID, Player* player);
 		void Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr);
 

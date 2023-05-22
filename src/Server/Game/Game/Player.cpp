@@ -15,7 +15,9 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_playerID{ playerID },
 	m_aniIndex{ 12 },
 	m_aniFrame{ 0.f },
-	m_aniSpeed{ 1.f }
+	m_aniSpeed{ 1.f },
+	m_hp{ 20 },
+	m_die{ false }
 {
 }
 
@@ -34,21 +36,27 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
-	m_controller->Move();
-
-	if (m_startSendTransform == true)
+	if (m_die == false)
 	{
-		game::Message msg{ m_playerID, ProtocolID::WR_TRANSFORM_ACK };
-		game::MessageHandler::GetInstance()->PushTransformMessage(msg);
+		m_controller->Move();
 
-		if (m_controller->IsStartJump() == true)
+		if (m_startSendTransform == true)
 		{
-			msg.msgProtocol = ProtocolID::WR_JUMP_START_ACK;
-			game::MessageHandler::GetInstance()->PushSendMessage(msg);
+			game::Message msg{ m_playerID, ProtocolID::WR_TRANSFORM_ACK };
+			game::MessageHandler::GetInstance()->PushTransformMessage(msg);
+
+			if (m_damaged == false and m_controller->IsStartJump() == true)
+			{
+				msg.msgProtocol = ProtocolID::WR_JUMP_START_ACK;
+				game::MessageHandler::GetInstance()->PushSendMessage(msg);
+			}
+
+			//auto p{ GetTransform()->GetPosition() };
+			//std::cout << m_playerID << " : " << p.x << ", " << p.y << ", " << p.z << "\n";
 		}
 
-		//auto p{ GetTransform()->GetPosition() };
-		//std::cout << m_playerID << " : " << p.x << ", " << p.y << ", " << p.z << "\n";
+		if (m_damaged == true and m_controller->IsOnGround() == true)
+			m_damaged = false;
 	}
 
 	// 스테이트 변경
@@ -77,11 +85,27 @@ bool Player::IsOnGound()
 	return m_controller->IsOnGround();
 }
 
+bool Player::IsDead()
+{
+	return m_die;
+}
+
 void Player::SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed)
 {
 	m_aniIndex = aniIndex;
 	m_aniFrame = aniFrame;
 	m_aniSpeed = aniSpeed;
+}
+
+void Player::GotHit(int32_t damage)
+{
+	m_hp -= damage;
+	m_damaged = true;
+}
+
+void Player::KillPlayer()
+{
+	m_die = true;
 }
 
 void Player::SetControllerMoveSpeed(float value)
@@ -114,7 +138,7 @@ void Player::SetControllerCameraLook(Vec3& value)
 	m_controller->CameraLookReceive(value);
 }
 
-void Player::PlayerPattern_ShootBall(float power)
+void Player::PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, float power)
 {
 	//투사체 위치 선정
 	physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
@@ -122,7 +146,7 @@ void Player::PlayerPattern_ShootBall(float power)
 
 	float playerRadius = m_controller->GetCollider()->GetRadius();
 	float skillBallHalfExtent = 50.f;
-	
+
 	physx::PxVec3 skillBallPosition = playerPos + playerCameraLook * (playerRadius + skillBallHalfExtent + 10);
 	Vec3 ballPos = FROM_PX(skillBallPosition);
 
@@ -135,6 +159,10 @@ void Player::PlayerPattern_ShootBall(float power)
 	auto ballBody = ballObject->GetComponent<RigidBody>(L"RigidBody");
 	ballBody->SetMass(1.f);
 	ballBody->AddCollider<SphereCollider>(ballObject->GetTransform()->GetScale());
+	ballObject->SetID(objID);
+	ballObject->SetName(L"Sphere");
+	ballObject->SetFBXType(server::FBX_TYPE::SPHERE);
+	ballObject->SetObjectType(type);
 
 	ballBody->AddForce(ForceMode::Impulse, playerCameraLook * power);
 }

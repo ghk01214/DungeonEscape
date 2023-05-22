@@ -68,6 +68,9 @@ enum class ProtocolID : unsigned short
 	MY_JUMP_START_REQ,
 	MY_JUMP_START_ACK,
 
+	MY_ATTACK_REQ,
+	MY_ATTACK_ACK,
+
 	PROTOCOL_MY_END = ProtocolBase::PROTOCOL_OFFSET_WR,
 #pragma endregion
 
@@ -103,6 +106,15 @@ enum class ProtocolID : unsigned short
 
 	WR_JUMP_START_REQ,
 	WR_JUMP_START_ACK,
+
+	WR_ATTACK_REQ,
+	WR_ATTACK_ACK,
+
+	WR_HIT_REQ,
+	WR_HIT_ACK,
+
+	WR_DIE_REQ,
+	WR_DIE_ACK,
 
 	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion

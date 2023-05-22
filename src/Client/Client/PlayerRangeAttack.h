@@ -10,6 +10,8 @@ public:
 	virtual void LateUpdate() override;
 
 private:
+	void ParsePackets();
+	void Transform(network::CPacket& packet);
 
 };
 

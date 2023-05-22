@@ -73,11 +73,13 @@ public:
 	bool IsStatic() { return m_static; }
 
 	GAME_OBJECT_TYPE GetType(void) { return m_gameObjectType; }
+	server::OBJECT_TYPE GetObjectType() { return m_objectType; }
 
 	Collider& GetCollider(int32_t id) { return m_colliders[id]; }
 	void SetCollider(int32_t id, Collider& collider) { m_colliders[id] = collider; }
 
 	void ChangeColliderID(int32_t oldID, int32_t newID);
+	void SetObjectType(server::OBJECT_TYPE type) { m_objectType = type; }
 
 private:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> m_components;
@@ -88,6 +90,7 @@ private:
 	bool m_static = true;
 
 	GAME_OBJECT_TYPE m_gameObjectType = GAME_OBJECT_TYPE::OBJECT;
+	server::OBJECT_TYPE m_objectType;
 
 	std::unordered_map<int32_t, Collider> m_colliders;
 };

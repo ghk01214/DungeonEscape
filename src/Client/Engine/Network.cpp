@@ -81,13 +81,14 @@ namespace network
 		GET_NETWORK->Send(packet);
 	}
 
-	void CNetwork::SendAniIndexPacket()
+	void CNetwork::SendAniIndexPacket(server::OBJECT_TYPE type)
 	{
 		CPacket packet;
 		auto anim{ GetAnimator() };
 
 		packet.WriteID(m_networkID);
 		packet.WriteProtocol(ProtocolID::MY_ANI_REQ);
+		packet.Write<server::OBJECT_TYPE>(type);
 		packet.Write<int32_t>(anim->GetCurrentClipIndex());
 		packet.Write<float>(anim->GetUpdateTime());
 		packet.Write<float>(anim->GetAnimSpeed());
@@ -99,7 +100,7 @@ namespace network
 	{
 		CPacket packet;
 
-		packet.WriteID(GetNetwork()->GetID());
+		packet.WriteID(m_networkID);
 		packet.WriteProtocol(ProtocolID::MY_CAMERA_LOOK_REQ);
 
 		packet.Write<float>(look.x);
@@ -118,6 +119,17 @@ namespace network
 
 		packet.Write<server::OBJECT_TYPE>(objType);
 		packet.Write<server::FBX_TYPE>(fbxType);
+
+		GET_NETWORK->Send(packet);
+	}
+
+	void CNetwork::SendRemoveObject(server::OBJECT_TYPE type)
+	{
+		CPacket packet;
+
+		packet.WriteID(m_networkID);
+		packet.WriteProtocol(ProtocolID::WR_REMOVE_REQ);
+		packet.Write<server::OBJECT_TYPE>(type);
 
 		GET_NETWORK->Send(packet);
 	}
@@ -146,6 +158,27 @@ namespace network
 		packet.Write<float>(collider.scale.z);
 
 		packet.Write<bool>(last);
+
+		GET_NETWORK->Send(packet);
+	}
+
+	void CNetwork::SendJumpStart()
+	{
+		CPacket packet;
+
+		packet.WriteID(m_networkID);
+		packet.WriteProtocol(ProtocolID::WR_JUMP_START_REQ);
+
+		GET_NETWORK->Send(packet);
+	}
+
+	void CNetwork::SendAttack(server::OBJECT_TYPE type)
+	{
+		CPacket packet;
+
+		packet.WriteID(m_networkID);
+		packet.WriteProtocol(ProtocolID::MY_ATTACK_REQ);
+		packet.Write<server::OBJECT_TYPE>(type);
 
 		GET_NETWORK->Send(packet);
 	}

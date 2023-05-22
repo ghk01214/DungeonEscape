@@ -6,10 +6,11 @@
 #include "Collider.h"
 #include "RigidBody.h"
 #include "CollisionPairInfo.h"
-
+#include "MessageHandler.h"
+#include "Monster.h"
 
 SkillObject::SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, server::OBJECT_TYPE type)
-	: GameObject(position, rotation, scale), m_body(nullptr), m_objType(type)
+	: GameObject(position, rotation, scale), m_body(nullptr)//, m_objType(type)
 {
 }
 
@@ -52,30 +53,85 @@ void SkillObject::ActionsWhenHit()
 	{
 		auto collider = info.get()->GetFromCollider();
 		server::OBJECT_TYPE type = collider->GetOwnerObject()->GetObjectType();
-		if (type == server::OBJECT_TYPE::MONSTER)		
+
+		if (type == server::OBJECT_TYPE::BOSS)
 		{								//스킬이 hit한게 몬스터
 			SetRemoveReserved();		//객체 삭제
+
+			game::Message msg{ -1, ProtocolID::WR_REMOVE_ACK };
+			msg.objID = m_id;
+			msg.objType = m_objType;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(msg);
+
+			auto monster{ dynamic_cast<Monster*>(collider->GetOwnerObject()) };
 
 			switch (m_objType)
 			{
 				case server::OBJECT_TYPE::FIREBALL:
-				std::cout << "파이어볼 몬스터타격 처리" << std::endl;
-				//msg써서 파이어볼처리
+				{
+					std::cout << "파이어볼 몬스터 타격\n";
+					monster->GotHit(3);
+					std::cout << "Boss got damage : 3\n";
+					std::cout << "BOSS HP : " << monster->GetHP() << "\n\n";
+				}
 				break;
 				case server::OBJECT_TYPE::ICEBALL:
-				std::cout << "아이스볼 몬스터타격 처리" << std::endl;
-				//msg써서 아이스볼처리
+				{
+					std::cout << "아이스볼 몬스터 타격\n";
+					monster->GotHit(25);
+					std::cout << "Boss got damage : 5\n";
+					std::cout << "BOSS HP : " << monster->GetHP() << "\n\n";
+				}
 				break;
+			}
+
+			if (monster->IsDead() == true)
+			{
+				std::cout << "BOSS DEFEATED!\n\n";
+
+				game::Message deadMsg{ -1, ProtocolID::WR_DIE_ACK };
+				deadMsg.objID = monster->GetMonsterID();
+				deadMsg.objType = server::OBJECT_TYPE::BOSS;
+
+				game::MessageHandler::GetInstance()->PushSendMessage(deadMsg);
+			}
+			else
+			{
+				game::Message hitMsg{ -1, ProtocolID::WR_HIT_ACK };
+				hitMsg.objID = monster->GetMonsterID();
+				hitMsg.objType = server::OBJECT_TYPE::BOSS;
+
+				game::MessageHandler::GetInstance()->PushSendMessage(hitMsg);
 			}
 		}
 		else if (type == server::OBJECT_TYPE::PLAYER)
-		{	
+		{
 			std::cout << "p" << std::endl;
 		}
 		else
 		{
-			std::cout << "파이어볼 맵타격 처리" << std::endl;
+			switch (m_objType)
+			{
+				case server::OBJECT_TYPE::FIREBALL:
+				{
+					//std::cout << "파이어볼 맵타격 처리\n";
+				}
+				break;
+				case server::OBJECT_TYPE::ICEBALL:
+				{
+					//std::cout << "아이스볼 맵타격 처리\n";
+				}
+				break;
+			}
+
 			SetRemoveReserved();		//객체 삭제
+
+			game::Message sendMsg{ -1, ProtocolID::WR_REMOVE_ACK };
+			sendMsg.objID = m_id;
+			sendMsg.objType = m_objType;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
 		}
 	}
 }

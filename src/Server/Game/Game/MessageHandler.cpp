@@ -11,6 +11,7 @@
 #include "CustomController.h"
 #include "TimeManager.h"
 #include "CapsuleCollider.h"
+#include "Monster.h"
 
 namespace game
 {
@@ -101,6 +102,7 @@ namespace game
 			postOver.playerID = msg.playerID;
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
+			postOver.objType = msg.objType;
 
 			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 
@@ -186,6 +188,7 @@ namespace game
 
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
+		auto monsterObjects{ objMgr->GetLayer(L"Layer_Monster")->GetGameObjects() };
 
 		for (int32_t i = 0; i < size;)
 		{
@@ -228,18 +231,15 @@ namespace game
 				{
 					Message sendMsg{ msg.playerID, static_cast<ProtocolID>(magic_enum::enum_integer(msg.msgProtocol) + 1) };
 					PushSendMessage(sendMsg);
-
-					TIMER_EVENT ev{ CURRENT_TIME };
-					m_eventQueue.push(ev);
 				}
 				break;
 				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 				{
-					int32_t colliderID{ NewColliderID() };
-
 					if (msg.objType == server::OBJECT_TYPE::PLAYER)
 					{
-						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500 + msg.playerID * 10.f, 150, -1000), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+						int32_t colliderID{ NewColliderID() };
+
+						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500 + msg.playerID * 50.f, 150, -1500), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 						player->SetName(L"Mistic");
 						player->SetObjectType(msg.objType);
 						player->SetFBXType(msg.fbxType);
@@ -248,6 +248,7 @@ namespace game
 					//Login(msg.playerID, player);
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
+					sendMsg.objType = msg.objType;
 					PushSendMessage(sendMsg);
 				}
 				break;
@@ -299,9 +300,7 @@ namespace game
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:
 				{
-					auto playerLayer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
-
-					for (auto& playerObject : playerLayer->GetGameObjects())
+					for (auto& playerObject : playerObjects)
 					{
 						auto player{ dynamic_cast<Player*>(playerObject) };
 
@@ -316,14 +315,30 @@ namespace game
 				break;
 				case ProtocolID::MY_ANI_REQ:
 				{
-					for (auto& playerObj : playerObjects)
+					if (msg.objType == server::OBJECT_TYPE::PLAYER)
 					{
-						auto player{ dynamic_cast<Player*>(playerObj) };
-
-						if (player->GetPlayerID() == msg.playerID)
+						for (auto& playerObj : playerObjects)
 						{
-							player->SetAniInfo(msg.aniIndex, msg.aniFrame, msg.aniSpeed);
-							break;
+							auto player{ dynamic_cast<Player*>(playerObj) };
+
+							if (player->GetPlayerID() == msg.playerID)
+							{
+								player->SetAniInfo(msg.aniIndex, msg.aniFrame, msg.aniSpeed);
+								break;
+							}
+						}
+					}
+					else if (msg.objType == server::OBJECT_TYPE::BOSS)
+					{
+						for (auto& monsterObject : monsterObjects)
+						{
+							auto monster{ dynamic_cast<Monster*>(monsterObject) };
+
+							if (monster->GetMonsterID() == msg.objID)
+							{
+								monster->SetAniInfo(msg.aniIndex, msg.aniFrame, msg.aniSpeed);
+								break;
+							}
 						}
 					}
 
@@ -347,7 +362,53 @@ namespace game
 					}
 				}
 				break;
+				case ProtocolID::MY_ATTACK_REQ:
+				{
+					int32_t objID{ NewObjectID() };
+
+					// 오브젝트 추가 작업 후 id 세팅
+					for (auto& player : playerObjects)
+					{
+						auto pl{ dynamic_cast<Player*>(player) };
+
+						if (pl->GetPlayerID() == msg.playerID)
+						{
+							pl->PlayerPattern_ShootBall(msg.objType, objID, 100.f);
+							break;
+						}
+					}
+
+					Message sendMsg{ msg.playerID, ProtocolID::WR_ATTACK_ACK };
+					sendMsg.objID = objID;
+
+					PushSendMessage(sendMsg);
+				}
+				break;
 #pragma endregion
+				case ProtocolID::WR_REMOVE_REQ:
+				{
+					if (msg.objType == server::OBJECT_TYPE::BOSS)
+					{
+						for (auto& monsterObject : monsterObjects)
+						{
+							auto monster{ dynamic_cast<Monster*>(monsterObject) };
+
+							if (monster->GetMonsterID() == msg.objID)
+							{
+								objMgr->RemoveGameObjectFromLayer(L"Layer_Monster", monster);
+								break;
+							}
+						}
+					}
+					//objMgr->RemoveGameObjectFromLayer(L"Layer_Monster", player);
+
+					Message sendMsg{ -1, ProtocolID::WR_REMOVE_ACK };
+					sendMsg.objID = msg.objID;
+					sendMsg.objType = msg.objType;
+
+					PushSendMessage(sendMsg);
+				}
+				break;
 				default:
 				break;
 			}
@@ -416,6 +477,12 @@ namespace game
 		m_reusableColliderID.pop();
 
 		return newID;
+	}
+
+	void MessageHandler::RemoveObject(int32_t objID)
+	{
+		m_reusableObjectID.push(objID);
+		--m_objectsNum;
 	}
 
 	void MessageHandler::Login(int32_t playerID, Player* player)

@@ -24,6 +24,7 @@
 #include "Monster_Script.h"
 #include "Camera_Script.h"
 #include "Player_Script.h"
+#include "PlayerRangeAttack.h"
 
 #include <Network.h>
 
@@ -44,7 +45,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	CreateMapObjects();
 
 	CreatePlayer();
-	CreateSphere();
+	//CreateSphere();
 
 	return scene;
 }
@@ -65,12 +66,7 @@ void Scene_Test::LateUpdate()
 		{
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
-				auto objType{ request.Read<server::OBJECT_TYPE>() };
-
-				if (objType == server::OBJECT_TYPE::PLAYER)
-					CreateRemotePlayer(request);
-				if (objType == server::OBJECT_TYPE::BOSS)
-					CreateBoss(request);
+				CreateAnimatedRemoteObject(request);
 			}
 			break;
 			case ProtocolID::MY_ADD_OBJ_ACK:
@@ -91,6 +87,11 @@ void Scene_Test::LateUpdate()
 			case ProtocolID::WR_ADD_OBJ_COLLIDER_ACK:
 			{
 				AddColliderToObject(request);
+			}
+			break;
+			case ProtocolID::WR_REMOVE_ACK:
+			{
+				RemoveObject(request);
 			}
 			break;
 			default:
@@ -117,19 +118,19 @@ void Scene_Test::CreateComputeShader(void)
 	{
 		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
 
-	// UAV 용 Texture 생성
-	shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
-		DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
-		CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
-		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+		// UAV 용 Texture 생성
+		shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
+			DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
+			CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
+			D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
 
-	shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"ComputeShader");
-	material->SetShader(shader);
-	material->SetInt(0, 1);
-	GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
+		shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"ComputeShader");
+		material->SetShader(shader);
+		material->SetInt(0, 1);
+		GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
 
-	// 쓰레드 그룹 (1 * 1024 * 1)
-	material->Dispatch(1, 1024, 1);
+		// 쓰레드 그룹 (1 * 1024 * 1)
+		material->Dispatch(1, 1024, 1);
 	}
 #pragma endregion
 }
@@ -315,6 +316,11 @@ void Scene_Test::CreatePlayer(void)
 	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
 	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::PLAYER);
 
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->SetObjectType(server::OBJECT_TYPE::PLAYER);
+	}
+
 	scene->AddPlayer(gameObjects);
 }
 
@@ -463,6 +469,59 @@ void Scene_Test::ChangeNetworkObjectID(network::CPacket& packet)
 	GET_NETWORK->ExchangeObjectID(oldID, newID);
 }
 
+void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
+{
+	int32_t id{ packet.ReadID() };
+
+	Vec3 pos;
+	pos.x = packet.Read<float>();
+	pos.y = packet.Read<float>();
+	pos.z = packet.Read<float>();
+
+	Vec4 quat;
+	quat.x = packet.Read<float>();
+	quat.y = packet.Read<float>();
+	quat.z = packet.Read<float>();
+	quat.w = packet.Read<float>();
+
+	Vec3 scale;
+	scale.x = packet.Read<float>();
+	scale.y = packet.Read<float>();
+	scale.z = packet.Read<float>();
+
+	int32_t aniIndex{ packet.Read<int32_t>() };
+	float aniFrame{ packet.Read<float>() };
+
+	server::OBJECT_TYPE objType{ packet.Read<server::OBJECT_TYPE>() };
+	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
+
+	ObjectDesc objectDesc;
+	ClassifyObject(fbxType, objectDesc);
+
+	if (objType == server::OBJECT_TYPE::PLAYER)
+		objType = server::OBJECT_TYPE::REMOTE_PLAYER;
+
+	std::vector<std::shared_ptr<CGameObject>> gameObjects{ CreateAnimatedObject(objectDesc) };
+	gameObjects = AddNetworkToObject(gameObjects, objType, id);
+
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->GetTransform()->SetWorldVec3Position(pos);
+		Matrix matWorld{ gameObject->GetTransform()->GetWorldMatrix() };
+
+		if (objType == server::OBJECT_TYPE::REMOTE_PLAYER)
+			matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
+
+		matWorld.Translation(pos);
+		gameObject->GetTransform()->SetWorldMatrix(matWorld);
+		gameObject->SetObjectType(objType);
+		gameObject->GetAnimator()->PlayFrame(aniIndex, aniFrame);
+	}
+
+	AddObjectToScene(objType, gameObjects);
+	GET_NETWORK->AddNetworkObject(id, gameObjects);
+}
+
 void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 {
 	int32_t objID{ packet.ReadID() };
@@ -483,20 +542,11 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
 
-	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 	server::OBJECT_TYPE objType{ packet.Read<server::OBJECT_TYPE>() };
-
-	std::wstring fbxName{};
-
-	if (fbxType == server::FBX_TYPE::MISTIC)
-		fbxName = L"Mistic";
+	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 
 	ObjectDesc objectDesc;
-	objectDesc.strName = fbxName;
-	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
-	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
-	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
-	objectDesc.script = std::make_shared<Player_Mistic>();
+	ClassifyObject(fbxType, objectDesc);
 
 	network::NetworkGameObject gameObjects{ CreateMapObject(objectDesc) };
 	gameObjects = AddNetworkToObject(gameObjects, objType, objID);
@@ -504,11 +554,21 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	for (auto& gameObject : gameObjects)
 	{
 		gameObject->GetTransform()->SetWorldVec3Position(pos);
-		auto mat{ Matrix::CreateTranslation(pos) };
-		gameObject->GetTransform()->SetWorldMatrix(mat);
+		Matrix matWorld{ gameObject->GetTransform()->GetWorldMatrix() };
+		//matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
+		matWorld.Translation(pos);
+		gameObject->GetTransform()->SetWorldMatrix(matWorld);
+
+		if (objType == server::OBJECT_TYPE::FIREBALL
+			or objType == server::OBJECT_TYPE::ICEBALL)
+		{
+			gameObject->AddComponent(objectDesc.script);
+		}
+
+		gameObject->SetObjectType(objType);
 	}
 
-	scene->AddGameObject(gameObjects);
+	AddObjectToScene(objType, gameObjects);
 	GET_NETWORK->AddNetworkObject(objID, gameObjects);
 }
 
@@ -556,6 +616,118 @@ void Scene_Test::AddColliderToObject(network::CPacket& packet)
 	for (auto& object : objects)
 	{
 		object->SetCollider(collider.id, collider);
+	}
+}
+
+void Scene_Test::RemoveObject(network::CPacket& packet)
+{
+	int32_t id{ packet.ReadID() };
+	auto type{ packet.Read<server::OBJECT_TYPE>() };
+
+	switch (type)
+	{
+		case server::OBJECT_TYPE::BOSS:
+		{
+			auto boss{ scene->GetBoss() };
+			scene->RemoveBoss(boss);
+
+			std::cout << "REMOVE BOSS" << std::endl;
+		}
+		break;
+		case server::OBJECT_TYPE::MONSTER:
+		{
+			auto boss{ scene->GetMonster() };
+			scene->RemoveMonster(boss);
+
+			std::cout << "REMOVE MONSTER" << std::endl;
+		}
+		break;
+		case server::OBJECT_TYPE::FIREBALL:
+		case server::OBJECT_TYPE::ICEBALL:
+		{
+			auto objects{ scene->GetGameObjects() };
+
+			for (auto& object : objects)
+			{
+				if (object->GetNetwork() != nullptr)
+				{
+					if (object->GetNetwork()->GetID() == id)
+					{
+						scene->RemoveGameObject(object);
+						break;
+					}
+				}
+			}
+		}
+		break;
+		default:
+		break;
+	}
+
+	GET_NETWORK->RemoveNetworkObject(id);
+}
+
+void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc)
+{
+	switch (type)
+	{
+		case server::FBX_TYPE::MISTIC:
+		{
+			objectDesc.strName = L"Mistic";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
+			objectDesc.script = std::make_shared<Player_Mistic>();
+			std::wcout << objectDesc.strName << std::endl;
+		}
+		break;
+		case server::FBX_TYPE::DRAGON:
+		{
+			objectDesc.strName = L"Dragon";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Dragon\\Dragon.fbx";
+			objectDesc.script = std::make_shared<Monster_Dragon>();
+		}
+		break;
+		case server::FBX_TYPE::SPHERE:
+		{
+			objectDesc.strName = L"Sphere";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Sphere.fbx";
+			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+		}
+		break;
+		default:
+		break;
+	}
+
+	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
+	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
+}
+
+void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects)
+{
+	switch (type)
+	{
+		case server::OBJECT_TYPE::REMOTE_PLAYER:
+		{
+			scene->AddPlayer(gameObjects);
+			std::cout << "ADD REMOTE PLAYER" << std::endl;
+		}
+		break;
+		case server::OBJECT_TYPE::MONSTER:
+		{
+			scene->AddMonster(gameObjects);
+			std::cout << "ADD MONSTER" << std::endl;
+		}
+		break;
+		case server::OBJECT_TYPE::BOSS:
+		{
+			scene->AddBoss(gameObjects);
+			std::cout << "ADD BOSS" << std::endl;
+		}
+		break;
+		default:
+		{
+			scene->AddGameObject(gameObjects);
+		}
+		break;
 	}
 }
 

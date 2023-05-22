@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Session.h"
 #include "Transform.h"
+#include "Monster.h"
 
 namespace game
 {
@@ -111,18 +112,17 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAddAnimateObjPacket(int32_t id, Player* obj)
+	void CSession::SendAddAnimateObjPacket(int32_t id, GameObject* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
 		auto pos{ trans->GetPosition() };
 		auto quat{ trans->GetRotation() };
 		auto scale{ trans->GetScale() };
+		auto objType{ obj->GetObjectType() };
 
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
-
-		packet.Write<server::OBJECT_TYPE>(obj->GetObjectType());
 
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
@@ -137,9 +137,22 @@ namespace game
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
 
-		packet.Write<int32_t>(obj->GetAniIndex());
-		packet.Write<float>(obj->GetAniFrame());
+		if (objType == server::OBJECT_TYPE::PLAYER)
+		{
+			auto player{ dynamic_cast<Player*>(obj) };
 
+			packet.Write<int32_t>(player->GetAniIndex());
+			packet.Write<float>(player->GetAniFrame());
+		}
+		else if (objType == server::OBJECT_TYPE::BOSS)
+		{
+			auto monster{ dynamic_cast<Monster*>(obj) };
+
+			packet.Write<int32_t>(monster->GetAniIndex());
+			packet.Write<float>(monster->GetAniFrame());
+		}
+
+		packet.Write<server::OBJECT_TYPE>(objType);
 		packet.Write<server::FBX_TYPE>(obj->GetFBXType());
 
 		Send(packet);
@@ -202,12 +215,13 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendRemovePacket(int32_t id)
+	void CSession::SendRemovePacket(int32_t id, server::OBJECT_TYPE type)
 	{
 		network::CPacket packet;
 
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_REMOVE_ACK);
+		packet.Write<server::OBJECT_TYPE>(type);
 
 		Send(packet);
 	}
@@ -244,11 +258,15 @@ namespace game
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
 
-		auto player{ dynamic_cast<Player*>(obj) };
-
-		if (player != nullptr)
+		if (obj->GetObjectType() == server::OBJECT_TYPE::PLAYER)
 		{
+			auto player{ dynamic_cast<Player*>(obj) };
 			packet.Write<bool>(player->IsOnGound());
+		}
+		else if (obj->GetObjectType() == server::OBJECT_TYPE::BOSS)
+		{
+			auto monster{ dynamic_cast<Monster*>(obj) };
+			packet.Write<bool>(monster->IsOnGround());
 		}
 
 		// 패킷 전송
@@ -289,6 +307,26 @@ namespace game
 
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_JUMP_START_ACK);
+
+		Send(packet);
+	}
+
+	void CSession::SendHitPacket(int32_t id)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_HIT_ACK);
+
+		Send(packet);
+	}
+
+	void CSession::SendDiePacket(int32_t id)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_DIE_ACK);
 
 		Send(packet);
 	}

@@ -81,6 +81,7 @@
 
 		MISTIC,
 		DRAGON,
+		SPHERE,
 
 		MAX,
 	};

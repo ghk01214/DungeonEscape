@@ -13,7 +13,8 @@
 #include "BoxCollider.h"
 #include "Transform.h"
 #include "MessageHandler.h"
-#include <bitset>
+#include "Monster.h"
+#include "SkillObject.h"
 
 namespace game
 {
@@ -378,7 +379,7 @@ namespace game
 			if (session->GetID() == id)
 				continue;
 
-			session->SendRemovePacket(id);
+			session->SendRemovePacket(id, server::OBJECT_TYPE::REMOTE_PLAYER);
 		}
 
 		m_sessions[id]->Reset();
@@ -538,6 +539,11 @@ namespace game
 			break;
 			case ProtocolID::MY_ANI_REQ:
 			{
+				msg.objType = packet.Read<server::OBJECT_TYPE>();
+
+				if (msg.objType == server::OBJECT_TYPE::BOSS)
+					msg.objID = packet.ReadID();
+
 				msg.aniIndex = packet.Read<int32_t>();
 				msg.aniFrame = packet.Read<float>();
 				msg.aniSpeed = packet.Read<float>();
@@ -557,6 +563,13 @@ namespace game
 				InputCommandMessage(msg);
 			}
 			break;
+			case ProtocolID::MY_ATTACK_REQ:
+			{
+				msg.objType = packet.Read<server::OBJECT_TYPE>();
+
+				InputCommandMessage(msg);
+			}
+			break;
 			default:
 			break;
 		}
@@ -569,14 +582,20 @@ namespace game
 
 		switch (protocol)
 		{
-			case ProtocolID::WR_ADD_ANIMATE_OBJ_REQ:
+			case ProtocolID::WR_JUMP_START_REQ:
 			{
+				msg.objID = packet.ReadID();
 
+				InputCommandMessage(msg);
 			}
-			break;
 			case ProtocolID::WR_REMOVE_REQ:
 			{
+				msg.objType = packet.Read<server::OBJECT_TYPE>();
 
+				if (msg.objType != server::OBJECT_TYPE::PLAYER)
+					msg.objID = packet.ReadID();
+
+				InputCommandMessage(msg);
 			}
 			break;
 			default:
@@ -655,14 +674,19 @@ namespace game
 
 	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* postOver)
 	{
-		auto session{ m_sessions[postOver->playerID] };
+		CSession* session{ nullptr };
 
-		if (session->GetState() != STATE::INGAME)
+		if (postOver->playerID != -1)
+			session = m_sessions[postOver->playerID];
+
+		if (session != nullptr and session->GetState() != STATE::INGAME)
 			return;
 
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
+		auto monsterObjects{ objMgr->GetLayer(L"Layer_Monster")->GetGameObjects() };
+		auto skillObjects{ objMgr->GetLayer(L"Layer_SkillObject")->GetGameObjects() };
 
 		switch (postOver->msgProtocol)
 		{
@@ -755,11 +779,6 @@ namespace game
 				}
 			}
 			break;
-			case ProtocolID::MY_CHANGE_STATE_ACK:
-			{
-
-			}
-			break;
 #pragma endregion
 #pragma region[WR]
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
@@ -783,6 +802,16 @@ namespace game
 					}
 
 					pl->StartSendTransform();
+				}
+
+				for (auto& monster : monsterObjects)
+				{
+					auto mob{ dynamic_cast<Monster*>(monster) };
+
+					if (mob != nullptr)
+					{
+						session->SendAddAnimateObjPacket(mob->GetMonsterID(), mob);
+					}
 				}
 			}
 			break;
@@ -824,28 +853,61 @@ namespace game
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
 			{
-				for (auto& client : m_sessions)
+				for (auto& player : playerObjects)
 				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
+					auto pl{ dynamic_cast<Player*>(player) };
 
-					for (auto& player : playerObjects)
+					for (auto& client : m_sessions)
 					{
-						auto pl{ dynamic_cast<Player*>(player) };
+						if (client->GetState() != STATE::INGAME)
+							continue;
 
 						if (pl != nullptr)
 							client->SendTransformPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
 					}
+				}
 
-					for (auto& object : mapObjects)
+				for (auto& monster : monsterObjects)
+				{
+					auto mob{ dynamic_cast<Monster*>(monster) };
+
+					for (auto& client : m_sessions)
 					{
-						auto map{ dynamic_cast<MapObject*>(object) };
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (mob != nullptr)
+							client->SendTransformPacket(mob->GetMonsterID(), ProtocolID::WR_TRANSFORM_ACK, mob);
+					}
+				}
+
+				for (auto& object : mapObjects)
+				{
+					auto map{ dynamic_cast<MapObject*>(object) };
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
 
 						if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
 						{
 							client->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);	//트랜스폼 갱신
 							map->SetRequireFlagTransmit(false);														//플래그 체크
 						}
+					}
+				}
+
+				for (auto& skillObject : skillObjects)
+				{
+					auto skill{ dynamic_cast<SkillObject*>(skillObject) };
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						client->SendTransformPacket(skill->GetID(), ProtocolID::WR_TRANSFORM_ACK, skill);
 					}
 				}
 			}
@@ -856,8 +918,8 @@ namespace game
 				{
 					auto pl{ dynamic_cast<Player*>(player) };
 
-					/*if (pl->GetPlayerID() != postOver->playerID)
-						continue;*/
+					if (pl->GetPlayerID() != postOver->playerID)
+						continue;
 
 					for (auto& client : m_sessions)
 					{
@@ -867,7 +929,7 @@ namespace game
 						/*if (client->GetID() == postOver->playerID)
 							continue;*/
 
-						client->SendAniIndexPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
+						client->SendAniIndexPacket(postOver->playerID, postOver->msgProtocol, pl);
 					}
 				}
 			}
@@ -882,8 +944,106 @@ namespace game
 					if (client->GetID() == postOver->playerID)
 						continue;
 
-					client->SendJumpStartPacket(postOver->playerID);
+					if (postOver->playerID != -1)
+						client->SendJumpStartPacket(postOver->playerID);
+					else
+						client->SendJumpStartPacket(postOver->objID);
 				}
+			}
+			break;
+			case ProtocolID::WR_ATTACK_ACK:
+			{
+				for (auto& skillObj : skillObjects)
+				{
+					auto skill{ dynamic_cast<SkillObject*>(skillObj) };
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						client->SendAddObjPacket(postOver->objID, skill);
+					}
+				}
+			}
+			break;
+			case ProtocolID::WR_HIT_ACK:
+			{
+				int32_t hitID{ -1 };
+
+				if (postOver->objType == server::OBJECT_TYPE::PLAYER)
+					hitID = postOver->playerID;
+				else
+					hitID = postOver->objID;
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendHitPacket(postOver->objID);
+				}
+			}
+			break;
+			case ProtocolID::WR_DIE_ACK:
+			{
+				int32_t hitID{ -1 };
+
+				if (postOver->objType == server::OBJECT_TYPE::PLAYER)
+					hitID = postOver->playerID;
+				else
+					hitID = postOver->objID;
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendDiePacket(postOver->objID);
+				}
+			}
+			break;
+			case ProtocolID::WR_REMOVE_ACK:
+			{
+				if (postOver->objType == server::OBJECT_TYPE::BOSS)
+				{
+					for (auto& monsterObject : monsterObjects)
+					{
+						auto monster{ dynamic_cast<Monster*>(monsterObject) };
+
+						if (monster->GetMonsterID() != postOver->objID)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendRemovePacket(postOver->objID, postOver->objType);
+						}
+					}
+				}
+				else if (postOver->objType == server::OBJECT_TYPE::FIREBALL
+					or postOver->objType == server::OBJECT_TYPE::ICEBALL)
+				{
+					for (auto& skillObject : skillObjects)
+					{
+						auto skill{ dynamic_cast<SkillObject*>(skillObject) };
+
+						if (skill->GetID() != postOver->objID)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendRemovePacket(postOver->objID, postOver->objType);
+						}
+					}
+				}
+
+				MessageHandler::GetInstance()->RemoveObject(postOver->objID);
 			}
 			break;
 #pragma endregion

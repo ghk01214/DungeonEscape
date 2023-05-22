@@ -23,8 +23,15 @@ private:
 		WALK_B,
 		WALK_L,
 		WALK_R,
+
+		DEAD,
+
 		END
 	};
+public:
+	Monster_Dragon();
+	~Monster_Dragon();
+
 public:
 	virtual void Start() override;
 	virtual void Update() override;
@@ -45,4 +52,6 @@ private:
 private:
 	DRAGON_STATE m_prevState = IDLE1;
 	DRAGON_STATE m_currState = IDLE1;
+
+	std::chrono::steady_clock::time_point m_skillEndTime;
 };

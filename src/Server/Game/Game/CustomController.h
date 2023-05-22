@@ -29,7 +29,7 @@ public:
 	bool CheckOnGround(CollisionInfoType type, physx::PxVec3& surfaceNormal);
 	void GetSlidingVector(CollisionInfoType type);
 	bool CheckOnGround_Raycast();
-	Collider* GetColliderBelow();		
+	Collider* GetColliderBelow();
 	void DirectionInput_Player();
 	void DirectionInput_Monster();
 	void Movement_Player();
@@ -48,6 +48,8 @@ public:
 	float GetMoveSpeed();
 	void SetJumpSpeed(float value);
 	float GetJumpSpeed();
+
+	void SetSpaceKeyDown(bool down);
 
 public:
 	void BounceFromAttack();	//호출시키지 않으면 공격넉백 적용이 불가능하다

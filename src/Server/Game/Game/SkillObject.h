@@ -21,7 +21,7 @@ public:
 	void ActionsWhenHit();		//충돌했는가 판단
 private:
 	RigidBody* m_body = nullptr;
-	server::OBJECT_TYPE m_objType = server::OBJECT_TYPE::FIREBALL;
+	//server::OBJECT_TYPE m_objType = server::OBJECT_TYPE::FIREBALL;
 };
 
 

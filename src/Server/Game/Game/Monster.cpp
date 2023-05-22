@@ -13,8 +13,10 @@
 Monster::Monster(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
 	m_MonsterID{ MonsterID },
-	m_aniIndex{ 0 },
-	m_aniFrame{ 0.f }
+	m_aniIndex{ 6 },
+	m_aniFrame{ 0.f },
+	m_aniSpeed{ 1.f },
+	m_hp{ 20 }
 {
 }
 
@@ -29,7 +31,9 @@ void Monster::Init()
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);
 
-	SetObjectType(server::OBJECT_TYPE::MONSTER);
+	SetObjectType(server::OBJECT_TYPE::BOSS);
+
+	std::cout << "BOSS HP : " << m_hp << "\n";
 }
 
 void Monster::Update(double timeDelta)
@@ -63,16 +67,27 @@ void Monster::Release()
 	GameObject::Release();
 }
 
-void Monster::SetAniInfo(int32_t aniIndex, float aniFrame)
+void Monster::SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed)
 {
 	m_aniIndex = aniIndex;
 	m_aniFrame = aniFrame;
+	m_aniSpeed = aniSpeed;
 }
 
-void Monster::SetFBXType(server::FBX_TYPE fbxType)
+bool Monster::IsOnGround()
 {
-	m_fbxType = fbxType;
+	return m_controller->IsOnGround();
 }
+
+bool Monster::IsDead()
+{
+	return m_hp <= 0;
+}
+
+//void Monster::SetFBXType(server::FBX_TYPE fbxType)
+//{
+//	m_fbxType = fbxType;
+//}
 
 void Monster::SetControllerMoveSpeed(float value)
 {
@@ -143,10 +158,42 @@ void Monster::MonsterPattern_GroundHit()
 				horizontalStrength = 100.f;
 				verticalStrength = 600.f;
 			}
-			playerController->BounceFromAttack();
-			playerbody->AddForce(ForceMode::Impulse, physx::PxVec3(direction.x * horizontalStrength, verticalStrength, direction.z * horizontalStrength));
-			std::cout << "몬스터 패턴 발동, 플레이어 피격 적용" << std::endl;
+
+			if (result->IsDead() == false)
+			{
+				playerController->BounceFromAttack();
+				playerbody->AddForce(ForceMode::Impulse, physx::PxVec3(direction.x * horizontalStrength, verticalStrength, direction.z * horizontalStrength));
+				result->GotHit(5);
+
+				std::cout << "몬스터 패턴 발동, 플레이어 피격 적용\n";
+				std::cout << "PLAYER[" << result->GetPlayerID() << "] HP : " << result->GetHP() << "\n\n";
+
+				game::Message hitMsg{ -1, ProtocolID::WR_HIT_ACK };
+				hitMsg.playerID = result->GetPlayerID();
+				hitMsg.objType = server::OBJECT_TYPE::PLAYER;
+
+				game::MessageHandler::GetInstance()->PushSendMessage(hitMsg);
+
+				if (result->GetHP() <= 0)
+				{
+					std::cout << "PLAYER [" << result->GetPlayerID() << "] DEAD!\n";
+
+					game::Message deadMsg{ -1, ProtocolID::WR_DIE_ACK };
+					deadMsg.playerID = result->GetPlayerID();
+					deadMsg.objType = server::OBJECT_TYPE::PLAYER;
+
+					game::MessageHandler::GetInstance()->PushSendMessage(deadMsg);
+
+					result->KillPlayer();
+				}
+			}
+
 			//playerbody->SetVelocity(physx::PxVec3(direction.x * 100, 100, direction.z * 100));
 		}
 	}
+}
+
+void Monster::GotHit(int32_t damage)
+{
+	m_hp -= damage;
 }

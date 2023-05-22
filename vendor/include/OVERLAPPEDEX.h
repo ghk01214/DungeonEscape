@@ -43,5 +43,7 @@ namespace network
 		int32_t tempObjectID;
 		int32_t tempColliderID;
 		bool lastCollider;
+
+		server::OBJECT_TYPE objType;
 	};
 }

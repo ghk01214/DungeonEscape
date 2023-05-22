@@ -15,7 +15,7 @@ private:
 		ATK4,
 		BLOCK,
 		DAMAGE,
-		DEATH,
+		DASH,
 		DIE0,
 		DIE1,
 		DIE2,
@@ -42,6 +42,7 @@ private:
 
 		JUMPING,
 		JUMP_END,
+		DEAD,
 
 		END
 	};

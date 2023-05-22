@@ -82,7 +82,7 @@ void Animator::Play(uint32 idx, float speed)
 	auto network{ GetGameObject()->GetNetwork() };
 	if (network != nullptr)
 	{
-		network->SendAniIndexPacket();
+		network->SendAniIndexPacket(GetGameObject()->GetObjectType());
 	}
 }
 
@@ -102,7 +102,7 @@ void Animator::PlayAndSend(uint32 idx, float updateTime, float speed)
 	auto network{ GetGameObject()->GetNetwork() };
 	if (network != nullptr)
 	{
-		network->SendAniIndexPacket();
+		network->SendAniIndexPacket(GetGameObject()->GetObjectType());
 	}
 }
 

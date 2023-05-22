@@ -16,10 +16,13 @@ namespace network
 
 #pragma region [SEND PACKET]
 		void SendAddPlayer(server::FBX_TYPE fbxType);
-		void SendAniIndexPacket();
+		void SendAniIndexPacket(server::OBJECT_TYPE type);
 		void SendCameraLook(const Vec3& look);
 		void SendAddObject(int32_t tempID, server::OBJECT_TYPE type, server::FBX_TYPE fbxType);
+		void SendRemoveObject(server::OBJECT_TYPE type);
 		void SendAddObjectCollider(int32_t tempID, int32_t tempColliderID, Collider& collider, bool last = false);
+		void SendJumpStart();
+		void SendAttack(server::OBJECT_TYPE type);
 #pragma endregion
 
 		void InsertPackets(CPacket& packet);

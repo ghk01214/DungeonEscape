@@ -13,7 +13,7 @@
 
 CGameObject::CGameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 {
-
+	m_objectType = server::OBJECT_TYPE::NONE;
 }
 
 CGameObject::~CGameObject()

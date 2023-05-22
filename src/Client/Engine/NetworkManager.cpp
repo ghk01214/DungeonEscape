@@ -205,6 +205,11 @@ namespace network
 		m_objects[id] = object;
 	}
 
+	void NetworkManager::RemoveNetworkObject(int32_t id)
+	{
+		m_objects.erase(id);
+	}
+
 	void NetworkManager::ExchangeObjectID(int32_t oldID, int32_t newID)
 	{
 		auto obj{ m_objects.extract(oldID) };
@@ -491,27 +496,21 @@ namespace network
 				}
 			}
 			break;
+			case ProtocolID::WR_ADD_OBJ_ACK:
+			{
+				GET_SCENE->PushServerRequest(m_packet);
+			}
+			break;
 			case ProtocolID::WR_REMOVE_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
 
-				RemovePlayer(id);
+				if (id < 3)
+					RemovePlayer(id);
+				else
+					GET_SCENE->PushServerRequest(m_packet);
 			}
 			break;
-			/*case ProtocolID::WR_TRANSFORM_ACK:
-			{
-				int32_t id{ m_packet.ReadID() };
-
-				TransformPlayer(id);
-			}
-			break;
-			case ProtocolID::WR_ANI_ACK:
-			{
-				int32_t id{ m_packet.ReadID() };
-
-				PlayAni(id);
-			}
-			break;*/
 			default:
 			{
 				int32_t id{ m_packet.ReadID() };
