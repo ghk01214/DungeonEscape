@@ -202,7 +202,7 @@ void TestLevel::Update(double timeDelta)
 
 		if (prevOnGround != mob->IsOnGround())
 		{
-			//mob->MonsterPattern_GroundHit();
+			mob->MonsterPattern_GroundHit();
 
 			bossSkillEndTime = steady_clock::now();
 		}
