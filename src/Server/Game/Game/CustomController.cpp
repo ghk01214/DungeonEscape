@@ -449,30 +449,6 @@ void CustomController::KeyboardReceive(ulong32_t key)
 
 		switch (magic_enum::enum_cast<server::KEY_STATE>(temp).value())
 		{
-			case server::KEY_STATE::NONE:
-			{
-				if (i == W)
-				{
-					//std::cout << "UP::None";
-				}
-				if (i == S)
-				{
-					//std::cout << "DOWN::None";
-				}
-				if (i == A)
-				{
-					//std::cout << "LEFT::None";
-				}
-				if (i == D)
-				{
-					//std::cout << "RIGHT::None";
-				}
-				if (i == SPACE)
-				{
-					//std::cout << "SPACE::None";
-				}
-			}
-			break;
 			case server::KEY_STATE::PRESS:
 			{
 				if (i == W)
@@ -501,6 +477,7 @@ void CustomController::KeyboardReceive(ulong32_t key)
 					m_keyboardSpace = true;
 			}
 			break;
+			case server::KEY_STATE::NONE:
 			case server::KEY_STATE::UP:
 			{
 				if (i == W)
