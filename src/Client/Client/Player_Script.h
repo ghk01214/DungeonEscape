@@ -71,7 +71,6 @@ private:
 	void Transform(network::CPacket& packet);
 	void ChangeAnimation(network::CPacket& packet);
 	void AddColliderToObject(network::CPacket& packet);
-	void RotateToCameraDirection(network::CPacket& packet);
 
 private:
 	float		_speed = 500.f;

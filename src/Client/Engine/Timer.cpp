@@ -31,7 +31,7 @@ void Timer::Update()
 
 const bool Timer::Is1FrameInVar()
 {
-	if (_fps > 0.f and _frameTick > _fps / 60)
+	if (_fps > 0.f and _frameTick > _fps / 240)
 	{
 		_frameTick = 0;
 		return true;

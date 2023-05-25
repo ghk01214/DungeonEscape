@@ -354,15 +354,10 @@ namespace game
 
 						if (player->GetPlayerID() == msg.playerID)
 						{
-							// 용섭 : 플레이어 카메라 정보
-							//std::cout << msg.cameraLook.x << ", " << msg.cameraLook.y << ", " << msg.cameraLook.z << "\n";
 							player->SetControllerCameraLook(msg.cameraLook);
 							break;
 						}
 					}
-
-					Message sendMsg{ msg.playerID, ProtocolID::WR_CAMERA_LOOK_ACK };
-					PushSendMessage(sendMsg);
 				}
 				break;
 				case ProtocolID::MY_ATTACK_REQ:

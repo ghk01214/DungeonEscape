@@ -367,7 +367,7 @@ void CustomController::Movement_Player()
 
 	m_slidingVector = PxVec3(0.f);
 	m_moveDirection = PxVec3(0.f);
-	KeyboardClear();
+	//KeyboardClear();
 }
 
 void CustomController::Movement_Monster()
@@ -476,73 +476,43 @@ void CustomController::KeyboardReceive(ulong32_t key)
 			case server::KEY_STATE::PRESS:
 			{
 				if (i == W)
-				{
 					m_keyboardUp = true;
-				}
 				if (i == S)
-				{
 					m_keyboardDown = true;
-				}
 				if (i == A)
-				{
 					m_keyboardLeft = true;
-				}
 				if (i == D)
-				{
 					m_keyboardRight = true;
-				}
 				if (i == SPACE)
-				{
 					m_keyboardSpace = false;
-				}
 			}
 			break;
 			case server::KEY_STATE::DOWN:
 			{
 				if (i == W)
-				{
 					m_keyboardUp = true;
-				}
 				if (i == S)
-				{
 					m_keyboardDown = true;
-				}
 				if (i == A)
-				{
 					m_keyboardLeft = true;
-				}
 				if (i == D)
-				{
 					m_keyboardRight = true;
-				}
 				if (i == SPACE)
-				{
 					m_keyboardSpace = true;
-				}
 			}
 			break;
 			case server::KEY_STATE::UP:
 			{
 				if (i == W)
-				{
 					m_keyboardUp = false;
-				}
 				if (i == S)
-				{
 					m_keyboardDown = false;
-				}
 				if (i == A)
-				{
 					m_keyboardLeft = false;
-				}
 				if (i == D)
-				{
 					m_keyboardRight = false;
-				}
 				if (i == SPACE)
-				{
 					m_keyboardSpace = false;
-				}
 			}
 			break;
 			default:

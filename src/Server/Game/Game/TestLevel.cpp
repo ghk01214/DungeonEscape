@@ -189,43 +189,43 @@ void TestLevel::Update(double timeDelta)
 	//if (GetAsyncKeyState('O') & 0x8000)
 	//	once = true;
 
-	using namespace std::chrono;
-	static steady_clock::time_point bossSkillEndTime{ steady_clock::now() };
-	static bool prevOnGround{ true };
+	//using namespace std::chrono;
+	//static steady_clock::time_point bossSkillEndTime{ steady_clock::now() };
+	//static bool prevOnGround{ true };
 
-	auto objMgr = ObjectManager::GetInstance();
-	auto monsters = objMgr->GetLayer(L"Layer_Monster")->GetGameObjects();
+	//auto objMgr = ObjectManager::GetInstance();
+	//auto monsters = objMgr->GetLayer(L"Layer_Monster")->GetGameObjects();
 
-	for (auto& monster : monsters)
-	{
-		auto mob{ dynamic_cast<Monster*>(monster) };
+	//for (auto& monster : monsters)
+	//{
+	//	auto mob{ dynamic_cast<Monster*>(monster) };
 
-		if (prevOnGround != mob->IsOnGround())
-		{
-			//mob->MonsterPattern_GroundHit();
+	//	if (prevOnGround != mob->IsOnGround())
+	//	{
+	//		//mob->MonsterPattern_GroundHit();
 
-			bossSkillEndTime = steady_clock::now();
-		}
+	//		bossSkillEndTime = steady_clock::now();
+	//	}
 
-		prevOnGround = mob->IsOnGround();
-	}
+	//	prevOnGround = mob->IsOnGround();
+	//}
 
-	if (steady_clock::now() - bossSkillEndTime > 5s)
-	{
-		for (auto& monster : monsters)
-		{
-			auto mob{ dynamic_cast<Monster*>(monster) };
+	//if (steady_clock::now() - bossSkillEndTime > 5s)
+	//{
+	//	for (auto& monster : monsters)
+	//	{
+	//		auto mob{ dynamic_cast<Monster*>(monster) };
 
-			if (mob->IsDead() == false)
-			{
-				mob->GetController()->SetSpaceKeyDown(true);
+	//		if (mob->IsDead() == false)
+	//		{
+	//			mob->GetController()->SetSpaceKeyDown(true);
 
-				game::Message msg{ -1, ProtocolID::WR_JUMP_START_ACK };
-				msg.objID = mob->GetMonsterID();
-				game::MessageHandler::GetInstance()->PushSendMessage(msg);
-			}
-		}
-	}
+	//			game::Message msg{ -1, ProtocolID::WR_JUMP_START_ACK };
+	//			msg.objID = mob->GetMonsterID();
+	//			game::MessageHandler::GetInstance()->PushSendMessage(msg);
+	//		}
+	//	}
+	//}
 }
 
 void TestLevel::LateUpdate(double timeDelta)
