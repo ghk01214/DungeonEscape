@@ -138,15 +138,15 @@ void TestLevel::Init()
 	//	auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(100, 1000, 100));
 	//	auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
 	//	centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
-	//#pragma endregion
-	//
-	//#pragma region Z100Box(1000,0,0)
+#pragma endregion
+	
+#pragma region Z100Box(1000,0,0)
 	//	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
 	//	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
 	//	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
-	//#pragma endregion
-	//
-	//#pragma region Plane
+#pragma endregion
+	
+#pragma region Plane
 	//	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
 	//	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 	//	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());

@@ -83,6 +83,8 @@ void CustomController::Move()
 		Movement_Monster();
 	}
 
+	CheckOnGround_Raycast();
+
 }
 
 bool CustomController::CheckOnGround(CollisionInfoType type, PxVec3& surfaceNormal)
@@ -196,16 +198,23 @@ bool CustomController::CheckOnGround_Raycast()
 	RaycastHit hit;
 	PhysicsRay ray;
 	ray.direction = PxVec3(0.f, -1.f, 0.f);
-	ray.distance = 0.21f;			//45degree-raycast distance : 0.2
+	ray.distance = 1000.f;						//raycast 측정 거리
 	ray.point = m_body->GetPosition()
 		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight()), 0.f);
 
 	if (query->Raycast(hit, ray, 1 << (uint8_t)PhysicsLayers::Map, PhysicsQueryType::All, m_body))
 	{
+		m_distanceFromGround = hit.distance;
+		std::cout << m_distanceFromGround << std::endl;
 		return true;
 	}
 
-	return false;
+	else
+	{
+		m_distanceFromGround = -1;				//raycast 실패 (밑에 아예 물체가 없거나 raycast 측정거리보다 멀다)
+		std::cout << m_distanceFromGround << std::endl;
+		return false;
+	}
 }
 
 Collider* CustomController::GetColliderBelow()
@@ -525,6 +534,11 @@ void CustomController::SetJumpSpeed(float value)
 float CustomController::GetJumpSpeed()
 {
 	return m_moveSpeed;
+}
+
+float CustomController::GetDistanceFromGround()
+{
+	return m_distanceFromGround;
 }
 
 void CustomController::SetSpaceKeyDown(bool down)

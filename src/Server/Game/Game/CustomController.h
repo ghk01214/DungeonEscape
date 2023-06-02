@@ -48,6 +48,7 @@ public:
 	float GetMoveSpeed();
 	void SetJumpSpeed(float value);
 	float GetJumpSpeed();
+	float GetDistanceFromGround();
 
 	void SetSpaceKeyDown(bool down);
 
@@ -66,9 +67,10 @@ private:
 	physx::PxVec3	m_slidingVector{ 0.f };
 
 	bool	m_onGround = false;
+	float	m_distanceFromGround = -1.f;		// -1.f값이 디폴트
+
+
 	float	m_degreeThreshold = 49.9f;
-	//float	m_moveSpeed = 600.f;
-	//float	m_moveSpeed = 65.f;
 	float	m_moveSpeed = 30.f;
 	float	m_jumpSpeed = 70.f;
 
