@@ -40,7 +40,7 @@ void GameInstance::Update(double timeDelta)
 		nullptr == m_physDevice)
 		return;
 
-	//collect pxPairContact
+	//contactPair Notify
 	m_physDevice->PreUpdate();
 
 	m_testLevel->Update(timeDelta);

@@ -111,7 +111,7 @@ public:
 
 	// 프레임워크 구현되는대로 맞게 인자 수정
 	physx::PxVec3 GetPosition();
-	void SetPosition(const Vec3 position, bool sleep);
+	void SetPosition(const Vec3 position, bool wake);
 	void SetRotation(const Quat rotation);
 	void SetRotation(const float degree, PhysicsAxis axis);
 

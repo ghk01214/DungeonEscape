@@ -6,6 +6,7 @@
 //#include "MeshCollider.h"
 #include "Transform.h"
 #include "TimeManager.h"
+#include "Collider.h"
 
 MapObject::MapObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
 	: GameObject(position, rotation, scale), m_body(nullptr)
@@ -27,6 +28,16 @@ void MapObject::Init()
 
 void MapObject::Update(double timeDelta)
 {
+	auto collider = m_body->GetCollider(0);
+	if (collider)
+	{
+		if (m_body->GetCollider(0)->IsTrigger())
+		{
+			m_body->SetRigidBodySleep(false);
+		}
+	}
+
+	
 	GameObject::Update(timeDelta);
 }
 

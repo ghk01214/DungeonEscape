@@ -190,11 +190,27 @@ void Collider::CollectCollisionInfo(CollisionInfoType type, std::shared_ptr<Coll
 	}
 }
 
+void Collider::CollectTriggerInfo(CollisionInfoType type, std::shared_ptr<TriggerPairInfo> info)
+{
+	switch (type)
+	{
+		case CollisionInfoType::Enter:
+		m_TriggerEnter.emplace_back(info);
+		break;
+		case CollisionInfoType::Exit:
+		m_TriggerExit.emplace_back(info);
+		break;
+	}
+}
+
 void Collider::ClearCollisionInfo()
 {
 	m_CollisionEnter.clear();
 	m_CollisionStay.clear();
 	m_CollisionExit.clear();
+
+	m_TriggerEnter.clear();
+	m_TriggerExit.clear();
 }
 
 const std::vector<std::shared_ptr<CollisionPairInfo>>& Collider::GetCollisionInfo(CollisionInfoType type) const
@@ -210,5 +226,24 @@ const std::vector<std::shared_ptr<CollisionPairInfo>>& Collider::GetCollisionInf
 		default:
 		throw std::runtime_error("Invalid CollisionInfoType value");
 	}
+}
+
+void Collider::SetTrigger(bool value)
+{
+	m_isTrigger = value;
+	bool simulationFlag = !value;
+	bool queryFlag = !value;
+
+	// eTRIGGER_SHAPE 플래그를 활성화 하기 전에는 반드시 eSIMULATION_SHAPE 플래그가 비활성화 상태여야 합니다.
+	m_shape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, simulationFlag);
+	m_shape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, m_isTrigger);
+	m_shape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, queryFlag);
+
+	m_attachedRigidBody->SetCCDFlag(true);
+}
+
+bool Collider::IsTrigger()
+{
+	return m_isTrigger;
 }
 

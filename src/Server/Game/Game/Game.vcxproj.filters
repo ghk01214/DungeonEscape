@@ -158,6 +158,9 @@
     <Filter Include="03. Game\01. GameObject\SkillObject">
       <UniqueIdentifier>{aa52c1d9-cf19-49ce-8756-eec3b0777e4c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Physx\PhysDevice\EventCallback\TriggerInfo">
+      <UniqueIdentifier>{25ed8d1f-9bed-4ac8-914b-f47a8057cfac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -292,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="SkillObject.cpp">
       <Filter>03. Game\01. GameObject\SkillObject</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerPairInfo.cpp">
+      <Filter>02. Physx\PhysDevice\EventCallback\TriggerInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -450,6 +456,9 @@
     </ClInclude>
     <ClInclude Include="SkillObject.h">
       <Filter>03. Game\01. GameObject\SkillObject</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerPairInfo.h">
+      <Filter>02. Physx\PhysDevice\EventCallback\TriggerInfo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

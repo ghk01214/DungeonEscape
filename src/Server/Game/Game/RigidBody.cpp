@@ -130,14 +130,14 @@ PxVec3 RigidBody::GetPosition()
 	return m_body->getGlobalPose().p;
 }
 
-void RigidBody::SetPosition(const Vec3 position, bool sleep)
+void RigidBody::SetPosition(const Vec3 position, bool wake)
 {
 	PxTransform t = m_body->getGlobalPose();
 	t.p.x = position.x;
 	t.p.y = position.y;
 	t.p.z = position.z;
 
-	m_body->setGlobalPose(t, sleep);
+	m_body->setGlobalPose(t, wake);
 }
 
 void RigidBody::SetRotation(const Quat rotation)

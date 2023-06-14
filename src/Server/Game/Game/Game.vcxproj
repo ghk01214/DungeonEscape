@@ -202,6 +202,7 @@
     <ClCompile Include="TestLevel.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="TriggerPairInfo.cpp" />
     <ClCompile Include="Vec3.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -256,6 +257,7 @@
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="transform_utils.h" />
+    <ClInclude Include="TriggerPairInfo.h" />
     <ClInclude Include="Vec3.h" />
   </ItemGroup>
   <ItemGroup>

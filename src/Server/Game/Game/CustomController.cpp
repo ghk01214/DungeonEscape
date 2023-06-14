@@ -205,14 +205,14 @@ bool CustomController::CheckOnGround_Raycast()
 	if (query->Raycast(hit, ray, 1 << (uint8_t)PhysicsLayers::Map, PhysicsQueryType::All, m_body))
 	{
 		m_distanceFromGround = hit.distance;
-		std::cout << m_distanceFromGround << std::endl;
+		//std::cout << m_distanceFromGround << std::endl;
 		return true;
 	}
 
 	else
 	{
 		m_distanceFromGround = -1;				//raycast 실패 (밑에 아예 물체가 없거나 raycast 측정거리보다 멀다)
-		std::cout << m_distanceFromGround << std::endl;
+		//std::cout << m_distanceFromGround << std::endl;
 		return false;
 	}
 }
@@ -245,7 +245,7 @@ Collider* CustomController::GetColliderBelow()
 
 void CustomController::DirectionInput_Player()
 {
-	bool serverConnected = true;
+	bool serverConnected = false;
 
 	if (serverConnected)
 	{
@@ -322,8 +322,8 @@ void CustomController::Movement_Player()
 	CheckOnGround(CollisionInfoType::Enter, surfaceNormal);
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
-	if (m_keyboardSpace && m_onGround)
+	if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
+	//if (m_keyboardSpace && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;

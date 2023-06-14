@@ -32,6 +32,7 @@ public:
 	void KillPlayer();
 
 public:
+	void SetControllerPosition(Vec3 pos);
 	float GetControllerMoveSpeed();
 	float GetControllerJumpSpeed();
 	CustomController* GetController();

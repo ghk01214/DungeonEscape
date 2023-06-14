@@ -97,7 +97,8 @@ void PhysDevice::StepSim(double timeDelta)
 	// 디버그 모드
 #if _DEBUG
 	//m_Scene->simulate(1 / 240.f);
-	m_Scene->simulate(1/120.f);
+	//m_Scene->simulate(1/120.f);
+	m_Scene->simulate(1/30.f);
 #else
 	// 릴리즈 모드
 	//m_Scene->simulate(timeDelta * 10.f);
@@ -177,30 +178,6 @@ PxCooking* PhysDevice::GetCooking() const
 
 void PhysDevice::ClearEventCallback()
 {
-	////모든 게임오브젝트의 리지드 바디 ClearCollidersCollisionInfo 호출
-	//const auto& objmgr = ObjectManager::GetInstance();
-	//auto& layers = objmgr->GetLayers();
-	//for (const auto& layer : layers)
-	//{
-	//	auto& objectList = layer.second->GetGameObjects();
-	//	for (auto& object : objectList)
-	//	{
-	//		RigidBody* body = object->GetComponent<RigidBody>(L"RigidBody");
-	//		if (body)
-	//		{
-	//			body->ClearCollidersCollisionInfo();
-	//		}
-	//		else
-	//		{
-	//			CustomController* controller = object->GetComponent<CustomController>(L"CustomController");
-	//			if (controller)
-	//			{
-	//				controller->ClearControllerCollisionInfo();
-	//			}
-	//		}
-	//	}
-	//}
-
 	m_eventCallback->ClearVector();
 }
 

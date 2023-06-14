@@ -12,6 +12,7 @@
 
 class RigidBody;
 class CollisionPairInfo;
+class TriggerPairInfo;
 
 class Collider : public Component
 {
@@ -59,8 +60,13 @@ public:
 
 public:
 	void CollectCollisionInfo(CollisionInfoType type, std::shared_ptr<CollisionPairInfo> info);
+	void CollectTriggerInfo(CollisionInfoType type, std::shared_ptr<TriggerPairInfo> info);
 	void ClearCollisionInfo();
 	const std::vector<std::shared_ptr<CollisionPairInfo>>& GetCollisionInfo(CollisionInfoType type) const;
+
+public:
+	void SetTrigger(bool value);
+	bool IsTrigger();
 
 protected:
 	RigidBody* m_attachedRigidBody = nullptr;
@@ -77,6 +83,9 @@ public:
 	std::vector<std::shared_ptr<CollisionPairInfo>> m_CollisionEnter;
 	std::vector<std::shared_ptr<CollisionPairInfo>> m_CollisionExit;
 	std::vector<std::shared_ptr<CollisionPairInfo>> m_CollisionStay;
+
+	std::vector<std::shared_ptr<TriggerPairInfo>> m_TriggerEnter;
+	std::vector<std::shared_ptr<TriggerPairInfo>> m_TriggerExit;
 };
 
 

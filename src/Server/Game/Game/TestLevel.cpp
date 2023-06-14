@@ -24,58 +24,8 @@ TestLevel::~TestLevel()
 {
 }
 
-void TestLevel::Init()
+void TestLevel::LoadMap()
 {
-	auto objmgr = ObjectManager::GetInstance();
-	objmgr->AddLayer(L"Layer_Map");
-	objmgr->AddLayer(L"Layer_Player");
-	objmgr->AddLayer(L"Layer_Monster");
-	objmgr->AddLayer(L"Layer_Map2");
-	objmgr->AddLayer(L"Layer_SkillObject");
-
-
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(1500, 100, -1500), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-
-	auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	MonsterObject->SetName(L"Dragon");
-	MonsterObject->SetObjectType(server::OBJECT_TYPE::BOSS);
-	MonsterObject->SetFBXType(server::FBX_TYPE::DRAGON);
-	MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
-
-#pragma region Sphere
-	//auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(5, 10, 5), Quat(0, 0, 0, 1), Vec3(2,2,2));
-	//auto SphereBody = SphereObject->GetComponent<RigidBody>(L"RigidBody");
-	//SphereBody->SetKinematic(false);
-	//SphereBody->SetCCDFlag(true);
-	//SphereBody->SetRigidBodySleep(false);
-	//SphereBody->AddCollider<SphereCollider>(SphereObject->GetTransform()->GetScale());
-
-	//SphereBody->SetAngularDamping(0.00001f);
-	//SphereBody->SetLinearDamping(0.15f);
-	//SphereBody->SetMass(SphereBody->GetMass() * 0.20f);
-#pragma endregion
-
-#pragma region Box1
-	//auto Box1Object = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(20, 10, 0), Quat(0, 0, 0, 1), Vec3(15, 15, 15));
-	//auto Box1Body = Box1Object->GetComponent<RigidBody>(L"RigidBody");
-	//Box1Body->AddCollider<BoxCollider>(Box1Object->GetTransform()->GetScale());
-	//Box1Body->SetRotation(45.f, PhysicsAxis::Y);
-#pragma endregion
-
-#pragma region Box2
-	//auto Box2Object = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(10, 5.5, 0), Quat(0, 0, 0, 1), Vec3(10, 1, 10));
-	//auto Box2Body = Box2Object->GetComponent<RigidBody>(L"RigidBody");
-	//Box2Body->AddCollider<BoxCollider>(Box2Object->GetTransform()->GetScale());
-	//Box2Body->SetRotation(-45.f, PhysicsAxis::X);
-#pragma endregion
-
-#pragma region Mesh
-	//auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(-10, 25, 0), Quat(0, 0, 0, 1), Vec3(1, 1, 1));
-	//auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
-	//MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), L"Moon", L"..\\Resources\\FBX\\Moon\\moon.fbx");
-#pragma endregion
-
-#pragma region MAP
 	// static Mesh 정보 로드
 	/*
 		1. static Mesh 오브젝트를 로드한다. -> 로드해서 어디 넣지?
@@ -84,7 +34,6 @@ void TestLevel::Init()
 		4. 로드한 맵 정보로부터 actor가 사용하는 staticMesh 오브젝트의 정보와 위치를 받아 맵 오브젝트를 생성한다.
 		5. 생성된 맵 오브젝트는 오브젝트 매니저에 넣는다.
 	*/
-
 	FBXMapLoader mapLoader;
 
 	// static Mesh 정보 로드
@@ -102,6 +51,7 @@ void TestLevel::Init()
 	// actor 정보 로드
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage4.FBX");
 
+	auto objmgr = ObjectManager::GetInstance();
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	int32_t i = 0;
 	for (auto& info : mapInfo)
@@ -132,33 +82,75 @@ void TestLevel::Init()
 	std::system("cls");
 
 	std::cout << "Map loading finished\n";
-#pragma endregion
-
-#pragma region CenterBox(0,0,0)
-	//	auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(100, 1000, 100));
-	//	auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
-	//	centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
-#pragma endregion
-	
-#pragma region Z100Box(1000,0,0)
-	//	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
-	//	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-	//	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
-#pragma endregion
-	
-#pragma region Plane
-	//	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
-	//	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
-	//	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
-#pragma endregion
-
-
 }
 
-void TestLevel::Update(double timeDelta)
+void TestLevel::LoadBasicMap1()
 {
-	game::MessageHandler::GetInstance()->ExecuteMessage();
+	auto objmgr = ObjectManager::GetInstance();
 
+#pragma region Sphere
+	auto SphereObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(5, 10, 5), Quat(0, 0, 0, 1), Vec3(2,2,2));
+	auto SphereBody = SphereObject->GetComponent<RigidBody>(L"RigidBody");
+	SphereBody->SetKinematic(false);
+	SphereBody->SetCCDFlag(true);
+	SphereBody->SetRigidBodySleep(false);
+	SphereBody->AddCollider<SphereCollider>(SphereObject->GetTransform()->GetScale());
+
+	SphereBody->SetAngularDamping(0.00001f);
+	SphereBody->SetLinearDamping(0.15f);
+	SphereBody->SetMass(SphereBody->GetMass() * 0.20f);
+#pragma endregion
+
+#pragma region Box1
+	auto Box1Object = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(20, 10, 0), Quat(0, 0, 0, 1), Vec3(15, 15, 15));
+	auto Box1Body = Box1Object->GetComponent<RigidBody>(L"RigidBody");
+	Box1Body->AddCollider<BoxCollider>(Box1Object->GetTransform()->GetScale());
+	Box1Body->SetRotation(45.f, PhysicsAxis::Y);
+#pragma endregion
+
+#pragma region Box2
+	auto Box2Object = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(10, 5.5, 0), Quat(0, 0, 0, 1), Vec3(10, 1, 10));
+	auto Box2Body = Box2Object->GetComponent<RigidBody>(L"RigidBody");
+	Box2Body->AddCollider<BoxCollider>(Box2Object->GetTransform()->GetScale());
+	Box2Body->SetRotation(-45.f, PhysicsAxis::X);
+#pragma endregion
+}
+
+void TestLevel::LoadBasicMap2()
+{
+	auto objmgr = ObjectManager::GetInstance();
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(1500, 100, -1500), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	PlayerObject->SetControllerPosition(Vec3(150.f, 100.f, 0.f));
+
+
+#pragma region CenterBox(0,0,0)
+		auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(100, 1000, 100));
+		auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
+		centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
+#pragma endregion
+
+#pragma region Z100Box(1000,0,0)
+		auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
+		auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+		Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+#pragma endregion
+
+#pragma region TriggerBox(300,0,0)
+		auto TriggerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(300, 100, 0), Quat(0, 0, 0, 1), Vec3(150, 100, 100));
+		auto TriggerBody = TriggerObj->GetComponent<RigidBody>(L"RigidBody");
+		TriggerBody->AddCollider<BoxCollider>(TriggerObj->GetTransform()->GetScale());
+		TriggerBody->GetCollider(0)->SetTrigger(true);
+#pragma endregion
+
+#pragma region Plane
+		auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 0), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
+		auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+		MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+#pragma endregion
+}
+
+void TestLevel::TestFunction()
+{
 	//P K I로 맵 오브젝트 삭제(removalFlag함수 사용후 삭제작업 처리하면 됨), 몬스터 패턴 실행, 플레이어 공 발사 등을 실험 가능
 	//한번 실행했으면 O를 누르면 다시 명령어 실행가능
 
@@ -226,6 +218,34 @@ void TestLevel::Update(double timeDelta)
 	//		}
 	//	}
 	//}
+}
+
+void TestLevel::Init()
+{
+	auto objmgr = ObjectManager::GetInstance();
+	objmgr->AddLayer(L"Layer_Map");
+	objmgr->AddLayer(L"Layer_Player");
+	objmgr->AddLayer(L"Layer_Monster");
+	objmgr->AddLayer(L"Layer_Map2");
+	objmgr->AddLayer(L"Layer_SkillObject");
+
+
+	//auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	//MonsterObject->SetName(L"Dragon");
+	//MonsterObject->SetObjectType(server::OBJECT_TYPE::BOSS);
+	//MonsterObject->SetFBXType(server::FBX_TYPE::DRAGON);
+	//MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
+
+
+	LoadBasicMap2();
+	//LoadMap();
+}
+
+void TestLevel::Update(double timeDelta)
+{
+	game::MessageHandler::GetInstance()->ExecuteMessage();
+
+	//TestFunction();
 }
 
 void TestLevel::LateUpdate(double timeDelta)

@@ -113,6 +113,11 @@ void Player::SetControllerMoveSpeed(float value)
 	m_controller->SetMoveSpeed(value);
 }
 
+void Player::SetControllerPosition(Vec3 pos)
+{
+	m_controller->GetBody()->SetPosition(pos, true);
+}
+
 float Player::GetControllerMoveSpeed()
 {
 	return m_controller->GetMoveSpeed();

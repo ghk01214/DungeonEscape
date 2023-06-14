@@ -15,7 +15,8 @@ PxFilterFlags CustomFilterShader::pairFound(PxU32 pairID, PxFilterObjectAttribut
 
 	const static PxPairFlags eTriggerFlags =
 		PxPairFlag::eTRIGGER_DEFAULT |
-		(PxPairFlag::Enum)eNotifyFlags;
+		PxPairFlag::eNOTIFY_TOUCH_FOUND |
+		PxPairFlag::eNOTIFY_TOUCH_LOST;
 
 	const static PxPairFlags eContactFlags =
 		PxPairFlag::eCONTACT_DEFAULT |
@@ -24,7 +25,15 @@ PxFilterFlags CustomFilterShader::pairFound(PxU32 pairID, PxFilterObjectAttribut
 		PxPairFlag::eNOTIFY_TOUCH_CCD |
 		PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
 
-	pairFlags = eContactFlags;
+
+	if (s0->getFlags() == PxShapeFlag::eTRIGGER_SHAPE || s1->getFlags() == PxShapeFlag::eTRIGGER_SHAPE)
+	{
+		std::cout << "trigger3" << std::endl;
+	}
+	else
+	{
+		pairFlags = eContactFlags;
+	}
 
 	return PxFilterFlag::eDEFAULT;
 }
@@ -43,10 +52,11 @@ PxFilterFlags CustomFilterShader::PxDefaultSimulationFilterShader(PxFilterObject
 	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
 	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
+
 	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
 	{
-		//트리거 방치
-		return PxFilterFlag::eSUPPRESS;
+		std::cout << "trigger 1" << std::endl;
 	}
+
 	return PxFilterFlag::eCALLBACK;
 }
