@@ -2,6 +2,7 @@
 #include "Session.h"
 #include "Transform.h"
 #include "Monster.h"
+#include "CustomController.h"
 
 namespace game
 {

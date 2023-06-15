@@ -649,13 +649,13 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 
 			for (auto& object : objects)
 			{
-				if (object->GetNetwork() != nullptr)
+				if (object->GetNetwork() == nullptr)
+					continue;
+
+				if (object->GetNetwork()->GetID() == id)
 				{
-					if (object->GetNetwork()->GetID() == id)
-					{
-						scene->RemoveGameObject(object);
-						break;
-					}
+					scene->RemoveGameObject(object);
+					break;
 				}
 			}
 		}

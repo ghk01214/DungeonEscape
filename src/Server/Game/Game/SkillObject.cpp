@@ -66,24 +66,27 @@ void SkillObject::ActionsWhenHit()
 
 			auto monster{ dynamic_cast<Monster*>(collider->GetOwnerObject()) };
 
-			switch (m_objType)
+			if (monster->IsDead() == false)
 			{
-				case server::OBJECT_TYPE::FIREBALL:
+				switch (m_objType)
 				{
-					std::cout << "파이어볼 몬스터 타격\n";
-					monster->GotHit(3);
-					std::cout << "Boss got damage : 3\n";
-					std::cout << "BOSS HP : " << monster->GetHP() << "\n\n";
+					case server::OBJECT_TYPE::FIREBALL:
+					{
+						std::cout << "파이어볼 몬스터 타격\n";
+						monster->GotHit(3);
+						std::cout << "Boss got damage : 3\n";
+						std::cout << "BOSS HP : " << monster->GetHP() << "\n\n";
+					}
+					break;
+					case server::OBJECT_TYPE::ICEBALL:
+					{
+						std::cout << "아이스볼 몬스터 타격\n";
+						monster->GotHit(25);
+						std::cout << "Boss got damage : 5\n";
+						std::cout << "BOSS HP : " << monster->GetHP() << "\n\n";
+					}
+					break;
 				}
-				break;
-				case server::OBJECT_TYPE::ICEBALL:
-				{
-					std::cout << "아이스볼 몬스터 타격\n";
-					monster->GotHit(25);
-					std::cout << "Boss got damage : 5\n";
-					std::cout << "BOSS HP : " << monster->GetHP() << "\n\n";
-				}
-				break;
 			}
 
 			if (monster->IsDead() == true)
@@ -132,6 +135,8 @@ void SkillObject::ActionsWhenHit()
 			sendMsg.objType = m_objType;
 
 			game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
+
+			std::cout << m_id << " removed\n";
 		}
 	}
 }

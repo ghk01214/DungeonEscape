@@ -84,7 +84,6 @@ void CustomController::Move()
 	}
 
 	CheckOnGround_Raycast();
-
 }
 
 bool CustomController::CheckOnGround(CollisionInfoType type, PxVec3& surfaceNormal)
@@ -205,14 +204,14 @@ bool CustomController::CheckOnGround_Raycast()
 	if (query->Raycast(hit, ray, 1 << (uint8_t)PhysicsLayers::Map, PhysicsQueryType::All, m_body))
 	{
 		m_distanceFromGround = hit.distance;
-		//std::cout << m_distanceFromGround << std::endl;
+		//std::cout << m_distanceFromGround << "\n";
 		return true;
 	}
 
 	else
 	{
 		m_distanceFromGround = -1;				//raycast 실패 (밑에 아예 물체가 없거나 raycast 측정거리보다 멀다)
-		//std::cout << m_distanceFromGround << std::endl;
+		//std::cout << m_distanceFromGround << "\n";
 		return false;
 	}
 }
@@ -567,7 +566,10 @@ CapsuleCollider* CustomController::GetCollider()
 
 bool CustomController::IsOnGround()
 {
-	return m_onGround;
+	if (m_distanceFromGround == -1)
+		return false;
+
+	return m_distanceFromGround < 30.f;
 }
 
 bool CustomController::IsStartJump()

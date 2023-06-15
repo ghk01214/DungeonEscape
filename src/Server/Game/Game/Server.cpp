@@ -902,6 +902,9 @@ namespace game
 				{
 					auto skill{ dynamic_cast<SkillObject*>(skillObject) };
 
+					if (skill == nullptr)
+						continue;
+
 					for (auto& client : m_sessions)
 					{
 						if (client->GetState() != STATE::INGAME)

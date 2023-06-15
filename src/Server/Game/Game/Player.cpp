@@ -42,6 +42,8 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
+	static uint64_t prev_num{ 0 };
+
 	if (m_die == false)
 	{
 		m_controller->Move();
@@ -66,12 +68,6 @@ void Player::Update(double timeDelta)
 	}
 
 	TriggerZoneStatusUpdate();
-
-	// 스테이트 변경
-	// game::Message msg{ m_playerID, ProtocolID::WR_ANI_ACK };
-	// msg.aniIndex = 애니 인덱스;
-	// msg.aniFrame = 0.f;
-	// game::MessageHandler::GetInstance()->PushTransformMessage(msg);
 
 	GameObject::Update(timeDelta);
 }
@@ -117,8 +113,8 @@ void Player::TriggerZoneStatusChange(server::TRIGGER_TYPE triggerType, bool stat
 		}
 		else
 		{
-			m_controller->SetMoveSpeed(30.f);	
-			m_controller->SetJumpSpeed(70.f);		
+			m_controller->SetMoveSpeed(30.f);
+			m_controller->SetJumpSpeed(70.f);
 		}
 	}
 }
