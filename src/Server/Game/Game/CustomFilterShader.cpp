@@ -25,16 +25,8 @@ PxFilterFlags CustomFilterShader::pairFound(PxU32 pairID, PxFilterObjectAttribut
 		PxPairFlag::eNOTIFY_TOUCH_CCD |
 		PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
 
-
-	if (s0->getFlags() == PxShapeFlag::eTRIGGER_SHAPE || s1->getFlags() == PxShapeFlag::eTRIGGER_SHAPE)
-	{
-		std::cout << "trigger3" << std::endl;
-	}
-	else
-	{
-		pairFlags = eContactFlags;
-	}
-
+	pairFlags = eContactFlags;
+	
 	return PxFilterFlag::eDEFAULT;
 }
 
@@ -55,7 +47,7 @@ PxFilterFlags CustomFilterShader::PxDefaultSimulationFilterShader(PxFilterObject
 
 	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
 	{
-		std::cout << "trigger 1" << std::endl;
+		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
 	}
 
 	return PxFilterFlag::eCALLBACK;

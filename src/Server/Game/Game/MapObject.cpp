@@ -28,14 +28,14 @@ void MapObject::Init()
 
 void MapObject::Update(double timeDelta)
 {
-	auto collider = m_body->GetCollider(0);
-	if (collider)
-	{
-		if (m_body->GetCollider(0)->IsTrigger())
-		{
-			m_body->SetRigidBodySleep(false);
-		}
-	}
+	//auto collider = m_body->GetCollider(0);
+	//if (collider)
+	//{
+	//	if (m_body->GetCollider(0)->IsTrigger())
+	//	{
+	//		m_body->SetRigidBodySleep(false);
+	//	}
+	//}
 
 	
 	GameObject::Update(timeDelta);

@@ -228,6 +228,19 @@ const std::vector<std::shared_ptr<CollisionPairInfo>>& Collider::GetCollisionInf
 	}
 }
 
+const std::vector<std::shared_ptr<TriggerPairInfo>>& Collider::GetTriggerInfo(CollisionInfoType type) const
+{
+	switch (type)
+	{
+		case CollisionInfoType::Enter:
+		return m_TriggerEnter;
+		case CollisionInfoType::Exit:
+		return m_TriggerExit;
+		default:
+		throw std::runtime_error("Invalid CollisionInfoType value");
+	}
+}
+
 void Collider::SetTrigger(bool value)
 {
 	m_isTrigger = value;

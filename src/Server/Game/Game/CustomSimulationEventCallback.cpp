@@ -37,7 +37,6 @@ void CustomSimulationEventCallback::onContact(const PxContactPairHeader& pairHea
 
 void CustomSimulationEventCallback::onTrigger(physx::PxTriggerPair* pairs, physx::PxU32 nbPairs)
 {
-    std::cout << "onTrigger 호출" << std::endl;
     for (PxU32 i = 0; i < nbPairs; i++)
     {
         PxTriggerPair& tp = pairs[i];
@@ -48,7 +47,6 @@ void CustomSimulationEventCallback::onTrigger(physx::PxTriggerPair* pairs, physx
             auto enterA2B = std::make_shared<TriggerPairInfo>(pairs, true);
             m_TriggerEnter.push_back(std::move(enterB2A));
             m_TriggerEnter.push_back(std::move(enterA2B));
-            std::cout << "enter" << std::endl;
         }
 
         if (tp.status & PxPairFlag::eNOTIFY_TOUCH_LOST)

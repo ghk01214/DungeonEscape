@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Monster.h"
 #include "MapObject.h"
+#include "TriggerObject.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
 #include "CapsuleCollider.h"
@@ -136,7 +137,8 @@ void TestLevel::LoadBasicMap2()
 #pragma endregion
 
 #pragma region TriggerBox(300,0,0)
-		auto TriggerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(300, 100, 0), Quat(0, 0, 0, 1), Vec3(150, 100, 100));
+		auto TriggerObj = objmgr->AddGameObjectToLayer<TriggerObject>(L"Trigger", Vec3(300, 100, 0), Quat(0, 0, 0, 1), Vec3(150, 100, 100));
+		TriggerObj->SetTriggerType(server::TRIGGER_TYPE::WIND_UP);
 		auto TriggerBody = TriggerObj->GetComponent<RigidBody>(L"RigidBody");
 		TriggerBody->AddCollider<BoxCollider>(TriggerObj->GetTransform()->GetScale());
 		TriggerBody->GetCollider(0)->SetTrigger(true);
@@ -228,6 +230,7 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Monster");
 	objmgr->AddLayer(L"Layer_Map2");
 	objmgr->AddLayer(L"Layer_SkillObject");
+	objmgr->AddLayer(L"Trigger");
 
 
 	//auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(50, 50, 50));

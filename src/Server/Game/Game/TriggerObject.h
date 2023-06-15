@@ -1,0 +1,37 @@
+﻿#pragma once
+
+#include "GameObject.h"
+
+class RigidBody;
+
+class TriggerObject : public GameObject
+{
+public:
+	TriggerObject(const Vec3& position = Vec3(0, 0, 0), const Quat& rotation = Quat(0, 0, 0, 1), const Vec3& scale = Vec3(1.f, 1.f, 1.f));
+	~TriggerObject() override;
+
+public:
+	virtual void Init();
+	virtual void Update(double timeDelta) override;
+	virtual void LateUpdate(double timeDelta) override;
+	virtual void Release();
+
+public:
+	void TriggerUpdate();
+
+	void Trigger_Persistent();
+	void Trigger_SingleStrike();
+
+public:
+	void SetTriggerType(server::TRIGGER_TYPE);
+	server::TRIGGER_TYPE GetTriggerType();
+private:
+	RigidBody* m_body = nullptr;
+
+private:
+	server::TRIGGER_TYPE m_triggerType = server::TRIGGER_TYPE::NONE;
+	bool m_invalid = false;
+};
+
+
+

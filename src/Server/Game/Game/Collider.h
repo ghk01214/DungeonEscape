@@ -36,9 +36,6 @@ protected:
 	void ResetShape();
 
 public:
-	// 현재 시뮬레이션 상황 :
-	// shape를 attach하기 전엔 사용 불가. 그래서 현재 Init에는 rigidBody를 인자로 들고 온다.
-
 	// value 0~31
 	uint8_t GetLayerIndex() const;
 	void SetLayerIndex(uint8_t layerIndex);
@@ -48,11 +45,8 @@ public:
 
 	float GetFriction(float value) const;
 	void SetFriction(float value);
-
-	//FrictionFlag
 	PhysicsCombineMode GetFrictionCombineMode() const;
 	void SetFrictionCombineMode(PhysicsCombineMode value);
-	//RestitutionFlag
 	PhysicsCombineMode GetRestitutionCombineMode() const;
 	void SetRestitutionCombineMode(PhysicsCombineMode value);
 	void SetMaterialFlag(physx::PxMaterialFlag::Enum, bool value);
@@ -62,7 +56,9 @@ public:
 	void CollectCollisionInfo(CollisionInfoType type, std::shared_ptr<CollisionPairInfo> info);
 	void CollectTriggerInfo(CollisionInfoType type, std::shared_ptr<TriggerPairInfo> info);
 	void ClearCollisionInfo();
+
 	const std::vector<std::shared_ptr<CollisionPairInfo>>& GetCollisionInfo(CollisionInfoType type) const;
+	const std::vector<std::shared_ptr<TriggerPairInfo>>& GetTriggerInfo(CollisionInfoType type) const;
 
 public:
 	void SetTrigger(bool value);

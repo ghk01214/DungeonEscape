@@ -26,25 +26,29 @@ public:
 	bool IsOnGound();
 	bool IsDead();
 
+	void TriggerZoneStatusChange(server::TRIGGER_TYPE triggerType, bool status);
+	void TriggerZoneStatusUpdate();
+	void Trigger_Magma();
+	void Trigger_Wind();
+	void Trigger_SingleStrike();
+
 	void SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed);
 
 	void GotHit(int32_t damage);
 	void KillPlayer();
-
 public:
+	CustomController* GetController();
 	void SetControllerPosition(Vec3 pos);
 	float GetControllerMoveSpeed();
 	float GetControllerJumpSpeed();
-	CustomController* GetController();
-
 	void SetControllerMoveSpeed(float value);
-	void SetControllerJumpSpeed(float value);
+	void SetControllerJumpSpeed(float value);		
 	void SetControllerCameraLook(Vec3& value);
 
 public:
 	void PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, float power);
 
-public:
+private:
 	CustomController* m_controller = nullptr;
 
 	int32_t m_playerID = 4294967295U;
@@ -52,6 +56,8 @@ public:
 	int32_t m_aniIndex;
 	float m_aniFrame;
 	float m_aniSpeed;
+
+	std::unordered_map<server::TRIGGER_TYPE, bool> m_triggerDictionary;
 
 	int32_t m_hp;
 	bool m_damaged;

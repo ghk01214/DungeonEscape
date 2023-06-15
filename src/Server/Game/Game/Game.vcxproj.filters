@@ -110,9 +110,6 @@
     <Filter Include="02. Physx\PhysDevice">
       <UniqueIdentifier>{98205cdf-b033-42c0-9f00-3287d050e728}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Physx\PhysDevice\FilterCallback">
-      <UniqueIdentifier>{539b1455-be53-4ba3-82a6-735abd5d0d51}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Physx\PhysDevice\FilterShader">
       <UniqueIdentifier>{137f7658-6687-4623-895c-16e33e743a8b}</UniqueIdentifier>
     </Filter>
@@ -161,6 +158,12 @@
     <Filter Include="02. Physx\PhysDevice\EventCallback\TriggerInfo">
       <UniqueIdentifier>{25ed8d1f-9bed-4ac8-914b-f47a8057cfac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Physx\PhysDevice\QueryFilterCallback">
+      <UniqueIdentifier>{539b1455-be53-4ba3-82a6-735abd5d0d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\TriggerObject">
+      <UniqueIdentifier>{f4b7b417-5c0b-47b2-9fe1-f7a81ae65959}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -182,7 +185,7 @@
       <Filter>02. Physx\PhysDevice</Filter>
     </ClCompile>
     <ClCompile Include="CustomQueryFilterCallback.cpp">
-      <Filter>02. Physx\PhysDevice\FilterCallback</Filter>
+      <Filter>02. Physx\PhysDevice\QueryFilterCallback</Filter>
     </ClCompile>
     <ClCompile Include="CustomFilterShader.cpp">
       <Filter>02. Physx\PhysDevice\FilterShader</Filter>
@@ -299,6 +302,9 @@
     <ClCompile Include="TriggerPairInfo.cpp">
       <Filter>02. Physx\PhysDevice\EventCallback\TriggerInfo</Filter>
     </ClCompile>
+    <ClCompile Include="TriggerObject.cpp">
+      <Filter>03. Game\01. GameObject\TriggerObject</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -323,7 +329,7 @@
       <Filter>02. Physx\PhysDevice</Filter>
     </ClInclude>
     <ClInclude Include="CustomQueryFilterCallback.h">
-      <Filter>02. Physx\PhysDevice\FilterCallback</Filter>
+      <Filter>02. Physx\PhysDevice\QueryFilterCallback</Filter>
     </ClInclude>
     <ClInclude Include="CustomFilterShader.h">
       <Filter>02. Physx\PhysDevice\FilterShader</Filter>
@@ -459,6 +465,9 @@
     </ClInclude>
     <ClInclude Include="TriggerPairInfo.h">
       <Filter>02. Physx\PhysDevice\EventCallback\TriggerInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerObject.h">
+      <Filter>03. Game\01. GameObject\TriggerObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

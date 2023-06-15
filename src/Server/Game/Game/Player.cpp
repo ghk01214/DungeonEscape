@@ -32,6 +32,12 @@ void Player::Init()
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);
 	SetObjectType(server::OBJECT_TYPE::PLAYER);
+
+
+	for (int i = static_cast<int>(server::TRIGGER_TYPE::NONE) + 1; i < static_cast<int>(server::TRIGGER_TYPE::MAX); ++i)
+	{
+		m_triggerDictionary[static_cast<server::TRIGGER_TYPE>(i)] = false;
+	}
 }
 
 void Player::Update(double timeDelta)
@@ -58,6 +64,8 @@ void Player::Update(double timeDelta)
 		if (m_damaged == true and m_controller->IsOnGround() == true)
 			m_damaged = false;
 	}
+
+	TriggerZoneStatusUpdate();
 
 	// 스테이트 변경
 	// game::Message msg{ m_playerID, ProtocolID::WR_ANI_ACK };
@@ -89,6 +97,58 @@ bool Player::IsDead()
 {
 	return m_die;
 }
+
+void Player::TriggerZoneStatusChange(server::TRIGGER_TYPE triggerType, bool status)
+{
+	//trigger enter/exit에 대한 처리
+	if (triggerType != server::TRIGGER_TYPE::NONE)
+	{
+		m_triggerDictionary[triggerType] = status;
+	}
+
+
+	//마그마블럭 진입/탈출
+	if (triggerType == server::TRIGGER_TYPE::MAGMA)
+	{
+		if (status)
+		{
+			m_controller->SetMoveSpeed(20.f);		//default:30
+			m_controller->SetJumpSpeed(50.f);		//default:70
+		}
+		else
+		{
+			m_controller->SetMoveSpeed(30.f);	
+			m_controller->SetJumpSpeed(70.f);		
+		}
+	}
+}
+
+void Player::TriggerZoneStatusUpdate()
+{
+	//영역 내 지속적인 효과를 주는 트리거 상호작용만 포함
+	//1회성 트리거(타격)의 경우 TriggerObject 클래스에서 플레이어의 status를 변경하는 방식으로 사용
+	Trigger_Magma();
+	Trigger_Wind();
+}
+
+void Player::Trigger_Magma()
+{
+	//특정 시간마다 데미지 부여(클라)
+}
+
+void Player::Trigger_Wind()
+{
+	if (!(m_triggerDictionary[server::TRIGGER_TYPE::WIND_FRONT] || m_triggerDictionary[server::TRIGGER_TYPE::WIND_BACK] ||
+		m_triggerDictionary[server::TRIGGER_TYPE::WIND_LEFT] || m_triggerDictionary[server::TRIGGER_TYPE::WIND_RIGHT] ||
+		m_triggerDictionary[server::TRIGGER_TYPE::WIND_UP] || m_triggerDictionary[server::TRIGGER_TYPE::WIND_DOWN]))
+		return;
+
+	if (m_triggerDictionary[server::TRIGGER_TYPE::WIND_UP])
+	{
+		m_controller->GetBody()->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1.f, 0) * 1.f);
+	}
+}
+
 
 void Player::SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed)
 {

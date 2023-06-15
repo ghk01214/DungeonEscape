@@ -25,8 +25,9 @@ void GameObject::Update(double timeDelta)
     if (m_removeReserved == RESERVED)
     {
         auto body = GetComponent<RigidBody>(L"RigidBody");
+        if (body == nullptr)
+            return;
         body->ExcludeFromSimulation(true);
-        //std::cout << "실행됨";
     }
     
     m_removeReserved -= 1;

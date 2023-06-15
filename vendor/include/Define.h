@@ -59,7 +59,24 @@
 		BOSS,
 		FIREBALL,
 		ICEBALL,
+		TRIGGER_OBJECT,
 
+		MAX
+	};
+
+	enum class TRIGGER_TYPE
+	{
+		NONE = 0,
+		
+		SINGLE_STRIKE,
+		MAGMA,
+		WIND_RIGHT,
+		WIND_LEFT,
+		WIND_FRONT,
+		WIND_BACK,
+		WIND_UP,
+		WIND_DOWN,
+		
 		MAX
 	};
 
