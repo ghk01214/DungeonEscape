@@ -138,7 +138,7 @@ void TestLevel::LoadBasicMap2()
 
 #pragma region TriggerBox(300,0,0)
 		auto TriggerObj = objmgr->AddGameObjectToLayer<TriggerObject>(L"Trigger", Vec3(300, 100, 0), Quat(0, 0, 0, 1), Vec3(150, 100, 100));
-		TriggerObj->SetTriggerType(server::TRIGGER_TYPE::WIND_UP);
+		TriggerObj->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE);
 		auto TriggerBody = TriggerObj->GetComponent<RigidBody>(L"RigidBody");
 		TriggerBody->AddCollider<BoxCollider>(TriggerObj->GetTransform()->GetScale());
 		TriggerBody->GetCollider(0)->SetTrigger(true);

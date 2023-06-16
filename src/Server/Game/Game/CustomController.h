@@ -44,6 +44,9 @@ public:
 	void KeyboardClear();
 
 public:
+	void GetKeyboardStatus();	//Receive와 다른, player코드에서 키보드 정보를 얻기 위한 함수
+
+public:
 	void SetMoveSpeed(float value);
 	float GetMoveSpeed();
 	void SetJumpSpeed(float value);
@@ -88,7 +91,7 @@ private:
 	bool			m_keyboardSpace = false;
 #pragma endregion
 	bool m_isPlayer = false;
-	physx::PxVec3	m_cameraLook;
+	physx::PxVec3	m_cameraLook = physx::PxVec3(1,0,0);
 
 	bool m_startJump;
 };

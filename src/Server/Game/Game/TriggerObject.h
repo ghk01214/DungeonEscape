@@ -3,6 +3,7 @@
 #include "GameObject.h"
 
 class RigidBody;
+class Collider;
 
 class TriggerObject : public GameObject
 {
@@ -18,19 +19,28 @@ public:
 
 public:
 	void TriggerUpdate();
-
 	void Trigger_Persistent();
 	void Trigger_SingleStrike();
 
 public:
-	void SetTriggerType(server::TRIGGER_TYPE);
+	void ExcludeTriggerFromSimulation(bool value);
+	void ExcludeManagement(Collider* collider, bool& duplicate);
+	void RestoreOneTimeEffect();
+
+public:
+	void SetTriggerType(server::TRIGGER_TYPE, float startTime = -1.f, float endTime = -1.f);
 	server::TRIGGER_TYPE GetTriggerType();
 private:
 	RigidBody* m_body = nullptr;
 
 private:
 	server::TRIGGER_TYPE m_triggerType = server::TRIGGER_TYPE::NONE;
-	bool m_invalid = false;
+	std::vector<Collider*> m_excludeColliders;		//중복처리 방지용 컨테이너(1회성 트리거 한정)
+	float m_startTime = -1.f;
+	float m_endTime = -1.f;			
+	float m_currentTime = -1.f;						//트리거 활성화 시간 + 시작/끝(1회성 트리거 한정)
+
+	physx::PxVec3 m_originalPosition = physx::PxVec3(0);
 };
 
 

@@ -130,6 +130,11 @@ PxVec3 RigidBody::GetPosition()
 	return m_body->getGlobalPose().p;
 }
 
+physx::PxQuat RigidBody::GetRotation()
+{
+	return m_body->getGlobalPose().q;
+}
+
 void RigidBody::SetPosition(const Vec3 position, bool wake)
 {
 	PxTransform t = m_body->getGlobalPose();
@@ -303,5 +308,11 @@ bool RigidBody::isKinematic() const
 
 void RigidBody::ExcludeFromSimulation(bool value)
 {
-	m_body->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, true);
+	m_body->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, value);
 }
+
+bool RigidBody::IsExcludedFromSimulation()
+{
+	return m_body->getActorFlags().isSet(PxActorFlag::eDISABLE_SIMULATION);
+}
+

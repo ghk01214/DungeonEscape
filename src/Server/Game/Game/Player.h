@@ -3,6 +3,7 @@
 #include "GameObject.h"
 
 class CustomController;
+class TriggerObject;
 
 class Player : public GameObject
 {
@@ -39,6 +40,8 @@ public:
 public:
 	CustomController* GetController();
 	void SetControllerPosition(Vec3 pos);
+	Vec3 GetControllerPosition();
+	Quat GetControllerRotation();
 	float GetControllerMoveSpeed();
 	float GetControllerJumpSpeed();
 	void SetControllerMoveSpeed(float value);
@@ -47,9 +50,11 @@ public:
 
 public:
 	void PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, float power);
+	void PlayerPattern_SingleStrike();
 
 private:
 	CustomController* m_controller = nullptr;
+	TriggerObject* m_attackTrigger = nullptr;
 
 	int32_t m_playerID = 4294967295U;
 

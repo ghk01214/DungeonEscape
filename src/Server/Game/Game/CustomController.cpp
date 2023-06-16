@@ -251,6 +251,8 @@ void CustomController::DirectionInput_Player()
 		m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
 		PxVec3 up = PxVec3(0.f, 1.f, 0.f);
+		m_cameraLook.y = 0.f;		//카메라의 y성분 제거
+		m_cameraLook.normalize();
 		PxVec3 right = up.cross(m_cameraLook);
 
 		if (m_keyboardLeft)
@@ -285,6 +287,7 @@ void CustomController::DirectionInput_Player()
 	}
 }
 
+//나중에 수정
 void CustomController::DirectionInput_Monster()
 {
 	m_moveDirection = PxVec3(0.f, 0.f, 0.f);
@@ -375,7 +378,6 @@ void CustomController::Movement_Player()
 
 	m_slidingVector = PxVec3(0.f);
 	m_moveDirection = PxVec3(0.f);
-	//KeyboardClear();
 }
 
 void CustomController::Movement_Monster()
@@ -513,6 +515,10 @@ void CustomController::KeyboardClear()
 	m_keyboardUp	= false;
 	m_keyboardDown	= false;
 	m_keyboardSpace	= false;
+}
+
+void CustomController::GetKeyboardStatus()
+{
 }
 
 void CustomController::SetMoveSpeed(float value)
