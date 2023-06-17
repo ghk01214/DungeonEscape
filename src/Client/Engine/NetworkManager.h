@@ -34,7 +34,7 @@ namespace network
 		void Recv();
 		void Send(CPacket& packet);
 
-		void SendLoginPacket();
+		void SendLoginPacket(const std::wstring& ID, const std::wstring& pwd);
 		void SendKeyInputPacket();
 		void SendLogoutPacket();
 		void SendIDIssueRequest();

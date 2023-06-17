@@ -65,12 +65,14 @@ public:
 	void AddMonster(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void AddBoss(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void AddSceneObject(std::vector<std::shared_ptr<CGameObject>> gameObject);
+	void AddNetworkObject(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void SetSkyBox(std::wstring key, std::wstring texture_path);
 
 	void RemovePlayer(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void RemoveMonster(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void RemoveBoss(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void RemoveSceneObject(std::vector<std::shared_ptr<CGameObject>> gameObject);
+	void RemoveNetworkObject(std::vector<std::shared_ptr<CGameObject>> gameObject);
 
 public:
 	const vector<shared_ptr<CGameObject>>& GetGameObjects(void) { return m_gameObjects; }
@@ -78,6 +80,7 @@ public:
 	const vector<shared_ptr<CGameObject>>& GetMonster(void) { return m_monster; }
 	const vector<shared_ptr<CGameObject>>& GetBoss(void) { return m_boss; }
 	const vector<shared_ptr<CGameObject>>& GetSceneObject(void) { return m_sceneObject; }
+	const vector<shared_ptr<CGameObject>>& GetNetworkObject(void) { return m_networkObject; }
 	const shared_ptr<CGameObject>& GetSkyBoxObject(void) { return m_skyBox; }
 
 	const std::deque<network::CPacket>& GetServerRequest() const { return m_requestQueue; }
@@ -94,6 +97,7 @@ private:
 	vector<shared_ptr<CGameObject>>		m_monster;
 	vector<shared_ptr<CGameObject>>		m_boss;
 	vector<shared_ptr<CGameObject>>		m_sceneObject;
+	vector<shared_ptr<CGameObject>>		m_networkObject;
 	shared_ptr<CGameObject>				m_skyBox;
 
 private:

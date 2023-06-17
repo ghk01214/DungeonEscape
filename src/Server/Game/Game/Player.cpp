@@ -14,13 +14,13 @@
 
 Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
-	m_playerID{ playerID },
 	m_aniIndex{ 12 },
 	m_aniFrame{ 0.f },
 	m_aniSpeed{ 1.f },
 	m_hp{ 20 },
 	m_die{ false }
 {
+	m_id = playerID;
 }
 
 Player::~Player()
@@ -52,7 +52,7 @@ void Player::Update(double timeDelta)
 
 		if (m_startSendTransform == true)
 		{
-			game::Message msg{ m_playerID, ProtocolID::WR_TRANSFORM_ACK };
+			game::Message msg{ m_id, ProtocolID::WR_TRANSFORM_ACK };
 			game::MessageHandler::GetInstance()->PushTransformMessage(msg);
 
 			if (m_damaged == false and m_controller->IsStartJump() == true)
@@ -70,7 +70,6 @@ void Player::Update(double timeDelta)
 	}
 
 	TriggerZoneStatusUpdate();
-	PlayerPattern_SingleStrike();
 
 	GameObject::Update(timeDelta);
 }
@@ -246,36 +245,31 @@ void Player::PlayerPattern_SingleStrike()
 	static bool firstRun = true;
 
 	auto objmgr = ObjectManager::GetInstance();
-	
-	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+
+	physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());				//플레이어 위치
+	physx::PxVec3 cameraDir = m_controller->GetCameraLook();
+	cameraDir.y = 0;  // y 컴포넌트를 0으로 설정
+	cameraDir.normalize();  // 벡터를 정규화
+	float angle = physx::PxAtan2(cameraDir.z, cameraDir.x);
+	physx::PxQuat cameraRot(angle, physx::PxVec3(0, 1, 0));					//카메라 회전정보
+
+	float radius = m_controller->GetCollider()->GetRadius();
+	float extent = 100.f;
+	physx::PxVec3 triggerPos = playerPos + cameraDir * (radius + extent);	//트리거 위치
+
+	if (firstRun)
 	{
-		physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());				//플레이어 위치
-
-		physx::PxVec3 cameraDir = m_controller->GetCameraLook();	
-		cameraDir.y = 0;  // y 컴포넌트를 0으로 설정
-		cameraDir.normalize();  // 벡터를 정규화
-		float angle = physx::PxAtan2(cameraDir.z, cameraDir.x);
-		physx::PxQuat cameraRot(angle, physx::PxVec3(0, 1, 0));					//카메라 회전정보
-
-
-		float radius = m_controller->GetCollider()->GetRadius();
-		float extent = 100.f;
-		physx::PxVec3 triggerPos = playerPos + cameraDir * (radius + extent);	//트리거 위치
-
-		if (firstRun)
-		{
- 			m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Trigger", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
-			m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, 0.5f, 1.5f);
-			auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
-			triggerBody->AddCollider<BoxCollider>(m_attackTrigger->GetTransform()->GetScale());
-			triggerBody->GetCollider(0)->SetTrigger(true);
-			firstRun = false;
-		}
-		else
-		{
-			m_attackTrigger->RestoreOneTimeEffect();
-			auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
-			triggerBody->SetPosition(FROM_PX3(triggerPos), true);
-		}
+		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Trigger", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
+		m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, 0.2f, 0.43f);		// ATK0 기준
+		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
+		triggerBody->AddCollider<BoxCollider>(m_attackTrigger->GetTransform()->GetScale());
+		triggerBody->GetCollider(0)->SetTrigger(true);
+		firstRun = false;
+	}
+	else
+	{
+		m_attackTrigger->RestoreOneTimeEffect();
+		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
+		triggerBody->SetPosition(FROM_PX3(triggerPos), true);
 	}
 }

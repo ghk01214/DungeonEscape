@@ -215,7 +215,7 @@ void TestLevel::TestFunction()
 	//			mob->GetController()->SetSpaceKeyDown(true);
 
 	//			game::Message msg{ -1, ProtocolID::WR_JUMP_START_ACK };
-	//			msg.objID = mob->GetMonsterID();
+	//			msg.objID = mob->GetID();
 	//			game::MessageHandler::GetInstance()->PushSendMessage(msg);
 	//		}
 	//	}
@@ -233,15 +233,15 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Trigger");
 
 
-	//auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	//MonsterObject->SetName(L"Dragon");
-	//MonsterObject->SetObjectType(server::OBJECT_TYPE::BOSS);
-	//MonsterObject->SetFBXType(server::FBX_TYPE::DRAGON);
-	//MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
+	auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	MonsterObject->SetName(L"Dragon");
+	MonsterObject->SetObjectType(server::OBJECT_TYPE::BOSS);
+	MonsterObject->SetFBXType(server::FBX_TYPE::DRAGON);
+	MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
 
 
-	LoadBasicMap2();
-	//LoadMap();
+	//LoadBasicMap2();
+	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)

@@ -384,6 +384,14 @@ void CScene::AddSceneObject(std::vector<std::shared_ptr<CGameObject>> gameObject
 	AddGameObject(gameObject);
 }
 
+void CScene::AddNetworkObject(std::vector<std::shared_ptr<CGameObject>> gameObject)
+{
+	for (auto& object : gameObject)
+		m_networkObject.push_back(object);
+
+	AddGameObject(gameObject);
+}
+
 void CScene::SetSkyBox(std::wstring key, std::wstring texture_path)
 {
 	// loading thread 적용 이후, 함수의 인자를 key로 받도록 수정
@@ -462,8 +470,20 @@ void CScene::RemoveSceneObject(std::vector<std::shared_ptr<CGameObject>> gameObj
 	for (auto& object : gameObject)
 	{
 		auto findIt = std::find(m_sceneObject.begin(), m_sceneObject.end(), object);
-		if (findIt != m_boss.end())
+		if (findIt != m_sceneObject.end())
 			m_sceneObject.erase(findIt);
+	}
+
+	RemoveGameObject(gameObject);
+}
+
+void CScene::RemoveNetworkObject(std::vector<std::shared_ptr<CGameObject>> gameObject)
+{
+	for (auto& object : gameObject)
+	{
+		auto findIt = std::find(m_networkObject.begin(), m_networkObject.end(), object);
+		if (findIt != m_networkObject.end())
+			m_networkObject.erase(findIt);
 	}
 
 	RemoveGameObject(gameObject);

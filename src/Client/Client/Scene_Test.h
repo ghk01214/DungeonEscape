@@ -8,7 +8,7 @@ class Scene_Test
 	DECLARE_SINGLE(Scene_Test)
 
 public:
-	std::shared_ptr<CScene> TestScene(void);
+	std::shared_ptr<CScene> TestScene(server::FBX_TYPE playerType);
 
 	void LateUpdate();
 
@@ -22,7 +22,7 @@ private:
 	void CreateLights(void);
 	void CreateMap(void);
 	void CreateMapObjects(void);
-	void CreatePlayer(void);
+	void CreatePlayer(server::FBX_TYPE player);
 	void CreateRemotePlayer(network::CPacket& packet);
 	void CreateSphere();
 	void CreateBoss(network::CPacket& packet);

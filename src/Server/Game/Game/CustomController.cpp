@@ -48,12 +48,6 @@ void CustomController::Init()
 	m_useKeyType.push_back(server::KEY_TYPE::D);
 	m_useKeyType.push_back(server::KEY_TYPE::SPACE);
 
-	m_keyboardLeft = false;
-	m_keyboardRight = false;
-	m_keyboardUp = false;
-	m_keyboardDown = false;
-	m_keyboardSpace = false;
-
 	m_cameraLook = PxVec3(0.f, 0.f, 1.f);
 
 	m_startJump = false;
@@ -201,7 +195,7 @@ bool CustomController::CheckOnGround_Raycast()
 	ray.point = m_body->GetPosition()
 		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight()), 0.f);
 
-	if (query->Raycast(hit, ray, 1 << (uint8_t)PhysicsLayers::Map, PhysicsQueryType::All, m_body))
+	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::Map), PhysicsQueryType::All, m_body))
 	{
 		m_distanceFromGround = hit.distance;
 		//std::cout << m_distanceFromGround << "\n";
@@ -231,7 +225,7 @@ Collider* CustomController::GetColliderBelow()
 	ray.point = m_body->GetPosition()
 		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight()), 0.f);
 
-	if (query->Raycast(hit, ray, 1 << (uint8_t)PhysicsLayers::Map, PhysicsQueryType::Collider, m_body))
+	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::Map), PhysicsQueryType::Collider, m_body))
 	{
 		return hit.collider;
 	}
@@ -244,7 +238,7 @@ Collider* CustomController::GetColliderBelow()
 
 void CustomController::DirectionInput_Player()
 {
-	bool serverConnected = false;
+	bool serverConnected = true;
 
 	if (serverConnected)
 	{
@@ -255,14 +249,14 @@ void CustomController::DirectionInput_Player()
 		m_cameraLook.normalize();
 		PxVec3 right = up.cross(m_cameraLook);
 
-		if (m_keyboardLeft)
+		if (m_keyboardLeft.press)
 			m_moveDirection -= right;
-		else if (m_keyboardRight)
+		else if (m_keyboardRight.press)
 			m_moveDirection += right;
 
-		if (m_keyboardUp)
+		if (m_keyboardUp.press)
 			m_moveDirection += m_cameraLook;
-		else if (m_keyboardDown)
+		else if (m_keyboardDown.press)
 			m_moveDirection -= m_cameraLook;
 
 		m_moveDirection.normalize();
@@ -324,8 +318,8 @@ void CustomController::Movement_Player()
 	CheckOnGround(CollisionInfoType::Enter, surfaceNormal);
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
-	//if (m_keyboardSpace && m_onGround)
+	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
+	if (m_keyboardSpace.down && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
@@ -392,7 +386,7 @@ void CustomController::Movement_Monster()
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
 	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
-	if (m_keyboardSpace && m_onGround)
+	if (m_keyboardSpace.press && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
@@ -408,7 +402,7 @@ void CustomController::Movement_Monster()
 #pragma endregion
 
 		m_onGround = false;
-		m_keyboardSpace = false;
+		m_keyboardSpace.press = false;
 	}
 
 	//friction adjustment
@@ -462,59 +456,63 @@ void CustomController::KeyboardReceive(ulong32_t key)
 			case server::KEY_STATE::PRESS:
 			{
 				if (i == W)
-					m_keyboardUp = true;
+					m_keyboardUp.Press();
 				if (i == S)
-					m_keyboardDown = true;
+					m_keyboardDown.Press();
 				if (i == A)
-					m_keyboardLeft = true;
+					m_keyboardLeft.Press();
 				if (i == D)
-					m_keyboardRight = true;
+					m_keyboardRight.Press();
 				if (i == SPACE)
-					m_keyboardSpace = false;
+					m_keyboardSpace.Press();
 			}
 			break;
 			case server::KEY_STATE::DOWN:
 			{
 				if (i == W)
-					m_keyboardUp = true;
+					m_keyboardUp.Down();
 				if (i == S)
-					m_keyboardDown = true;
+					m_keyboardDown.Down();
 				if (i == A)
-					m_keyboardLeft = true;
+					m_keyboardLeft.Down();
 				if (i == D)
-					m_keyboardRight = true;
+					m_keyboardRight.Down();
 				if (i == SPACE)
-					m_keyboardSpace = true;
+					m_keyboardSpace.Down();
 			}
 			break;
-			case server::KEY_STATE::NONE:
 			case server::KEY_STATE::UP:
 			{
 				if (i == W)
-					m_keyboardUp = false;
+					m_keyboardUp.Up();
 				if (i == S)
-					m_keyboardDown = false;
+					m_keyboardDown.Up();
 				if (i == A)
-					m_keyboardLeft = false;
+					m_keyboardLeft.Up();
 				if (i == D)
-					m_keyboardRight = false;
+					m_keyboardRight.Up();
 				if (i == SPACE)
-					m_keyboardSpace = false;
+					m_keyboardSpace.Up();
+			}
+			break;
+			case server::KEY_STATE::NONE:
+			{
+				if (i == W)
+					m_keyboardUp.None();
+				if (i == S)
+					m_keyboardDown.None();
+				if (i == A)
+					m_keyboardLeft.None();
+				if (i == D)
+					m_keyboardRight.None();
+				if (i == SPACE)
+					m_keyboardSpace.None();
 			}
 			break;
 			default:
 			break;
 		}
 	}
-}
-
-void CustomController::KeyboardClear()
-{
-	m_keyboardLeft	= false;
-	m_keyboardRight = false;
-	m_keyboardUp	= false;
-	m_keyboardDown	= false;
-	m_keyboardSpace	= false;
 }
 
 void CustomController::GetKeyboardStatus()
@@ -544,11 +542,6 @@ float CustomController::GetJumpSpeed()
 float CustomController::GetDistanceFromGround()
 {
 	return m_distanceFromGround;
-}
-
-void CustomController::SetSpaceKeyDown(bool down)
-{
-	m_keyboardSpace = down;
 }
 
 void CustomController::BounceFromAttack()

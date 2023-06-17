@@ -18,7 +18,6 @@ public:
 	virtual void Release();
 
 public:
-	constexpr int32_t GetPlayerID() const { return m_playerID; }
 	constexpr int32_t GetAniIndex() const { return m_aniIndex; }
 	constexpr float GetAniFrame() const { return m_aniFrame; }
 	constexpr float GetAniSpeed() const { return m_aniSpeed; }
@@ -45,7 +44,7 @@ public:
 	float GetControllerMoveSpeed();
 	float GetControllerJumpSpeed();
 	void SetControllerMoveSpeed(float value);
-	void SetControllerJumpSpeed(float value);		
+	void SetControllerJumpSpeed(float value);
 	void SetControllerCameraLook(Vec3& value);
 
 public:
@@ -55,8 +54,6 @@ public:
 private:
 	CustomController* m_controller = nullptr;
 	TriggerObject* m_attackTrigger = nullptr;
-
-	int32_t m_playerID = 4294967295U;
 
 	int32_t m_aniIndex;
 	float m_aniFrame;

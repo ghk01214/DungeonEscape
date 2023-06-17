@@ -132,12 +132,14 @@ namespace network
 		WSASend(m_socket, &m_sendEx.wsa, 1, 0, 0, &m_sendEx.over, nullptr);
 	}
 
-	void NetworkManager::SendLoginPacket()
+	void NetworkManager::SendLoginPacket(const std::wstring& ID, const std::wstring& pwd)
 	{
 		CPacket packet;
 
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_REQ);
+		//packet.WriteWString(ID);
+		//packet.WriteWString(pwd);
 
 		// 패킷 전송
 		Send(packet);

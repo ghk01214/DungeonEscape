@@ -12,12 +12,12 @@
 
 Monster::Monster(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
-	m_MonsterID{ MonsterID },
 	m_aniIndex{ 6 },
 	m_aniFrame{ 0.f },
 	m_aniSpeed{ 1.f },
 	m_hp{ 20 }
 {
+	m_id = MonsterID;
 }
 
 Monster::~Monster()
@@ -42,7 +42,7 @@ void Monster::Update(double timeDelta)
 
 	if (m_startSendTransform == true)
 	{
-		game::Message msg{ m_MonsterID, ProtocolID::WR_TRANSFORM_ACK };
+		game::Message msg{ m_id, ProtocolID::WR_TRANSFORM_ACK };
 		game::MessageHandler::GetInstance()->PushTransformMessage(msg);
 	}
 
@@ -166,20 +166,20 @@ void Monster::MonsterPattern_GroundHit()
 				result->GotHit(5);
 
 				std::cout << "몬스터 패턴 발동, 플레이어 피격 적용\n";
-				std::cout << "PLAYER[" << result->GetPlayerID() << "] HP : " << result->GetHP() << "\n\n";
+				std::cout << "PLAYER[" << result->GetID() << "] HP : " << result->GetHP() << "\n\n";
 
 				game::Message hitMsg{ -1, ProtocolID::WR_HIT_ACK };
-				hitMsg.playerID = result->GetPlayerID();
+				hitMsg.playerID = result->GetID();
 				hitMsg.objType = server::OBJECT_TYPE::PLAYER;
 
 				game::MessageHandler::GetInstance()->PushSendMessage(hitMsg);
 
 				if (result->GetHP() <= 0)
 				{
-					std::cout << "PLAYER [" << result->GetPlayerID() << "] DEAD!\n";
+					std::cout << "PLAYER [" << result->GetID() << "] DEAD!\n";
 
 					game::Message deadMsg{ -1, ProtocolID::WR_DIE_ACK };
-					deadMsg.playerID = result->GetPlayerID();
+					deadMsg.playerID = result->GetID();
 					deadMsg.objType = server::OBJECT_TYPE::PLAYER;
 
 					game::MessageHandler::GetInstance()->PushSendMessage(deadMsg);

@@ -699,7 +699,7 @@ namespace game
 				{
 					player = dynamic_cast<Player*>(playerObj);
 
-					if (player->GetPlayerID() == id)
+					if (player->GetID() == id)
 						break;
 				}*/
 
@@ -727,9 +727,9 @@ namespace game
 				{
 					auto pl{ dynamic_cast<Player*>(player) };
 
-					if (pl->GetPlayerID() != postOver->playerID)
+					if (pl->GetID() != postOver->playerID)
 					{
-						session->SendPlayerIDIssuePacket(pl->GetPlayerID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
+						session->SendPlayerIDIssuePacket(pl->GetID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
 						continue;
 					}
 
@@ -738,10 +738,10 @@ namespace game
 						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						if (client->GetID() == pl->GetPlayerID())
+						if (client->GetID() == pl->GetID())
 							continue;
 
-						client->SendPlayerIDIssuePacket(pl->GetPlayerID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
+						client->SendPlayerIDIssuePacket(pl->GetID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
 					}
 				}*/
 			}
@@ -763,12 +763,15 @@ namespace game
 						auto pl{ dynamic_cast<Player*>(player) };
 
 						if (pl != nullptr)
-							client->SendTransformPacket(pl->GetPlayerID(), ProtocolID::WR_TRANSFORM_ACK, pl);
+							client->SendTransformPacket(pl->GetID(), ProtocolID::WR_TRANSFORM_ACK, pl);
 					}
 
 					for (auto& object : mapObjects)
 					{
 						auto map{ dynamic_cast<MapObject*>(object) };
+
+						if (map == nullptr)
+							continue;
 
 						if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
 						{
@@ -787,7 +790,10 @@ namespace game
 				{
 					auto pl{ dynamic_cast<Player*>(player) };
 
-					session->SendAddAnimateObjPacket(pl->GetPlayerID(), pl);
+					if (pl == nullptr)
+						continue;
+
+					session->SendAddAnimateObjPacket(pl->GetID(), pl);
 
 					for (auto& client : m_sessions)
 					{
@@ -797,8 +803,8 @@ namespace game
 						if (client->GetID() == postOver->playerID)
 							continue;
 
-						if (pl->GetPlayerID() == postOver->playerID)
-							client->SendAddAnimateObjPacket(pl->GetPlayerID(), pl);
+						if (pl->GetID() == postOver->playerID)
+							client->SendAddAnimateObjPacket(pl->GetID(), pl);
 					}
 
 					pl->StartSendTransform();
@@ -810,7 +816,7 @@ namespace game
 
 					if (mob != nullptr)
 					{
-						session->SendAddAnimateObjPacket(mob->GetMonsterID(), mob);
+						session->SendAddAnimateObjPacket(mob->GetID(), mob);
 					}
 				}
 			}
@@ -857,13 +863,15 @@ namespace game
 				{
 					auto pl{ dynamic_cast<Player*>(player) };
 
+					if (pl == nullptr)
+						continue;
+
 					for (auto& client : m_sessions)
 					{
 						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						if (pl != nullptr)
-							client->SendTransformPacket(pl->GetPlayerID(), postOver->msgProtocol, pl);
+						client->SendTransformPacket(pl->GetID(), postOver->msgProtocol, pl);
 					}
 				}
 
@@ -871,19 +879,25 @@ namespace game
 				{
 					auto mob{ dynamic_cast<Monster*>(monster) };
 
+					if (mob == nullptr)
+						continue;
+
 					for (auto& client : m_sessions)
 					{
 						if (client->GetState() != STATE::INGAME)
 							continue;
 
 						if (mob != nullptr)
-							client->SendTransformPacket(mob->GetMonsterID(), ProtocolID::WR_TRANSFORM_ACK, mob);
+							client->SendTransformPacket(mob->GetID(), ProtocolID::WR_TRANSFORM_ACK, mob);
 					}
 				}
 
 				for (auto& object : mapObjects)
 				{
 					auto map{ dynamic_cast<MapObject*>(object) };
+
+					if (map == nullptr)
+						continue;
 
 					for (auto& client : m_sessions)
 					{
@@ -921,7 +935,10 @@ namespace game
 				{
 					auto pl{ dynamic_cast<Player*>(player) };
 
-					if (pl->GetPlayerID() != postOver->playerID)
+					if (pl == nullptr)
+						continue;
+
+					if (pl->GetID() != postOver->playerID)
 						continue;
 
 					for (auto& client : m_sessions)
@@ -959,6 +976,9 @@ namespace game
 				for (auto& skillObj : skillObjects)
 				{
 					auto skill{ dynamic_cast<SkillObject*>(skillObj) };
+
+					if (skill == nullptr)
+						continue;
 
 					for (auto& client : m_sessions)
 					{
@@ -1014,7 +1034,10 @@ namespace game
 					{
 						auto monster{ dynamic_cast<Monster*>(monsterObject) };
 
-						if (monster->GetMonsterID() != postOver->objID)
+						if (monster == nullptr)
+							continue;
+
+						if (monster->GetID() != postOver->objID)
 							continue;
 
 						for (auto& client : m_sessions)
@@ -1032,6 +1055,9 @@ namespace game
 					for (auto& skillObject : skillObjects)
 					{
 						auto skill{ dynamic_cast<SkillObject*>(skillObject) };
+
+						if (skill == nullptr)
+							continue;
 
 						if (skill->GetID() != postOver->objID)
 							continue;
@@ -1068,7 +1094,7 @@ namespace game
 		{
 			player = dynamic_cast<Player*>(playerObj);
 
-			if (player->GetPlayerID() == playerID)
+			if (player->GetID() == playerID)
 				return player;
 		}
 

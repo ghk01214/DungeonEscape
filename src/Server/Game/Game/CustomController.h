@@ -17,6 +17,20 @@ class CustomController : public Component
 		SPACE,
 		MAX
 	};
+
+	struct KeyInput
+	{
+		bool down;
+		bool press;
+		bool up;
+
+		KeyInput() : down{ false }, press{ false }, up{ false } {}
+
+		void None() { down = false; press = false; up = false; }
+		void Down() { None(); down = true; }
+		void Press() { None(); press = true; }
+		void Up() { None(); up = true; }
+	};
 public:
 	CustomController(GameObject* ownerGameObject, Component* ownerComponent, bool player);
 	~CustomController();
@@ -41,7 +55,6 @@ public:
 public:
 	void CameraLookReceive(Vec3& CameraLook);
 	void KeyboardReceive(ulong32_t key);
-	void KeyboardClear();
 
 public:
 	void GetKeyboardStatus();	//Receive와 다른, player코드에서 키보드 정보를 얻기 위한 함수
@@ -52,8 +65,6 @@ public:
 	void SetJumpSpeed(float value);
 	float GetJumpSpeed();
 	float GetDistanceFromGround();
-
-	void SetSpaceKeyDown(bool down);
 
 public:
 	void BounceFromAttack();	//호출시키지 않으면 공격넉백 적용이 불가능하다
@@ -79,19 +90,19 @@ private:
 
 	bool	m_BounceFromAttack = false;
 private:
-	RigidBody*			m_body = nullptr;
+	RigidBody* m_body = nullptr;
 	CapsuleCollider* m_collider = nullptr;
 
 #pragma region keyboardVariable
 	std::vector<server::KEY_TYPE> m_useKeyType;
-	bool			m_keyboardLeft = false;
-	bool			m_keyboardRight = false;
-	bool			m_keyboardUp = false;
-	bool			m_keyboardDown = false;
-	bool			m_keyboardSpace = false;
+	KeyInput		m_keyboardLeft;
+	KeyInput		m_keyboardRight;
+	KeyInput		m_keyboardUp;
+	KeyInput		m_keyboardDown;
+	KeyInput		m_keyboardSpace;
 #pragma endregion
 	bool m_isPlayer = false;
-	physx::PxVec3	m_cameraLook = physx::PxVec3(1,0,0);
+	physx::PxVec3	m_cameraLook = physx::PxVec3(1, 0, 0);
 
 	bool m_startJump;
 };

@@ -14,23 +14,19 @@
 #include "Light.h"
 #include "Animator.h"
 
-#include "TestCameraScript.h"
 #include "Resources.h"
 #include "ParticleSystem.h"
 #include "Terrain.h"
 #include "SphereCollider.h"
 #include "MeshData.h"
 
-#include "Monster_Script.h"
-#include "Camera_Script.h"
-#include "Player_Script.h"
-#include "PlayerRangeAttack.h"
+#include "Scripts.hpp"
 
 #include <Network.h>
 
 #include "FBXMapLoader.h"
 
-std::shared_ptr<CScene> Scene_Test::TestScene(void)
+std::shared_ptr<CScene> Scene_Test::TestScene(server::FBX_TYPE playerType)
 {
 	scene = make_shared<CScene>();
 
@@ -44,8 +40,7 @@ std::shared_ptr<CScene> Scene_Test::TestScene(void)
 	CreateMap();
 	CreateMapObjects();
 
-	CreatePlayer();
-	//CreateSphere();
+	CreatePlayer(playerType);
 
 	return scene;
 }
@@ -304,14 +299,37 @@ void Scene_Test::CreateMapObjects(void)
 	//scene->AddPlayer(gameObjects);
 }
 
-void Scene_Test::CreatePlayer(void)
+void Scene_Test::CreatePlayer(server::FBX_TYPE player)
 {
 	ObjectDesc objectDesc;
-	objectDesc.strName = L"Mistic";
-	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
 	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
 	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
-	objectDesc.script = std::make_shared<Player_Mistic>();
+
+	switch (player)
+	{
+		case server::FBX_TYPE::NANA:
+		{
+			objectDesc.strName = L"Nana";
+			objectDesc.script = std::make_shared<Player_Nana>();
+		}
+		break;
+		case server::FBX_TYPE::MISTIC:
+		{
+			objectDesc.strName = L"Mistic";
+			objectDesc.script = std::make_shared<Player_Mistic>();
+		}
+		break;
+		case server::FBX_TYPE::CARMEL:
+		{
+			objectDesc.strName = L"Carmel";
+			objectDesc.script = std::make_shared<Player_Carmel>();
+		}
+		break;
+		default:
+		break;
+	}
+
+	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + objectDesc.strName + L"\\" + objectDesc.strName + L".fbx";
 
 	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
 	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::PLAYER);
@@ -629,15 +647,31 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		case server::OBJECT_TYPE::BOSS:
 		{
 			auto boss{ scene->GetBoss() };
-			scene->RemoveBoss(boss);
+			network::NetworkGameObject removeObject;
+
+			for (auto& object : boss)
+			{
+				if (object->GetNetwork()->GetID() == id)
+					removeObject.push_back(object);
+			}
+
+			scene->RemoveBoss(removeObject);
 
 			std::cout << "REMOVE BOSS" << std::endl;
 		}
 		break;
 		case server::OBJECT_TYPE::MONSTER:
 		{
-			auto boss{ scene->GetMonster() };
-			scene->RemoveMonster(boss);
+			auto monster{ scene->GetMonster() };
+			network::NetworkGameObject removeObject;
+
+			for (auto& object : monster)
+			{
+				if (object->GetNetwork()->GetID() == id)
+					removeObject.push_back(object);
+			}
+
+			scene->RemoveMonster(removeObject);
 
 			std::cout << "REMOVE MONSTER" << std::endl;
 		}
@@ -645,19 +679,16 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		case server::OBJECT_TYPE::FIREBALL:
 		case server::OBJECT_TYPE::ICEBALL:
 		{
-			auto objects{ scene->GetGameObjects() };
+			auto objects{ scene->GetNetworkObject() };
+			network::NetworkGameObject removeObjects;
 
 			for (auto& object : objects)
 			{
-				if (object->GetNetwork() == nullptr)
-					continue;
-
 				if (object->GetNetwork()->GetID() == id)
-				{
-					scene->RemoveGameObject(object);
-					break;
-				}
+					removeObjects.push_back(object);
 			}
+
+			scene->RemoveNetworkObject(removeObjects);
 		}
 		break;
 		default:
@@ -671,11 +702,27 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc)
 {
 	switch (type)
 	{
+		case server::FBX_TYPE::NANA:
+		{
+			objectDesc.strName = L"Nana";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx";
+			objectDesc.script = std::make_shared<Player_Nana>();
+			std::wcout << objectDesc.strName << std::endl;
+		}
+		break;
 		case server::FBX_TYPE::MISTIC:
 		{
 			objectDesc.strName = L"Mistic";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
 			objectDesc.script = std::make_shared<Player_Mistic>();
+			std::wcout << objectDesc.strName << std::endl;
+		}
+		break;
+		case server::FBX_TYPE::CARMEL:
+		{
+			objectDesc.strName = L"Carmel";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx";
+			objectDesc.script = std::make_shared<Player_Carmel>();
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
@@ -725,7 +772,8 @@ void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::sha
 		break;
 		default:
 		{
-			scene->AddGameObject(gameObjects);
+			//scene->AddGameObject(gameObjects);
+			scene->AddNetworkObject(gameObjects);
 		}
 		break;
 	}

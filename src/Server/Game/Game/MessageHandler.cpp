@@ -215,7 +215,7 @@ namespace game
 					{
 						player = dynamic_cast<Player*>(playerObj);
 
-						if (player->GetPlayerID() == msg.playerID)
+						if (player->GetID() == msg.playerID)
 						{
 							Logout(msg.playerID, msg.roomID, player, objMgr);
 
@@ -240,12 +240,21 @@ namespace game
 						int32_t colliderID{ NewColliderID() };
 
 						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500 + msg.playerID * 50.f, 150, -1500), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-						player->SetName(L"Mistic");
+
+						std::wstring name{};
+
+						if (msg.fbxType == server::FBX_TYPE::NANA)
+							name = L"Nana";
+						else if (msg.fbxType == server::FBX_TYPE::MISTIC)
+							name = L"Mistic";
+						else if (msg.fbxType == server::FBX_TYPE::CARMEL)
+							name = L"Carmel";
+
+						player->SetName(name);
 						player->SetObjectType(msg.objType);
 						player->SetFBXType(msg.fbxType);
 						player->GetController()->GetCollider()->SetID(colliderID);
 					}
-					//Login(msg.playerID, player);
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
 					sendMsg.objType = msg.objType;
@@ -304,7 +313,7 @@ namespace game
 					{
 						auto player{ dynamic_cast<Player*>(playerObject) };
 
-						if (player->GetPlayerID() == msg.playerID)
+						if (player->GetID() == msg.playerID)
 						{
 							auto customController{ player->GetComponent<CustomController>(L"CustomController") };
 							customController->KeyboardReceive(msg.keyInput);
@@ -321,7 +330,7 @@ namespace game
 						{
 							auto player{ dynamic_cast<Player*>(playerObj) };
 
-							if (player->GetPlayerID() == msg.playerID)
+							if (player->GetID() == msg.playerID)
 							{
 								player->SetAniInfo(msg.aniIndex, msg.aniFrame, msg.aniSpeed);
 								break;
@@ -334,7 +343,7 @@ namespace game
 						{
 							auto monster{ dynamic_cast<Monster*>(monsterObject) };
 
-							if (monster->GetMonsterID() == msg.objID)
+							if (monster->GetID() == msg.objID)
 							{
 								monster->SetAniInfo(msg.aniIndex, msg.aniFrame, msg.aniSpeed);
 								break;
@@ -352,7 +361,7 @@ namespace game
 					{
 						auto player{ dynamic_cast<Player*>(playerObj) };
 
-						if (player->GetPlayerID() == msg.playerID)
+						if (player->GetID() == msg.playerID)
 						{
 							player->SetControllerCameraLook(msg.cameraLook);
 							break;
@@ -369,7 +378,7 @@ namespace game
 					{
 						auto pl{ dynamic_cast<Player*>(player) };
 
-						if (pl->GetPlayerID() == msg.playerID)
+						if (pl->GetID() == msg.playerID)
 						{
 							pl->PlayerPattern_ShootBall(msg.objType, objID, 100.f);
 							break;
@@ -391,7 +400,7 @@ namespace game
 						{
 							auto monster{ dynamic_cast<Monster*>(monsterObject) };
 
-							if (monster->GetMonsterID() == msg.objID)
+							if (monster->GetID() == msg.objID)
 							{
 								objMgr->RemoveGameObjectFromLayer(L"Layer_Monster", monster);
 								break;

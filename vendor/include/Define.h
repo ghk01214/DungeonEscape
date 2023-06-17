@@ -67,7 +67,7 @@
 	enum class TRIGGER_TYPE
 	{
 		NONE = 0,
-		
+
 		SINGLE_STRIKE,
 		MAGMA,
 		WIND_RIGHT,
@@ -76,7 +76,7 @@
 		WIND_BACK,
 		WIND_UP,
 		WIND_DOWN,
-		
+
 		MAX
 	};
 
@@ -96,7 +96,9 @@
 	{
 		NONE = 0,
 
+		NANA,
 		MISTIC,
+		CARMEL,
 		DRAGON,
 		SPHERE,
 

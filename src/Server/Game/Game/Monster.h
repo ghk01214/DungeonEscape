@@ -17,7 +17,6 @@ public:
 	virtual void Release();
 
 public:
-	constexpr int32_t GetMonsterID() const { return m_MonsterID; }
 	constexpr int32_t GetAniIndex() const { return m_aniIndex; }
 	constexpr float GetAniFrame() const { return m_aniFrame; }
 	CustomController* GetController() { return m_controller; }
@@ -42,8 +41,6 @@ public:
 
 public:
 	CustomController* m_controller = nullptr;
-
-	int32_t m_MonsterID = 4294967295U;
 
 	int32_t m_hp;
 

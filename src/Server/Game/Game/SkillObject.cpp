@@ -94,7 +94,7 @@ void SkillObject::ActionsWhenHit()
 				std::cout << "BOSS DEFEATED!\n\n";
 
 				game::Message deadMsg{ -1, ProtocolID::WR_DIE_ACK };
-				deadMsg.objID = monster->GetMonsterID();
+				deadMsg.objID = monster->GetID();
 				deadMsg.objType = server::OBJECT_TYPE::BOSS;
 
 				game::MessageHandler::GetInstance()->PushSendMessage(deadMsg);
@@ -102,7 +102,7 @@ void SkillObject::ActionsWhenHit()
 			else
 			{
 				game::Message hitMsg{ -1, ProtocolID::WR_HIT_ACK };
-				hitMsg.objID = monster->GetMonsterID();
+				hitMsg.objID = monster->GetID();
 				hitMsg.objType = server::OBJECT_TYPE::BOSS;
 
 				game::MessageHandler::GetInstance()->PushSendMessage(hitMsg);
