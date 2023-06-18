@@ -172,13 +172,13 @@ namespace network
 		GET_NETWORK->Send(packet);
 	}
 
-	void CNetwork::SendAttack(server::OBJECT_TYPE type)
+	void CNetwork::SendAttack(server::ATTACK_TYPE type)
 	{
 		CPacket packet;
 
 		packet.WriteID(m_networkID);
 		packet.WriteProtocol(ProtocolID::MY_ATTACK_REQ);
-		packet.Write<server::OBJECT_TYPE>(type);
+		packet.Write<server::ATTACK_TYPE>(type);
 
 		GET_NETWORK->Send(packet);
 	}

@@ -80,6 +80,19 @@
 		MAX
 	};
 
+	enum class ATTACK_TYPE
+	{
+		NONE = 0,
+
+		ATK0,
+		ATK1,
+		ATK2,
+		ATK3,
+		ATK4,
+
+		MAX
+	};
+
 	enum class COLLIDER_TYPE
 	{
 		NONE = 0,

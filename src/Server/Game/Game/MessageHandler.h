@@ -18,6 +18,7 @@ namespace game
 		float		aniFrame;
 		float		aniSpeed;
 		Vec3		cameraLook;
+		server::ATTACK_TYPE atkType;
 
 		int32_t colliderID;
 		server::COLLIDER_TYPE colliderType;

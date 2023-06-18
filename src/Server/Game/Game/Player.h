@@ -49,7 +49,7 @@ public:
 
 public:
 	void PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, float power);
-	void PlayerPattern_SingleStrike();
+	void PlayerPattern_SingleStrike(server::ATTACK_TYPE attack);
 
 private:
 	CustomController* m_controller = nullptr;
@@ -64,4 +64,6 @@ private:
 	int32_t m_hp;
 	bool m_damaged;
 	bool m_die;
+
+	bool m_firstSingleStrike;
 };

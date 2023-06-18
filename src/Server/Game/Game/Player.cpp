@@ -18,7 +18,8 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_aniFrame{ 0.f },
 	m_aniSpeed{ 1.f },
 	m_hp{ 20 },
-	m_die{ false }
+	m_die{ false },
+	m_firstSingleStrike{ true }
 {
 	m_id = playerID;
 }
@@ -240,12 +241,46 @@ void Player::PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, fl
 	ballBody->AddForce(ForceMode::Impulse, playerCameraLook * power);
 }
 
-void Player::PlayerPattern_SingleStrike()
+void Player::PlayerPattern_SingleStrike(server::ATTACK_TYPE attack)
 {
-	static bool firstRun = true;
+	enum { start, end };
+	std::array<float, 2> attackTime;
+
+	switch (attack)
+	{
+		case server::ATTACK_TYPE::ATK0:
+		{
+			attackTime[start] = 0.2f;
+			attackTime[end] = 0.43f;
+		}
+		break;
+		case server::ATTACK_TYPE::ATK1:
+		{
+			attackTime[start] = 0.2f;
+			attackTime[end] = 0.39f;
+		}
+		break;
+		case server::ATTACK_TYPE::ATK2:
+		{
+			attackTime[start] = 0.08f;
+			attackTime[end] = 0.19f;
+		}
+		break;
+		case server::ATTACK_TYPE::ATK3:
+		{
+			attackTime[start] = 0.6f;
+			attackTime[end] = 0.75f;
+		}
+		break;
+		case server::ATTACK_TYPE::ATK4:
+		{
+			attackTime[start] = 0.08f;
+			attackTime[end] = 0.27f;
+		}
+		break;
+	}
 
 	auto objmgr = ObjectManager::GetInstance();
-
 	physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());				//플레이어 위치
 	physx::PxVec3 cameraDir = m_controller->GetCameraLook();
 	cameraDir.y = 0;  // y 컴포넌트를 0으로 설정
@@ -257,14 +292,14 @@ void Player::PlayerPattern_SingleStrike()
 	float extent = 100.f;
 	physx::PxVec3 triggerPos = playerPos + cameraDir * (radius + extent);	//트리거 위치
 
-	if (firstRun)
+	if (m_firstSingleStrike == true)
 	{
 		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Trigger", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
-		m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, 0.2f, 0.43f);		// ATK0 기준
+		m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, attackTime[start], attackTime[end]);
 		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
 		triggerBody->AddCollider<BoxCollider>(m_attackTrigger->GetTransform()->GetScale());
 		triggerBody->GetCollider(0)->SetTrigger(true);
-		firstRun = false;
+		m_firstSingleStrike = false;
 	}
 	else
 	{

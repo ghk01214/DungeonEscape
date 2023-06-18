@@ -88,12 +88,12 @@ void Player_Carmel::Update(void)
 				if (INPUT->GetButtonDown(KEY_TYPE::KEY_1) == true)
 				{
 					m_currState = ATK0;
-					GetNetwork()->SendAttack(server::OBJECT_TYPE::FIREBALL);
+					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK0);
 				}
 				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_2) == true)
 				{
 					m_currState = ATK1;
-					GetNetwork()->SendAttack(server::OBJECT_TYPE::ICEBALL);
+					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK1);
 				}
 				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_3) == true)
 				{

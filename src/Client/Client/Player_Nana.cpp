@@ -39,13 +39,9 @@ void Player_Nana::Update(void)
 
 	switch (m_currState)
 	{
-		case JUMP_START:
-		case JUMPING:
-		case JUMP_END:
-		case DIE0:
-		case DIE1:
-		case DIE2:
-		case DEAD:
+		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
+		case JUMP_START: case JUMPING: case JUMP_END:
+		case DIE0: case DIE1: case DIE2: case DEAD:
 		case DAMAGE:
 		break;
 		default:
@@ -88,20 +84,22 @@ void Player_Nana::Update(void)
 				if (INPUT->GetButtonDown(KEY_TYPE::KEY_1) == true)
 				{
 					m_currState = ATK0;
-					GetNetwork()->SendAttack(server::OBJECT_TYPE::FIREBALL);
+					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK0);
 				}
 				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_2) == true)
 				{
 					m_currState = ATK1;
-					GetNetwork()->SendAttack(server::OBJECT_TYPE::ICEBALL);
+					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK1);
 				}
 				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_3) == true)
 				{
 					m_currState = ATK2;
+					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK2);
 				}
 				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_4) == true)
 				{
 					m_currState = ATK3;
+					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK3);
 				}
 			}
 		}

@@ -6,6 +6,7 @@
 #include "Collider.h"
 #include "TriggerPairInfo.h"
 #include "Player.h"
+#include "Monster.h"
 #include "CustomController.h"
 
 TriggerObject::TriggerObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
@@ -93,12 +94,12 @@ void TriggerObject::Trigger_SingleStrike()
 		dt = 0.f;
 	m_currentTime += dt;
 
-	if (m_currentTime == 0.f)											
+	if (m_currentTime == 0.f)
 	{
 		ExcludeTriggerFromSimulation(true);							//0초 : 시뮬레이션 비활성화
 		m_originalPosition = m_body->GetPosition();
 	}
-	else if (m_currentTime > m_startTime && m_currentTime < m_endTime)		
+	else if (m_currentTime > m_startTime && m_currentTime < m_endTime)
 	{
 		if (m_body->IsExcludedFromSimulation())
 		{
@@ -124,12 +125,12 @@ void TriggerObject::Trigger_SingleStrike()
 	{
 		auto collider = info.get()->GetFromCollider();
 		auto ownerObj = collider->GetOwnerObject();
-		auto player = dynamic_cast<Player*>(ownerObj);
-		if (player == nullptr)						
+		auto player = dynamic_cast<Monster*>(ownerObj);
+		if (player == nullptr)
 			continue;								//조건 1 : 플레이어인가?
-		
+
 		bool duplicate = false;
-		ExcludeManagement(collider, duplicate);		
+		ExcludeManagement(collider, duplicate);
 		if (duplicate)
 			continue;								//조건 2 : 중복은 아닌가?
 

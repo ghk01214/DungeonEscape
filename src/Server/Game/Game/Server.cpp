@@ -565,7 +565,7 @@ namespace game
 			break;
 			case ProtocolID::MY_ATTACK_REQ:
 			{
-				msg.objType = packet.Read<server::OBJECT_TYPE>();
+				msg.atkType = packet.Read<server::ATTACK_TYPE>();
 
 				InputCommandMessage(msg);
 			}

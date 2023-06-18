@@ -22,7 +22,7 @@ namespace network
 		void SendRemoveObject(server::OBJECT_TYPE type);
 		void SendAddObjectCollider(int32_t tempID, int32_t tempColliderID, Collider& collider, bool last = false);
 		void SendJumpStart();
-		void SendAttack(server::OBJECT_TYPE type);
+		void SendAttack(server::ATTACK_TYPE type);
 #pragma endregion
 
 		void InsertPackets(CPacket& packet);

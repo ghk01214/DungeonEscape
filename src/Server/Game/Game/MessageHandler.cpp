@@ -380,7 +380,10 @@ namespace game
 
 						if (pl->GetID() == msg.playerID)
 						{
-							pl->PlayerPattern_ShootBall(msg.objType, objID, 100.f);
+							//pl->PlayerPattern_ShootBall(msg.objType, objID, 100.f);
+							if (pl->GetFBXType() == server::FBX_TYPE::NANA)
+								pl->PlayerPattern_SingleStrike(msg.atkType);
+
 							break;
 						}
 					}
