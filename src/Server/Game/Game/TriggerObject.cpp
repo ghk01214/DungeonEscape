@@ -72,7 +72,7 @@ void TriggerObject::Trigger_Persistent()
 
 	for (auto& info : collisionExit)		//exit
 	{
-		std::cout << "TriggerObject::Persistent(collisionExit)" << std::endl;
+		std::cout << "TriggerObject::Persistent(collisionExit)\n";
 		auto collider = info.get()->GetFromCollider();
 		auto ownerObj = collider->GetOwnerObject();
 		auto player = dynamic_cast<Player*>(ownerObj);
@@ -104,7 +104,7 @@ void TriggerObject::Trigger_SingleStrike()
 		if (m_body->IsExcludedFromSimulation())
 		{
 			ExcludeTriggerFromSimulation(false);						//시작~끝 : 시뮬레이션 활성화
-			std::cout << "활성화" << std::endl;
+			std::cout << "활성화\n";
 		}
 	}
 	else if (m_currentTime > m_endTime)
@@ -112,7 +112,7 @@ void TriggerObject::Trigger_SingleStrike()
 		if (!m_body->IsExcludedFromSimulation())
 		{
 			ExcludeTriggerFromSimulation(true);						//끝~ : 시뮬레이션 비활성화
-			std::cout << "비활성화" << std::endl;
+			std::cout << "비활성화\n";
 		}
 		return;
 	}

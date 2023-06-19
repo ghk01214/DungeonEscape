@@ -29,6 +29,7 @@ public:
 	bool AccessAuthorized();
 
 public:
+#pragma region [TEMPLATE]
 	template<typename T>
 	T* GetComponent(const std::wstring componentName)
 	{
@@ -63,6 +64,7 @@ public:
 			m_components.erase(it);
 		}
 	}
+#pragma endregion
 public:
 	bool GetRemovalFlag();
 	void SetRemovalFlag(bool value);
@@ -79,12 +81,11 @@ public:
 	void SetName(const std::wstring& name);
 	void SetObjectType(server::OBJECT_TYPE objType);
 	void SetFBXType(server::FBX_TYPE fbxType);
-
-	void StartSendTransform();
+	void SetTransformSendFlag(bool flag);
 
 protected:
 	bool m_removalFlag = false;			//update()에 수집, lateUpdate()에 실제 삭제 진행
-	
+
 	int m_removeReserved = -1;			//물리 시뮬레이션 참가 오브젝트만 사용하는 변수.
 										//기본값 -1. 양수가 되는 순간 0까지 감소. 0이 되는 순간 removalFlag를 true로 변환.
 

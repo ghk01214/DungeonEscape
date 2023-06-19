@@ -29,7 +29,7 @@ void GameObject::Update(double timeDelta)
             return;
         body->ExcludeFromSimulation(true);
     }
-    
+
     m_removeReserved -= 1;
 
     if (m_removeReserved == 0)
@@ -94,7 +94,7 @@ void GameObject::SetFBXType(server::FBX_TYPE fbxType)
     m_fbxType = fbxType;
 }
 
-void GameObject::StartSendTransform()
+void GameObject::SetTransformSendFlag(bool flag)
 {
-    m_startSendTransform = true;
+    m_startSendTransform = flag;
 }

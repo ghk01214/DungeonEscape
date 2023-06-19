@@ -49,8 +49,6 @@ void CustomController::Init()
 	m_useKeyType.push_back(server::KEY_TYPE::SPACE);
 
 	m_cameraLook = PxVec3(0.f, 0.f, 1.f);
-
-	m_startJump = false;
 }
 
 void CustomController::Release()
@@ -59,7 +57,7 @@ void CustomController::Release()
 	SafeRelease(m_body);
 }
 
-void CustomController::Move()
+void CustomController::Move(int32_t objID)
 {
 	if (!m_ownerGameObject->AccessAuthorized())
 		return;
@@ -69,7 +67,7 @@ void CustomController::Move()
 	if (m_isPlayer)
 	{
 		DirectionInput_Player();
-		Movement_Player();
+		Movement_Player(objID);
 	}
 	else
 	{
@@ -304,7 +302,7 @@ void CustomController::DirectionInput_Monster()
 
 }
 
-void CustomController::Movement_Player()
+void CustomController::Movement_Player(int32_t objID)
 {
 	if (m_body->isKinematic())
 		return;
@@ -335,7 +333,9 @@ void CustomController::Movement_Player()
 		#pragma endregion
 
 		m_onGround = false;
-		m_startJump = true;
+
+		game::Message msg{ objID, ProtocolID::WR_JUMP_START_ACK };
+		game::MessageHandler::GetInstance()->PushSendMessage(msg);
 	}
 
 	//friction adjustment
@@ -569,17 +569,6 @@ bool CustomController::IsOnGround()
 		return false;
 
 	return m_distanceFromGround < 30.f;
-}
-
-bool CustomController::IsStartJump()
-{
-	if (m_startJump == true)
-	{
-		m_startJump = false;
-		return true;
-	}
-
-	return false;
 }
 
 physx::PxVec3 CustomController::GetCameraLook()

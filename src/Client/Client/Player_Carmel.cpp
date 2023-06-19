@@ -39,13 +39,9 @@ void Player_Carmel::Update(void)
 
 	switch (m_currState)
 	{
-		case JUMP_START:
-		case JUMPING:
-		case JUMP_END:
-		case DIE0:
-		case DIE1:
-		case DIE2:
-		case DEAD:
+		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
+		case JUMP_START: case JUMPING: case JUMP_END:
+		case DIE0: case DIE1: case DIE2: case DEAD:
 		case DAMAGE:
 		break;
 		default:
@@ -327,11 +323,7 @@ void Player_Carmel::UpdateFrameOnce()
 	{
 		switch (m_currState)
 		{
-			case ATK0:
-			case ATK1:
-			case ATK2:
-			case ATK3:
-			case ATK4:
+			case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
 			{
 				m_currState = IDLE_A;
 			}
@@ -341,9 +333,7 @@ void Player_Carmel::UpdateFrameOnce()
 				m_currState = IDLE_A;
 			}
 			break;
-			case DIE0:
-			case DIE1:
-			case DIE2:
+			case DIE0: case DIE1: case DIE2:
 			{
 				m_currState = DEAD;
 				anim->SetAniSpeed(0.f);
@@ -418,27 +408,6 @@ void Player_Carmel::TurnPlayer(Vec3 from, Vec3 to)
 		// 반시계방향
 		GetTransform()->TurnAxisY(false);
 	}
-}
-
-void Player_Carmel::RangeAttack()
-{
-	// 오브젝트 생성 로직
-	// 임시 랜덤 id 발급(추후 서버 발급 id로 변경 예정)
-	// std::uniform_int_distribution<int32_t> uidObj{ 100000, 999999 };
-	// std::uniform_int_distribution<int32_t> uidCollider{ 1000000, 9999999 };
-	// int32_t tempObjID{ uidObj(dre) };
-	// int32_t tempColliderID{ uidCollider(dre) };
-	//
-	// TODO : 오브젝트 생성
-	//
-	// for (auto& obj : object)
-	// {
-	//		obj->GetNetwork()->SendAddObject(tempObjID, server::OBJECT_TYPE::FIREBALL);
-	// }
-	//
-	// TODO : 충돌체 추가 및 서버 전송
-	//
-	// GET_NETWORK->AddNetworkObject(tempObjID, object);
 }
 
 void Player_Carmel::MovePlayerCameraLook(void)

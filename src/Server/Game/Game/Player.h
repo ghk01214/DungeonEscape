@@ -34,8 +34,7 @@ public:
 
 	void SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed);
 
-	void GotHit(int32_t damage);
-	void KillPlayer();
+	void GetDamaged(int32_t damage);
 public:
 	CustomController* GetController();
 	void SetControllerPosition(Vec3 pos);
@@ -46,10 +45,12 @@ public:
 	void SetControllerMoveSpeed(float value);
 	void SetControllerJumpSpeed(float value);
 	void SetControllerCameraLook(Vec3& value);
+	void SetAttackTypeFlag(server::ATTACK_TYPE attack, bool flag);
 
-public:
+private:
+	bool GetAttackType(server::ATTACK_TYPE& type);
 	void PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, float power);
-	void PlayerPattern_SingleStrike(server::ATTACK_TYPE attack);
+	void PlayerPattern_SingleStrike();
 
 private:
 	CustomController* m_controller = nullptr;
@@ -62,8 +63,8 @@ private:
 	std::unordered_map<server::TRIGGER_TYPE, bool> m_triggerDictionary;
 
 	int32_t m_hp;
-	bool m_damaged;
-	bool m_die;
 
 	bool m_firstSingleStrike;
+
+	std::array<bool, 5> m_attack;
 };

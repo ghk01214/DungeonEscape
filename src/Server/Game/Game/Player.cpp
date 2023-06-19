@@ -18,10 +18,10 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_aniFrame{ 0.f },
 	m_aniSpeed{ 1.f },
 	m_hp{ 20 },
-	m_die{ false },
 	m_firstSingleStrike{ true }
 {
 	m_id = playerID;
+	m_attack.fill(false);
 }
 
 Player::~Player()
@@ -45,34 +45,22 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
-	static uint64_t prev_num{ 0 };
+	// 플레이어 사망 시 삭제 로직 추가 필요
+	m_controller->Move(m_id);
 
-	if (m_die == false)
-	{
-		m_controller->Move();
-
-		if (m_startSendTransform == true)
-		{
-			game::Message msg{ m_id, ProtocolID::WR_TRANSFORM_ACK };
-			game::MessageHandler::GetInstance()->PushTransformMessage(msg);
-
-			if (m_damaged == false and m_controller->IsStartJump() == true)
-			{
-				msg.msgProtocol = ProtocolID::WR_JUMP_START_ACK;
-				game::MessageHandler::GetInstance()->PushSendMessage(msg);
-			}
-
-			//auto p{ GetTransform()->GetPosition() };
-			//std::cout << m_playerID << " : " << p.x << ", " << p.y << ", " << p.z << "\n";
-		}
-
-		if (m_damaged == true and m_controller->IsOnGround() == true)
-			m_damaged = false;
-	}
-
+	PlayerPattern_SingleStrike();
 	TriggerZoneStatusUpdate();
 
 	GameObject::Update(timeDelta);
+
+	if (m_startSendTransform == true)
+	{
+		game::Message msg{ m_id, ProtocolID::WR_TRANSFORM_ACK };
+		game::MessageHandler::GetInstance()->PushTransformMessage(msg);
+
+		//auto p{ GetTransform()->GetPosition() };
+		//std::cout << m_playerID << " : " << p.x << ", " << p.y << ", " << p.z << "\n";
+	}
 }
 
 void Player::LateUpdate(double timeDelta)
@@ -94,7 +82,7 @@ bool Player::IsOnGound()
 
 bool Player::IsDead()
 {
-	return m_die;
+	return m_hp <= 0;
 }
 
 void Player::TriggerZoneStatusChange(server::TRIGGER_TYPE triggerType, bool status)
@@ -148,7 +136,6 @@ void Player::Trigger_Wind()
 	}
 }
 
-
 void Player::SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed)
 {
 	m_aniIndex = aniIndex;
@@ -156,15 +143,9 @@ void Player::SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed)
 	m_aniSpeed = aniSpeed;
 }
 
-void Player::GotHit(int32_t damage)
+void Player::GetDamaged(int32_t damage)
 {
 	m_hp -= damage;
-	m_damaged = true;
-}
-
-void Player::KillPlayer()
-{
-	m_die = true;
 }
 
 void Player::SetControllerMoveSpeed(float value)
@@ -212,8 +193,35 @@ void Player::SetControllerCameraLook(Vec3& value)
 	m_controller->CameraLookReceive(value);
 }
 
+void Player::SetAttackTypeFlag(server::ATTACK_TYPE attack, bool flag)
+{
+	m_attack[magic_enum::enum_integer(attack) - 1] = flag;
+}
+
+bool Player::GetAttackType(server::ATTACK_TYPE& type)
+{
+	for (int32_t i = 0; i < m_attack.size(); ++i)
+	{
+		if (m_attack[i] == true)
+		{
+			type = magic_enum::enum_value<server::ATTACK_TYPE>(i + 1);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Player::PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, float power)
 {
+	if (m_fbxType != server::FBX_TYPE::MISTIC)
+		return;
+
+	server::ATTACK_TYPE attackType{ server::ATTACK_TYPE::NONE };
+
+	if (GetAttackType(attackType) == false)
+		return;
+
 	//투사체 위치 선정
 	physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
 	physx::PxVec3 playerCameraLook = m_controller->GetCameraLook().getNormalized();
@@ -228,7 +236,7 @@ void Player::PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, fl
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 
-
+	// TODO : 오브젝트 id 발급은 MessageHandler에서 이루어지는데 PlayerPattern_ShootBall을 직접 호출하지 못 하면 오브젝트 id를 어떻게 건내면 좋을까?
 	auto ballObject = objmgr->AddGameObjectToLayer<SkillObject>(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent));
 	auto ballBody = ballObject->GetComponent<RigidBody>(L"RigidBody");
 	ballBody->SetMass(1.f);
@@ -239,14 +247,24 @@ void Player::PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, fl
 	ballObject->SetObjectType(type);
 
 	ballBody->AddForce(ForceMode::Impulse, playerCameraLook * power);
+
+	SetAttackTypeFlag(attackType, false);
 }
 
-void Player::PlayerPattern_SingleStrike(server::ATTACK_TYPE attack)
+void Player::PlayerPattern_SingleStrike()
 {
+	if (m_fbxType != server::FBX_TYPE::NANA)
+		return;
+
+	server::ATTACK_TYPE attackType{ server::ATTACK_TYPE::NONE };
+
+	if (GetAttackType(attackType) == false)
+		return;
+
 	enum { start, end };
 	std::array<float, 2> attackTime;
 
-	switch (attack)
+	switch (attackType)
 	{
 		case server::ATTACK_TYPE::ATK0:
 		{
@@ -307,4 +325,6 @@ void Player::PlayerPattern_SingleStrike(server::ATTACK_TYPE attack)
 		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
 		triggerBody->SetPosition(FROM_PX3(triggerPos), true);
 	}
+
+	SetAttackTypeFlag(attackType, false);
 }

@@ -61,8 +61,6 @@ private:
 	float GetAngleBetweenVector(const XMVECTOR& vector1, const XMVECTOR& vector2);
 	void TurnPlayer(Vec3 vector1, Vec3 vector2);
 
-	void RangeAttack();
-
 private:
 	void MovePlayerCameraLook(void);
 	void ParsePackets();

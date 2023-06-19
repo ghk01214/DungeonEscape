@@ -325,11 +325,7 @@ void Player_Nana::UpdateFrameOnce()
 	{
 		switch (m_currState)
 		{
-			case ATK0:
-			case ATK1:
-			case ATK2:
-			case ATK3:
-			case ATK4:
+			case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
 			{
 				m_currState = IDLE_A;
 			}
@@ -339,9 +335,7 @@ void Player_Nana::UpdateFrameOnce()
 				m_currState = IDLE_A;
 			}
 			break;
-			case DIE0:
-			case DIE1:
-			case DIE2:
+			case DIE0: case DIE1: case DIE2:
 			{
 				m_currState = DEAD;
 				anim->SetAniSpeed(0.f);
@@ -417,28 +411,6 @@ void Player_Nana::TurnPlayer(Vec3 from, Vec3 to)
 		GetTransform()->TurnAxisY(false);
 	}
 }
-
-void Player_Nana::RangeAttack()
-{
-	// 오브젝트 생성 로직
-	// 임시 랜덤 id 발급(추후 서버 발급 id로 변경 예정)
-	// std::uniform_int_distribution<int32_t> uidObj{ 100000, 999999 };
-	// std::uniform_int_distribution<int32_t> uidCollider{ 1000000, 9999999 };
-	// int32_t tempObjID{ uidObj(dre) };
-	// int32_t tempColliderID{ uidCollider(dre) };
-	//
-	// TODO : 오브젝트 생성
-	//
-	// for (auto& obj : object)
-	// {
-	//		obj->GetNetwork()->SendAddObject(tempObjID, server::OBJECT_TYPE::FIREBALL);
-	// }
-	//
-	// TODO : 충돌체 추가 및 서버 전송
-	//
-	// GET_NETWORK->AddNetworkObject(tempObjID, object);
-}
-
 void Player_Nana::MovePlayerCameraLook(void)
 {
 	const auto& transform = GetTransform();
@@ -449,41 +421,6 @@ void Player_Nana::MovePlayerCameraLook(void)
 	// 카메라가 존재할 경우
 	if (nullptr != camera)
 	{
-		//Vec3 pos = GetTransform()->GetWorldPosition();
-
-		//const shared_ptr<Transform>& cameraTransform = camera->GetTransform();
-
-		//// 초당 이동 속도
-		//if (INPUT->GetButton(KEY_TYPE::W))
-		//{
-		//	pos.x += cameraTransform->GetLook().x * _speed * DELTA_TIME;
-		//	pos.z += cameraTransform->GetLook().z * _speed * DELTA_TIME;
-		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Forward());
-		//}
-		//if (INPUT->GetButton(KEY_TYPE::S))
-		//{
-		//	pos.x -= cameraTransform->GetLook().x * _speed * DELTA_TIME;
-		//	pos.z -= cameraTransform->GetLook().z * _speed * DELTA_TIME;
-		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Backward());
-		//}
-		//if (INPUT->GetButton(KEY_TYPE::A))
-		//{
-		//	pos.x -= cameraTransform->GetRight().x * _speed * DELTA_TIME;
-		//	pos.z -= cameraTransform->GetRight().z * _speed * DELTA_TIME;
-		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Right());
-		//}
-		//if (INPUT->GetButton(KEY_TYPE::D))
-		//{
-		//	pos.x += cameraTransform->GetRight().x * _speed * DELTA_TIME;
-		//	pos.z += cameraTransform->GetRight().z * _speed * DELTA_TIME;
-		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Left());
-		//}
-		//Matrix matWorld = GetTransform()->GetWorldMatrix();
-		//matWorld.Translation(pos);
-		//GetTransform()->SetWorldMatrix(matWorld);
-
-		//TurnPlayer(GetTransform()->GetWorldMatrix().Forward(), camera->GetTransform()->GetLook());
-
 		Vec3 pos{ GetTransform()->GetWorldVec3Position() };
 		Matrix matWorld{ GetTransform()->GetWorldMatrix() };
 		matWorld.Translation(pos);

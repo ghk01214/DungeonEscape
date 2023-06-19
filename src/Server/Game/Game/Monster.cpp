@@ -38,19 +38,14 @@ void Monster::Init()
 
 void Monster::Update(double timeDelta)
 {
-	m_controller->Move();
+	// 몬스터 사망 시 삭제 로직 추가 필요
+	m_controller->Move(m_id);
 
 	if (m_startSendTransform == true)
 	{
 		game::Message msg{ m_id, ProtocolID::WR_TRANSFORM_ACK };
 		game::MessageHandler::GetInstance()->PushTransformMessage(msg);
 	}
-
-	// 스테이트 변경
-	// game::Message msg{ m_playerID, ProtocolID::WR_ANI_ACK };
-	// msg.aniIndex = 애니 인덱스;
-	// msg.aniFrame = 0.f;
-	// game::MessageHandler::GetInstance()->PushTransformMessage(msg);
 
 	GameObject::Update(timeDelta);
 }
@@ -83,11 +78,6 @@ bool Monster::IsDead()
 {
 	return m_hp <= 0;
 }
-
-//void Monster::SetFBXType(server::FBX_TYPE fbxType)
-//{
-//	m_fbxType = fbxType;
-//}
 
 void Monster::SetControllerMoveSpeed(float value)
 {
@@ -159,11 +149,12 @@ void Monster::MonsterPattern_GroundHit()
 				verticalStrength = 600.f;
 			}
 
+			// 플레이어가 살아있을 때만 작동되어야 한다
 			if (result->IsDead() == false)
 			{
 				playerController->BounceFromAttack();
 				playerbody->AddForce(ForceMode::Impulse, physx::PxVec3(direction.x * horizontalStrength, verticalStrength, direction.z * horizontalStrength));
-				result->GotHit(5);
+				result->GetDamaged(5);
 
 				std::cout << "몬스터 패턴 발동, 플레이어 피격 적용\n";
 				std::cout << "PLAYER[" << result->GetID() << "] HP : " << result->GetHP() << "\n\n";
@@ -174,7 +165,7 @@ void Monster::MonsterPattern_GroundHit()
 
 				game::MessageHandler::GetInstance()->PushSendMessage(hitMsg);
 
-				if (result->GetHP() <= 0)
+				if (result->IsDead() == true)
 				{
 					std::cout << "PLAYER [" << result->GetID() << "] DEAD!\n";
 
@@ -184,7 +175,8 @@ void Monster::MonsterPattern_GroundHit()
 
 					game::MessageHandler::GetInstance()->PushSendMessage(deadMsg);
 
-					result->KillPlayer();
+					// 플레이어 클래스 내에서 바꾸면 주석처리 or 삭제
+					result->SetTransformSendFlag(false);
 				}
 			}
 
@@ -193,7 +185,7 @@ void Monster::MonsterPattern_GroundHit()
 	}
 }
 
-void Monster::GotHit(int32_t damage)
+void Monster::GetDamaged(int32_t damage)
 {
 	m_hp -= damage;
 }

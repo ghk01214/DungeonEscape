@@ -807,7 +807,7 @@ namespace game
 							client->SendAddAnimateObjPacket(pl->GetID(), pl);
 					}
 
-					pl->StartSendTransform();
+					pl->SetTransformSendFlag(true);
 				}
 
 				for (auto& monster : monsterObjects)

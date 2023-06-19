@@ -37,7 +37,7 @@ public:
 
 public:
 	void MonsterPattern_GroundHit();	//땅을 내리쳐 같은 메쉬에 서있는 오브젝트들을 공중에 띄운다
-	void GotHit(int32_t damage);
+	void GetDamaged(int32_t damage);
 
 public:
 	CustomController* m_controller = nullptr;

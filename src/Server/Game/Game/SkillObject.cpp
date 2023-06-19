@@ -58,22 +58,22 @@ void SkillObject::ActionsWhenHit()
 		{								//스킬이 hit한게 몬스터
 			SetRemoveReserved();		//객체 삭제
 
-			game::Message msg{ -1, ProtocolID::WR_REMOVE_ACK };
-			msg.objID = m_id;
-			msg.objType = m_objType;
-
-			game::MessageHandler::GetInstance()->PushSendMessage(msg);
-
 			auto monster{ dynamic_cast<Monster*>(collider->GetOwnerObject()) };
 
 			if (monster->IsDead() == false)
 			{
+				game::Message msg{ -1, ProtocolID::WR_REMOVE_ACK };
+				msg.objID = m_id;
+				msg.objType = m_objType;
+
+				game::MessageHandler::GetInstance()->PushSendMessage(msg);
+
 				switch (m_objType)
 				{
 					case server::OBJECT_TYPE::FIREBALL:
 					{
 						std::cout << "파이어볼 몬스터 타격\n";
-						monster->GotHit(3);
+						monster->GetDamaged(3);
 						std::cout << "Boss got damage : 3\n";
 						std::cout << "BOSS HP : " << monster->GetHP() << "\n\n";
 					}
@@ -81,7 +81,7 @@ void SkillObject::ActionsWhenHit()
 					case server::OBJECT_TYPE::ICEBALL:
 					{
 						std::cout << "아이스볼 몬스터 타격\n";
-						monster->GotHit(25);
+						monster->GetDamaged(25);
 						std::cout << "Boss got damage : 5\n";
 						std::cout << "BOSS HP : " << monster->GetHP() << "\n\n";
 					}
@@ -110,7 +110,7 @@ void SkillObject::ActionsWhenHit()
 		}
 		else if (type == server::OBJECT_TYPE::PLAYER)
 		{
-			std::cout << "p" << std::endl;
+			std::cout << "p\n";
 		}
 		else
 		{

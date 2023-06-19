@@ -123,7 +123,7 @@ void ConvexMeshWrapper::CreatePxConvexMesh(const std::vector<physx::PxVec3>& ver
 
     // Apply scale to vertices
     std::vector<physx::PxVec3> scaledVertices(vertices.size());
-    
+
     for (size_t i = 0; i < vertices.size(); ++i)
     {
         scaledVertices[i].x = (vertices[i].x) * PX_SCALE_FACTOR;
@@ -136,7 +136,7 @@ void ConvexMeshWrapper::CreatePxConvexMesh(const std::vector<physx::PxVec3>& ver
     meshDesc.points.count = scaledVertices.size();
     meshDesc.points.stride = sizeof(physx::PxVec3);
     meshDesc.points.data = scaledVertices.data();
-    
+
     meshDesc.triangles.count = indices.size() / 3;
     meshDesc.triangles.stride = 3 * sizeof(PxU32);
     meshDesc.triangles.data = indices.data();
@@ -149,7 +149,7 @@ void ConvexMeshWrapper::CreatePxConvexMesh(const std::vector<physx::PxVec3>& ver
     physx::PxDefaultMemoryOutputStream writeBuffer;
     if (!cooking->cookTriangleMesh(meshDesc, writeBuffer)) {
         // handle error
-        std::cout << "triangleMeshWraperErr" << std::endl;
+        std::cout << "triangleMeshWraperErr\n";
         return;
     }
 

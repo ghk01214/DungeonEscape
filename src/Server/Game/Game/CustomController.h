@@ -39,14 +39,14 @@ public:
 	void Release() override;
 public:
 	//CustomController 컴포넌트를 사용하는 게임오브젝트는 Move()를 GameObject::Update()에서 반드시 호출
-	void Move();
+	void Move(int32_t objID);
 	bool CheckOnGround(CollisionInfoType type, physx::PxVec3& surfaceNormal);
 	void GetSlidingVector(CollisionInfoType type);
 	bool CheckOnGround_Raycast();
 	Collider* GetColliderBelow();
 	void DirectionInput_Player();
 	void DirectionInput_Monster();
-	void Movement_Player();
+	void Movement_Player(int32_t objID);
 	void Movement_Monster();
 
 public:
@@ -73,7 +73,6 @@ public:
 	RigidBody* GetBody();
 	CapsuleCollider* GetCollider();
 	bool IsOnGround();
-	bool IsStartJump();
 	physx::PxVec3 GetCameraLook();
 
 private:
@@ -103,8 +102,6 @@ private:
 #pragma endregion
 	bool m_isPlayer = false;
 	physx::PxVec3	m_cameraLook = physx::PxVec3(1, 0, 0);
-
-	bool m_startJump;
 };
 
 

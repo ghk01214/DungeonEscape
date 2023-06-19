@@ -39,13 +39,9 @@ void Player_Mistic::Update(void)
 
 	switch (m_currState)
 	{
-		case JUMP_START:
-		case JUMPING:
-		case JUMP_END:
-		case DIE0:
-		case DIE1:
-		case DIE2:
-		case DEAD:
+		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
+		case JUMP_START: case JUMPING: case JUMP_END:
+		case DIE0: case DIE1: case DIE2: case DEAD:
 		case DAMAGE:
 		break;
 		default:
@@ -98,10 +94,12 @@ void Player_Mistic::Update(void)
 				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_3) == true)
 				{
 					m_currState = ATK2;
+					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK2);
 				}
 				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_4) == true)
 				{
 					m_currState = ATK3;
+					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK3);
 				}
 			}
 		}
@@ -418,27 +416,6 @@ void Player_Mistic::TurnPlayer(Vec3 from, Vec3 to)
 		// 반시계방향
 		GetTransform()->TurnAxisY(false);
 	}
-}
-
-void Player_Mistic::RangeAttack()
-{
-	// 오브젝트 생성 로직
-	// 임시 랜덤 id 발급(추후 서버 발급 id로 변경 예정)
-	// std::uniform_int_distribution<int32_t> uidObj{ 100000, 999999 };
-	// std::uniform_int_distribution<int32_t> uidCollider{ 1000000, 9999999 };
-	// int32_t tempObjID{ uidObj(dre) };
-	// int32_t tempColliderID{ uidCollider(dre) };
-	//
-	// TODO : 오브젝트 생성
-	//
-	// for (auto& obj : object)
-	// {
-	//		obj->GetNetwork()->SendAddObject(tempObjID, server::OBJECT_TYPE::FIREBALL);
-	// }
-	//
-	// TODO : 충돌체 추가 및 서버 전송
-	//
-	// GET_NETWORK->AddNetworkObject(tempObjID, object);
 }
 
 void Player_Mistic::MovePlayerCameraLook(void)
