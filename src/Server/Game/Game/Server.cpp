@@ -563,13 +563,6 @@ namespace game
 				InputCommandMessage(msg);
 			}
 			break;
-			case ProtocolID::MY_ATTACK_REQ:
-			{
-				msg.atkType = packet.Read<server::ATTACK_TYPE>();
-
-				InputCommandMessage(msg);
-			}
-			break;
 			default:
 			break;
 		}
@@ -588,6 +581,13 @@ namespace game
 
 				InputCommandMessage(msg);
 			}
+			case ProtocolID::WR_DIE_REQ:
+			{
+				msg.objID = packet.ReadID();
+
+				InputCommandMessage(msg);
+			}
+			break;
 			case ProtocolID::WR_REMOVE_REQ:
 			{
 				msg.objType = packet.Read<server::OBJECT_TYPE>();
@@ -603,6 +603,7 @@ namespace game
 		}
 	}
 
+#pragma region [UNUSED]
 	void CServer::ProcessBTPacket(int32_t id, network::CPacket& packet, ProtocolID protocol)
 	{
 		// TODO : 추후 전투 관련 패킷 프로세스 처리
@@ -634,6 +635,7 @@ namespace game
 	{
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
 	}
+#pragma endregion
 #pragma endregion
 	void CServer::Login(int32_t id, CSession* session, Player* player, int32_t roomID)
 	{
@@ -992,31 +994,17 @@ namespace game
 			break;
 			case ProtocolID::WR_HIT_ACK:
 			{
-				int32_t hitID{ -1 };
-
-				if (postOver->objType == server::OBJECT_TYPE::PLAYER)
-					hitID = postOver->playerID;
-				else
-					hitID = postOver->objID;
-
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					client->SendHitPacket(postOver->objID);
+					client->SendHitPacket(postOver->objID, postOver->hitOriginID);
 				}
 			}
 			break;
 			case ProtocolID::WR_DIE_ACK:
 			{
-				int32_t hitID{ -1 };
-
-				if (postOver->objType == server::OBJECT_TYPE::PLAYER)
-					hitID = postOver->playerID;
-				else
-					hitID = postOver->objID;
-
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)

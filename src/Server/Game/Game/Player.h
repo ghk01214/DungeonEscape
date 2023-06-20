@@ -45,12 +45,11 @@ public:
 	void SetControllerMoveSpeed(float value);
 	void SetControllerJumpSpeed(float value);
 	void SetControllerCameraLook(Vec3& value);
-	void SetAttackTypeFlag(server::ATTACK_TYPE attack, bool flag);
 
 private:
-	bool GetAttackType(server::ATTACK_TYPE& type);
-	void PlayerPattern_ShootBall(server::OBJECT_TYPE type, int32_t objID, float power);
+	void PlayerPattern_ShootBall(server::OBJECT_TYPE type, float power);
 	void PlayerPattern_SingleStrike();
+	int32_t IsAttackKeyDown();
 
 private:
 	CustomController* m_controller = nullptr;
@@ -65,6 +64,4 @@ private:
 	int32_t m_hp;
 
 	bool m_firstSingleStrike;
-
-	std::array<bool, 5> m_attack;
 };

@@ -12,7 +12,7 @@ void CGame::Init(const WindowInfo& Info, const std::wstring& ID, const std::wstr
 {
 	GGameInstance->Initialize_Engine(Info);
 
-	int32_t classNum{ 1 };
+	int32_t classNum{ 2 };
 	//std::wcout << std::format(L"Warrior = 1\n");
 	//std::wcout << std::format(L"Magician = 2\n");
 	//std::wcout << std::format(L"Priest = 3\n");

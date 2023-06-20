@@ -19,6 +19,10 @@ void Input::Init(HWND hWnd)
 	m_useKeyType.push_back(KEY_TYPE::A);
 	m_useKeyType.push_back(KEY_TYPE::D);
 	m_useKeyType.push_back(KEY_TYPE::SPACE);
+	m_useKeyType.push_back(KEY_TYPE::KEY_1);
+	m_useKeyType.push_back(KEY_TYPE::KEY_2);
+	m_useKeyType.push_back(KEY_TYPE::KEY_3);
+	m_useKeyType.push_back(KEY_TYPE::KEY_4);
 }
 
 void Input::Update()

@@ -21,8 +21,7 @@ namespace network
 		void SendAddObject(int32_t tempID, server::OBJECT_TYPE type, server::FBX_TYPE fbxType);
 		void SendRemoveObject(server::OBJECT_TYPE type);
 		void SendAddObjectCollider(int32_t tempID, int32_t tempColliderID, Collider& collider, bool last = false);
-		void SendJumpStart();
-		void SendAttack(server::ATTACK_TYPE type);
+		void SendDie();
 #pragma endregion
 
 		void InsertPackets(CPacket& packet);

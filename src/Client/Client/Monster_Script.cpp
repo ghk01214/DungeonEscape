@@ -16,11 +16,12 @@
 #include <Network.h>
 
 Monster_Dragon::Monster_Dragon() :
-	MonoBehaviour{},
-	m_prevState{ END },
-	m_currState{ END },
-	m_skillEndTime{ std::chrono::steady_clock::now() }
+	m_prevState{ IDLE1 },
+	m_currState{ IDLE1 },
+	m_hp{ 30 },
+	m_recvDead{ false }
 {
+	std::cout << std::format("BOSS HP : {}", m_hp) << std::endl;
 }
 
 Monster_Dragon::~Monster_Dragon()
@@ -29,9 +30,8 @@ Monster_Dragon::~Monster_Dragon()
 
 void Monster_Dragon::Start()
 {
-	m_prevState = IDLE1;
-	m_currState = IDLE1;
-	m_skillEndTime = std::chrono::steady_clock::now();
+	std::cout << std::format("BOSS HP : {}", m_hp) << std::endl;
+
 	GetAnimator()->SetFramePerSecond(30);
 
 	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
@@ -64,20 +64,7 @@ void Monster_Dragon::Update(void)
 		}
 	}*/
 
-	using namespace std::chrono;
-
-	//if (m_currState == IDLE1)
-	//{
-	//	if (steady_clock::now() - m_skillEndTime > 5s)
-	//		m_currState = JUMP;
-	//}
-
-	if (m_currState == END)
-	{
-		m_skillEndTime = steady_clock::now();
-		m_currState = IDLE1;
-		GetAnimator()->SetFramePerSecond(30);
-	}
+	DecideMonsterDeath();
 }
 
 void Monster_Dragon::LateUpdate()
@@ -119,11 +106,17 @@ void Monster_Dragon::CheckState()
 		case DIE:
 		{
 			GetAnimator()->Play(m_currState);
+
+			if (m_recvDead == false)
+				GetNetwork()->SendDie();
 		}
 		break;
 		case GET_HIT:
 		{
 			GetAnimator()->Play(m_currState);
+
+			m_hp -= 5;
+			std::cout << std::format("BOSS HP : {}", m_hp) << std::endl;
 		}
 		break;
 		case IDLE1:
@@ -269,6 +262,12 @@ void Monster_Dragon::UpdateFrameOnce()
 	}
 }
 
+void Monster_Dragon::DecideMonsterDeath()
+{
+	if (m_hp <= 0)
+		m_currState = DIE;
+}
+
 void Monster_Dragon::ParsePackets()
 {
 	auto size{ GetNetwork()->GetRecvQueueSize() };
@@ -320,6 +319,7 @@ void Monster_Dragon::ParsePackets()
 			case ProtocolID::WR_DIE_ACK:
 			{
 				m_currState = DIE;
+				m_recvDead = true;
 			}
 			break;
 			default:

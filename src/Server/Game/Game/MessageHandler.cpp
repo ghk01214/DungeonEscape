@@ -103,6 +103,7 @@ namespace game
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
 			postOver.objType = msg.objType;
+			postOver.hitOriginID = msg.hitID;
 
 			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 
@@ -369,30 +370,15 @@ namespace game
 					}
 				}
 				break;
-				case ProtocolID::MY_ATTACK_REQ:
+#pragma endregion
+				case ProtocolID::WR_DIE_REQ:
 				{
-					int32_t objID{ NewObjectID() };
-
-					// 오브젝트 추가 작업 후 id 세팅
-					for (auto& player : playerObjects)
-					{
-						auto pl{ dynamic_cast<Player*>(player) };
-
-						if (pl->GetID() == msg.playerID)
-						{
-							//pl->PlayerPattern_ShootBall(msg.objType, objID, 100.f);
-							pl->SetAttackTypeFlag(msg.atkType, true);
-							break;
-						}
-					}
-
-					Message sendMsg{ msg.playerID, ProtocolID::WR_ATTACK_ACK };
-					sendMsg.objID = objID;
+					Message sendMsg{ -1, ProtocolID::WR_DIE_ACK };
+					sendMsg.objID = msg.objID;
 
 					PushSendMessage(sendMsg);
 				}
 				break;
-#pragma endregion
 				case ProtocolID::WR_REMOVE_REQ:
 				{
 					if (msg.objType == server::OBJECT_TYPE::BOSS)
@@ -424,7 +410,7 @@ namespace game
 			++i;
 			queue.pop();
 		}
-	}
+	};
 
 	void MessageHandler::PushRecvMessage(Message& msg)
 	{

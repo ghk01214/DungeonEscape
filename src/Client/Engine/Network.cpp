@@ -162,23 +162,12 @@ namespace network
 		GET_NETWORK->Send(packet);
 	}
 
-	void CNetwork::SendJumpStart()
+	void CNetwork::SendDie()
 	{
 		CPacket packet;
 
 		packet.WriteID(m_networkID);
-		packet.WriteProtocol(ProtocolID::WR_JUMP_START_REQ);
-
-		GET_NETWORK->Send(packet);
-	}
-
-	void CNetwork::SendAttack(server::ATTACK_TYPE type)
-	{
-		CPacket packet;
-
-		packet.WriteID(m_networkID);
-		packet.WriteProtocol(ProtocolID::MY_ATTACK_REQ);
-		packet.Write<server::ATTACK_TYPE>(type);
+		packet.WriteProtocol(ProtocolID::WR_DIE_REQ);
 
 		GET_NETWORK->Send(packet);
 	}

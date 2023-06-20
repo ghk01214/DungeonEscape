@@ -42,7 +42,7 @@ namespace game
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, Player* obj);
 		void SendAniIndexPacket(int32_t id, ProtocolID protocol, int32_t index, float frame);
 		void SendJumpStartPacket(int32_t id);
-		void SendHitPacket(int32_t id);
+		void SendHitPacket(int32_t id, int32_t hitOriginID);
 		void SendDiePacket(int32_t id);
 
 		const STATE GetState() const { return m_state; }

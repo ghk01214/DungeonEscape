@@ -122,66 +122,58 @@ void Monster::MonsterPattern_GroundHit()
 		auto collider = info.get()->GetFromCollider();
 		auto obj = collider->GetOwnerObject();
 		auto result = dynamic_cast<Player*>(obj);
+
 		if (result == nullptr)
-		{
 			continue;
+
+		auto playerController = result->GetComponent<CustomController>(L"CustomController");
+		auto playerbody = playerController->GetBody();
+		physx::PxVec3 playerPos = playerbody->GetPosition();
+		physx::PxVec3 direction = playerPos - monsterPos;
+		float distance = direction.magnitude();
+
+		direction.normalize();
+
+		float verticalStrength = 1.f;
+		float horizontalStrength = 1.f;
+		if (distance < 300)
+		{
+			horizontalStrength = 300.f;
+			verticalStrength = 1000.f;
 		}
 		else
 		{
-			auto playerController = result->GetComponent<CustomController>(L"CustomController");
-			auto playerbody = playerController->GetBody();
-			physx::PxVec3 playerPos = playerbody->GetPosition();
-			physx::PxVec3 direction = playerPos - monsterPos;
-			float distance = direction.magnitude();
-
-			direction.normalize();
-
-			float verticalStrength = 1.f;
-			float horizontalStrength = 1.f;
-			if (distance < 300)
-			{
-				horizontalStrength = 300.f;
-				verticalStrength = 1000.f;
-			}
-			else
-			{
-				horizontalStrength = 100.f;
-				verticalStrength = 600.f;
-			}
-
-			// 플레이어가 살아있을 때만 작동되어야 한다
-			if (result->IsDead() == false)
-			{
-				playerController->BounceFromAttack();
-				playerbody->AddForce(ForceMode::Impulse, physx::PxVec3(direction.x * horizontalStrength, verticalStrength, direction.z * horizontalStrength));
-				result->GetDamaged(5);
-
-				std::cout << "몬스터 패턴 발동, 플레이어 피격 적용\n";
-				std::cout << "PLAYER[" << result->GetID() << "] HP : " << result->GetHP() << "\n\n";
-
-				game::Message hitMsg{ -1, ProtocolID::WR_HIT_ACK };
-				hitMsg.playerID = result->GetID();
-				hitMsg.objType = server::OBJECT_TYPE::PLAYER;
-
-				game::MessageHandler::GetInstance()->PushSendMessage(hitMsg);
-
-				if (result->IsDead() == true)
-				{
-					std::cout << "PLAYER [" << result->GetID() << "] DEAD!\n";
-
-					game::Message deadMsg{ -1, ProtocolID::WR_DIE_ACK };
-					deadMsg.playerID = result->GetID();
-					deadMsg.objType = server::OBJECT_TYPE::PLAYER;
-
-					game::MessageHandler::GetInstance()->PushSendMessage(deadMsg);
-
-					// 플레이어 클래스 내에서 바꾸면 주석처리 or 삭제
-					result->SetTransformSendFlag(false);
-				}
-			}
-
-			//playerbody->SetVelocity(physx::PxVec3(direction.x * 100, 100, direction.z * 100));
+			horizontalStrength = 100.f;
+			verticalStrength = 600.f;
 		}
+
+		playerController->BounceFromAttack();
+		playerbody->AddForce(ForceMode::Impulse, physx::PxVec3(direction.x * horizontalStrength, verticalStrength, direction.z * horizontalStrength));
+
+		std::cout << "몬스터 패턴 발동, 플레이어 피격 적용\n";
+
+		game::Message hitMsg{ -1, ProtocolID::WR_HIT_ACK };
+		hitMsg.objID = result->GetID();
+		hitMsg.objType = server::OBJECT_TYPE::PLAYER;
+		hitMsg.hitID = m_id;
+
+		game::MessageHandler::GetInstance()->PushSendMessage(hitMsg);
+
+		//if (result->IsDead() == true)
+		//{
+		//	std::cout << "PLAYER [" << result->GetID() << "] DEAD!\n";
+
+		//	game::Message deadMsg{ -1, ProtocolID::WR_DIE_ACK };
+		//	deadMsg.playerID = result->GetID();
+		//	deadMsg.objType = server::OBJECT_TYPE::PLAYER;
+
+		//	game::MessageHandler::GetInstance()->PushSendMessage(deadMsg);
+
+		//	// 플레이어 클래스 내에서 바꾸면 주석처리 or 삭제
+		//	result->SetTransformSendFlag(false);
+		//}
+
+		//playerbody->SetVelocity(physx::PxVec3(direction.x * 100, 100, direction.z * 100));
 	}
 }
 

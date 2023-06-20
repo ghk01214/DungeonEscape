@@ -312,12 +312,13 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendHitPacket(int32_t id)
+	void CSession::SendHitPacket(int32_t id, int32_t hitOriginID)
 	{
 		network::CPacket packet;
 
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_HIT_ACK);
+		packet.Write<int32_t>(hitOriginID);
 
 		Send(packet);
 	}

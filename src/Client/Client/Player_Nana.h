@@ -57,6 +57,9 @@ private:
 	void UpdateFrameRepeat();
 	void UpdateFrameOnce();
 
+	void KeyInputStateChange();
+	void DecidePlayerDeath();
+
 private:
 	float GetAngleBetweenVector(const XMVECTOR& vector1, const XMVECTOR& vector2);
 	void TurnPlayer(Vec3 vector1, Vec3 vector2);
@@ -73,4 +76,6 @@ private:
 private:
 	PLAYER_STATE m_prevState;
 	PLAYER_STATE m_currState;
+
+	int32_t m_hp;
 };

@@ -22,6 +22,10 @@ void Player_Mistic::Start()
 	m_prevState = IDLE_A;
 	m_currState = IDLE_A;
 
+	m_hp = 30;
+
+	std::cout << std::format("PLAYER {} HP : {}", GetNetwork()->GetID(), m_hp) << std::endl;
+
 	if (GetNetwork()->IsMyPlayer() == false)
 		return;
 
@@ -37,74 +41,8 @@ void Player_Mistic::Update(void)
 	if (GetNetwork()->IsMyPlayer() == false)
 		return;
 
-	switch (m_currState)
-	{
-		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
-		case JUMP_START: case JUMPING: case JUMP_END:
-		case DIE0: case DIE1: case DIE2: case DEAD:
-		case DAMAGE:
-		break;
-		default:
-		{
-			if (INPUT->GetButtonDown(KEY_TYPE::W) == true
-				or INPUT->GetButton(KEY_TYPE::W) == true)
-			{
-				m_currState = MOVE;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::A) == true
-				or INPUT->GetButton(KEY_TYPE::A) == true)
-			{
-				m_currState = MOVE_L;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::S) == true
-				or INPUT->GetButton(KEY_TYPE::S) == true)
-			{
-				m_currState = MOVE;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::D) == true
-				or INPUT->GetButton(KEY_TYPE::D) == true)
-			{
-				m_currState = MOVE_R;
-			}
-			else if (INPUT->GetButtonUp(KEY_TYPE::W) == true
-				or INPUT->GetButtonUp(KEY_TYPE::A) == true
-				or INPUT->GetButtonUp(KEY_TYPE::S) == true
-				or INPUT->GetButtonUp(KEY_TYPE::D) == true)
-			{
-				m_currState = IDLE_A;
-			}
-			else if (INPUT->GetButtonDown(KEY_TYPE::SPACE) == true)
-			{
-				m_currState = JUMP_START;
-			}
-
-			if (m_currState != ATK0 or m_currState != ATK1 or m_currState != ATK2
-				or m_currState != ATK3 or m_currState != ATK4)
-			{
-				if (INPUT->GetButtonDown(KEY_TYPE::KEY_1) == true)
-				{
-					m_currState = ATK0;
-					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK0);
-				}
-				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_2) == true)
-				{
-					m_currState = ATK1;
-					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK1);
-				}
-				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_3) == true)
-				{
-					m_currState = ATK2;
-					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK2);
-				}
-				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_4) == true)
-				{
-					m_currState = ATK3;
-					GetNetwork()->SendAttack(server::ATTACK_TYPE::ATK3);
-				}
-			}
-		}
-		break;
-	}
+	DecidePlayerDeath();
+	KeyInputStateChange();
 }
 
 void Player_Mistic::LateUpdate()
@@ -164,6 +102,9 @@ void Player_Mistic::CheckState()
 		case DAMAGE:
 		{
 			GetAnimator()->Play(m_currState);
+
+			m_hp -= 5;
+			std::cout << std::format("PLAYER {} HP : {}", GetNetwork()->GetID(), m_hp) << std::endl;
 		}
 		break;
 		case DASH:
@@ -174,16 +115,25 @@ void Player_Mistic::CheckState()
 		case DIE0:
 		{
 			GetAnimator()->Play(m_currState);
+
+			if (GetNetwork()->IsMyPlayer() == true)
+				GetNetwork()->SendDie();
 		}
 		break;
 		case DIE1:
 		{
 			GetAnimator()->Play(m_currState);
+
+			if (GetNetwork()->IsMyPlayer() == true)
+				GetNetwork()->SendDie();
 		}
 		break;
 		case DIE2:
 		{
 			GetAnimator()->Play(m_currState);
+
+			if (GetNetwork()->IsMyPlayer() == true)
+				GetNetwork()->SendDie();
 		}
 		break;
 		case IDLE_A:
@@ -384,6 +334,80 @@ void Player_Mistic::UpdateFrameOnce()
 			m_currState = JUMPING;
 		}
 	}
+}
+
+void Player_Mistic::KeyInputStateChange()
+{
+	switch (m_currState)
+	{
+		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
+		case JUMP_START: case JUMPING: case JUMP_END:
+		case DIE0: case DIE1: case DIE2: case DEAD:
+		case DAMAGE:
+		break;
+		default:
+		{
+			if (INPUT->GetButtonDown(KEY_TYPE::W) == true
+				or INPUT->GetButton(KEY_TYPE::W) == true)
+			{
+				m_currState = MOVE;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::A) == true
+				or INPUT->GetButton(KEY_TYPE::A) == true)
+			{
+				m_currState = MOVE_L;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::S) == true
+				or INPUT->GetButton(KEY_TYPE::S) == true)
+			{
+				m_currState = MOVE;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::D) == true
+				or INPUT->GetButton(KEY_TYPE::D) == true)
+			{
+				m_currState = MOVE_R;
+			}
+			else if (INPUT->GetButtonUp(KEY_TYPE::W) == true
+				or INPUT->GetButtonUp(KEY_TYPE::A) == true
+				or INPUT->GetButtonUp(KEY_TYPE::S) == true
+				or INPUT->GetButtonUp(KEY_TYPE::D) == true)
+			{
+				m_currState = IDLE_A;
+			}
+			else if (INPUT->GetButtonDown(KEY_TYPE::SPACE) == true)
+			{
+				m_currState = JUMP_START;
+			}
+
+			if (m_currState != ATK0 or m_currState != ATK1 or m_currState != ATK2
+				or m_currState != ATK3 or m_currState != ATK4)
+			{
+				if (INPUT->GetButtonDown(KEY_TYPE::KEY_1) == true)
+				{
+					m_currState = ATK0;
+				}
+				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_2) == true)
+				{
+					m_currState = ATK1;
+				}
+				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_3) == true)
+				{
+					m_currState = ATK2;
+				}
+				else if (INPUT->GetButtonDown(KEY_TYPE::KEY_4) == true)
+				{
+					m_currState = ATK3;
+				}
+			}
+		}
+		break;
+	}
+}
+
+void Player_Mistic::DecidePlayerDeath()
+{
+	if (m_hp <= 0)
+		m_currState = DIE0;
 }
 
 float Player_Mistic::GetAngleBetweenVector(const XMVECTOR& vector1, const XMVECTOR& vector2)

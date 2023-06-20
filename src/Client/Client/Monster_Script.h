@@ -42,6 +42,8 @@ private:
 	void UpdateFrameRepeat();
 	void UpdateFrameOnce();
 
+	void DecideMonsterDeath();
+
 private:
 	void ParsePackets();
 
@@ -53,5 +55,7 @@ private:
 	DRAGON_STATE m_prevState = IDLE1;
 	DRAGON_STATE m_currState = IDLE1;
 
-	std::chrono::steady_clock::time_point m_skillEndTime;
+	int32_t m_hp;
+
+	bool m_recvDead;
 };

@@ -31,7 +31,7 @@ void CustomController::Init()
 	//m_collider = m_body->AddCollider<CapsuleCollider>(m_ownerGameObject->GetTransform()->GetScale());
 	m_collider = m_body->AddComponent<CapsuleCollider>(m_body, m_ownerGameObject->GetTransform()->GetScale());
 
-		//body 초기화
+	//body 초기화
 	m_body->SetSleepThresholder(1e-6f);
 	m_body->SetRotation(90, PhysicsAxis::Z);				//capsule is laying by default.
 	m_body->SetRotationLockAxis(PhysicsAxis::All, true);
@@ -39,14 +39,12 @@ void CustomController::Init()
 
 	m_body->SetKinematic(false);
 
-	// 사용할 키 종류를 추가
-	// enum KEY_ORDER 순서에 맞게
-	m_useKeyType.clear();
-	m_useKeyType.push_back(server::KEY_TYPE::W);
-	m_useKeyType.push_back(server::KEY_TYPE::S);
-	m_useKeyType.push_back(server::KEY_TYPE::A);
-	m_useKeyType.push_back(server::KEY_TYPE::D);
-	m_useKeyType.push_back(server::KEY_TYPE::SPACE);
+	m_keyboardInput.clear();
+	m_keyboardInput.reserve(KEY_ORDER::MAX);
+	for (int32_t i = 0; i < KEY_ORDER::MAX; ++i)
+	{
+		m_keyboardInput.push_back(KeyInput{});
+	}
 
 	m_cameraLook = PxVec3(0.f, 0.f, 1.f);
 }
@@ -247,14 +245,14 @@ void CustomController::DirectionInput_Player()
 		m_cameraLook.normalize();
 		PxVec3 right = up.cross(m_cameraLook);
 
-		if (m_keyboardLeft.press)
+		if (m_keyboardInput[A].press)
 			m_moveDirection -= right;
-		else if (m_keyboardRight.press)
+		else if (m_keyboardInput[D].press)
 			m_moveDirection += right;
 
-		if (m_keyboardUp.press)
+		if (m_keyboardInput[W].press)
 			m_moveDirection += m_cameraLook;
-		else if (m_keyboardDown.press)
+		else if (m_keyboardInput[S].press)
 			m_moveDirection -= m_cameraLook;
 
 		m_moveDirection.normalize();
@@ -317,7 +315,7 @@ void CustomController::Movement_Player(int32_t objID)
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
 	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
-	if (m_keyboardSpace.down && m_onGround)
+	if (m_keyboardInput[SPACE].down && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
@@ -327,10 +325,10 @@ void CustomController::Movement_Player(int32_t objID)
 		velocity.y = m_jumpSpeed;
 		m_body->SetVelocity(velocity);
 
-		#pragma region choice2 add force
+#pragma region choice2 add force
 		//PxVec3 force = m_moveDirection * m_body->GetMass() * deltaTime * adjustmentValue;
 		//m_body->GetBody()->addForce(force, PxForceMode::eIMPULSE);
-		#pragma endregion
+#pragma endregion
 
 		m_onGround = false;
 
@@ -386,7 +384,7 @@ void CustomController::Movement_Monster()
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
 	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
-	if (m_keyboardSpace.press && m_onGround)
+	if (m_keyboardInput[SPACE].press && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
@@ -402,7 +400,7 @@ void CustomController::Movement_Monster()
 #pragma endregion
 
 		m_onGround = false;
-		m_keyboardSpace.press = false;
+		m_keyboardInput[SPACE].press = false;
 	}
 
 	//friction adjustment
@@ -443,7 +441,7 @@ void CustomController::CameraLookReceive(Vec3& CameraLook)
 
 void CustomController::KeyboardReceive(ulong32_t key)
 {
-	for (int32_t i = 0; i < m_useKeyType.size(); ++i)
+	for (int32_t i = 0; i < KEY_ORDER::MAX; ++i)
 	{
 		int32_t temp{ 3 };
 
@@ -455,58 +453,22 @@ void CustomController::KeyboardReceive(ulong32_t key)
 		{
 			case server::KEY_STATE::PRESS:
 			{
-				if (i == W)
-					m_keyboardUp.Press();
-				if (i == S)
-					m_keyboardDown.Press();
-				if (i == A)
-					m_keyboardLeft.Press();
-				if (i == D)
-					m_keyboardRight.Press();
-				if (i == SPACE)
-					m_keyboardSpace.Press();
+				m_keyboardInput[i].Press();
 			}
 			break;
 			case server::KEY_STATE::DOWN:
 			{
-				if (i == W)
-					m_keyboardUp.Down();
-				if (i == S)
-					m_keyboardDown.Down();
-				if (i == A)
-					m_keyboardLeft.Down();
-				if (i == D)
-					m_keyboardRight.Down();
-				if (i == SPACE)
-					m_keyboardSpace.Down();
+				m_keyboardInput[i].Down();
 			}
 			break;
 			case server::KEY_STATE::UP:
 			{
-				if (i == W)
-					m_keyboardUp.Up();
-				if (i == S)
-					m_keyboardDown.Up();
-				if (i == A)
-					m_keyboardLeft.Up();
-				if (i == D)
-					m_keyboardRight.Up();
-				if (i == SPACE)
-					m_keyboardSpace.Up();
+				m_keyboardInput[i].Up();
 			}
 			break;
 			case server::KEY_STATE::NONE:
 			{
-				if (i == W)
-					m_keyboardUp.None();
-				if (i == S)
-					m_keyboardDown.None();
-				if (i == A)
-					m_keyboardLeft.None();
-				if (i == D)
-					m_keyboardRight.None();
-				if (i == SPACE)
-					m_keyboardSpace.None();
+				m_keyboardInput[i].None();
 			}
 			break;
 			default:
@@ -542,6 +504,16 @@ float CustomController::GetJumpSpeed()
 float CustomController::GetDistanceFromGround()
 {
 	return m_distanceFromGround;
+}
+
+KeyInput& CustomController::GetKeyInput(KEY_ORDER key)
+{
+	return m_keyboardInput[key];
+}
+
+KeyInput& CustomController::GetKeyInput(int32_t key)
+{
+	return m_keyboardInput[key];
 }
 
 void CustomController::BounceFromAttack()

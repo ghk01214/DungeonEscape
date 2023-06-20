@@ -2,35 +2,41 @@
 #include "physx_define.h"
 #include "Component.h"
 
+enum KEY_ORDER
+{
+	W,
+	S,
+	A,
+	D,
+	SPACE,
+	KEY_1,
+	KEY_2,
+	KEY_3,
+	KEY_4,
+
+	MAX
+};
+
+struct KeyInput
+{
+	KeyInput() : down{ false }, press{ false }, up{ false } {}
+
+	void None() { down = false; press = false; up = false; }
+	void Down() { None(); down = true; }
+	void Press() { None(); press = true; }
+	void Up() { None(); up = true; }
+
+	bool down;
+	bool press;
+	bool up;
+};
+
 class RigidBody;
 class CapsuleCollider;
 class Collider;
 
 class CustomController : public Component
 {
-	enum KEY_ORDER
-	{
-		W,
-		S,
-		A,
-		D,
-		SPACE,
-		MAX
-	};
-
-	struct KeyInput
-	{
-		bool down;
-		bool press;
-		bool up;
-
-		KeyInput() : down{ false }, press{ false }, up{ false } {}
-
-		void None() { down = false; press = false; up = false; }
-		void Down() { None(); down = true; }
-		void Press() { None(); press = true; }
-		void Up() { None(); up = true; }
-	};
 public:
 	CustomController(GameObject* ownerGameObject, Component* ownerComponent, bool player);
 	~CustomController();
@@ -65,6 +71,8 @@ public:
 	void SetJumpSpeed(float value);
 	float GetJumpSpeed();
 	float GetDistanceFromGround();
+	KeyInput& GetKeyInput(KEY_ORDER key);
+	KeyInput& GetKeyInput(int32_t key);
 
 public:
 	void BounceFromAttack();	//호출시키지 않으면 공격넉백 적용이 불가능하다
@@ -94,11 +102,7 @@ private:
 
 #pragma region keyboardVariable
 	std::vector<server::KEY_TYPE> m_useKeyType;
-	KeyInput		m_keyboardLeft;
-	KeyInput		m_keyboardRight;
-	KeyInput		m_keyboardUp;
-	KeyInput		m_keyboardDown;
-	KeyInput		m_keyboardSpace;
+	std::vector<KeyInput> m_keyboardInput;
 #pragma endregion
 	bool m_isPlayer = false;
 	physx::PxVec3	m_cameraLook = physx::PxVec3(1, 0, 0);
