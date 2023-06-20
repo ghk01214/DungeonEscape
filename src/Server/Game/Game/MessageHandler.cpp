@@ -389,7 +389,7 @@ namespace game
 
 							if (monster->GetID() == msg.objID)
 							{
-								objMgr->RemoveGameObjectFromLayer(L"Layer_Monster", monster);
+								monster->SetRemoveReserved();
 								break;
 							}
 						}
