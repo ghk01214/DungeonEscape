@@ -45,6 +45,11 @@ std::shared_ptr<CScene> Scene_Test::TestScene(server::FBX_TYPE playerType)
 	return scene;
 }
 
+void Scene_Test::Update()
+{
+	SendKeyInput();
+}
+
 void Scene_Test::LateUpdate()
 {
 	auto size{ scene->GetServerRequestQueueSize() };
@@ -362,6 +367,14 @@ void Scene_Test::CreateSphere()
 	}
 
 	scene->AddGameObject(gameObjects);
+}
+
+void Scene_Test::SendKeyInput()
+{
+	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
+	{
+		GET_NETWORK->SendKeyInputPacket();
+	}
 }
 
 void Scene_Test::ChangeNetworkObjectID(network::CPacket& packet)

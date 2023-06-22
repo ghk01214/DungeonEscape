@@ -33,6 +33,8 @@ void CGame::Start()
 void CGame::Update()
 {
 	GEngine->Update();
+
+	Scene_Test::GetInstance()->Update();
 }
 
 void CGame::LateUpdate()

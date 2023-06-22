@@ -46,13 +46,7 @@ void Engine::Update()
 	GET_SINGLE(SceneManager)->Update();
 	GET_SINGLE(InstancingManager)->ClearBuffer();
 
-	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
-	{
-		GET_NETWORK->SendKeyInputPacket();
-	}
-
 	Render();
-
 	ShowFps();
 }
 

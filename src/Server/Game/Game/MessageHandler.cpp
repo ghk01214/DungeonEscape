@@ -394,7 +394,6 @@ namespace game
 							}
 						}
 					}
-					//objMgr->RemoveGameObjectFromLayer(L"Layer_Monster", player);
 
 					Message sendMsg{ -1, ProtocolID::WR_REMOVE_ACK };
 					sendMsg.objID = msg.objID;

@@ -10,6 +10,7 @@ class Scene_Test
 public:
 	std::shared_ptr<CScene> TestScene(server::FBX_TYPE playerType);
 
+	void Update();
 	void LateUpdate();
 
 private:
@@ -24,6 +25,8 @@ private:
 	void CreateMapObjects(void);
 	void CreatePlayer(server::FBX_TYPE player);
 	void CreateSphere();
+
+	void SendKeyInput();
 
 	void ChangeNetworkObjectID(network::CPacket& packet);
 	void CreateAnimatedRemoteObject(network::CPacket& packet);
