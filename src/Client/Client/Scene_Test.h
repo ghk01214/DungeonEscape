@@ -23,9 +23,7 @@ private:
 	void CreateMap(void);
 	void CreateMapObjects(void);
 	void CreatePlayer(server::FBX_TYPE player);
-	void CreateRemotePlayer(network::CPacket& packet);
 	void CreateSphere();
-	void CreateBoss(network::CPacket& packet);
 
 	void ChangeNetworkObjectID(network::CPacket& packet);
 	void CreateAnimatedRemoteObject(network::CPacket& packet);

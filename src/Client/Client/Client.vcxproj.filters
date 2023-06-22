@@ -51,12 +51,18 @@
     <Filter Include="소스 파일\Script\04. Player\Script\Carmel">
       <UniqueIdentifier>{1af9db9a-5ea8-414e-9bab-e6e195fd4cb7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Script\03. Monster\Boss">
+      <UniqueIdentifier>{f391a361-40f4-47f8-be68-26d238cfca11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\03. Monster\Boss\Weeper">
+      <UniqueIdentifier>{38931a79-0d11-4864-815c-bec3ced30266}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
       <Filter>소스 파일\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Monster_Script.h">
+    <ClInclude Include="Monster_Dragon.h">
       <Filter>소스 파일\Script\03. Monster</Filter>
     </ClInclude>
     <ClInclude Include="Camera_Script.h">
@@ -92,11 +98,14 @@
     <ClInclude Include="Player_Nana.h">
       <Filter>소스 파일\Script\04. Player\Script\Nana</Filter>
     </ClInclude>
-    <ClInclude Include="Scripts.hpp">
-      <Filter>소스 파일\Script\04. Player\Script</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerRangeAttack.h">
       <Filter>소스 파일\Script\04. Player\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster_Weeper.h">
+      <Filter>소스 파일\Script\03. Monster\Boss\Weeper</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripts.hpp">
+      <Filter>소스 파일\Script</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -116,7 +125,7 @@
     <ClCompile Include="Game.cpp">
       <Filter>소스 파일\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Monster_Script.cpp">
+    <ClCompile Include="Monster_Dragon.cpp">
       <Filter>소스 파일\Script\03. Monster</Filter>
     </ClCompile>
     <ClCompile Include="Camera_Script.cpp">
@@ -145,6 +154,9 @@
     </ClCompile>
     <ClCompile Include="PlayerRangeAttack.cpp">
       <Filter>소스 파일\Script\04. Player\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Weeper.cpp">
+      <Filter>소스 파일\Script\03. Monster\Boss\Weeper</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

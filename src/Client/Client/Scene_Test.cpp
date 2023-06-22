@@ -342,60 +342,6 @@ void Scene_Test::CreatePlayer(server::FBX_TYPE player)
 	scene->AddPlayer(gameObjects);
 }
 
-void Scene_Test::CreateRemotePlayer(network::CPacket& packet)
-{
-	int32_t id{ packet.ReadID() };
-
-	Vec3 pos;
-	pos.x = packet.Read<float>();
-	pos.y = packet.Read<float>();
-	pos.z = packet.Read<float>();
-
-	Vec4 quat;
-	quat.x = packet.Read<float>();
-	quat.y = packet.Read<float>();
-	quat.z = packet.Read<float>();
-	quat.w = packet.Read<float>();
-
-	Vec3 scale;
-	scale.x = packet.Read<float>();
-	scale.y = packet.Read<float>();
-	scale.z = packet.Read<float>();
-
-	int32_t aniIndex{ packet.Read<int32_t>() };
-	float aniFrame{ packet.Read<float>() };
-
-	server::FBX_TYPE type{ packet.Read<server::FBX_TYPE>() };
-
-	std::wstring fbxName{};
-
-	if (type == server::FBX_TYPE::MISTIC)
-		fbxName = L"Mistic";
-
-	ObjectDesc objectDesc;
-	objectDesc.strName = fbxName;
-	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
-	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
-	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
-	objectDesc.script = std::make_shared<Player_Mistic>();
-
-	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
-	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::REMOTE_PLAYER, id);
-
-	for (auto& gameObject : gameObjects)
-	{
-		gameObject->GetTransform()->SetWorldVec3Position(pos);
-		auto mat{ Matrix::CreateTranslation(pos) };
-		gameObject->GetTransform()->SetWorldMatrix(mat);
-		gameObject->GetAnimator()->Play(aniIndex, aniFrame);
-	}
-
-	scene->AddPlayer(gameObjects);
-	GET_NETWORK->AddNetworkObject(id, gameObjects);
-
-	std::cout << "ADD REMOTE PLAYER[" << id << "]" << std::endl;
-}
-
 void Scene_Test::CreateSphere()
 {
 	ObjectDesc objectDesc;
@@ -416,65 +362,6 @@ void Scene_Test::CreateSphere()
 	}
 
 	scene->AddGameObject(gameObjects);
-}
-
-void Scene_Test::CreateBoss(network::CPacket& packet)
-{
-	int32_t id{ packet.ReadID() };
-
-	Vec3 pos;
-	pos.x = packet.Read<float>();
-	pos.y = packet.Read<float>();
-	pos.z = packet.Read<float>();
-
-	Vec4 quat;
-	quat.x = packet.Read<float>();
-	quat.y = packet.Read<float>();
-	quat.z = packet.Read<float>();
-	quat.w = packet.Read<float>();
-
-	Vec3 scale;
-	scale.x = packet.Read<float>();
-	scale.y = packet.Read<float>();
-	scale.z = packet.Read<float>();
-
-	int32_t aniIndex{ packet.Read<int32_t>() };
-	float aniFrame{ packet.Read<float>() };
-
-	server::FBX_TYPE type{ packet.Read<server::FBX_TYPE>() };
-
-	std::wstring fbxName{};
-
-	if (type == server::FBX_TYPE::DRAGON)
-		fbxName = L"Dragon";
-
-	std::cout << std::format("ID : {}\n", id);
-	std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
-	std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
-	std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
-
-	ObjectDesc objectDesc;
-	objectDesc.strName = fbxName;
-	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
-	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
-	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
-	objectDesc.script = std::make_shared<Monster_Dragon>();
-
-	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
-	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::BOSS, id);
-
-	for (auto& gameObject : gameObjects)
-	{
-		gameObject->GetTransform()->SetWorldVec3Position(pos);
-		auto mat{ Matrix::CreateTranslation(pos) };
-		gameObject->GetTransform()->SetWorldMatrix(mat);
-		gameObject->GetAnimator()->Play(aniIndex, aniFrame);
-	}
-
-	scene->AddBoss(gameObjects);
-	GET_NETWORK->AddNetworkObject(id, gameObjects);
-
-	std::cout << "ADD BOSS MONSTER" << std::endl;
 }
 
 void Scene_Test::ChangeNetworkObjectID(network::CPacket& packet)
@@ -538,6 +425,18 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 
 	AddObjectToScene(objType, gameObjects);
 	GET_NETWORK->AddNetworkObject(id, gameObjects);
+
+	switch (objType)
+	{
+		case server::OBJECT_TYPE::MONSTER:
+		case server::OBJECT_TYPE::BOSS:
+		{
+			objectDesc.script->Start();
+		}
+		break;
+		default:
+		break;
+	}
 }
 
 void Scene_Test::CreateRemoteObject(network::CPacket& packet)
@@ -726,6 +625,13 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc)
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
+		case server::FBX_TYPE::WEEPER:
+		{
+			objectDesc.strName = L"Weeper";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\Weeper.fbx";
+			objectDesc.script = std::make_shared<Monster_Weeper>();
+		}
+		break;
 		case server::FBX_TYPE::DRAGON:
 		{
 			objectDesc.strName = L"Dragon";
@@ -806,7 +712,6 @@ std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateAnimatedObject(Objec
 	{
 		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
 		gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
-		gameObject->GetAnimator()->Play(0);
 	}
 
 	return gameObjects;

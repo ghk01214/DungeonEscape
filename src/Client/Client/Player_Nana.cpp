@@ -19,8 +19,8 @@
 
 void Player_Nana::Start()
 {
-	m_prevState = IDLE_A;
-	m_currState = IDLE_A;
+	m_prevState = IDLE1;
+	m_currState = IDLE1;
 
 	m_hp = 30;
 
@@ -136,26 +136,23 @@ void Player_Nana::CheckState()
 				GetNetwork()->SendDie();
 		}
 		break;
-		case IDLE_A:
+		case IDLE1:
 		{
 			GetAnimator()->Play(m_currState);
 		}
 		break;
-		case IDLE_B:
+		case IDLE2:
 		{
 			GetAnimator()->Play(m_currState);
 		}
 		break;
-		case IDLE_C:
+		case IDLE3:
 		{
 			GetAnimator()->Play(m_currState);
 		}
 		break;
 		case JUMP_START:
 		{
-			// 물리 시뮬레이터의 점프 속도가 클라이언트에서 재생되는 점프 속도보다 빨라서
-			// 점프 애니메이션의 속도를 2배로 조정
-			// 점프 애니메이션의 길이 : 1.16
 			GetAnimator()->Play(m_currState, 1.f);
 		}
 		break;
@@ -177,12 +174,12 @@ void Player_Nana::CheckState()
 			GetAnimator()->Play(m_currState);
 		}
 		break;
-		case MOVE_L:
+		case MOVE_LEFT:
 		{
 			GetAnimator()->Play(m_currState);
 		}
 		break;
-		case MOVE_R:
+		case MOVE_RIGHT:
 		{
 			GetAnimator()->Play(m_currState);
 		}
@@ -217,12 +214,12 @@ void Player_Nana::CheckState()
 
 		}
 		break;
-		case VICTORY_A:
+		case VICTORY1:
 		{
 
 		}
 		break;
-		case VICTORY_B:
+		case VICTORY2:
 		{
 
 		}
@@ -256,11 +253,11 @@ void Player_Nana::UpdateFrameOnce()
 {
 	switch (m_currState)
 	{
-		case IDLE_A: case IDLE_B: case IDLE_C:
-		case MOVE: case MOVE_L: case MOVE_R:
-		case RUN: case RUN_L: case RUN_R:
-		case WALK: case WALK_L: case WALK_R:
-		case VICTORY_A: case VICTORY_B:
+		case IDLE1: case IDLE2: case IDLE3:
+		case MOVE: case MOVE_LEFT: case MOVE_RIGHT:
+		case RUN: case RUN_LEFT: case RUN_RIGHT:
+		case WALK: case WALK_LEFT: case WALK_RIGHT:
+		case VICTORY1: case VICTORY2:
 		case DEAD:
 		return;
 		default:
@@ -277,12 +274,12 @@ void Player_Nana::UpdateFrameOnce()
 		{
 			case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
 			{
-				m_currState = IDLE_A;
+				m_currState = IDLE1;
 			}
 			break;
 			case DAMAGE:
 			{
-				m_currState = IDLE_A;
+				m_currState = IDLE1;
 			}
 			break;
 			case DIE0: case DIE1: case DIE2:
@@ -293,27 +290,27 @@ void Player_Nana::UpdateFrameOnce()
 			break;
 			case JUMP_END:
 			{
-				m_currState = IDLE_A;
+				m_currState = IDLE1;
 			}
 			break;
 			case SHOOT:
 			{
-				m_currState = IDLE_A;
+				m_currState = IDLE1;
 			}
 			break;
 			case SLEEP:
 			{
-				m_currState = IDLE_A;
+				m_currState = IDLE1;
 			}
 			break;
 			case SWOON:
 			{
-				m_currState = IDLE_A;
+				m_currState = IDLE1;
 			}
 			break;
 			case TIRED:
 			{
-				m_currState = IDLE_A;
+				m_currState = IDLE1;
 			}
 			break;
 		}
@@ -349,7 +346,7 @@ void Player_Nana::KeyInputStateChange()
 			else if (INPUT->GetButtonDown(KEY_TYPE::A) == true
 				or INPUT->GetButton(KEY_TYPE::A) == true)
 			{
-				m_currState = MOVE_L;
+				m_currState = MOVE_LEFT;
 			}
 			else if (INPUT->GetButtonDown(KEY_TYPE::S) == true
 				or INPUT->GetButton(KEY_TYPE::S) == true)
@@ -359,14 +356,14 @@ void Player_Nana::KeyInputStateChange()
 			else if (INPUT->GetButtonDown(KEY_TYPE::D) == true
 				or INPUT->GetButton(KEY_TYPE::D) == true)
 			{
-				m_currState = MOVE_R;
+				m_currState = MOVE_RIGHT;
 			}
 			else if (INPUT->GetButtonUp(KEY_TYPE::W) == true
 				or INPUT->GetButtonUp(KEY_TYPE::A) == true
 				or INPUT->GetButtonUp(KEY_TYPE::S) == true
 				or INPUT->GetButtonUp(KEY_TYPE::D) == true)
 			{
-				m_currState = IDLE_A;
+				m_currState = IDLE1;
 			}
 			else if (INPUT->GetButtonDown(KEY_TYPE::SPACE) == true)
 			{
@@ -530,38 +527,36 @@ void Player_Nana::StartRender(network::CPacket& packet)
 	if (GetNetwork()->GetID() == -1)
 		GetNetwork()->SetID(id);
 
-	if (GetNetwork()->GetID() != -1)
-	{
-		Vec3 pos;
-		pos.x = packet.Read<float>();
-		pos.y = packet.Read<float>();
-		pos.z = packet.Read<float>();
+	Vec3 pos;
+	pos.x = packet.Read<float>();
+	pos.y = packet.Read<float>();
+	pos.z = packet.Read<float>();
 
-		Vec4 quat;
-		quat.x = packet.Read<float>();
-		quat.y = packet.Read<float>();
-		quat.z = packet.Read<float>();
-		quat.w = packet.Read<float>();
+	Vec4 quat;
+	quat.x = packet.Read<float>();
+	quat.y = packet.Read<float>();
+	quat.z = packet.Read<float>();
+	quat.w = packet.Read<float>();
 
-		Vec3 scale;
-		scale.x = packet.Read<float>();
-		scale.y = packet.Read<float>();
-		scale.z = packet.Read<float>();
+	Vec3 scale;
+	scale.x = packet.Read<float>();
+	scale.y = packet.Read<float>();
+	scale.z = packet.Read<float>();
 
-		int32_t aniIndex{ packet.Read<int32_t>() };
-		float aniFrame{ packet.Read<float>() };
+	int32_t aniIndex{ packet.Read<int32_t>() };
+	float aniFrame{ packet.Read<float>() };
 
-		std::cout << std::format("ID : {}\n", id);
-		std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
-		std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
-		std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
+	std::cout << std::format("ID : {}\n", id);
+	std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
+	std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
+	std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
 
-		GetTransform()->SetWorldVec3Position(pos);
-		Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-		matWorld.Translation(pos);
-		GetTransform()->SetWorldMatrix(matWorld);
-		GetAnimator()->Play(aniIndex, aniFrame);
-	}
+	GetTransform()->SetWorldVec3Position(pos);
+	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	matWorld.Translation(pos);
+	GetTransform()->SetWorldMatrix(matWorld);
+
+	GetAnimator()->Play(aniIndex, aniFrame);
 }
 
 void Player_Nana::Transform(network::CPacket& packet)
@@ -597,12 +592,8 @@ void Player_Nana::Transform(network::CPacket& packet)
 	{
 		switch (m_currState)
 		{
-			case IDLE_A:
-			case IDLE_B:
-			case IDLE_C:
-			//case MOVE:
-			//case MOVE_L:
-			//case MOVE_R:
+			case IDLE1: case IDLE2: case IDLE3:
+			//case MOVE: case MOVE_L: case MOVE_RIGHT:
 			{
 				m_currState = JUMPING;
 			}
@@ -615,8 +606,10 @@ void Player_Nana::Transform(network::CPacket& packet)
 	matWorld.Translation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
 
+#pragma region [FOR DEBUGGING]
 	//auto t{ GetTransform()->GetWorldPosition() };
 	//std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
+#pragma endregion
 }
 
 void Player_Nana::ChangeAnimation(network::CPacket& packet)

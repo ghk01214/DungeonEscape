@@ -236,7 +236,7 @@ void TestLevel::Init()
 	auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 	MonsterObject->SetName(L"Dragon");
 	MonsterObject->SetObjectType(server::OBJECT_TYPE::BOSS);
-	MonsterObject->SetFBXType(server::FBX_TYPE::DRAGON);
+	MonsterObject->SetFBXType(server::FBX_TYPE::WEEPER);
 	MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
 
 

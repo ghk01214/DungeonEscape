@@ -12,7 +12,7 @@
 
 Monster::Monster(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
-	m_aniIndex{ 6 },
+	m_aniIndex{ 0 },
 	m_aniFrame{ 0.f },
 	m_aniSpeed{ 1.f },
 	m_hp{ 20 }
@@ -60,6 +60,28 @@ void Monster::Release()
 {
 	m_controller = nullptr;
 	GameObject::Release();
+}
+
+void Monster::SetFBXType(server::FBX_TYPE fbxType)
+{
+	// 몬스터 별 IDLE 상태로 설정
+	switch (fbxType)
+	{
+		case server::FBX_TYPE::WEEPER:
+		{
+			m_aniIndex = 11;
+		}
+		break;
+		case server::FBX_TYPE::DRAGON:
+		{
+			m_aniIndex = 6;
+		}
+		break;
+		default:
+		break;
+	}
+
+	GameObject::SetFBXType(fbxType);
 }
 
 void Monster::SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed)

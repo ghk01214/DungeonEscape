@@ -112,6 +112,7 @@
 		NANA,
 		MISTIC,
 		CARMEL,
+		WEEPER,
 		DRAGON,
 		SPHERE,
 

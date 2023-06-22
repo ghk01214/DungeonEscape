@@ -22,6 +22,7 @@ public:
 	CustomController* GetController() { return m_controller; }
 	constexpr int32_t GetHP() const { return m_hp; }
 
+	void SetFBXType(server::FBX_TYPE fbxType) override;
 	void SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed);
 
 	bool IsOnGround();

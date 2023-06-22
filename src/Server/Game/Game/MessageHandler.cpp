@@ -316,7 +316,7 @@ namespace game
 
 						if (player->GetID() == msg.playerID)
 						{
-							auto customController{ player->GetComponent<CustomController>(L"CustomController") };
+							auto customController{ player->GetController() };
 							customController->KeyboardReceive(msg.keyInput);
 							break;
 						}

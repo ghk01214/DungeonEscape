@@ -80,7 +80,7 @@ public:
 	void SetID(int32_t id);
 	void SetName(const std::wstring& name);
 	void SetObjectType(server::OBJECT_TYPE objType);
-	void SetFBXType(server::FBX_TYPE fbxType);
+	virtual void SetFBXType(server::FBX_TYPE fbxType);
 	void SetTransformSendFlag(bool flag);
 
 protected:
