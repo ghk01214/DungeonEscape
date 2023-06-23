@@ -165,6 +165,7 @@
     <ClCompile Include="ControllerManagerWrapper.cpp" />
     <ClCompile Include="ControllerWrapper.cpp" />
     <ClCompile Include="ConvexMeshWrapper.cpp" />
+    <ClCompile Include="Database.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="ControllerManagerWrapper.h" />
     <ClInclude Include="ControllerWrapper.h" />
     <ClInclude Include="ConvexMeshWrapper.h" />
+    <ClInclude Include="Database.h" />
     <ClInclude Include="Monster.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />

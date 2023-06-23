@@ -23,6 +23,8 @@ void Player_Nana::Start()
 	m_currState = IDLE1;
 
 	m_hp = 30;
+	m_radius = 50.f;
+	m_halfHeight = 50.f;
 
 	std::cout << std::format("PLAYER {} HP : {}", GetNetwork()->GetID(), m_hp) << std::endl;
 
@@ -600,6 +602,8 @@ void Player_Nana::Transform(network::CPacket& packet)
 			break;
 		}
 	}
+
+	pos.y -= (m_radius + m_halfHeight);
 
 	GetTransform()->SetWorldVec3Position(pos);
 	Matrix matWorld{ GetTransform()->GetWorldMatrix() };

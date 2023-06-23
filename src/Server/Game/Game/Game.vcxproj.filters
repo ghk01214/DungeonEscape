@@ -164,6 +164,9 @@
     <Filter Include="03. Game\01. GameObject\TriggerObject">
       <UniqueIdentifier>{f4b7b417-5c0b-47b2-9fe1-f7a81ae65959}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. DB">
+      <UniqueIdentifier>{c03ab8b2-3cf9-4361-b4d8-e8b8b37f6d23}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -304,6 +307,9 @@
     </ClCompile>
     <ClCompile Include="TriggerObject.cpp">
       <Filter>03. Game\01. GameObject\TriggerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>03. DB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -468,6 +474,9 @@
     </ClInclude>
     <ClInclude Include="TriggerObject.h">
       <Filter>03. Game\01. GameObject\TriggerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>03. DB</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

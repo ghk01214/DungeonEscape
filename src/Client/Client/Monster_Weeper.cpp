@@ -19,7 +19,9 @@ Monster_Weeper::Monster_Weeper() :
 	m_prevState{ IDLE },
 	m_currState{ IDLE },
 	m_hp{ 30 },
-	m_recvDead{ false }
+	m_recvDead{ false },
+	m_radius{ 100.f },
+	m_halfHeight{ 100.f }
 {
 }
 
@@ -32,12 +34,38 @@ void Monster_Weeper::Start()
 	std::cout << std::format("BOSS HP : {}", m_hp) << std::endl;
 
 	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-	matWorld *= Matrix::CreateScale(2.f);
+	matWorld *= Matrix::CreateScale(2.5f);
 	GetTransform()->SetWorldMatrix(matWorld);
 }
 
 void Monster_Weeper::Update(void)
 {
+	//if (GET_NETWORK->GetID() == GetNetwork()->GetID())
+	{
+		if (INPUT->GetButtonDown(KEY_TYPE::KEY_1))
+		{
+			int32 count = GetAnimator()->GetAnimCount();
+			int32 currentIndex = GetAnimator()->GetCurrentClipIndex();
+
+			int32 index = (currentIndex + 1) % count;
+
+			GetAnimator()->Play(index);
+
+			std::cout << std::format("{}", magic_enum::enum_name(magic_enum::enum_value<WEEPER_STATE>(index))) << std::endl;
+		}
+
+		if (INPUT->GetButtonDown(KEY_TYPE::KEY_2))
+		{
+			int32 count = GetAnimator()->GetAnimCount();
+			int32 currentIndex = GetAnimator()->GetCurrentClipIndex();
+
+			int32 index = (currentIndex - 1 + count) % count;
+
+			GetAnimator()->Play(index);
+			std::cout << std::format("{}", magic_enum::enum_name(magic_enum::enum_value<WEEPER_STATE>(index))) << std::endl;
+		}
+	}
+
 	DecideMonsterDeath();
 }
 
@@ -404,6 +432,8 @@ void Monster_Weeper::Transform(network::CPacket& packet)
 	//if (onGround == true)
 	//{
 	//}
+
+	pos.y -= m_halfHeight;
 
 	GetTransform()->SetWorldVec3Position(pos);
 	Matrix matWorld{ GetTransform()->GetWorldMatrix() };

@@ -78,4 +78,7 @@ private:
 	PLAYER_STATE m_currState;
 
 	int32_t m_hp;
+private:
+	float m_radius;
+	float m_halfHeight;
 };

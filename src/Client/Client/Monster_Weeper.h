@@ -64,4 +64,7 @@ private:
 	int32_t m_hp;
 
 	bool m_recvDead;
+private:
+	float m_radius;
+	float m_halfHeight;
 };
