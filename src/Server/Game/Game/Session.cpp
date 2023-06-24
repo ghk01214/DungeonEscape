@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "Session.h"
 #include "Transform.h"
-#include "Monster.h"
+#include "Monsters.hpp"
 #include "CustomController.h"
 
 namespace game
@@ -121,6 +121,7 @@ namespace game
 		auto quat{ trans->GetRotation() };
 		auto scale{ trans->GetScale() };
 		auto objType{ obj->GetObjectType() };
+		auto fbxType{ obj->GetFBXType() };
 
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
@@ -142,19 +143,26 @@ namespace game
 		{
 			auto player{ dynamic_cast<Player*>(obj) };
 
-			packet.Write<int32_t>(player->GetAniIndex());
-			packet.Write<float>(player->GetAniFrame());
+			packet.Write<int32_t>(player->GetState());
+			packet.Write<float>(player->GetAniPlayTime());
 		}
-		else if (objType == server::OBJECT_TYPE::BOSS)
+		else if (fbxType == server::FBX_TYPE::WEEPER)
 		{
-			auto monster{ dynamic_cast<Monster*>(obj) };
+			auto monster{ dynamic_cast<Weeper*>(obj) };
 
-			packet.Write<int32_t>(monster->GetAniIndex());
-			packet.Write<float>(monster->GetAniFrame());
+			packet.Write<int32_t>(monster->GetState());
+			packet.Write<float>(monster->GetAniPlayTime());
+		}
+		else if (fbxType == server::FBX_TYPE::DRAGON)
+		{
+			auto monster{ dynamic_cast<Dragon*>(obj) };
+
+			packet.Write<int32_t>(monster->GetState());
+			packet.Write<float>(monster->GetAniPlayTime());
 		}
 
 		packet.Write<server::OBJECT_TYPE>(objType);
-		packet.Write<server::FBX_TYPE>(obj->GetFBXType());
+		packet.Write<server::FBX_TYPE>(fbxType);
 
 		Send(packet);
 	}
@@ -195,23 +203,7 @@ namespace game
 
 		packet.WriteID(objID);
 		packet.WriteProtocol(ProtocolID::MY_ADD_OBJ_ACK);
-
 		packet.Write<int32_t>(oldObjID);
-
-		Send(packet);
-	}
-
-	void CSession::SendAddObjectColliderPacket(int32_t id, int32_t objID, int32_t colliderID, int32_t tempColliderID, bool last)
-	{
-		network::CPacket packet;
-
-		packet.WriteID(id);
-		packet.WriteProtocol(ProtocolID::MY_ADD_OBJ_COLLIDER_ACK);
-
-		packet.Write<int32_t>(objID);
-		packet.Write<int32_t>(colliderID);
-		packet.Write<int32_t>(tempColliderID);
-		packet.Write<bool>(last);
 
 		Send(packet);
 	}
@@ -259,76 +251,17 @@ namespace game
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
 
-		if (obj->GetObjectType() == server::OBJECT_TYPE::PLAYER)
-		{
-			auto player{ dynamic_cast<Player*>(obj) };
-			packet.Write<bool>(player->IsOnGound());
-		}
-		else if (obj->GetObjectType() == server::OBJECT_TYPE::BOSS)
-		{
-			auto monster{ dynamic_cast<Monster*>(obj) };
-			packet.Write<bool>(monster->IsOnGround());
-		}
-
 		// 패킷 전송
 		Send(packet);
 	}
 
-	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, Player* obj)
-	{
-		network::CPacket packet;
-		int32_t aniIndex{ obj->GetAniIndex() };
-		float aniFrame{ obj->GetAniFrame() };
-		float aniSpeed{ obj->GetAniSpeed() };
-
-		packet.WriteID(id);
-		packet.WriteProtocol(protocol);
-		packet.Write<int32_t>(aniIndex);
-		packet.Write<float>(aniFrame);
-		packet.Write<float>(aniSpeed);
-
-		Send(packet);
-	}
-
-	void CSession::SendAniIndexPacket(int32_t id, ProtocolID protocol, int32_t index, float frame)
+	void CSession::SendStatePacket(int32_t id, int32_t stateIndex)
 	{
 		network::CPacket packet;
 
 		packet.WriteID(id);
-		packet.WriteProtocol(protocol);
-		packet.Write<int32_t>(index);
-		packet.Write<float>(frame);
-
-		Send(packet);
-	}
-
-	void CSession::SendJumpStartPacket(int32_t id)
-	{
-		network::CPacket packet;
-
-		packet.WriteID(id);
-		packet.WriteProtocol(ProtocolID::WR_JUMP_START_ACK);
-
-		Send(packet);
-	}
-
-	void CSession::SendHitPacket(int32_t id, int32_t hitOriginID)
-	{
-		network::CPacket packet;
-
-		packet.WriteID(id);
-		packet.WriteProtocol(ProtocolID::WR_HIT_ACK);
-		packet.Write<int32_t>(hitOriginID);
-
-		Send(packet);
-	}
-
-	void CSession::SendDiePacket(int32_t id)
-	{
-		network::CPacket packet;
-
-		packet.WriteID(id);
-		packet.WriteProtocol(ProtocolID::WR_DIE_ACK);
+		packet.WriteProtocol(ProtocolID::WR_CHANGE_STATE_ACK);
+		packet.Write<int32_t>(stateIndex);
 
 		Send(packet);
 	}

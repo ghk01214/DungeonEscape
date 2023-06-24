@@ -9,6 +9,18 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
+Camera_Basic::Camera_Basic() :
+	m_speed{ 2000.f },
+	m_lengthX{ 1000.f },
+	m_lengthY{ 600.f },
+	m_rotation{ 0.f }
+{
+}
+
+Camera_Basic::~Camera_Basic()
+{
+}
+
 void Camera_Basic::Update(void)
 {
 }
@@ -24,16 +36,16 @@ void Camera_Basic::LateUpdate()
 		Vec3 pos = GetTransform()->GetWorldPosition();
 
 		if (INPUT->GetButton(KEY_TYPE::W))
-			pos += GetTransform()->GetLook() * _speed * DELTA_TIME;
+			pos += GetTransform()->GetLook() * m_speed * DELTA_TIME;
 
 		if (INPUT->GetButton(KEY_TYPE::S))
-			pos -= GetTransform()->GetLook() * _speed * DELTA_TIME;
+			pos -= GetTransform()->GetLook() * m_speed * DELTA_TIME;
 
 		if (INPUT->GetButton(KEY_TYPE::A))
-			pos -= GetTransform()->GetRight() * _speed * DELTA_TIME;
+			pos -= GetTransform()->GetRight() * m_speed * DELTA_TIME;
 
 		if (INPUT->GetButton(KEY_TYPE::D))
-			pos += GetTransform()->GetRight() * _speed * DELTA_TIME;
+			pos += GetTransform()->GetRight() * m_speed * DELTA_TIME;
 
 		if (INPUT->GetButton(KEY_TYPE::Q))
 		{

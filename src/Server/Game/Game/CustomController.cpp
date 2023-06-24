@@ -194,14 +194,11 @@ bool CustomController::CheckOnGround_Raycast()
 	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::Map), PhysicsQueryType::All, m_body))
 	{
 		m_distanceFromGround = hit.distance;
-		//std::cout << m_distanceFromGround << "\n";
 		return true;
 	}
-
 	else
 	{
-		m_distanceFromGround = -1;				//raycast 실패 (밑에 아예 물체가 없거나 raycast 측정거리보다 멀다)
-		//std::cout << m_distanceFromGround << "\n";
+		m_distanceFromGround = -1.f;				//raycast 실패 (밑에 아예 물체가 없거나 raycast 측정거리보다 멀다)
 		return false;
 	}
 }
@@ -331,9 +328,6 @@ void CustomController::Movement_Player(int32_t objID)
 #pragma endregion
 
 		m_onGround = false;
-
-		game::Message msg{ objID, ProtocolID::WR_JUMP_START_ACK };
-		game::MessageHandler::GetInstance()->PushSendMessage(msg);
 	}
 
 	//friction adjustment
@@ -477,10 +471,6 @@ void CustomController::KeyboardReceive(ulong32_t key)
 	}
 }
 
-void CustomController::GetKeyboardStatus()
-{
-}
-
 void CustomController::SetMoveSpeed(float value)
 {
 	m_moveSpeed = value;
@@ -506,14 +496,19 @@ float CustomController::GetDistanceFromGround()
 	return m_distanceFromGround;
 }
 
-KeyInput& CustomController::GetKeyInput(KEY_ORDER key)
+KeyInput& CustomController::GetKeyStatus(KEY_ORDER key)
 {
 	return m_keyboardInput[key];
 }
 
-KeyInput& CustomController::GetKeyInput(int32_t key)
+KeyInput& CustomController::GetKeyStatus(int32_t key)
 {
 	return m_keyboardInput[key];
+}
+
+std::vector<KeyInput>& CustomController::GetKeyInput()
+{
+	return m_keyboardInput;
 }
 
 void CustomController::BounceFromAttack()

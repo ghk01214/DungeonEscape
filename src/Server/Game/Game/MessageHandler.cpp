@@ -103,7 +103,7 @@ namespace game
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
 			postOver.objType = msg.objType;
-			postOver.hitOriginID = msg.hitID;
+			postOver.state = msg.state;
 
 			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 
@@ -148,11 +148,6 @@ namespace game
 			postOver.playerID = msg.playerID;
 			postOver.objID = msg.objID;
 			postOver.roomID = msg.roomID;
-			postOver.colliderID = msg.colliderID;
-
-			postOver.tempObjectID = msg.tempObjectID;
-			postOver.tempColliderID = msg.tempColliderID;
-			postOver.lastCollider = msg.lastCollider;
 
 			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
 
@@ -240,7 +235,7 @@ namespace game
 					{
 						int32_t colliderID{ NewColliderID() };
 
-						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500 + msg.playerID * 50.f, 150, -1500), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 
 						std::wstring name{};
 
@@ -259,53 +254,8 @@ namespace game
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
 					sendMsg.objType = msg.objType;
-					PushSendMessage(sendMsg);
-				}
-				break;
-				case ProtocolID::MY_ADD_OBJ_REQ:
-				{
-					int32_t objID{ NewObjectID() };
-
-					// 오브젝트 추가 작업 후 id 세팅
-					//auto MapPlaneObject = objMgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", Vec3(0, 2, 0), Quat(0, 0, 0, 1), Vec3(100, 2, 100));
-					//MapPlaneObject->SetID(objID);
-					//MapPlaneObject->SetObjectType(msg.objType);
-					//MapPlaneObject->SetFBXType(msg.fbxType);
-					//auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
-					//MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
-
-					m_tempIDMap[msg.tempObjectID] = objID;
-
-					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_OBJ_ACK };
-					sendMsg.objID = objID;
-					sendMsg.tempObjectID = msg.tempObjectID;
 
 					PushSendMessage(sendMsg);
-				}
-				break;
-				case ProtocolID::MY_ADD_OBJ_COLLIDER_REQ:
-				{
-					int32_t objID{ m_tempIDMap[msg.objID] };
-					int32_t colliderID{ NewColliderID() };
-
-					// 충돌체 추가 작업
-					objID;
-					colliderID;
-					msg.colliderPos;
-					msg.colliderQuat;
-					msg.colliderScale;
-					msg.colliderType;
-
-					Message sendMsg{ msg.playerID, ProtocolID::MY_ADD_OBJ_COLLIDER_ACK };
-					sendMsg.objID = objID;
-					sendMsg.colliderID = colliderID;
-					sendMsg.tempColliderID = msg.colliderID;
-					sendMsg.lastCollider = msg.lastCollider;
-
-					PushSendMessage(sendMsg);
-
-					if (msg.lastCollider == true)
-						m_tempIDMap.erase(msg.objID);
 				}
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:
@@ -316,14 +266,13 @@ namespace game
 
 						if (player->GetID() == msg.playerID)
 						{
-							auto customController{ player->GetController() };
-							customController->KeyboardReceive(msg.keyInput);
+							player->GetController()->KeyboardReceive(msg.keyInput);
 							break;
 						}
 					}
 				}
 				break;
-				case ProtocolID::MY_ANI_REQ:
+				case ProtocolID::MY_ANI_PLAY_TIME_REQ:
 				{
 					if (msg.objType == server::OBJECT_TYPE::PLAYER)
 					{
@@ -333,7 +282,7 @@ namespace game
 
 							if (player->GetID() == msg.playerID)
 							{
-								player->SetAniInfo(msg.aniIndex, msg.aniFrame, msg.aniSpeed);
+								player->SetAniPlayTime(msg.aniPlayTime);
 								break;
 							}
 						}
@@ -346,14 +295,41 @@ namespace game
 
 							if (monster->GetID() == msg.objID)
 							{
-								monster->SetAniInfo(msg.aniIndex, msg.aniFrame, msg.aniSpeed);
+								monster->SetAniPlayTime(msg.aniPlayTime);
 								break;
 							}
 						}
 					}
+				}
+				break;
+				case ProtocolID::MY_ANI_END_REQ:
+				{
+					if (msg.objType == server::OBJECT_TYPE::PLAYER)
+					{
+						for (auto& playerObj : playerObjects)
+						{
+							auto player{ dynamic_cast<Player*>(playerObj) };
 
-					Message sendMsg{ msg.playerID, ProtocolID::WR_ANI_ACK };
-					PushSendMessage(sendMsg);
+							if (player->GetID() == msg.objID)
+							{
+								player->ChangeAniEndFlag(true);
+								break;
+							}
+						}
+					}
+					else if (msg.objType == server::OBJECT_TYPE::BOSS)
+					{
+						for (auto& monsterObject : monsterObjects)
+						{
+							auto monster{ dynamic_cast<Monster*>(monsterObject) };
+
+							if (monster->GetID() == msg.objID)
+							{
+								monster->SetAniEndFlag(true);
+								break;
+							}
+						}
+					}
 				}
 				break;
 				case ProtocolID::MY_CAMERA_LOOK_REQ:
@@ -371,14 +347,6 @@ namespace game
 				}
 				break;
 #pragma endregion
-				case ProtocolID::WR_DIE_REQ:
-				{
-					Message sendMsg{ -1, ProtocolID::WR_DIE_ACK };
-					sendMsg.objID = msg.objID;
-
-					PushSendMessage(sendMsg);
-				}
-				break;
 				case ProtocolID::WR_REMOVE_REQ:
 				{
 					if (msg.objType == server::OBJECT_TYPE::BOSS)

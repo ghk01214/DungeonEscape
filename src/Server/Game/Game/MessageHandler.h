@@ -14,22 +14,10 @@ namespace game
 		server::FBX_TYPE fbxType;
 		int32_t		roomID;
 		ulong32_t	keyInput;
-		int32_t		aniIndex;
-		float		aniFrame;
-		float		aniSpeed;
+		float		aniPlayTime;
 		Vec3		cameraLook;
+		int32_t		state;
 		int32_t		damage;
-		int32_t		hitID;
-
-		int32_t colliderID;
-		server::COLLIDER_TYPE colliderType;
-		Vec3 colliderPos;
-		Quat colliderQuat;
-		Vec3 colliderScale;
-		bool lastCollider;
-
-		int32_t tempObjectID;
-		int32_t tempColliderID;
 
 		Message(int32_t id = -1, ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE);
 	};

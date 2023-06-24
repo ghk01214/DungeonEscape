@@ -73,14 +73,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)vendor\include\;$(SolutionDir)vendor\include\FBX\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)vendor\Lib\FBX\;$(SolutionDir)vendor/Lib/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>../../../../vendor/lib;../../../../vendor/lib/FBX;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\$(ProjectName)\</OutDir>
     <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\$(ProjectName)\</IntDir>
-    <IncludePath>$(SolutionDir)vendor\include\;$(SolutionDir)vendor\include\FBX\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)vendor\Lib\FBX\;$(SolutionDir)vendor/Lib/;$(LibraryPath)</LibraryPath>
+    <LibraryPath>../../../../vendor/lib;../../../../vendor/lib/FBX;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -120,7 +118,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>../../../../vendor/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../vendor/include;../../../../vendor/include/FBX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +137,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>../../../../vendor/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../../vendor/include;../../../../vendor/include/FBX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -166,6 +164,7 @@
     <ClCompile Include="ControllerWrapper.cpp" />
     <ClCompile Include="ConvexMeshWrapper.cpp" />
     <ClCompile Include="Database.cpp" />
+    <ClCompile Include="Dragon.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
@@ -206,6 +205,7 @@
     <ClCompile Include="TriggerObject.cpp" />
     <ClCompile Include="TriggerPairInfo.cpp" />
     <ClCompile Include="Vec3.cpp" />
+    <ClCompile Include="Weeper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\vendor\include\Define.h" />
@@ -221,7 +221,9 @@
     <ClInclude Include="ControllerWrapper.h" />
     <ClInclude Include="ConvexMeshWrapper.h" />
     <ClInclude Include="Database.h" />
+    <ClInclude Include="Dragon.h" />
     <ClInclude Include="Monster.h" />
+    <ClInclude Include="Monsters.hpp" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="CustomController.h" />
@@ -263,6 +265,7 @@
     <ClInclude Include="TriggerObject.h" />
     <ClInclude Include="TriggerPairInfo.h" />
     <ClInclude Include="Vec3.h" />
+    <ClInclude Include="Weeper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl" />

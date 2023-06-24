@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "MonoBehaviour.h"
+#include "Monster_Script.h"
 
-class Monster_Dragon : public MonoBehaviour
+class Monster_Dragon : public Monster_Script
 {
 private:
 	enum DRAGON_STATE
@@ -28,8 +28,10 @@ private:
 
 		END
 	};
+
 public:
 	Monster_Dragon();
+	Monster_Dragon(int32_t stateIndex);
 	~Monster_Dragon();
 
 public:
@@ -38,24 +40,13 @@ public:
 	virtual void LateUpdate() override;
 
 private:
-	void CheckState();
-	void UpdateFrameRepeat();
-	void UpdateFrameOnce();
+	void CheckState() override;
+	void UpdateFrameRepeat() override;
+	void UpdateFrameOnce() override;
 
-	void DecideMonsterDeath();
-
-private:
 	void ParsePackets();
 
-	void StartRender(network::CPacket& packet);
-	void Transform(network::CPacket& packet);
-	void ChangeAnimation(network::CPacket& packet);
-
 private:
-	DRAGON_STATE m_prevState = IDLE1;
-	DRAGON_STATE m_currState = IDLE1;
-
-	int32_t m_hp;
-
-	bool m_recvDead;
+	DRAGON_STATE m_prevState;
+	DRAGON_STATE m_currState;
 };

@@ -17,24 +17,6 @@ namespace network
 	class CNetwork;
 }
 
-enum class GAME_OBJECT_TYPE : uint8
-{
-	OBJECT,				// 일반
-	PLAYER,				// 플레이어
-	MONSTER,			// 몬스터
-	BOSS_MONSTER,		// 보스몬스터
-	END
-};
-
-struct Collider
-{
-	int32_t id;
-	server::COLLIDER_TYPE type;
-	Vec3 pos;
-	Vec4 quat;
-	Vec3 scale;
-};
-
 class CGameObject : public Object, public enable_shared_from_this<CGameObject>
 {
 public:
@@ -72,13 +54,8 @@ public:
 	void SetStatic(bool flag) { m_static = flag; }
 	bool IsStatic() { return m_static; }
 
-	GAME_OBJECT_TYPE GetType(void) { return m_gameObjectType; }
 	server::OBJECT_TYPE GetObjectType() { return m_objectType; }
 
-	Collider& GetCollider(int32_t id) { return m_colliders[id]; }
-	void SetCollider(int32_t id, Collider& collider) { m_colliders[id] = collider; }
-
-	void ChangeColliderID(int32_t oldID, int32_t newID);
 	void SetObjectType(server::OBJECT_TYPE type) { m_objectType = type; }
 
 private:
@@ -89,9 +66,6 @@ private:
 	uint8 m_layerIndex = 0;
 	bool m_static = true;
 
-	GAME_OBJECT_TYPE m_gameObjectType = GAME_OBJECT_TYPE::OBJECT;
 	server::OBJECT_TYPE m_objectType;
-
-	std::unordered_map<int32_t, Collider> m_colliders;
 };
 

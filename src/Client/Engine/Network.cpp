@@ -81,17 +81,40 @@ namespace network
 		GET_NETWORK->Send(packet);
 	}
 
-	void CNetwork::SendAniIndexPacket(server::OBJECT_TYPE type)
+	void CNetwork::SendAniIndex(server::OBJECT_TYPE type)
 	{
 		CPacket packet;
 		auto anim{ GetAnimator() };
 
 		packet.WriteID(m_networkID);
-		packet.WriteProtocol(ProtocolID::MY_ANI_REQ);
+		//packet.WriteProtocol(ProtocolID::MY_ANI_REQ);
 		packet.Write<server::OBJECT_TYPE>(type);
 		packet.Write<int32_t>(anim->GetCurrentClipIndex());
 		packet.Write<float>(anim->GetUpdateTime());
 		packet.Write<float>(anim->GetAnimSpeed());
+
+		GET_NETWORK->Send(packet);
+	}
+
+	void CNetwork::SendAnimationTime(server::OBJECT_TYPE type, float time)
+	{
+		CPacket packet;
+
+		packet.WriteID(m_networkID);
+		packet.WriteProtocol(ProtocolID::MY_ANI_PLAY_TIME_REQ);
+		packet.Write<server::OBJECT_TYPE>(type);
+		packet.Write<float>(time);
+
+		GET_NETWORK->Send(packet);
+	}
+
+	void CNetwork::SendAnimationEnd(server::OBJECT_TYPE type)
+	{
+		CPacket packet;
+
+		packet.WriteID(m_networkID);
+		packet.WriteProtocol(ProtocolID::MY_ANI_END_REQ);
+		packet.Write<server::OBJECT_TYPE>(type);
 
 		GET_NETWORK->Send(packet);
 	}
@@ -130,44 +153,6 @@ namespace network
 		packet.WriteID(m_networkID);
 		packet.WriteProtocol(ProtocolID::WR_REMOVE_REQ);
 		packet.Write<server::OBJECT_TYPE>(type);
-
-		GET_NETWORK->Send(packet);
-	}
-
-	void CNetwork::SendAddObjectCollider(int32_t tempID, int32_t tempColliderID, Collider& collider, bool last)
-	{
-		CPacket packet;
-
-		packet.WriteID(tempID);
-		packet.WriteProtocol(ProtocolID::MY_ADD_OBJ_COLLIDER_REQ);
-
-		packet.Write<int32_t>(tempColliderID);
-		packet.Write<server::COLLIDER_TYPE>(collider.type);
-
-		packet.Write<float>(collider.pos.x);
-		packet.Write<float>(collider.pos.y);
-		packet.Write<float>(collider.pos.z);
-
-		packet.Write<float>(collider.quat.x);
-		packet.Write<float>(collider.quat.y);
-		packet.Write<float>(collider.quat.z);
-		packet.Write<float>(collider.quat.w);
-
-		packet.Write<float>(collider.scale.x);
-		packet.Write<float>(collider.scale.y);
-		packet.Write<float>(collider.scale.z);
-
-		packet.Write<bool>(last);
-
-		GET_NETWORK->Send(packet);
-	}
-
-	void CNetwork::SendDie()
-	{
-		CPacket packet;
-
-		packet.WriteID(m_networkID);
-		packet.WriteProtocol(ProtocolID::WR_DIE_REQ);
 
 		GET_NETWORK->Send(packet);
 	}

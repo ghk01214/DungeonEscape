@@ -32,7 +32,6 @@ public:
 
 	void Play(uint32 idx, float speed = 1.f);
 	void PlayFrame(uint32 idx, float updateTime, float speed = 1.f);
-	void PlayAndSend(uint32 idx, float updateTime, float speed = 1.f);
 
 	void CalculateUpdateTime();
 	void PlayNextFrame();

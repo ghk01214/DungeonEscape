@@ -18,6 +18,7 @@
 
 namespace game
 {
+#pragma region [CORE]
 	CServer::CServer() :
 		m_iocp{ INVALID_HANDLE_VALUE },
 		m_socket{ INVALID_SOCKET },
@@ -388,6 +389,7 @@ namespace game
 
 		std::cout << std::format("session[{}] disconnected\n", id);
 	}
+#pragma endregion
 #pragma region [PROCESS PACKET]
 	void CServer::ProcessPacket(int32_t id, network::CPacket& packet)
 	{
@@ -496,40 +498,6 @@ namespace game
 				InputCommandMessage(msg);
 			}
 			break;
-			case ProtocolID::MY_ADD_OBJ_REQ:
-			{
-				msg.tempObjectID = packet.ReadID();
-				msg.objType = packet.Read<server::OBJECT_TYPE>();
-				msg.fbxType = packet.Read<server::FBX_TYPE>();
-
-				InputCommandMessage(msg);
-			}
-			break;
-			case ProtocolID::MY_ADD_OBJ_COLLIDER_REQ:
-			{
-				msg.objID = packet.ReadID();
-
-				msg.colliderID = packet.Read<int32_t>();
-				msg.colliderType = packet.Read<server::COLLIDER_TYPE>();
-
-				msg.colliderPos.x = packet.Read<float>();
-				msg.colliderPos.y = packet.Read<float>();
-				msg.colliderPos.z = packet.Read<float>();
-
-				msg.colliderQuat.x = packet.Read<float>();
-				msg.colliderQuat.y = packet.Read<float>();
-				msg.colliderQuat.z = packet.Read<float>();
-				msg.colliderQuat.w = packet.Read<float>();
-
-				msg.colliderScale.x = packet.Read<float>();
-				msg.colliderScale.y = packet.Read<float>();
-				msg.colliderScale.z = packet.Read<float>();
-
-				msg.lastCollider = packet.Read<bool>();
-
-				InputCommandMessage(msg);
-			}
-			break;
 			case ProtocolID::MY_KEYINPUT_REQ:
 			{
 				msg.keyInput = packet.Read<ulong32_t>();
@@ -537,16 +505,17 @@ namespace game
 				InputCommandMessage(msg);
 			}
 			break;
-			case ProtocolID::MY_ANI_REQ:
+			case ProtocolID::MY_ANI_PLAY_TIME_REQ:
 			{
+				msg.aniPlayTime = packet.Read<float>();
+
+				InputCommandMessage(msg);
+			}
+			break;
+			case ProtocolID::MY_ANI_END_REQ:
+			{
+				msg.objID = packet.ReadID();
 				msg.objType = packet.Read<server::OBJECT_TYPE>();
-
-				if (msg.objType == server::OBJECT_TYPE::BOSS)
-					msg.objID = packet.ReadID();
-
-				msg.aniIndex = packet.Read<int32_t>();
-				msg.aniFrame = packet.Read<float>();
-				msg.aniSpeed = packet.Read<float>();
 
 				InputCommandMessage(msg);
 			}
@@ -575,19 +544,6 @@ namespace game
 
 		switch (protocol)
 		{
-			case ProtocolID::WR_JUMP_START_REQ:
-			{
-				msg.objID = packet.ReadID();
-
-				InputCommandMessage(msg);
-			}
-			case ProtocolID::WR_DIE_REQ:
-			{
-				msg.objID = packet.ReadID();
-
-				InputCommandMessage(msg);
-			}
-			break;
 			case ProtocolID::WR_REMOVE_REQ:
 			{
 				msg.objType = packet.Read<server::OBJECT_TYPE>();
@@ -676,13 +632,13 @@ namespace game
 
 	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* postOver)
 	{
-		CSession* session{ nullptr };
+		/*CSession* session{ nullptr };
 
 		if (postOver->playerID != -1)
 			session = m_sessions[postOver->playerID];
 
 		if (session != nullptr and session->GetState() != STATE::INGAME)
-			return;
+			return;*/
 
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
@@ -707,7 +663,7 @@ namespace game
 
 				//int32_t roomID{ postOver->roomID };
 
-				Login(id, session, nullptr, 0);
+				Login(id, m_sessions[postOver->playerID], nullptr, 0);
 
 				std::cout << std::format("session[{}] login complete\n", id);
 			}
@@ -723,7 +679,7 @@ namespace game
 #pragma region[MY]
 			case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
 			{
-				session->SendPlayerIDIssuePacket(postOver->playerID, postOver->msgProtocol);
+				m_sessions[postOver->playerID]->SendPlayerIDIssuePacket(postOver->playerID, postOver->msgProtocol);
 
 				/*for (auto& player : playerObjects)
 				{
@@ -748,11 +704,6 @@ namespace game
 				}*/
 			}
 			break;
-			case ProtocolID::MY_ADD_OBJ_COLLIDER_ACK:
-			{
-				session->SendAddObjectColliderPacket(postOver->playerID, postOver->objID, postOver->colliderID, postOver->tempColliderID, postOver->lastCollider);
-			}
-			break;
 			case ProtocolID::MY_TRANSFORM_ACK:
 			{
 				for (auto& client : m_sessions)
@@ -764,8 +715,20 @@ namespace game
 					{
 						auto pl{ dynamic_cast<Player*>(player) };
 
-						if (pl != nullptr)
-							client->SendTransformPacket(pl->GetID(), ProtocolID::WR_TRANSFORM_ACK, pl);
+						if (pl == nullptr)
+							continue;
+
+						client->SendTransformPacket(pl->GetID(), ProtocolID::WR_TRANSFORM_ACK, pl);
+					}
+
+					for (auto& monster : monsterObjects)
+					{
+						auto mob{ dynamic_cast<Monster*>(monster) };
+
+						if (mob == nullptr)
+							continue;
+
+						client->SendTransformPacket(mob->GetID(), ProtocolID::WR_TRANSFORM_ACK, mob);
 					}
 
 					for (auto& object : mapObjects)
@@ -795,7 +758,7 @@ namespace game
 					if (pl == nullptr)
 						continue;
 
-					session->SendAddAnimateObjPacket(pl->GetID(), pl);
+					m_sessions[postOver->playerID]->SendAddAnimateObjPacket(pl->GetID(), pl);
 
 					for (auto& client : m_sessions)
 					{
@@ -816,18 +779,30 @@ namespace game
 				{
 					auto mob{ dynamic_cast<Monster*>(monster) };
 
-					if (mob != nullptr)
-					{
-						session->SendAddAnimateObjPacket(mob->GetID(), mob);
-					}
+					if (mob == nullptr)
+						continue;
+
+					m_sessions[postOver->playerID]->SendAddAnimateObjPacket(mob->GetID(), mob);
+					mob->SetTransformSendFlag(true);
 				}
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
 			{
 				GameObject* object{ nullptr };
+				std::list<GameObject*> objects{};
 
-				for (auto& obj : mapObjects)
+				if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT)
+				{
+					objects = mapObjects;
+				}
+				else if (postOver->objType == server::OBJECT_TYPE::FIREBALL
+					or postOver->objType == server::OBJECT_TYPE::ICEBALL)
+				{
+					objects = skillObjects;
+				}
+
+				for (auto& obj : objects)
 				{
 					if (obj->GetID() != postOver->objID)
 						continue;
@@ -836,27 +811,13 @@ namespace game
 					break;
 				}
 
-				session->SendObjectIDPacket(postOver->objID, postOver->tempObjectID);
-
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					if (client->GetID() == postOver->playerID)
-						continue;
-
 					client->SendAddObjPacket(postOver->objID, object);
 				}
-			}
-			break;
-			case ProtocolID::WR_ADD_OBJ_COLLIDER_ACK:
-			{
-				// TODO : 충돌체 정보 전송
-				// 오브젝트 id : write id
-				// 충돌체 id
-				// 충돌체 종류
-				// 충돌체 위치, 회전, 크기
 			}
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
@@ -889,8 +850,7 @@ namespace game
 						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						if (mob != nullptr)
-							client->SendTransformPacket(mob->GetID(), ProtocolID::WR_TRANSFORM_ACK, mob);
+						client->SendTransformPacket(mob->GetID(), postOver->msgProtocol, mob);
 					}
 				}
 
@@ -908,7 +868,7 @@ namespace game
 
 						if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
 						{
-							client->SendTransformPacket(object->GetID(), ProtocolID::WR_TRANSFORM_ACK, object);	//트랜스폼 갱신
+							client->SendTransformPacket(object->GetID(), postOver->msgProtocol, object);	//트랜스폼 갱신
 							map->SetRequireFlagTransmit(false);														//플래그 체크
 						}
 					}
@@ -926,91 +886,48 @@ namespace game
 						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						client->SendTransformPacket(skill->GetID(), ProtocolID::WR_TRANSFORM_ACK, skill);
+						client->SendTransformPacket(skill->GetID(), postOver->msgProtocol, skill);
 					}
 				}
 			}
 			break;
-			case ProtocolID::WR_ANI_ACK:
+			case ProtocolID::WR_CHANGE_STATE_ACK:
 			{
-				for (auto& player : playerObjects)
+				if (postOver->objType == server::OBJECT_TYPE::PLAYER)
 				{
-					auto pl{ dynamic_cast<Player*>(player) };
-
-					if (pl == nullptr)
-						continue;
-
-					if (pl->GetID() != postOver->playerID)
-						continue;
-
-					for (auto& client : m_sessions)
+					for (auto& player : playerObjects)
 					{
-						if (client->GetState() != STATE::INGAME)
+						auto pl{ dynamic_cast<Player*>(player) };
+
+						if (pl == nullptr)
 							continue;
 
-						/*if (client->GetID() == postOver->playerID)
-							continue;*/
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
 
-						client->SendAniIndexPacket(postOver->playerID, postOver->msgProtocol, pl);
+							client->SendStatePacket(postOver->playerID, postOver->state);
+						}
 					}
 				}
-			}
-			break;
-			case ProtocolID::WR_JUMP_START_ACK:
-			{
-				for (auto& client : m_sessions)
+				else if (postOver->objType == server::OBJECT_TYPE::BOSS)
 				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
-
-					if (client->GetID() == postOver->playerID)
-						continue;
-
-					if (postOver->playerID != -1)
-						client->SendJumpStartPacket(postOver->playerID);
-					else
-						client->SendJumpStartPacket(postOver->objID);
-				}
-			}
-			break;
-			case ProtocolID::WR_ATTACK_ACK:
-			{
-				for (auto& skillObj : skillObjects)
-				{
-					auto skill{ dynamic_cast<SkillObject*>(skillObj) };
-
-					if (skill == nullptr)
-						continue;
-
-					for (auto& client : m_sessions)
+					for (auto& monster : monsterObjects)
 					{
-						if (client->GetState() != STATE::INGAME)
+						auto mob{ dynamic_cast<Monster*>(monster) };
+
+						if (mob == nullptr)
 							continue;
 
-						client->SendAddObjPacket(postOver->objID, skill);
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendStatePacket(postOver->objID, postOver->state);
+						}
 					}
-				}
-			}
-			break;
-			case ProtocolID::WR_HIT_ACK:
-			{
-				for (auto& client : m_sessions)
-				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
-
-					client->SendHitPacket(postOver->objID, postOver->hitOriginID);
-				}
-			}
-			break;
-			case ProtocolID::WR_DIE_ACK:
-			{
-				for (auto& client : m_sessions)
-				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
-
-					client->SendDiePacket(postOver->objID);
 				}
 			}
 			break;

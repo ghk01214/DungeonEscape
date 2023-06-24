@@ -30,7 +30,7 @@ void FBXLoader::LoadFbx(const std::wstring& path)
 }
 void FBXLoader::LoadFbxFromBinary(const HANDLE& hFile)
 {
-	uint32 size = 0;
+	uint32_t size = 0;
 
 	// 1. vector<FbxMeshInfo>의 사이즈 불러오기
 	size = loadInt(hFile);
@@ -38,9 +38,9 @@ void FBXLoader::LoadFbxFromBinary(const HANDLE& hFile)
 	m_meshInfo.resize(size);
 	for (auto& mesh : m_meshInfo)
 	{
-		uint32 num = 0;
+		uint32_t num = 0;
 		mesh.m_vertices = loadVecData<FBXVec3>(hFile);
-		mesh.m_indicies = loadVecData<uint32>(hFile);
+		mesh.m_indicies = loadVecData<uint32_t>(hFile);
 
 		// FBXTransformInfo 위치 정보 저장
 		FBXTransformInfo& transform = mesh.m_transformInfo;
@@ -75,14 +75,14 @@ void FBXLoader::LoadFbxFromBinary(const HANDLE& hFile)
 void FBXLoader::SaveFbxToBinary(const HANDLE& hFile)
 {
 	// 버티시즈, 인디시즈 정보 저장
-	uint32 num = 0;
+	uint32_t num = 0;
 
 	// 1. vector<FbxMeshInfo>의 사이즈 저장
 	num = m_meshes.size();
 	saveInt(hFile, num);
 
 	vector<FBXVec3> vertices;
-	vector<uint32> indicies;
+	vector<uint32_t> indicies;
 	for (auto& iter : m_meshes)
 	{
 		// 버텍스 정보 저장
@@ -200,8 +200,8 @@ void FBXLoader::ParseNode(FbxNode* node)
 	}
 
 	// Tree 구조 재귀 호출
-	const int32 childCount = node->GetChildCount();
-	for (int32 i = 0; i < childCount; ++i)
+	const int32_t childCount = node->GetChildCount();
+	for (int32_t i = 0; i < childCount; ++i)
 		ParseNode(node->GetChild(i));
 }
 
@@ -212,36 +212,36 @@ void FBXLoader::LoadMesh(FbxMesh* mesh)
 
 	meshInfo.name = s2ws(mesh->GetName());
 
-	const int32 vertexCount = mesh->GetControlPointsCount();
+	const int32_t vertexCount = mesh->GetControlPointsCount();
 	meshInfo.vertices.resize(vertexCount);
 	meshInfo.boneWeights.resize(vertexCount);
 
 	// Position
 	FbxVector4* controlPoints = mesh->GetControlPoints();
-	for (int32 i = 0; i < vertexCount; ++i)
+	for (int32_t i = 0; i < vertexCount; ++i)
 	{
 		meshInfo.vertices[i].pos.x = static_cast<float>(controlPoints[i].mData[0]);
 		meshInfo.vertices[i].pos.y = static_cast<float>(controlPoints[i].mData[2]);
 		meshInfo.vertices[i].pos.z = static_cast<float>(controlPoints[i].mData[1]);
 	}
 
-	const int32 materialCount = mesh->GetNode()->GetMaterialCount();
+	const int32_t materialCount = mesh->GetNode()->GetMaterialCount();
 	meshInfo.indices.resize(materialCount);
 
 	FbxGeometryElementMaterial* geometryElementMaterial = mesh->GetElementMaterial();
 
-	const int32 polygonSize = mesh->GetPolygonSize(0);
+	const int32_t polygonSize = mesh->GetPolygonSize(0);
 	assert(polygonSize == 3);
 
-	uint32 arrIdx[3];
-	uint32 vertexCounter = 0; // 정점의 개수
+	uint32_t arrIdx[3];
+	uint32_t vertexCounter = 0; // 정점의 개수
 
-	const int32 triCount = mesh->GetPolygonCount(); // 메쉬의 삼각형 개수를 가져온다
-	for (int32 i = 0; i < triCount; i++) // 삼각형의 개수
+	const int32_t triCount = mesh->GetPolygonCount(); // 메쉬의 삼각형 개수를 가져온다
+	for (int32_t i = 0; i < triCount; i++) // 삼각형의 개수
 	{
-		for (int32 j = 0; j < 3; j++) // 삼각형은 세 개의 정점으로 구성
+		for (int32_t j = 0; j < 3; j++) // 삼각형은 세 개의 정점으로 구성
 		{
-			int32 controlPointIndex = mesh->GetPolygonVertex(i, j); // 제어점의 인덱스 추출
+			int32_t controlPointIndex = mesh->GetPolygonVertex(i, j); // 제어점의 인덱스 추출
 			arrIdx[j] = controlPointIndex;
 
 			GetNormal(mesh, &meshInfo, controlPointIndex, vertexCounter);
@@ -251,7 +251,7 @@ void FBXLoader::LoadMesh(FbxMesh* mesh)
 			vertexCounter++;
 		}
 
-		const uint32 subsetIdx = geometryElementMaterial->GetIndexArray().GetAt(i);
+		const uint32_t subsetIdx = geometryElementMaterial->GetIndexArray().GetAt(i);
 		meshInfo.indices[subsetIdx].push_back(arrIdx[0]);
 		meshInfo.indices[subsetIdx].push_back(arrIdx[2]);
 		meshInfo.indices[subsetIdx].push_back(arrIdx[1]);
@@ -290,13 +290,13 @@ void FBXLoader::LoadMaterial(FbxSurfaceMaterial* surfaceMaterial)
 	m_meshes.back().materials.push_back(material);
 }
 
-void FBXLoader::GetNormal(FbxMesh* mesh, FbxMeshInfo* container, int32 idx, int32 vertexCounter)
+void FBXLoader::GetNormal(FbxMesh* mesh, FbxMeshInfo* container, int32_t idx, int32_t vertexCounter)
 {
 	if (mesh->GetElementNormalCount() == 0)
 		return;
 
 	FbxGeometryElementNormal* normal = mesh->GetElementNormal();
-	uint32 normalIdx = 0;
+	uint32_t normalIdx = 0;
 
 	if (normal->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
 	{
@@ -319,7 +319,7 @@ void FBXLoader::GetNormal(FbxMesh* mesh, FbxMeshInfo* container, int32 idx, int3
 	container->vertices[idx].normal.z = static_cast<float>(vec.mData[1]);
 }
 
-void FBXLoader::GetTangent(FbxMesh* mesh, FbxMeshInfo* meshInfo, int32 idx, int32 vertexCounter)
+void FBXLoader::GetTangent(FbxMesh* mesh, FbxMeshInfo* meshInfo, int32_t idx, int32_t vertexCounter)
 {
 	if (mesh->GetElementTangentCount() == 0)
 	{
@@ -331,7 +331,7 @@ void FBXLoader::GetTangent(FbxMesh* mesh, FbxMeshInfo* meshInfo, int32 idx, int3
 	}
 
 	FbxGeometryElementTangent* tangent = mesh->GetElementTangent();
-	uint32 tangentIdx = 0;
+	uint32_t tangentIdx = 0;
 
 	if (tangent->GetMappingMode() == FbxGeometryElement::eByPolygonVertex)
 	{
@@ -354,7 +354,7 @@ void FBXLoader::GetTangent(FbxMesh* mesh, FbxMeshInfo* meshInfo, int32 idx, int3
 	meshInfo->vertices[idx].tangent.z = static_cast<float>(vec.mData[1]);
 }
 
-void FBXLoader::GetUV(FbxMesh* mesh, FbxMeshInfo* meshInfo, int32 idx, int32 uvIndex)
+void FBXLoader::GetUV(FbxMesh* mesh, FbxMeshInfo* meshInfo, int32_t idx, int32_t uvIndex)
 {
 	FbxVector2 uv = mesh->GetElementUV()->GetDirectArray().GetAt(uvIndex);
 	meshInfo->vertices[idx].uv.x = static_cast<float>(uv.mData[0]);
@@ -391,7 +391,7 @@ wstring FBXLoader::GetTextureRelativeName(FbxSurfaceMaterial* surface, const cha
 	FbxProperty textureProperty = surface->FindProperty(materialProperty);
 	if (textureProperty.IsValid())
 	{
-		uint32 count = textureProperty.GetSrcObjectCount();
+		uint32_t count = textureProperty.GetSrcObjectCount();
 
 		if (1 <= count)
 		{
@@ -404,7 +404,7 @@ wstring FBXLoader::GetTextureRelativeName(FbxSurfaceMaterial* surface, const cha
 	return s2ws(name);
 }
 
-void FBXLoader::LoadBones(FbxNode* node, int32 idx, int32 parentIdx)
+void FBXLoader::LoadBones(FbxNode* node, int32_t idx, int32_t parentIdx)
 {
 	FbxNodeAttribute* attribute = node->GetNodeAttribute();
 
@@ -416,17 +416,17 @@ void FBXLoader::LoadBones(FbxNode* node, int32 idx, int32 parentIdx)
 		m_bones.push_back(bone);
 	}
 
-	const int32 childCount = node->GetChildCount();
-	for (int32 i = 0; i < childCount; i++)
-		LoadBones(node->GetChild(i), static_cast<int32>(m_bones.size()), idx);
+	const int32_t childCount = node->GetChildCount();
+	for (int32_t i = 0; i < childCount; i++)
+		LoadBones(node->GetChild(i), static_cast<int32_t>(m_bones.size()), idx);
 }
 
 void FBXLoader::LoadAnimationInfo()
 {
 	m_scene->FillAnimStackNameArray(OUT m_animNames);
 
-	const int32 animCount = m_animNames.GetCount();
-	for (int32 i = 0; i < animCount; i++)
+	const int32_t animCount = m_animNames.GetCount();
+	for (int32_t i = 0; i < animCount; i++)
 	{
 		FbxAnimStack* animStack = m_scene->FindMember<FbxAnimStack>(m_animNames[i]->Buffer());
 		if (animStack == nullptr)
@@ -447,13 +447,13 @@ void FBXLoader::LoadAnimationInfo()
 
 void FBXLoader::LoadAnimationData(FbxMesh* mesh, FbxMeshInfo* meshInfo)
 {
-	const int32 skinCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
+	const int32_t skinCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
 	if (skinCount <= 0 || m_animClips.empty())
 		return;
 
 	meshInfo->hasAnimation = true;
 
-	for (int32 i = 0; i < skinCount; i++)
+	for (int32_t i = 0; i < skinCount; i++)
 	{
 		FbxSkin* fbxSkin = static_cast<FbxSkin*>(mesh->GetDeformer(i, FbxDeformer::eSkin));
 
@@ -462,22 +462,22 @@ void FBXLoader::LoadAnimationData(FbxMesh* mesh, FbxMeshInfo* meshInfo)
 			FbxSkin::EType type = fbxSkin->GetSkinningType();
 			if (FbxSkin::eRigid == type || FbxSkin::eLinear)
 			{
-				const int32 clusterCount = fbxSkin->GetClusterCount();
-				for (int32 j = 0; j < clusterCount; j++)
+				const int32_t clusterCount = fbxSkin->GetClusterCount();
+				for (int32_t j = 0; j < clusterCount; j++)
 				{
 					FbxCluster* cluster = fbxSkin->GetCluster(j);
 					if (cluster->GetLink() == nullptr)
 						continue;
 
-					int32 boneIdx = FindBoneIndex(cluster->GetLink()->GetName());
+					int32_t boneIdx = FindBoneIndex(cluster->GetLink()->GetName());
 					assert(boneIdx >= 0);
 
 					FbxAMatrix matNodeTransform = GetTransform(mesh->GetNode());
 					LoadBoneWeight(cluster, boneIdx, meshInfo);
 					LoadOffsetMatrix(cluster, matNodeTransform, boneIdx, meshInfo);
 
-					const int32 animCount = m_animNames.Size();
-					for (int32 k = 0; k < animCount; k++)
+					const int32_t animCount = m_animNames.Size();
+					for (int32_t k = 0; k < animCount; k++)
 						LoadKeyframe(k, mesh->GetNode(), cluster, matNodeTransform, boneIdx, meshInfo);
 				}
 			}
@@ -490,8 +490,8 @@ void FBXLoader::LoadAnimationData(FbxMesh* mesh, FbxMeshInfo* meshInfo)
 
 void FBXLoader::FillBoneWeight(FbxMesh* mesh, FbxMeshInfo* meshInfo)
 {
-	const int32 size = static_cast<int32>(meshInfo->boneWeights.size());
-	for (int32 v = 0; v < size; v++)
+	const int32_t size = static_cast<int32_t>(meshInfo->boneWeights.size());
+	for (int32_t v = 0; v < size; v++)
 	{
 		BoneWeight& boneWeight = meshInfo->boneWeights[v];
 		boneWeight.Normalize();
@@ -499,8 +499,8 @@ void FBXLoader::FillBoneWeight(FbxMesh* mesh, FbxMeshInfo* meshInfo)
 		float animBoneIndex[4] = {};
 		float animBoneWeight[4] = {};
 
-		const int32 weightCount = static_cast<int32>(boneWeight.boneWeights.size());
-		for (int32 w = 0; w < weightCount; w++)
+		const int32_t weightCount = static_cast<int32_t>(boneWeight.boneWeights.size());
+		for (int32_t w = 0; w < weightCount; w++)
 		{
 			animBoneIndex[w] = static_cast<float>(boneWeight.boneWeights[w].first);
 			animBoneWeight[w] = static_cast<float>(boneWeight.boneWeights[w].second);
@@ -521,18 +521,18 @@ HANDLE FBXLoader::CreateFileRead(const wstring& path)
 	return CreateFile(path.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 }
 
-void FBXLoader::LoadBoneWeight(FbxCluster* cluster, int32 boneIdx, FbxMeshInfo* meshInfo)
+void FBXLoader::LoadBoneWeight(FbxCluster* cluster, int32_t boneIdx, FbxMeshInfo* meshInfo)
 {
-	const int32 indicesCount = cluster->GetControlPointIndicesCount();
-	for (int32 i = 0; i < indicesCount; i++)
+	const int32_t indicesCount = cluster->GetControlPointIndicesCount();
+	for (int32_t i = 0; i < indicesCount; i++)
 	{
 		double weight = cluster->GetControlPointWeights()[i];
-		int32 vtxIdx = cluster->GetControlPointIndices()[i];
+		int32_t vtxIdx = cluster->GetControlPointIndices()[i];
 		meshInfo->boneWeights[vtxIdx].AddWeights(boneIdx, weight);
 	}
 }
 
-void FBXLoader::LoadOffsetMatrix(FbxCluster* cluster, const FbxAMatrix& matNodeTransform, int32 boneIdx, FbxMeshInfo* meshInfo)
+void FBXLoader::LoadOffsetMatrix(FbxCluster* cluster, const FbxAMatrix& matNodeTransform, int32_t boneIdx, FbxMeshInfo* meshInfo)
 {
 	FbxAMatrix matClusterTrans;
 	FbxAMatrix matClusterLinkTrans;
@@ -559,7 +559,7 @@ void FBXLoader::LoadOffsetMatrix(FbxCluster* cluster, const FbxAMatrix& matNodeT
 	m_bones[boneIdx]->matOffset = matOffset.Transpose();
 }
 
-void FBXLoader::LoadKeyframe(int32 animIndex, FbxNode* node, FbxCluster* cluster, const FbxAMatrix& matNodeTransform, int32 boneIdx, FbxMeshInfo* meshInfo)
+void FBXLoader::LoadKeyframe(int32_t animIndex, FbxNode* node, FbxCluster* cluster, const FbxAMatrix& matNodeTransform, int32_t boneIdx, FbxMeshInfo* meshInfo)
 {
 	if (m_animClips.empty())
 		return;
@@ -601,7 +601,7 @@ void FBXLoader::LoadKeyframe(int32 animIndex, FbxNode* node, FbxCluster* cluster
 	}
 }
 
-int32 FBXLoader::FindBoneIndex(string name)
+int32_t FBXLoader::FindBoneIndex(string name)
 {
 	wstring boneName = wstring(name.begin(), name.end());
 

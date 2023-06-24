@@ -1,14 +1,12 @@
 ﻿#pragma once
 
-
 #define GET_INSTANCE(CLASSNAME)	[](){					\
-	CLASSNAME*	instance = CLASSNAME::GetInstance();			
-
+	CLASSNAME*	instance = CLASSNAME::GetInstance();
 
 #define NO_COPY(CLASSNAME)								\
 	private:											\
 	CLASSNAME(const CLASSNAME&);						\
-	CLASSNAME& operator = (const CLASSNAME&);	
+	CLASSNAME& operator = (const CLASSNAME&);
 
 
 #define DeclareSingletone(CLASSNAME)					\
@@ -17,7 +15,7 @@
 	static CLASSNAME*	instance;						\
 	public:												\
 	static CLASSNAME*	GetInstance();					\
-	void DestroyInstance();				
+	void DestroyInstance();
 
 
 #define ImplementSingletone(CLASSNAME)					\
@@ -38,8 +36,4 @@
 			delete instance;							\
 			instance = nullptr;							\
 		}												\
-	}																				
-
-
-
-
+	}

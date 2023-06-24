@@ -7,7 +7,7 @@
 #include "RigidBody.h"
 #include "CollisionPairInfo.h"
 #include "MessageHandler.h"
-#include "Monster.h"
+#include "Monsters.hpp"
 
 SkillObject::SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, server::OBJECT_TYPE type)
 	: GameObject(position, rotation, scale), m_body(nullptr)//, m_objType(type)
@@ -28,7 +28,6 @@ void SkillObject::Init()
 void SkillObject::Update(double timeDelta)
 {
 	ActionsWhenHit();
-
 
 	GameObject::Update(timeDelta);
 }
@@ -66,14 +65,31 @@ void SkillObject::ActionsWhenHit()
 
 			auto monster{ dynamic_cast<Monster*>(collider->GetOwnerObject()) };
 
-			if (monster != nullptr)
+			if (monster != nullptr and monster->IsDead() == false)
 			{
-				game::Message hitMsg{ -1, ProtocolID::WR_HIT_ACK };
-				hitMsg.objID = monster->GetID();
-				hitMsg.objType = server::OBJECT_TYPE::BOSS;
-				hitMsg.hitID = m_id;
+				monster->GetDamaged(5);
+				std::cout << "BOSS HP : " << monster->GetHP() << "\n";
 
-				game::MessageHandler::GetInstance()->PushSendMessage(hitMsg);
+				switch (monster->GetFBXType())
+				{
+					case server::FBX_TYPE::WEEPER:
+					{
+						auto weeper{ dynamic_cast<Weeper*>(monster) };
+
+						if (weeper != nullptr)
+							weeper->SetState(Weeper::DAMAGE);
+					}
+					break;
+					case server::FBX_TYPE::DRAGON:
+					{
+						auto dragon{ dynamic_cast<Dragon*>(monster) };
+
+						if (dragon != nullptr)
+							dragon->SetState(Dragon::DAMAGE);
+					}
+					break;
+				}
+
 			}
 		}
 		else if (type == server::OBJECT_TYPE::PLAYER)

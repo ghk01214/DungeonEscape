@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include "MonoBehaviour.h"
+#include "Monster_Script.h"
 
-class Monster_Weeper : public MonoBehaviour
+class Monster_Weeper : public Monster_Script
 {
-private:
+public:
 	enum WEEPER_STATE
 	{
 		CAST1,
@@ -34,8 +34,10 @@ private:
 
 		END
 	};
+
 public:
 	Monster_Weeper();
+	Monster_Weeper(int32_t stateIndex);
 	~Monster_Weeper();
 
 public:
@@ -44,27 +46,13 @@ public:
 	virtual void LateUpdate() override;
 
 private:
-	void CheckState();
-	void UpdateFrameRepeat();
-	void UpdateFrameOnce();
+	void CheckState() override;
+	void UpdateFrameRepeat() override;
+	void UpdateFrameOnce() override;
 
-	void DecideMonsterDeath();
-
-private:
 	void ParsePackets();
 
-	void StartRender(network::CPacket& packet);
-	void Transform(network::CPacket& packet);
-	void ChangeAnimation(network::CPacket& packet);
-
 private:
-	WEEPER_STATE m_prevState = IDLE;
-	WEEPER_STATE m_currState = IDLE;
-
-	int32_t m_hp;
-
-	bool m_recvDead;
-private:
-	float m_radius;
-	float m_halfHeight;
+	WEEPER_STATE m_prevState;
+	WEEPER_STATE m_currState;
 };

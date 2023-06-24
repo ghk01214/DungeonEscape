@@ -42,15 +42,6 @@
     <Filter Include="소스 파일\Script\04. Player\Script">
       <UniqueIdentifier>{aaf5488c-ece7-40c8-8fb2-42a0e9ca5ae2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Script\04. Player\Script\Mistic">
-      <UniqueIdentifier>{fa0e460e-97a1-46ba-87fe-bfcb4b38c7ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Script\04. Player\Script\Nana">
-      <UniqueIdentifier>{2f2c2d85-79a8-4a27-a572-7ae364d6ddb3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Script\04. Player\Script\Carmel">
-      <UniqueIdentifier>{1af9db9a-5ea8-414e-9bab-e6e195fd4cb7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Script\03. Monster\Boss">
       <UniqueIdentifier>{f391a361-40f4-47f8-be68-26d238cfca11}</UniqueIdentifier>
     </Filter>
@@ -89,15 +80,6 @@
     <ClInclude Include="MainPlayer.h">
       <Filter>소스 파일\Script\04. Player</Filter>
     </ClInclude>
-    <ClInclude Include="Player_Mistic.h">
-      <Filter>소스 파일\Script\04. Player\Script\Mistic</Filter>
-    </ClInclude>
-    <ClInclude Include="Player_Carmel.h">
-      <Filter>소스 파일\Script\04. Player\Script\Carmel</Filter>
-    </ClInclude>
-    <ClInclude Include="Player_Nana.h">
-      <Filter>소스 파일\Script\04. Player\Script\Nana</Filter>
-    </ClInclude>
     <ClInclude Include="PlayerRangeAttack.h">
       <Filter>소스 파일\Script\04. Player\Script</Filter>
     </ClInclude>
@@ -106,6 +88,12 @@
     </ClInclude>
     <ClInclude Include="Scripts.hpp">
       <Filter>소스 파일\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="Player_Script.h">
+      <Filter>소스 파일\Script\04. Player\Script</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster_Script.h">
+      <Filter>소스 파일\Script\03. Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,20 +131,17 @@
     <ClCompile Include="MainPlayer.cpp">
       <Filter>소스 파일\Script\04. Player</Filter>
     </ClCompile>
-    <ClCompile Include="Player_Mistic.cpp">
-      <Filter>소스 파일\Script\04. Player\Script\Mistic</Filter>
-    </ClCompile>
-    <ClCompile Include="Player_Carmel.cpp">
-      <Filter>소스 파일\Script\04. Player\Script\Carmel</Filter>
-    </ClCompile>
-    <ClCompile Include="Player_Nana.cpp">
-      <Filter>소스 파일\Script\04. Player\Script\Nana</Filter>
-    </ClCompile>
     <ClCompile Include="PlayerRangeAttack.cpp">
       <Filter>소스 파일\Script\04. Player\Script</Filter>
     </ClCompile>
     <ClCompile Include="Monster_Weeper.cpp">
       <Filter>소스 파일\Script\03. Monster\Boss\Weeper</Filter>
+    </ClCompile>
+    <ClCompile Include="Player_Script.cpp">
+      <Filter>소스 파일\Script\04. Player\Script</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Script.cpp">
+      <Filter>소스 파일\Script\03. Monster</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

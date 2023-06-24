@@ -560,116 +560,11 @@ namespace network
 	}
 #pragma endregion
 
-	void NetworkManager::AddPlayer(int32_t id)
-	{
-		std::wstring fbxName{};
-
-		m_packet.ReadWString(fbxName);
-
-		Vec3 pos{};
-		pos.x = m_packet.Read<float>();
-		pos.y = m_packet.Read<float>();
-		pos.z = m_packet.Read<float>();
-
-		Vec4 quat{};
-		quat.x = m_packet.Read<float>();
-		quat.y = m_packet.Read<float>();
-		quat.z = m_packet.Read<float>();
-		quat.w = m_packet.Read<float>();
-
-		Vec3 scale{};
-		scale.x = m_packet.Read<float>();
-		scale.y = m_packet.Read<float>();
-		scale.z = m_packet.Read<float>();
-
-		int32_t aniIndex{ m_packet.Read<int32_t>() };
-		float aniFrame{ m_packet.Read<float>() };
-
-		std::wstring newName{ fbxName + std::to_wstring(id) };
-
-		std::cout << std::format("ID : {}\n", id);
-		std::wcout << std::format(L"name : {}\n", newName);
-		std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
-		std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
-		std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
-
-		ObjectDesc objectDesc;
-		objectDesc.strName = newName;
-		objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + fbxName + L"\\" + fbxName + L".fbx";
-		objectDesc.vPostion = pos;	// pos;
-		objectDesc.vScale = scale;	// scale;
-		objectDesc.script = nullptr;
-
-		std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
-		std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
-		std::shared_ptr<CNetwork> networkComponent{ std::make_shared<CNetwork>(server::OBJECT_TYPE::PLAYER, id) };
-
-		for (auto& gameObject : gameObjects)
-		{
-			gameObject->SetName(objectDesc.strName);
-			gameObject->SetCheckFrustum(false);
-			gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
-			gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
-			gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
-			gameObject->AddComponent(objectDesc.script);
-			gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
-			gameObject->AddComponent(networkComponent);
-			gameObject->GetAnimator()->Play(aniIndex, aniFrame);
-		}
-
-		GET_SCENE->AddPlayer(gameObjects);
-
-		m_objects[id] = gameObjects;
-	}
-
 	void NetworkManager::RemovePlayer(int32_t id)
 	{
 		GET_SCENE->RemovePlayer(m_objects[id]);
 
 		m_objects.erase(id);
-	}
-
-	void NetworkManager::TransformPlayer(int32_t id)
-	{
-		// 패킷에서 오브젝트를 렌더링할 좌표 읽기
-		Vec3 pos;
-		pos.x = m_packet.Read<float>();
-		pos.y = m_packet.Read<float>();
-		pos.z = m_packet.Read<float>();
-
-		Vec4 quat;
-		quat.x = m_packet.Read<float>();
-		quat.y = m_packet.Read<float>();
-		quat.z = m_packet.Read<float>();
-		quat.w = m_packet.Read<float>();
-
-		Vec3 scale;
-		scale.x = m_packet.Read<float>();
-		scale.y = m_packet.Read<float>();
-		scale.z = m_packet.Read<float>();
-
-		// 오브젝트를 렌더링할 좌표를 오브젝트에 설정
-		for (auto& object : m_objects[id])
-		{
-			auto transform = object->GetTransform();
-
-			transform->SetWorldVec3Position(pos);
-			auto mat{ Matrix::CreateTranslation(pos) };
-			transform->SetWorldMatrix(mat);
-		}
-	}
-
-	void NetworkManager::PlayAni(int32_t id)
-	{
-		int32_t aniIndex{ m_packet.Read<int32_t>() };
-		float aniFrame{ m_packet.Read<float>() };
-
-		for (auto& object : m_objects[id])
-		{
-			object->GetAnimator()->Play(aniIndex, aniFrame);
-		}
-
-		std::cout << "changed player[" << id << "] animation to " << aniIndex << std::endl;
 	}
 #pragma endregion
 }

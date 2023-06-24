@@ -78,12 +78,6 @@ void Animator::Play(uint32 idx, float speed)
 	m_updateTime = 0.f;
 	m_aniSpeed = speed;
 	m_aniClipInfo = m_animClips->at(idx);
-
-	auto network{ GetGameObject()->GetNetwork() };
-	if (network != nullptr)
-	{
-		network->SendAniIndexPacket(GetGameObject()->GetObjectType());
-	}
 }
 
 void Animator::PlayFrame(uint32 idx, float updateTime, float speed)
@@ -93,17 +87,6 @@ void Animator::PlayFrame(uint32 idx, float updateTime, float speed)
 	m_updateTime = updateTime;
 	m_aniSpeed = speed;
 	m_aniClipInfo = m_animClips->at(idx);
-}
-
-void Animator::PlayAndSend(uint32 idx, float updateTime, float speed)
-{
-	PlayFrame(idx, updateTime, speed);
-
-	auto network{ GetGameObject()->GetNetwork() };
-	if (network != nullptr)
-	{
-		network->SendAniIndexPacket(GetGameObject()->GetObjectType());
-	}
 }
 
 void Animator::CalculateUpdateTime()
@@ -118,12 +101,21 @@ void Animator::PlayNextFrame()
 	m_frame = min(m_frame, m_aniClipInfo.frameCount - 1);
 	m_nextFrame = min(m_frame + 1, m_aniClipInfo.frameCount - 1);
 	m_frameRatio = static_cast<float>(m_frame - m_frame);
+
+	auto network{ GetGameObject()->GetNetwork() };
+	if (network != nullptr)
+		network->SendAnimationTime(GetGameObject()->GetObjectType(), m_updateTime);
 }
 
 bool Animator::IsAnimationEnd()
 {
 	if (m_updateTime >= m_aniClipInfo.duration)
+	{
+		m_updateTime = 0.f;
+		GetNetwork()->SendAnimationEnd(GetGameObject()->GetObjectType());
+
 		return true;
+	}
 
 	return false;
 }
@@ -148,4 +140,8 @@ void Animator::RepeatPlay()
 	m_frame = min(m_frame, m_aniClipInfo.frameCount - 1);
 	m_nextFrame = min(m_frame + 1, m_aniClipInfo.frameCount - 1);
 	m_frameRatio = static_cast<float>(m_frame - m_frame);
+
+	auto network{ GetGameObject()->GetNetwork() };
+	if (network != nullptr)
+		network->SendAnimationTime(GetGameObject()->GetObjectType(), m_updateTime);
 }

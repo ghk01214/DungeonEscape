@@ -13,10 +13,10 @@ struct FbxMaterialInfo
 
 struct BoneWeight
 {
-	using Pair = std::pair<int32, double>;
+	using Pair = std::pair<int32_t, double>;
 	std::vector<Pair> boneWeights;
 
-	void AddWeights(uint32 index, double weight)
+	void AddWeights(uint32_t index, double weight)
 	{
 		if (weight <= 0.f)
 			return;
@@ -47,7 +47,7 @@ struct FbxMeshInfo
 	std::wstring						name;
 	FBXTransformInfo					transform;
 	std::vector<Vertex>					vertices;
-	std::vector<std::vector<uint32>>	indices;
+	std::vector<std::vector<uint32_t>>	indices;
 	std::vector<FbxMaterialInfo>		materials;
 	std::vector<BoneWeight>				boneWeights; // 뼈 가중치
 	bool								hasAnimation;
@@ -62,7 +62,7 @@ struct FbxKeyFrameInfo
 struct FbxBoneInfo
 {
 	std::wstring			boneName;
-	int32					parentIndex;
+	int32_t					parentIndex;
 	FbxAMatrix				matOffset;
 };
 
@@ -91,8 +91,8 @@ public:
 	void makeBinaryFilePath(const std::wstring& path);
 
 public:
-	int32 GetMeshCount() { return static_cast<int32>(m_meshes.size()); }
-	const FbxMeshInfo& GetMesh(int32 idx) { return m_meshes[idx]; }
+	int32_t GetMeshCount() { return static_cast<int32_t>(m_meshes.size()); }
+	const FbxMeshInfo& GetMesh(int32_t idx) { return m_meshes[idx]; }
 	std::vector<std::shared_ptr<FbxBoneInfo>>& GetBones() { return m_bones; }
 	std::vector<std::shared_ptr<FbxAnimClipInfo>>& GetAnimClip() { return m_animClips; }
 private:
@@ -103,23 +103,23 @@ private:
 	void LoadPosition(FbxNode* pNode);
 	void LoadMaterial(FbxSurfaceMaterial* surfaceMaterial);
 
-	void		GetNormal(FbxMesh* mesh, FbxMeshInfo* container, int32 idx, int32 vertexCounter);
-	void		GetTangent(FbxMesh* mesh, FbxMeshInfo* container, int32 idx, int32 vertexCounter);
-	void		GetUV(FbxMesh* mesh, FbxMeshInfo* container, int32 idx, int32 vertexCounter);
+	void		GetNormal(FbxMesh* mesh, FbxMeshInfo* container, int32_t idx, int32_t vertexCounter);
+	void		GetTangent(FbxMesh* mesh, FbxMeshInfo* container, int32_t idx, int32_t vertexCounter);
+	void		GetUV(FbxMesh* mesh, FbxMeshInfo* container, int32_t idx, int32_t vertexCounter);
 	FBXVec4		GetMaterialData(FbxSurfaceMaterial* surface, const char* materialName, const char* factorName);
 	std::wstring		GetTextureRelativeName(FbxSurfaceMaterial* surface, const char* materialProperty);
 
 	// Animation
 	void LoadBones(FbxNode* node) { LoadBones(node, 0, -1); }
-	void LoadBones(FbxNode* node, int32 idx, int32 parentIdx);
+	void LoadBones(FbxNode* node, int32_t idx, int32_t parentIdx);
 	void LoadAnimationInfo();
 
 	void LoadAnimationData(FbxMesh* mesh, FbxMeshInfo* meshInfo);
-	void LoadBoneWeight(FbxCluster* cluster, int32 boneIdx, FbxMeshInfo* meshInfo);
-	void LoadOffsetMatrix(FbxCluster* cluster, const FbxAMatrix& matNodeTransform, int32 boneIdx, FbxMeshInfo* meshInfo);
-	void LoadKeyframe(int32 animIndex, FbxNode* node, FbxCluster* cluster, const FbxAMatrix& matNodeTransform, int32 boneIdx, FbxMeshInfo* container);
+	void LoadBoneWeight(FbxCluster* cluster, int32_t boneIdx, FbxMeshInfo* meshInfo);
+	void LoadOffsetMatrix(FbxCluster* cluster, const FbxAMatrix& matNodeTransform, int32_t boneIdx, FbxMeshInfo* meshInfo);
+	void LoadKeyframe(int32_t animIndex, FbxNode* node, FbxCluster* cluster, const FbxAMatrix& matNodeTransform, int32_t boneIdx, FbxMeshInfo* container);
 
-	int32 FindBoneIndex(std::string name);
+	int32_t FindBoneIndex(std::string name);
 	FbxAMatrix GetTransform(FbxNode* node);
 
 	void FillBoneWeight(FbxMesh* mesh, FbxMeshInfo* meshInfo);

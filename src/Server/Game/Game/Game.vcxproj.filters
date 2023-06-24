@@ -164,8 +164,14 @@
     <Filter Include="03. Game\01. GameObject\TriggerObject">
       <UniqueIdentifier>{f4b7b417-5c0b-47b2-9fe1-f7a81ae65959}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. DB">
+    <Filter Include="01. Server\DB">
       <UniqueIdentifier>{c03ab8b2-3cf9-4361-b4d8-e8b8b37f6d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\Monster\Weeper">
+      <UniqueIdentifier>{c677c425-4658-4b78-8a4c-2b85b2c5847f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\Monster\Dragon">
+      <UniqueIdentifier>{a0c86811-ad09-48e6-9f30-8035ee079645}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -309,7 +315,13 @@
       <Filter>03. Game\01. GameObject\TriggerObject</Filter>
     </ClCompile>
     <ClCompile Include="Database.cpp">
-      <Filter>03. DB</Filter>
+      <Filter>01. Server\DB</Filter>
+    </ClCompile>
+    <ClCompile Include="Weeper.cpp">
+      <Filter>03. Game\01. GameObject\Monster\Weeper</Filter>
+    </ClCompile>
+    <ClCompile Include="Dragon.cpp">
+      <Filter>03. Game\01. GameObject\Monster\Dragon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -476,7 +488,16 @@
       <Filter>03. Game\01. GameObject\TriggerObject</Filter>
     </ClInclude>
     <ClInclude Include="Database.h">
-      <Filter>03. DB</Filter>
+      <Filter>01. Server\DB</Filter>
+    </ClInclude>
+    <ClInclude Include="Weeper.h">
+      <Filter>03. Game\01. GameObject\Monster\Weeper</Filter>
+    </ClInclude>
+    <ClInclude Include="Dragon.h">
+      <Filter>03. Game\01. GameObject\Monster\Dragon</Filter>
+    </ClInclude>
+    <ClInclude Include="Monsters.hpp">
+      <Filter>03. Game\01. GameObject\Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

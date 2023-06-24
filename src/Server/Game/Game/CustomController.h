@@ -63,16 +63,14 @@ public:
 	void KeyboardReceive(ulong32_t key);
 
 public:
-	void GetKeyboardStatus();	//Receive와 다른, player코드에서 키보드 정보를 얻기 위한 함수
-
-public:
 	void SetMoveSpeed(float value);
 	float GetMoveSpeed();
 	void SetJumpSpeed(float value);
 	float GetJumpSpeed();
 	float GetDistanceFromGround();
-	KeyInput& GetKeyInput(KEY_ORDER key);
-	KeyInput& GetKeyInput(int32_t key);
+	KeyInput& GetKeyStatus(KEY_ORDER key);
+	KeyInput& GetKeyStatus(int32_t key);
+	std::vector<KeyInput>& GetKeyInput();
 
 public:
 	void BounceFromAttack();	//호출시키지 않으면 공격넉백 적용이 불가능하다

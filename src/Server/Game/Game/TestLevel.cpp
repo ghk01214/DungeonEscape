@@ -2,7 +2,7 @@
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
-#include "Monster.h"
+#include "Monsters.hpp"
 #include "MapObject.h"
 #include "TriggerObject.h"
 #include "RigidBody.h"
@@ -50,7 +50,7 @@ void TestLevel::LoadMap()
 
 
 	// actor 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage4.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1.FBX");
 
 	auto objmgr = ObjectManager::GetInstance();
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
@@ -233,10 +233,7 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Trigger");
 
 
-	auto MonsterObject = objmgr->AddGameObjectToLayer<Monster>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	MonsterObject->SetName(L"Weeper");
-	MonsterObject->SetObjectType(server::OBJECT_TYPE::BOSS);
-	MonsterObject->SetFBXType(server::FBX_TYPE::WEEPER);
+	auto MonsterObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 	MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
 
 

@@ -67,10 +67,7 @@ namespace network
 		void ProcessTTPacket(ProtocolID type);
 #pragma endregion
 
-		void AddPlayer(int32_t id);
 		void RemovePlayer(int32_t id);
-		void TransformPlayer(int32_t id);
-		void PlayAni(int32_t id);
 
 	private:
 		HANDLE m_iocp;

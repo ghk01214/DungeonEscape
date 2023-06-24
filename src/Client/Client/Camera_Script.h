@@ -5,13 +5,17 @@
 class Camera_Basic : public MonoBehaviour
 {
 public:
+	Camera_Basic();
+	~Camera_Basic();
+
+public:
 	virtual void Update() override;
 	virtual void LateUpdate() override;
 
 private:
-	float		_speed = 2000.f;
-	float		m_lengthX = 1000.f;
-	float		m_lengthY = 600.f;
-	float		m_rotation = 0.f;
+	float m_speed;
+	float m_lengthX;
+	float m_lengthY;
+	float m_rotation;
 };
 

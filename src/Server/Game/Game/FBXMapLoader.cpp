@@ -20,9 +20,9 @@ void FBXMapLoader::AddBasicObject(std::wstring path)
     loader.LoadFbx(path);
 
     std::vector<FBXVec3> vertices;
-    std::vector<uint32> indicies;
+    std::vector<uint32_t> indicies;
 
-    for (int32 i = 0; i < loader.GetMeshCount(); i++)
+    for (int32_t i = 0; i < loader.GetMeshCount(); i++)
     {
         const FbxMeshInfo& mesh = loader.GetMesh(i);
 
@@ -130,7 +130,7 @@ void FBXMapLoader::ExtractObjectInfoFromFBX(std::wstring path)
     FBXLoader loader;
     loader.LoadFbx(path);
 
-    for (uint32 i = 0; i < loader.GetMeshCount(); ++i)
+    for (uint32_t i = 0; i < loader.GetMeshCount(); ++i)
     {
         const std::wstring& wstrName = loader.GetMesh(i).name;
         objectLocationInfo locationInfo{};

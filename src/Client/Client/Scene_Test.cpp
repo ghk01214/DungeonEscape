@@ -79,16 +79,6 @@ void Scene_Test::LateUpdate()
 				CreateRemoteObject(request);
 			}
 			break;
-			case ProtocolID::MY_ADD_OBJ_COLLIDER_ACK:
-			{
-				ChangeColliderID(request);
-			}
-			break;
-			case ProtocolID::WR_ADD_OBJ_COLLIDER_ACK:
-			{
-				AddColliderToObject(request);
-			}
-			break;
 			case ProtocolID::WR_REMOVE_ACK:
 			{
 				RemoveObject(request);
@@ -264,7 +254,7 @@ void Scene_Test::CreateMap(void)
 	//
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
 
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage4.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage1.FBX");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 
@@ -315,19 +305,16 @@ void Scene_Test::CreatePlayer(server::FBX_TYPE player)
 		case server::FBX_TYPE::NANA:
 		{
 			objectDesc.strName = L"Nana";
-			objectDesc.script = std::make_shared<Player_Nana>();
 		}
 		break;
 		case server::FBX_TYPE::MISTIC:
 		{
 			objectDesc.strName = L"Mistic";
-			objectDesc.script = std::make_shared<Player_Mistic>();
 		}
 		break;
 		case server::FBX_TYPE::CARMEL:
 		{
 			objectDesc.strName = L"Carmel";
-			objectDesc.script = std::make_shared<Player_Carmel>();
 		}
 		break;
 		default:
@@ -335,6 +322,7 @@ void Scene_Test::CreatePlayer(server::FBX_TYPE player)
 	}
 
 	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\" + objectDesc.strName + L"\\" + objectDesc.strName + L".fbx";
+	objectDesc.script = std::make_shared<Player_Script>(player);
 
 	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateAnimatedObject(objectDesc);
 	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::PLAYER);
@@ -407,14 +395,14 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
 
-	int32_t aniIndex{ packet.Read<int32_t>() };
-	float aniFrame{ packet.Read<float>() };
+	int32_t state{ packet.Read<int32_t>() };
+	float updateTime{ packet.Read<float>() };
 
 	server::OBJECT_TYPE objType{ packet.Read<server::OBJECT_TYPE>() };
 	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 
 	ObjectDesc objectDesc;
-	ClassifyObject(fbxType, objectDesc);
+	ClassifyObject(state, fbxType, objectDesc);
 
 	if (objType == server::OBJECT_TYPE::PLAYER)
 		objType = server::OBJECT_TYPE::REMOTE_PLAYER;
@@ -433,7 +421,7 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 		matWorld.Translation(pos);
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 		gameObject->SetObjectType(objType);
-		gameObject->GetAnimator()->PlayFrame(aniIndex, aniFrame);
+		gameObject->GetAnimator()->PlayFrame(state, updateTime);
 	}
 
 	AddObjectToScene(objType, gameObjects);
@@ -476,7 +464,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 
 	ObjectDesc objectDesc;
-	ClassifyObject(fbxType, objectDesc);
+	ClassifyObject(-1, fbxType, objectDesc);
 
 	network::NetworkGameObject gameObjects{ CreateMapObject(objectDesc) };
 	gameObjects = AddNetworkToObject(gameObjects, objType, objID);
@@ -500,53 +488,6 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 
 	AddObjectToScene(objType, gameObjects);
 	GET_NETWORK->AddNetworkObject(objID, gameObjects);
-}
-
-void Scene_Test::ChangeColliderID(network::CPacket& packet)
-{
-	int32_t tempObjID{ packet.Read<int32_t>() };
-	int32_t newID{ packet.Read<int32_t>() };
-	int32_t oldID{ packet.Read<int32_t>() };
-	int32_t objID{ m_objectIDMap[tempObjID] };
-	bool lastCollider{ packet.Read<bool>() };
-
-	auto objects{ GET_NETWORK->GetNetworkObject(objID) };
-
-	for (auto& object : objects)
-	{
-		object->ChangeColliderID(oldID, newID);
-	}
-}
-
-void Scene_Test::AddColliderToObject(network::CPacket& packet)
-{
-	int32_t objID{ packet.ReadID() };
-
-	Collider collider;
-
-	collider.id = packet.Read<int32_t>();
-	collider.type = packet.Read<server::COLLIDER_TYPE>();
-
-	collider.pos.x = packet.Read<float>();
-	collider.pos.y = packet.Read<float>();
-	collider.pos.z = packet.Read<float>();
-
-	collider.quat.x = packet.Read<float>();
-	collider.quat.y = packet.Read<float>();
-	collider.quat.z = packet.Read<float>();
-	collider.quat.w = packet.Read<float>();
-
-	collider.scale.x = packet.Read<float>();
-	collider.scale.y = packet.Read<float>();
-	collider.scale.z = packet.Read<float>();
-
-	auto objects{ GET_NETWORK->GetNetworkObject(objID) };
-
-	// 개량 필요
-	for (auto& object : objects)
-	{
-		object->SetCollider(collider.id, collider);
-	}
 }
 
 void Scene_Test::RemoveObject(network::CPacket& packet)
@@ -610,7 +551,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 	GET_NETWORK->RemoveNetworkObject(id);
 }
 
-void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc)
+void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, ObjectDesc& objectDesc)
 {
 	switch (type)
 	{
@@ -618,7 +559,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc)
 		{
 			objectDesc.strName = L"Nana";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx";
-			objectDesc.script = std::make_shared<Player_Nana>();
+			objectDesc.script = std::make_shared<Player_Script>(type);
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
@@ -626,7 +567,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc)
 		{
 			objectDesc.strName = L"Mistic";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
-			objectDesc.script = std::make_shared<Player_Mistic>();
+			objectDesc.script = std::make_shared<Player_Script>(type);
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
@@ -634,7 +575,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc)
 		{
 			objectDesc.strName = L"Carmel";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx";
-			objectDesc.script = std::make_shared<Player_Carmel>();
+			objectDesc.script = std::make_shared<Player_Script>(type);
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
@@ -642,14 +583,14 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc)
 		{
 			objectDesc.strName = L"Weeper";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\Weeper.fbx";
-			objectDesc.script = std::make_shared<Monster_Weeper>();
+			objectDesc.script = std::make_shared<Monster_Weeper>(stateIndex);
 		}
 		break;
 		case server::FBX_TYPE::DRAGON:
 		{
 			objectDesc.strName = L"Dragon";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Dragon\\Dragon.fbx";
-			objectDesc.script = std::make_shared<Monster_Dragon>();
+			objectDesc.script = std::make_shared<Monster_Dragon>(stateIndex);
 		}
 		break;
 		case server::FBX_TYPE::SPHERE:

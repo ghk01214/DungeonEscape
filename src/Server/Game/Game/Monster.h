@@ -11,19 +11,19 @@ public:
 	~Monster() override;
 
 public:
-	virtual void Init();
+	virtual void Init() override;
 	virtual void Update(double timeDelta) override;
 	virtual void LateUpdate(double timeDelta) override;
-	virtual void Release();
+	virtual void Release() override;
 
 public:
-	constexpr int32_t GetAniIndex() const { return m_aniIndex; }
-	constexpr float GetAniFrame() const { return m_aniFrame; }
 	CustomController* GetController() { return m_controller; }
-	constexpr int32_t GetHP() const { return m_hp; }
+	int32_t GetHP() const;
+	float GetAniPlayTime() const;
 
 	void SetFBXType(server::FBX_TYPE fbxType) override;
-	void SetAniInfo(int32_t aniIndex, float aniFrame, float aniSpeed);
+	void SetAniPlayTime(float time);
+	void SetAniEndFlag(bool flag);
 
 	bool IsOnGround();
 	bool IsDead();
@@ -37,15 +37,15 @@ public:
 	void SetControllerCameraLook(Vec3& value);
 
 public:
-	void MonsterPattern_GroundHit();	//땅을 내리쳐 같은 메쉬에 서있는 오브젝트들을 공중에 띄운다
 	void GetDamaged(int32_t damage);
 
-public:
-	CustomController* m_controller = nullptr;
+	void SendTransform();
+
+protected:
+	CustomController* m_controller;
 
 	int32_t m_hp;
 
-	int32_t m_aniIndex;
-	float m_aniFrame;
-	float m_aniSpeed;
+	float m_aniPlayTime;
+	bool m_aniEnd;
 };

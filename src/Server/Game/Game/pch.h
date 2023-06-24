@@ -75,14 +75,6 @@ namespace fs = std::filesystem;
 #endif
 
 // 각종 typedef
-using int8 = __int8;
-using int16 = __int16;
-using int32 = __int32;
-using int64 = __int64;
-using uint8 = unsigned __int8;
-using uint16 = unsigned __int16;
-using uint32 = unsigned __int32;
-using uint64 = unsigned __int64;
 using FBXVec2 = DirectX::SimpleMath::Vector2;
 using FBXVec3 = DirectX::SimpleMath::Vector3;
 using FBXVec4 = DirectX::SimpleMath::Vector4;
@@ -117,7 +109,7 @@ struct FBXTransformInfo
 struct FBXMeshInfomation
 {
 	std::vector<FBXVec3> m_vertices;
-	std::vector<uint32> m_indicies;
+	std::vector<uint32_t> m_indicies;
 	FBXTransformInfo m_transformInfo;
 };
 
@@ -129,7 +121,7 @@ template<typename T>
 void saveStructData(const HANDLE& hFile, T* data);
 
 void saveString(const HANDLE& hFile, const std::wstring& str);
-void saveInt(const HANDLE& hFile, uint32 number);
+void saveInt(const HANDLE& hFile, uint32_t number);
 void saveDouble(const HANDLE& hFile, double number);
 void saveMatrix(const HANDLE& hFile, const FBXMatrix& matrix);
 
@@ -137,9 +129,9 @@ template<typename T>
 inline void saveVecData(const HANDLE& hFile, std::vector<T>& data)
 {
 	DWORD		dwByte = 0;
-	uint32 dataCount = data.size();
+	uint32_t dataCount = data.size();
 
-	WriteFile(hFile, &dataCount, sizeof(uint32), &dwByte, NULL);
+	WriteFile(hFile, &dataCount, sizeof(uint32_t), &dwByte, NULL);
 	WriteFile(hFile, data.data(), sizeof(T) * dataCount, &dwByte, NULL);
 }
 
@@ -160,17 +152,17 @@ template<typename T>
 T loadStructData(const HANDLE& hFile);
 
 const std::wstring loadString(const HANDLE& hFile);
-const uint32 loadInt(const HANDLE& hFile);
+const uint32_t loadInt(const HANDLE& hFile);
 const double loadDouble(const HANDLE& hFile);
 const FBXMatrix loadMatrix(const HANDLE& hFile);
 
 template<typename T>
 inline std::vector<T> loadVecData(const HANDLE& hFile)
 {
-	uint32 num = 0;
-	DWORD		dwByte = 0;
+	uint32_t num = 0;
+	DWORD dwByte = 0;
 
-	ReadFile(hFile, &num, sizeof(uint32), &dwByte, NULL);
+	ReadFile(hFile, &num, sizeof(uint32_t), &dwByte, NULL);
 
 	std::vector<T> data;
 	data.resize(num);
@@ -183,8 +175,7 @@ inline std::vector<T> loadVecData(const HANDLE& hFile)
 template<typename T>
 inline T loadStructData(const HANDLE& hFile)
 {
-	DWORD		dwByte = 0;
-
+	DWORD dwByte = 0;
 	T data;
 
 	ReadFile(hFile, &data, sizeof(T), &dwByte, NULL);
@@ -225,3 +216,29 @@ extern std::default_random_engine dre;
 
 void ErrorQuit(const std::wstring_view& msg);
 void ErrorDisplay(const std::wstring_view& msg);
+
+template<typename T, typename U>
+concept IsFloatingPointV = requires
+{
+	std::is_floating_point_v<T>;
+	std::is_floating_point_v<U>;
+};
+
+template<typename T, typename U>
+inline bool IsEqual(T a, U b) requires IsFloatingPointV<T, U>
+{
+	if (typeid(T).name() == "double" and typeid(U).name() == "double")
+	{
+		if (std::abs(a - b) < DBL_EPSILON)
+			return true;
+
+		return false;
+	}
+	else
+	{
+		if (std::abs(a - b) < FLT_EPSILON)
+			return true;
+
+		return false;
+	}
+}

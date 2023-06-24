@@ -1,8 +1,6 @@
 ﻿#pragma once
 #pragma region [PLAYERS]
-#include "Player_Nana.h"
-#include "Player_Mistic.h"
-#include "Player_Carmel.h"
+#include "Player_Script.h"
 #include "PlayerRangeAttack.h"
 #pragma endregion
 
