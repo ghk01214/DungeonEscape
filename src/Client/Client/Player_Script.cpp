@@ -310,7 +310,7 @@ void Player_Script::StartRender(network::CPacket& packet)
 	matWorld.Translation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
 
-	GetAnimator()->Play(currState, updateTime);
+	m_currState = magic_enum::enum_value<PLAYER_STATE>(currState);
 }
 
 void Player_Script::Transform(network::CPacket& packet)
@@ -341,7 +341,7 @@ void Player_Script::Transform(network::CPacket& packet)
 	GetTransform()->SetWorldMatrix(matWorld);
 
 #pragma region [FOR DEBUGGING]
-	//auto t{ GetTransform()->GetWorldPosition() };
-	//std::cout << std::format("player id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
+	auto t{ GetTransform()->GetWorldPosition() };
+	std::cout << std::format("player id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
 #pragma endregion
 }

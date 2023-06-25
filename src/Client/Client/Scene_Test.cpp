@@ -478,7 +478,9 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 
 		if (objType == server::OBJECT_TYPE::FIREBALL
-			or objType == server::OBJECT_TYPE::ICEBALL)
+			or objType == server::OBJECT_TYPE::ICEBALL
+			or objType == server::OBJECT_TYPE::THUNDERBALL
+			or objType == server::OBJECT_TYPE::POISONBALL)
 		{
 			gameObject->AddComponent(objectDesc.script);
 		}
@@ -531,6 +533,8 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		break;
 		case server::OBJECT_TYPE::FIREBALL:
 		case server::OBJECT_TYPE::ICEBALL:
+		case server::OBJECT_TYPE::THUNDERBALL:
+		case server::OBJECT_TYPE::POISONBALL:
 		{
 			auto objects{ scene->GetNetworkObject() };
 			network::NetworkGameObject removeObjects;

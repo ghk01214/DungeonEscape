@@ -237,8 +237,8 @@ void TestLevel::Init()
 	MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
 
 
-	LoadBasicMap2();
-	//LoadMap();
+	//LoadBasicMap2();
+	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)

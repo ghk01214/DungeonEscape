@@ -187,7 +187,6 @@ void Player::ChangeStateByKeyInput()
 	{
 		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
 		case JUMP_START: case JUMPING: case DAMAGE: case DEAD:
-		return;
 		case DIE0: case DIE1: case DIE2:
 		return;
 		default:
@@ -254,11 +253,11 @@ void Player::State_Check_Enter()
 	switch (m_currState)				//state최초진입 행동정의
 	{
 		case AERT:
-		case ATK0:
-		case ATK1:
-		case ATK2:
-		case ATK3:
-		case ATK4:
+		{
+
+		}
+		break;
+		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
 		{
 			if (m_fbxType == server::FBX_TYPE::NANA)
 				PlayerPattern_SingleStrike();
@@ -415,6 +414,20 @@ void Player::Update_Frame_Continuous()
 {
 	switch (m_currState)				//연속된 애니메이션의 주기마다의 처리
 	{
+		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
+		case DAMAGE: case DIE0: case DIE1: case DIE2: case DEAD:
+		case JUMP_START: case JUMPING: case JUMP_END:
+		case SHOOT: case SLEEP: case SWOON: case TIRED:
+		return;
+		default:
+		break;
+	}
+}
+
+void Player::Update_Frame_Once()
+{
+	switch (m_currState)
+	{
 		case IDLE1: case IDLE2: case IDLE3:
 		case MOVE: case MOVE_LEFT: case MOVE_RIGHT:
 		case RUN: case RUN_LEFT: case RUN_RIGHT:
@@ -424,11 +437,14 @@ void Player::Update_Frame_Continuous()
 		default:
 		break;
 	}
-}
 
-void Player::Update_Frame_Once()
-{
-	if (!m_aniEnd)
+	if (m_controller->IsOnGround() == true)
+	{
+		if (m_currState == JUMP_START or m_currState == JUMPING)
+			m_currState = JUMP_END;
+	}
+
+	if (m_aniEnd == false)
 		return;
 
 	switch (m_currState)
@@ -478,13 +494,6 @@ void Player::Update_Frame_Once()
 		break;
 
 		m_aniEnd = false;
-		return;
-	}
-
-	if (m_controller->IsOnGround() == true)
-	{
-		if (m_currState == JUMP_START or m_currState == JUMPING)
-			m_currState = JUMP_END;
 	}
 }
 
@@ -657,7 +666,7 @@ void Player::PlayerPattern_ShootBall()
 	ballBody->AddForce(ForceMode::Impulse, playerCameraLook * power);
 
 	game::Message sendMsg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
-	sendMsg.objType = server::OBJECT_TYPE::FIREBALL;
+	sendMsg.objType = type;
 	sendMsg.objID = objID;
 
 	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
