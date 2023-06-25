@@ -19,6 +19,7 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_aniPlayTime{ 0.f },
 	m_aniEnd{ false },
 	m_hp{ 20 },
+	m_mp{ 100 },
 	m_firstSingleStrike{ true }
 {
 	m_id = playerID;
@@ -44,22 +45,24 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
-	if (m_hp <= 0)
-	{
-		m_currState = DIE0;
-		GameObject::Update(timeDelta);
+	ChangeStateByKeyInput();			//FSM 1단계	: 키보드 입력에 의한 STATE변경 (이동, 점프, 공격) STATE가 자유롭지 못할 시 진입X
 
-		return;
-	}
 
-	ChangeStateByKeyInput();
+	TriggerZoneStatusUpdate();			//FSM 2단계	: 위부 요인에 의한 STATE변경 (판단 순서 : MP부족 > 피격 > HP부족)
 
-	m_controller->Move(m_id);
 
-	IsOnGound();
-	PlayerPattern_SingleStrike();
-	PlayerPattern_ShootBall(server::OBJECT_TYPE::FIREBALL, 100.f);
-	TriggerZoneStatusUpdate();
+	IsOnGround();						//FSM 3단계	: 플레이어가 공중에 있다면 STATE불문 공중모션으로 변경
+
+	SkillAttempt();						//FSM 4단계 : STATE_CHECK직전 state가 공격이라면 마나상태에 따라 ATK or TIRED로 진입.
+	DeathCheck();						//			: IDLE상태에서 HP0면 state를 DIE0으로													//최종 STATE
+
+
+
+	State_Check_Enter();				//FSM 5단계	: 최종적으로 정해진 State진입에 대한 1회성 행동처리(공격함수 호출, 사운드 출력 등..)		//최종 STATE에 대한 처리
+	Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
+	Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
+
+	PlayerMove();						//			: controller를 사용해 이동한다. state가 move/jump가 아닐 시 키보드 정보 삭제
 
 	GameObject::Update(timeDelta);
 
@@ -68,9 +71,6 @@ void Player::Update(double timeDelta)
 
 void Player::LateUpdate(double timeDelta)
 {
-	CheckState();
-	UpdateFrame();
-
 	m_controller->ClearControllerCollisionInfo();
 	m_transform->ConvertPX(m_controller->GetBody()->GetGlobalPose());
 }
@@ -81,7 +81,7 @@ void Player::Release()
 	GameObject::Release();
 }
 
-void Player::IsOnGound()
+void Player::IsOnGround()
 {
 	auto distance{ m_controller->GetDistanceFromGround() };
 
@@ -186,7 +186,8 @@ void Player::ChangeStateByKeyInput()
 	switch (m_currState)
 	{
 		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
-		case JUMP_START:case DAMAGE: case DEAD:
+		case JUMP_START: case JUMPING: case DAMAGE: case DEAD:
+		return;
 		case DIE0: case DIE1: case DIE2:
 		return;
 		default:
@@ -195,81 +196,76 @@ void Player::ChangeStateByKeyInput()
 
 	auto key{ m_controller->GetKeyInput() };
 
-	if (key[W].down == true or key[W].press == true
-		or key[S].down == true or key[S].press == true)
+#pragma region 방향처리
+	if (key[W].press || key[A].press || key[S].press || key[D].press)
 	{
 		m_currState = MOVE;
 	}
-	else if (key[A].down == true or key[A].press == true)
-	{
-		m_currState = MOVE;
-	}
-	else if (key[D].down == true or key[D].press == true)
-	{
-		m_currState = MOVE;
-	}
-	else if (key[W].up == true or key[S].up == true
-		or key[A].up == true or key[D].up == true)
+
+	else if (key[W].up && key[S].up && key[A].up && key[D].up)
 	{
 		m_currState = IDLE1;
 	}
+#pragma endregion
 
-	if (key[SPACE].down == true and m_controller->IsOnGround() == true)
+#pragma region 점프처리
+	if (key[SPACE].down && m_controller->IsOnGround())
 	{
 		m_currState = JUMP_START;
+		return;			// 점프면 바로 함수 종료
 	}
-	else if (key[KEY_1].down == true)
+#pragma endregion
+
+#pragma region 스킬처리
+	//스킬누르면 방향키입력을 모조리 삭제
+
+	if (key[KEY_1].down)
 	{
 		m_currState = ATK0;
+		m_controller->Keyboard_Direction_Clear();
+		m_controller->Keyboard_SpaceBar_Clear();
 	}
-	else if (key[KEY_2].down == true)
+	else if (key[KEY_2].down)
 	{
 		m_currState = ATK1;
+		m_controller->Keyboard_Direction_Clear();
+		m_controller->Keyboard_SpaceBar_Clear();
 	}
-	else if (key[KEY_3].down == true)
+	else if (key[KEY_3].down)
 	{
 		m_currState = ATK2;
+		m_controller->Keyboard_Direction_Clear();
+		m_controller->Keyboard_SpaceBar_Clear();
 	}
-	else if (key[KEY_4].down == true)
+	else if (key[KEY_4].down)
 	{
 		m_currState = ATK3;
+		m_controller->Keyboard_Direction_Clear();
+		m_controller->Keyboard_SpaceBar_Clear();
 	}
+#pragma endregion
 }
 
-void Player::CheckState()
+void Player::State_Check_Enter()
 {
 	if (m_prevState == m_currState)
 		return;
 
-	switch (m_currState)
+	switch (m_currState)				//state최초진입 행동정의
 	{
 		case AERT:
-		{
-		}
-		break;
 		case ATK0:
-		{
-
-		}
-		break;
 		case ATK1:
-		{
-
-		}
-		break;
 		case ATK2:
-		{
-
-		}
-		break;
 		case ATK3:
-		{
-
-		}
-		break;
 		case ATK4:
 		{
-
+			if (m_fbxType == server::FBX_TYPE::NANA)
+				PlayerPattern_SingleStrike();
+			else if (m_fbxType == server::FBX_TYPE::MISTIC)
+				PlayerPattern_ShootBall();
+			else if (m_fbxType == server::FBX_TYPE::CARMEL)
+				std::cout << "카르멜도 패턴 추가해야함" << std::endl;
 		}
 		break;
 		case BLOCK:
@@ -415,9 +411,9 @@ void Player::CheckState()
 	game::MessageHandler::GetInstance()->PushSendMessage(msg);
 }
 
-void Player::UpdateFrame()
+void Player::Update_Frame_Continuous()
 {
-	switch (m_currState)
+	switch (m_currState)				//연속된 애니메이션의 주기마다의 처리
 	{
 		case IDLE1: case IDLE2: case IDLE3:
 		case MOVE: case MOVE_LEFT: case MOVE_RIGHT:
@@ -428,55 +424,58 @@ void Player::UpdateFrame()
 		default:
 		break;
 	}
+}
 
-	if (m_aniEnd == true)
+void Player::Update_Frame_Once()
+{
+	if (!m_aniEnd)
+		return;
+
+	switch (m_currState)
 	{
-		switch (m_currState)
+		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
 		{
-			case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
-			{
-				m_currState = IDLE1;
-			}
-			break;
-			case DAMAGE:
-			{
-				m_currState = IDLE1;
-			}
-			break;
-			case DIE0: case DIE1: case DIE2:
-			{
-				m_currState = DEAD;
-				m_startSendTransform = false;
-			}
-			break;
-			case JUMP_END:
-			{
-				m_currState = IDLE1;
-			}
-			break;
-			case SHOOT:
-			{
-				m_currState = IDLE1;
-			}
-			break;
-			case SLEEP:
-			{
-				m_currState = IDLE1;
-			}
-			break;
-			case SWOON:
-			{
-				m_currState = IDLE1;
-			}
-			break;
-			case TIRED:
-			{
-				m_currState = IDLE1;
-			}
-			break;
-			default:
-			break;
+			m_currState = IDLE1;
 		}
+		break;
+		case DAMAGE:
+		{
+			m_currState = IDLE1;
+		}
+		break;
+		case DIE0: case DIE1: case DIE2:
+		{
+			m_currState = DEAD;
+			m_startSendTransform = false;
+		}
+		break;
+		case JUMP_END:
+		{
+			m_currState = IDLE1;
+		}
+		break;
+		case SHOOT:
+		{
+			m_currState = IDLE1;
+		}
+		break;
+		case SLEEP:
+		{
+			m_currState = IDLE1;
+		}
+		break;
+		case SWOON:
+		{
+			m_currState = IDLE1;
+		}
+		break;
+		case TIRED:
+		{
+			m_currState = IDLE1;
+		}
+		break;
+		default:
+		break;
 
 		m_aniEnd = false;
 		return;
@@ -487,6 +486,70 @@ void Player::UpdateFrame()
 		if (m_currState == JUMP_START or m_currState == JUMPING)
 			m_currState = JUMP_END;
 	}
+}
+
+void Player::PlayerMove()
+{
+	if (m_currState == MOVE || m_currState == JUMP_START || m_currState == JUMPING)
+		m_controller->Keyboard_Direction_Clear();
+
+	m_controller->PlayerMove();
+}
+
+void Player::SkillAttempt()
+{
+	std::vector<int32_t> requiredMana;
+	requiredMana.resize(4);
+
+	//직업별 필요 마나 설정
+	if (m_fbxType == server::FBX_TYPE::NANA)				//전사
+	{
+		requiredMana[0] = 10;
+		requiredMana[1] = 20;
+		requiredMana[2] = 30;
+		requiredMana[3] = 40;
+	}
+	else if (m_fbxType == server::FBX_TYPE::MISTIC)				//법사
+	{
+		requiredMana[0] = 10;
+		requiredMana[1] = 20;
+		requiredMana[2] = 30;
+		requiredMana[3] = 40;
+	}
+	else if (m_fbxType == server::FBX_TYPE::CARMEL)				//힐러
+	{
+		requiredMana[0] = 10;
+		requiredMana[1] = 20;
+		requiredMana[2] = 30;
+		requiredMana[3] = 40;
+	}
+
+	// state(스킬)과 마나 비교
+	if (m_currState == ATK0 && m_mp < requiredMana[0])
+	{
+		m_currState = TIRED;
+	}
+	if (m_currState == ATK1 && m_mp < requiredMana[1])
+	{
+		m_currState = TIRED;
+	}
+	if (m_currState == ATK2 && m_mp < requiredMana[2])
+	{
+		m_currState = TIRED;
+	}
+	if (m_currState == ATK3 && m_mp < requiredMana[3])
+	{
+		m_currState = TIRED;
+	}
+}
+
+void Player::DeathCheck()
+{
+	if (m_currState == DIE0)					//반복호출을 막는다. 계속 DIE0이면 DEAD로 진행이 불가능하다.
+		return;
+
+	if (m_currState == IDLE1 && m_hp <= 0)		//IDLE상태일때만 죽음으로 보내버린다.
+		m_currState = DIE0;
 }
 
 void Player::SetControllerMoveSpeed(float value)
@@ -534,15 +597,37 @@ void Player::SetControllerCameraLook(Vec3& value)
 	m_controller->CameraLookReceive(value);
 }
 
-void Player::PlayerPattern_ShootBall(server::OBJECT_TYPE type, float power)
+void Player::PlayerPattern_ShootBall()
 {
-	if (m_fbxType != server::FBX_TYPE::MISTIC)
-		return;
-
-	int32_t keyIndex{ IsAttackKeyDown() };
-
-	if (keyIndex == -1)
-		return;
+	server::OBJECT_TYPE type;
+	float power;
+	switch (m_currState)
+	{
+		case ATK0:
+		{
+			type = server::OBJECT_TYPE::FIREBALL;
+			power = 20.f;
+		}
+		break;
+		case ATK1:
+		{
+			type = server::OBJECT_TYPE::ICEBALL;
+			power = 20.f;
+		}
+		break;
+		case ATK2:
+		{
+			type = server::OBJECT_TYPE::THUNDERBALL;
+			power = 20.f;
+		}
+		break;
+		case ATK3:
+		{
+			type = server::OBJECT_TYPE::POISONBALL;
+			power = 5.f;
+		}
+		break;
+	}
 
 	//투사체 위치 선정
 	physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
@@ -578,57 +663,49 @@ void Player::PlayerPattern_ShootBall(server::OBJECT_TYPE type, float power)
 	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
 
 	// KeyUp 상태가 전달되기까지의 딜레이가 있어서 로직 종료 시 key 상태 변경
-	m_controller->GetKeyStatus(keyIndex).None();
+	m_controller->Keyboard_ATK_Clear();
 }
 
 void Player::PlayerPattern_SingleStrike()
 {
-	if (m_fbxType != server::FBX_TYPE::NANA)
-		return;
+	float attackTime[2];
 
-	int32_t keyIndex{ IsAttackKeyDown() };
-
-	if (keyIndex == -1)
-		return;
-
-	enum { start, end };
-	std::array<float, 2> attackTime;
-
-	switch (keyIndex)
+	switch (m_currState)
 	{
-		case KEY_1:
+		case ATK0:
 		{
-			attackTime[start] = 0.2f;
-			attackTime[end] = 0.43f;
+			attackTime[0] = 0.2f;
+			attackTime[1] = 0.43f;
 		}
 		break;
-		case KEY_2:
+		case ATK1:
 		{
-			attackTime[start] = 0.2f;
-			attackTime[end] = 0.39f;
+			attackTime[0] = 0.2f;
+			attackTime[1] = 0.39f;
 		}
 		break;
-		case KEY_3:
+		case ATK2:
 		{
-			attackTime[start] = 0.08f;
-			attackTime[end] = 0.19f;
+			attackTime[0] = 0.08f;
+			attackTime[1] = 0.19f;
 		}
 		break;
-		case KEY_4:
+		case ATK3:
 		{
-			attackTime[start] = 0.6f;
-			attackTime[end] = 0.75f;
+			attackTime[0] = 0.6f;
+			attackTime[1] = 0.75f;
 		}
 		break;
-		//case KEY_5:
-		//{
-		//	attackTime[start] = 0.08f;
-		//	attackTime[end] = 0.27f;
-		//}
-		//break;
+		case ATK4:
+		{
+			attackTime[0] = 0.08f;
+			attackTime[1] = 0.27f;
+		}
+		break;
 		default:
 		break;
 	}
+			//공격 활성화 시간
 
 	auto objmgr = ObjectManager::GetInstance();
 	physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());				//플레이어 위치
@@ -645,7 +722,7 @@ void Player::PlayerPattern_SingleStrike()
 	if (m_firstSingleStrike == true)
 	{
 		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Trigger", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
-		m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, attackTime[start], attackTime[end]);
+		m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, attackTime[0], attackTime[1]);
 		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
 		triggerBody->AddCollider<BoxCollider>(m_attackTrigger->GetTransform()->GetScale());
 		triggerBody->GetCollider(0)->SetTrigger(true);
@@ -658,7 +735,7 @@ void Player::PlayerPattern_SingleStrike()
 		triggerBody->SetPosition(FROM_PX3(triggerPos), true);
 	}
 
-	m_controller->GetKeyStatus(keyIndex).None();
+	m_controller->Keyboard_ATK_Clear();
 }
 
 int32_t Player::IsAttackKeyDown()

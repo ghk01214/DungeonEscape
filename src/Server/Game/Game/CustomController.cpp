@@ -55,7 +55,7 @@ void CustomController::Release()
 	SafeRelease(m_body);
 }
 
-void CustomController::Move(int32_t objID)
+void CustomController::PlayerMove()
 {
 	if (!m_ownerGameObject->AccessAuthorized())
 		return;
@@ -65,9 +65,20 @@ void CustomController::Move(int32_t objID)
 	if (m_isPlayer)
 	{
 		DirectionInput_Player();
-		Movement_Player(objID);
+		Movement_Player();
 	}
-	else
+
+	CheckOnGround_Raycast();
+}
+
+void CustomController::MonsterMove()
+{
+	if (!m_ownerGameObject->AccessAuthorized())
+		return;
+
+	m_body->SetRigidBodySleep(false);
+
+	if (!m_isPlayer)
 	{
 		DirectionInput_Monster();
 		Movement_Monster();
@@ -231,7 +242,7 @@ Collider* CustomController::GetColliderBelow()
 
 void CustomController::DirectionInput_Player()
 {
-	bool serverConnected = true;
+	bool serverConnected = false;
 
 	if (serverConnected)
 	{
@@ -297,7 +308,7 @@ void CustomController::DirectionInput_Monster()
 
 }
 
-void CustomController::Movement_Player(int32_t objID)
+void CustomController::Movement_Player()
 {
 	if (m_body->isKinematic())
 		return;
@@ -306,7 +317,6 @@ void CustomController::Movement_Player(int32_t objID)
 
 	GetSlidingVector(CollisionInfoType::Stay);
 	PxVec3 surfaceNormal{ 0.f };
-	PxVec3 GarbageValue{ 0.f };
 
 	CheckOnGround(CollisionInfoType::Enter, surfaceNormal);
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
@@ -317,15 +327,9 @@ void CustomController::Movement_Player(int32_t objID)
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
 
-		//choice 1 : add velocity
 		PxVec3 velocity = m_body->GetVelocity();
 		velocity.y = m_jumpSpeed;
 		m_body->SetVelocity(velocity);
-
-#pragma region choice2 add force
-		//PxVec3 force = m_moveDirection * m_body->GetMass() * deltaTime * adjustmentValue;
-		//m_body->GetBody()->addForce(force, PxForceMode::eIMPULSE);
-#pragma endregion
 
 		m_onGround = false;
 	}
@@ -509,6 +513,29 @@ KeyInput& CustomController::GetKeyStatus(int32_t key)
 std::vector<KeyInput>& CustomController::GetKeyInput()
 {
 	return m_keyboardInput;
+}
+
+void CustomController::Keyboard_Direction_Clear()
+{
+	//FSM에서 directionInput에 제한을 걸기 위한 함수
+
+	m_keyboardInput[KEY_ORDER::W].None();
+	m_keyboardInput[KEY_ORDER::A].None();
+	m_keyboardInput[KEY_ORDER::S].None();
+	m_keyboardInput[KEY_ORDER::D].None();
+}
+
+void CustomController::Keyboard_SpaceBar_Clear()
+{
+	m_keyboardInput[KEY_ORDER::SPACE].None();
+}
+
+void CustomController::Keyboard_ATK_Clear()
+{
+	m_keyboardInput[KEY_ORDER::KEY_1].None();
+	m_keyboardInput[KEY_ORDER::KEY_2].None();
+	m_keyboardInput[KEY_ORDER::KEY_3].None();
+	m_keyboardInput[KEY_ORDER::KEY_4].None();
 }
 
 void CustomController::BounceFromAttack()

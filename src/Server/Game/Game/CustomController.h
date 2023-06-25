@@ -45,14 +45,15 @@ public:
 	void Release() override;
 public:
 	//CustomController 컴포넌트를 사용하는 게임오브젝트는 Move()를 GameObject::Update()에서 반드시 호출
-	void Move(int32_t objID);
+	void PlayerMove();
+	void MonsterMove();
 	bool CheckOnGround(CollisionInfoType type, physx::PxVec3& surfaceNormal);
 	void GetSlidingVector(CollisionInfoType type);
 	bool CheckOnGround_Raycast();
 	Collider* GetColliderBelow();
 	void DirectionInput_Player();
 	void DirectionInput_Monster();
-	void Movement_Player(int32_t objID);
+	void Movement_Player();
 	void Movement_Monster();
 
 public:
@@ -61,6 +62,13 @@ public:
 public:
 	void CameraLookReceive(Vec3& CameraLook);
 	void KeyboardReceive(ulong32_t key);
+	KeyInput& GetKeyStatus(KEY_ORDER key);
+	KeyInput& GetKeyStatus(int32_t key);
+	std::vector<KeyInput>& GetKeyInput();
+	void Keyboard_Direction_Clear();		//FSM에서 directionInput()에 제한을 걸기 위한 함수
+	void Keyboard_SpaceBar_Clear();			//FSM에서 move()에 제한을 걸기 위한 함수
+	void Keyboard_ATK_Clear();				//FSM에서 공격 키보드를 비우기 위한 함수
+
 
 public:
 	void SetMoveSpeed(float value);
@@ -68,9 +76,7 @@ public:
 	void SetJumpSpeed(float value);
 	float GetJumpSpeed();
 	float GetDistanceFromGround();
-	KeyInput& GetKeyStatus(KEY_ORDER key);
-	KeyInput& GetKeyStatus(int32_t key);
-	std::vector<KeyInput>& GetKeyInput();
+
 
 public:
 	void BounceFromAttack();	//호출시키지 않으면 공격넉백 적용이 불가능하다

@@ -37,7 +37,7 @@ void Monster::Init()
 
 void Monster::Update(double timeDelta)
 {
-	m_controller->Move(m_id);
+	m_controller->MonsterMove();
 
 	GameObject::Update(timeDelta);
 

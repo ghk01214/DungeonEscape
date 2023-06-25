@@ -16,8 +16,10 @@ public:
 		ATK2,
 		ATK3,
 		ATK4,
+
 		BLOCK,
 		DAMAGE,
+
 		DASH,
 		DIE0,
 		DIE1,
@@ -62,8 +64,9 @@ public:
 
 public:
 	constexpr int32_t GetHP() const { return m_hp; }
+	constexpr int32_t GetMP() const { return m_mp; }
 
-	void IsOnGound();
+	void IsOnGround();
 	bool IsDead();
 
 	void TriggerZoneStatusChange(server::TRIGGER_TYPE triggerType, bool status);
@@ -84,8 +87,12 @@ public:
 
 public:
 	void ChangeStateByKeyInput();
-	void CheckState();
-	void UpdateFrame();
+	void State_Check_Enter();
+	void Update_Frame_Continuous();
+	void Update_Frame_Once();
+	void PlayerMove();				//controller를 사용해 이동한다. state가 move/jump가 아닐 시 키보드 정보 삭제
+	void SkillAttempt();
+	void DeathCheck();				//hp를 따져 DIE0으로 진입
 
 public:
 	CustomController* GetController();
@@ -99,7 +106,7 @@ public:
 	void SetControllerCameraLook(Vec3& value);
 
 private:
-	void PlayerPattern_ShootBall(server::OBJECT_TYPE type, float power);
+	void PlayerPattern_ShootBall();
 	void PlayerPattern_SingleStrike();
 	int32_t IsAttackKeyDown();
 
@@ -118,6 +125,7 @@ private:
 	std::unordered_map<server::TRIGGER_TYPE, bool> m_triggerDictionary;
 
 	int32_t m_hp;
+	int32_t m_mp;
 
 	bool m_firstSingleStrike;
 };
