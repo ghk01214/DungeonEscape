@@ -88,8 +88,6 @@ void Player_Script::CheckState()
 	}
 
 	m_prevState = m_currState;
-
-	//std::cout << magic_enum::enum_name(m_currState) << std::endl;
 }
 
 void Player_Script::UpdateFrameRepeat()

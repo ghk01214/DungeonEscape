@@ -149,7 +149,7 @@ namespace network
 	void NetworkManager::SendKeyInputPacket()
 	{
 		CPacket packet;
-		auto input{ GET_SINGLE(Input)->GetKeyInput() };
+		auto input{ GET_SINGLE(CInput)->GetKeyInput() };
 
 		packet.WriteProtocol(ProtocolID::MY_KEYINPUT_REQ);
 		packet.Write<unsigned long>(input);

@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "Engine.h"
 
-void Input::Init(HWND hWnd)
+HRESULT CInput::Init(HINSTANCE hInst, HWND hWnd)
 {
 	m_hWnd = hWnd;
 	m_states.resize(KEY_TYPE_COUNT, KEY_STATE::NONE);
@@ -23,9 +23,43 @@ void Input::Init(HWND hWnd)
 	m_useKeyType.push_back(KEY_TYPE::KEY_2);
 	m_useKeyType.push_back(KEY_TYPE::KEY_3);
 	m_useKeyType.push_back(KEY_TYPE::KEY_4);
+
+
+
+	 
+	if (FAILED(DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_pInputSDK, nullptr)))
+		return E_FAIL;
+
+	if (FAILED(m_pInputSDK->CreateDevice(GUID_SysKeyboard, &m_pKeyBoard, nullptr)))
+		return E_FAIL;
+
+	m_pKeyBoard->SetDataFormat(&c_dfDIKeyboard);
+	m_pKeyBoard->SetCooperativeLevel(hWnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+	m_pKeyBoard->Acquire();
+
+
+	if (FAILED(m_pInputSDK->CreateDevice(GUID_SysMouse, &m_pMouse, nullptr)))
+		return E_FAIL;
+
+	m_pMouse->SetDataFormat(&c_dfDIMouse);
+	m_pMouse->SetCooperativeLevel(hWnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+	m_pMouse->Acquire();
 }
 
-void Input::Update()
+void CInput::SetUp_InputDeviceState()
+{
+	if (nullptr == m_pKeyBoard ||
+		nullptr == m_pMouse)
+		return;
+
+	ZeroMemory(&m_MouseState, sizeof(m_MouseState));
+
+	m_pKeyBoard->GetDeviceState(256, m_KeyBoardState);
+
+	m_pMouse->GetDeviceState(sizeof(m_MouseState), &m_MouseState);
+}
+
+void CInput::Update()
 {
 	HWND hWnd = ::GetActiveWindow();
 	if (m_hWnd != hWnd)
@@ -78,7 +112,7 @@ void Input::Update()
 	::ScreenToClient(GEngine->GetWindow().hWnd, &m_curMousePos);
 }
 
-void Input::EncodeKeyInput(void)
+void CInput::EncodeKeyInput(void)
 {
 	/*
 		각 키별로 2bit 씩 정보 전송
@@ -107,11 +141,62 @@ void Input::EncodeKeyInput(void)
 	}
 }
 
-Vec2 Input::GetMouseMove(void)
+Vec2 CInput::GetMouseMove(void)
 {
 	Vec2 move;
 	move.x = m_curMousePos.x - m_preMousePos.x;
 	move.y = m_curMousePos.y - m_curMousePos.y;
 
 	return move;
+}
+
+
+bool CInput::Button_Pressing(MOUSEBUTTONSTATE eDIMBState)
+{
+	// 예외처리
+	if (eDIMBState < DIMB_LBUTTON || eDIMBState >= DIMB_END)
+		return false;
+
+	if (Get_DIMButtonState(eDIMBState))
+		return true;
+
+	return false;
+}
+
+bool CInput::Button_Down(MOUSEBUTTONSTATE eDIMBState)
+{
+	// 예외처리
+	if (eDIMBState < DIMB_LBUTTON || eDIMBState >= DIMB_END)
+		return false;
+
+	// 이전에 눌림이 없고, 현재 눌림이 있는 경우
+	if (!m_bButtonState[eDIMBState] && (Get_DIMButtonState(eDIMBState) & 0x8000))
+	{
+		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
+		return true;
+	}
+
+	if (m_bButtonState[eDIMBState] && !(Get_DIMButtonState(eDIMBState) & 0x8000))
+		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
+
+	return false;
+}
+
+bool CInput::Button_Up(MOUSEBUTTONSTATE eDIMBState)
+{
+	// 예외처리
+	if (eDIMBState < DIMB_LBUTTON || eDIMBState >= DIMB_END)
+		return false;
+
+	// 이전에 눌림이 있고, 현재 눌리지 않았을 경우
+	if (m_bButtonState[eDIMBState] && !(Get_DIMButtonState(eDIMBState) & 0x8000))
+	{
+		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
+		return true;
+	}
+
+	if (!m_bButtonState[eDIMBState] && (Get_DIMButtonState(eDIMBState) & 0x8000))
+		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
+
+	return false;
 }

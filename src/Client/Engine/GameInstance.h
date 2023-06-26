@@ -3,6 +3,7 @@
 #include "GameObject.h"
 
 #include "SceneManager.h"
+#include "Input.h"
 
 class CGameInstance
 {

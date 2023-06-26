@@ -101,7 +101,10 @@ void Camera_Basic::LateUpdate()
 		// 부모
 		//transform->SetParent(playerTransform);
 
-		Vec2 move = GET_SINGLE(Input)->GetMouseMove();
-		m_rotation += DELTA_TIME * move.x * 5.f;
+		Vec2 move = GET_SINGLE(CInput)->GetMouseMove();
+
+		long MouseMoveX = GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_X);
+		
+		m_rotation += MouseMoveX * DELTA_TIME * 5.f;
 	}
 }

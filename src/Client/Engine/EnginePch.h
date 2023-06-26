@@ -52,6 +52,7 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "dxgi")
 #pragma comment(lib, "dxguid")
 #pragma comment(lib, "d3dcompiler")
+#pragma comment(lib, "dinput8")	// 마우스 처리
 
 #ifdef _DEBUG
 #pragma comment(lib, "DirectXTex\\DirectXTex_Debug.lib")
@@ -68,6 +69,7 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "FBX\\release\\libxml2-md.lib")
 #pragma comment(lib, "FBX\\release\\zlib-md.lib")
 #endif
+
 
 // 각종 typedef
 using int8 = __int8;
@@ -133,10 +135,11 @@ enum
 
 struct WindowInfo
 {
-	HWND	hWnd; // 출력 윈도우
-	int32	width; // 너비
-	int32	height; // 높이
-	bool	windowed; // 창모드 or 전체화면
+	HWND		hWnd;		// 출력 윈도우
+	HINSTANCE	hInst;		// 윈도우 인스턴스
+	int32		width;		// 너비
+	int32		height;		// 높이
+	bool		windowed;	// 창모드 or 전체화면
 };
 
 struct Vertex
@@ -156,40 +159,6 @@ struct Vertex
 	Vec4 indices;
 };
 
-#define DECLARE_SINGLE(type)		\
-private:							\
-	type() {}						\
-	~type() {}						\
-public:								\
-	static type* GetInstance()		\
-	{								\
-		static type instance;		\
-		return &instance;			\
-	}								\
-
-#define GET_SINGLE(type)	type::GetInstance()
-
-#define DEVICE				GEngine->GetDevice()->GetDevice()
-#define GRAPHICS_CMD_LIST	GEngine->GetGraphicsCmdQueue()->GetGraphicsCmdList()
-#define RESOURCE_CMD_LIST	GEngine->GetGraphicsCmdQueue()->GetResourceCmdList()
-#define COMPUTE_CMD_LIST	GEngine->GetComputeCmdQueue()->GetComputeCmdList()
-
-#define GRAPHICS_ROOT_SIGNATURE		GEngine->GetRootSignature()->GetGraphicsRootSignature()
-#define COMPUTE_ROOT_SIGNATURE		GEngine->GetRootSignature()->GetComputeRootSignature()
-
-#define INPUT				GET_SINGLE(Input)
-#define DELTA_TIME			GET_SINGLE(Timer)->GetDeltaTime()
-
-#define GET_SCENE		GET_SINGLE(SceneManager)->GetActiveScene()
-#define GET_PLAYER		GET_SCENE->GetPlayer()
-#define GET_MONSTER		GET_SCENE->GetMonster()
-#define GET_BOSS		GET_SCENE->GetBoss()
-#define GET_OBJECT		GET_SCENE->GetSceneObject()
-
-
-#define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
-
-#define	MSG_BOX(_message) MessageBox(nullptr, _message, L"System Message", MB_OK)
 
 struct TransformParams
 {
@@ -289,7 +258,78 @@ inline T loadStructData(const HANDLE& hFile)
 }
 
 #pragma endregion
-#pragma endregion
+
+
+
+
+
+
+
+
+
+
+
+
+#define GET_SINGLE(type)	type::GetInstance()
+
+#define DEVICE				GEngine->GetDevice()->GetDevice()
+#define GRAPHICS_CMD_LIST	GEngine->GetGraphicsCmdQueue()->GetGraphicsCmdList()
+#define RESOURCE_CMD_LIST	GEngine->GetGraphicsCmdQueue()->GetResourceCmdList()
+#define COMPUTE_CMD_LIST	GEngine->GetComputeCmdQueue()->GetComputeCmdList()
+
+#define GRAPHICS_ROOT_SIGNATURE		GEngine->GetRootSignature()->GetGraphicsRootSignature()
+#define COMPUTE_ROOT_SIGNATURE		GEngine->GetRootSignature()->GetComputeRootSignature()
+
+#define INPUT				GET_SINGLE(CInput)
+#define DELTA_TIME			GET_SINGLE(Timer)->GetDeltaTime()
+
+#define GET_SCENE		GET_SINGLE(SceneManager)->GetActiveScene()
+#define GET_PLAYER		GET_SCENE->GetPlayer()
+#define GET_MONSTER		GET_SCENE->GetMonster()
+#define GET_BOSS		GET_SCENE->GetBoss()
+#define GET_OBJECT		GET_SCENE->GetSceneObject()
+#define GET_NETWORK		GET_SINGLE(network::NetworkManager)
+
+
+#define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
+
+#define	MSG_BOX(_message) MessageBox(nullptr, _message, L"System Message", MB_OK)
+
+#define DECLARE_SINGLE(type)		\
+private:							\
+	type() {}						\
+	~type() {}						\
+public:								\
+	static type* GetInstance()		\
+	{								\
+		static type instance;		\
+		return &instance;			\
+	}								\
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #pragma region [NETWORK]
 // network 관련
@@ -306,8 +346,6 @@ inline T loadStructData(const HANDLE& hFile)
 
 #pragma comment(lib, "WS2_32")
 #pragma comment(lib, "MSWSock")
-
-#define GET_NETWORK		GET_SINGLE(network::NetworkManager)
 
 namespace network
 {

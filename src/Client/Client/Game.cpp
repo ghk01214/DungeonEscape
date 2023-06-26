@@ -35,6 +35,7 @@ void CGame::Update()
 	GEngine->Update();
 
 	Scene_Test::GetInstance()->Update();
+	GET_SINGLE(CInput)->SetUp_InputDeviceState();
 }
 
 void CGame::LateUpdate()

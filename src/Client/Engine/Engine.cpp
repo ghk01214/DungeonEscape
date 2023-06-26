@@ -34,14 +34,14 @@ void Engine::Init(const WindowInfo& info)
 
 	ResizeWindow(info.width, info.height);
 
-	GET_SINGLE(Input)->Init(info.hWnd);
+	GET_SINGLE(CInput)->Init(info.hInst, info.hWnd);
 	GET_SINGLE(Timer)->Init();
 	GET_SINGLE(Resources)->Init();
 }
 
 void Engine::Update()
 {
-	GET_SINGLE(Input)->Update();
+	GET_SINGLE(CInput)->Update();
 	GET_SINGLE(Timer)->Update();
 	GET_SINGLE(SceneManager)->Update();
 	GET_SINGLE(InstancingManager)->ClearBuffer();

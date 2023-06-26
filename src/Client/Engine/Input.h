@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <bitset>
+#include <dinput.h>
 
 enum class KEY_TYPE
 {
@@ -50,14 +51,23 @@ enum
 	KEY_STATE_USE = static_cast<int32_t>(KEY_TYPE::MAX) * 2
 };
 
-class Input
+class CInput
 {
-	DECLARE_SINGLE(Input);
+	DECLARE_SINGLE(CInput);
 
 public:
-	void Init(HWND hWnd);
+	enum MOUSEBUTTONSTATE { DIMB_LBUTTON, DIMB_RBUTTON, DIMB_WHEEL, DIMB_END };
+	enum MOUSEMOVESTATE { DIMM_X, DIMM_Y, DIMM_WHEEL, DIMM_END };
+
+public:
+	HRESULT Init(HINSTANCE hInst, HWND hWnd);
+	void SetUp_InputDeviceState();
 	void Update();
 
+
+
+
+public:
 	// 누르고 있을 때
 	bool GetButton(KEY_TYPE key) { return GetState(key) == KEY_STATE::PRESS; }
 	// 맨 처음 눌렀을 때
@@ -73,8 +83,26 @@ private:
 	inline KEY_STATE GetState(KEY_TYPE key) { return m_states[static_cast<uint8>(key)]; }
 	void EncodeKeyInput(void);
 
+
+
+
+
+
 public:
 	Vec2 GetMouseMove(void);	// 이전 프레임과 현재 프레임의 마우스의 x,y 좌표의 움직이는 정도를 반환하는 함수
+
+public:
+	char Get_DIKeyState(unsigned char byKeyID) { return m_KeyBoardState[byKeyID]; }
+	char Get_DIMButtonState(MOUSEBUTTONSTATE eDIMBState) { return m_MouseState.rgbButtons[eDIMBState];}
+	long Get_DIMMoveState(MOUSEMOVESTATE eDIMMState) { return ((long*)&m_MouseState)[eDIMMState]; }
+
+public:
+	bool      Button_Pressing(MOUSEBUTTONSTATE eDIMBState);
+	bool      Button_Down(MOUSEBUTTONSTATE eDIMBState);
+	bool      Button_Up(MOUSEBUTTONSTATE eDIMBState);
+
+
+
 
 private:
 	HWND m_hWnd;
@@ -85,5 +113,15 @@ private:
 	std::bitset<KEY_STATE_USE> m_keyInputState;
 
 	vector<KEY_TYPE> m_useKeyType;
+
+	LPDIRECTINPUT8			m_pInputSDK = nullptr;
+	LPDIRECTINPUTDEVICE8	m_pKeyBoard = nullptr;
+	LPDIRECTINPUTDEVICE8	m_pMouse = nullptr;
+
+private:
+	char				m_KeyBoardState[256];
+	DIMOUSESTATE		m_MouseState;
+	bool				m_bKeyState[0xff];	//0xff
+	bool				m_bButtonState[4];
 };
 
