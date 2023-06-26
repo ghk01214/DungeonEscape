@@ -46,6 +46,15 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
+	//auto t{ GetTransform() };
+	//auto p{ t->GetPosition() };
+	//
+	//if (p.y < -5.f)
+	//{
+	//	t->SetPosition(p.x, 10.f, -1500.f);
+	//	SetControllerPosition(Vec3{ p.x, 10.f, -1500.f });
+	//}
+
 	ChangeStateByKeyInput();			//FSM 1단계	: 키보드 입력에 의한 STATE변경 (이동, 점프, 공격) STATE가 자유롭지 못할 시 진입X
 
 
@@ -84,6 +93,15 @@ void Player::Release()
 
 void Player::IsOnGround()
 {
+	switch (m_currState)
+	{
+		case DAMAGE: case DEAD:
+		case DIE0: case DIE1: case DIE2:
+		return;
+		default:
+		break;
+	}
+
 	auto distance{ m_controller->GetDistanceFromGround() };
 
 	if (distance > 250.f)
@@ -189,7 +207,7 @@ void Player::ChangeStateByKeyInput()
 	switch (m_currState)
 	{
 		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
-		case JUMP_START: case JUMPING: case JUMP_END: case DAMAGE: case DEAD:
+		case JUMP_START: case JUMPING: case DAMAGE: case DEAD:
 		case DIE0: case DIE1: case DIE2:
 		return;
 		default:
@@ -206,8 +224,6 @@ void Player::ChangeStateByKeyInput()
 	else if (!key[W].press and !key[S].press and !key[A].press and !key[D].press
 		and !key[W].down and !key[S].down and !key[A].down and !key[D].down)
 	{
-		// 수정 필요: 점프를 하던 도중 이동 키를 누르고 있지 않으면 JUMP_START에서 바로 IDLE로 바뀌어서
-		// 점프 하던 도중에 IDLE로 바뀌어 버림
 		m_currState = IDLE1;
 	}
 #pragma endregion
@@ -215,6 +231,7 @@ void Player::ChangeStateByKeyInput()
 #pragma region 점프처리
 	if (key[SPACE].down and m_controller->IsOnGround())
 	{
+		std::cout << magic_enum::enum_name(m_currState) << "\n";
  		m_currState = JUMP_START;
 		return;			// 점프면 바로 함수 종료
 	}

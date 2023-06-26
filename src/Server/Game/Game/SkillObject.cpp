@@ -57,11 +57,11 @@ void SkillObject::ActionsWhenHit()
 		{								//스킬이 hit한게 몬스터
 			SetRemoveReserved();		//객체 삭제
 
-			game::Message msg{ -1, ProtocolID::WR_REMOVE_ACK };
-			msg.objID = m_id;
-			msg.objType = m_objType;
+			game::Message sendMsg{ -1, ProtocolID::WR_REMOVE_ACK };
+			sendMsg.objID = m_id;
+			sendMsg.objType = m_objType;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(msg);
+			game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
 
 			auto monster{ dynamic_cast<Monster*>(collider->GetOwnerObject()) };
 
@@ -87,6 +87,8 @@ void SkillObject::ActionsWhenHit()
 						if (dragon != nullptr)
 							dragon->SetState(Dragon::DAMAGE);
 					}
+					break;
+					default:
 					break;
 				}
 

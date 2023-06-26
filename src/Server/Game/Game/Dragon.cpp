@@ -36,21 +36,23 @@ void Dragon::Update(double timeDelta)
 {
 	if (IsDead() == true)
 	{
-		m_currState = DIE;
+		if (m_currState != DEAD)
+			m_currState = DIE;
+
 		Monster::Update(timeDelta);
 
 		return;
 	}
 
 	// 5초마다 드래곤 패턴 발동
-	/*using namespace std::chrono;
-	static steady_clock::time_point bossSkillEndTime{ CURRENT_TIME };
+	//using namespace std::chrono;
+	//static steady_clock::time_point bossSkillEndTime{ CURRENT_TIME };
 
-	if (CURRENT_TIME - bossSkillEndTime > 5s)
-	{
-		DragonPattern_GroundHit();
-		bossSkillEndTime = CURRENT_TIME;
-	}*/
+	//if (CURRENT_TIME - bossSkillEndTime > 5s)
+	//{
+	//	DragonPattern_GroundHit();
+	//	bossSkillEndTime = CURRENT_TIME;
+	//}
 	//DragonPattern_GroundHit();
 
 	Monster::Update(timeDelta);
@@ -172,14 +174,14 @@ void Dragon::CheckState()
 
 	m_prevState = m_currState;
 
-	if (m_currState == DEAD)
-		return;
-
-	game::Message msg{ m_id, ProtocolID::WR_CHANGE_STATE_ACK };
+	game::Message msg{ -1, ProtocolID::WR_CHANGE_STATE_ACK };
 	msg.state = m_currState;
+	msg.objID = m_id;
 	msg.objType = m_objType;
 
 	game::MessageHandler::GetInstance()->PushSendMessage(msg);
+
+	//std::cout << "DRAGON STATE : " << magic_enum::enum_name(m_currState) << "\n";
 }
 
 void Dragon::UpdateFrame()
@@ -193,39 +195,39 @@ void Dragon::UpdateFrame()
 		break;
 	}
 
-	if (m_aniEnd == true)
+	if (m_aniEnd == false)
+		return;
+
+	switch (m_currState)
 	{
-		switch (m_currState)
+		case ATTACK_HAND: case ATTACK_HORN: case ATTACK_MOUTH:
 		{
-			case ATTACK_HAND: case ATTACK_HORN: case ATTACK_MOUTH:
-			{
-				m_currState = IDLE1;
-			}
-			break;
-			case DEFEND:
-			{
-				m_currState = IDLE1;
-			}
-			break;
-			case DIE:
-			{
-				m_currState = DEAD;
-				m_startSendTransform = false;
-			}
-			break;
-			case DAMAGE: case JUMP: case SCREAM: case SLEEP:
-			{
-				// 추후 각 state 별 추가 사항이 있으면 case 분리
-				m_currState = IDLE1;
-			}
-			break;
-			default:
-			break;
-
-
-			m_aniEnd = false;
+			m_currState = IDLE1;
 		}
+		break;
+		case DEFEND:
+		{
+			m_currState = IDLE1;
+		}
+		break;
+		case DIE:
+		{
+			m_currState = DEAD;
+			m_startSendTransform = false;
+		}
+		break;
+		case DAMAGE: case JUMP: case SCREAM: case SLEEP:
+		{
+			// 추후 각 state 별 추가 사항이 있으면 case 분리
+			m_currState = IDLE1;
+		}
+		break;
+		default:
+		break;
+
 	}
+
+	m_aniEnd = false;
 }
 
 void Dragon::DragonPattern_GroundHit()
@@ -277,7 +279,7 @@ void Dragon::DragonPattern_GroundHit()
 		std::cout << "몬스터 패턴 발동, 플레이어 피격 적용\n";
 
 		result->SetState(Player::PLAYER_STATE::DAMAGE);
-		//result->GetDamaged(3);
+		//result->GetDamaged(5);
 		std::cout << "PLAYER [" << result->GetID() << "] HP : " << result->GetHP() << "\n";
 
 		if (result->IsDead() == true)

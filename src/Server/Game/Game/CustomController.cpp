@@ -200,7 +200,7 @@ bool CustomController::CheckOnGround_Raycast()
 	ray.direction = PxVec3(0.f, -1.f, 0.f);
 	ray.distance = 1000.f;						//raycast 측정 거리
 	ray.point = m_body->GetPosition()
-		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight() - 1.f), 0.f);
+		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight() - 5.f), 0.f);
 
 	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::Map), PhysicsQueryType::All, m_body))
 	{

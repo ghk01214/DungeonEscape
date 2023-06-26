@@ -127,12 +127,7 @@ void Player_Script::UpdateFrameOnce()
 	anim->CalculateUpdateTime();
 
 	if (anim->IsAnimationEnd() == true)
-	{
-		std::cout << magic_enum::enum_name(m_currState) << std::endl;
-		if (m_currState == JUMPING)
-			std::cout << "jump end" << std::endl;
 		return;
-	}
 
 	anim->PlayNextFrame();
 

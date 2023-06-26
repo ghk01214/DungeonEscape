@@ -937,23 +937,12 @@ namespace game
 			{
 				if (postOver->objType == server::OBJECT_TYPE::BOSS)
 				{
-					for (auto& monsterObject : monsterObjects)
+					for (auto& client : m_sessions)
 					{
-						auto monster{ dynamic_cast<Monster*>(monsterObject) };
-
-						if (monster == nullptr)
+						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						if (monster->GetID() != postOver->objID)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendRemovePacket(postOver->objID, postOver->objType);
-						}
+						client->SendRemovePacket(postOver->objID, postOver->objType);
 					}
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::FIREBALL
@@ -961,23 +950,13 @@ namespace game
 					or postOver->objType == server::OBJECT_TYPE::THUNDERBALL
 					or postOver->objType == server::OBJECT_TYPE::POISONBALL)
 				{
-					for (auto& skillObject : skillObjects)
+					for (auto& client : m_sessions)
 					{
-						auto skill{ dynamic_cast<SkillObject*>(skillObject) };
-
-						if (skill == nullptr)
+						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						if (skill->GetID() != postOver->objID)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendRemovePacket(postOver->objID, postOver->objType);
-						}
+						client->SendRemovePacket(postOver->objID, postOver->objType);
+						std::cout << "id : " << postOver->objID << "\n";
 					}
 				}
 

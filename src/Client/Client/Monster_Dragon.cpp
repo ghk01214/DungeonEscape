@@ -80,7 +80,8 @@ void Monster_Dragon::CheckState()
 	}
 
 	m_prevState = m_currState;
-	std::cout << magic_enum::enum_name(magic_enum::enum_value<DRAGON_STATE>(m_currState)) << std::endl;
+
+	//std::cout << magic_enum::enum_name(m_currState) << std::endl;
 }
 
 void Monster_Dragon::UpdateFrameRepeat()

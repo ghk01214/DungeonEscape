@@ -67,51 +67,51 @@ void Weeper::CheckState()
 
 	switch (m_currState)
 	{
-		case Weeper::CAST1:
+		case CAST1:
 		{
 
 		}
 		break;
-		case Weeper::CAST2_START:
+		case CAST2_START:
 		{
 
 		}
 		break;
-		case Weeper::CAST2_LOOP:
+		case CAST2_LOOP:
 		{
 
 		}
 		break;
-		case Weeper::CAST2_END:
+		case CAST2_END:
 		{
 
 		}
 		break;
-		case Weeper::CAST3:
+		case CAST3:
 		{
 
 		}
 		break;
-		case Weeper::CAST4_START:
+		case CAST4_START:
 		{
 
 		}
 		break;
-		case Weeper::CAST4_LOOP:
+		case CAST4_LOOP:
 		{
 
 		}
 		break;
-		case Weeper::CAST4_END:
+		case CAST4_END:
 		{
 
 		}
 		break;
-		case Weeper::DAMAGE:
+		case DAMAGE:
 		{
 		}
 		break;
-		case Weeper::DEAD:
+		case DEAD:
 		{
 			SetRemoveReserved();
 
@@ -122,62 +122,62 @@ void Weeper::CheckState()
 			game::MessageHandler::GetInstance()->PushSendMessage(msg);
 		}
 		break;
-		case Weeper::DEATH:
+		case DEATH:
 		{
 			std::cout << "BOSS DEFEATED!\n";
 		}
 		break;
-		case Weeper::DODGE:
+		case DODGE:
 		{
 
 		}
 		break;
-		case Weeper::IDLE:
+		case IDLE:
 		{
 
 		}
 		break;
-		case Weeper::IDLE_BREAK:
+		case IDLE_BREAK:
 		{
 
 		}
 		break;
-		case Weeper::STATUE1:
+		case STATUE1:
 		{
 
 		}
 		break;
-		case Weeper::STATUE2:
+		case STATUE2:
 		{
 
 		}
 		break;
-		case Weeper::STATUE3:
+		case STATUE3:
 		{
 
 		}
 		break;
-		case Weeper::TAUNT:
+		case TAUNT:
 		{
 
 		}
 		break;
-		case Weeper::TURN_LEFT:
+		case TURN_LEFT:
 		{
 
 		}
 		break;
-		case Weeper::WALK:
+		case WALK:
 		{
 
 		}
 		break;
-		case Weeper::WALK_BACK:
+		case WALK_BACK:
 		{
 
 		}
 		break;
-		case Weeper::WALK_BACK_NO_LEGS:
+		case WALK_BACK_NO_LEGS:
 		{
 
 		}
@@ -203,49 +203,49 @@ void Weeper::UpdateFrame()
 {
 	switch (m_currState)
 	{
-		case Weeper::CAST2_LOOP: case Weeper::CAST4_LOOP: case Weeper::IDLE: case Weeper::DEAD:
-		case Weeper::STATUE1: case Weeper::STATUE2: case Weeper::STATUE3:
-		case Weeper::WALK: case Weeper::WALK_BACK: case Weeper::WALK_BACK_NO_LEGS:
+		case CAST2_LOOP: case CAST4_LOOP: case IDLE: case DEAD:
+		case STATUE1: case STATUE2: case STATUE3:
+		case WALK: case WALK_BACK: case WALK_BACK_NO_LEGS:
 		return;
 		default:
 		break;
 	}
 
-	if (m_aniEnd == true)
-	{
-		switch (m_currState)
-		{
-			case Weeper::CAST1: case Weeper::CAST2_END: case Weeper::CAST3: case Weeper::CAST4_END:
-			{
-				m_currState = Weeper::IDLE;
-			}
-			break;
-			case Weeper::CAST2_START: case Weeper::CAST4_START:
-			{
-				// CAST2_END로 갈지 CAST2_LOOP로 갈지는 추후 변경
-				// 현재는 END로 가도록 설정
-				m_currState = magic_enum::enum_value<Weeper::WEEPER_STATE>(m_currState - 2);
-			}
-			break;
-			case Weeper::DEATH:
-			{
-				m_currState = Weeper::DEAD;
-				m_startSendTransform = false;
-			}
-			break;
-			case Weeper::DAMAGE: case Weeper::DODGE: case Weeper::IDLE_BREAK:
-			case Weeper::TAUNT: case Weeper::TURN_LEFT: case Weeper::TURN_RIGHT:
-			{
-				// 추후 각 state 별 추가 사항이 있으면 case 분리
-				m_currState = Weeper::IDLE;
-			}
-			break;
-			default:
-			break;
-		}
+	if (m_aniEnd == false)
+		return;
 
-		m_aniEnd = false;
+	switch (m_currState)
+	{
+		case CAST1: case CAST2_END: case CAST3: case CAST4_END:
+		{
+			m_currState = IDLE;
+		}
+		break;
+		case CAST2_START: case CAST4_START:
+		{
+			// CAST2_END로 갈지 CAST2_LOOP로 갈지는 추후 변경
+			// 현재는 END로 가도록 설정
+			m_currState = magic_enum::enum_value<WEEPER_STATE>(m_currState - 2);
+		}
+		break;
+		case DEATH:
+		{
+			m_currState = DEAD;
+			m_startSendTransform = false;
+		}
+		break;
+		case DAMAGE: case DODGE: case IDLE_BREAK:
+		case TAUNT: case TURN_LEFT: case TURN_RIGHT:
+		{
+			// 추후 각 state 별 추가 사항이 있으면 case 분리
+			m_currState = IDLE;
+		}
+		break;
+		default:
+		break;
 	}
+
+	m_aniEnd = false;
 }
 
 Weeper::WEEPER_STATE Weeper::GetState() const
