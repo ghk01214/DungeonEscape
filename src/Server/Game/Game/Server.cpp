@@ -797,7 +797,9 @@ namespace game
 					objects = mapObjects;
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::FIREBALL
-					or postOver->objType == server::OBJECT_TYPE::ICEBALL)
+					or postOver->objType == server::OBJECT_TYPE::ICEBALL
+					or postOver->objType == server::OBJECT_TYPE::THUNDERBALL
+					or postOver->objType == server::OBJECT_TYPE::POISONBALL)
 				{
 					objects = skillObjects;
 				}

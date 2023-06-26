@@ -199,9 +199,11 @@ void Player::ChangeStateByKeyInput()
 	if (key[W].press || key[A].press || key[S].press || key[D].press)
 	{
 		m_currState = MOVE;
+		std::cout << "움직임" << std::endl;
 	}
 
-	else if (key[W].up && key[S].up && key[A].up && key[D].up)
+	else if (!key[W].press && !key[S].press && !key[A].press && !key[D].press &&
+		!key[W].down && !key[S].down && !key[A].down && !key[D].down)
 	{
 		m_currState = IDLE1;
 	}
@@ -211,6 +213,7 @@ void Player::ChangeStateByKeyInput()
 	if (key[SPACE].down && m_controller->IsOnGround())
 	{
 		m_currState = JUMP_START;
+		std::cout << "Jump Start" << std::endl;
 		return;			// 점프면 바로 함수 종료
 	}
 #pragma endregion
@@ -223,24 +226,28 @@ void Player::ChangeStateByKeyInput()
 		m_currState = ATK0;
 		m_controller->Keyboard_Direction_Clear();
 		m_controller->Keyboard_SpaceBar_Clear();
+		std::cout << "ATK0, Keyboard direction/space delete" << std::endl;
 	}
 	else if (key[KEY_2].down)
 	{
 		m_currState = ATK1;
 		m_controller->Keyboard_Direction_Clear();
 		m_controller->Keyboard_SpaceBar_Clear();
+		std::cout << "ATK0, Keyboard direction/space delete" << std::endl;
 	}
 	else if (key[KEY_3].down)
 	{
 		m_currState = ATK2;
 		m_controller->Keyboard_Direction_Clear();
 		m_controller->Keyboard_SpaceBar_Clear();
+		std::cout << "ATK0, Keyboard direction/space delete" << std::endl;
 	}
 	else if (key[KEY_4].down)
 	{
 		m_currState = ATK3;
 		m_controller->Keyboard_Direction_Clear();
 		m_controller->Keyboard_SpaceBar_Clear();
+		std::cout << "ATK0, Keyboard direction/space delete" << std::endl;
 	}
 #pragma endregion
 }
@@ -492,14 +499,14 @@ void Player::Update_Frame_Once()
 		break;
 		default:
 		break;
-
-		m_aniEnd = false;
 	}
+
+	m_aniEnd = false;
 }
 
 void Player::PlayerMove()
 {
-	if (m_currState == MOVE || m_currState == JUMP_START || m_currState == JUMPING)
+	if (m_currState != MOVE && m_currState != JUMP_START && m_currState != JUMPING)
 		m_controller->Keyboard_Direction_Clear();
 
 	m_controller->PlayerMove();
