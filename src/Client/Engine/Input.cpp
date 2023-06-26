@@ -18,15 +18,13 @@ HRESULT CInput::Init(HINSTANCE hInst, HWND hWnd)
 	m_useKeyType.push_back(KEY_TYPE::S);
 	m_useKeyType.push_back(KEY_TYPE::A);
 	m_useKeyType.push_back(KEY_TYPE::D);
+	m_useKeyType.push_back(KEY_TYPE::R);
 	m_useKeyType.push_back(KEY_TYPE::SPACE);
 	m_useKeyType.push_back(KEY_TYPE::KEY_1);
 	m_useKeyType.push_back(KEY_TYPE::KEY_2);
 	m_useKeyType.push_back(KEY_TYPE::KEY_3);
 	m_useKeyType.push_back(KEY_TYPE::KEY_4);
 
-
-
-	 
 	if (FAILED(DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_pInputSDK, nullptr)))
 		return E_FAIL;
 

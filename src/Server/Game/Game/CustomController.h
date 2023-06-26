@@ -8,6 +8,7 @@ enum KEY_ORDER
 	S,
 	A,
 	D,
+	R,
 	SPACE,
 	KEY_1,
 	KEY_2,

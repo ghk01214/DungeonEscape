@@ -20,6 +20,7 @@ enum class KEY_TYPE
 	E = 'E',
 	Z = 'Z',
 	C = 'C',
+	R = 'R',
 
 	// 여기 있는 번호 키는 키보드 영/한 자판 위에 있는 번호 1 ~ 0 사이의 버튼, 오른쪽에 있는 것은 NUMPAD 숫자.
 	KEY_1 = '1',
@@ -31,7 +32,7 @@ enum class KEY_TYPE
 	LBUTTON = VK_LBUTTON,
 	RBUTTON = VK_RBUTTON,
 
-	MAX = 19
+	MAX = 20
 };
 
 enum class KEY_STATE

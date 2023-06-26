@@ -231,8 +231,7 @@ void Player::ChangeStateByKeyInput()
 #pragma region 점프처리
 	if (key[SPACE].down and m_controller->IsOnGround())
 	{
-		std::cout << magic_enum::enum_name(m_currState) << "\n";
- 		m_currState = JUMP_START;
+		m_currState = JUMP_START;
 		return;			// 점프면 바로 함수 종료
 	}
 #pragma endregion
@@ -739,7 +738,7 @@ void Player::PlayerPattern_SingleStrike()
 		default:
 		break;
 	}
-			//공격 활성화 시간
+	//공격 활성화 시간
 
 	auto objmgr = ObjectManager::GetInstance();
 	physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());				//플레이어 위치

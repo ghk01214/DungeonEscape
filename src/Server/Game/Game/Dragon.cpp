@@ -45,14 +45,14 @@ void Dragon::Update(double timeDelta)
 	}
 
 	// 5초마다 드래곤 패턴 발동
-	//using namespace std::chrono;
-	//static steady_clock::time_point bossSkillEndTime{ CURRENT_TIME };
+	using namespace std::chrono;
+	static steady_clock::time_point bossSkillEndTime{ CURRENT_TIME };
 
-	//if (CURRENT_TIME - bossSkillEndTime > 5s)
-	//{
-	//	DragonPattern_GroundHit();
-	//	bossSkillEndTime = CURRENT_TIME;
-	//}
+	if (CURRENT_TIME - bossSkillEndTime > 5s)
+	{
+		DragonPattern_GroundHit();
+		bossSkillEndTime = CURRENT_TIME;
+	}
 	//DragonPattern_GroundHit();
 
 	Monster::Update(timeDelta);
