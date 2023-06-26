@@ -210,37 +210,38 @@ void TestLevel::TestFunction()
 	//if (GetAsyncKeyState('O') & 0x8000)
 	//	once = true;
 
-	//using namespace std::chrono;
-	//static steady_clock::time_point bossSkillEndTime{ steady_clock::now() };
-	//static bool prevOnGround{ true };
+	using namespace std::chrono;
+	static steady_clock::time_point bossSkillEndTime{ steady_clock::now() };
+	static bool prevOnGround{ true };
 
-	//auto objMgr = ObjectManager::GetInstance();
-	//auto monsters = objMgr->GetLayer(L"Layer_Monster")->GetGameObjects();
+	auto objMgr = ObjectManager::GetInstance();
+	auto monsters = objMgr->GetLayer(L"Layer_Monster")->GetGameObjects();
 
-	//for (auto& monster : monsters)
-	//{
-	//	auto mob{ dynamic_cast<Monster*>(monster) };
+	for (auto& monster : monsters)
+	{
+		auto mob{ dynamic_cast<Dragon*>(monster) };
 
-	//	if (prevOnGround != mob->IsOnGround())
-	//	{
-	//		//mob->MonsterPattern_GroundHit();
+		if (prevOnGround != mob->IsOnGround())
+		{
+			mob->DragonPattern_GroundHit();
+			mob->SetState(Dragon::JUMP);
 
-	//		bossSkillEndTime = steady_clock::now();
-	//	}
+			//bossSkillEndTime = steady_clock::now();
+		}
 
-	//	prevOnGround = mob->IsOnGround();
-	//}
+		prevOnGround = mob->IsOnGround();
+	}
 
 	//if (steady_clock::now() - bossSkillEndTime > 5s)
 	//{
 	//	for (auto& monster : monsters)
 	//	{
 	//		auto mob{ dynamic_cast<Monster*>(monster) };
-
+	//
 	//		if (mob->IsDead() == false)
 	//		{
 	//			mob->GetController()->SetSpaceKeyDown(true);
-
+	//
 	//			game::Message msg{ -1, ProtocolID::WR_JUMP_START_ACK };
 	//			msg.objID = mob->GetID();
 	//			game::MessageHandler::GetInstance()->PushSendMessage(msg);
@@ -259,13 +260,11 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Trigger");
 
+	auto MonsterObject = objmgr->AddGameObjectToLayer<Dragon>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
 
-	//auto MonsterObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
-
-
-	LoadBasicMap3();
-	//LoadMap();
+	//LoadBasicMap3();
+	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)

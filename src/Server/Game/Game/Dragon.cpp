@@ -42,7 +42,16 @@ void Dragon::Update(double timeDelta)
 		return;
 	}
 
-	DragonPattern_GroundHit();
+	// 5초마다 드래곤 패턴 발동
+	/*using namespace std::chrono;
+	static steady_clock::time_point bossSkillEndTime{ CURRENT_TIME };
+
+	if (CURRENT_TIME - bossSkillEndTime > 5s)
+	{
+		DragonPattern_GroundHit();
+		bossSkillEndTime = CURRENT_TIME;
+	}*/
+	//DragonPattern_GroundHit();
 
 	Monster::Update(timeDelta);
 }
@@ -268,7 +277,7 @@ void Dragon::DragonPattern_GroundHit()
 		std::cout << "몬스터 패턴 발동, 플레이어 피격 적용\n";
 
 		result->SetState(Player::PLAYER_STATE::DAMAGE);
-		result->GetDamaged(3);
+		//result->GetDamaged(3);
 		std::cout << "PLAYER [" << result->GetID() << "] HP : " << result->GetHP() << "\n";
 
 		if (result->IsDead() == true)

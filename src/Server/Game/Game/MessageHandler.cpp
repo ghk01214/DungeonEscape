@@ -312,7 +312,7 @@ namespace game
 
 							if (player->GetID() == msg.objID)
 							{
-								player->ChangeAniEndFlag(true);
+								player->SetAniEndFlag(true);
 								break;
 							}
 						}

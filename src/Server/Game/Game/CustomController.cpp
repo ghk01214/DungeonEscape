@@ -200,7 +200,7 @@ bool CustomController::CheckOnGround_Raycast()
 	ray.direction = PxVec3(0.f, -1.f, 0.f);
 	ray.distance = 1000.f;						//raycast 측정 거리
 	ray.point = m_body->GetPosition()
-		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight()), 0.f);
+		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight() - 1.f), 0.f);
 
 	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::Map), PhysicsQueryType::All, m_body))
 	{
@@ -447,7 +447,7 @@ void CustomController::KeyboardReceive(ulong32_t key)
 		temp &= key;
 		temp >>= (i * 2);
 
-		switch (magic_enum::enum_cast<server::KEY_STATE>(temp).value())
+		switch (magic_enum::enum_value<server::KEY_STATE>(temp))
 		{
 			case server::KEY_STATE::PRESS:
 			{
@@ -457,6 +457,8 @@ void CustomController::KeyboardReceive(ulong32_t key)
 			case server::KEY_STATE::DOWN:
 			{
 				m_keyboardInput[i].Down();
+
+				//std::cout << magic_enum::enum_name(magic_enum::enum_value<KEY_ORDER>(i)) << ", " << std::boolalpha << m_keyboardInput[i].down << "\n";
 			}
 			break;
 			case server::KEY_STATE::UP:
@@ -557,12 +559,17 @@ CapsuleCollider* CustomController::GetCollider()
 	return m_collider;
 }
 
-bool CustomController::IsOnGround()
+bool CustomController::IsOnGroundByDistance()
 {
-	if (m_distanceFromGround == -1)
+	if (IsEqual(m_distanceFromGround, -1.f) == true)
 		return false;
 
 	return m_distanceFromGround < 30.f;
+}
+
+bool CustomController::IsOnGround()
+{
+	return m_onGround;
 }
 
 physx::PxVec3 CustomController::GetCameraLook()

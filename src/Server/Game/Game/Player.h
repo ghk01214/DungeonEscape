@@ -81,7 +81,7 @@ public:
 	void SetState(PLAYER_STATE state);
 	void SetState(int32_t index);
 	void SetAniPlayTime(float time);
-	void ChangeAniEndFlag(bool flag);
+	void SetAniEndFlag(bool flag);
 
 	void GetDamaged(int32_t damage);
 
@@ -128,4 +128,5 @@ private:
 	int32_t m_mp;
 
 	bool m_firstSingleStrike;
+	bool m_prevOnGround;
 };

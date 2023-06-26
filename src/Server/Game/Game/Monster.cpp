@@ -84,7 +84,7 @@ void Monster::SetAniEndFlag(bool flag)
 
 bool Monster::IsOnGround()
 {
-	return m_controller->IsOnGround();
+	return m_controller->IsOnGroundByDistance();
 }
 
 bool Monster::IsDead()

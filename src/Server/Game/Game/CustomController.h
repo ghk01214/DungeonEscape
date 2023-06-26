@@ -84,6 +84,7 @@ public:
 public:
 	RigidBody* GetBody();
 	CapsuleCollider* GetCollider();
+	bool IsOnGroundByDistance();
 	bool IsOnGround();
 	physx::PxVec3 GetCameraLook();
 

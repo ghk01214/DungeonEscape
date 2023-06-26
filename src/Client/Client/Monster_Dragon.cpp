@@ -40,6 +40,10 @@ void Monster_Dragon::Start()
 {
 	Monster_Script::Start();
 
+	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	matWorld *= Matrix::CreateScale(0.5f);
+	GetTransform()->SetWorldMatrix(matWorld);
+
 	GetAnimator()->SetFramePerSecond(30);
 }
 
@@ -76,6 +80,7 @@ void Monster_Dragon::CheckState()
 	}
 
 	m_prevState = m_currState;
+	std::cout << magic_enum::enum_name(magic_enum::enum_value<DRAGON_STATE>(m_currState)) << std::endl;
 }
 
 void Monster_Dragon::UpdateFrameRepeat()
