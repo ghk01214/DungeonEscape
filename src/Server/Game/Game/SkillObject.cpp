@@ -72,12 +72,29 @@ void SkillObject::ActionsWhenHit()
 
 				switch (monster->GetFBXType())
 				{
-					case server::FBX_TYPE::WEEPER:
+					case server::FBX_TYPE::WEEPER1:
+					case server::FBX_TYPE::WEEPER2:
+					case server::FBX_TYPE::WEEPER3:
+					case server::FBX_TYPE::WEEPER4:
+					case server::FBX_TYPE::WEEPER5:
+					case server::FBX_TYPE::WEEPER6:
+					case server::FBX_TYPE::WEEPER7:
+					case server::FBX_TYPE::WEEPER_EMISSIVE:
 					{
 						auto weeper{ dynamic_cast<Weeper*>(monster) };
 
 						if (weeper != nullptr)
 							weeper->SetState(Weeper::DAMAGE);
+					}
+					break;
+					case server::FBX_TYPE::BLUE_GOLEM:
+					case server::FBX_TYPE::GREEN_GOLEM:
+					case server::FBX_TYPE::RED_GOLEM:
+					{
+						auto weeper{ dynamic_cast<Golem*>(monster) };
+
+						if (weeper != nullptr)
+							weeper->SetState(Golem::DAMAGE);
 					}
 					break;
 					case server::FBX_TYPE::DRAGON:

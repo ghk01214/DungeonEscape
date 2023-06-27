@@ -167,6 +167,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="MainPlayer.h" />
     <ClInclude Include="Monster_Dragon.h" />
+    <ClInclude Include="Monster_Golem.h" />
     <ClInclude Include="Monster_Script.h" />
     <ClInclude Include="Monster_Weeper.h" />
     <ClInclude Include="pch.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="MainPlayer.cpp" />
     <ClCompile Include="Monster_Dragon.cpp" />
+    <ClCompile Include="Monster_Golem.cpp" />
     <ClCompile Include="Monster_Script.cpp" />
     <ClCompile Include="Monster_Weeper.cpp" />
     <ClCompile Include="pch.cpp">

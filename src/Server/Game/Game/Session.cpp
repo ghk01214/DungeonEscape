@@ -139,27 +139,76 @@ namespace game
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
 
-		if (objType == server::OBJECT_TYPE::PLAYER)
+		switch (fbxType)
 		{
-			auto player{ dynamic_cast<Player*>(obj) };
+			case server::FBX_TYPE::NANA:
+			case server::FBX_TYPE::MISTIC:
+			case server::FBX_TYPE::CARMEL:
+			{
+				auto player{ dynamic_cast<Player*>(obj) };
 
-			packet.Write<int32_t>(player->GetState());
-			packet.Write<float>(player->GetAniPlayTime());
-		}
-		else if (fbxType == server::FBX_TYPE::WEEPER)
-		{
-			auto monster{ dynamic_cast<Weeper*>(obj) };
+				packet.Write<int32_t>(player->GetState());
+				packet.Write<float>(player->GetAniPlayTime());
+			}
+			break;
+			case server::FBX_TYPE::WEEPER1:
+			case server::FBX_TYPE::WEEPER2:
+			case server::FBX_TYPE::WEEPER3:
+			case server::FBX_TYPE::WEEPER4:
+			case server::FBX_TYPE::WEEPER5:
+			case server::FBX_TYPE::WEEPER6:
+			case server::FBX_TYPE::WEEPER7:
+			case server::FBX_TYPE::WEEPER_EMISSIVE:
+			{
+				auto monster{ dynamic_cast<Weeper*>(obj) };
 
-			packet.Write<int32_t>(monster->GetState());
-			packet.Write<float>(monster->GetAniPlayTime());
-		}
-		else if (fbxType == server::FBX_TYPE::DRAGON)
-		{
-			auto monster{ dynamic_cast<Dragon*>(obj) };
+				packet.Write<int32_t>(monster->GetState());
+				packet.Write<float>(monster->GetAniPlayTime());
+			}
+			break;
+			case server::FBX_TYPE::BLUE_GOLEM:
+			case server::FBX_TYPE::GREEN_GOLEM:
+			case server::FBX_TYPE::RED_GOLEM:
+			{
+				auto monster{ dynamic_cast<Golem*>(obj) };
 
-			packet.Write<int32_t>(monster->GetState());
-			packet.Write<float>(monster->GetAniPlayTime());
+				packet.Write<int32_t>(monster->GetState());
+				packet.Write<float>(monster->GetAniPlayTime());
+			}
+			break;
+			case server::FBX_TYPE::DRAGON:
+			{
+				auto monster{ dynamic_cast<Dragon*>(obj) };
+
+				packet.Write<int32_t>(monster->GetState());
+				packet.Write<float>(monster->GetAniPlayTime());
+			}
+			break;
+			default:
+			break;
 		}
+
+		//if (objType == server::OBJECT_TYPE::PLAYER)
+		//{
+		//	auto player{ dynamic_cast<Player*>(obj) };
+		//
+		//	packet.Write<int32_t>(player->GetState());
+		//	packet.Write<float>(player->GetAniPlayTime());
+		//}
+		//else if (fbxType == server::FBX_TYPE::WEEPER1)
+		//{
+		//	auto monster{ dynamic_cast<Weeper*>(obj) };
+		//
+		//	packet.Write<int32_t>(monster->GetState());
+		//	packet.Write<float>(monster->GetAniPlayTime());
+		//}
+		//else if (fbxType == server::FBX_TYPE::DRAGON)
+		//{
+		//	auto monster{ dynamic_cast<Dragon*>(obj) };
+		//
+		//	packet.Write<int32_t>(monster->GetState());
+		//	packet.Write<float>(monster->GetAniPlayTime());
+		//}
 
 		packet.Write<server::OBJECT_TYPE>(objType);
 		packet.Write<server::FBX_TYPE>(fbxType);

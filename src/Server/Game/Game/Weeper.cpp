@@ -20,7 +20,7 @@ Weeper::Weeper(int32_t MonsterID, const Vec3& position, const Quat& rotation, co
 
 	m_name = L"Weeper";
 	m_objType = server::OBJECT_TYPE::BOSS;
-	m_fbxType = server::FBX_TYPE::WEEPER;
+	m_fbxType = server::FBX_TYPE::WEEPER1;
 }
 
 Weeper::~Weeper()
@@ -187,9 +187,6 @@ void Weeper::CheckState()
 	}
 
 	m_prevState = m_currState;
-
-	if (m_currState == DEAD)
-		return;
 
 	game::Message msg{ -1, ProtocolID::WR_CHANGE_STATE_ACK };
 	msg.state = m_currState;

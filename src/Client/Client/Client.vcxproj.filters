@@ -48,13 +48,16 @@
     <Filter Include="소스 파일\Script\03. Monster\Boss\Weeper">
       <UniqueIdentifier>{38931a79-0d11-4864-815c-bec3ced30266}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Script\03. Monster\Boss\Dragon">
+      <UniqueIdentifier>{b0bea009-2752-4897-8f6e-717ec8c1f1a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\03. Monster\Boss\Golem">
+      <UniqueIdentifier>{27e16deb-49ab-48d0-a533-73a0bdf8c6bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
       <Filter>소스 파일\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Monster_Dragon.h">
-      <Filter>소스 파일\Script\03. Monster</Filter>
     </ClInclude>
     <ClInclude Include="Camera_Script.h">
       <Filter>소스 파일\Script\02. Camera</Filter>
@@ -95,6 +98,12 @@
     <ClInclude Include="Monster_Script.h">
       <Filter>소스 파일\Script\03. Monster</Filter>
     </ClInclude>
+    <ClInclude Include="Monster_Dragon.h">
+      <Filter>소스 파일\Script\03. Monster\Boss\Dragon</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster_Golem.h">
+      <Filter>소스 파일\Script\03. Monster\Boss\Golem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -112,9 +121,6 @@
   <ItemGroup>
     <ClCompile Include="Game.cpp">
       <Filter>소스 파일\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Monster_Dragon.cpp">
-      <Filter>소스 파일\Script\03. Monster</Filter>
     </ClCompile>
     <ClCompile Include="Camera_Script.cpp">
       <Filter>소스 파일\Script\02. Camera</Filter>
@@ -142,6 +148,12 @@
     </ClCompile>
     <ClCompile Include="Monster_Script.cpp">
       <Filter>소스 파일\Script\03. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Dragon.cpp">
+      <Filter>소스 파일\Script\03. Monster\Boss\Dragon</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Golem.cpp">
+      <Filter>소스 파일\Script\03. Monster\Boss\Golem</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

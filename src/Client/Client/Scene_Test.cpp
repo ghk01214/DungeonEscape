@@ -251,10 +251,11 @@ void Scene_Test::CreateMap(void)
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
 
-	//
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Items.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Props.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Weapons.fbx");
 
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage1.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage2.FBX");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 
@@ -583,11 +584,45 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
-		case server::FBX_TYPE::WEEPER:
+		case server::FBX_TYPE::WEEPER1:
+		case server::FBX_TYPE::WEEPER2:
+		case server::FBX_TYPE::WEEPER3:
+		case server::FBX_TYPE::WEEPER4:
+		case server::FBX_TYPE::WEEPER5:
+		case server::FBX_TYPE::WEEPER6:
+		case server::FBX_TYPE::WEEPER7:
 		{
-			objectDesc.strName = L"Weeper";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\Weeper.fbx";
+			objectDesc.strName = L"Weeper" + std::to_wstring(magic_enum::enum_integer(type) - magic_enum::enum_integer(server::FBX_TYPE::WEEPER1));
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\" + objectDesc.strName + L".fbx";
 			objectDesc.script = std::make_shared<Monster_Weeper>(stateIndex);
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_EMISSIVE:
+		{
+			objectDesc.strName = L"Weeper_Emissive";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\Weeper Emissive.fbx";
+			objectDesc.script = std::make_shared<Monster_Weeper>(stateIndex);
+		}
+		break;
+		case server::FBX_TYPE::BLUE_GOLEM:
+		{
+			objectDesc.strName = L"Blue Golem";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx";
+			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
+		}
+		break;
+		case server::FBX_TYPE::GREEN_GOLEM:
+		{
+			objectDesc.strName = L"Green Golem";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Green Golem.fbx";
+			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
+		}
+		break;
+		case server::FBX_TYPE::RED_GOLEM:
+		{
+			objectDesc.strName = L"Red Golem";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx";
+			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
 		}
 		break;
 		case server::FBX_TYPE::DRAGON:
