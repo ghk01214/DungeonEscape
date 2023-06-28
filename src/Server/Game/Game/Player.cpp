@@ -12,6 +12,8 @@
 #include "BoxCollider.h"
 #include "TriggerObject.h"
 
+using namespace std;
+
 Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
 	m_prevState{ IDLE1 },
@@ -46,33 +48,23 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
-	//auto t{ GetTransform() };
-	//auto p{ t->GetPosition() };
-	//
-	//if (p.y < -5.f)
-	//{
-	//	t->SetPosition(p.x, 10.f, -1500.f);
-	//	SetControllerPosition(Vec3{ p.x, 10.f, -1500.f });
-	//}
+	KeyboardLimit();					//FSM 0단계 : 금지상태에서는 키보드 클리어
 
 	ChangeStateByKeyInput();			//FSM 1단계	: 키보드 입력에 의한 STATE변경 (이동, 점프, 공격) STATE가 자유롭지 못할 시 진입X
-
 
 	TriggerZoneStatusUpdate();			//FSM 2단계	: 위부 요인에 의한 STATE변경 (판단 순서 : MP부족 > 피격 > HP부족)
 
 
-	IsOnGround();						//FSM 3단계	: 플레이어가 공중에 있다면 STATE불문 공중모션으로 변경
+	IsOnGround();						//FSM 3단계	: 공중모션 판단
 
 	SkillAttempt();						//FSM 4단계 : STATE_CHECK직전 state가 공격이라면 마나상태에 따라 ATK or TIRED로 진입.
 	DeathCheck();						//			: IDLE상태에서 HP0면 state를 DIE0으로													//최종 STATE
 
-
+	PlayerMove();						//			: controller를 사용해 이동한다. state가 move/jump가 아닐 시 키보드 정보 삭제
 
 	State_Check_Enter();				//FSM 5단계	: 최종적으로 정해진 State진입에 대한 1회성 행동처리(공격함수 호출, 사운드 출력 등..)		//최종 STATE에 대한 처리
 	Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
 	Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
-
-	PlayerMove();						//			: controller를 사용해 이동한다. state가 move/jump가 아닐 시 키보드 정보 삭제
 
 	GameObject::Update(timeDelta);
 
@@ -104,11 +96,10 @@ void Player::IsOnGround()
 
 	auto distance{ m_controller->GetDistanceFromGround() };
 
-	if (distance > 250.f)
-		m_prevOnGround = false;
-
 	if (IsEqual(distance, -1.f) == true or distance > 300.f)
+	{
 		m_currState = JUMPING;
+	}
 }
 
 bool Player::IsDead()
@@ -202,6 +193,29 @@ void Player::GetDamaged(int32_t damage)
 	m_hp -= damage;
 }
 
+void Player::KeyboardLimit()
+{
+	switch (m_currState)
+	{
+		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
+		case DAMAGE: case DEAD:
+		case DIE0: case DIE1: case DIE2:
+		{
+			m_controller->Keyboard_ATK_Clear();
+			m_controller->Keyboard_Direction_Clear();
+			m_controller->Keyboard_SpaceBar_Clear();
+		}
+		return;
+		case JUMP_START: case JUMPING:
+		{
+			m_controller->Keyboard_ATK_Clear();
+		}
+		return;
+		default:
+		break;
+	}
+}
+
 void Player::ChangeStateByKeyInput()
 {
 	switch (m_currState)
@@ -237,8 +251,6 @@ void Player::ChangeStateByKeyInput()
 #pragma endregion
 
 #pragma region 스킬처리
-	//스킬누르면 방향키입력을 모조리 삭제
-
 	if (key[KEY_1].down)
 	{
 		m_currState = ATK0;
@@ -270,6 +282,8 @@ void Player::State_Check_Enter()
 {
 	if (m_prevState == m_currState)
 		return;
+
+	std::cout << magic_enum::enum_name(m_currState) << "\n";
 
 	switch (m_currState)				//state최초진입 행동정의
 	{
@@ -460,12 +474,16 @@ void Player::Update_Frame_Once()
 		break;
 	}
 
-	if (m_prevOnGround == false and m_controller->IsOnGroundByDistance() == true)
+	if (m_controller->IsOnGroundByDistance() == true)
 	{
-		if (m_currState == JUMP_START or m_currState == JUMPING)
-			m_currState = JUMP_END;
-
-		m_prevOnGround = true;
+		if (m_currState == JUMP_START || m_currState == JUMPING)
+		{
+			if (m_controller->Falling())
+			{
+				cout << "수정필요" << endl;
+				m_currState = IDLE1;
+			}
+		}
 	}
 
 	if (m_aniEnd == false)
@@ -486,9 +504,12 @@ void Player::Update_Frame_Once()
 		case DIE0: case DIE1: case DIE2:
 		{
 			m_currState = DEAD;
-			m_startSendTransform = false;
 		}
 		break;
+		case JUMP_START:
+		{
+			m_currState = JUMPING;
+		}
 		case JUMP_END:
 		{
 			m_currState = IDLE1;

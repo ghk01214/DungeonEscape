@@ -77,6 +77,7 @@ public:
 	void SetJumpSpeed(float value);
 	float GetJumpSpeed();
 	float GetDistanceFromGround();
+	bool Falling();
 
 
 public:

@@ -502,6 +502,15 @@ float CustomController::GetDistanceFromGround()
 	return m_distanceFromGround;
 }
 
+bool CustomController::Falling()
+{
+	PxVec3 curVel = m_body->GetVelocity();
+	if (curVel.y < 0.f)
+		return true;
+
+	return false;
+}
+
 KeyInput& CustomController::GetKeyStatus(KEY_ORDER key)
 {
 	return m_keyboardInput[key];
