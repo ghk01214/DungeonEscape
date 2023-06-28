@@ -12,6 +12,8 @@
 #include "BoxCollider.h"
 #include "TriggerObject.h"
 
+#define SEND_AGAIN 3
+
 using namespace std;
 
 Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
@@ -23,7 +25,8 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_hp{ 20 },
 	m_mp{ 100 },
 	m_firstSingleStrike{ true },
-	m_prevOnGround{ false }
+	m_prevOnGround{ false },
+	m_sendState{ false }
 {
 	m_id = playerID;
 }
@@ -48,6 +51,17 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
+	if (m_sendState > 0)
+	{
+		game::Message msg{ m_id, ProtocolID::WR_CHANGE_STATE_ACK };
+		msg.state = m_currState;
+		msg.objType = m_objType;
+
+		game::MessageHandler::GetInstance()->PushSendMessage(msg);
+
+		--m_sendState;
+	}
+
 	KeyboardLimit();					//FSM 0단계 : 금지상태에서는 키보드 클리어
 
 	ChangeStateByKeyInput();			//FSM 1단계	: 키보드 입력에 의한 STATE변경 (이동, 점프, 공격) STATE가 자유롭지 못할 시 진입X
@@ -283,8 +297,6 @@ void Player::State_Check_Enter()
 	if (m_prevState == m_currState)
 		return;
 
-	std::cout << magic_enum::enum_name(m_currState) << "\n";
-
 	switch (m_currState)				//state최초진입 행동정의
 	{
 		case AERT:
@@ -436,6 +448,7 @@ void Player::State_Check_Enter()
 	}
 
 	m_prevState = m_currState;
+	m_sendState = SEND_AGAIN;
 
 	game::Message msg{ m_id, ProtocolID::WR_CHANGE_STATE_ACK };
 	msg.state = m_currState;
@@ -443,7 +456,7 @@ void Player::State_Check_Enter()
 
 	game::MessageHandler::GetInstance()->PushSendMessage(msg);
 
-	//std::cout << magic_enum::enum_name(m_currState) << "\n";
+	//std::cout << "check state : " << magic_enum::enum_name(m_currState) << "\n";
 }
 
 void Player::Update_Frame_Continuous()

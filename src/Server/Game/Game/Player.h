@@ -130,4 +130,6 @@ private:
 
 	bool m_firstSingleStrike;
 	bool m_prevOnGround;
+
+	int32_t m_sendState;
 };

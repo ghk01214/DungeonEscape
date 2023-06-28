@@ -813,6 +813,9 @@ namespace game
 					break;
 				}
 
+				if (object == nullptr)
+					return;
+
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
@@ -956,7 +959,6 @@ namespace game
 							continue;
 
 						client->SendRemovePacket(postOver->objID, postOver->objType);
-						std::cout << "id : " << postOver->objID << "\n";
 					}
 				}
 

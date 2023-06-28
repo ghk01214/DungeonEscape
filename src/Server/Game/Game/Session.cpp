@@ -312,6 +312,8 @@ namespace game
 		packet.WriteProtocol(ProtocolID::WR_CHANGE_STATE_ACK);
 		packet.Write<int32_t>(stateIndex);
 
+		//std::cout << id << " : " <<magic_enum::enum_name(magic_enum::enum_value<Player::PLAYER_STATE>(stateIndex)) << "\n";
+
 		Send(packet);
 	}
 }
