@@ -244,7 +244,7 @@ void Scene_Test::CreateMap(void)
 	FBXMapLoader mapLoader;
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
-	mapLoader.AddBasicObject(L"..\\Resoures\\FBX\\Environments\\Misc.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
