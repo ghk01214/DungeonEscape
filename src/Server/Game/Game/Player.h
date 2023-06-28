@@ -128,4 +128,5 @@ private:
 	int32_t m_mp;
 
 	bool m_firstSingleStrike;
+	bool m_prevOnGround;
 };

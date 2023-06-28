@@ -20,7 +20,8 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_aniEnd{ false },
 	m_hp{ 20 },
 	m_mp{ 100 },
-	m_firstSingleStrike{ true }
+	m_firstSingleStrike{ true },
+	m_prevOnGround{ false }
 {
 	m_id = playerID;
 }
@@ -45,6 +46,15 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
+	//auto t{ GetTransform() };
+	//auto p{ t->GetPosition() };
+	//
+	//if (p.y < -5.f)
+	//{
+	//	t->SetPosition(p.x, 10.f, -1500.f);
+	//	SetControllerPosition(Vec3{ p.x, 10.f, -1500.f });
+	//}
+
 	ChangeStateByKeyInput();			//FSM 1단계	: 키보드 입력에 의한 STATE변경 (이동, 점프, 공격) STATE가 자유롭지 못할 시 진입X
 
 
@@ -83,10 +93,21 @@ void Player::Release()
 
 void Player::IsOnGround()
 {
+	switch (m_currState)
+	{
+		case DAMAGE: case DEAD:
+		case DIE0: case DIE1: case DIE2:
+		return;
+		default:
+		break;
+	}
+
 	auto distance{ m_controller->GetDistanceFromGround() };
 
-	// 수정
-	if (IsEqual(distance, -1.f) == true or distance > 30.f)
+	if (distance > 250.f)
+		m_prevOnGround = false;
+
+	if (IsEqual(distance, -1.f) == true or distance > 300.f)
 		m_currState = JUMPING;
 }
 
@@ -196,24 +217,21 @@ void Player::ChangeStateByKeyInput()
 	auto key{ m_controller->GetKeyInput() };
 
 #pragma region 방향처리
-	if (key[W].press || key[A].press || key[S].press || key[D].press)
+	if (key[W].press or key[A].press or key[S].press or key[D].press)
 	{
 		m_currState = MOVE;
-		//std::cout << "움직임" << std::endl;
 	}
-
-	else if (!key[W].press && !key[S].press && !key[A].press && !key[D].press &&
-		!key[W].down && !key[S].down && !key[A].down && !key[D].down)
+	else if (!key[W].press and !key[S].press and !key[A].press and !key[D].press
+		and !key[W].down and !key[S].down and !key[A].down and !key[D].down)
 	{
 		m_currState = IDLE1;
 	}
 #pragma endregion
 
 #pragma region 점프처리
-	if (key[SPACE].down && m_controller->IsOnGround())
+	if (key[SPACE].down and m_controller->IsOnGround())
 	{
 		m_currState = JUMP_START;
-		//std::cout << "Jump Start" << std::endl;
 		return;			// 점프면 바로 함수 종료
 	}
 #pragma endregion
@@ -226,28 +244,24 @@ void Player::ChangeStateByKeyInput()
 		m_currState = ATK0;
 		m_controller->Keyboard_Direction_Clear();
 		m_controller->Keyboard_SpaceBar_Clear();
-		//std::cout << "ATK0, Keyboard direction/space delete" << std::endl;
 	}
 	else if (key[KEY_2].down)
 	{
 		m_currState = ATK1;
 		m_controller->Keyboard_Direction_Clear();
 		m_controller->Keyboard_SpaceBar_Clear();
-		//std::cout << "ATK0, Keyboard direction/space delete" << std::endl;
 	}
 	else if (key[KEY_3].down)
 	{
 		m_currState = ATK2;
 		m_controller->Keyboard_Direction_Clear();
 		m_controller->Keyboard_SpaceBar_Clear();
-		//std::cout << "ATK0, Keyboard direction/space delete" << std::endl;
 	}
 	else if (key[KEY_4].down)
 	{
 		m_currState = ATK3;
 		m_controller->Keyboard_Direction_Clear();
 		m_controller->Keyboard_SpaceBar_Clear();
-		//std::cout << "ATK0, Keyboard direction/space delete" << std::endl;
 	}
 #pragma endregion
 }
@@ -321,7 +335,6 @@ void Player::State_Check_Enter()
 		break;
 		case JUMP_START:
 		{
-
 		}
 		break;
 		case MOVE:
@@ -415,6 +428,8 @@ void Player::State_Check_Enter()
 	msg.objType = m_objType;
 
 	game::MessageHandler::GetInstance()->PushSendMessage(msg);
+
+	//std::cout << magic_enum::enum_name(m_currState) << "\n";
 }
 
 void Player::Update_Frame_Continuous()
@@ -445,10 +460,12 @@ void Player::Update_Frame_Once()
 		break;
 	}
 
-	if (m_controller->IsOnGround() == true)
+	if (m_prevOnGround == false and m_controller->IsOnGroundByDistance() == true)
 	{
 		if (m_currState == JUMP_START or m_currState == JUMPING)
 			m_currState = JUMP_END;
+
+		m_prevOnGround = true;
 	}
 
 	if (m_aniEnd == false)
@@ -506,7 +523,7 @@ void Player::Update_Frame_Once()
 
 void Player::PlayerMove()
 {
-	if (m_currState != MOVE && m_currState != JUMP_START && m_currState != JUMPING)
+	if (m_currState != MOVE and m_currState != JUMP_START and m_currState != JUMPING)
 		m_controller->Keyboard_Direction_Clear();
 
 	m_controller->PlayerMove();
@@ -541,19 +558,19 @@ void Player::SkillAttempt()
 	}
 
 	// state(스킬)과 마나 비교
-	if (m_currState == ATK0 && m_mp < requiredMana[0])
+	if (m_currState == ATK0 and m_mp < requiredMana[0])
 	{
 		m_currState = TIRED;
 	}
-	if (m_currState == ATK1 && m_mp < requiredMana[1])
+	if (m_currState == ATK1 and m_mp < requiredMana[1])
 	{
 		m_currState = TIRED;
 	}
-	if (m_currState == ATK2 && m_mp < requiredMana[2])
+	if (m_currState == ATK2 and m_mp < requiredMana[2])
 	{
 		m_currState = TIRED;
 	}
-	if (m_currState == ATK3 && m_mp < requiredMana[3])
+	if (m_currState == ATK3 and m_mp < requiredMana[3])
 	{
 		m_currState = TIRED;
 	}
@@ -564,7 +581,7 @@ void Player::DeathCheck()
 	if (m_currState == DIE0)					//반복호출을 막는다. 계속 DIE0이면 DEAD로 진행이 불가능하다.
 		return;
 
-	if (m_currState == IDLE1 && m_hp <= 0)		//IDLE상태일때만 죽음으로 보내버린다.
+	if (m_currState == IDLE1 and m_hp <= 0)		//IDLE상태일때만 죽음으로 보내버린다.
 		m_currState = DIE0;
 }
 
@@ -721,7 +738,7 @@ void Player::PlayerPattern_SingleStrike()
 		default:
 		break;
 	}
-			//공격 활성화 시간
+	//공격 활성화 시간
 
 	auto objmgr = ObjectManager::GetInstance();
 	physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());				//플레이어 위치
