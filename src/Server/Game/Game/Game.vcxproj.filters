@@ -176,6 +176,9 @@
     <Filter Include="03. Game\01. GameObject\Monster\Golem">
       <UniqueIdentifier>{001019ca-fda6-4e1d-8569-7fa9513d8c02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\Monster\AI">
+      <UniqueIdentifier>{334f80ee-fb67-42fa-a916-b9fa34b9f5ed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -328,6 +331,9 @@
     </ClCompile>
     <ClCompile Include="Golem.cpp">
       <Filter>03. Game\01. GameObject\Monster\Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterAI.cpp">
+      <Filter>03. Game\01. GameObject\Monster\AI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -507,6 +513,9 @@
     </ClInclude>
     <ClInclude Include="Golem.h">
       <Filter>03. Game\01. GameObject\Monster\Golem</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterAI.h">
+      <Filter>03. Game\01. GameObject\Monster\AI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

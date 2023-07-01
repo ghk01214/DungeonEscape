@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 #include "Monster.h"
+#include "MonsterAI.h"
+#include "ObjectManager.h"
 #include "CustomController.h"
 #include "MessageHandler.h"
 #include "TimeManager.h"
@@ -9,6 +11,7 @@
 #include "CollisionPairInfo.h"
 #include "Player.h"
 #include "RigidBody.h"
+#include "Layer.h"
 
 Monster::Monster(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
@@ -53,7 +56,19 @@ void Monster::LateUpdate(double timeDelta)
 void Monster::Release()
 {
 	m_controller = nullptr;
+	m_AI->Release();
+
 	GameObject::Release();
+}
+
+Vec3 Monster::GetControllerPosition()
+{
+	return FROM_PX3(m_controller->GetBody()->GetPosition());
+}
+
+void Monster::SetControllerPosition(Vec3 pos)
+{
+	m_controller->GetBody()->SetPosition(pos, true);
 }
 
 int32_t Monster::GetHP() const

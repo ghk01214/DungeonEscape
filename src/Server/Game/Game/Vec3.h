@@ -43,9 +43,6 @@ public:
     operator DirectX::XMFLOAT4() const;
 
 public:
-
-
-public:
     static Vec3 back();
     static Vec3 down();
     static Vec3 forward();
@@ -54,4 +51,7 @@ public:
     static Vec3 up();
     static Vec3 one();
     static Vec3 zero();
+
+public:
+    static float DistanceBetween(const Vec3& A, const Vec3& B);
 };

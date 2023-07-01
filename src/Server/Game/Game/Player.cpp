@@ -38,6 +38,7 @@ Player::~Player()
 void Player::Init()
 {
 	m_controller = AddComponent<CustomController>(L"CustomController", true);
+	m_controller->GetBody()->SetName("Player");
 
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);
@@ -493,7 +494,6 @@ void Player::Update_Frame_Once()
 		{
 			if (m_controller->Falling())
 			{
-				cout << "수정필요" << endl;
 				m_currState = IDLE1;
 			}
 		}

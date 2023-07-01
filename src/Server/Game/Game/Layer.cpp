@@ -4,7 +4,8 @@
 
 void Layer::Init()
 {
-	//objectList를 레벨 구분하여 관리하게 된다면 배열 할당에 사용 가능하기 때문에 빈 함수로 남깁니다.
+    std::random_device rd;
+    m_randomEngine = std::mt19937(rd());
 }
 
 void Layer::Update(double timeDelta)
@@ -63,15 +64,3 @@ std::list<GameObject*>& Layer::GetGameObjects()
 {
     return m_GameObjects;
 }
-
-//template <typename T, typename... Args>
-//T* Layer::AddGameObject(Args&&... args)
-//{
-//	static_assert(std::is_base_of<GameObject, T>::value, "T must be derived from GameObject\n");
-//													//부모클래스가 gameObject인지 재확인합니다.
-//	T* newGameObject = new T();
-//	newGameObject->Init(std::forward<Args>(args)...);
-//	m_GameObjects.push_back(newGameObject);
-//
-//	return newGameObject;
-//}

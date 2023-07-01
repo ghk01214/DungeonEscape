@@ -29,6 +29,27 @@ public:
 		return newGameObject;
 	}
 
+	template <typename T>
+	T* SelectRandomObject()
+	{
+		static_assert(std::is_base_of<GameObject, T>::value, "T must be derived from GameObject");
+
+		if (m_GameObjects.empty()) // If the list is empty, return nullptr
+			return nullptr;
+
+		std::uniform_int_distribution<> dis(0, m_GameObjects.size() - 1);
+
+		int random_index = dis(m_randomEngine);
+
+		std::list<GameObject*>::iterator it = m_GameObjects.begin();
+		std::advance(it, random_index);
+
+		T* selectedObject = dynamic_cast<T*>(*it);
+		if (selectedObject == nullptr) // If the cast fails, return nullptr
+			return nullptr;
+
+		return selectedObject;
+	}
 
 
 	void RemoveGameObject(GameObject* gameObject);
@@ -37,5 +58,6 @@ public:
 
 private:
 	std::list<GameObject*>	m_GameObjects;
+	std::mt19937 m_randomEngine;
 };
 

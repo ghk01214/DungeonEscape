@@ -68,4 +68,7 @@ public:
 private:
 	GOLEM_STATE m_prevState;
 	GOLEM_STATE m_currState;
+
+private:
+	Vec3 m_patternSize;
 };

@@ -20,6 +20,7 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <functional>
+#include <random>
 
 #include <thread>
 #include <atomic>
@@ -64,6 +65,7 @@ namespace fs = std::filesystem;
 #include <DirectXMath.h>
 #include "SimpleMath.h"
 #include "FBX/fbxsdk.h"
+#include <cmath>
 
 #ifdef _DEBUG
 #pragma comment(lib, "FBX\\debug\\libfbxsdk-md.lib")

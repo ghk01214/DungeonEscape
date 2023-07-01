@@ -191,6 +191,15 @@ Vec3 Vec3::zero()
 	return Vec3(0, 0, 0);
 }
 
+float Vec3::DistanceBetween(const Vec3& A, const Vec3& B)
+{
+	float dx = B.x - A.x;
+	float dy = B.y - A.y;
+	float dz = B.z - A.z;
+
+	return std::sqrt(dx * dx + dy * dy + dz * dz);
+}
+
 
 
 

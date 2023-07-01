@@ -306,6 +306,17 @@ bool RigidBody::isKinematic() const
 	return m_body->getRigidBodyFlags().isSet(PxRigidBodyFlag::eKINEMATIC);
 }
 
+std::string RigidBody::GetName()
+{
+	std::string name = std::string(m_body->getName());
+	return name;
+}
+
+void RigidBody::SetName(std::string name)
+{
+	m_body->setName(name.c_str());
+}
+
 void RigidBody::ExcludeFromSimulation(bool value)
 {
 	m_body->setActorFlag(PxActorFlag::eDISABLE_SIMULATION, value);

@@ -144,6 +144,10 @@ public:
 	bool isKinematic() const;
 
 public:
+	std::string GetName();
+	void SetName(std::string name);
+
+public:
 	void ExcludeFromSimulation(bool value);
 	bool IsExcludedFromSimulation();
 

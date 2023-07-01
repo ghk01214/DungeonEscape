@@ -23,7 +23,7 @@ public:
 		STATUE1,
 		STATUE2,
 		STATUE3,
-		TAUNT,		// 놀리다, 비웃다
+		TAUNT,		
 		TURN_LEFT,
 		TURN_RIGHT,
 		WALK,

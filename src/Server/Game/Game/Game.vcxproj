@@ -167,6 +167,7 @@
     <ClCompile Include="Dragon.cpp" />
     <ClCompile Include="Golem.cpp" />
     <ClCompile Include="Monster.cpp" />
+    <ClCompile Include="MonsterAI.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="CustomController.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="Dragon.h" />
     <ClInclude Include="Golem.h" />
     <ClInclude Include="Monster.h" />
+    <ClInclude Include="MonsterAI.h" />
     <ClInclude Include="Monsters.hpp" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />

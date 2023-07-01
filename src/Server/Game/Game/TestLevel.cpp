@@ -39,8 +39,8 @@ void TestLevel::Init()
 	//auto MonsterObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 	//MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
 
-	//LoadBasicMap3();
-	LoadMap();
+	LoadBasicMap3();
+	//LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -187,8 +187,11 @@ void TestLevel::LoadBasicMap2()
 void TestLevel::LoadBasicMap3()
 {
 	auto objmgr = ObjectManager::GetInstance();
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(1500, 100, -1500), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	//PlayerObject->SetControllerPosition(Vec3(650.f, 100.f, 0.f));
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(1500, 100, -1500), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	PlayerObject->SetControllerPosition(Vec3(650.f, 100.f, 0.f));
+
+	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1500, 100, -1500), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	WeeperObject->SetControllerPosition(Vec3(750.f, 100.f, 0.f));
 
 
 #pragma region CenterBox(0,0,0)

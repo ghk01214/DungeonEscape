@@ -10,6 +10,7 @@
 #include "CollisionPairInfo.h"
 #include "Player.h"
 #include "RigidBody.h"
+#include "MonsterAI.h"
 
 Weeper::Weeper(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	Monster{ MonsterID, position, rotation, scale },
@@ -30,19 +31,18 @@ Weeper::~Weeper()
 void Weeper::Init()
 {
 	Monster::Init();
+
+	m_AI->AddSkillSize(GeometryType::Box, Vec3(50, 50, 200), L"WEEPER_CAST1");
+	m_AI->AddSkillSize(GeometryType::Box, Vec3(50, 50, 200), L"WEEPER_CAST2");
+	m_AI->AddSkillSize(GeometryType::Box, Vec3(50, 50, 200), L"WEEPER_CAST3");
+	m_AI->AddSkillSize(GeometryType::Box, Vec3(50, 50, 200), L"WEEPER_CAST4");
+
 }
 
 void Weeper::Update(double timeDelta)
 {
-	if (IsDead() == true)
-	{
-		if (m_currState != DEAD)
-			m_currState = DEATH;
+	m_AI->Update();
 
-		Monster::Update(timeDelta);
-
-		return;
-	}
 
 	Monster::Update(timeDelta);
 }

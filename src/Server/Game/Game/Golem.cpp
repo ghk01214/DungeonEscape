@@ -30,6 +30,9 @@ Golem::~Golem()
 void Golem::Init()
 {
 	Monster::Init();
+
+	//패턴 크기 다 넣기
+	//AddSkillSize();
 }
 
 void Golem::Update(double timeDelta)

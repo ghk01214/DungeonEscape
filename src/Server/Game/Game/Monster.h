@@ -1,11 +1,15 @@
 ﻿#pragma once
 
 #include "GameObject.h"
+#include "physx_define.h"
 
 class CustomController;
+class Player;
+class MonsterAI;
 
 class Monster : public GameObject
 {
+	friend class MonsterAI;
 public:
 	Monster(int32_t MonsterID = -1, const Vec3& position = Vec3(), const Quat& rotation = Quat(), const Vec3& scale = Vec3(1.f, 1.f, 1.f));
 	~Monster() override;
@@ -18,6 +22,8 @@ public:
 
 public:
 	CustomController* GetController() { return m_controller; }
+	Vec3 GetControllerPosition();
+	void SetControllerPosition(Vec3 pos);
 	int32_t GetHP() const;
 	float GetAniPlayTime() const;
 
@@ -38,7 +44,6 @@ public:
 
 public:
 	void GetDamaged(int32_t damage);
-
 	void SendTransform();
 
 protected:
@@ -48,4 +53,7 @@ protected:
 
 	float m_aniPlayTime;
 	bool m_aniEnd;
+
+protected:
+	MonsterAI* m_AI;
 };
