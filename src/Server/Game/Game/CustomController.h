@@ -47,13 +47,13 @@ public:
 public:
 	//CustomController 컴포넌트를 사용하는 게임오브젝트는 Move()를 GameObject::Update()에서 반드시 호출
 	void PlayerMove();
-	void MonsterMove();
+	void MonsterMove(physx::PxVec3 targetDir);
 	bool CheckOnGround(CollisionInfoType type, physx::PxVec3& surfaceNormal);
 	void GetSlidingVector(CollisionInfoType type);
 	bool CheckOnGround_Raycast();
 	Collider* GetColliderBelow();
 	void DirectionInput_Player();
-	void DirectionInput_Monster();
+	void DirectionInput_Monster(physx::PxVec3 targetDir);
 	void Movement_Player();
 	void Movement_Monster();
 

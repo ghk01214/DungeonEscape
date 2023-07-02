@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
-#include "Monster.h"
 #include "Weeper.h"
+#include "WeeperAI.h"
 #include "CustomController.h"
 #include "MessageHandler.h"
 #include "TimeManager.h"
@@ -32,32 +32,30 @@ void Weeper::Init()
 {
 	Monster::Init();
 
-	m_AI->AddSkillSize(GeometryType::Box, Vec3(50, 50, 200), L"WEEPER_CAST1");
-	m_AI->AddSkillSize(GeometryType::Box, Vec3(50, 50, 200), L"WEEPER_CAST2");
-	m_AI->AddSkillSize(GeometryType::Box, Vec3(50, 50, 200), L"WEEPER_CAST3");
-	m_AI->AddSkillSize(GeometryType::Box, Vec3(50, 50, 200), L"WEEPER_CAST4");
-
+	m_AI = new WeeperAI(this);
+	m_AI->Init();
 }
 
 void Weeper::Update(double timeDelta)
 {
-	m_AI->Update();
+	m_AI->Update(timeDelta);
 
+	CheckState();
+	UpdateFrame();
 
 	Monster::Update(timeDelta);
 }
 
 void Weeper::LateUpdate(double timeDelta)
 {
-	CheckState();
-	UpdateFrame();
-
 	Monster::LateUpdate(timeDelta);
 }
 
 void Weeper::Release()
 {
 	Monster::Release();
+
+	SafeRelease(m_AI);
 }
 
 void Weeper::CheckState()

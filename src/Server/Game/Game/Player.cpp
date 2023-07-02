@@ -38,7 +38,9 @@ Player::~Player()
 void Player::Init()
 {
 	m_controller = AddComponent<CustomController>(L"CustomController", true);
-	m_controller->GetBody()->SetName("Player");
+	std::string test = "Player";
+	m_controller->GetBody()->SetName(test);
+	m_controller->GetBody()->GetName();
 
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);

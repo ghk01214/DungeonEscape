@@ -40,8 +40,6 @@ void Monster::Init()
 
 void Monster::Update(double timeDelta)
 {
-	m_controller->MonsterMove();
-
 	GameObject::Update(timeDelta);
 
 	SendTransform();
@@ -56,7 +54,6 @@ void Monster::LateUpdate(double timeDelta)
 void Monster::Release()
 {
 	m_controller = nullptr;
-	m_AI->Release();
 
 	GameObject::Release();
 }

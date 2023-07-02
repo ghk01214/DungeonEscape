@@ -167,17 +167,26 @@
     <Filter Include="01. Server\DB">
       <UniqueIdentifier>{c03ab8b2-3cf9-4361-b4d8-e8b8b37f6d23}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Game\01. GameObject\Monster\Weeper">
-      <UniqueIdentifier>{c677c425-4658-4b78-8a4c-2b85b2c5847f}</UniqueIdentifier>
+    <Filter Include="03. Game\01. GameObject\Monster\00. MonsterAI">
+      <UniqueIdentifier>{7f4b6065-ab77-4e29-afa3-dd5dc360ba86}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Game\01. GameObject\Monster\Dragon">
-      <UniqueIdentifier>{a0c86811-ad09-48e6-9f30-8035ee079645}</UniqueIdentifier>
+    <Filter Include="03. Game\01. GameObject\Monster\00. MonsterAI\WeeperAI">
+      <UniqueIdentifier>{f2edf3bf-04b2-404c-9dfb-c826aa1bba5b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Game\01. GameObject\Monster\Golem">
+    <Filter Include="03. Game\01. GameObject\Monster\01. Monsters">
+      <UniqueIdentifier>{b92fcf5e-67df-47e1-a705-f13b4c1d0c3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\Monster\01. Monsters\Golem">
       <UniqueIdentifier>{001019ca-fda6-4e1d-8569-7fa9513d8c02}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Game\01. GameObject\Monster\AI">
-      <UniqueIdentifier>{334f80ee-fb67-42fa-a916-b9fa34b9f5ed}</UniqueIdentifier>
+    <Filter Include="03. Game\01. GameObject\Monster\01. Monsters\Dragon">
+      <UniqueIdentifier>{a0c86811-ad09-48e6-9f30-8035ee079645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\Monster\01. Monsters\Weeper">
+      <UniqueIdentifier>{c677c425-4658-4b78-8a4c-2b85b2c5847f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\Monster\00. MonsterAI\00. MonsterSkill">
+      <UniqueIdentifier>{ea3d9318-e1b2-4240-9a62-2b929ec6fe66}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -324,16 +333,22 @@
       <Filter>01. Server\DB</Filter>
     </ClCompile>
     <ClCompile Include="Weeper.cpp">
-      <Filter>03. Game\01. GameObject\Monster\Weeper</Filter>
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Weeper</Filter>
     </ClCompile>
     <ClCompile Include="Dragon.cpp">
-      <Filter>03. Game\01. GameObject\Monster\Dragon</Filter>
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Dragon</Filter>
     </ClCompile>
     <ClCompile Include="Golem.cpp">
-      <Filter>03. Game\01. GameObject\Monster\Golem</Filter>
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterSkill.cpp">
+      <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\00. MonsterSkill</Filter>
     </ClCompile>
     <ClCompile Include="MonsterAI.cpp">
-      <Filter>03. Game\01. GameObject\Monster\AI</Filter>
+      <Filter>03. Game\01. GameObject\Monster\00. MonsterAI</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperAI.cpp">
+      <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\WeeperAI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -503,19 +518,25 @@
       <Filter>01. Server\DB</Filter>
     </ClInclude>
     <ClInclude Include="Weeper.h">
-      <Filter>03. Game\01. GameObject\Monster\Weeper</Filter>
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Weeper</Filter>
     </ClInclude>
     <ClInclude Include="Dragon.h">
-      <Filter>03. Game\01. GameObject\Monster\Dragon</Filter>
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Dragon</Filter>
     </ClInclude>
     <ClInclude Include="Monsters.hpp">
       <Filter>03. Game\01. GameObject\Monster</Filter>
     </ClInclude>
     <ClInclude Include="Golem.h">
-      <Filter>03. Game\01. GameObject\Monster\Golem</Filter>
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Golem</Filter>
+    </ClInclude>
+    <ClInclude Include="MonsterSkill.h">
+      <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\00. MonsterSkill</Filter>
     </ClInclude>
     <ClInclude Include="MonsterAI.h">
-      <Filter>03. Game\01. GameObject\Monster\AI</Filter>
+      <Filter>03. Game\01. GameObject\Monster\00. MonsterAI</Filter>
+    </ClInclude>
+    <ClInclude Include="WeeperAI.h">
+      <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\WeeperAI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

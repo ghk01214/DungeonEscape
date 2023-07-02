@@ -145,7 +145,7 @@ public:
 
 public:
 	std::string GetName();
-	void SetName(std::string name);
+	void SetName(std::string& name);
 
 public:
 	void ExcludeFromSimulation(bool value);
@@ -156,5 +156,6 @@ private:
 	bool m_continuous{ true };
 
 	std::vector<Collider*> m_colliders;
+	std::string m_name;
 };
 

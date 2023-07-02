@@ -199,6 +199,7 @@
     </ClCompile>
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="SimpleMath.cpp" />
+    <ClCompile Include="MonsterSkill.cpp" />
     <ClCompile Include="SkillObject.cpp" />
     <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="TestLevel.cpp" />
@@ -208,6 +209,7 @@
     <ClCompile Include="TriggerPairInfo.cpp" />
     <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="Weeper.cpp" />
+    <ClCompile Include="WeeperAI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\vendor\include\Define.h" />
@@ -259,6 +261,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="Session.h" />
     <ClInclude Include="SimpleMath.h" />
+    <ClInclude Include="MonsterSkill.h" />
     <ClInclude Include="SkillObject.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="game_functions.h" />
@@ -270,6 +273,7 @@
     <ClInclude Include="TriggerPairInfo.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="Weeper.h" />
+    <ClInclude Include="WeeperAI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SimpleMath.inl" />

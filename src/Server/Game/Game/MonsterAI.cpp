@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "MonsterAI.h"
 #include "Monster.h"
+#include "MonsterSkill.h"
 #include "Player.h"
 #include "ObjectManager.h"
 #include "Layer.h"
@@ -11,10 +12,12 @@
 
 using namespace physx;
 
+
+
 MonsterAI::MonsterAI(Monster* monster) :
 	m_monster(monster),
-	m_detectRange{ 5000000.f },
-	m_targetPos_UpdateInterval{ 0.5f }
+	m_detectRange(500000.f),
+	m_targetPos_UpdateInterval(0.5f)
 {
 }
 
@@ -25,38 +28,37 @@ MonsterAI::~MonsterAI()
 void MonsterAI::Init()
 {
 	SetRandomTarget();
-	m_scheduler.emplace_back(SCHEDULE::WEEPER_CAST1);			//임시
 }
 
-void MonsterAI::Update()
+void MonsterAI::Update(float timeDelta)
 {
-	SchedulerUpdate();
+	if (IsEmptySchedule())
+		FillSchedule();
+
+	else
+		ExecuteSchedule(timeDelta);
 }
 
-void MonsterAI::Late_Update()
+void MonsterAI::LateUpdate(float timeDelta)
 {
 }
 
 void MonsterAI::Release()
 {
-	for (auto& pair : m_skillSizeHolder)
+	for (auto& skill : m_skillSizeHolder)
 	{
-		delete pair.second;
+		skill->Release();
+		SafeRelease(skill);
 	}
-}
-
-void MonsterAI::SchedulerUpdate()
-{
-	if (!m_scheduler.empty())
-		return;
-
-	if (m_scheduler[0] == SCHEDULE::WEEPER_CAST1)
-		SkillRangeCheck();
+	m_skillSizeHolder.clear();
 }
 
 void MonsterAI::SetRandomTarget()
 {
-	Layer* players = ObjectManager::GetInstance()->GetLayer(L"Player");
+	Layer* players = ObjectManager::GetInstance()->GetLayer(L"Layer_Player");
+	if (!players)
+		return;
+
 	Vec3 monsterPos = m_monster->GetControllerPosition();
 	while (1)
 	{
@@ -64,8 +66,9 @@ void MonsterAI::SetRandomTarget()
 		if (m_target == newTarget)
 			continue;
 
-		if (m_target)																//유효값 확인
+		if (newTarget)																//유효값 확인
 		{
+			m_target = newTarget;
 			m_targetPos = m_target->GetControllerPosition();
 			if (Vec3::DistanceBetween(monsterPos, m_targetPos) < m_detectRange)		//몬스터 인식범위 확인
 			{
@@ -83,42 +86,26 @@ void MonsterAI::UpdateTargetPos()
 		return;
 
 	m_targetPos = m_target->GetControllerPosition();
-	PxVec3 dir = TO_PX3(m_monster->GetControllerPosition()) - TO_PX3(m_targetPos);
+	PxVec3 dir = TO_PX3(m_targetPos) - TO_PX3(m_monster->GetControllerPosition());
 	dir.normalize();
 	m_targetDir = FROM_PX3(dir);
 }
 
-void MonsterAI::AddSkillSize(GeometryType type, Vec3 size, const std::wstring& skillTag)
+void MonsterAI::AddSkillSize(std::string scheduleName, GeometryType shape, Vec3 size)
 {
-	PxGeometry* skillGeometry;
-	PxVec3 pxSize = TO_PX3(size);
+	auto skill = new MonsterSkill(scheduleName, shape, size);
+	m_skillSizeHolder.emplace_back(skill);
+}
 
-	if (type == GeometryType::Box)
+physx::PxGeometry* MonsterAI::GetRequestedSkillGeometry(std::string schedule)
+{
+	for (auto& skill : m_skillSizeHolder)
 	{
-		auto box = new PxBoxGeometry(pxSize);
-		if (!box->isValid())
-			return;
-		skillGeometry = box;
-	}
-	else if (type == GeometryType::Sphere)
-	{
-		auto sphere = new PxSphereGeometry(pxSize.x);
-		if (!sphere->isValid())
-			return;
-		skillGeometry = sphere;
-	}
-	else if (type == GeometryType::Capsule)
-	{
-		auto capsule = new PxCapsuleGeometry(pxSize.x, pxSize.y);
-		if (!capsule->isValid())
-			return;
-		skillGeometry = capsule;
+		if (skill->scheduleName == schedule)
+			return skill->skillGeometry;
 	}
 
-
-	auto pair = std::make_pair(skillTag, skillGeometry);
-	m_skillSizeHolder;
-	m_skillSizeHolder.emplace(pair);
+	return nullptr;
 }
 
 bool MonsterAI::SkillRangeCheck()
@@ -126,7 +113,8 @@ bool MonsterAI::SkillRangeCheck()
 	auto physDevice = PhysDevice::GetInstance();
 	auto query = physDevice->GetQuery();
 
-	PxGeometry* skillGeometry = GetSkillGeometry();
+	std::string schedule = GetRequestedScheduleName();
+	PxGeometry* skillGeometry = GetRequestedSkillGeometry(schedule);
 	if (!skillGeometry)
 		return false;									//여기 걸리면 SkillAdd()의 오류. 각 Monster의 Init수정 요구
 
@@ -144,22 +132,34 @@ bool MonsterAI::SkillRangeCheck()
 	trans.q = monsterRot;
 #pragma endregion
 
-
 	PxQueryFilterData filterData(PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC);
 	constexpr PxU32 bufferSize = 10;  // Set this to whatever size you need
 	PxOverlapHit hitBuffer[bufferSize];
 	PxOverlapBuffer overlapBuffer(hitBuffer, bufferSize);
 
-	switch (skillGeometry->getType())
-	{
+	switch (skillGeometry->getType())									
+	{	//박스의 경우 전방에 배치
 		case PxGeometryType::eBOX:
 		{
-			//query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::Map), PhysicsQueryType::Collider, m_body)
 			auto box = static_cast<PxBoxGeometry*>(skillGeometry);
 			float extentZ = box->halfExtents.z;
 			trans.p += TO_PX3(m_targetDir) * extentZ;
 
 			query->Overlap(*box, trans, filterData, &overlapBuffer);
+		}
+		break;
+
+		case PxGeometryType::eSPHERE:
+		{
+			auto sphere = static_cast<PxSphereGeometry*>(skillGeometry);
+			query->Overlap(*sphere, trans, filterData, &overlapBuffer);
+		}
+		break;
+
+		case PxGeometryType::eCAPSULE:
+		{
+			auto capsule = static_cast<PxCapsuleGeometry*>(skillGeometry);
+			query->Overlap(*capsule, trans, filterData, &overlapBuffer);
 		}
 		break;
 	}
@@ -170,24 +170,16 @@ bool MonsterAI::SkillRangeCheck()
 		const PxOverlapHit& hit = overlapBuffer.getTouch(i);
 		PxRigidActor* actor = hit.actor;
 		auto body = static_cast<RigidBody*>(actor->userData);
-		
-		std::cout << "Name : " << body->GetName() << std::endl;
+		std::string name = body->GetName();
+		if (name == "Player")
+		{
+			std::cout << "skillRangecheck" << std::endl;
+			return true;
+		}
 	}
-	
+	return false;
 }
 
-physx::PxGeometry* MonsterAI::GetSkillGeometry()
-{
-	if (m_scheduler[0] == SCHEDULE::WEEPER_CAST1)
-	{
-		auto iter = m_skillSizeHolder.find(L"WEEPER_CAST1");
-		if (iter != m_skillSizeHolder.end())
-		{
-			auto skillGeometry = iter->second;
-			auto device = PhysDevice::GetInstance();
-		}
-		return nullptr;			//스킬 범위 탐색 실패. 오류.
-	}
-}
+
 
 

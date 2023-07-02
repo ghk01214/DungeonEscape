@@ -1,9 +1,12 @@
 ﻿#pragma once
 
-class Monster;
+#include "Monster.h"
+
+class WeeperAI;
 
 class Weeper : public Monster
 {
+	friend class WeeperAI;
 public:
 	enum WEEPER_STATE
 	{
@@ -57,4 +60,6 @@ public:
 private:
 	WEEPER_STATE m_prevState;
 	WEEPER_STATE m_currState;
+
+	WeeperAI* m_AI;
 };

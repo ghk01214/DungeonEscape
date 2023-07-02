@@ -308,13 +308,12 @@ bool RigidBody::isKinematic() const
 
 std::string RigidBody::GetName()
 {
-	std::string name = std::string(m_body->getName());
-	return name;
+	return m_name;
 }
 
-void RigidBody::SetName(std::string name)
+void RigidBody::SetName(std::string& name)
 {
-	m_body->setName(name.c_str());
+	m_name = name;
 }
 
 void RigidBody::ExcludeFromSimulation(bool value)

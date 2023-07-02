@@ -71,7 +71,7 @@ void CustomController::PlayerMove()
 	CheckOnGround_Raycast();
 }
 
-void CustomController::MonsterMove()
+void CustomController::MonsterMove(physx::PxVec3 targetDir)
 {
 	if (!m_ownerGameObject->AccessAuthorized())
 		return;
@@ -80,7 +80,7 @@ void CustomController::MonsterMove()
 
 	if (!m_isPlayer)
 	{
-		DirectionInput_Monster();
+		DirectionInput_Monster(targetDir);
 		Movement_Monster();
 	}
 
@@ -286,23 +286,9 @@ void CustomController::DirectionInput_Player()
 }
 
 //나중에 수정
-void CustomController::DirectionInput_Monster()
+void CustomController::DirectionInput_Monster(physx::PxVec3 targetDir)
 {
-	m_moveDirection = PxVec3(0.f, 0.f, 0.f);
-
-	//PxVec3 targetDirection = target - m_body->GetPosition()
-	PxVec3 up = PxVec3(0.f, 1.f, 0.f);
-	PxVec3 right = up.cross(m_cameraLook);
-
-	//if (m_keyboardLeft)
-	//	m_moveDirection -= right;
-	//else if (m_keyboardRight)
-	//	m_moveDirection += right;
-
-	//if (m_keyboardUp)
-	//	m_moveDirection += targetDirection;
-	//else if (m_keyboardDown)
-	//	m_moveDirection -= targetDirection;
+	m_moveDirection = targetDir;
 
 	m_moveDirection.normalize();
 
@@ -376,8 +362,6 @@ void CustomController::Movement_Monster()
 		return;
 
 	//check onGround
-	return;
-
 	GetSlidingVector(CollisionInfoType::Stay);
 	PxVec3 surfaceNormal{ 0.f };
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
