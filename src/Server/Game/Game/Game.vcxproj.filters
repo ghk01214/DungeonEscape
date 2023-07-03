@@ -188,6 +188,9 @@
     <Filter Include="03. Game\01. GameObject\Monster\00. MonsterAI\00. MonsterSkill">
       <UniqueIdentifier>{ea3d9318-e1b2-4240-9a62-2b929ec6fe66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\Monster\01. Monsters\Scorpion">
+      <UniqueIdentifier>{992e94b5-ec6f-4fd2-afbc-260f0a6feda4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Game\02. Event">
       <UniqueIdentifier>{fa72cbc0-7163-4c7c-8b89-695dbe5b9a02}</UniqueIdentifier>
     </Filter>
@@ -196,6 +199,9 @@
     </Filter>
     <Filter Include="03. Game\02. Event\01. Event">
       <UniqueIdentifier>{2390eb7b-c91e-4d24-bd7c-23f69e274946}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\Monster\01. Monsters\Scorpion">
+      <UniqueIdentifier>{992e94b5-ec6f-4fd2-afbc-260f0a6feda4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -359,11 +365,17 @@
     <ClCompile Include="WeeperAI.cpp">
       <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\WeeperAI</Filter>
     </ClCompile>
+    <ClCompile Include="Scorpion.cpp">
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Scorpion</Filter>
+    </ClCompile>
     <ClCompile Include="EventHandler.cpp">
       <Filter>03. Game\02. Event\00. EventHandler</Filter>
     </ClCompile>
     <ClCompile Include="Event.cpp">
       <Filter>03. Game\02. Event\01. Event</Filter>
+    </ClCompile>
+    <ClCompile Include="Scorpion.cpp">
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Scorpion</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -553,11 +565,17 @@
     <ClInclude Include="WeeperAI.h">
       <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\WeeperAI</Filter>
     </ClInclude>
+    <ClInclude Include="Scorpion.h">
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Scorpion</Filter>
+    </ClInclude>
     <ClInclude Include="EventHandler.h">
       <Filter>03. Game\02. Event\00. EventHandler</Filter>
     </ClInclude>
     <ClInclude Include="Event.h">
       <Filter>03. Game\02. Event\01. Event</Filter>
+    </ClInclude>
+    <ClInclude Include="Scorpion.h">
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Scorpion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

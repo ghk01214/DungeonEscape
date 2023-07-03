@@ -193,6 +193,7 @@
     <ClCompile Include="Quat.cpp" />
     <ClCompile Include="RaycastHit.cpp" />
     <ClCompile Include="RigidBody.cpp" />
+    <ClCompile Include="Scorpion.cpp" />
     <ClCompile Include="Server.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="pch.cpp">
@@ -261,6 +262,7 @@
     <ClInclude Include="Quat.h" />
     <ClInclude Include="RaycastHit.h" />
     <ClInclude Include="RigidBody.h" />
+    <ClInclude Include="Scorpion.h" />
     <ClInclude Include="Server.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Session.h" />

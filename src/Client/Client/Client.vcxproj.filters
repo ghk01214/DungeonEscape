@@ -54,6 +54,9 @@
     <Filter Include="소스 파일\Script\03. Monster\Boss\Golem">
       <UniqueIdentifier>{27e16deb-49ab-48d0-a533-73a0bdf8c6bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Script\03. Monster\Boss\Scorpion">
+      <UniqueIdentifier>{83fcf50e-5307-4406-b3f3-3cc197ee3e05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -106,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="MonsterRangeAttack.h">
       <Filter>소스 파일\Script\03. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster_Scorpion.h">
+      <Filter>소스 파일\Script\03. Monster\Boss\Scorpion</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="MonsterRangeAttack.cpp">
       <Filter>소스 파일\Script\03. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster_Scorpion.cpp">
+      <Filter>소스 파일\Script\03. Monster\Boss\Scorpion</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

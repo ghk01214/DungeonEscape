@@ -4,3 +4,4 @@
 #include "Weeper.h"
 #include "Dragon.h"
 #include "Golem.h"
+#include "Scorpion.h"

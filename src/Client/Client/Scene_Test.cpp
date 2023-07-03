@@ -594,7 +594,7 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 		case server::FBX_TYPE::WEEPER6:
 		case server::FBX_TYPE::WEEPER7:
 		{
-			objectDesc.strName = L"Weeper" + std::to_wstring(magic_enum::enum_integer(type) - magic_enum::enum_integer(server::FBX_TYPE::WEEPER1));
+			objectDesc.strName = L"Weeper" + std::to_wstring(magic_enum::enum_integer(type) - magic_enum::enum_integer(server::FBX_TYPE::WEEPER1) + 1);
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\" + objectDesc.strName + L".fbx";
 			objectDesc.script = std::make_shared<Monster_Weeper>(stateIndex);
 		}
@@ -625,6 +625,34 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 			objectDesc.strName = L"Red Golem";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx";
 			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
+		}
+		break;
+		case server::FBX_TYPE::BLACK_SCORPION:
+		{
+			objectDesc.strName = L"Black Scorpion";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Black Scorpion.fbx";
+			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
+		}
+		break;
+		case server::FBX_TYPE::ORANGE_SCORPION:
+		{
+			objectDesc.strName = L"Orange Scorpion";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Orange Scorpion.fbx";
+			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
+		}
+		break;
+		case server::FBX_TYPE::PURPLE_SCORPION:
+		{
+			objectDesc.strName = L"Purple Scorpion";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Purple Scorpion.fbx";
+			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
+		}
+		break;
+		case server::FBX_TYPE::RED_SCORPION:
+		{
+			objectDesc.strName = L"Red Scorpion";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Red Scorpion.fbx";
+			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
 		}
 		break;
 		case server::FBX_TYPE::DRAGON:

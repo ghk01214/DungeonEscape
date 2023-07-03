@@ -7,6 +7,7 @@
 #pragma region [MONSTERS]
 #include "Monster_Weeper.h"
 #include "Monster_Golem.h"
+#include "Monster_Scorpion.h"
 #include "Monster_Dragon.h"
 #include "MonsterRangeAttack.h"
 #pragma endregion
