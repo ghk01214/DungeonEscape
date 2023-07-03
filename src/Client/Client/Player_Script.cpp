@@ -217,10 +217,10 @@ void Player_Script::MovePlayerCameraLook(void)
 		//
 		//TurnPlayer(GetTransform()->GetWorldMatrix().Forward(), camera->GetTransform()->GetLook());
 
-		Vec3 pos{ GetTransform()->GetWorldVec3Position() };
-		Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-		matWorld.Translation(pos);
-		GetTransform()->SetWorldMatrix(matWorld);
+		//Vec3 pos{ GetTransform()->GetWorldVec3Position() };
+		//Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+		//matWorld.Translation(pos);
+		//GetTransform()->SetWorldMatrix(matWorld);
 
 		GetNetwork()->SendCameraLook(camera->GetTransform()->GetLook());
 	}

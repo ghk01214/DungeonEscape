@@ -120,8 +120,8 @@ bool MonsterAI::SkillRangeCheck()
 
 #pragma region 스킬 위치, 회전값 부여
 	PxVec3 monsterPos = TO_PX3(m_monster->GetControllerPosition());
-	PxTransform trans(PxIdentity);										
-	
+	PxTransform trans(PxIdentity);
+
 	PxVec3 up(0, 1, 0);
 	PxVec3 right = up.cross(TO_PX3(m_targetDir)).getNormalized();
 	PxVec3 realUp = TO_PX3(m_targetDir).cross(right);
@@ -137,7 +137,7 @@ bool MonsterAI::SkillRangeCheck()
 	PxOverlapHit hitBuffer[bufferSize];
 	PxOverlapBuffer overlapBuffer(hitBuffer, bufferSize);
 
-	switch (skillGeometry->getType())									
+	switch (skillGeometry->getType())
 	{	//박스의 경우 전방에 배치
 		case PxGeometryType::eBOX:
 		{

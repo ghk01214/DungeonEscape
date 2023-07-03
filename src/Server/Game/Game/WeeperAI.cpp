@@ -17,13 +17,13 @@ WeeperAI::~WeeperAI()
 void WeeperAI::Init()
 {
 	MonsterAI::Init();
-	
+
 	//SkillSize 추가
 	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 300));		//z거리 200
 	AddSkillSize("CAST2", GeometryType::Box, Vec3(50, 50, 200));
 	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 400));
 	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 800));
-	
+
 	m_weeper->SetControllerMoveSpeed(10.f);
 
 	//Schedule 추가
@@ -84,10 +84,10 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				m_weeper->m_currState = Weeper::CAST1;
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
-				
+
 			}
 			else
-			{	
+			{
 				m_weeper->GetController()->MonsterMove(TO_PX3(m_targetDir));
 				m_weeper->m_currState = Weeper::IDLE;
 			}

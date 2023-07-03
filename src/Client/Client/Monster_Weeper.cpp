@@ -137,12 +137,12 @@ void Monster_Weeper::ParsePackets()
 		{
 			case ProtocolID::WR_TRANSFORM_ACK:
 			{
-				Transform(packet);
+				//Transform(packet);
 			}
 			break;
 			case ProtocolID::WR_CHANGE_STATE_ACK:
 			{
-				m_currState = magic_enum::enum_value<WEEPER_STATE>(packet.Read<int32_t>());
+				//m_currState = magic_enum::enum_value<WEEPER_STATE>(packet.Read<int32_t>());
 			}
 			break;
 			default:
