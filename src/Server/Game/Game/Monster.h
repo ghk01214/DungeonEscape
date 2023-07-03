@@ -10,6 +10,7 @@ class MonsterAI;
 class Monster : public GameObject
 {
 	friend class MonsterAI;
+	friend class SkillObject;
 public:
 	Monster(int32_t MonsterID = -1, const Vec3& position = Vec3(), const Quat& rotation = Quat(), const Vec3& scale = Vec3(1.f, 1.f, 1.f));
 	~Monster() override;

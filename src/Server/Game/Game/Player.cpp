@@ -668,32 +668,27 @@ void Player::SetControllerCameraLook(Vec3& value)
 
 void Player::PlayerPattern_ShootBall()
 {
-	server::OBJECT_TYPE type;
-	float power;
+	SkillObject::SKILLOBJECTTYPE skilltype;
 	switch (m_currState)
 	{
 		case ATK0:
 		{
-			type = server::OBJECT_TYPE::FIREBALL;
-			power = 20.f;
+			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_FIREBALL;
 		}
 		break;
 		case ATK1:
 		{
-			type = server::OBJECT_TYPE::ICEBALL;
-			power = 20.f;
+			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_ICEBALL;
 		}
 		break;
 		case ATK2:
 		{
-			type = server::OBJECT_TYPE::THUNDERBALL;
-			power = 20.f;
+			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_THUNDERBALL;
 		}
 		break;
 		case ATK3:
 		{
-			type = server::OBJECT_TYPE::POISONBALL;
-			power = 5.f;
+			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_POISONBALL;
 		}
 		break;
 	}
@@ -712,24 +707,16 @@ void Player::PlayerPattern_ShootBall()
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 
-	int32_t objID{ game::MessageHandler::GetInstance()->NewObjectID() };
+	//int32_t objID{ game::MessageHandler::GetInstance()->NewObjectID() };
 
-	auto ballObject = objmgr->AddGameObjectToLayer<SkillObject>(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent));
-	auto ballBody = ballObject->GetComponent<RigidBody>(L"RigidBody");
-	ballBody->SetMass(1.f);
-	ballBody->AddCollider<SphereCollider>(ballObject->GetTransform()->GetScale());
-	ballObject->SetID(objID);
-	ballObject->SetName(L"Sphere");
-	ballObject->SetFBXType(server::FBX_TYPE::SPHERE);
-	ballObject->SetObjectType(type);
+	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype);
 
-	ballBody->AddForce(ForceMode::Impulse, playerCameraLook * power);
+	//ballObject->SetID(objID);
+	//ballObject->SetName(L"Sphere");
+	//ballObject->SetFBXType(server::FBX_TYPE::SPHERE);
+	//ballObject->SetObjectType(type);					SkillObject::ServerMessage_SkillInit()에 넣었음.
 
-	game::Message sendMsg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
-	sendMsg.objType = type;
-	sendMsg.objID = objID;
-
-	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
+	skillObject->PlayerSkillFire(playerCameraLook);
 
 	// KeyUp 상태가 전달되기까지의 딜레이가 있어서 로직 종료 시 key 상태 변경
 	m_controller->Keyboard_ATK_Clear();

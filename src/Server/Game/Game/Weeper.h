@@ -7,6 +7,7 @@ class WeeperAI;
 class Weeper : public Monster
 {
 	friend class WeeperAI;
+	friend class SkillObject;
 public:
 	enum WEEPER_STATE
 	{
@@ -51,6 +52,9 @@ public:
 public:
 	void CheckState();
 	void UpdateFrame();
+
+public:
+	void Pattern_Cast1();
 
 public:
 	WEEPER_STATE GetState() const;

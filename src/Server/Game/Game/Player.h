@@ -7,6 +7,7 @@ class TriggerObject;
 
 class Player : public GameObject
 {
+	friend class SkillObject;
 public:
 	enum PLAYER_STATE
 	{

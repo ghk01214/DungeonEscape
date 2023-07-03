@@ -243,6 +243,10 @@ void Weeper::UpdateFrame()
 	m_aniEnd = false;
 }
 
+void Weeper::Pattern_Cast1()
+{
+}
+
 Weeper::WEEPER_STATE Weeper::GetState() const
 {
 	return m_currState;

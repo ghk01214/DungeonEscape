@@ -41,6 +41,9 @@ public:
 	virtual std::string GetRequestedScheduleName() override;
 
 private:
+	void ReportSchedule();		//콘솔출력 목적의 디버그 전용 함수
+
+private:
 	std::vector<WEEPER_SCHEDULE> m_scheduler;
 
 private:

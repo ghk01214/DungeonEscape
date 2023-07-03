@@ -6,9 +6,29 @@ class RigidBody;
 
 class SkillObject : public GameObject
 {
+	friend class Player;
+	friend class Monster;
+	friend class Weeper;
+
 public:
-	//projectile 위주. 무조건 위치 전달
-	SkillObject(const Vec3& position = Vec3(0, 0, 0), const Quat& rotation = Quat(0, 0, 0, 1), const Vec3& scale = Vec3(1.f, 1.f, 1.f), server::OBJECT_TYPE type = server::OBJECT_TYPE::FIREBALL);
+	enum class SKILLOBJECTTYPE
+	{
+		PLAYER_FIREBALL,
+		PLAYER_ICEBALL,
+		PLAYER_THUNDERBALL,
+		PLAYER_POISONBALL,
+
+		BOUNDARY,
+
+		MONSTER_FIREBALL,
+		MONSTER_ICEBALL,
+		MONSTER_THUNDERBALL,
+		MONSTER_POISONBALL,
+		MONSTER_DARKBALL
+	};
+
+public:
+	SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype);
 	~SkillObject() override;
 
 public:
@@ -18,10 +38,22 @@ public:
 	virtual void Release();
 
 public:
-	void ActionsWhenHit();		//충돌했는가 판단
+	void ServerMessage_SkillInit();
+	void ServerMessage_SkillHit();
+
+public:
+	bool IsPlayerAttribute();
+
+public:
+	void PlayerSkillFire(physx::PxVec3 dir);					//Player::PlayerPattern_ShootBall()에서 스킬 오브젝트를 발사하기 위한 함수
+
+public:
+	void HandlePlayerSkillCollision();		//플레이어 스킬의 충돌 판단	(피격 : 몬스터)
+	void HandleMonsterSkillCollision();		//몬스터 스킬의 충돌 판단		(피격 : 플레이어)
 private:
 	RigidBody* m_body = nullptr;
-	//server::OBJECT_TYPE m_objType = server::OBJECT_TYPE::FIREBALL;
+	SKILLOBJECTTYPE m_skillType;
+	float m_firePower;
 };
 
 
