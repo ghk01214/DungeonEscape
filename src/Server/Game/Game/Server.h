@@ -13,6 +13,8 @@ namespace game
 {
 	class CSession;
 	class CRoomManager;
+	class MessageHandler;
+	class Database;
 	struct Message;
 	struct TIMER_EVENT;
 
@@ -33,6 +35,7 @@ namespace game
 
 		void WorkerThread();
 		void GameThread();
+		void DatabaseThread();
 
 		void AcceptClient(network::OVERLAPPEDEX* pOverEx);
 		void Recv(int32_t id, DWORD bytes, network::OVERLAPPEDEX* pOverEx);
@@ -79,7 +82,9 @@ namespace game
 
 		tbb::concurrent_priority_queue<TIMER_EVENT> m_eventQueue;
 
+		MessageHandler* m_msgHandler;
 		CRoomManager* m_roomManager;
 		GameInstance* m_gameInstance;
+		Database* m_database;
 	};
 }

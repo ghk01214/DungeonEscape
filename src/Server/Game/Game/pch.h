@@ -39,9 +39,6 @@
 #include <Packet.h>
 #include <OVERLAPPEDEX.h>
 
-#include <sqlext.h>
-
-#include <magic_enum.hpp>
 #include <magic_enum_format.hpp>
 #include <magic_enum_fuse.hpp>
 #include <magic_enum_switch.hpp>
@@ -118,7 +115,7 @@ struct FBXMeshInfomation
 };
 
 
-#pragma region save관련 함수들
+#pragma region [save관련 함수들]
 template<typename T>
 void saveVecData(const HANDLE& hFile, std::vector<T>& data);
 template<typename T>
@@ -148,7 +145,7 @@ inline void saveStructData(const HANDLE& hFile, T* data)
 #pragma endregion
 
 
-#pragma region load관련 함수들
+#pragma region [load관련 함수들]
 template<typename T>
 std::vector<T> loadVecData(const HANDLE& hFile);
 

@@ -36,11 +36,11 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Trigger");
 
-	//auto MonsterObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
+	auto MonsterObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", game::MessageHandler::GetInstance()->NewObjectID(), Vec3(1500, 200, -1000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	MonsterObject->GetController()->GetCollider()->SetID(game::MessageHandler::GetInstance()->NewColliderID());
 
-	LoadBasicMap3();
-	//LoadMap();
+	//LoadBasicMap3();
+	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)

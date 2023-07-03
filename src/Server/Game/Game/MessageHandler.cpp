@@ -32,11 +32,12 @@ namespace game
 		Release();
 	}
 
-	void MessageHandler::Init()
+	void MessageHandler::Init(HANDLE iocp)
 	{
 		m_recvQueueSize = 0;
 		m_sendQueueSize = 0;
 		m_objectsNum = 0;
+		m_iocp = iocp;
 	}
 
 	void MessageHandler::Release()
@@ -58,12 +59,6 @@ namespace game
 			m_sendQueue.try_pop(msg);
 			empty = m_sendQueue.empty();
 		}
-	}
-
-	void MessageHandler::CreateThreads(std::thread& timer, std::thread& transform)
-	{
-		timer = std::thread{ &MessageHandler::TimerThread, this };
-		transform = std::thread{ &MessageHandler::TransformThread, this };
 	}
 
 	void MessageHandler::TimerThread()
@@ -401,11 +396,6 @@ namespace game
 
 		game::TIMER_EVENT ev{ CURRENT_TIME };
 		m_transformEvent.push(ev);
-	}
-
-	void MessageHandler::SetIOCPHandle(HANDLE iocp)
-	{
-		m_iocp = iocp;
 	}
 
 	int32_t MessageHandler::NewObjectID()

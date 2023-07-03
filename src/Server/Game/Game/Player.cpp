@@ -54,16 +54,7 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
-	if (m_sendState > 0)
-	{
-		game::Message msg{ m_id, ProtocolID::WR_CHANGE_STATE_ACK };
-		msg.state = m_currState;
-		msg.objType = m_objType;
-
-		game::MessageHandler::GetInstance()->PushSendMessage(msg);
-
-		--m_sendState;
-	}
+	SendChangedStateAgain();
 
 	KeyboardLimit();					//FSM 0단계 : 금지상태에서는 키보드 클리어
 
@@ -208,6 +199,20 @@ void Player::SetAniEndFlag(bool flag)
 void Player::GetDamaged(int32_t damage)
 {
 	m_hp -= damage;
+}
+
+void Player::SendChangedStateAgain()
+{
+	if (m_sendState <= 0)
+		return;
+
+	game::Message msg{ m_id, ProtocolID::WR_CHANGE_STATE_ACK };
+	msg.state = m_currState;
+	msg.objType = m_objType;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(msg);
+
+	--m_sendState;
 }
 
 void Player::KeyboardLimit()
@@ -690,6 +695,8 @@ void Player::PlayerPattern_ShootBall()
 		{
 			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_POISONBALL;
 		}
+		break;
+		default:
 		break;
 	}
 

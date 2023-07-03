@@ -2,7 +2,9 @@
 #include "Session.h"
 #include "GameInstance.h"
 #include "RoomManager.h"
+#include "Database.h"
 #include "Server.h"
+
 #include "TimeManager.h"
 #include "ObjectManager.h"
 #include "Layer.h"
@@ -95,10 +97,12 @@ namespace game
 
 		m_roomManager = CRoomManager::GetInstance();
 		m_gameInstance = GameInstance::GetInstance();
-		MessageHandler::GetInstance()->SetIOCPHandle(m_iocp);
+		m_msgHandler = MessageHandler::GetInstance();
 
 		m_roomManager->Init();
 		m_gameInstance->Init();
+		m_msgHandler->Init(m_iocp);
+		//m_database->Init(m_iocp);
 	}
 
 	// accept 등록
@@ -122,7 +126,8 @@ namespace game
 		}
 
 		m_gameThread = std::thread{ &CServer::GameThread, this };
-		MessageHandler::GetInstance()->CreateThreads(m_timerThread, m_transformThread);
+		m_timerThread = std::thread{ &MessageHandler::TimerThread, m_msgHandler };
+		m_transformThread = std::thread{ &MessageHandler::TransformThread, m_msgHandler };
 
 		for (auto& thread : m_workerThreads)
 		{
@@ -242,13 +247,17 @@ namespace game
 		{
 			TimeManager::GetInstance()->Update();
 
-			//if (TimeManager::GetInstance()->Is1FrameInVar() == true)
-			//{
 			float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
 			m_gameInstance->Update(timeDelta);
 			m_gameInstance->LateUpdate(timeDelta);
-			//TimeManager::GetInstance()->ClearDeltaTimeInVar();
-		//}
+		}
+	}
+
+	void CServer::DatabaseThread()
+	{
+		while (true)
+		{
+
 		}
 	}
 
@@ -796,10 +805,8 @@ namespace game
 				{
 					objects = mapObjects;
 				}
-				else if (postOver->objType == server::OBJECT_TYPE::FIREBALL
-					or postOver->objType == server::OBJECT_TYPE::ICEBALL
-					or postOver->objType == server::OBJECT_TYPE::THUNDERBALL
-					or postOver->objType == server::OBJECT_TYPE::POISONBALL)
+				else if (magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(postOver->objType)
+					and magic_enum::enum_integer(postOver->objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::MONSTER_POISONBALL))
 				{
 					objects = skillObjects;
 				}
@@ -938,7 +945,7 @@ namespace game
 			break;
 			case ProtocolID::WR_REMOVE_ACK:
 			{
-				if (postOver->objType == server::OBJECT_TYPE::BOSS)
+				/*if (postOver->objType == server::OBJECT_TYPE::BOSS)
 				{
 					for (auto& client : m_sessions)
 					{
@@ -948,10 +955,14 @@ namespace game
 						client->SendRemovePacket(postOver->objID, postOver->objType);
 					}
 				}
-				else if (postOver->objType == server::OBJECT_TYPE::FIREBALL
-					or postOver->objType == server::OBJECT_TYPE::ICEBALL
-					or postOver->objType == server::OBJECT_TYPE::THUNDERBALL
-					or postOver->objType == server::OBJECT_TYPE::POISONBALL)
+				else if (postOver->objType == server::OBJECT_TYPE::PLAYER_FIREBALL
+					or postOver->objType == server::OBJECT_TYPE::PLAYER_ICEBALL
+					or postOver->objType == server::OBJECT_TYPE::PLAYER_THUNDERBALL
+					or postOver->objType == server::OBJECT_TYPE::PLAYER_POISONBALL
+					or postOver->objType == server::OBJECT_TYPE::MONSTER_FIREBALL
+					or postOver->objType == server::OBJECT_TYPE::MONSTER_ICEBALL
+					or postOver->objType == server::OBJECT_TYPE::MONSTER_THUNDERBALL
+					or postOver->objType == server::OBJECT_TYPE::MONSTER_POISONBALL)
 				{
 					for (auto& client : m_sessions)
 					{
@@ -960,9 +971,16 @@ namespace game
 
 						client->SendRemovePacket(postOver->objID, postOver->objType);
 					}
+				}*/
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendRemovePacket(postOver->objID, postOver->objType);
 				}
 
-				MessageHandler::GetInstance()->RemoveObject(postOver->objID);
+				m_msgHandler->RemoveObject(postOver->objID);
 			}
 			break;
 #pragma endregion
@@ -973,7 +991,7 @@ namespace game
 
 	void CServer::InputCommandMessage(Message msg)
 	{
-		MessageHandler::GetInstance()->PushRecvMessage(msg);
+		m_msgHandler->PushRecvMessage(msg);
 	}
 
 	Player* CServer::FindPlayer(std::list<GameObject*>& playerObjects, int32_t playerID)

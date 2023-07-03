@@ -104,6 +104,9 @@
     <ClInclude Include="Monster_Golem.h">
       <Filter>소스 파일\Script\03. Monster\Boss\Golem</Filter>
     </ClInclude>
+    <ClInclude Include="MonsterRangeAttack.h">
+      <Filter>소스 파일\Script\03. Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -154,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="Monster_Golem.cpp">
       <Filter>소스 파일\Script\03. Monster\Boss\Golem</Filter>
+    </ClCompile>
+    <ClCompile Include="MonsterRangeAttack.cpp">
+      <Filter>소스 파일\Script\03. Monster</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

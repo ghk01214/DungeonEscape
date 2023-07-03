@@ -24,6 +24,8 @@ SkillObject::~SkillObject()
 
 void SkillObject::Init()
 {
+	m_id = game::MessageHandler::GetInstance()->NewObjectID();
+
 	m_body = AddComponent<RigidBody>(L"RigidBody");
 	m_body->SetCCDFlag(true);
 	m_body->SetKinematic(false);
@@ -32,6 +34,10 @@ void SkillObject::Init()
 	{
 		case SKILLOBJECTTYPE::PLAYER_FIREBALL:
 		{
+			m_name = L"PLAYER FIREBALL";
+			m_fbxType = server::FBX_TYPE::PLAYER_SPHERE;
+			m_objType = server::OBJECT_TYPE::PLAYER_FIREBALL;
+
 			m_body->SetMass(1.f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -40,6 +46,10 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::PLAYER_ICEBALL:
 		{
+			m_name = L"PLAYER ICEBALL";
+			m_fbxType = server::FBX_TYPE::PLAYER_SPHERE;
+			m_objType = server::OBJECT_TYPE::PLAYER_ICEBALL;
+
 			m_body->SetMass(1.f);
 			m_body->AddCollider<BoxCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -48,6 +58,10 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::PLAYER_THUNDERBALL:
 		{
+			m_name = L"PLAYER THUNDERBALL";
+			m_fbxType = server::FBX_TYPE::PLAYER_SPHERE;
+			m_objType = server::OBJECT_TYPE::PLAYER_THUNDERBALL;
+
 			m_body->SetMass(1.f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 500.f;
@@ -56,6 +70,10 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::PLAYER_POISONBALL:
 		{
+			m_name = L"PLAYER POISONBALL";
+			m_fbxType = server::FBX_TYPE::PLAYER_SPHERE;
+			m_objType = server::OBJECT_TYPE::PLAYER_POISONBALL;
+
 			m_body->SetMass(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -64,6 +82,10 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::MONSTER_FIREBALL:
 		{
+			m_name = L"MONSTER FIREBALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
+
 			m_body->SetMass(1.f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -72,6 +94,10 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::MONSTER_ICEBALL:
 		{
+			m_name = L"MONSTER ICEBALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_objType = server::OBJECT_TYPE::MONSTER_ICEBALL;
+
 			m_body->SetMass(1.f);
 			m_body->AddCollider<BoxCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -80,6 +106,10 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::MONSTER_THUNDERBALL:
 		{
+			m_name = L"MONSTER THUNDERBALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_objType = server::OBJECT_TYPE::MONSTER_THUNDERBALL;
+
 			m_body->SetMass(1.f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -88,15 +118,25 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::MONSTER_POISONBALL:
 		{
+			m_name = L"MONSTER POISONBALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_objType = server::OBJECT_TYPE::MONSTER_POISONBALL;
+
 			m_body->SetMass(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
 		}
 		break;
-
+		default:
+		break;
 	}
 
-	ServerMessage_SkillInit();
+	//ServerMessage_SkillInit();
+	game::Message sendMsg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
+	sendMsg.objType = m_objType;
+	sendMsg.objID = m_id;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
 }
 
 void SkillObject::Update(double timeDelta)
@@ -108,7 +148,7 @@ void SkillObject::Update(double timeDelta)
 
 
 	//충돌로직
-	if (IsPlayerAttribute)
+	if (IsPlayerAttribute() == true)
 		HandlePlayerSkillCollision();
 
 	else
@@ -132,25 +172,11 @@ void SkillObject::Release()
 
 void SkillObject::ServerMessage_SkillInit()
 {
-	// SKILLOBJECTTYPE(m_skillType)과 GameObject::fbx타입을 고려해서
+	game::Message sendMsg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
+	sendMsg.objType = m_objType;
+	sendMsg.objID = m_id;
 
-
-	//int32_t objID{ game::MessageHandler::GetInstance()->NewObjectID() };
-	//ballObject->SetID(objID);
-	//ballObject->SetName(L"Sphere");
-	//ballObject->SetFBXType(server::FBX_TYPE::SPHERE);		얘는 Init()에서 Collider 모양에 맞는 FBX을 전달	
-	//ballObject->SetObjectType(type);
-
-
-	//game::Message sendMsg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
-	//sendMsg.objType = type;
-	//sendMsg.objID = objID;
-	//game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
-
-	//if (m_skillType == SKILLOBJECTTYPE::PLAYER_FIREBALL)
-	//{
-	//	GetObjectType() = server::OBJECT_TYPE::FIREBALL;
-	//}
+	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
 }
 
 void SkillObject::ServerMessage_SkillHit()
@@ -158,13 +184,11 @@ void SkillObject::ServerMessage_SkillHit()
 	//스킬 오브젝트 객체 삭제 전달.
 	//추후 피격 잔상 위치 같이 추가적으로 더 정보를 전달할 수 있음.
 
-	//game::Message sendMsg{ -1, ProtocolID::WR_REMOVE_ACK };
-	//sendMsg.objID = m_id;
-	//sendMsg.objType = m_objType;
+	game::Message sendMsg{ -1, ProtocolID::WR_REMOVE_ACK };
+	sendMsg.objID = m_id;
+	sendMsg.objType = m_objType;
 
-	//game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
-
-
+	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
 }
 
 bool SkillObject::IsPlayerAttribute()
@@ -186,7 +210,7 @@ void SkillObject::HandlePlayerSkillCollision()
 
 		//플레이어스킬 : 보스타격
 		if (type == server::OBJECT_TYPE::BOSS)		//피격대상 : 보스
-		{								
+		{
 			auto monster{ dynamic_cast<Monster*>(collider->GetOwnerObject()) };
 
 			if (monster != nullptr and monster->IsDead() == false)
@@ -237,7 +261,6 @@ void SkillObject::HandlePlayerSkillCollision()
 					break;
 				}
 
-
 				SetRemoveReserved();						//객체 삭제
 				ServerMessage_SkillHit();					//서버 메시지 처리
 			}
@@ -255,22 +278,22 @@ void SkillObject::HandlePlayerSkillCollision()
 		{
 			switch (m_skillType)
 			{
-				case SKILLOBJECTTYPE::PLAYER_FIREBALL
+				case SKILLOBJECTTYPE::PLAYER_FIREBALL:
 				{
 					//std::cout << "파이어볼 맵타격 처리\n";
 				}
 				break;
-				case SKILLOBJECTTYPE::PLAYER_ICEBALL
+				case SKILLOBJECTTYPE::PLAYER_ICEBALL:
 				{
 					//std::cout << "아이스볼 맵타격 처리\n";
 				}
 				break;
-				case SKILLOBJECTTYPE::PLAYER_THUNDERBALL
+				case SKILLOBJECTTYPE::PLAYER_THUNDERBALL:
 				{
 					//std::cout << "파이어볼 맵타격 처리\n";
 				}
 				break;
-				case SKILLOBJECTTYPE::PLAYER_POISONBALL
+				case SKILLOBJECTTYPE::PLAYER_POISONBALL:
 				{
 					//std::cout << "아이스볼 맵타격 처리\n";
 				}
@@ -312,7 +335,7 @@ void SkillObject::HandleMonsterSkillCollision()
 					break;
 					case server::FBX_TYPE::CARMEL:
 					{
-						//플레이어 카라멜 피격
+						//플레이어 카멜 피격
 					}
 					break;
 				}
@@ -352,6 +375,3 @@ void SkillObject::PlayerSkillFire(physx::PxVec3 dir)
 		m_body->AddForce(ForceMode::Impulse, dir * m_firePower);
 	}
 }
-
-
-

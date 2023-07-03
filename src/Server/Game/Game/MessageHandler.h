@@ -41,10 +41,9 @@ namespace game
 		MessageHandler();
 		~MessageHandler();
 	public:
-		void Init();
+		void Init(HANDLE iocp);
 		void Release();
 
-		void CreateThreads(std::thread& timer, std::thread& transform);
 		void TimerThread();
 		void TransformThread();
 	public:
@@ -53,8 +52,6 @@ namespace game
 		void ExecuteMessage();
 
 		void PushTransformMessage(Message& msg);
-
-		void SetIOCPHandle(HANDLE iocp);
 
 	public:
 		int32_t NewObjectID();

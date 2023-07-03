@@ -166,6 +166,7 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MainPlayer.h" />
+    <ClInclude Include="MonsterRangeAttack.h" />
     <ClInclude Include="Monster_Dragon.h" />
     <ClInclude Include="Monster_Golem.h" />
     <ClInclude Include="Monster_Script.h" />
@@ -183,6 +184,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="MainPlayer.cpp" />
+    <ClCompile Include="MonsterRangeAttack.cpp" />
     <ClCompile Include="Monster_Dragon.cpp" />
     <ClCompile Include="Monster_Golem.cpp" />
     <ClCompile Include="Monster_Script.cpp" />

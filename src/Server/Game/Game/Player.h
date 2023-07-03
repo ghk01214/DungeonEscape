@@ -87,6 +87,7 @@ public:
 	void GetDamaged(int32_t damage);
 
 public:
+	void SendChangedStateAgain();
 	void KeyboardLimit();
 	void ChangeStateByKeyInput();
 	void State_Check_Enter();

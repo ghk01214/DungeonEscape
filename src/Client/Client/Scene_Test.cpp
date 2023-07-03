@@ -345,7 +345,7 @@ void Scene_Test::CreateSphere()
 	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
 
 	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateMapObject(objectDesc);
-	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::FIREBALL);
+	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::PLAYER_FIREBALL);
 
 	Vec3 pos{ 1500.f, 100.f, -1000.f };
 	for (auto& gameObject : gameObjects)
@@ -478,10 +478,8 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 		matWorld.Translation(pos);
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 
-		if (objType == server::OBJECT_TYPE::FIREBALL
-			or objType == server::OBJECT_TYPE::ICEBALL
-			or objType == server::OBJECT_TYPE::THUNDERBALL
-			or objType == server::OBJECT_TYPE::POISONBALL)
+		if (magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(objType)
+			and magic_enum::enum_integer(objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::MONSTER_POISONBALL))
 		{
 			gameObject->AddComponent(objectDesc.script);
 		}
@@ -532,10 +530,14 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			std::cout << "REMOVE MONSTER" << std::endl;
 		}
 		break;
-		case server::OBJECT_TYPE::FIREBALL:
-		case server::OBJECT_TYPE::ICEBALL:
-		case server::OBJECT_TYPE::THUNDERBALL:
-		case server::OBJECT_TYPE::POISONBALL:
+		case server::OBJECT_TYPE::PLAYER_FIREBALL:
+		case server::OBJECT_TYPE::PLAYER_ICEBALL:
+		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
+		case server::OBJECT_TYPE::PLAYER_POISONBALL:
+		case server::OBJECT_TYPE::MONSTER_FIREBALL:
+		case server::OBJECT_TYPE::MONSTER_ICEBALL:
+		case server::OBJECT_TYPE::MONSTER_THUNDERBALL:
+		case server::OBJECT_TYPE::MONSTER_POISONBALL:
 		{
 			auto objects{ scene->GetNetworkObject() };
 			network::NetworkGameObject removeObjects;
@@ -632,11 +634,18 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 			objectDesc.script = std::make_shared<Monster_Dragon>(stateIndex);
 		}
 		break;
-		case server::FBX_TYPE::SPHERE:
+		case server::FBX_TYPE::PLAYER_SPHERE:
 		{
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Sphere.fbx";
 			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::MONSTER_SPHERE:
+		{
+			objectDesc.strName = L"Sphere";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Sphere.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
 		default:
