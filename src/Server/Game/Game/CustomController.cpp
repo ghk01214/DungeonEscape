@@ -242,7 +242,7 @@ Collider* CustomController::GetColliderBelow()
 
 void CustomController::DirectionInput_Player()
 {
-	bool serverConnected = true;
+	bool serverConnected = false;
 
 	if (serverConnected)
 	{

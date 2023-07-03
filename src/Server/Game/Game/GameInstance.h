@@ -3,6 +3,8 @@
 class TimeManager;
 class ObjectManager;
 class PhysDevice;
+class EventHandler;
+
 class TestLevel;
 
 class GameInstance
@@ -23,6 +25,7 @@ public:
 	ObjectManager*	m_objectManager = nullptr;
 	TimeManager*	m_timeManager = nullptr;
 	PhysDevice*		m_physDevice = nullptr;
+	EventHandler*	m_eventHandler = nullptr;
 
 	//추후 levelManager로 대체
 	TestLevel*		m_testLevel = nullptr;

@@ -20,15 +20,22 @@ public:
 
 		BOUNDARY,
 
-		MONSTER_FIREBALL,
+		WEEPER_CAST1_BALL,
 		MONSTER_ICEBALL,
 		MONSTER_THUNDERBALL,
 		MONSTER_POISONBALL,
 		MONSTER_DARKBALL
 	};
 
+	enum SKILLATTRIBUTE
+	{
+		NONE			= 0,
+		LEVITATE		= 1 << 0,
+		GUIDED			= 1 << 1
+	};
+
 public:
-	SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype);
+	SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype, GameObject* target);
 	~SkillObject() override;
 
 public:
@@ -42,18 +49,30 @@ public:
 	void ServerMessage_SkillHit();
 
 public:
-	bool IsPlayerAttribute();
+	void HandlePlayerSkillCollision();							//플레이어 스킬의 충돌 판단	(피격 : 몬스터)
+	void HandleMonsterSkillCollision();							//몬스터 스킬의 충돌 판단		(피격 : 플레이어)
 
 public:
 	void PlayerSkillFire(physx::PxVec3 dir);					//Player::PlayerPattern_ShootBall()에서 스킬 오브젝트를 발사하기 위한 함수
+	void MonsterSkillFire(physx::PxVec3 dir);					//Weeper::Pattern_Cast1()에서 스킬 오브젝트를 발사하기 위한 함수
 
 public:
-	void HandlePlayerSkillCollision();		//플레이어 스킬의 충돌 판단	(피격 : 몬스터)
-	void HandleMonsterSkillCollision();		//몬스터 스킬의 충돌 판단		(피격 : 플레이어)
+	void Handle_Attribute();		//attribute에 따라 지속적으로 실행
+	void Attirbute_Levitate();		//공중 지속
+	void Attribute_Guide();			//유도
+
+	void SetAttribute(SKILLATTRIBUTE attrib);
+
+public:
+	bool IsPlayerSkill();
+
 private:
 	RigidBody* m_body = nullptr;
 	SKILLOBJECTTYPE m_skillType;
+	SKILLATTRIBUTE m_skillAttrib = SKILLATTRIBUTE::NONE;
 	float m_firePower;
+
+	GameObject* m_target = nullptr;	
 };
 
 

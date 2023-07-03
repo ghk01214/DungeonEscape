@@ -9,12 +9,13 @@
 #include "MessageHandler.h"
 #include "SphereCollider.h"
 #include "BoxCollider.h"
+#include "PhysDevice.h"
 
 #include "Player.h"
 #include "Monsters.hpp"
 
-SkillObject::SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype)
-	: GameObject(position, rotation, scale), m_body(nullptr), m_skillType(skilltype)
+SkillObject::SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype, GameObject* target)
+	: GameObject(position, rotation, scale), m_body(nullptr), m_skillType(skilltype), m_target(target)
 {
 }
 
@@ -80,15 +81,20 @@ void SkillObject::Init()
 		}
 		break;
 
-		case SKILLOBJECTTYPE::MONSTER_FIREBALL:
+		case SKILLOBJECTTYPE::WEEPER_CAST1_BALL:
 		{
-			m_name = L"MONSTER FIREBALL";
+			m_name = L"WEEPER_CAST1_BALL";
 			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
 			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
 
-			m_body->SetMass(1.f);
+			m_transform->SetScale(100.f, 100.f, 100.f);
+
+			m_body->SetMass(3.f);
+			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
+			m_body->GetBody()->setAngularDamping(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
-			m_firePower = 200.f;
+
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE);
 		}
 		break;
 
@@ -142,15 +148,14 @@ void SkillObject::Init()
 void SkillObject::Update(double timeDelta)
 {
 	//이동로직 (플레이어는 SkillPattern()에서 최초 힘 적용하면 끝. 보스 스킬만 추가적인 이동로직이 있다)
+	Handle_Attribute();
 
-	//보스몬스터 스킬 이동 로직 추가 예정
 
 
 
 	//충돌로직
-	if (IsPlayerAttribute() == true)
+	if (IsPlayerSkill() == true)
 		HandlePlayerSkillCollision();
-
 	else
 		HandleMonsterSkillCollision();
 
@@ -160,7 +165,6 @@ void SkillObject::Update(double timeDelta)
 void SkillObject::LateUpdate(double timeDelta)
 {
 	m_body->ClearCollidersCollisionInfo();
-
 	m_transform->ConvertPX(m_body->GetGlobalPose());
 }
 
@@ -191,7 +195,7 @@ void SkillObject::ServerMessage_SkillHit()
 	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
 }
 
-bool SkillObject::IsPlayerAttribute()
+bool SkillObject::IsPlayerSkill()
 {
 	if (m_skillType < SKILLOBJECTTYPE::BOUNDARY)
 		return true;
@@ -370,8 +374,58 @@ void SkillObject::HandleMonsterSkillCollision()
 
 void SkillObject::PlayerSkillFire(physx::PxVec3 dir)
 {
-	if(m_body)
+	if (m_body)
 	{
 		m_body->AddForce(ForceMode::Impulse, dir * m_firePower);
 	}
 }
+
+void SkillObject::MonsterSkillFire(physx::PxVec3 dir)
+{
+	if (m_body)
+	{
+		m_body->AddForce(ForceMode::Impulse, dir * m_firePower);
+	}
+}
+
+void SkillObject::Handle_Attribute()
+{
+	Attirbute_Levitate();
+	Attribute_Guide();
+}
+
+void SkillObject::Attirbute_Levitate()
+{
+	if (m_skillAttrib & SKILLATTRIBUTE::LEVITATE)
+	{
+		physx::PxVec3 gravity = PhysDevice::GetInstance()->GetGravity();
+		m_body->AddForce(ForceMode::Force, -gravity * m_body->GetMass());
+	}
+}
+
+void SkillObject::Attribute_Guide()
+{
+	if (!m_target)					//타겟없으면 취소
+		return;
+
+	if (m_body->IsExcludedFromSimulation())		//삭제예정이면 취소
+		return;
+
+	if (m_skillAttrib & SKILLATTRIBUTE::GUIDED)
+	{
+		float guidePower = 10.f;
+
+		physx::PxVec3 TargetPos = TO_PX3(m_target->GetTransform()->GetPosition());
+		physx::PxVec3 TargetDir = TargetPos - m_body->GetPosition();
+		TargetDir.normalize();
+
+		m_body->AddForce(ForceMode::Force, TargetDir * guidePower);
+	}
+}
+
+void SkillObject::SetAttribute(SKILLATTRIBUTE attrib)
+{
+	m_skillAttrib = static_cast<SKILLATTRIBUTE>(m_skillAttrib | attrib);
+}
+
+

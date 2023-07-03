@@ -34,8 +34,6 @@ void Monster::Init()
 	body->SetMass(body->GetMass() * 0.7f);
 
 	SetObjectType(server::OBJECT_TYPE::BOSS);
-
-	std::cout << "BOSS HP : " << m_hp << "\n";
 }
 
 void Monster::Update(double timeDelta)

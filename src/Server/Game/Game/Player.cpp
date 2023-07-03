@@ -38,9 +38,9 @@ Player::~Player()
 void Player::Init()
 {
 	m_controller = AddComponent<CustomController>(L"CustomController", true);
+	
 	std::string test = "Player";
 	m_controller->GetBody()->SetName(test);
-	m_controller->GetBody()->GetName();
 
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);
@@ -713,16 +713,8 @@ void Player::PlayerPattern_ShootBall()
 	//투사체 생성
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
-
-	//int32_t objID{ game::MessageHandler::GetInstance()->NewObjectID() };
-
-	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype);
-
-	//ballObject->SetID(objID);
-	//ballObject->SetName(L"Sphere");
-	//ballObject->SetFBXType(server::FBX_TYPE::SPHERE);
-	//ballObject->SetObjectType(type);					SkillObject::ServerMessage_SkillInit()에 넣었음.
-
+	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, nullptr);
 	skillObject->PlayerSkillFire(playerCameraLook);
 
 	// KeyUp 상태가 전달되기까지의 딜레이가 있어서 로직 종료 시 key 상태 변경

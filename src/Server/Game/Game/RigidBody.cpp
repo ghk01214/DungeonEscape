@@ -241,6 +241,33 @@ void RigidBody::AddForce(ForceMode mode, const PxVec3& forceVector)
 	m_body->addForce(forceVector, (PxForceMode::Enum)mode);
 }
 
+void RigidBody::AddTorque(ForceMode mode, const physx::PxVec3& forceVector)
+{
+	if (isKinematic())
+	{
+		return;
+	}
+
+	m_body->addTorque(forceVector, (PxForceMode::Enum)mode);
+}
+
+void RigidBody::AddRandomTorque(ForceMode mode, float strength)
+{
+	static std::random_device rd;  // 랜덤 시드 생성
+	static std::mt19937 gen(rd()); // Mersenne twister 엔진 초기화
+	static std::uniform_real_distribution<> dis(-1.0, 1.0); // -1.0에서 1.0까지의 균등 분포 생성
+
+	if (isKinematic())
+	{
+		return;
+	}
+
+	PxVec3 randomTorque = PxVec3(dis(gen), dis(gen), dis(gen));
+	randomTorque *= strength;
+
+	m_body->addTorque(randomTorque, (PxForceMode::Enum)mode);
+}
+
 void RigidBody::SetAngularDamping(float value)
 {
 	if (m_body)

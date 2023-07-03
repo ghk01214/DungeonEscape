@@ -170,6 +170,11 @@ CustomSimulationEventCallback* PhysDevice::GetEventCallback()
 	return m_eventCallback;
 }
 
+physx::PxVec3 PhysDevice::GetGravity() const
+{
+	return m_Scene->getGravity();
+}
+
 PxCooking* PhysDevice::GetCooking() const
 {
 	return m_Cooking;

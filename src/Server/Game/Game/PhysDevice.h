@@ -32,6 +32,9 @@ public:
 	PhysQuery*				GetQuery() const;
 	CustomSimulationEventCallback* GetEventCallback();
 
+public:
+	physx::PxVec3			GetGravity() const;
+
 private:
 	physx::PxDefaultAllocator				m_Allocator;
 	physx::PxDefaultErrorCallback			m_ErrorCallback;

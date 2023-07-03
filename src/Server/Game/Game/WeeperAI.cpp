@@ -19,10 +19,10 @@ void WeeperAI::Init()
 	MonsterAI::Init();
 	
 	//SkillSize 추가
-	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 200));		//z거리 200
-	AddSkillSize("CAST2", GeometryType::Box, Vec3(50, 50, 400));
-	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 800));
-	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 1600));
+	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 300));		//z거리 200
+	AddSkillSize("CAST2", GeometryType::Box, Vec3(50, 50, 200));
+	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 400));
+	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 800));
 	
 	m_weeper->SetControllerMoveSpeed(10.f);
 
@@ -47,15 +47,17 @@ void WeeperAI::Release()
 
 void WeeperAI::FillSchedule()
 {
-	std::cout << "hi" << std::endl;
-
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
+	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
-
 }
 
 void WeeperAI::ExecuteSchedule(float deltaTime)
 {
-	if (m_weeper->m_currState != Weeper::IDLE || m_weeper->m_currState != Weeper::IDLE_BREAK)
+	if (m_weeper->m_currState != Weeper::IDLE && m_weeper->m_currState != Weeper::IDLE_BREAK)
 		return;			// 기본스탠딩, 이동도중에만 패턴수행이 가능하다.
 
 	static float directionUpdateInterval = 0.f;
@@ -78,7 +80,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
-				std::cout << "catch" << std::endl;
+				m_weeper->Pattern_Cast1();
 				m_weeper->m_currState = Weeper::CAST1;
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();

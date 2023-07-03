@@ -69,6 +69,14 @@ void GameObject::SetRemoveReserved()
     m_removeReserved = RESERVED;
 }
 
+bool GameObject::GetRemoveReserved()
+{
+    if (m_removeReserved == -1)
+        return false;
+    else
+        return true;
+}
+
 Transform* GameObject::GetTransform()
 {
     return m_transform;
