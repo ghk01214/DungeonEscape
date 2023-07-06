@@ -83,7 +83,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			{
 				m_weeper->Pattern_Cast1();
 				m_weeper->m_currState = Weeper::CAST1;
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
+				//EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
@@ -103,7 +103,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			{
 				m_weeper->Pattern_Cast1();
 				m_weeper->m_currState = Weeper::CAST1;
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
+				//EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
@@ -123,7 +123,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			{
 				m_weeper->Pattern_Cast1();
 				m_weeper->m_currState = Weeper::CAST1;
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
+				//EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
@@ -143,7 +143,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			{
 				m_weeper->Pattern_Cast1();
 				m_weeper->m_currState = Weeper::CAST1;
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
+				//EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 

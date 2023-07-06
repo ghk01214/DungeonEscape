@@ -36,6 +36,7 @@ Weeper::~Weeper()
 void Weeper::Init()
 {
 	Monster::Init();
+	m_controller->GetBody()->SetMass(1000.f);
 
 	m_AI = new WeeperAI(this);
 	m_AI->Init();
