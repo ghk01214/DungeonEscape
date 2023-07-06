@@ -47,6 +47,10 @@ public:
 	void GetDamaged(int32_t damage);
 	void SendTransform();
 
+public:
+	//Server혼자 FSM실험을 위해 만든 임시함수. 추후 무력화 기믹에서 사용할 예정
+	void SetAnimationEnd();
+
 protected:
 	CustomController* m_controller;
 

@@ -3,6 +3,7 @@
 #include "Weeper.h"
 #include "Monster.h"
 #include "CustomController.h"
+#include "EventHandler.h"
 
 WeeperAI::WeeperAI(Weeper* weeper) :
 	MonsterAI(weeper),
@@ -19,15 +20,15 @@ void WeeperAI::Init()
 	MonsterAI::Init();
 
 	//SkillSize 추가
-	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 300));		//z거리 200
+	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 100));		//z거리 200
 	AddSkillSize("CAST2", GeometryType::Box, Vec3(50, 50, 200));
-	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 400));
-	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 800));
+	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 300));
+	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 400));
 
 	m_weeper->SetControllerMoveSpeed(10.f);
 
 	//Schedule 추가
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 }
 
 void WeeperAI::Update(float timeDelta)
@@ -47,10 +48,10 @@ void WeeperAI::Release()
 
 void WeeperAI::FillSchedule()
 {
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
 }
@@ -82,6 +83,67 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			{
 				m_weeper->Pattern_Cast1();
 				m_weeper->m_currState = Weeper::CAST1;
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
+				m_scheduler.erase(m_scheduler.begin());
+				ReportSchedule();
+
+			}
+			else
+			{
+				m_weeper->GetController()->MonsterMove(TO_PX3(m_targetDir));
+				m_weeper->m_currState = Weeper::IDLE;
+			}
+		}
+		break;
+
+		case WEEPER_SCHEDULE::CAST2:
+		{
+			inSkillRange = SkillRangeCheck();
+			if (inSkillRange)
+			{
+				m_weeper->Pattern_Cast1();
+				m_weeper->m_currState = Weeper::CAST1;
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
+				m_scheduler.erase(m_scheduler.begin());
+				ReportSchedule();
+
+			}
+			else
+			{
+				m_weeper->GetController()->MonsterMove(TO_PX3(m_targetDir));
+				m_weeper->m_currState = Weeper::IDLE;
+			}
+		}
+		break;
+
+		case WEEPER_SCHEDULE::CAST3:
+		{
+			inSkillRange = SkillRangeCheck();
+			if (inSkillRange)
+			{
+				m_weeper->Pattern_Cast1();
+				m_weeper->m_currState = Weeper::CAST1;
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
+				m_scheduler.erase(m_scheduler.begin());
+				ReportSchedule();
+
+			}
+			else
+			{
+				m_weeper->GetController()->MonsterMove(TO_PX3(m_targetDir));
+				m_weeper->m_currState = Weeper::IDLE;
+			}
+		}
+		break;
+
+		case WEEPER_SCHEDULE::CAST4:
+		{
+			inSkillRange = SkillRangeCheck();
+			if (inSkillRange)
+			{
+				m_weeper->Pattern_Cast1();
+				m_weeper->m_currState = Weeper::CAST1;
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 

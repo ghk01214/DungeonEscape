@@ -140,3 +140,8 @@ void Monster::SendTransform()
 		game::MessageHandler::GetInstance()->PushTransformMessage(msg);
 	}
 }
+
+void Monster::SetAnimationEnd()
+{
+	m_aniEnd = true;
+}

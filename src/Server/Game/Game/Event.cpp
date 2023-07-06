@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Event.h"
+#include "Monster.h"
 #include "SkillObject.h"
 
 Event::Event(std::string context, float remainTime, GameObject* subject) :
@@ -28,6 +29,15 @@ void Event::Tick(float deltaTime)
 void Event::ExecuteMsg_Once()
 {
 	executed = true;
+
+	if (msg == "ANIM_END")
+	{
+		auto monsterObj = dynamic_cast<Monster*>(target);
+		if (monsterObj)
+		{
+			monsterObj->SetAnimationEnd();
+		}
+	}
 
 	if (msg == "SKILL_GUIDESTART")
 	{

@@ -219,6 +219,7 @@ void Weeper::UpdateFrame()
 		case CAST1: case CAST2_END: case CAST3: case CAST4_END:
 		{
 			m_currState = IDLE;
+			m_AI->UpdateTargetPos();		//패턴이 끝났으면 바로 플레이어를 바라보도록
 		}
 		break;
 		case CAST2_START: case CAST4_START:
@@ -259,7 +260,7 @@ void Weeper::Pattern_Cast1()
 	float monsterRadius = m_controller->GetCollider()->GetRadius();
 	float skillBallHalfExtent = 100.f;
 
-	physx::PxVec3 skillBallPosition = monsterPos + lookDir * (monsterRadius + skillBallHalfExtent + 10);
+	physx::PxVec3 skillBallPosition = monsterPos + lookDir * (monsterRadius + skillBallHalfExtent + 50);
 	Vec3 ballPos = FROM_PX3(skillBallPosition);
 
 	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST1_BALL;
@@ -270,7 +271,82 @@ void Weeper::Pattern_Cast1()
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
 		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target);
 	
-	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 5.f, skillObject);		//5초후 추적시작
+	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.f, skillObject);		//5초후 추적시작
+}
+
+void Weeper::Pattern_Cast2()
+{
+	//투사체 위치 선정
+	physx::PxVec3 monsterPos = m_controller->GetBody()->GetGlobalPose().p;
+	monsterPos.y += 200.f;		//weeper 모델 위치 고려해서 살짝 위로
+	physx::PxVec3 lookDir = TO_PX3(m_AI->m_targetDir);
+	lookDir.getNormalized();
+
+	float monsterRadius = m_controller->GetCollider()->GetRadius();
+	float skillBallHalfExtent = 100.f;
+
+	physx::PxVec3 skillBallPosition = monsterPos + lookDir * (monsterRadius + skillBallHalfExtent + 50);
+	Vec3 ballPos = FROM_PX3(skillBallPosition);
+
+	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL;
+
+	//투사체 생성
+	auto objmgr = ObjectManager::GetInstance();
+	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
+	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target);
+
+	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.f, skillObject);		//5초후 추적시작
+}
+
+void Weeper::Pattern_Cast3()
+{
+	//투사체 위치 선정
+	physx::PxVec3 monsterPos = m_controller->GetBody()->GetGlobalPose().p;
+	monsterPos.y += 200.f;		//weeper 모델 위치 고려해서 살짝 위로
+	physx::PxVec3 lookDir = TO_PX3(m_AI->m_targetDir);
+	lookDir.getNormalized();
+
+	float monsterRadius = m_controller->GetCollider()->GetRadius();
+	float skillBallHalfExtent = 100.f;
+
+	physx::PxVec3 skillBallPosition = monsterPos + lookDir * (monsterRadius + skillBallHalfExtent + 50);
+	Vec3 ballPos = FROM_PX3(skillBallPosition);
+
+	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST3_BALL;
+
+	//투사체 생성
+	auto objmgr = ObjectManager::GetInstance();
+	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
+	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target);
+
+	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.f, skillObject);		//5초후 추적시작
+}
+
+void Weeper::Pattern_Cast4()
+{
+	//투사체 위치 선정
+	physx::PxVec3 monsterPos = m_controller->GetBody()->GetGlobalPose().p;
+	monsterPos.y += 200.f;		//weeper 모델 위치 고려해서 살짝 위로
+	physx::PxVec3 lookDir = TO_PX3(m_AI->m_targetDir);
+	lookDir.getNormalized();
+
+	float monsterRadius = m_controller->GetCollider()->GetRadius();
+	float skillBallHalfExtent = 100.f;
+
+	physx::PxVec3 skillBallPosition = monsterPos + lookDir * (monsterRadius + skillBallHalfExtent + 50);
+	Vec3 ballPos = FROM_PX3(skillBallPosition);
+
+	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST4_BALL;
+
+	//투사체 생성
+	auto objmgr = ObjectManager::GetInstance();
+	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
+	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target);
+
+	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.f, skillObject);		//5초후 추적시작
 }
 
 Weeper::WEEPER_STATE Weeper::GetState() const

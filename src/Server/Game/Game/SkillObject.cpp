@@ -98,6 +98,57 @@ void SkillObject::Init()
 		}
 		break;
 
+		case SKILLOBJECTTYPE::WEEPER_CAST2_BALL:
+		{
+			m_name = L"WEEPER_CAST2_BALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
+
+			m_transform->SetScale(100.f, 100.f, 100.f);
+
+			m_body->SetMass(3.f);
+			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
+			m_body->GetBody()->setAngularDamping(0.5f);
+			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
+
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE);
+		}
+		break;
+
+		case SKILLOBJECTTYPE::WEEPER_CAST3_BALL:
+		{
+			m_name = L"WEEPER_CAST3_BALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
+
+			m_transform->SetScale(100.f, 100.f, 100.f);
+
+			m_body->SetMass(3.f);
+			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
+			m_body->GetBody()->setAngularDamping(0.5f);
+			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
+
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE);
+		}
+		break;
+
+		case SKILLOBJECTTYPE::WEEPER_CAST4_BALL:
+		{
+			m_name = L"WEEPER_CAST4_BALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
+
+			m_transform->SetScale(100.f, 100.f, 100.f);
+
+			m_body->SetMass(3.f);
+			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
+			m_body->GetBody()->setAngularDamping(0.5f);
+			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
+
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE);
+		}
+		break;
+
 		case SKILLOBJECTTYPE::MONSTER_ICEBALL:
 		{
 			m_name = L"MONSTER ICEBALL";

@@ -55,6 +55,10 @@ public:
 
 public:
 	void Pattern_Cast1();
+	void Pattern_Cast2();
+	void Pattern_Cast3();
+	void Pattern_Cast4();
+
 
 public:
 	WEEPER_STATE GetState() const;

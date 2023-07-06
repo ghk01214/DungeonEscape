@@ -27,16 +27,21 @@ MonsterAI::~MonsterAI()
 
 void MonsterAI::Init()
 {
-	SetRandomTarget();
+
 }
 
 void MonsterAI::Update(float timeDelta)
 {
 	if (IsEmptySchedule())
+	{
+		SetRandomTarget();
 		FillSchedule();
+	}
 
 	else
+	{
 		ExecuteSchedule(timeDelta);
+	}
 }
 
 void MonsterAI::LateUpdate(float timeDelta)
@@ -63,7 +68,7 @@ void MonsterAI::SetRandomTarget()
 	while (1)
 	{
 		auto newTarget = players->SelectRandomObject<Player>();						//랜덤 플레이어 선택
-		if (m_target == newTarget)
+		if (m_target == newTarget && players->GetGameObjects().size() > 1)			//남은 플레이어가 1명보다 많고, 랜덤선정이 중복플레이어를 타겟으로 삼으면 continue 
 			continue;
 
 		if (newTarget)																//유효값 확인
