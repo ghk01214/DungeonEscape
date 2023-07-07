@@ -242,7 +242,7 @@ Collider* CustomController::GetColliderBelow()
 
 void CustomController::DirectionInput_Player()
 {
-	bool serverConnected = true;
+	bool serverConnected = false;							//ONOFF
 
 	if (serverConnected)
 	{
@@ -307,8 +307,8 @@ void CustomController::Movement_Player()
 	CheckOnGround(CollisionInfoType::Enter, surfaceNormal);
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)		//connected
-	if (m_keyboardInput[SPACE].down && m_onGround)
+	if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)		//ONOFF
+	//if (m_keyboardInput[SPACE].down && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;
@@ -366,7 +366,7 @@ void CustomController::Movement_Monster()
 	PxVec3 surfaceNormal{ 0.f };
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)				//connected
+	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)			
 	if (m_keyboardInput[SPACE].press && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };

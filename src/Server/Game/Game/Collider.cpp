@@ -133,7 +133,7 @@ PxShape* Collider::GetPxShape() const
 	return m_shape;
 }
 
-float Collider::GetFriction(float value) const
+float Collider::GetFriction() const
 {
 	return m_material->getDynamicFriction();
 }
@@ -142,6 +142,16 @@ void Collider::SetFriction(float value)
 {
 	m_material->setStaticFriction(value);
 	m_material->setDynamicFriction(value);
+}
+
+float Collider::GetRestitution() const
+{
+	return m_material->getRestitution();
+}
+
+void Collider::SetRestitution(float value)
+{
+	m_material->setRestitution(value);
 }
 
 PhysicsCombineMode Collider::GetFrictionCombineMode() const

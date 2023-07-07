@@ -20,10 +20,10 @@ void WeeperAI::Init()
 	MonsterAI::Init();
 
 	//SkillSize 추가
-	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 100));		//z거리 200
-	AddSkillSize("CAST2", GeometryType::Box, Vec3(50, 50, 200));
-	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 300));
-	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 400));
+	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 600));		//z거리 200
+	AddSkillSize("CAST2", GeometryType::Sphere, Vec3(1200, 1200, 1200));
+	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 350));
+	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 450));
 
 	m_weeper->SetControllerMoveSpeed(10.f);
 
@@ -48,10 +48,15 @@ void WeeperAI::Release()
 
 void WeeperAI::FillSchedule()
 {
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	if (!m_target)
+		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
+
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+
+
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
 }
@@ -81,12 +86,16 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
-				m_weeper->Pattern_Cast1();
 				m_weeper->m_currState = Weeper::CAST1;
-				//EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
+				if (m_debugmode)
+					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					
+
+				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 1.5f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.5f, m_weeper);
 			}
 			else
 			{
@@ -101,12 +110,10 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
-				m_weeper->Pattern_Cast1();
-				m_weeper->m_currState = Weeper::CAST1;
-				//EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
+				m_weeper->Pattern_Cast2();							//공중 공 소환
+				m_weeper->m_currState = Weeper::CAST2_START;		//원기옥 자세
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
-
 			}
 			else
 			{
@@ -121,12 +128,13 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
-				m_weeper->Pattern_Cast1();
+				m_weeper->Pattern_Cast3();
 				m_weeper->m_currState = Weeper::CAST1;
-				//EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
+				if (m_debugmode)
+					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					
 			}
 			else
 			{
@@ -141,12 +149,13 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
-				m_weeper->Pattern_Cast1();
+				m_weeper->Pattern_Cast4();
 				m_weeper->m_currState = Weeper::CAST1;
-				//EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					// connected = true면 해당 줄을 주석처리
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
+				if (m_debugmode)
+					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					
 			}
 			else
 			{

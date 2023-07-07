@@ -17,6 +17,8 @@
 #include "MonsterAI.h"
 #include "EventHandler.h"
 
+using namespace std;
+
 Weeper::Weeper(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	Monster{ MonsterID, position, rotation, scale },
 	m_prevState{ IDLE },
@@ -252,17 +254,47 @@ void Weeper::UpdateFrame()
 
 void Weeper::Pattern_Cast1()
 {
-	//투사체 위치 선정
-	physx::PxVec3 monsterPos = m_controller->GetBody()->GetGlobalPose().p;
-	monsterPos.y += 200.f;		//weeper 모델 위치 고려해서 살짝 위로
+#pragma region 순서 설정
+	static int order = -1;
+	order += 1;
+	if (order > 2)
+		order = 0;
+#pragma endregion
+
+	//투사체 위치 선정			
+	physx::PxVec3 ballPos = m_controller->GetBody()->GetGlobalPose().p;
+	ballPos.y += 550.f;		//weeper 모델 위치 고려해서 살짝 위로
+
+	float xPosInterval = 400.f;
+	static float xTurn = Randnum_Cast1_XInterval();
+
 	physx::PxVec3 lookDir = TO_PX3(m_AI->m_targetDir);
-	lookDir.getNormalized();
+	physx::PxVec3 up(0, 1, 0);
+	physx::PxVec3 right = lookDir.cross(up);
+	right.getNormalized();
 
 	float monsterRadius = m_controller->GetCollider()->GetRadius();
 	float skillBallHalfExtent = 100.f;
 
-	physx::PxVec3 skillBallPosition = monsterPos + lookDir * (monsterRadius + skillBallHalfExtent + 50);
-	Vec3 ballPos = FROM_PX3(skillBallPosition);
+	switch (order)
+	{
+		case 0: 
+		break;
+
+		case 1:
+		ballPos += right * xPosInterval * xTurn;
+		ballPos.y += Randnum_Cast1_YInterval();
+		break;
+
+		case 2:
+		ballPos -= right * xPosInterval * xTurn;
+		ballPos.y += Randnum_Cast1_YInterval();			//상하 간격으로 상시 랜덤으로 돌린다
+		xTurn = Randnum_Cast1_XInterval();				//3번째공을 소환하면 좌우 생성 순서 다시 랜덤으로 설정
+		break;
+	}
+
+
+	Vec3 convertedballPos = FROM_PX3(ballPos);
 
 	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST1_BALL;
 
@@ -270,24 +302,20 @@ void Weeper::Pattern_Cast1()
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target);
+		(L"Layer_SkillObject", convertedballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target, this);
 	
-	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.f, skillObject);		//5초후 추적시작
+	cout << "SKillBallPosition - ORDER" << order << "    Position : " << convertedballPos.x << "    " << convertedballPos.y << "    " << convertedballPos.z << endl;
 }
 
 void Weeper::Pattern_Cast2()
 {
-	//투사체 위치 선정
-	physx::PxVec3 monsterPos = m_controller->GetBody()->GetGlobalPose().p;
-	monsterPos.y += 200.f;		//weeper 모델 위치 고려해서 살짝 위로
-	physx::PxVec3 lookDir = TO_PX3(m_AI->m_targetDir);
-	lookDir.getNormalized();
+	physx::PxVec3 ballPos = m_controller->GetBody()->GetGlobalPose().p;
+	ballPos.y += 700.f;		//weeper 모델 위치 고려해서 살짝 위로
 
 	float monsterRadius = m_controller->GetCollider()->GetRadius();
-	float skillBallHalfExtent = 100.f;
+	float skillBallHalfExtent = 200.f;
 
-	physx::PxVec3 skillBallPosition = monsterPos + lookDir * (monsterRadius + skillBallHalfExtent + 50);
-	Vec3 ballPos = FROM_PX3(skillBallPosition);
+	Vec3 convertedballPos = FROM_PX3(ballPos);
 
 	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL;
 
@@ -295,9 +323,15 @@ void Weeper::Pattern_Cast2()
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target);
+		(L"Layer_SkillObject", convertedballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target, this);
 
-	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.f, skillObject);		//5초후 추적시작
+	EventHandler::GetInstance()->AddEvent("SKILL_AERIAL_FIRE", 4.f, skillObject);		//5초후 위로 발사
+	EventHandler::GetInstance()->AddEvent("COUNTER_AVAILABLE", 7.f, this);
+	EventHandler::GetInstance()->AddEvent("COUNTER_UNAVAILABLE", 10.f, this);
+}
+
+void Weeper::Pattern_Cast2_Scatter()
+{
 }
 
 void Weeper::Pattern_Cast3()
@@ -320,9 +354,9 @@ void Weeper::Pattern_Cast3()
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target);
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target, this);
 
-	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.f, skillObject);		//5초후 추적시작
+	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.5f, skillObject);		//5초후 추적시작
 }
 
 void Weeper::Pattern_Cast4()
@@ -345,9 +379,66 @@ void Weeper::Pattern_Cast4()
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target);
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target, this);
 
-	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.f, skillObject);		//5초후 추적시작
+	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.5f, skillObject);		//5초후 추적시작
+}
+
+int Weeper::Randnum_Cast1_XInterval()
+{
+	static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	static std::default_random_engine generator(seed);
+	static std::uniform_int_distribution<int> distribution(0, 1);
+
+	int number = distribution(generator) * 2 - 1;
+
+	return number;
+}
+
+float Weeper::Randnum_Cast1_YInterval()
+{
+	static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	static std::default_random_engine generator(seed);
+	static std::uniform_int_distribution<int> distribution(-5, 5);
+
+	int number = 0;
+	while (number == 0) {
+		// 랜덤 값을 생성
+		number = distribution(generator) * 50;
+	}
+
+	return number;
+}
+
+float Weeper::Randnum_Cast2_XZInterval()
+{
+	static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	static std::default_random_engine generator(seed);
+	static std::uniform_real_distribution<float> distribution(-1200.0f, 1200.0f);
+
+	float skillBallHalfExtent = 100.f;
+	float radius = m_controller->GetCollider()->GetRadius();
+	float num = 0;
+	float distance = 0;
+
+	do {
+		num = distribution(generator);  // Generate a random float in the range of -1200 to 1200
+
+		// Calculate the distance from the origin
+		distance = abs(num);
+	} while (distance < radius + skillBallHalfExtent || distance > 1200);  // Continue if the generated point is within the excluded radius or outside the circle
+
+	return num;
+}
+
+float Weeper::Randnum_Cast2_YInterval()
+{
+	static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	static std::default_random_engine generator(seed);
+	static std::uniform_real_distribution<float> distribution(0.0f, 400.0f);
+
+	float num = distribution(generator);
+	return num;
 }
 
 Weeper::WEEPER_STATE Weeper::GetState() const

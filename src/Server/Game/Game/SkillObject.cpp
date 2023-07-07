@@ -7,6 +7,7 @@
 #include "RigidBody.h"
 #include "CollisionPairInfo.h"
 #include "MessageHandler.h"
+#include "EventHandler.h"
 #include "SphereCollider.h"
 #include "BoxCollider.h"
 #include "PhysDevice.h"
@@ -14,8 +15,8 @@
 #include "Player.h"
 #include "Monsters.hpp"
 
-SkillObject::SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype, GameObject* target)
-	: GameObject(position, rotation, scale), m_body(nullptr), m_skillType(skilltype), m_target(target)
+SkillObject::SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype, GameObject* target, GameObject* owner)
+	: GameObject(position, rotation, scale), m_body(nullptr), m_skillType(skilltype), m_target(target), m_owner(owner)
 {
 }
 
@@ -93,8 +94,12 @@ void SkillObject::Init()
 			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
 			m_body->GetBody()->setAngularDamping(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
+			auto collider = m_body->GetCollider(0);
+			collider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
+			collider->SetRestitution(0.8f);
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
+			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.5f, this);		//3.2초후 추적시작
 		}
 		break;
 
@@ -111,7 +116,7 @@ void SkillObject::Init()
 			m_body->GetBody()->setAngularDamping(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
 		}
 		break;
 
@@ -128,7 +133,7 @@ void SkillObject::Init()
 			m_body->GetBody()->setAngularDamping(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
 		}
 		break;
 
@@ -145,7 +150,7 @@ void SkillObject::Init()
 			m_body->GetBody()->setAngularDamping(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
 		}
 		break;
 
@@ -317,6 +322,7 @@ void SkillObject::HandlePlayerSkillCollision()
 				}
 
 				SetRemoveReserved();						//객체 삭제
+				m_body->ExcludeFromSimulation(true);
 				ServerMessage_SkillHit();					//서버 메시지 처리
 			}
 		}
@@ -407,18 +413,43 @@ void SkillObject::HandleMonsterSkillCollision()
 			{
 				case SKILLOBJECTTYPE::PLAYER_FIREBALL:
 				{
-					//std::cout << "파이어볼 맵타격 처리\n";
+					SetRemoveReserved();						//객체 삭제
+					ServerMessage_SkillHit();					//서버 메시지 처리
 				}
 				break;
 				case SKILLOBJECTTYPE::PLAYER_POISONBALL:
 				{
-					//std::cout << "아이스볼 맵타격 처리\n";
+					SetRemoveReserved();						//객체 삭제
+					ServerMessage_SkillHit();					//서버 메시지 처리
+				}
+				break;
+				case SKILLOBJECTTYPE::WEEPER_CAST1_BALL:
+				{
+					if (m_mapEncountered)
+					{
+						SetRemoveReserved();						//객체 삭제
+						ServerMessage_SkillHit();					//서버 메시지 처리
+					}
 				}
 				break;
 			}
 
-			SetRemoveReserved();						//객체 삭제
-			ServerMessage_SkillHit();					//서버 메시지 처리
+
+		}
+	}
+
+	auto exitInfos = m_body->GetCollider(0)->GetCollisionInfo(CollisionInfoType::Exit);
+	for (auto& info : exitInfos)
+	{
+		auto collider = info.get()->GetFromCollider();
+		server::OBJECT_TYPE type = collider->GetOwnerObject()->GetObjectType();
+
+		if (m_skillType == SkillObject::SKILLOBJECTTYPE::WEEPER_CAST1_BALL)
+		{
+			SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED, false);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, false);
+			m_body->SetMass(10.f);
+			m_mapEncountered = true;
 		}
 	}
 }
@@ -464,7 +495,7 @@ void SkillObject::Attribute_Guide()
 
 	if (m_skillAttrib & SKILLATTRIBUTE::GUIDED)
 	{
-		float guidePower = 10.f;
+		float guidePower = 15.f;
 
 		physx::PxVec3 TargetPos = TO_PX3(m_target->GetTransform()->GetPosition());
 		physx::PxVec3 TargetDir = TargetPos - m_body->GetPosition();
@@ -474,9 +505,15 @@ void SkillObject::Attribute_Guide()
 	}
 }
 
-void SkillObject::SetAttribute(SKILLATTRIBUTE attrib)
+void SkillObject::SetAttribute(SKILLATTRIBUTE attrib, bool set)
 {
-	m_skillAttrib = static_cast<SKILLATTRIBUTE>(m_skillAttrib | attrib);
+	if (set)
+	{
+		m_skillAttrib = static_cast<SKILLATTRIBUTE>(m_skillAttrib | attrib);
+	}
+	else
+	{
+		m_skillAttrib = static_cast<SKILLATTRIBUTE>(m_skillAttrib & ~attrib);
+	}
 }
-
 

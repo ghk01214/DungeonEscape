@@ -36,24 +36,13 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Trigger");
 
-	//LoadBasicMap3();
-	LoadMap();
+	LoadBasicMap3();
+	//LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
-	static bool temp{ false };
-
-	auto layer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
-
-	if (layer->GetGameObjects().size() > 0 and temp == false)
-	{
-		auto WeeperObject = ObjectManager::GetInstance()->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-		temp = true;
-	}
-
-	//TestFunction();
 }
 
 void TestLevel::LateUpdate(double timeDelta)

@@ -56,7 +56,7 @@ enum class PhysicsQueryType
 	None = 0,
 	Collider = 1 << 0,
 	Trigger = 1 << 1,
-	All = Collider | Trigger,
+	All = 1,
 };
 
 enum class PhysicsLayers

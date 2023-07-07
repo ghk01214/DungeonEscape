@@ -43,8 +43,10 @@ public:
 	RigidBody* GetRigidBody() const;
 	physx::PxShape* GetPxShape() const;
 
-	float GetFriction(float value) const;
+	float GetFriction() const;
 	void SetFriction(float value);
+	float GetRestitution() const;
+	void SetRestitution(float value);
 	PhysicsCombineMode GetFrictionCombineMode() const;
 	void SetFrictionCombineMode(PhysicsCombineMode value);
 	PhysicsCombineMode GetRestitutionCombineMode() const;

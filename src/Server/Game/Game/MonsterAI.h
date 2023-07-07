@@ -32,7 +32,7 @@ public:
 protected:
 	Monster* m_monster;
 	std::vector<MonsterSkill*> m_skillSizeHolder;
-	Player* m_target;
+	Player* m_target = nullptr;
 	Vec3 m_targetPos;
 	Vec3 m_targetDir;
 

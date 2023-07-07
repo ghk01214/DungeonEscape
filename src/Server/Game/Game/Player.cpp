@@ -714,7 +714,7 @@ void Player::PlayerPattern_ShootBall()
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, nullptr);
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, nullptr, this);
 	skillObject->PlayerSkillFire(playerCameraLook);
 
 	// KeyUp 상태가 전달되기까지의 딜레이가 있어서 로직 종료 시 key 상태 변경

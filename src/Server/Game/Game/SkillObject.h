@@ -35,11 +35,12 @@ public:
 	{
 		NONE			= 0,
 		LEVITATE		= 1 << 0,
-		GUIDED			= 1 << 1
+		GUIDED			= 1 << 1,
+		AERIAL_FIRE		= 1 << 2
 	};
 
 public:
-	SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype, GameObject* target);
+	SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype, GameObject* target, GameObject* owner);
 	~SkillObject() override;
 
 public:
@@ -65,7 +66,7 @@ public:
 	void Attirbute_Levitate();		//공중 지속
 	void Attribute_Guide();			//유도
 
-	void SetAttribute(SKILLATTRIBUTE attrib);
+	void SetAttribute(SKILLATTRIBUTE attrib, bool set);
 
 public:
 	bool IsPlayerSkill();
@@ -75,8 +76,10 @@ private:
 	SKILLOBJECTTYPE m_skillType;
 	SKILLATTRIBUTE m_skillAttrib = SKILLATTRIBUTE::NONE;
 	float m_firePower;
+	bool m_mapEncountered = false;		//맵 1회 접촉 이후 삭제
 
-	GameObject* m_target = nullptr;	
+	GameObject* m_target = nullptr;
+	GameObject* m_owner = nullptr;
 };
 
 

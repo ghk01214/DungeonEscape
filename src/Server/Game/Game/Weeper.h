@@ -54,15 +54,20 @@ public:
 	void UpdateFrame();
 
 public:
-	void Pattern_Cast1();
-	void Pattern_Cast2();
+	void Pattern_Cast1();		//공 3개 발사
+	void Pattern_Cast2();				//원기옥 생성 + 발사 메시지 생성
+	void Pattern_Cast2_Scatter();		//원기옥 발사 이후 흩어짐
 	void Pattern_Cast3();
 	void Pattern_Cast4();
 
+public:
+	int Randnum_Cast1_XInterval();
+	float Randnum_Cast1_YInterval();
+	float Randnum_Cast2_XZInterval();
+	float Randnum_Cast2_YInterval();
 
 public:
 	WEEPER_STATE GetState() const;
-
 	void SetState(WEEPER_STATE state);
 
 private:

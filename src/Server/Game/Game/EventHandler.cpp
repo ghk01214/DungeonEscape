@@ -14,10 +14,15 @@ void EventHandler::Init()
 
 void EventHandler::Update(double timeDelta)
 {
-	for (auto& event : m_events)
-	{
-		event->Tick(timeDelta);
-	}
+	//for (auto& event : m_events)
+	//{
+	//	event->Tick(timeDelta);
+	//}
+
+    for (int i = 0; i < m_events.size(); ++i)
+    {
+        m_events[i]->Tick(timeDelta);
+    }
 }
 
 void EventHandler::LateUpdate(double timeDelta)

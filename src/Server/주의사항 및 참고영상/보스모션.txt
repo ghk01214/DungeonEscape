@@ -1,0 +1,41 @@
+리퍼
+Anim_cast01 : 평타. 짧은 모션
+Anim_cast02 : 원기옥자세 (start = loop)
+Anim_cast02End : 원기옥던지기(은근 휘청거림)	
+Anim_cast03 : 레이저자세. 은근김
+Anim_cast04 : 무릎꿇지만, 위치가 바뀜
+Anim_Dodge : 회피. 위치 바뀌니 무적설정
+Anim_GotHit : 짧은 피격모션
+Anim_taunt : 무력화모션에 딱
+Anim_IDLE 
+Anim_IdleBreak : 두리번
+
+weeper
+
+cast1 : 운석떨구기, 
+cast2 : 슬비중력장(무력화), 범위운석, 
+cast3 : 빠르고 큰 운석
+Dodge : 회피
+회피1
+
+에너지공 생성 > 대기 > 공 위로 던짐 > 카운터 > IDLE
+에너지공 생성 > 피격 > 공 아래로 던짐 > IDLE
+
+
+
+골렘
+IDLE1
+IDLE2 과격한 두리번
+JUMP START / Loop / End
+Run있음. 돌진가능
+WALK 기본이동
+ROAR : 짧은 포효.
+SpellStart : 팔을 뒤로 뺌
+SpellLoop : 팔 차징
+SpellEnd : 전방의 땅을 한손으로 친다.
+Attack1 : 어퍼컷
+Attack2 : 옆구리치기. 좀 많이 뻗음
+Attack3 : 두손으로 전방 내려찍기. 개빠르다
+Attack4 : 옆구리치기. 약간 잡기모션처럼보임
+Damage : 피격모션. 무력화 시작.
+STun : 무력화 루프
