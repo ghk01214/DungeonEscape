@@ -142,6 +142,7 @@ namespace game
 			postOver.msgProtocol = msg.msgProtocol;
 			postOver.playerID = msg.playerID;
 			postOver.objID = msg.objID;
+			postOver.objType = msg.objType;
 			postOver.roomID = msg.roomID;
 
 			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
