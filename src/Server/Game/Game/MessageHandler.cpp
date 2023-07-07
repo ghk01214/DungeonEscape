@@ -209,6 +209,7 @@ namespace game
 
 						if (player->GetID() == msg.playerID)
 						{
+							// 용섭 클라이언트 로그아웃
 							Logout(msg.playerID, msg.roomID, player, objMgr);
 
 							break;
@@ -231,8 +232,8 @@ namespace game
 					{
 						int32_t colliderID{ NewColliderID() };
 
-						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-						//Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(11460, -1710, 34480), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+						//Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 50.f, 300.f, -2500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 
 						std::wstring name{};
 
