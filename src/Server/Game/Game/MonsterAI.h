@@ -29,12 +29,18 @@ public:
 	physx::PxGeometry* GetRequestedSkillGeometry(std::string schedule);
 	bool SkillRangeCheck();
 
+public:
+	void SetAIWait(bool value);
+	bool GetAIWait();
+
 protected:
 	Monster* m_monster;
 	std::vector<MonsterSkill*> m_skillSizeHolder;
 	Player* m_target = nullptr;
 	Vec3 m_targetPos;
 	Vec3 m_targetDir;
+
+	bool m_AIWait = false;				//카운터 대기를 위해
 
 	float m_detectRange;				//몬스터 인식 범위
 	float m_targetPos_UpdateInterval;	//플레이어 위치 갱신 주기

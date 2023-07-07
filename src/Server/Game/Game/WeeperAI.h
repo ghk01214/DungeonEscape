@@ -15,11 +15,11 @@ enum class WEEPER_SCHEDULE
 	RESET = 1,				//패턴진행 직전, SetRandomTarget()실행 후, 클라이언트에서 몬스터를 돌릴 틈을 준다.
 	//패턴 3번 쓰면 한번정도 섞어주는 정도	
 
-	CAST1 = 2,				//weeper 평타 (약한 유도 3개)
+	CAST1 = 2,				//평타 (약한 유도 3개)
 	CAST2 = 3,				//하누마탄 원기옥
-	CAST3 = 4,		//광역 연속운석
-	CAST4 = 5,		//강화 평타. 강화운석 타겟발사
-	DODGE = 5		//회피동작
+	CAST3 = 4,				//광역 연속운석
+	CAST4 = 5,				//강화 평타. 강화운석 타겟발사
+	DODGE = 5				//회피동작
 };
 
 class WeeperAI : public MonsterAI
@@ -52,7 +52,7 @@ private:
 	float m_detectRange;				//몬스터 인식 범위
 	float m_targetPos_UpdateInterval;	//플레이어 위치 갱신 주기
 
-private:
+public:
 	bool m_debugmode = true;			//서버 FSM 확인용 변수
 };
 

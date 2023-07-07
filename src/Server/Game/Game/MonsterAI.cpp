@@ -32,6 +32,9 @@ void MonsterAI::Init()
 
 void MonsterAI::Update(float timeDelta)
 {
+	if (m_AIWait)
+		return;
+
 	if (IsEmptySchedule())
 	{
 		SetRandomTarget();
@@ -183,6 +186,16 @@ bool MonsterAI::SkillRangeCheck()
 		}
 	}
 	return false;
+}
+
+void MonsterAI::SetAIWait(bool value)
+{
+	m_AIWait = value;
+}
+
+bool MonsterAI::GetAIWait()
+{
+	return m_AIWait;
 }
 
 

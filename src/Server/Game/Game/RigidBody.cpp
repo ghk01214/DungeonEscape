@@ -268,6 +268,23 @@ void RigidBody::AddRandomTorque(ForceMode mode, float strength)
 	m_body->addTorque(randomTorque, (PxForceMode::Enum)mode);
 }
 
+void RigidBody::AddRandomTorque_PlanetStyle(ForceMode mode, float strength)
+{
+	static std::uniform_real_distribution<> dis(0.5, 1.0);
+	static std::uniform_real_distribution<> disXZ(-1.0, 1.0); // -1.0에서 1.0까지의 균등 분포 생성
+	static std::uniform_real_distribution<> disY(-0.2, 0.2); // 예를 들어, -0.2에서 0.2까지의 균등 분포 생성
+
+	if (isKinematic())
+	{
+		return;
+	}
+
+	PxVec3 randomTorque = PxVec3(disXZ(dre), disY(dre), disXZ(dre));
+	randomTorque *= strength;
+
+	m_body->addTorque(randomTorque, (PxForceMode::Enum)mode);
+}
+
 void RigidBody::SetAngularDamping(float value)
 {
 	if (m_body)
@@ -279,6 +296,8 @@ void RigidBody::SetLinearDamping(float value)
 	if (m_body)
 		m_body->setLinearDamping(value);
 }
+
+
 
 void RigidBody::UpdateMassAndInertia()
 {

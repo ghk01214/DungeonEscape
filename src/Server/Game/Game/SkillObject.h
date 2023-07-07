@@ -3,12 +3,14 @@
 #include "GameObject.h"
 
 class RigidBody;
+class Event;
 
 class SkillObject : public GameObject
 {
 	friend class Player;
 	friend class Monster;
 	friend class Weeper;
+	friend class Event;
 
 public:
 	enum class SKILLOBJECTTYPE
@@ -36,7 +38,7 @@ public:
 		NONE			= 0,
 		LEVITATE		= 1 << 0,
 		GUIDED			= 1 << 1,
-		AERIAL_FIRE		= 1 << 2
+		ASCENDING		= 1 << 2
 	};
 
 public:
@@ -65,8 +67,10 @@ public:
 	void Handle_Attribute();		//attribute에 따라 지속적으로 실행
 	void Attirbute_Levitate();		//공중 지속
 	void Attribute_Guide();			//유도
+	void Attribute_Ascending();	//공중 발사
 
 	void SetAttribute(SKILLATTRIBUTE attrib, bool set);
+	SKILLATTRIBUTE GetAttribute();
 
 public:
 	bool IsPlayerSkill();

@@ -219,12 +219,20 @@ void Weeper::UpdateFrame()
 
 	switch (m_currState)
 	{
-		case CAST1: case CAST2_END: case CAST3: case CAST4_END:
+		case CAST1: case CAST3: case CAST4_END:
 		{
 			m_currState = IDLE;
 			m_AI->UpdateTargetPos();		//패턴이 끝났으면 바로 플레이어를 바라보도록
 		}
 		break;
+		case CAST2_END:
+		{
+			m_currState = IDLE;
+			if (m_AI->GetAIWait())
+			{
+				//if wait
+			}
+		}
 		case CAST2_START: case CAST4_START:
 		{
 			// CAST2_END로 갈지 CAST2_LOOP로 갈지는 추후 변경
@@ -250,6 +258,11 @@ void Weeper::UpdateFrame()
 	}
 
 	m_aniEnd = false;
+}
+
+WeeperAI* Weeper::GetAI()
+{
+	return m_AI;
 }
 
 void Weeper::Pattern_Cast1()
@@ -303,8 +316,6 @@ void Weeper::Pattern_Cast1()
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
 		(L"Layer_SkillObject", convertedballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target, this);
-	
-	cout << "SKillBallPosition - ORDER" << order << "    Position : " << convertedballPos.x << "    " << convertedballPos.y << "    " << convertedballPos.z << endl;
 }
 
 void Weeper::Pattern_Cast2()
@@ -325,9 +336,7 @@ void Weeper::Pattern_Cast2()
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
 		(L"Layer_SkillObject", convertedballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_AI->m_target, this);
 
-	EventHandler::GetInstance()->AddEvent("SKILL_AERIAL_FIRE", 4.f, skillObject);		//5초후 위로 발사
-	EventHandler::GetInstance()->AddEvent("COUNTER_AVAILABLE", 7.f, this);
-	EventHandler::GetInstance()->AddEvent("COUNTER_UNAVAILABLE", 10.f, this);
+	EventHandler::GetInstance()->AddEvent("SKILL_ASCENDSTART_NORMAL", 7.f, skillObject);
 }
 
 void Weeper::Pattern_Cast2_Scatter()
@@ -418,6 +427,7 @@ float Weeper::Randnum_Cast2_XZInterval()
 
 	float skillBallHalfExtent = 100.f;
 	float radius = m_controller->GetCollider()->GetRadius();
+	float min_distance = 100.f; // minimum distance between the sphere and the capsule
 	float num = 0;
 	float distance = 0;
 
@@ -426,7 +436,7 @@ float Weeper::Randnum_Cast2_XZInterval()
 
 		// Calculate the distance from the origin
 		distance = abs(num);
-	} while (distance < radius + skillBallHalfExtent || distance > 1200);  // Continue if the generated point is within the excluded radius or outside the circle
+	} while (distance < radius + skillBallHalfExtent + min_distance || distance > 1200);  // Continue if the generated point is within the excluded radius or outside the circle
 
 	return num;
 }

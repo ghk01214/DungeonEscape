@@ -207,8 +207,6 @@ void SkillObject::Update(double timeDelta)
 	Handle_Attribute();
 
 
-
-
 	//충돌로직
 	if (IsPlayerSkill() == true)
 		HandlePlayerSkillCollision();
@@ -227,6 +225,7 @@ void SkillObject::LateUpdate(double timeDelta)
 void SkillObject::Release()
 {
 	m_body = nullptr;
+
 	GameObject::Release();
 }
 
@@ -474,6 +473,7 @@ void SkillObject::Handle_Attribute()
 {
 	Attirbute_Levitate();
 	Attribute_Guide();
+	Attribute_Ascending();
 }
 
 void SkillObject::Attirbute_Levitate()
@@ -487,7 +487,7 @@ void SkillObject::Attirbute_Levitate()
 
 void SkillObject::Attribute_Guide()
 {
-	if (!m_target)					//타겟없으면 취소
+	if (!m_target)								//타겟없으면 취소
 		return;
 
 	if (m_body->IsExcludedFromSimulation())		//삭제예정이면 취소
@@ -505,6 +505,20 @@ void SkillObject::Attribute_Guide()
 	}
 }
 
+void SkillObject::Attribute_Ascending()
+{
+	if (m_body->IsExcludedFromSimulation())		//삭제예정이면 취소
+		return;
+
+	if (m_skillAttrib & SKILLATTRIBUTE::ASCENDING)
+	{
+		physx::PxVec3 up(0, 1, 0);
+		float power = 10.f;
+
+		m_body->SetVelocity(up * power);
+	}
+}
+
 void SkillObject::SetAttribute(SKILLATTRIBUTE attrib, bool set)
 {
 	if (set)
@@ -517,3 +531,7 @@ void SkillObject::SetAttribute(SKILLATTRIBUTE attrib, bool set)
 	}
 }
 
+SkillObject::SKILLATTRIBUTE SkillObject::GetAttribute()
+{
+	return m_skillAttrib;
+}

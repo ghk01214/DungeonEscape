@@ -51,6 +51,25 @@ public:
 		return selectedObject;
 	}
 
+	template <typename T>
+	T* GetGameObjectByName(const std::wstring& name)
+	{
+		static_assert(std::is_base_of<GameObject, T>::value, "T must be derived from GameObject");
+
+		for (auto& obj : m_GameObjects)
+		{
+			if (obj->GetName() == name)
+			{
+				T* castedObject = dynamic_cast<T*>(obj);
+				if (castedObject != nullptr) // If the cast is successful, return the object
+					return castedObject;
+				else
+					return nullptr; // If the cast fails, return nullptr
+			}
+		}
+		return nullptr;
+	}
+
 
 	void RemoveGameObject(GameObject* gameObject);
 

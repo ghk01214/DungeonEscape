@@ -2,9 +2,11 @@
 
 class GameObject;
 class EventHandler;
+class SkillObject;
 
 class Event
 {
+	friend class SkillObject;
 	friend class EventHandler;
 public:
 	Event(std::string context, float remainTime, GameObject* subject);
