@@ -94,6 +94,21 @@ void Collider::ApplyLayer()
 	m_shape->setSimulationFilterData(filter);
 }
 
+void Collider::ApplyModifiedLayer(PhysicsLayers newLayer, PhysicsLayers ignoreLayer)
+{
+	m_layerIndex = static_cast<uint8_t>(newLayer);
+	m_ignoreLayerBits = static_cast<uint32_t>(ignoreLayer);
+
+	// Filter setup remains the same as in ApplyLayer
+	uint32_t unignoreBits = ~m_ignoreLayerBits;
+
+	PxFilterData filter{};
+	filter.word0 = (1 << m_layerIndex);
+	filter.word1 = unignoreBits;
+
+	m_shape->setSimulationFilterData(filter);
+}
+
 void Collider::ResetShape()
 {
 	m_shape->setGeometry(CreateGeometry().any());

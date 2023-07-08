@@ -141,6 +141,11 @@ void Monster::SendTransform()
 	}
 }
 
+MonsterAI* Monster::GetAI()
+{
+	return m_AI;
+}
+
 void Monster::SetAnimationEnd()
 {
 	m_aniEnd = true;

@@ -61,8 +61,12 @@ enum class PhysicsQueryType
 
 enum class PhysicsLayers
 {
-	Map = 0,
-	Player = 1
+	NONE					= 0,
+	MAP						= 1,
+	PLAYER					= 2,
+	MONSTER					= 3,
+	SKILLOBJECT_PLAYER		= 4,
+	SKILLOBJECT_MONSTER		= 5
 };
 
 enum class CollisionInfoType

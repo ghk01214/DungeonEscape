@@ -58,8 +58,10 @@ public:
 
 public:
 	void Pattern_Cast1();				//공 3개 발사
+
+	// * Cast2 연계는 Event에서 주로 이루어진다.
 	void Pattern_Cast2();				//원기옥 생성
-	void Pattern_Cast2_Scatter();		//원기옥 발사 이후 흩어짐
+	void Pattern_Cast2_Scatter();		//원기옥 파편 1개를 지정된 구역에서 랜덤 생성
 	void Pattern_Cast3();
 	void Pattern_Cast4();
 
@@ -67,7 +69,6 @@ public:
 	int Randnum_Cast1_XInterval();
 	float Randnum_Cast1_YInterval();
 	float Randnum_Cast2_XZInterval();
-	float Randnum_Cast2_YInterval();
 
 public:
 	WEEPER_STATE GetState() const;
@@ -77,5 +78,5 @@ private:
 	WEEPER_STATE m_prevState;
 	WEEPER_STATE m_currState;
 
-	WeeperAI* m_AI;
+	WeeperAI* m_weeperAI;
 };

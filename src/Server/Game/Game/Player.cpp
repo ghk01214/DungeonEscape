@@ -46,6 +46,8 @@ void Player::Init()
 	body->SetMass(body->GetMass() * 0.7f);
 	SetObjectType(server::OBJECT_TYPE::PLAYER);
 
+	m_controller->GetBody()->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PLAYER, PhysicsLayers::NONE);
+
 	for (int32_t i = magic_enum::enum_integer(server::TRIGGER_TYPE::NONE) + 1; i < magic_enum::enum_integer(server::TRIGGER_TYPE::MAX); ++i)
 	{
 		m_triggerDictionary[magic_enum::enum_value<server::TRIGGER_TYPE>(i)] = false;

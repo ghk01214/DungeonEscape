@@ -30,6 +30,7 @@ public:
 	void ApplyTransform();
 	void ApplyScale();
 	void ApplyLayer();
+	void ApplyModifiedLayer(PhysicsLayers newLayer, PhysicsLayers ignoreLayer);
 
 protected:
 	virtual physx::PxGeometryHolder CreateGeometry() = 0;

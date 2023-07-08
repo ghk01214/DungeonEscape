@@ -20,7 +20,7 @@ void WeeperAI::Init()
 	MonsterAI::Init();
 
 	//SkillSize 추가
-	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 600));		//z거리 200
+	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 600));		//z거리 1200
 	AddSkillSize("CAST2", GeometryType::Sphere, Vec3(1200, 1200, 1200));
 	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 350));
 	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 450));
@@ -110,6 +110,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			{
 				m_weeper->Pattern_Cast2();							//공중 공 소환
 				m_weeper->m_currState = Weeper::CAST2_START;		//원기옥 자세
+				m_AIWait = true;
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 			}

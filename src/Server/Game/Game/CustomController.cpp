@@ -202,7 +202,7 @@ bool CustomController::CheckOnGround_Raycast()
 	ray.point = m_body->GetPosition()
 		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight() - 5.f), 0.f);
 
-	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::Map), PhysicsQueryType::All, m_body))
+	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::MAP), PhysicsQueryType::All, m_body))
 	{
 		m_distanceFromGround = hit.distance;
 		return true;
@@ -229,7 +229,7 @@ Collider* CustomController::GetColliderBelow()
 	ray.point = m_body->GetPosition()
 		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight()), 0.f);
 
-	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::Map), PhysicsQueryType::Collider, m_body))
+	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::MAP), PhysicsQueryType::Collider, m_body))
 	{
 		return hit.collider;
 	}

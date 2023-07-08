@@ -88,8 +88,6 @@ void SkillObject::Init()
 			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
 			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
 
-			m_transform->SetScale(100.f, 100.f, 100.f);
-
 			m_body->SetMass(3.f);
 			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
 			m_body->GetBody()->setAngularDamping(0.5f);
@@ -109,14 +107,30 @@ void SkillObject::Init()
 			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
 			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
 
-			m_transform->SetScale(100.f, 100.f, 100.f);
-
 			m_body->SetMass(3.f);
 			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
 			m_body->GetBody()->setAngularDamping(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 
 			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
+		}
+		break;
+
+		case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			m_name = L"WEEPER_CAST2_BALL_SCATTER";
+			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
+
+			m_transform->SetScale(100.f, 100.f, 100.f);
+
+			m_body->SetMass(10.f);
+			m_body->AddRandomTorque_Vertical(ForceMode::Impulse, 200.f);
+			m_body->GetBody()->setAngularDamping(0.5f);
+			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
+
+
+			SetAttribute(SkillObject::SKILLATTRIBUTE::DESCENDING, true);
 		}
 		break;
 
@@ -193,6 +207,19 @@ void SkillObject::Init()
 		break;
 	}
 
+	if (m_owner->GetObjectType() == server::OBJECT_TYPE::PLAYER)
+	{
+		m_flagPlayer = true;
+		m_body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_PLAYER,
+				static_cast<PhysicsLayers>(static_cast<int>(PhysicsLayers::PLAYER) | static_cast<int>(PhysicsLayers::SKILLOBJECT_PLAYER)));
+	}
+	else
+	{
+		m_flagPlayer = false;
+		m_body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_MONSTER,
+				static_cast<PhysicsLayers>(static_cast<int>(PhysicsLayers::MONSTER) | static_cast<int>(PhysicsLayers::SKILLOBJECT_MONSTER)));
+	}
+
 	//ServerMessage_SkillInit();
 	game::Message sendMsg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
 	sendMsg.objType = m_objType;
@@ -208,7 +235,7 @@ void SkillObject::Update(double timeDelta)
 
 
 	//충돌로직
-	if (IsPlayerSkill() == true)
+	if (IsPlayerSkill())
 		HandlePlayerSkillCollision();
 	else
 		HandleMonsterSkillCollision();
@@ -252,7 +279,7 @@ void SkillObject::ServerMessage_SkillHit()
 
 bool SkillObject::IsPlayerSkill()
 {
-	if (m_skillType < SKILLOBJECTTYPE::BOUNDARY)
+	if (m_flagPlayer)
 		return true;
 
 	else
@@ -431,6 +458,12 @@ void SkillObject::HandleMonsterSkillCollision()
 					}
 				}
 				break;
+				case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER:
+				{
+					SetRemoveReserved();						//객체 삭제
+					ServerMessage_SkillHit();					//서버 메시지 처리
+				}
+				break;
 			}
 
 
@@ -513,7 +546,21 @@ void SkillObject::Attribute_Ascending()
 	if (m_skillAttrib & SKILLATTRIBUTE::ASCENDING)
 	{
 		physx::PxVec3 up(0, 1, 0);
-		float power = 10.f;
+		float power = 50.f;
+
+		m_body->SetVelocity(up * power);
+	}
+}
+
+void SkillObject::Attribute_Descending()
+{
+	if (m_body->IsExcludedFromSimulation())		//삭제예정이면 취소
+		return;
+
+	if (m_skillAttrib & SKILLATTRIBUTE::ASCENDING)
+	{
+		physx::PxVec3 up(0, -1, 0);
+		float power = 5.f;
 
 		m_body->SetVelocity(up * power);
 	}

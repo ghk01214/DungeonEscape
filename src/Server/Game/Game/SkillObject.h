@@ -24,6 +24,7 @@ public:
 
 		WEEPER_CAST1_BALL,
 		WEEPER_CAST2_BALL,
+		WEEPER_CAST2_BALL_SCATTER,
 		WEEPER_CAST3_BALL,
 		WEEPER_CAST4_BALL,
 
@@ -38,7 +39,8 @@ public:
 		NONE			= 0,
 		LEVITATE		= 1 << 0,
 		GUIDED			= 1 << 1,
-		ASCENDING		= 1 << 2
+		ASCENDING		= 1 << 2,
+		DESCENDING		= 1 << 3
 	};
 
 public:
@@ -67,7 +69,8 @@ public:
 	void Handle_Attribute();		//attribute에 따라 지속적으로 실행
 	void Attirbute_Levitate();		//공중 지속
 	void Attribute_Guide();			//유도
-	void Attribute_Ascending();	//공중 발사
+	void Attribute_Ascending();		//공중 발사
+	void Attribute_Descending();
 
 	void SetAttribute(SKILLATTRIBUTE attrib, bool set);
 	SKILLATTRIBUTE GetAttribute();
@@ -84,6 +87,8 @@ private:
 
 	GameObject* m_target = nullptr;
 	GameObject* m_owner = nullptr;
+
+	bool m_flagPlayer = false;
 };
 
 

@@ -46,6 +46,9 @@ public:
 public:
 	void GetDamaged(int32_t damage);
 	void SendTransform();
+	
+public:
+	MonsterAI* GetAI();
 
 public:
 	//Server혼자 FSM실험을 위해 만든 임시함수. 추후 무력화 기믹에서 사용할 예정

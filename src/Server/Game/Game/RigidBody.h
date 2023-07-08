@@ -128,6 +128,7 @@ public:
 	void AddTorque(ForceMode mode, const physx::PxVec3& forceVector);
 	void AddRandomTorque(ForceMode mode, float strength);
 	void AddRandomTorque_PlanetStyle(ForceMode mode, float strength);
+	void AddRandomTorque_Vertical(ForceMode mode, float strength);
 
 public:
 	void SetAngularDamping(float value);
