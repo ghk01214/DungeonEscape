@@ -27,6 +27,10 @@ PxFilterFlags CustomFilterShader::pairFound(PxU32 pairID, PxFilterObjectAttribut
 
 	pairFlags = eContactFlags;
 	
+	if ((filterData0.word0 & filterData1.word1) || (filterData1.word0 & filterData0.word1))
+		return PxFilterFlag::eSUPPRESS;
+
+	// 기본 플래그 반환
 	return PxFilterFlag::eDEFAULT;
 }
 

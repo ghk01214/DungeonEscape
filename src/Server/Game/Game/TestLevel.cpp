@@ -104,6 +104,7 @@ void TestLevel::LoadMap()
 		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
 		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
 		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+		MeshObject->ApplyRequestedLayers();
 
 		++i;
 	}
@@ -182,20 +183,22 @@ void TestLevel::LoadBasicMap2()
 void TestLevel::LoadBasicMap3()
 {
 	auto objmgr = ObjectManager::GetInstance();
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(200.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(200.f, 1000.f, 0.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
 
 #pragma region CenterBox(0,0,0)
-	auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(750, 600, 0), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
-	centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
+	//auto centerObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(750, 600, 0), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto centerBody = centerObj->GetComponent<RigidBody>(L"RigidBody");
+	//centerBody->AddCollider<BoxCollider>(centerObj->GetTransform()->GetScale());
+	//centerObj->ApplyRequestedLayers();
 #pragma endregion
 
 #pragma region Z100Box(1000,0,0)
 	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(750, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
 	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
 	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+	Box1Obj->ApplyRequestedLayers();
 #pragma endregion
 
 
@@ -203,6 +206,7 @@ void TestLevel::LoadBasicMap3()
 	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(750, 0, 0), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
 	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+	MapPlaneObject->ApplyRequestedLayers();
 #pragma endregion
 }
 

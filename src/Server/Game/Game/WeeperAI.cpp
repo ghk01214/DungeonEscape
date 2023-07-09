@@ -3,7 +3,10 @@
 #include "Weeper.h"
 #include "Monster.h"
 #include "CustomController.h"
+#include "SkillObject.h"
 #include "EventHandler.h"
+
+using namespace std;
 
 WeeperAI::WeeperAI(Weeper* weeper) :
 	MonsterAI(weeper),
@@ -22,7 +25,7 @@ void WeeperAI::Init()
 	//SkillSize 추가
 	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 600));		//z거리 1200
 	AddSkillSize("CAST2", GeometryType::Sphere, Vec3(1200, 1200, 1200));
-	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 350));
+	AddSkillSize("CAST3", GeometryType::Box, Vec3(1200, 1200, 1200));
 	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 450));
 
 	m_weeper->SetControllerMoveSpeed(10.f);
@@ -34,6 +37,8 @@ void WeeperAI::Init()
 void WeeperAI::Update(float timeDelta)
 {
 	MonsterAI::Update(timeDelta);
+
+	DamageCheck();
 }
 
 void WeeperAI::LateUpdate(float timeDelta)
@@ -51,8 +56,9 @@ void WeeperAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 
 
 	std::cout << "Filled Schedule" << std::endl;
@@ -71,7 +77,6 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 		directionUpdateInterval = 0.f;
 	}
 	directionUpdateInterval += deltaTime;
-
 
 	WEEPER_SCHEDULE schedule = m_scheduler[0];
 
@@ -108,10 +113,14 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
-				m_weeper->Pattern_Cast2();							//공중 공 소환
-				m_weeper->m_currState = Weeper::CAST2_START;		//원기옥 자세
-				m_AIWait = true;
-				m_scheduler.erase(m_scheduler.begin());
+				SkillObject* cast2Ball = m_weeper->Pattern_Cast2();									//스킬오브젝트(CAST2_BALL) 생성
+				m_weeper->m_currState = Weeper::CAST2_START;										//원기옥 자세
+				Cast2Counter_ON();																	//원기옥 반격모드 ON
+				m_AIWait = true;																	//fill,execute schedule 방지
+				m_scheduler.erase(m_scheduler.begin());												//스케듈러 비우기
+
+				EventHandler::GetInstance()->AddEvent("CAST2_SCATTER_AIRFIRE", 7.f, cast2Ball);		//EVENT:ASCEND예약 (스킬 ascend attribute 부여, 애니메이션 재생, 반격모드 OFF) 
+				
 				ReportSchedule();
 			}
 			else
@@ -128,12 +137,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			if (inSkillRange)
 			{
 				m_weeper->Pattern_Cast3();
-				m_weeper->m_currState = Weeper::CAST1;
-				m_scheduler.erase(m_scheduler.begin());
-				ReportSchedule();
-
-				if (m_debugmode)
-					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					
 			}
 			else
 			{
@@ -184,6 +188,33 @@ std::string WeeperAI::GetRequestedScheduleName()
 	WEEPER_SCHEDULE schedule = m_scheduler[0];
 	std::string name = magic_enum::enum_name(schedule).data();
 	return name;
+}
+
+void WeeperAI::DamageCheck()
+{
+	static int originalHealth = m_weeper->GetHP();
+
+	if (originalHealth < m_weeper->GetHP())
+	{
+		if (m_cast2Counter)
+		{
+			m_weeper->Pattern_Cast2_CounterNuclear();
+		}
+	}
+
+
+}
+
+void WeeperAI::Cast2Counter_ON()
+{
+	m_cast2Counter = true;
+	cout << "핵폭탄 반격모드 ON" << endl;
+}
+
+void WeeperAI::Cast2Counter_OFF()
+{
+	m_cast2Counter = false;
+	cout << "핵폭탄 반격모드 OFF" << endl;
 }
 
 void WeeperAI::ReportSchedule()

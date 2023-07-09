@@ -74,7 +74,7 @@ protected:
 
 	bool m_isTrigger = false;
 	uint8_t m_layerIndex = 0;
-	uint32_t m_ignoreLayerBits = 0x00000000;
+	uint8_t m_ignoreLayerBits = 0;
 
 	int32_t m_id;
 

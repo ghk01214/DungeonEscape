@@ -40,6 +40,11 @@ public:
 
 	virtual std::string GetRequestedScheduleName() override;
 
+public:
+	void DamageCheck();
+	void Cast2Counter_ON();
+	void Cast2Counter_OFF();
+
 private:
 	void ReportSchedule();		//콘솔출력 목적의 디버그 전용 함수
 
@@ -51,6 +56,7 @@ private:
 
 	float m_detectRange;				//몬스터 인식 범위
 	float m_targetPos_UpdateInterval;	//플레이어 위치 갱신 주기
+	float m_cast2Counter = false;		//Cast2의 nuclear
 
 public:
 	bool m_debugmode = true;			//서버 FSM 확인용 변수

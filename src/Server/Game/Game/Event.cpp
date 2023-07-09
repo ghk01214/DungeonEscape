@@ -48,8 +48,8 @@ void Event::ExecuteMsg_Once()
 		auto monsterObj = dynamic_cast<Monster*>(target);
 		if (monsterObj)
 		{
-			auto weeperAI = monsterObj->GetAI();
-			weeperAI->SetAIWait(false);
+			auto monsterAI = monsterObj->GetAI();
+			monsterAI->SetAIWait(false);
 		}
 	}
 
@@ -79,8 +79,7 @@ void Event::ExecuteMsg_Once()
 		WeeperAI* ownerAI = owner->GetAI();
 		if (skillObj)
 		{
-
-			// * WeeperAI::Execute(Cast2)에서 반격준비 기능을 구현하고, 여기에서는, 반격준비 기능을 해제해야한다.
+			ownerAI->Cast2Counter_OFF();
 			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::ASCENDING, true);
 			EventHandler::GetInstance()->AddEvent("CAST2_SCATTER_BREAKDOWN", 3.f, target);		//3초후 SkillObject삭제 및 Scatter공격시작. 애니메이션 CAST2_END로 진입
 		}
@@ -101,11 +100,13 @@ void Event::ExecuteMsg_Once()
 
 			skillObj->SetRemoveReserved();											//Ascend 속성의 오브젝트는 삭제
 
-			for (int i = 0; i < 200; ++i)
+			int scatterCnt = 70;
+			float scatterTime = 5.f;
+			for (int i = 0; i < scatterCnt; ++i)
 			{
-				static std::uniform_real_distribution<float> distribution(0.f, 5.f);
+				static std::uniform_real_distribution<float> distribution(0.f, scatterTime);
+			
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST2_SCATTER_FUNCTIONCALL", distribution(dre), owner);
-				//반격기능 ONOFF
 			}
 
 			//addevent(카운터 진입시간)
@@ -113,29 +114,32 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "CAST2_NUCLEAR_AIRFIRE")											// Weeper::Pattern_Cast2_CounterNuclear()에 의해 호출되었다. 반격모드는 해제됐음.
+	{
+		auto scatterEvent = EventHandler::GetInstance()->GetEvent("CAST2_SCATTER_AIRFIRE");
+		auto skillObj = static_cast<SkillObject*>(scatterEvent->target);
+		Weeper* weeper = static_cast<Weeper*>(target);
+		WeeperAI* weeperAI = weeper->GetAI();
+
+		EventHandler::GetInstance()->DeleteEvent("CAST2_SCATTER_AIRFIRE");		// 1. Cast2 노말 진행 이벤트 삭제
+		weeper->SetState(Weeper::WEEPER_STATE::CAST2_END);						// 2. Cast2 원기옥 던지기 애니메이션 재생
+		if (weeperAI->m_debugmode)
+			EventHandler::GetInstance()->AddEvent("ANIM_END", 4.f, weeper);		//디버그 전용 애니메이션 종료 코드
+		EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 6.f, weeper);		//AI wait 해제 (던지는 애니메이션이 끝나고 몇초 후 이동 가능하도록)
+
+		skillObj->WeeperNuclearFire();
+		}
+
+	if (msg == "CAST2_NUCLEAR_TEST")
+	{
+		auto skillObj = static_cast<SkillObject*>(target);
+		skillObj->WeeperNuclearFire();
+		std::cout << "디버그 코드 실행완료" << std::endl;
+	}
+
 	if (msg == "SKILL_ASCENDSTART_EXPlOSION")							//위로 발사(핵폭탄)
 	{
-		auto skillObj = dynamic_cast<SkillObject*>(target);
-		if (skillObj)
-		{
-			//Weeper* owner = dynamic_cast<Weeper*>(skillObj->m_owner);
-			//WeeperAI* ownerAI = owner->GetAI();
-
-			//EventHandler::GetInstance()->DeleteEvent("SKILL_ASCENDSTART_NORMAL");		//정상 발사 예정인 스킬을 취소.
-
-			//skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::ASCENDING, true);
-			//owner->SetState(Weeper::WEEPER_STATE::CAST2_END);							//STATE : CAST2 END로 설정
-			//if (ownerAI->m_debugmode)
-			//	EventHandler::GetInstance()->AddEvent("ANIM_END", 4.f, owner);			//디버그 모드일경우 애니메이션 종료시간 설정
-
-			//owner->GetAI()->SetAIWait(true);											//카운터 시간부여를 위한 밑작업
-
-			//EventHandler::GetInstance()->AddEvent("SKILL_REMOVE", 8.f, owner);
-
-	
-			//n초후 ascend속성 삭제, descend attribute enchant
-			
-		}
+		std::cout << "예전 코드 찾아라. 엉뚱한 이벤트를 호출하는 놈이 있다." << std::endl;
 	}
 
 	if (msg == "SKILL_RELEASE")

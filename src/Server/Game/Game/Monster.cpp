@@ -33,6 +33,8 @@ void Monster::Init()
 	auto body = m_controller->GetBody();
 	body->SetMass(body->GetMass() * 0.7f);
 
+	m_controller->GetBody()->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::MONSTER, PhysicsLayers::SKILLOBJECT_MONSTER);
+
 	SetObjectType(server::OBJECT_TYPE::BOSS);
 }
 

@@ -25,6 +25,7 @@ public:
 		WEEPER_CAST1_BALL,
 		WEEPER_CAST2_BALL,
 		WEEPER_CAST2_BALL_SCATTER,
+		WEEPER_CAST2_BALL_NUCLEAR,
 		WEEPER_CAST3_BALL,
 		WEEPER_CAST4_BALL,
 
@@ -63,8 +64,9 @@ public:
 
 public:
 	void PlayerSkillFire(physx::PxVec3 dir);					//Player::PlayerPattern_ShootBall()에서 스킬 오브젝트를 발사하기 위한 함수
-	void MonsterSkillFire(physx::PxVec3 dir);					//Weeper::Pattern_Cast1()에서 스킬 오브젝트를 발사하기 위한 함수
 
+	void MonsterSkillFire(physx::PxVec3 dir);					//Weeper::Pattern_Cast1()에서 스킬 오브젝트를 발사하기 위한 함수
+	void WeeperNuclearFire();
 public:
 	void Handle_Attribute();		//attribute에 따라 지속적으로 실행
 	void Attirbute_Levitate();		//공중 지속

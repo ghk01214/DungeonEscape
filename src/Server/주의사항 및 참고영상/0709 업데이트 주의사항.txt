@@ -1,0 +1,4 @@
+물리 필터, 레이어 적용완료
+skillobject, player, monster처럼 레이어 구분이 필요하다면, init에 collider::ApplyModifiedLayer를 사용할것.
+
+MapObject도 생성후에 명시적으로 호출해야한다.

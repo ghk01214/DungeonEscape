@@ -20,6 +20,9 @@ public:		//server
 	bool GetRequireFlagTransmit();
 	void SetRequireFlagTransmit(bool value);
 
+public:
+	void ApplyRequestedLayers();
+
 private:
 	RigidBody* m_body = nullptr;
 

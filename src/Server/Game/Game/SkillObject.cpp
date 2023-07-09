@@ -14,6 +14,9 @@
 
 #include "Player.h"
 #include "Monsters.hpp"
+#include "MonsterAI.h"
+#include "WeeperAI.h"
+
 
 SkillObject::SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype, GameObject* target, GameObject* owner)
 	: GameObject(position, rotation, scale), m_body(nullptr), m_skillType(skilltype), m_target(target), m_owner(owner)
@@ -124,9 +127,7 @@ void SkillObject::Init()
 
 			m_transform->SetScale(100.f, 100.f, 100.f);
 
-			m_body->SetMass(10.f);
-			m_body->AddRandomTorque_Vertical(ForceMode::Impulse, 200.f);
-			m_body->GetBody()->setAngularDamping(0.5f);
+			m_body->SetMass(20.f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 
 
@@ -211,7 +212,7 @@ void SkillObject::Init()
 	{
 		m_flagPlayer = true;
 		m_body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_PLAYER,
-				static_cast<PhysicsLayers>(static_cast<int>(PhysicsLayers::PLAYER) | static_cast<int>(PhysicsLayers::SKILLOBJECT_PLAYER)));
+				static_cast<PhysicsLayers>(PLAYER | SKILLOBJECT_PLAYER));
 	}
 	else
 	{
@@ -502,6 +503,19 @@ void SkillObject::MonsterSkillFire(physx::PxVec3 dir)
 	}
 }
 
+void SkillObject::WeeperNuclearFire()
+{
+	auto weeper = dynamic_cast<Weeper*>(m_owner);
+	physx::PxVec3 dir = TO_PX3(weeper->GetAI()->GetTargetDir());
+	dir.normalize();
+	float power = 10000.f;
+
+	m_skillType = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER;							//충돌판단을 위한 타입변경
+	m_skillAttrib = static_cast<SKILLATTRIBUTE>(m_skillAttrib & ~SKILLATTRIBUTE::LEVITATE);			//공중 attirb 제거
+	m_body->SetMass(1000.f);																		//무겁게 변경
+	m_body->AddForce(ForceMode::Acceleration, dir * power);													//던진다
+}
+
 void SkillObject::Handle_Attribute()
 {
 	Attirbute_Levitate();
@@ -546,7 +560,7 @@ void SkillObject::Attribute_Ascending()
 	if (m_skillAttrib & SKILLATTRIBUTE::ASCENDING)
 	{
 		physx::PxVec3 up(0, 1, 0);
-		float power = 50.f;
+		float power = 300.f;
 
 		m_body->SetVelocity(up * power);
 	}
@@ -554,15 +568,17 @@ void SkillObject::Attribute_Ascending()
 
 void SkillObject::Attribute_Descending()
 {
+	float power = 30.f;
+
 	if (m_body->IsExcludedFromSimulation())		//삭제예정이면 취소
 		return;
 
 	if (m_skillAttrib & SKILLATTRIBUTE::ASCENDING)
 	{
-		physx::PxVec3 up(0, -1, 0);
-		float power = 5.f;
+		physx::PxVec3 down(0, -1, 0);
+		down *= power;
 
-		m_body->SetVelocity(up * power);
+		m_body->SetVelocity(down);
 	}
 }
 

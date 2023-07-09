@@ -68,3 +68,8 @@ void MapObject::SetRequireFlagTransmit(bool value)
 	m_requiresPacketTransmit = value;
 }
 
+void MapObject::ApplyRequestedLayers()
+{
+	m_body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::MAP, PhysicsLayers::NONE);
+}
+

@@ -21,6 +21,7 @@ public:
 
 public:
 	void AddEvent(std::string context, float remainTime, GameObject* subject);
+	Event* GetEvent(std::string);
 	void DeleteEvent(std::string context);
 
 private:

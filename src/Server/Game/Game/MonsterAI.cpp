@@ -198,6 +198,19 @@ bool MonsterAI::GetAIWait()
 	return m_AIWait;
 }
 
+Vec3 MonsterAI::GetTargetPosition()
+{
+	if (m_target)
+		return m_target->GetControllerPosition();
+	else
+		return Vec3(0, 1000, 0);
+}
+
+Vec3 MonsterAI::GetTargetDir()
+{
+	return m_targetDir;
+}
+
 
 
 

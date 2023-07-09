@@ -197,11 +197,11 @@
     <Filter Include="03. Game\02. Event\00. EventHandler">
       <UniqueIdentifier>{57098ae0-1764-43f8-83c2-517f0ce1fdb7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Game\02. Event\01. Event">
-      <UniqueIdentifier>{2390eb7b-c91e-4d24-bd7c-23f69e274946}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Game\01. GameObject\Monster\01. Monsters\Scorpion">
       <UniqueIdentifier>{992e94b5-ec6f-4fd2-afbc-260f0a6feda4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\02. Event\01. Event">
+      <UniqueIdentifier>{2390eb7b-c91e-4d24-bd7c-23f69e274946}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

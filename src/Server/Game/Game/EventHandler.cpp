@@ -61,6 +61,19 @@ void EventHandler::AddEvent(std::string context, float remainTime, GameObject* s
 	m_events.emplace_back(event);
 }
 
+Event* EventHandler::GetEvent(std::string context)
+{
+    for (auto& event : m_events)
+    {
+        if (event->msg == context)
+        {
+            return event;
+        }
+    }
+
+    return nullptr;
+}
+
 void EventHandler::DeleteEvent(std::string context)
 {
     for (auto& event : m_events)

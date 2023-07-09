@@ -32,6 +32,8 @@ public:
 public:
 	void SetAIWait(bool value);
 	bool GetAIWait();
+	Vec3 GetTargetPosition();
+	Vec3 GetTargetDir();
 
 protected:
 	Monster* m_monster;

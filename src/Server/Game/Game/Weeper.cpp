@@ -38,6 +38,8 @@ Weeper::~Weeper()
 void Weeper::Init()
 {
 	Monster::Init();
+	m_hp = 1000;
+
 	m_controller->GetBody()->SetMass(1000.f);
 
 	m_weeperAI = new WeeperAI(this);
@@ -313,7 +315,7 @@ void Weeper::Pattern_Cast1()
 		(L"Layer_SkillObject", convertedballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_weeperAI->m_target, this);
 }
 
-void Weeper::Pattern_Cast2()
+SkillObject* Weeper::Pattern_Cast2()
 {
 	physx::PxVec3 ballPos = m_controller->GetBody()->GetGlobalPose().p;
 	ballPos.y += 700.f;		//weeper 모델 위치 고려해서 살짝 위로
@@ -328,20 +330,16 @@ void Weeper::Pattern_Cast2()
 	//투사체 생성
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
-	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+	SkillObject* skillObject = objmgr->AddGameObjectToLayer<SkillObject>
 		(L"Layer_SkillObject", convertedballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_weeperAI->m_target, this);
 
-	//반격기능 구현
-
-	EventHandler::GetInstance()->AddEvent("CAST2_SCATTER_AIRFIRE", 7.f, skillObject);
+	return skillObject;
 }
 
 void Weeper::Pattern_Cast2_Scatter()
 {
 	physx::PxVec3 ballPos = m_controller->GetBody()->GetGlobalPose().p;
-	ballPos.y += 700.f;
-	ballPos.x += Randnum_Cast2_XZInterval();
-	ballPos.z += Randnum_Cast2_XZInterval();
+	ballPos += Randnum_Cast2_XZInterval();
 
 	float monsterRadius = m_controller->GetCollider()->GetRadius();
 	float skillBallHalfExtent = 70.f;
@@ -357,29 +355,33 @@ void Weeper::Pattern_Cast2_Scatter()
 		(L"Layer_SkillObject", convertedballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_weeperAI->m_target, this);
 }
 
+void Weeper::Pattern_Cast2_CounterNuclear()
+{
+	m_weeperAI->Cast2Counter_OFF();			//카운터 모드 종료
+	EventHandler::GetInstance()->AddEvent("CAST2_NUCLEAR_AIRFIRE", 0.f, this);
+}
+
 void Weeper::Pattern_Cast3()
 {
-	//투사체 위치 선정
-	physx::PxVec3 monsterPos = m_controller->GetBody()->GetGlobalPose().p;
-	monsterPos.y += 200.f;		//weeper 모델 위치 고려해서 살짝 위로
-	physx::PxVec3 lookDir = TO_PX3(m_weeperAI->m_targetDir);
-	lookDir.getNormalized();
+	physx::PxVec3 ballPos = m_controller->GetBody()->GetGlobalPose().p;
+	ballPos.y += 700.f;		//weeper 모델 위치 고려해서 살짝 위로
 
 	float monsterRadius = m_controller->GetCollider()->GetRadius();
-	float skillBallHalfExtent = 100.f;
+	float skillBallHalfExtent = 200.f;
 
-	physx::PxVec3 skillBallPosition = monsterPos + lookDir * (monsterRadius + skillBallHalfExtent + 50);
-	Vec3 ballPos = FROM_PX3(skillBallPosition);
+	Vec3 convertedballPos = FROM_PX3(ballPos);
 
-	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST3_BALL;
+	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL;
 
 	//투사체 생성
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
-	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_weeperAI->m_target, this);
+	SkillObject* skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+		(L"Layer_SkillObject", convertedballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_weeperAI->m_target, this);
 
-	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.5f, skillObject);		//5초후 추적시작
+	EventHandler::GetInstance()->AddEvent("CAST2_NUCLEAR_TEST", 3.f, skillObject);
+	m_weeperAI->SetAIWait(true);
+	EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 4.f, this);
 }
 
 void Weeper::Pattern_Cast4()
@@ -433,21 +435,21 @@ float Weeper::Randnum_Cast1_YInterval()
 	return number;
 }
 
-float Weeper::Randnum_Cast2_XZInterval()
+physx::PxVec3 Weeper::Randnum_Cast2_XZInterval()
 {
-	static std::uniform_real_distribution<float> distribution(-1200.0f, 1200.0f);
-	
-	float num;
-	float abs_distance = 0;
-	
-	// Generate a random float in the range of -1200 to 1200 until it meets the conditions
-	while ((abs_distance < 600.0f) || (abs_distance > 1200.0f))
-	{
-		num = distribution(dre);
-		abs_distance = std::abs(num);
-	}
+	static std::uniform_real_distribution<float> distribution(0, 2 * physx::PxPi); // 0 to 2*Pi for a full circle
+	static std::uniform_real_distribution<float> distributionDistance(800.f, 1600.f);
+	float startingY = 1000.f;
 
-	return num;
+	float theta = distribution(dre); // get random angle
+	float distance = distributionDistance(dre);
+
+	// convert polar coordinates to cartesian
+	float x = cos(theta) * distance;
+	float z = sin(theta) * distance;
+
+	physx::PxVec3 result(x, startingY, z);
+	return result;
 }
 
 Weeper::WEEPER_STATE Weeper::GetState() const
