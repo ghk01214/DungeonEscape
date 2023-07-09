@@ -361,27 +361,21 @@ void Weeper::Pattern_Cast2_CounterNuclear()
 	EventHandler::GetInstance()->AddEvent("CAST2_NUCLEAR_AIRFIRE", 0.f, this);
 }
 
-void Weeper::Pattern_Cast3()
+SkillObject* Weeper::Pattern_Cast3()
 {
-	physx::PxVec3 ballPos = m_controller->GetBody()->GetGlobalPose().p;
-	ballPos.y += 700.f;		//weeper 모델 위치 고려해서 살짝 위로
+	Vec3 ballPos= m_weeperAI->m_target->GetControllerPosition();
+	ballPos.y += 600.f;
 
-	float monsterRadius = m_controller->GetCollider()->GetRadius();
-	float skillBallHalfExtent = 200.f;
-
-	Vec3 convertedballPos = FROM_PX3(ballPos);
-
-	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL;
+	float skillBallHalfExtent = 100.f;
+	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST3_BALL;
 
 	//투사체 생성
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
-	SkillObject* skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-		(L"Layer_SkillObject", convertedballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_weeperAI->m_target, this);
+	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_weeperAI->m_target, this);
 
-	EventHandler::GetInstance()->AddEvent("CAST2_NUCLEAR_TEST", 3.f, skillObject);
-	m_weeperAI->SetAIWait(true);
-	EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 4.f, this);
+	return skillObject;
 }
 
 void Weeper::Pattern_Cast4()

@@ -141,14 +141,16 @@ void SkillObject::Init()
 			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
 			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
 
-			m_transform->SetScale(100.f, 100.f, 100.f);
-
-			m_body->SetMass(3.f);
-			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
+			m_body->SetMass(10.f);
+			m_body->AddRandomTorque(ForceMode::Impulse, 100.f);
 			m_body->GetBody()->setAngularDamping(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
+			auto collider = m_body->GetCollider(0);
+			collider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
+			collider->SetRestitution(0.8f);
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::DESCENDING, true);
+			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.5f, this);		//3.2초후 추적시작
 		}
 		break;
 
@@ -460,6 +462,19 @@ void SkillObject::HandleMonsterSkillCollision()
 				}
 				break;
 				case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER:
+				{
+					SetRemoveReserved();						//객체 삭제
+					ServerMessage_SkillHit();					//서버 메시지 처리
+				}
+				break;
+				case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR:
+				{
+					SetRemoveReserved();						//객체 삭제
+					ServerMessage_SkillHit();					//서버 메시지 처리
+					//triggerbox생성 (폭발)
+				}
+				break;
+				case SKILLOBJECTTYPE::WEEPER_CAST3_BALL:
 				{
 					SetRemoveReserved();						//객체 삭제
 					ServerMessage_SkillHit();					//서버 메시지 처리

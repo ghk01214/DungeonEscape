@@ -1,9 +1,0 @@
-서버 연결할때는
-
-1. CustomController에서 //ONOFF를 검색
-주석처리된 부분을 스위칭
-	directionInput_Player()에서 serverconnected = true
-	Movement_Player()에서 if(spacebar..)
-
-
-2. WeeperAI의 m_debugmode를 true에서 false로

@@ -130,16 +130,13 @@ void Event::ExecuteMsg_Once()
 		skillObj->WeeperNuclearFire();
 		}
 
-	if (msg == "CAST2_NUCLEAR_TEST")
+	if (msg == "WEEPER_CAST3_FUNCTIONCALL")
 	{
-		auto skillObj = static_cast<SkillObject*>(target);
-		skillObj->WeeperNuclearFire();
-		std::cout << "디버그 코드 실행완료" << std::endl;
-	}
-
-	if (msg == "SKILL_ASCENDSTART_EXPlOSION")							//위로 발사(핵폭탄)
-	{
-		std::cout << "예전 코드 찾아라. 엉뚱한 이벤트를 호출하는 놈이 있다." << std::endl;
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			weeperObj->Pattern_Cast3();
+		}
 	}
 
 	if (msg == "SKILL_RELEASE")

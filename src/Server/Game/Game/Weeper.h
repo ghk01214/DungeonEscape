@@ -65,7 +65,7 @@ public:
 	void Pattern_Cast2_Scatter();					//원기옥 파편 1개 랜덤위치 생성
 	void Pattern_Cast2_CounterNuclear();
 
-	void Pattern_Cast3();
+	SkillObject* Pattern_Cast3();
 	void Pattern_Cast4();
 
 public:

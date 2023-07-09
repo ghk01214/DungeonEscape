@@ -25,7 +25,7 @@ void WeeperAI::Init()
 	//SkillSize 추가
 	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 600));		//z거리 1200
 	AddSkillSize("CAST2", GeometryType::Sphere, Vec3(1200, 1200, 1200));
-	AddSkillSize("CAST3", GeometryType::Box, Vec3(1200, 1200, 1200));
+	AddSkillSize("CAST3", GeometryType::Box, Vec3(400, 400, 400));
 	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 450));
 
 	m_weeper->SetControllerMoveSpeed(10.f);
@@ -90,11 +90,11 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			if (inSkillRange)
 			{
 				m_weeper->m_currState = Weeper::CAST1;
+				if (m_debugmode)
+					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);
+
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
-
-				if (m_debugmode)
-					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					
 
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 1.5f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.f, m_weeper);
@@ -136,8 +136,16 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
-				m_weeper->Pattern_Cast3();
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					
+				m_weeper->m_currState = Weeper::CAST1;
+				if (m_debugmode)
+					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);
+
+				m_scheduler.erase(m_scheduler.begin());
+				ReportSchedule();
+
+				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 1.f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 2.f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 3.f, m_weeper);
 			}
 			else
 			{
