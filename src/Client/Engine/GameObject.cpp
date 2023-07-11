@@ -18,7 +18,21 @@ CGameObject::CGameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 
 CGameObject::~CGameObject()
 {
+	for (auto& component : m_components)
+	{
+		if (nullptr != component)
+		{
+			component.reset();
+		}
+	}
 
+	for (auto& script : m_scripts)
+	{
+		if (nullptr != script)
+		{
+			script.reset();
+		}
+	}
 }
 
 void CGameObject::Awake()

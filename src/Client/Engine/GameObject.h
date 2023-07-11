@@ -20,8 +20,6 @@ namespace network
 class CGameObject : public Object, public enable_shared_from_this<CGameObject>
 {
 public:
-
-public:
 	CGameObject();
 	virtual ~CGameObject();
 

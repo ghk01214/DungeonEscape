@@ -29,7 +29,21 @@ void SceneManager::Update()
 		return;
 
 	m_activeScene->Update();
+}
+
+void SceneManager::LateUpdate()
+{
+	if (m_activeScene == nullptr)
+		return;
+
 	m_activeScene->LateUpdate();
+}
+
+void SceneManager::FinalUpdate()
+{
+	if (m_activeScene == nullptr)
+		return;
+
 	m_activeScene->FinalUpdate();
 }
 
@@ -45,7 +59,7 @@ void SceneManager::LoadScene(std::shared_ptr<CScene> scene)
 	m_activeScene = scene;
 
 	m_activeScene->Awake();
-	//m_activeScene->Start();
+	m_activeScene->Start();
 }
 
 void SceneManager::SetLayerName(uint8 index, const wstring& name)

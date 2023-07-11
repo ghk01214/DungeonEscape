@@ -185,7 +185,7 @@ void TestLevel::LoadBasicMap3()
 {
 	auto objmgr = ObjectManager::GetInstance();
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(200.f, 1000.f, 0.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
 
 #pragma region CenterBox(0,0,0)

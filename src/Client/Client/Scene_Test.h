@@ -1,30 +1,34 @@
 ﻿#pragma once
 
+#include "Client_Defines.h"
 #include "Scene.h"
 #include "MonoBehaviour.h"
 
-class Scene_Test
+class Scene_Test final : public CScene
 {
-	DECLARE_SINGLE(Scene_Test)
+public:
+	explicit Scene_Test();
+	virtual ~Scene_Test() = default;
 
 public:
-	std::shared_ptr<CScene> TestScene(server::FBX_TYPE playerType);
-
-	void Update();
-	void LateUpdate();
+	virtual void Awake();
+	virtual void Start();
+	virtual void Update();
+	virtual void LateUpdate();
+	virtual void FinalUpdate();
+	virtual void Render();
 
 private:
 	void CreateLayer(void);
 	void CreateComputeShader(void);
-	void CreateMainCamera(void);
-	void CreateUICamera(void);
-	void CreateSkyBox(void);
-	void CreateUI(void);
-	void CreateLights(void);
-	void CreateMap(void);
-	void CreateMapObjects(void);
-	void CreatePlayer(server::FBX_TYPE player);
-	void CreateSphere();
+	void CreateMainCamera(shared_ptr<CScene> pScene);
+	void CreateUICamera(shared_ptr<CScene> pScene);
+	void CreateSkyBox(shared_ptr<CScene> pScene);
+	void CreateUI(shared_ptr<CScene> pScene);
+	void CreateLights(shared_ptr<CScene> pScene);
+	void CreateMap(shared_ptr<CScene> pScene);
+	void CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player);
+	void CreateSphere(shared_ptr<CScene> pScene);
 
 	void SendKeyInput();
 
@@ -42,6 +46,11 @@ public:
 	std::vector<std::shared_ptr<CGameObject>> AddNetworkToObject(std::vector<std::shared_ptr<CGameObject>> object, server::OBJECT_TYPE objectType, int32_t id = -1);
 
 private:
-	shared_ptr<CScene> scene;
+	void Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType);
+
+private:
 	std::unordered_map<int32_t, int32_t> m_objectIDMap;		// temp obj id, new obj id
+
+public:
+	static shared_ptr<CScene> Create(server::FBX_TYPE eType);
 };

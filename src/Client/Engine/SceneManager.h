@@ -21,11 +21,13 @@ enum
 
 class SceneManager
 {
-	DECLARE_SINGLE(SceneManager);
+	DECLARE_SINGLE(SceneManager);  
 
 public:
 	void Start();
 	void Update();
+	void LateUpdate();
+	void FinalUpdate();
 	void Render();
 	void LoadScene(std::shared_ptr<CScene> scene);
 

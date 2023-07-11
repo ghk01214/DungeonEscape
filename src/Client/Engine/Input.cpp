@@ -108,6 +108,9 @@ void CInput::Update()
 	// 현재 프레임의 마우스 좌표 계산
 	::GetCursorPos(&m_curMousePos);
 	::ScreenToClient(GEngine->GetWindow().hWnd, &m_curMousePos);
+
+	// 현재 프레임의 입력 정보 세팅
+	SetUp_InputDeviceState();
 }
 
 void CInput::EncodeKeyInput(void)
