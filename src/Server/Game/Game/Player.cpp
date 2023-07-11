@@ -38,7 +38,7 @@ Player::~Player()
 void Player::Init()
 {
 	m_controller = AddComponent<CustomController>(L"CustomController", true);
-	
+
 	std::string test = "Player";
 	m_controller->GetBody()->SetName(test);
 
@@ -814,4 +814,7 @@ void Player::SendTransform()
 
 	game::Message msg{ m_id, ProtocolID::WR_TRANSFORM_ACK };
 	game::MessageHandler::GetInstance()->PushTransformMessage(msg);
+
+	//auto p{ GetTransform()->GetPosition() };
+	//std::cout << p.x << ", " << p.y << ", " << p.z << "\n";
 }

@@ -40,7 +40,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::PLAYER_FIREBALL:
 		{
 			m_name = L"PLAYER FIREBALL";
-			m_fbxType = server::FBX_TYPE::PLAYER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::PLAYER_FIREBALL;
 
 			m_body->SetMass(1.f);
@@ -52,7 +52,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::PLAYER_ICEBALL:
 		{
 			m_name = L"PLAYER ICEBALL";
-			m_fbxType = server::FBX_TYPE::PLAYER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::PLAYER_ICEBALL;
 
 			m_body->SetMass(1.f);
@@ -64,7 +64,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::PLAYER_THUNDERBALL:
 		{
 			m_name = L"PLAYER THUNDERBALL";
-			m_fbxType = server::FBX_TYPE::PLAYER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::PLAYER_THUNDERBALL;
 
 			m_body->SetMass(1.f);
@@ -76,7 +76,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::PLAYER_POISONBALL:
 		{
 			m_name = L"PLAYER POISONBALL";
-			m_fbxType = server::FBX_TYPE::PLAYER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::PLAYER_POISONBALL;
 
 			m_body->SetMass(0.5f);
@@ -88,7 +88,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::WEEPER_CAST1_BALL:
 		{
 			m_name = L"WEEPER_CAST1_BALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
 
 			m_body->SetMass(3.f);
@@ -100,14 +100,14 @@ void SkillObject::Init()
 			collider->SetRestitution(0.8f);
 
 			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
-			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.6f, this);		
+			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.6f, this);
 		}
 		break;
 
 		case SKILLOBJECTTYPE::WEEPER_CAST2_BALL:
 		{
 			m_name = L"WEEPER_CAST2_BALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
 
 			m_body->SetMass(3.f);
@@ -122,7 +122,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
 			m_name = L"WEEPER_CAST2_BALL_SCATTER";
-			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
 
 			m_transform->SetScale(100.f, 100.f, 100.f);
@@ -138,7 +138,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::WEEPER_CAST3_BALL:
 		{
 			m_name = L"WEEPER_CAST3_BALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
 
 			m_body->SetMass(10.f);
@@ -150,14 +150,14 @@ void SkillObject::Init()
 			collider->SetRestitution(0.8f);
 
 			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
-			EventHandler::GetInstance()->AddEvent("SKILL_LEVITATE_END", 0.5f, this);		
+			EventHandler::GetInstance()->AddEvent("SKILL_LEVITATE_END", 0.5f, this);
 		}
 		break;
 
 		case SKILLOBJECTTYPE::WEEPER_CAST4_BALL:
 		{
 			m_name = L"WEEPER_CAST4_BALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
 
 			m_transform->SetScale(100.f, 100.f, 100.f);
@@ -174,7 +174,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::MONSTER_ICEBALL:
 		{
 			m_name = L"MONSTER ICEBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::MONSTER_ICEBALL;
 
 			m_body->SetMass(1.f);
@@ -186,7 +186,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::MONSTER_THUNDERBALL:
 		{
 			m_name = L"MONSTER THUNDERBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::MONSTER_THUNDERBALL;
 
 			m_body->SetMass(1.f);
@@ -198,7 +198,7 @@ void SkillObject::Init()
 		case SKILLOBJECTTYPE::MONSTER_POISONBALL:
 		{
 			m_name = L"MONSTER POISONBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_SPHERE;
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
 			m_objType = server::OBJECT_TYPE::MONSTER_POISONBALL;
 
 			m_body->SetMass(0.5f);

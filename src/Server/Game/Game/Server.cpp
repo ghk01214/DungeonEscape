@@ -369,7 +369,10 @@ namespace game
 			bool issueReuseID{ m_reusableID.try_pop(newID) };
 
 			if (issueReuseID == true)
+			{
+				++m_userID;
 				return newID;
+			}
 		}
 	}
 

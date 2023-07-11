@@ -37,6 +37,11 @@ void CScene::Update()
 	{
 		gameObject->Update();
 	}
+
+	//for (int32_t i = 0; i < m_gameObjects.size(); ++i)
+	//{
+	//	m_gameObjects[i]->Update();
+	//}
 }
 
 void CScene::LateUpdate()
@@ -45,6 +50,11 @@ void CScene::LateUpdate()
 	{
 		gameObject->LateUpdate();
 	}
+
+	//for (int32_t i = 0; i < m_gameObjects.size(); ++i)
+	//{
+	//	m_gameObjects[i]->LateUpdate();
+	//}
 }
 
 void CScene::FinalUpdate()
@@ -53,6 +63,11 @@ void CScene::FinalUpdate()
 	{
 		gameObject->FinalUpdate();
 	}
+
+	//for (int32_t i = 0; i < m_gameObjects.size(); ++i)
+	//{
+	//	m_gameObjects[i]->FinalUpdate();
+	//}
 }
 
 shared_ptr<Camera> CScene::GetMainCamera()

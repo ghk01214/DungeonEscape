@@ -119,8 +119,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				m_AIWait = true;																	//fill,execute schedule 방지
 				m_scheduler.erase(m_scheduler.begin());												//스케듈러 비우기
 
-				EventHandler::GetInstance()->AddEvent("CAST2_SCATTER_AIRFIRE", 7.f, cast2Ball);		//EVENT:ASCEND예약 (스킬 ascend attribute 부여, 애니메이션 재생, 반격모드 OFF) 
-				
+				EventHandler::GetInstance()->AddEvent("CAST2_SCATTER_AIRFIRE", 7.f, cast2Ball);		//EVENT:ASCEND예약 (스킬 ascend attribute 부여, 애니메이션 재생, 반격모드 OFF)
+
 				ReportSchedule();
 			}
 			else
@@ -166,7 +166,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				ReportSchedule();
 
 				if (m_debugmode)
-					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);					
+					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);
 			}
 			else
 			{

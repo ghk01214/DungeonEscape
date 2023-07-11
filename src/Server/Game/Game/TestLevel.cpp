@@ -43,6 +43,17 @@ void TestLevel::Init()
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
+	//static bool temp{ false };
+
+	//auto layer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
+
+	//if (layer->GetGameObjects().size() > 0 and temp == false)
+	//{
+	//	auto WeeperObject = ObjectManager::GetInstance()->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//	temp = true;
+	//}
+
+	//TestFunction();
 }
 
 void TestLevel::LateUpdate(double timeDelta)
@@ -80,19 +91,23 @@ void TestLevel::LoadMap()
 	// actor 정보 로드
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1.FBX");
 
+	//mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");
+	//mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models3.fbx");
+	//mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Stage1.fbx");
+
 	auto objmgr = ObjectManager::GetInstance();
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	int32_t i = 0;
 	for (auto& info : mapInfo)
 	{
-		switch (i)
-		{
-			case 944: case 945: case 1068:
-			case 1069: case 1070: case 1071:
-			++i;
-			continue;
-			break;
-		}
+		//switch (i)
+		//{
+		//	case 944: case 945: case 1068:
+		//	case 1069: case 1070: case 1071:
+		//	++i;
+		//	continue;
+		//	break;
+		//}
 
 		const objectLocationInfo& locationInfo = info.second;
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
@@ -106,13 +121,13 @@ void TestLevel::LoadMap()
 		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
 		MeshObject->ApplyRequestedLayers();
 
-		++i;
+		//++i;
 	}
 
 	std::system("cls");
 
 	std::cout << "Map loading finished\n";
-	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 300.f, -500.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(1050.f, 300.f, -500.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 }
 
 void TestLevel::LoadBasicMap1()

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Weeper.h"
 #include "WeeperAI.h"
 #include "SkillObject.h"

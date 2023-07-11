@@ -229,9 +229,9 @@ void Scene_Test::CreateLights(void)
 #pragma region Directional Light
 	{
 		LightDesc lightDesc;
-		lightDesc.vDirection = Vec3(0, -1, 1.f);
+		lightDesc.vDirection = Vec3(0.f, -1.f, 0.5f);
 		lightDesc.vDiffuse = Vec3(1.f, 1.f, 1.f);
-		lightDesc.vAmbient = Vec3(0.1f, 0.1f, 0.1f);
+		lightDesc.vAmbient = Vec3(0.9f, 0.9f, 0.9f);
 		lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
 
 		scene->AddDirectionalLight(lightDesc);
@@ -255,7 +255,11 @@ void Scene_Test::CreateMap(void)
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Props.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Weapons.fbx");
 
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage2.FBX");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage1.FBX");
+
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models3.fbx");
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\NewStage.fbx");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 
@@ -662,17 +666,38 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 			objectDesc.script = std::make_shared<Monster_Dragon>(stateIndex);
 		}
 		break;
-		case server::FBX_TYPE::PLAYER_SPHERE:
+		case server::FBX_TYPE::PLAYER_FIREBALL:
 		{
 			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Sphere.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Skill\\Sphere.fbx";
 			objectDesc.script = std::make_shared<PlayerRangeAttack>();
 		}
 		break;
-		case server::FBX_TYPE::MONSTER_SPHERE:
+		case server::FBX_TYPE::MONSTER_ICEBALL:
 		{
 			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Sphere.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\ice.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::MONSTER_THUNDERBALL:
+		{
+			objectDesc.strName = L"Sphere";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\ice.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::MONSTER_POISONBALL:
+		{
+			objectDesc.strName = L"Sphere";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\ice.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::MONSTER_DARKBALL:
+		{
+			objectDesc.strName = L"Stone Bullet2";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\ice.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
