@@ -538,6 +538,12 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
 		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
 		case server::OBJECT_TYPE::PLAYER_POISONBALL:
+		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
+		case server::OBJECT_TYPE::WEEPER_CAST2_BALL:
+		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_NUCLEAR:
+		case server::OBJECT_TYPE::WEEPER_CAST3_BALL:
+		case server::OBJECT_TYPE::WEEPER_CAST4_BALL:
 		case server::OBJECT_TYPE::MONSTER_FIREBALL:
 		case server::OBJECT_TYPE::MONSTER_ICEBALL:
 		case server::OBJECT_TYPE::MONSTER_THUNDERBALL:
@@ -659,45 +665,88 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
 		}
 		break;
-		case server::FBX_TYPE::DRAGON:
-		{
-			objectDesc.strName = L"Dragon";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Dragon\\Dragon.fbx";
-			objectDesc.script = std::make_shared<Monster_Dragon>(stateIndex);
-		}
-		break;
 		case server::FBX_TYPE::PLAYER_FIREBALL:
 		{
 			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Skill\\Sphere.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
 			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::PLAYER_ICEBALL:
+		{
+			objectDesc.strName = L"Sphere";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
+			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::PLAYER_THUNDERBALL:
+		{
+			objectDesc.strName = L"Sphere";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
+			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::PLAYER_POISONBALL:
+		{
+			objectDesc.strName = L"Sphere";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx";
+			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST1_BALL:
+		{
+			objectDesc.strName = L"Weeper Cast1";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST2_BALL:
+		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			objectDesc.strName = L"Weeper Cast2";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST3_BALL:
+		{
+			objectDesc.strName = L"Weeper Cast3";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST4_BALL:
+		{
+			objectDesc.strName = L"Weeper Cast4";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Stone Bullet2.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
 		case server::FBX_TYPE::MONSTER_ICEBALL:
 		{
 			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\ice.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
 		case server::FBX_TYPE::MONSTER_THUNDERBALL:
 		{
 			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\ice.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone Spike.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
 		case server::FBX_TYPE::MONSTER_POISONBALL:
 		{
 			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\ice.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
 		case server::FBX_TYPE::MONSTER_DARKBALL:
 		{
 			objectDesc.strName = L"Stone Bullet2";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\ice.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;

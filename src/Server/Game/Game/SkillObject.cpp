@@ -29,8 +29,6 @@ SkillObject::~SkillObject()
 
 void SkillObject::Init()
 {
-	m_id = game::MessageHandler::GetInstance()->NewObjectID();
-
 	m_body = AddComponent<RigidBody>(L"RigidBody");
 	m_body->SetCCDFlag(true);
 	m_body->SetKinematic(false);
@@ -39,10 +37,6 @@ void SkillObject::Init()
 	{
 		case SKILLOBJECTTYPE::PLAYER_FIREBALL:
 		{
-			m_name = L"PLAYER FIREBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::PLAYER_FIREBALL;
-
 			m_body->SetMass(1.f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -51,10 +45,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::PLAYER_ICEBALL:
 		{
-			m_name = L"PLAYER ICEBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::PLAYER_ICEBALL;
-
 			m_body->SetMass(1.f);
 			m_body->AddCollider<BoxCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -63,10 +53,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::PLAYER_THUNDERBALL:
 		{
-			m_name = L"PLAYER THUNDERBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::PLAYER_THUNDERBALL;
-
 			m_body->SetMass(1.f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 500.f;
@@ -75,10 +61,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::PLAYER_POISONBALL:
 		{
-			m_name = L"PLAYER POISONBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::PLAYER_POISONBALL;
-
 			m_body->SetMass(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -87,10 +69,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::WEEPER_CAST1_BALL:
 		{
-			m_name = L"WEEPER_CAST1_BALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
-
 			m_body->SetMass(3.f);
 			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
 			m_body->GetBody()->setAngularDamping(0.5f);
@@ -106,10 +84,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::WEEPER_CAST2_BALL:
 		{
-			m_name = L"WEEPER_CAST2_BALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
-
 			m_body->SetMass(3.f);
 			m_body->AddRandomTorque(ForceMode::Impulse, 400.f);
 			m_body->GetBody()->setAngularDamping(0.5f);
@@ -121,10 +95,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
-			m_name = L"WEEPER_CAST2_BALL_SCATTER";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
-
 			m_transform->SetScale(100.f, 100.f, 100.f);
 
 			m_body->SetMass(20.f);
@@ -137,10 +107,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::WEEPER_CAST3_BALL:
 		{
-			m_name = L"WEEPER_CAST3_BALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
-
 			m_body->SetMass(10.f);
 			m_body->AddRandomTorque(ForceMode::Impulse, 100.f);
 			m_body->GetBody()->setAngularDamping(0.5f);
@@ -156,10 +122,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::WEEPER_CAST4_BALL:
 		{
-			m_name = L"WEEPER_CAST4_BALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_FIREBALL;
-
 			m_transform->SetScale(100.f, 100.f, 100.f);
 
 			m_body->SetMass(3.f);
@@ -173,10 +135,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::MONSTER_ICEBALL:
 		{
-			m_name = L"MONSTER ICEBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_ICEBALL;
-
 			m_body->SetMass(1.f);
 			m_body->AddCollider<BoxCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -185,10 +143,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::MONSTER_THUNDERBALL:
 		{
-			m_name = L"MONSTER THUNDERBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_THUNDERBALL;
-
 			m_body->SetMass(1.f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -197,10 +151,6 @@ void SkillObject::Init()
 
 		case SKILLOBJECTTYPE::MONSTER_POISONBALL:
 		{
-			m_name = L"MONSTER POISONBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_POISONBALL;
-
 			m_body->SetMass(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
@@ -223,12 +173,7 @@ void SkillObject::Init()
 				static_cast<PhysicsLayers>(static_cast<int>(PhysicsLayers::MONSTER) | static_cast<int>(PhysicsLayers::SKILLOBJECT_MONSTER)));
 	}
 
-	//ServerMessage_SkillInit();
-	game::Message sendMsg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
-	sendMsg.objType = m_objType;
-	sendMsg.objID = m_id;
-
-	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
+	ServerMessage_SkillInit();
 }
 
 void SkillObject::Update(double timeDelta)
@@ -261,6 +206,98 @@ void SkillObject::Release()
 
 void SkillObject::ServerMessage_SkillInit()
 {
+	m_id = game::MessageHandler::GetInstance()->NewObjectID();
+
+	switch (m_skillType)
+	{
+		case SKILLOBJECTTYPE::PLAYER_FIREBALL:
+		{
+			m_name = L"PLAYER FIREBALL";
+			m_fbxType = server::FBX_TYPE::PLAYER_FIREBALL;
+			m_objType = server::OBJECT_TYPE::PLAYER_FIREBALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::PLAYER_ICEBALL:
+		{
+			m_name = L"PLAYER ICEBALL";
+			m_fbxType = server::FBX_TYPE::PLAYER_ICEBALL;
+			m_objType = server::OBJECT_TYPE::PLAYER_ICEBALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::PLAYER_THUNDERBALL:
+		{
+			m_name = L"PLAYER THUNDERBALL";
+			m_fbxType = server::FBX_TYPE::PLAYER_THUNDERBALL;
+			m_objType = server::OBJECT_TYPE::PLAYER_THUNDERBALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::PLAYER_POISONBALL:
+		{
+			m_name = L"PLAYER POISONBALL";
+			m_fbxType = server::FBX_TYPE::PLAYER_POISONBALL;
+			m_objType = server::OBJECT_TYPE::PLAYER_POISONBALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::WEEPER_CAST1_BALL:
+		{
+			m_name = L"WEEPER_CAST1_BALL";
+			m_fbxType = server::FBX_TYPE::WEEPER_CAST1_BALL;
+			m_objType = server::OBJECT_TYPE::WEEPER_CAST1_BALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::WEEPER_CAST2_BALL:
+		{
+			m_name = L"WEEPER_CAST2_BALL";
+			m_fbxType = server::FBX_TYPE::WEEPER_CAST2_BALL;
+			m_objType = server::OBJECT_TYPE::WEEPER_CAST2_BALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			m_name = L"WEEPER_CAST2_BALL_SCATTER";
+			m_fbxType = server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER;
+			m_objType = server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER;
+		}
+		break;
+		case SKILLOBJECTTYPE::WEEPER_CAST3_BALL:
+		{
+			m_name = L"WEEPER_CAST3_BALL";
+			m_fbxType = server::FBX_TYPE::WEEPER_CAST3_BALL;
+			m_objType = server::OBJECT_TYPE::WEEPER_CAST3_BALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::WEEPER_CAST4_BALL:
+		{
+			m_name = L"WEEPER_CAST4_BALL";
+			m_fbxType = server::FBX_TYPE::WEEPER_CAST4_BALL;
+			m_objType = server::OBJECT_TYPE::WEEPER_CAST4_BALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::MONSTER_ICEBALL:
+		{
+			m_name = L"MONSTER ICEBALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
+			m_objType = server::OBJECT_TYPE::MONSTER_ICEBALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::MONSTER_THUNDERBALL:
+		{
+			m_name = L"MONSTER THUNDERBALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_THUNDERBALL;
+			m_objType = server::OBJECT_TYPE::MONSTER_THUNDERBALL;
+		}
+		break;
+		case SKILLOBJECTTYPE::MONSTER_POISONBALL:
+		{
+			m_name = L"MONSTER POISONBALL";
+			m_fbxType = server::FBX_TYPE::MONSTER_POISONBALL;
+			m_objType = server::OBJECT_TYPE::MONSTER_POISONBALL;
+		}
+		break;
+		default:
+		break;
+	}
+
 	game::Message sendMsg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
 	sendMsg.objType = m_objType;
 	sendMsg.objID = m_id;
