@@ -55,9 +55,10 @@ namespace game
 
 	public:
 		int32_t NewObjectID();
-		int32_t NewColliderID();
 
 		void RemoveObject(int32_t objID);
+
+		int32_t GetObjectNum() { return m_objectsNum; }
 
 	private:
 		void Login(int32_t playerID, Player* player);
@@ -80,8 +81,5 @@ namespace game
 		tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableObjectID;
 
 		std::unordered_map<int32_t, int32_t> m_tempIDMap;
-
-		int32_t m_colliderNum;
-		std::priority_queue<int32_t, std::vector<int32_t>, std::greater<int32_t>> m_reusableColliderID;
 	};
 }

@@ -153,7 +153,7 @@ namespace game
 
 	void MessageHandler::ExecuteMessage()
 	{
-		int32_t size{ m_recvQueueSize.load() };
+		int32_t size{ m_recvQueueSize };
 
 		if (size == 0)
 			return;
@@ -230,8 +230,6 @@ namespace game
 				{
 					if (msg.objType == server::OBJECT_TYPE::PLAYER)
 					{
-						int32_t colliderID{ NewColliderID() };
-
 						//Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1722.f + msg.playerID * 50.f, 200.f, -1300.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 
@@ -247,7 +245,6 @@ namespace game
 						player->SetName(name);
 						player->SetObjectType(msg.objType);
 						player->SetFBXType(msg.fbxType);
-						player->GetController()->GetCollider()->SetID(colliderID);
 					}
 
 					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
@@ -406,7 +403,7 @@ namespace game
 
 		// 재사용 가능 id가 없으면 최고 숫자 발급
 		if (issueNewID == true)
-			return (m_objectsNum++) + 3;
+			return (m_objectsNum++) + 100;
 
 		int32_t newID{ -1 };
 
@@ -416,21 +413,13 @@ namespace game
 			bool issueReuseID{ m_reusableObjectID.try_pop(newID) };
 
 			if (issueReuseID == true)
+			{
+				++m_objectsNum;
 				return newID;
+			}
 		}
 
 		return 0;
-	}
-
-	int32_t MessageHandler::NewColliderID()
-	{
-		if (m_reusableColliderID.empty() == true)
-			return m_colliderNum++;
-
-		int32_t newID{ m_reusableColliderID.top() };
-		m_reusableColliderID.pop();
-
-		return newID;
 	}
 
 	void MessageHandler::RemoveObject(int32_t objID)
