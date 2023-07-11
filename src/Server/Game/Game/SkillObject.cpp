@@ -100,7 +100,7 @@ void SkillObject::Init()
 			collider->SetRestitution(0.8f);
 
 			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
-			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.5f, this);		//3.2초후 추적시작
+			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.6f, this);		
 		}
 		break;
 
@@ -149,8 +149,8 @@ void SkillObject::Init()
 			collider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
 			collider->SetRestitution(0.8f);
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::DESCENDING, true);
-			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.5f, this);		//3.2초후 추적시작
+			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
+			EventHandler::GetInstance()->AddEvent("SKILL_LEVITATE_END", 0.5f, this);		
 		}
 		break;
 
@@ -318,9 +318,9 @@ void SkillObject::HandlePlayerSkillCollision()
 					{
 						auto weeper{ dynamic_cast<Weeper*>(monster) };
 
-						if (weeper != nullptr)
+						if (weeper)
 						{
-							//추후 추가
+							weeper->GetDamaged(10);
 						}
 					}
 					break;
@@ -350,10 +350,12 @@ void SkillObject::HandlePlayerSkillCollision()
 					break;
 				}
 
-				SetRemoveReserved();						//객체 삭제
 				m_body->ExcludeFromSimulation(true);
+				SetRemoveReserved();						//객체 삭제
 				ServerMessage_SkillHit();					//서버 메시지 처리
 			}
+
+
 		}
 
 		//플레이어스킬 : 팀킬

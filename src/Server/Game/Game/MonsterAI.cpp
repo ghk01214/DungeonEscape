@@ -67,6 +67,9 @@ void MonsterAI::SetRandomTarget()
 	if (!players)
 		return;
 
+	if (players->GetGameObjects().size() < 1)
+		return;
+
 	Vec3 monsterPos = m_monster->GetControllerPosition();
 	while (1)
 	{

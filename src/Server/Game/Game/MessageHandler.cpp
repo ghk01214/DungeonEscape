@@ -233,7 +233,7 @@ namespace game
 						int32_t colliderID{ NewColliderID() };
 
 						//Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 50.f, 300.f, -2500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1722.f + msg.playerID * 50.f, 200.f, -1300.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 
 						std::wstring name{};
 

@@ -47,6 +47,7 @@ void Player::Init()
 	SetObjectType(server::OBJECT_TYPE::PLAYER);
 
 	m_controller->GetBody()->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PLAYER, PhysicsLayers::SKILLOBJECT_PLAYER);
+	m_controller->SetJumpSpeed(80.f);
 
 	for (int32_t i = magic_enum::enum_integer(server::TRIGGER_TYPE::NONE) + 1; i < magic_enum::enum_integer(server::TRIGGER_TYPE::MAX); ++i)
 	{

@@ -112,6 +112,7 @@ void TestLevel::LoadMap()
 	std::system("cls");
 
 	std::cout << "Map loading finished\n";
+	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 300.f, -500.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 }
 
 void TestLevel::LoadBasicMap1()
@@ -183,7 +184,7 @@ void TestLevel::LoadBasicMap2()
 void TestLevel::LoadBasicMap3()
 {
 	auto objmgr = ObjectManager::GetInstance();
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(200.f, 1000.f, 0.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(200.f, 1000.f, 0.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
 
@@ -195,10 +196,10 @@ void TestLevel::LoadBasicMap3()
 #pragma endregion
 
 #pragma region Z100Box(1000,0,0)
-	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(750, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
-	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
-	Box1Obj->ApplyRequestedLayers();
+	//auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(750, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
+	//auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+	//Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+	//Box1Obj->ApplyRequestedLayers();
 #pragma endregion
 
 

@@ -53,7 +53,6 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
-
 	if (msg == "WEEPER_CAST1_FUNCTIONCALL")
 	{
 		auto weeperObj = dynamic_cast<Weeper*>(target);
@@ -154,6 +153,17 @@ void Event::ExecuteMsg_Once()
 		if (skillObj)
 		{
 			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED, true);
+			auto body = skillObj->GetComponent<RigidBody>(L"RigidBody");
+			body->SetAngularDamping(0.f);
+		}
+	}
+
+	if (msg == "SKILL_LEVITATE_END")
+	{
+		auto skillObj = dynamic_cast<SkillObject*>(target);
+		if (skillObj)
+		{
+			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, false);
 			auto body = skillObj->GetComponent<RigidBody>(L"RigidBody");
 			body->SetAngularDamping(0.f);
 		}

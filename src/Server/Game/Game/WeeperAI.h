@@ -59,6 +59,6 @@ private:
 	float m_cast2Counter = false;		//Cast2의 nuclear
 
 public:
-	bool m_debugmode = true;			//서버 FSM 확인용 변수
+	bool m_debugmode = false;			//서버 FSM 확인용 변수
 };
 
