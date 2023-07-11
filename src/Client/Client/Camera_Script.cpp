@@ -31,7 +31,7 @@ void Camera_Basic::LateUpdate()
 	auto& player = activeScene->GetPlayer();
 
 	// 플레이어가 존재하지 않을 경우
-	if (true)
+	if (player.empty())
 	{
 		Vec3 pos = GetTransform()->GetWorldPosition();
 

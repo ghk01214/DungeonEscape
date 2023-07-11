@@ -21,9 +21,6 @@
     <Filter Include="소스 파일\Script\00. Scene">
       <UniqueIdentifier>{ffc51424-6759-4955-a77d-a12099f80a5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Script\01. UI">
-      <UniqueIdentifier>{ca12ca84-1c51-45ff-9ffc-c5951463c314}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Script\02. Camera">
       <UniqueIdentifier>{c73e4ffb-1df9-4e67-afca-b4e31b330758}</UniqueIdentifier>
     </Filter>
@@ -74,6 +71,9 @@
     </Filter>
     <Filter Include="소스 파일\Script\00. Scene\GamePlay">
       <UniqueIdentifier>{a8fa2d3d-0869-4da4-b446-9e2aa298468c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\01. UI">
+      <UniqueIdentifier>{ca12ca84-1c51-45ff-9ffc-c5951463c314}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

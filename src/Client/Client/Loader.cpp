@@ -45,12 +45,13 @@ HRESULT CLoader::Loading(SCENE eScene)
 {
 	m_eScene = eScene;
 
+	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
+	InitializeCriticalSection(&m_CriticalSection);
+
 	thread loaderThread = std::thread{ ThreadEntryFunc, this };
 
 	loaderThread.join();
-	//CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-
-	//InitializeCriticalSection(&m_CriticalSection);
 
 	//m_hThread = (HANDLE)_beginthreadex(nullptr, 0, ThreadEntryFunc, this, 0, nullptr);
 	//if (0 == m_hThread)

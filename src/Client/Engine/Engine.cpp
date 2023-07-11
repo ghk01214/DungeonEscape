@@ -47,6 +47,7 @@ void Engine::Update()
 
 	GET_SINGLE(SceneManager)->Update();
 	GET_SINGLE(SceneManager)->LateUpdate();
+	GET_SINGLE(SceneManager)->FinalUpdate();
 
 	GET_SINGLE(InstancingManager)->ClearBuffer();
 
