@@ -79,7 +79,7 @@ void Monster_Weeper::UpdateFrameRepeat()
 {
 	switch (m_currState)
 	{
-		case CAST1: case CAST2_START: case CAST2_END: case CAST3: case CAST4_START: case CAST4_END:
+		case CAST1: case CAST2_END: case CAST3: case CAST4_START: case CAST4_END:
 		case DAMAGE: case DEATH: case DODGE: case DEAD:
 		case IDLE_BREAK: case TAUNT: case TURN_LEFT: case TURN_RIGHT:
 		return;
@@ -94,7 +94,7 @@ void Monster_Weeper::UpdateFrameOnce()
 {
 	switch (m_currState)
 	{
-		case CAST2_LOOP: case CAST4_LOOP: case IDLE: case DEAD:
+		case CAST2_START: case CAST2_LOOP: case CAST4_LOOP: case IDLE: case DEAD:
 		case STATUE1: case STATUE2: case STATUE3:
 		case WALK: case WALK_BACK: case WALK_BACK_NO_LEGS:
 		return;

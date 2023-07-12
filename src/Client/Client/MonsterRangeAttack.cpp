@@ -85,8 +85,8 @@ void MonsterRangeAttack::Transform(network::CPacket& packet)
 	Vec3 temp{ quat.x, quat.y, quat.z };
 
 	Matrix matWorld{};
-	//matWorld *= Matrix::CreateScale(scale);
-	matWorld = Matrix::CreateFromQuaternion(quat);
+	matWorld = Matrix::CreateScale(scale / 100.f);
+	matWorld *= Matrix::CreateFromQuaternion(quat);
 	matWorld *= Matrix::CreateTranslation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
 
