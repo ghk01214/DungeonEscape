@@ -570,6 +570,9 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 
 void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, ObjectDesc& objectDesc)
 {
+	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
+	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
+
 	switch (type)
 	{
 		case server::FBX_TYPE::NANA:
@@ -696,8 +699,9 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast1";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
@@ -753,9 +757,6 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 		default:
 		break;
 	}
-
-	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
-	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
 }
 
 void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects)

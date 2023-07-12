@@ -14,6 +14,7 @@
 
 void MonsterRangeAttack::Start()
 {
+
 }
 
 void MonsterRangeAttack::Update()
