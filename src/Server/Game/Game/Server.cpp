@@ -801,6 +801,8 @@ namespace game
 							client->SendAddObjPacket(skill);
 						}
 					}
+
+					std::cout << "send : " << id << ", " << magic_enum::enum_name(postOver->objType) << "\n";
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT)
 				{
@@ -820,8 +822,6 @@ namespace game
 						}
 					}
 				}
-
-				std::cout << "send : " << id << ", " << magic_enum::enum_name(postOver->objType) << "\n";
 			}
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
@@ -999,6 +999,8 @@ namespace game
 				}
 
 				m_msgHandler->RemoveObject();
+
+				//std::cout << "send : " << id << ", " << magic_enum::enum_name(postOver->objType) << "\n";
 			}
 			break;
 #pragma endregion
