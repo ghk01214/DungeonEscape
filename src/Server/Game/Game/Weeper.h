@@ -28,7 +28,7 @@ public:
 		STATUE1,
 		STATUE2,
 		STATUE3,
-		TAUNT,		
+		TAUNT,
 		TURN_LEFT,
 		TURN_RIGHT,
 		WALK,
@@ -77,9 +77,13 @@ public:
 	WEEPER_STATE GetState() const;
 	void SetState(WEEPER_STATE state);
 
+	void SendChangedStateAgain();
+
 private:
 	WEEPER_STATE m_prevState;
 	WEEPER_STATE m_currState;
+
+	int32_t m_sendState;
 
 	WeeperAI* m_weeperAI;
 };

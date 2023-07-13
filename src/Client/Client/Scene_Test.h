@@ -3,6 +3,8 @@
 #include "Scene.h"
 #include "MonoBehaviour.h"
 
+#include <unordered_set>
+
 class Scene_Test
 {
 	DECLARE_SINGLE(Scene_Test)
@@ -33,6 +35,7 @@ private:
 	void CreateRemoteObject(network::CPacket& packet);
 	void RemoveObject(network::CPacket& packet);
 
+	bool FindOverlappedObject(int32_t id);
 	void ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, ObjectDesc& objectDesc);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
 
@@ -44,4 +47,6 @@ public:
 private:
 	shared_ptr<CScene> scene;
 	std::unordered_map<int32_t, int32_t> m_objectIDMap;		// temp obj id, new obj id
+
+	std::unordered_set<int32_t> m_overlappedObjects;
 };

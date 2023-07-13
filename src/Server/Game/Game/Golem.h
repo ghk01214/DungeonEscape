@@ -1,4 +1,5 @@
 ﻿#pragma once
+#pragma once
 
 class Monster;
 
@@ -62,12 +63,15 @@ public:
 
 public:
 	GOLEM_STATE GetState() const;
-
 	void SetState(GOLEM_STATE state);
+
+	void SendChangedStateAgain();
 
 private:
 	GOLEM_STATE m_prevState;
 	GOLEM_STATE m_currState;
+
+	int32_t m_sendState;
 
 private:
 	Vec3 m_patternSize;

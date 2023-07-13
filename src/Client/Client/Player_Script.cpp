@@ -307,10 +307,13 @@ void Player_Script::StartRender(network::CPacket& packet)
 
 	pos.y -= (m_radius + m_halfHeight);
 
-	GetTransform()->SetWorldVec3Position(pos);
 	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
 	matWorld.Translation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
+	//Matrix matWorld{ Matrix::CreateScale(scale) };
+	//matWorld *= Matrix::CreateFromQuaternion(quat);
+	//matWorld *= Matrix::CreateTranslation(pos);
+	//GetTransform()->SetWorldMatrix(matWorld);
 
 	m_currState = magic_enum::enum_value<PLAYER_STATE>(currState);
 }
@@ -337,10 +340,13 @@ void Player_Script::Transform(network::CPacket& packet)
 
 	pos.y -= (m_radius + m_halfHeight);
 
-	GetTransform()->SetWorldVec3Position(pos);
 	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
 	matWorld.Translation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
+	//Matrix matWorld{ Matrix::CreateScale(scale) };
+	//matWorld *= Matrix::CreateFromQuaternion(quat);
+	//matWorld *= Matrix::CreateTranslation(pos);
+	//GetTransform()->SetWorldMatrix(matWorld);
 
 #pragma region [FOR DEBUGGING]
 	//auto t{ GetTransform()->GetWorldPosition() };

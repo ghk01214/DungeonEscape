@@ -33,11 +33,11 @@ namespace game
 		void SendLoginPacket(Player* obj);
 		void SendPlayerIDIssuePacket(int32_t id, ProtocolID protocol);
 		void SendIDIssuePacket(GameObject* obj);
-		void SendAddAnimateObjPacket(int32_t id, GameObject* obj);
-		void SendAddObjPacket(int32_t id, GameObject* obj);
+		void SendAddAnimateObjPacket(GameObject* obj);
+		void SendAddObjPacket(GameObject* obj);
 		void SendObjectIDPacket(int32_t objID, int32_t oldObjID);
 		void SendRemovePacket(int32_t id, server::OBJECT_TYPE type);
-		void SendTransformPacket(int32_t id, ProtocolID protocol, GameObject* obj);
+		void SendTransformPacket(GameObject* obj);
 		void SendStatePacket(int32_t id, int32_t stateIndex);
 
 		const STATE GetState() const { return m_state; }

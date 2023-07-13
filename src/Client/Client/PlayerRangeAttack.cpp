@@ -70,7 +70,7 @@ void PlayerRangeAttack::Transform(network::CPacket& packet)
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
-	Vec4 quat;
+	SimpleMath::Quaternion quat;
 	quat.x = packet.Read<float>();
 	quat.y = packet.Read<float>();
 	quat.z = packet.Read<float>();
@@ -81,11 +81,11 @@ void PlayerRangeAttack::Transform(network::CPacket& packet)
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
 
-	GetTransform()->SetWorldVec3Position(pos);
-	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-	matWorld.Translation(pos);
+	Matrix matWorld{ Matrix::CreateScale(scale / 100.f) };
+	matWorld *= Matrix::CreateFromQuaternion(quat);
+	matWorld *= Matrix::CreateTranslation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
 
-	//auto t{ GetTransform()->GetWorldPosition() };
-	//std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
+	auto t{ GetTransform()->GetWorldPosition() };
+	std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
 }

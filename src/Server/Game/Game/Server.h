@@ -73,6 +73,7 @@ namespace game
 		std::thread m_gameThread;
 		std::thread m_timerThread;
 		std::thread m_transformThread;
+		std::thread m_addRemoveThread;
 
 		std::array<CSession*, MAX_USER> m_sessions;
 		std::atomic_int32_t m_activeSessionNum;

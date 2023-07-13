@@ -17,11 +17,25 @@ namespace game
 {
 	ImplementSingletone(MessageHandler);
 
-	Message::Message(int32_t id, ProtocolID msgProtocol) :
-		playerID{ id },
+	Message::Message(int32_t playerID, ProtocolID msgProtocol) :
+		playerID{ playerID },
 		msgProtocol{ msgProtocol }
 	{
 	}
+
+	TIMER_EVENT::TIMER_EVENT(ProtocolID msgProtocol, int32_t playerID) :
+		playerID{ playerID },
+		type{ msgProtocol },
+		wakeUpTime{ CURRENT_TIME }
+	{
+	}
+
+	constexpr bool TIMER_EVENT::operator<(const TIMER_EVENT& left) const
+	{
+		return left.wakeUpTime < wakeUpTime;
+	}
+
+	//===============================================================================
 
 	MessageHandler::MessageHandler()
 	{
@@ -35,9 +49,11 @@ namespace game
 	void MessageHandler::Init(HANDLE iocp)
 	{
 		m_recvQueueSize = 0;
-		m_sendQueueSize = 0;
 		m_objectsNum = 0;
+		m_objectIDOffest = 100;
 		m_iocp = iocp;
+
+		m_objMgr = ObjectManager::GetInstance();
 	}
 
 	void MessageHandler::Release()
@@ -55,8 +71,8 @@ namespace game
 
 		while (empty == false)
 		{
-			Message msg{};
-			m_sendQueue.try_pop(msg);
+			TIMER_EVENT ev{};
+			m_sendQueue.try_pop(ev);
 			empty = m_sendQueue.empty();
 		}
 	}
@@ -64,45 +80,62 @@ namespace game
 	void MessageHandler::TimerThread()
 	{
 		using namespace std::chrono_literals;
+
 		while (true)
 		{
 			TIMER_EVENT ev;
-			auto currentTime{ std::chrono::steady_clock::now() };
-			bool success{ m_eventQueue.try_pop(ev) };
+			auto currentTime{ CURRENT_TIME };
+			//bool success{ m_sendQueue.try_pop(ev) };
 
-			if (success == false)
+			if (m_sendQueue.try_pop(ev) == false)
+			{
+				std::this_thread::sleep_for(1ms);
 				continue;
+			}
 
 			if (ev.wakeUpTime > currentTime)
 			{
-				m_eventQueue.push(ev);
+				m_sendQueue.push(ev);
+				std::this_thread::sleep_for(1ms);
 				continue;
 			}
 
-			Message msg{};
-			while (true)
-			{
-				bool success{ m_sendQueue.try_pop(msg) };
-
-				if (success == true)
-				{
-					--m_sendQueueSize;
-					break;
-				}
-			}
-
 			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
-			network::CPacket packet;
-			postOver.msgProtocol = msg.msgProtocol;
-			postOver.playerID = msg.playerID;
-			postOver.objID = msg.objID;
-			postOver.roomID = msg.roomID;
-			postOver.objType = msg.objType;
-			postOver.state = msg.state;
+			postOver.msgProtocol = ev.type;
+			//postOver.roomID = ev.roomID;
 
-			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
+			switch (ev.type)
+			{
+				case ProtocolID::AU_LOGIN_ACK:
+				case ProtocolID::AU_LOGOUT_ACK:
+				case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
+				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
+				{
+					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
+					std::this_thread::sleep_for(1ms);
+				}
+				break;
+				case ProtocolID::WR_ADD_OBJ_ACK:
+				case ProtocolID::WR_REMOVE_ACK:
+				{
+					postOver.objType = ev.objType;
 
-			std::this_thread::sleep_for(1ms);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					std::this_thread::sleep_for(1ms);
+				}
+				break;
+				case ProtocolID::WR_CHANGE_STATE_ACK:
+				{
+					postOver.objType = ev.objType;
+					postOver.state = ev.state;
+
+					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
+					std::this_thread::sleep_for(1ms);
+				}
+				break;
+				default:
+				break;
+			}
 		}
 	}
 
@@ -113,8 +146,8 @@ namespace game
 		while (true)
 		{
 			TIMER_EVENT ev;
-			auto currentTime{ std::chrono::steady_clock::now() };
-			bool success{ m_transformEvent.try_pop(ev) };
+			auto currentTime{ CURRENT_TIME };
+			bool success{ m_transformQueue.try_pop(ev) };
 
 			if (success == false)
 			{
@@ -124,30 +157,77 @@ namespace game
 
 			if (ev.wakeUpTime > currentTime)
 			{
-				m_transformEvent.push(ev);
+				m_transformQueue.push(ev);
 				std::this_thread::sleep_for(1ms);
 				continue;
 			}
 
-			Message msg{};
-			while (true)
-			{
-				bool success{ m_transformMessage.try_pop(msg) };
+			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
+			postOver.msgProtocol = ev.type;
+			postOver.objType = ev.objType;
+			//postOver.roomID = ev.roomID;
 
-				if (success == true)
-					break;
+			switch (ev.objType)
+			{
+				case server::OBJECT_TYPE::PLAYER:
+				{
+					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
+					std::this_thread::sleep_for(1ms);
+				}
+				break;
+				default:
+				{
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					std::this_thread::sleep_for(1ms);
+				}
+				break;
+			}
+		}
+	}
+
+	void MessageHandler::AddRemoveThread()
+	{
+		using namespace std::chrono_literals;
+
+		while (true)
+		{
+			TIMER_EVENT ev;
+			auto currentTime{ CURRENT_TIME };
+			bool success{ m_addRemoveQueue.try_pop(ev) };
+
+			if (success == false)
+			{
+				std::this_thread::sleep_for(1ms);
+				continue;
+			}
+
+			if (ev.wakeUpTime > currentTime)
+			{
+				m_addRemoveQueue.push(ev);
+				std::this_thread::sleep_for(1ms);
+				continue;
 			}
 
 			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
-			postOver.msgProtocol = msg.msgProtocol;
-			postOver.playerID = msg.playerID;
-			postOver.objID = msg.objID;
-			postOver.objType = msg.objType;
-			postOver.roomID = msg.roomID;
+			postOver.msgProtocol = ev.type;
+			postOver.objType = ev.objType;
+			//postOver.roomID = ev.roomID;
 
-			PostQueuedCompletionStatus(m_iocp, 1, msg.playerID, &postOver.over);
-
-			std::this_thread::sleep_for(1ms);
+			switch (ev.objType)
+			{
+				case server::OBJECT_TYPE::PLAYER:
+				{
+					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
+					std::this_thread::sleep_for(1ms);
+				}
+				break;
+				default:
+				{
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					std::this_thread::sleep_for(1ms);
+				}
+				break;
+			}
 		}
 	}
 
@@ -165,27 +245,22 @@ namespace game
 			bool empty{ m_recvQueue.empty() };
 
 			if (empty == true)
-				break;
+				return;
 
 			Message msg{};
 			bool success{ m_recvQueue.try_pop(msg) };
 
-			if (success == true)
-			{
-				queue.push(msg);
-				--m_recvQueueSize;
-				++i;
-			}
-		}
+			if (success == false)
+				continue;
 
-		auto objMgr{ ObjectManager::GetInstance() };
-		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
-		auto monsterObjects{ objMgr->GetLayer(L"Layer_Monster")->GetGameObjects() };
+			queue.push(msg);
+			--m_recvQueueSize;
+			++i;
+		}
 
 		for (int32_t i = 0; i < size;)
 		{
 			Message msg{ queue.front() };
-
 			switch (msg.msgProtocol)
 			{
 #pragma region [AU]
@@ -195,22 +270,22 @@ namespace game
 					//player->SetName(L"Mistic");
 					//
 					//Login(msg.playerID, player);
-					Message sendMsg{ msg.playerID, ProtocolID::AU_LOGIN_ACK };
-					PushSendMessage(sendMsg);
+					TIMER_EVENT ev{ ProtocolID::AU_LOGIN_ACK, msg.playerID };
+					PushSendMessage(ev);
 				}
 				break;
 				case ProtocolID::AU_LOGOUT_REQ:
 				{
-					Player* player{ nullptr };
+					auto playerObjects{ m_objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 
 					for (auto& playerObj : playerObjects)
 					{
-						player = dynamic_cast<Player*>(playerObj);
+						auto player = dynamic_cast<Player*>(playerObj);
 
 						if (player->GetID() == msg.playerID)
 						{
 							// 용섭 클라이언트 로그아웃
-							Logout(msg.playerID, msg.roomID, player, objMgr);
+							Logout(msg.playerID, msg.roomID, player);
 
 							break;
 						}
@@ -222,149 +297,39 @@ namespace game
 				case ProtocolID::MY_ISSUE_PLAYER_ID_REQ:
 				case ProtocolID::WR_ISSUE_PLAYER_ID_REQ:
 				{
-					Message sendMsg{ msg.playerID, static_cast<ProtocolID>(magic_enum::enum_integer(msg.msgProtocol) + 1) };
-					PushSendMessage(sendMsg);
+					TIMER_EVENT ev{ magic_enum::enum_value<ProtocolID>(magic_enum::enum_integer(msg.msgProtocol) + 1), msg.playerID };
+					//TIMER_EVENT ev{ ProtocolID::MY_ISSUE_PLAYER_ID_ACK, msg.playerID };
+					PushSendMessage(ev);
 				}
 				break;
 				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 				{
-					if (msg.objType == server::OBJECT_TYPE::PLAYER)
-					{
-						//Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-						Player* player{ objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1722.f + msg.playerID * 50.f, 200.f, -1300.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-
-						std::wstring name{};
-
-						if (msg.fbxType == server::FBX_TYPE::NANA)
-							name = L"Nana";
-						else if (msg.fbxType == server::FBX_TYPE::MISTIC)
-							name = L"Mistic";
-						else if (msg.fbxType == server::FBX_TYPE::CARMEL)
-							name = L"Carmel";
-
-						player->SetName(name);
-						player->SetObjectType(msg.objType);
-						player->SetFBXType(msg.fbxType);
-					}
-
-					Message sendMsg{ msg.playerID, ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
-					sendMsg.objType = msg.objType;
-
-					PushSendMessage(sendMsg);
+					CreatePlayer(msg);
 				}
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:
 				{
-					for (auto& playerObject : playerObjects)
-					{
-						auto player{ dynamic_cast<Player*>(playerObject) };
-
-						if (player->GetID() == msg.playerID)
-						{
-							player->GetController()->KeyboardReceive(msg.keyInput);
-							break;
-						}
-					}
+					SetKeyInput(msg);
 				}
 				break;
 				case ProtocolID::MY_ANI_PLAY_TIME_REQ:
 				{
-					if (msg.objType == server::OBJECT_TYPE::PLAYER)
-					{
-						for (auto& playerObj : playerObjects)
-						{
-							auto player{ dynamic_cast<Player*>(playerObj) };
-
-							if (player->GetID() == msg.playerID)
-							{
-								player->SetAniPlayTime(msg.aniPlayTime);
-								break;
-							}
-						}
-					}
-					else if (msg.objType == server::OBJECT_TYPE::BOSS)
-					{
-						for (auto& monsterObject : monsterObjects)
-						{
-							auto monster{ dynamic_cast<Monster*>(monsterObject) };
-
-							if (monster->GetID() == msg.objID)
-							{
-								monster->SetAniPlayTime(msg.aniPlayTime);
-								break;
-							}
-						}
-					}
+					SetPlayerAniPlayTime(msg);
 				}
 				break;
 				case ProtocolID::MY_ANI_END_REQ:
 				{
-					if (msg.objType == server::OBJECT_TYPE::PLAYER)
-					{
-						for (auto& playerObj : playerObjects)
-						{
-							auto player{ dynamic_cast<Player*>(playerObj) };
-
-							if (player->GetID() == msg.objID)
-							{
-								player->SetAniEndFlag(true);
-								break;
-							}
-						}
-					}
-					else if (msg.objType == server::OBJECT_TYPE::BOSS)
-					{
-						for (auto& monsterObject : monsterObjects)
-						{
-							auto monster{ dynamic_cast<Monster*>(monsterObject) };
-
-							if (monster->GetID() == msg.objID)
-							{
-								monster->SetAniEndFlag(true);
-								break;
-							}
-						}
-					}
+					SetAniEndFlag(msg);
 				}
 				break;
 				case ProtocolID::MY_CAMERA_LOOK_REQ:
 				{
-					for (auto& playerObj : playerObjects)
-					{
-						auto player{ dynamic_cast<Player*>(playerObj) };
-
-						if (player->GetID() == msg.playerID)
-						{
-							player->SetControllerCameraLook(msg.cameraLook);
-							break;
-						}
-					}
+					SetPlayerCameraLook(msg);
 				}
 				break;
 #pragma endregion
-				case ProtocolID::WR_REMOVE_REQ:
-				{
-					if (msg.objType == server::OBJECT_TYPE::BOSS)
-					{
-						for (auto& monsterObject : monsterObjects)
-						{
-							auto monster{ dynamic_cast<Monster*>(monsterObject) };
-
-							if (monster->GetID() == msg.objID)
-							{
-								monster->SetRemoveReserved();
-								break;
-							}
-						}
-					}
-
-					Message sendMsg{ -1, ProtocolID::WR_REMOVE_ACK };
-					sendMsg.objID = msg.objID;
-					sendMsg.objType = msg.objType;
-
-					PushSendMessage(sendMsg);
-				}
-				break;
+#pragma region [WR]
+#pragma endregion
 				default:
 				break;
 			}
@@ -380,54 +345,54 @@ namespace game
 		++m_recvQueueSize;
 	}
 
-	void MessageHandler::PushSendMessage(Message& msg)
+	void MessageHandler::PushSendMessage(TIMER_EVENT& ev)
 	{
-		m_sendQueue.push(msg);
-		++m_sendQueueSize;
-
-		TIMER_EVENT ev{ CURRENT_TIME };
-		m_eventQueue.push(ev);
+		m_sendQueue.push(ev);
 	}
 
-	void MessageHandler::PushTransformMessage(Message& msg)
+	void MessageHandler::PushTransformMessage(TIMER_EVENT& ev)
 	{
-		m_transformMessage.push(msg);
+		m_transformQueue.push(ev);
+	}
 
-		game::TIMER_EVENT ev{ CURRENT_TIME };
-		m_transformEvent.push(ev);
+	void MessageHandler::PushAddRemoveMessage(TIMER_EVENT& ev)
+	{
+		m_addRemoveQueue.push(ev);
 	}
 
 	int32_t MessageHandler::NewObjectID()
 	{
-		bool issueNewID{ m_reusableObjectID.empty() };
+		//bool issueNewID{ m_reusableObjectID.empty() };
 
-		// 재사용 가능 id가 없으면 최고 숫자 발급
-		if (issueNewID == true)
-			return (m_objectsNum++) + 100;
+		//// 재사용 가능 id가 없으면 최고 숫자 발급
+		//if (issueNewID == true)
+		//	return (m_objectsNum++) + 100;
 
-		int32_t newID{ -1 };
+		//int32_t newID{ -1 };
 
-		// 재사용 가능한 id가 있으면 재사용 가능한 id 중 가장 낮은 id 발급
-		while (true)
-		{
-			bool issueReuseID{ m_reusableObjectID.try_pop(newID) };
+		//// 재사용 가능한 id가 있으면 재사용 가능한 id 중 가장 낮은 id 발급
+		//while (true)
+		//{
+		//	bool issueReuseID{ m_reusableObjectID.try_pop(newID) };
 
-			if (issueReuseID == true)
-			{
-				++m_objectsNum;
-				return newID;
-			}
-		}
+		//	if (issueReuseID == true)
+		//	{
+		//		++m_objectsNum;
+		//		return newID;
+		//	}
+		//}
 
-		return 0;
+		++m_objectsNum;
+		return m_objectIDOffest++;
 	}
 
-	void MessageHandler::RemoveObject(int32_t objID)
+	void MessageHandler::RemoveObject()
 	{
-		m_reusableObjectID.push(objID);
+		//m_reusableObjectID.push(objID);
 		--m_objectsNum;
 	}
 
+#pragma region [EXECUTE METHOD]
 	void MessageHandler::Login(int32_t playerID, Player* player)
 	{
 		int32_t roomID{};
@@ -436,20 +401,181 @@ namespace game
 
 		game::CRoomManager::GetInstance()->Enter(roomID, player);
 
-		Message msg{ playerID, ProtocolID::AU_LOGIN_ACK };
-		msg.roomID = roomID;
+		TIMER_EVENT ev{ ProtocolID::AU_LOGIN_ACK, playerID };
+		ev.roomID = roomID;
 
-		PushSendMessage(msg);
+		PushSendMessage(ev);
 	}
 
-	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr)
+	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player)
 	{
 		//game::CRoomManager::GetInstance()->Exit(roomID, player);
-		objMgr->RemoveGameObjectFromLayer(L"Layer_Player", player);
+		m_objMgr->RemoveGameObjectFromLayer(L"Layer_Player", player);
 
-		Message msg{ playerID, ProtocolID::AU_LOGOUT_ACK };
-		msg.roomID = roomID;
+		TIMER_EVENT ev{ ProtocolID::AU_LOGOUT_ACK, playerID };
+		ev.roomID = roomID;
 
-		PushSendMessage(msg);
+		PushSendMessage(ev);
 	}
+
+	void MessageHandler::CreatePlayer(Message& msg)
+	{
+		if (msg.objType == server::OBJECT_TYPE::PLAYER)
+		{
+			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1722.f + msg.playerID * 50.f, 200.f, -1300.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 50.f, 200.f, -1300.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+
+			std::wstring name{};
+
+			switch (msg.fbxType)
+			{
+				case server::FBX_TYPE::NANA:
+				{
+					player->SetName(L"Nana");
+				}
+				break;
+				case server::FBX_TYPE::MISTIC:
+				{
+					player->SetName(L"Mistic");
+				}
+				break;
+				case server::FBX_TYPE::CARMEL:
+				{
+					player->SetName(L"Carmel");
+				}
+				break;
+				default:
+				break;
+			}
+
+			player->SetObjectType(msg.objType);
+			player->SetFBXType(msg.fbxType);
+		}
+
+		TIMER_EVENT ev{ ProtocolID::WR_ADD_ANIMATE_OBJ_ACK, msg.playerID };
+		ev.objType = msg.objType;
+
+		PushSendMessage(ev);
+	}
+
+	void MessageHandler::SetKeyInput(Message& msg)
+	{
+		auto playerObjects{ m_objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
+
+		for (auto& playerObject : playerObjects)
+		{
+			auto player{ dynamic_cast<Player*>(playerObject) };
+
+			if (player == nullptr)
+				continue;
+
+			if (player->GetID() == msg.playerID)
+			{
+				player->GetController()->KeyboardReceive(msg.keyInput);
+				break;
+			}
+		}
+	}
+
+	void MessageHandler::SetPlayerAniPlayTime(Message& msg)
+	{
+		if (msg.objType == server::OBJECT_TYPE::PLAYER)
+		{
+			auto playerObjects{ m_objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
+
+			for (auto& playerObj : playerObjects)
+			{
+				auto player{ dynamic_cast<Player*>(playerObj) };
+
+				if (player == nullptr)
+					continue;
+
+				if (player->GetID() == msg.playerID)
+				{
+					player->SetAniPlayTime(msg.aniPlayTime);
+					break;
+				}
+			}
+		}
+		else if (msg.objType == server::OBJECT_TYPE::BOSS)
+		{
+			auto monsterObjects{ m_objMgr->GetLayer(L"Layer_Monster")->GetGameObjects() };
+
+			for (auto& monsterObject : monsterObjects)
+			{
+				auto monster{ dynamic_cast<Monster*>(monsterObject) };
+
+				if (monster == nullptr)
+					continue;
+
+				if (monster->GetID() == msg.objID)
+				{
+					monster->SetAniPlayTime(msg.aniPlayTime);
+					break;
+				}
+			}
+		}
+	}
+
+	void MessageHandler::SetAniEndFlag(Message& msg)
+	{
+		if (msg.objType == server::OBJECT_TYPE::PLAYER)
+		{
+			auto playerObjects{ m_objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
+
+			for (auto& playerObj : playerObjects)
+			{
+				auto player{ dynamic_cast<Player*>(playerObj) };
+
+				if (player == nullptr)
+					continue;
+
+				if (player->GetID() == msg.objID)
+				{
+					player->SetAniEndFlag(true);
+					break;
+				}
+			}
+		}
+		else if (msg.objType == server::OBJECT_TYPE::BOSS)
+		{
+			auto monsterObjects{ m_objMgr->GetLayer(L"Layer_Monster")->GetGameObjects() };
+
+			for (auto& monsterObject : monsterObjects)
+			{
+				auto monster{ dynamic_cast<Monster*>(monsterObject) };
+
+				if (monster == nullptr)
+					continue;
+
+				if (monster->GetID() == msg.objID)
+				{
+					monster->SetAniEndFlag(true);
+					break;
+				}
+			}
+		}
+	}
+
+	void MessageHandler::SetPlayerCameraLook(Message& msg)
+	{
+		auto playerObjects{ m_objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
+
+		for (auto& playerObj : playerObjects)
+		{
+			auto player{ dynamic_cast<Player*>(playerObj) };
+
+			if (player == nullptr)
+				continue;
+
+			if (player->GetID() == msg.playerID)
+			{
+				player->SetControllerCameraLook(msg.cameraLook);
+				break;
+			}
+		}
+	}
+
+#pragma endregion
 }

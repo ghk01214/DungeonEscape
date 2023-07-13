@@ -242,24 +242,24 @@ void Scene_Test::CreateLights(void)
 void Scene_Test::CreateMap(void)
 {
 	FBXMapLoader mapLoader;
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
 
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Items.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Props.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Weapons.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Items.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Props.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Weapons.fbx");
 
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage1.FBX");
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage1.FBX");
 
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models3.fbx");
-	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\NewStage.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models3.fbx");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\NewStage.fbx");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 
@@ -384,6 +384,9 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 {
 	int32_t id{ packet.ReadID() };
 
+	if (FindOverlappedObject(id) == true)
+		return;
+
 	Vec3 pos;
 	pos.x = packet.Read<float>();
 	pos.y = packet.Read<float>();
@@ -417,13 +420,12 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 
 	for (auto& gameObject : gameObjects)
 	{
-		gameObject->GetTransform()->SetWorldVec3Position(pos);
 		Matrix matWorld{ gameObject->GetTransform()->GetWorldMatrix() };
 
 		if (objType == server::OBJECT_TYPE::REMOTE_PLAYER)
 			matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
 
-		matWorld.Translation(pos);
+		matWorld *= Matrix::CreateTranslation(pos);
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 		gameObject->SetObjectType(objType);
 		gameObject->GetAnimator()->PlayFrame(state, updateTime);
@@ -449,12 +451,17 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 {
 	int32_t objID{ packet.ReadID() };
 
+	//std::cout << objID << std::endl;
+	//if (FindOverlappedObject(objID) == true)
+	if (m_overlappedObjects.contains(objID) == true)
+		return;
+
 	Vec3 pos;
 	pos.x = packet.Read<float>();
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
-	Vec4 quat;
+	SimpleMath::Quaternion quat;
 	quat.x = packet.Read<float>();
 	quat.y = packet.Read<float>();
 	quat.z = packet.Read<float>();
@@ -468,6 +475,8 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	server::OBJECT_TYPE objType{ packet.Read<server::OBJECT_TYPE>() };
 	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 
+	std::cout << objID << ", " << magic_enum::enum_name(objType) << std::endl;
+
 	ObjectDesc objectDesc;
 	ClassifyObject(-1, fbxType, objectDesc);
 
@@ -476,10 +485,9 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 
 	for (auto& gameObject : gameObjects)
 	{
-		gameObject->GetTransform()->SetWorldVec3Position(pos);
-		Matrix matWorld{ gameObject->GetTransform()->GetWorldMatrix() };
-		//matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
-		matWorld.Translation(pos);
+		Matrix matWorld{ Matrix::CreateScale(scale) };
+		matWorld *= Matrix::CreateFromQuaternion(quat);
+		matWorld *= Matrix::CreateTranslation(pos);
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 
 		if (magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(objType)
@@ -493,6 +501,8 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 
 	AddObjectToScene(objType, gameObjects);
 	GET_NETWORK->AddNetworkObject(objID, gameObjects);
+
+	m_overlappedObjects.insert(objID);
 }
 
 void Scene_Test::RemoveObject(network::CPacket& packet)
@@ -559,6 +569,9 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			}
 
 			scene->RemoveNetworkObject(removeObjects);
+
+			//std::cout << id << ", " << magic_enum::enum_name(type) << std::endl;
+			m_overlappedObjects.erase(id);
 		}
 		break;
 		default:
@@ -566,6 +579,17 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 	}
 
 	GET_NETWORK->RemoveNetworkObject(id);
+}
+
+bool Scene_Test::FindOverlappedObject(int32_t id)
+{
+	for (auto& obj : GET_SCENE->GetNetworkObject())
+	{
+		if (obj->GetNetwork()->GetID() == id)
+			return true;
+	}
+
+	return false;
 }
 
 void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, ObjectDesc& objectDesc)
@@ -699,9 +723,8 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast1";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
-			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
@@ -710,6 +733,7 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 			objectDesc.strName = L"Weeper Cast2";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
@@ -783,7 +807,6 @@ void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::sha
 		break;
 		default:
 		{
-			//scene->AddGameObject(gameObjects);
 			scene->AddNetworkObject(gameObjects);
 		}
 		break;

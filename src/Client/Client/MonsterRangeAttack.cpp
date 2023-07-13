@@ -82,11 +82,7 @@ void MonsterRangeAttack::Transform(network::CPacket& packet)
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
 
-	GetTransform()->SetWorldVec3Position(pos);
-	Vec3 temp{ quat.x, quat.y, quat.z };
-
-	Matrix matWorld{};
-	matWorld = Matrix::CreateScale(scale / 100.f);
+	Matrix matWorld{ Matrix::CreateScale(scale / 100.f) };
 	matWorld *= Matrix::CreateFromQuaternion(quat);
 	matWorld *= Matrix::CreateTranslation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);

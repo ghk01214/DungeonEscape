@@ -46,7 +46,7 @@ public:
 public:
 	void GetDamaged(int32_t damage);
 	void SendTransform();
-	
+
 public:
 	MonsterAI* GetAI();
 

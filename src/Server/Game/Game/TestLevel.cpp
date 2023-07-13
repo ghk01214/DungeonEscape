@@ -36,8 +36,8 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Trigger");
 
-	LoadBasicMap3();
-	//LoadMap();
+	//LoadBasicMap3();
+	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -77,23 +77,23 @@ void TestLevel::LoadMap()
 	FBXMapLoader mapLoader;
 
 	// static Mesh 정보 로드
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\CUBE.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\CUBE.fbx");
 
 
-	// actor 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1.FBX");
+	//// actor 정보 로드
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1.FBX");
 
-	//mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");
-	//mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models3.fbx");
-	//mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Stage1.fbx");
+	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");
+	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models3.fbx");
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\NewStage.fbx");
 
 	auto objmgr = ObjectManager::GetInstance();
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
@@ -200,7 +200,7 @@ void TestLevel::LoadBasicMap3()
 {
 	auto objmgr = ObjectManager::GetInstance();
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(200.f, 1000.f, 0.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
 
 #pragma region CenterBox(0,0,0)

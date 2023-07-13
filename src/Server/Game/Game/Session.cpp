@@ -113,7 +113,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAddAnimateObjPacket(int32_t id, GameObject* obj)
+	void CSession::SendAddAnimateObjPacket(GameObject* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -123,7 +123,7 @@ namespace game
 		auto objType{ obj->GetObjectType() };
 		auto fbxType{ obj->GetFBXType() };
 
-		packet.WriteID(id);
+		packet.WriteID(obj->GetID());
 		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
 
 		packet.Write<float>(pos.x);
@@ -216,7 +216,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAddObjPacket(int32_t id, GameObject* obj)
+	void CSession::SendAddObjPacket(GameObject* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -224,7 +224,7 @@ namespace game
 		auto quat{ trans->GetRotation() };
 		auto scale{ trans->GetScale() };
 
-		packet.WriteID(id);
+		packet.WriteID(obj->GetID());
 		packet.WriteProtocol(ProtocolID::WR_ADD_OBJ_ACK);
 
 		packet.Write<float>(pos.x);
@@ -268,7 +268,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendTransformPacket(int32_t id, ProtocolID protocol, GameObject* obj)
+	void CSession::SendTransformPacket(GameObject* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -282,9 +282,9 @@ namespace game
 		quat.Normalize();
 
 		// 타깃 id 작성
-		packet.WriteID(id);
+		packet.WriteID(obj->GetID());
 		// 프로토콜 종류 작성
-		packet.WriteProtocol(protocol);
+		packet.WriteProtocol(ProtocolID::WR_TRANSFORM_ACK);
 
 		// 타깃 렌더링 좌표 작성
 		packet.Write<float>(pos.x);

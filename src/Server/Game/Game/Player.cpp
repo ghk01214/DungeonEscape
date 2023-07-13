@@ -12,8 +12,6 @@
 #include "BoxCollider.h"
 #include "TriggerObject.h"
 
-#define SEND_AGAIN 3
-
 using namespace std;
 
 Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
@@ -209,11 +207,11 @@ void Player::SendChangedStateAgain()
 	if (m_sendState <= 0)
 		return;
 
-	game::Message msg{ m_id, ProtocolID::WR_CHANGE_STATE_ACK };
-	msg.state = m_currState;
-	msg.objType = m_objType;
+	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
+	ev.state = m_currState;
+	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(msg);
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 
 	--m_sendState;
 }
@@ -461,11 +459,11 @@ void Player::State_Check_Enter()
 	m_prevState = m_currState;
 	m_sendState = SEND_AGAIN;
 
-	game::Message msg{ m_id, ProtocolID::WR_CHANGE_STATE_ACK };
-	msg.state = m_currState;
-	msg.objType = m_objType;
+	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
+	ev.state = m_currState;
+	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(msg);
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 
 	//std::cout << "check state : " << magic_enum::enum_name(m_currState) << "\n";
 }
@@ -812,8 +810,9 @@ void Player::SendTransform()
 	if (m_startSendTransform == false)
 		return;
 
-	game::Message msg{ m_id, ProtocolID::WR_TRANSFORM_ACK };
-	game::MessageHandler::GetInstance()->PushTransformMessage(msg);
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRANSFORM_ACK, m_id };
+	ev.objType = m_objType;
+	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
 
 	//auto p{ GetTransform()->GetPosition() };
 	//std::cout << p.x << ", " << p.y << ", " << p.z << "\n";

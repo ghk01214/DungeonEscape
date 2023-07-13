@@ -14,7 +14,8 @@
 Scorpion::Scorpion(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	Monster{ MonsterID, position, rotation, scale },
 	m_prevState{ IDLE1 },
-	m_currState{ m_prevState }
+	m_currState{ m_prevState },
+	m_sendState{ 0 }
 {
 	m_hp = 20;
 
@@ -37,6 +38,8 @@ void Scorpion::Init()
 
 void Scorpion::Update(double timeDelta)
 {
+	SendChangedStateAgain();
+
 	if (IsDead() == true)
 	{
 		if (m_currState != DEAD)
@@ -149,11 +152,14 @@ void Scorpion::CheckState()
 		{
 			SetRemoveReserved();
 
-			game::Message msg{ -1, ProtocolID::WR_REMOVE_ACK };
-			msg.objID = m_id;
-			msg.objType = m_objType;
+			for (int32_t i = 0; i < SEND_AGAIN; ++i)
+			{
+				game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+				ev.objID = m_id;
+				ev.objType = m_objType;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(msg);
+				game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			}
 		}
 		break;
 		case IDLE1:
@@ -279,13 +285,14 @@ void Scorpion::CheckState()
 	}
 
 	m_prevState = m_currState;
+	m_sendState = SEND_AGAIN;
 
-	game::Message msg{ -1, ProtocolID::WR_CHANGE_STATE_ACK };
-	msg.state = m_currState;
-	msg.objID = m_id;
-	msg.objType = m_objType;
+	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
+	ev.state = m_currState;
+	ev.objID = m_id;
+	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(msg);
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void Scorpion::UpdateFrameRepeat()
@@ -364,4 +371,18 @@ Scorpion::SCORPION_STATE Scorpion::GetState() const
 void Scorpion::SetState(SCORPION_STATE state)
 {
 	m_currState = state;
+}
+
+void Scorpion::SendChangedStateAgain()
+{
+	if (m_sendState <= 0)
+		return;
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
+	ev.state = m_currState;
+	ev.objType = m_objType;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+
+	--m_sendState;
 }

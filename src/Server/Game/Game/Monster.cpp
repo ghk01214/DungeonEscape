@@ -136,11 +136,14 @@ void Monster::GetDamaged(int32_t damage)
 
 void Monster::SendTransform()
 {
-	if (m_startSendTransform == true)
-	{
-		game::Message msg{ m_id, ProtocolID::WR_TRANSFORM_ACK };
-		game::MessageHandler::GetInstance()->PushTransformMessage(msg);
-	}
+	if (m_startSendTransform == false)
+		return;
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRANSFORM_ACK };
+	ev.objID = m_id;
+	ev.objType = m_objType;
+
+	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
 }
 
 MonsterAI* Monster::GetAI()

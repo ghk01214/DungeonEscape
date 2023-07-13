@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+class GameObject;
 class ObjectManager;
 class Player;
 
@@ -7,29 +8,33 @@ namespace game
 {
 	struct Message
 	{
-		ProtocolID	msgProtocol;
-		int32_t		playerID;
-		int32_t		objID;
-		server::OBJECT_TYPE objType;
-		server::FBX_TYPE fbxType;
-		int32_t		roomID;
-		ulong32_t	keyInput;
-		float		aniPlayTime;
-		Vec3		cameraLook;
-		int32_t		state;
-		int32_t		damage;
+		ProtocolID				msgProtocol;
+		int32_t					playerID;
+		int32_t					objID;
+		server::OBJECT_TYPE		objType;
+		server::FBX_TYPE		fbxType;
+		int32_t					roomID;
+		ulong32_t				keyInput;
+		float					aniPlayTime;
+		Vec3					cameraLook;
+		int32_t					state;
 
-		Message(int32_t id = -1, ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE);
+		Message(int32_t playerID = -1, ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE);
 	};
 
 	struct TIMER_EVENT
 	{
-		std::chrono::steady_clock::time_point wakeUpTime;
+		std::chrono::steady_clock::time_point	wakeUpTime;
+		ProtocolID								type;
+		int32_t									playerID;
+		int32_t									objID;
+		int32_t									roomID;
+		server::OBJECT_TYPE						objType;
+		int32_t									state;
 
-		constexpr bool operator<(const TIMER_EVENT& left) const
-		{
-			return left.wakeUpTime < wakeUpTime;
-		}
+		TIMER_EVENT(ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE, int32_t playerID = -1);
+
+		constexpr bool operator<(const TIMER_EVENT& left) const;
 	};
 
 	class MessageHandler
@@ -46,40 +51,45 @@ namespace game
 
 		void TimerThread();
 		void TransformThread();
+		void AddRemoveThread();
 	public:
 		void PushRecvMessage(Message& msg);
-		void PushSendMessage(Message& msg);
+		void PushSendMessage(TIMER_EVENT& ev);
 		void ExecuteMessage();
 
-		void PushTransformMessage(Message& msg);
+		void PushTransformMessage(TIMER_EVENT& ev);
+		void PushAddRemoveMessage(TIMER_EVENT& ev);
 
 	public:
 		int32_t NewObjectID();
 
-		void RemoveObject(int32_t objID);
+		void RemoveObject();
 
 		int32_t GetObjectNum() { return m_objectsNum; }
 
 	private:
 		void Login(int32_t playerID, Player* player);
-		void Logout(int32_t playerID, int32_t roomID, Player* player, ObjectManager* objMgr);
+		void Logout(int32_t playerID, int32_t roomID, Player* player);
+		void CreatePlayer(Message& msg);
+		void SetKeyInput(Message& msg);
+		void SetPlayerAniPlayTime(Message& msg);
+		void SetAniEndFlag(Message& msg);
+		void SetPlayerCameraLook(Message& msg);
 
 	private:
 		HANDLE m_iocp;
 
 		tbb::concurrent_queue<Message> m_recvQueue;
-		tbb::concurrent_queue<Message> m_sendQueue;
-		tbb::concurrent_queue<Message> m_transformMessage;
+		tbb::concurrent_priority_queue<TIMER_EVENT> m_sendQueue;
+		tbb::concurrent_priority_queue<TIMER_EVENT> m_transformQueue;
+		tbb::concurrent_priority_queue<TIMER_EVENT> m_addRemoveQueue;
 
 		std::atomic_int32_t m_recvQueueSize;
-		std::atomic_int32_t m_sendQueueSize;
-
-		tbb::concurrent_priority_queue<TIMER_EVENT> m_eventQueue;
-		tbb::concurrent_priority_queue<TIMER_EVENT> m_transformEvent;
 
 		std::atomic_int32_t m_objectsNum;
+		std::atomic_int32_t m_objectIDOffest;
 		tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableObjectID;
 
-		std::unordered_map<int32_t, int32_t> m_tempIDMap;
+		ObjectManager* m_objMgr;
 	};
 }

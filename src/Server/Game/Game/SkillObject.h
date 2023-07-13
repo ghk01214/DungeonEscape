@@ -84,6 +84,9 @@ public:
 
 public:
 	bool IsPlayerSkill();
+	void SendTransform();
+	void SendAddAgain();
+	void SendRemoveAgain();
 
 private:
 	RigidBody* m_body = nullptr;
@@ -96,6 +99,9 @@ private:
 	GameObject* m_owner = nullptr;
 
 	bool m_flagPlayer = false;
+
+	int32_t m_sendAdd = 0;
+	int32_t m_sendRemove = 0;
 };
 
 

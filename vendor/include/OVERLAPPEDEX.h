@@ -35,8 +35,6 @@ namespace network
 		char data[CPacket::BUFF_SIZE];
 
 		ProtocolID msgProtocol;
-		int32_t playerID;
-		int32_t objID;
 		int32_t roomID;
 		int32_t state;
 

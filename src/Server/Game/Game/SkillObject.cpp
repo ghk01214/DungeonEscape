@@ -301,11 +301,15 @@ void SkillObject::ServerMessage_SkillInit()
 		break;
 	}
 
-	game::Message sendMsg{ -1, ProtocolID::WR_ADD_OBJ_ACK };
-	sendMsg.objType = m_objType;
-	sendMsg.objID = m_id;
+//	std::cout << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
+	for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
+	{
+		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
+		ev.objType = m_objType;
+		ev.objID = m_id;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	}
 }
 
 void SkillObject::ServerMessage_SkillHit()
@@ -313,11 +317,14 @@ void SkillObject::ServerMessage_SkillHit()
 	//스킬 오브젝트 객체 삭제 전달.
 	//추후 피격 잔상 위치 같이 추가적으로 더 정보를 전달할 수 있음.
 
-	game::Message sendMsg{ -1, ProtocolID::WR_REMOVE_ACK };
-	sendMsg.objID = m_id;
-	sendMsg.objType = m_objType;
+	for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
+	{
+		game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+		ev.objID = m_id;
+		ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(sendMsg);
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	}
 }
 
 bool SkillObject::IsPlayerSkill()
@@ -520,7 +527,7 @@ void SkillObject::HandleMonsterSkillCollision()
 				{
 					SetRemoveReserved();						//객체 삭제
 					ServerMessage_SkillHit();					//서버 메시지 처리
-					
+
 					if (m_skillAttrib & SKILLATTRIBUTE::NUCLEAR)
 					{
 						Nuclear_Attribute_Explosion();

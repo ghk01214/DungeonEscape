@@ -22,7 +22,8 @@ using namespace std;
 Weeper::Weeper(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	Monster{ MonsterID, position, rotation, scale },
 	m_prevState{ IDLE },
-	m_currState{ m_prevState }
+	m_currState{ m_prevState },
+	m_sendState{ 0 }
 {
 	m_hp = 20;
 
@@ -49,6 +50,8 @@ void Weeper::Init()
 
 void Weeper::Update(double timeDelta)
 {
+	SendChangedStateAgain();
+
 	m_weeperAI->Update(timeDelta);
 
 	CheckState();
@@ -124,11 +127,14 @@ void Weeper::CheckState()
 		{
 			SetRemoveReserved();
 
-			game::Message msg{ -1, ProtocolID::WR_REMOVE_ACK };
-			msg.objID = m_id;
-			msg.objType = m_objType;
+			for (int32_t i = 0; i < SEND_AGAIN; ++i)
+			{
+				game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+				ev.objID = m_id;
+				ev.objType = m_objType;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(msg);
+				game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			}
 		}
 		break;
 		case DEATH:
@@ -196,13 +202,14 @@ void Weeper::CheckState()
 	}
 
 	m_prevState = m_currState;
+	m_sendState = SEND_AGAIN;
 
-	game::Message msg{ -1, ProtocolID::WR_CHANGE_STATE_ACK };
-	msg.state = m_currState;
-	msg.objID = m_id;
-	msg.objType = m_objType;
+	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
+	ev.state = m_currState;
+	ev.objID = m_id;
+	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(msg);
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void Weeper::UpdateFrame()
@@ -271,7 +278,7 @@ void Weeper::Pattern_Cast1()
 		order = 0;
 #pragma endregion
 
-	//투사체 위치 선정			
+	//투사체 위치 선정
 	physx::PxVec3 ballPos = m_controller->GetBody()->GetGlobalPose().p;
 	ballPos.y += 550.f;		//weeper 모델 위치 고려해서 살짝 위로
 
@@ -288,7 +295,7 @@ void Weeper::Pattern_Cast1()
 
 	switch (order)
 	{
-		case 0: 
+		case 0:
 		break;
 
 		case 1:
@@ -409,9 +416,9 @@ int Weeper::Randnum_Cast1_XInterval()
 	static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	static std::default_random_engine generator(seed);
 	static std::uniform_int_distribution<int> distribution(0, 1);
-	
+
 	int number = distribution(generator) * 2 - 1;
-	
+
 	return number;
 }
 
@@ -420,13 +427,13 @@ float Weeper::Randnum_Cast1_YInterval()
 	static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	static std::default_random_engine generator(seed);
 	static std::uniform_int_distribution<int> distribution(-5, 5);
-	
+
 	int number = 0;
 	while (number == 0) {
 		// 랜덤 값을 생성
 		number = distribution(generator) * 50;
 	}
-	
+
 	return number;
 }
 
@@ -455,4 +462,18 @@ Weeper::WEEPER_STATE Weeper::GetState() const
 void Weeper::SetState(WEEPER_STATE state)
 {
 	m_currState = state;
+}
+
+void Weeper::SendChangedStateAgain()
+{
+	if (m_sendState <= 0)
+		return;
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
+	ev.state = m_currState;
+	ev.objType = m_objType;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+
+	--m_sendState;
 }

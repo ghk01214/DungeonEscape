@@ -72,9 +72,13 @@ public:
 
 	void SetState(SCORPION_STATE state);
 
+	void SendChangedStateAgain();
+
 private:
 	SCORPION_STATE m_prevState;
 	SCORPION_STATE m_currState;
+
+	int32_t m_sendState;
 
 private:
 	Vec3 m_patternSize;
