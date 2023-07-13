@@ -12,10 +12,13 @@
 #include "BoxCollider.h"
 #include "PhysDevice.h"
 
+#include "ObjectManager.h"
+#include "Layer.h"
 #include "Player.h"
 #include "Monsters.hpp"
 #include "MonsterAI.h"
 #include "WeeperAI.h"
+#include "CustomController.h"
 
 
 SkillObject::SkillObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLOBJECTTYPE skilltype, GameObject* target, GameObject* owner)
@@ -469,8 +472,15 @@ void SkillObject::HandleMonsterSkillCollision()
 					break;
 				}
 
+				if (m_skillType == SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR)
+				{
+					Nuclear_Attribute_Explosion();
+				}
+
 				SetRemoveReserved();						//객체 삭제
 				ServerMessage_SkillHit();					//서버 메시지 처리
+
+
 			}
 		}
 
@@ -510,7 +520,11 @@ void SkillObject::HandleMonsterSkillCollision()
 				{
 					SetRemoveReserved();						//객체 삭제
 					ServerMessage_SkillHit();					//서버 메시지 처리
-					//triggerbox생성 (폭발)
+					
+					if (m_skillAttrib & SKILLATTRIBUTE::NUCLEAR)
+					{
+						Nuclear_Attribute_Explosion();
+					}
 				}
 				break;
 				case SKILLOBJECTTYPE::WEEPER_CAST3_BALL:
@@ -520,8 +534,6 @@ void SkillObject::HandleMonsterSkillCollision()
 				}
 				break;
 			}
-
-
 		}
 	}
 
@@ -648,7 +660,53 @@ void SkillObject::SetAttribute(SKILLATTRIBUTE attrib, bool set)
 	}
 }
 
+void SkillObject::SetSkillObjectType(SKILLOBJECTTYPE type)
+{
+	m_skillType = type;
+}
+
 SkillObject::SKILLATTRIBUTE SkillObject::GetAttribute()
 {
 	return m_skillAttrib;
+}
+
+void SkillObject::Nuclear_Attribute_Explosion()
+{
+	auto layer = ObjectManager::GetInstance()->GetLayer(L"Layer_Player");
+	auto players = layer->GetGameObjects();
+	for (auto& obj : players)
+	{
+		Player* player = static_cast<Player*>(obj);
+		physx::PxVec3 playerPos = TO_PX3(player->GetControllerPosition());
+		playerPos.y = 0;
+		physx::PxVec3 skillObjPos = m_body->GetPosition();
+		skillObjPos.y = 0;
+		physx::PxVec3 knockbackDir = playerPos - skillObjPos;
+		float distance = knockbackDir.magnitude();
+
+		if (distance > 1000.f)
+			continue;
+
+		knockbackDir.normalize();								//방향 정규화
+
+		auto playerController = player->GetController();
+		auto playerBody = playerController->GetBody();
+
+		float verticalStrength = 1.f;
+		float horizontalStrength = 1.f;
+
+		if (distance < 300)
+		{
+			horizontalStrength = 300.f;
+			verticalStrength = 1000.f;
+		}
+		else
+		{
+			horizontalStrength = 100.f;
+			verticalStrength = 600.f;
+		}
+
+		playerController->BounceFromAttack();					//플레이어 input 무효화 (땅 착지전까지)
+		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(knockbackDir.x * horizontalStrength, verticalStrength, knockbackDir.z * horizontalStrength));
+	}
 }

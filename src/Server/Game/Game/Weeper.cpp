@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Weeper.h"
 #include "WeeperAI.h"
 #include "SkillObject.h"
@@ -358,7 +358,8 @@ void Weeper::Pattern_Cast2_Scatter()
 void Weeper::Pattern_Cast2_CounterNuclear()
 {
 	m_weeperAI->Cast2Counter_OFF();			//카운터 모드 종료
-	EventHandler::GetInstance()->AddEvent("CAST2_NUCLEAR_AIRFIRE", 0.f, this);
+	SetState(WEEPER_STATE::CAST2_END);
+	EventHandler::GetInstance()->AddEvent("CAST2_NUCLEAR_AIRFIRE", 0.5f, this);
 }
 
 SkillObject* Weeper::Pattern_Cast3()

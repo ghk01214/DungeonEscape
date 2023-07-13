@@ -44,6 +44,8 @@ public:
 	void DamageCheck();
 	void Cast2Counter_ON();
 	void Cast2Counter_OFF();
+	void Cast2Vulnerable_ON();
+	void Cast2Vulnerable_OFF();
 
 private:
 	void ReportSchedule();		//콘솔출력 목적의 디버그 전용 함수
@@ -57,6 +59,7 @@ private:
 	float m_detectRange;				//몬스터 인식 범위
 	float m_targetPos_UpdateInterval;	//플레이어 위치 갱신 주기
 	float m_cast2Counter = false;		//Cast2의 nuclear
+	float m_vulnerable = false;			//Cast2의 카운터 취약 순간
 
 public:
 	bool m_debugmode = false;			//서버 FSM 확인용 변수
