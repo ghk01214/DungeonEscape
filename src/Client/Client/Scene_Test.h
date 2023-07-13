@@ -35,7 +35,6 @@ private:
 	void CreateRemoteObject(network::CPacket& packet);
 	void RemoveObject(network::CPacket& packet);
 
-	bool FindOverlappedObject(int32_t id);
 	void ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, ObjectDesc& objectDesc);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
 

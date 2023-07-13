@@ -84,7 +84,6 @@ public:
 
 public:
 	bool IsPlayerSkill();
-	void SendTransform();
 	void SendAddAgain();
 	void SendRemoveAgain();
 

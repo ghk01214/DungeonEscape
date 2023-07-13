@@ -77,6 +77,7 @@ public:
 
 private:
 	std::list<GameObject*>	m_GameObjects;
+	std::list<GameObject*>	m_removeObjects;
 	std::mt19937 m_randomEngine;
 };
 

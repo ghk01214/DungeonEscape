@@ -70,6 +70,7 @@ public:
 	void SetRemovalFlag(bool value);
 	void SetRemoveReserved();			//직간접적으로 RigidBody를 가지는 게임 오브젝트는 반드시 해당 함수로 삭제
 	bool GetRemoveReserved();
+	int32_t GetRemoveReservedValue();
 
 public:
 	Transform* GetTransform();

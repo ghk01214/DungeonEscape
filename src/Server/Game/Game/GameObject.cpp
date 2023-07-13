@@ -77,6 +77,11 @@ bool GameObject::GetRemoveReserved()
         return true;
 }
 
+int32_t GameObject::GetRemoveReservedValue()
+{
+    return m_removeReserved;
+}
+
 Transform* GameObject::GetTransform()
 {
     return m_transform;

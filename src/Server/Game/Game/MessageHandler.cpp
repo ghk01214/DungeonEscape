@@ -297,8 +297,11 @@ namespace game
 				case ProtocolID::MY_ISSUE_PLAYER_ID_REQ:
 				case ProtocolID::WR_ISSUE_PLAYER_ID_REQ:
 				{
+#ifndef _DEBUG
 					TIMER_EVENT ev{ magic_enum::enum_value<ProtocolID>(magic_enum::enum_integer(msg.msgProtocol) + 1), msg.playerID };
-					//TIMER_EVENT ev{ ProtocolID::MY_ISSUE_PLAYER_ID_ACK, msg.playerID };
+#else
+					TIMER_EVENT ev{ ProtocolID::MY_ISSUE_PLAYER_ID_ACK, msg.playerID };
+#endif
 					PushSendMessage(ev);
 				}
 				break;

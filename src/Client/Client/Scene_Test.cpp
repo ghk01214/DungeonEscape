@@ -451,8 +451,6 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 {
 	int32_t objID{ packet.ReadID() };
 
-	//std::cout << objID << std::endl;
-	//if (FindOverlappedObject(objID) == true)
 	if (m_overlappedObjects.contains(objID) == true)
 		return;
 
@@ -475,7 +473,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	server::OBJECT_TYPE objType{ packet.Read<server::OBJECT_TYPE>() };
 	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 
-	std::cout << objID << ", " << magic_enum::enum_name(objType) << std::endl;
+	//std::cout << "생성 : " << objID << ", " << magic_enum::enum_name(objType) << std::endl;
 
 	ObjectDesc objectDesc;
 	ClassifyObject(-1, fbxType, objectDesc);
@@ -526,6 +524,8 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			scene->RemoveBoss(removeObject);
 
 			std::cout << "REMOVE BOSS" << std::endl;
+
+			GET_NETWORK->RemoveNetworkObject(id);
 		}
 		break;
 		case server::OBJECT_TYPE::MONSTER:
@@ -542,6 +542,8 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			scene->RemoveMonster(removeObject);
 
 			std::cout << "REMOVE MONSTER" << std::endl;
+
+			GET_NETWORK->RemoveNetworkObject(id);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
@@ -559,6 +561,9 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		case server::OBJECT_TYPE::MONSTER_THUNDERBALL:
 		case server::OBJECT_TYPE::MONSTER_POISONBALL:
 		{
+			if (m_overlappedObjects.contains(id) == false)
+				return;
+
 			auto objects{ scene->GetNetworkObject() };
 			network::NetworkGameObject removeObjects;
 
@@ -570,26 +575,15 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 
 			scene->RemoveNetworkObject(removeObjects);
 
-			//std::cout << id << ", " << magic_enum::enum_name(type) << std::endl;
+			//std::cout << "삭제 : " << id << ", " << magic_enum::enum_name(type) << std::endl;
 			m_overlappedObjects.erase(id);
+
+			GET_NETWORK->RemoveNetworkObject(id);
 		}
 		break;
 		default:
 		break;
 	}
-
-	GET_NETWORK->RemoveNetworkObject(id);
-}
-
-bool Scene_Test::FindOverlappedObject(int32_t id)
-{
-	for (auto& obj : GET_SCENE->GetNetworkObject())
-	{
-		if (obj->GetNetwork()->GetID() == id)
-			return true;
-	}
-
-	return false;
 }
 
 void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, ObjectDesc& objectDesc)

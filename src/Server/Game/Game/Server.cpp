@@ -793,6 +793,14 @@ namespace game
 						if (skill == nullptr)
 							continue;
 
+						if (skill->GetID() != id)
+							continue;
+
+						/*if (skill->GetRemovalFlag() == true)
+							continue;*/
+
+						//std::cout << "add : " << skill->GetID() << ", " << magic_enum::enum_name(skill->GetObjectType()) << "\n";
+
 						for (auto& client : m_sessions)
 						{
 							if (client->GetState() != STATE::INGAME)
@@ -801,8 +809,6 @@ namespace game
 							client->SendAddObjPacket(skill);
 						}
 					}
-
-					std::cout << "send : " << id << ", " << magic_enum::enum_name(postOver->objType) << "\n";
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT)
 				{
@@ -811,6 +817,12 @@ namespace game
 						auto map{ dynamic_cast<MapObject*>(object) };
 
 						if (map == nullptr)
+							continue;
+
+						if (map->GetID() != id)
+							continue;
+
+						if (map->GetRemovalFlag() == true)
 							continue;
 
 						for (auto& client : m_sessions)
@@ -1000,7 +1012,7 @@ namespace game
 
 				m_msgHandler->RemoveObject();
 
-				//std::cout << "send : " << id << ", " << magic_enum::enum_name(postOver->objType) << "\n";
+				//std::cout << "remove : " << id << ", " << magic_enum::enum_name(postOver->objType) << "\n";
 			}
 			break;
 #pragma endregion
