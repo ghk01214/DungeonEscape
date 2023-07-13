@@ -144,6 +144,8 @@ void Event::ExecuteMsg_Once()
 		EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST2END", 6.f, weeper);		//클라에서 애니메이션 종료 못들어도 종료
 
 		skillObj->WeeperNuclearFire();
+		skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::NUCLEAR, true);
+		skillObj->SetSkillObjectType(SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR);
 		}
 
 	if (msg == "WEEPER_COUNTERSTAGGER_END")											// WeeperAI::DmgCheck()에서 호출

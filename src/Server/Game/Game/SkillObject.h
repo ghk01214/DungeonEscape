@@ -41,7 +41,8 @@ public:
 		LEVITATE		= 1 << 0,
 		GUIDED			= 1 << 1,
 		ASCENDING		= 1 << 2,
-		DESCENDING		= 1 << 3
+		DESCENDING		= 1 << 3,
+		NUCLEAR			= 1 << 4
 	};
 
 public:
@@ -75,7 +76,11 @@ public:
 	void Attribute_Descending();
 
 	void SetAttribute(SKILLATTRIBUTE attrib, bool set);
+	void SetSkillObjectType(SKILLOBJECTTYPE type);
 	SKILLATTRIBUTE GetAttribute();
+
+public:
+	void Nuclear_Attribute_Explosion();
 
 public:
 	bool IsPlayerSkill();
