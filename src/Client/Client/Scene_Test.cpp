@@ -384,9 +384,6 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 {
 	int32_t id{ packet.ReadID() };
 
-	if (FindOverlappedObject(id) == true)
-		return;
-
 	Vec3 pos;
 	pos.x = packet.Read<float>();
 	pos.y = packet.Read<float>();

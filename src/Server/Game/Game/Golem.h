@@ -8,38 +8,38 @@ class Golem : public Monster
 public:
 	enum GOLEM_STATE
 	{
-		ROAR,
-		SPELL_END,
-		SPELL_LOOP,
-		SPELL_START,
-		STUN,
-		ATTACK1,
-		ATTACK2,
-		ATTACK3,
-		ATTACK4,
-		DAMAGE,
-		READY,
-		DEATH,
-		LAUGH,
-		TALK,
-		IDLE1,
-		IDLE2,
-		JUMP_END,
-		JUMP_LOOP,
-		JUMP_START,
-		RUN_BACKWARD,
-		RUN,
-		RUN_LEFT,
-		RUN_RIGHT,
-		SWIM_BACKWARD,
-		SWIM,
-		SWIM_IDLE,
-		SWIM_LEFT,
-		SWIM_RIGHT,
-		WALK_BACKWARD,
-		WALK,
-		WALK_LEFT,
-		WALK_RIGHT,
+		ROAR,			   // 2.33
+		SPELL_END,		   // 1.5
+		SPELL_LOOP,		   // 1.5
+		SPELL_START,	   // 1.5
+		STUN,			   // 2.33
+		ATTACK1,		   // 1.5
+		ATTACK2,		   // 1.53
+		ATTACK3,		   // 2.33
+		ATTACK4,		   // 1.6
+		DAMAGE,			   // 1.33
+		READY,			   // 2.33
+		DEATH,			   // 3.3
+		LAUGH,			   // 3
+		TALK,			   // 2.97
+		IDLE1,			   // 2
+		IDLE2,			   // 3
+		JUMP_END,		   // 1.27
+		JUMP_LOOP,		   // 1
+		JUMP_START,		   // 1.27
+		RUN_BACKWARD,	   // 2
+		RUN,			   // 2
+		RUN_LEFT,		   // 2
+		RUN_RIGHT,		   // 2
+		SWIM_BACKWARD,	   // 2
+		SWIM,			   // 2
+		SWIM_IDLE,		   // 2.33
+		SWIM_LEFT,		   // 2
+		SWIM_RIGHT,		   // 2
+		WALK_BACKWARD,	   // 2.33
+		WALK,			   // 2.33
+		WALK_LEFT,		   // 2.33
+		WALK_RIGHT,		   // 2.33
 
 		DEAD,
 

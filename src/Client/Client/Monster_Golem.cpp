@@ -38,6 +38,8 @@ Monster_Golem::~Monster_Golem()
 void Monster_Golem::Start()
 {
 	Monster_Script::Start();
+
+	GetAnimator()->SetFramePerSecond(30);
 }
 
 void Monster_Golem::Update()
