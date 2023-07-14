@@ -32,7 +32,6 @@ namespace game
 
 		void SendLoginPacket(Player* obj);
 		void SendPlayerIDIssuePacket(int32_t id, ProtocolID protocol);
-		void SendIDIssuePacket(GameObject* obj);
 		void SendAddAnimateObjPacket(GameObject* obj);
 		void SendAddObjPacket(GameObject* obj);
 		void SendObjectIDPacket(int32_t objID, int32_t oldObjID);

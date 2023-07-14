@@ -31,6 +31,8 @@ shared_ptr<MeshData> MeshData::LoadFromFBX(const wstring& path)
 	// 파일이 존재한다면
 	if (INVALID_HANDLE_VALUE != hFile)
 	{
+		// 파일 읽어서 정보 반환
+
 		// nullptr 반환
 		CloseHandle(hFile);
 		return nullptr;

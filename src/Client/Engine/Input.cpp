@@ -93,9 +93,13 @@ void CInput::Update()
 
 			// 이전 프레임에 키를 누른 상태라면 UP
 			if (state == KEY_STATE::PRESS || state == KEY_STATE::DOWN)
+			{
 				state = KEY_STATE::UP;
+			}
 			else
+			{
 				state = KEY_STATE::NONE;
+			}
 		}
 	}
 
@@ -108,6 +112,9 @@ void CInput::Update()
 	// 현재 프레임의 마우스 좌표 계산
 	::GetCursorPos(&m_curMousePos);
 	::ScreenToClient(GEngine->GetWindow().hWnd, &m_curMousePos);
+
+	// 현재 프레임의 입력 정보 세팅
+	SetUp_InputDeviceState();
 }
 
 void CInput::EncodeKeyInput(void)

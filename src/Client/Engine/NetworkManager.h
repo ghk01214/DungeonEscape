@@ -24,8 +24,6 @@ namespace network
 
 	public:
 		void Init(const std::wstring& serverAddr);
-		void RegisterObject(server::OBJECT_TYPE type, std::shared_ptr<CGameObject> object);
-		void RegisterObject(server::OBJECT_TYPE type, NetworkGameObject object);
 
 		void Connect();
 		void EndThreadProcess();
@@ -37,8 +35,8 @@ namespace network
 		void SendLoginPacket(const std::wstring& ID, const std::wstring& pwd);
 		void SendKeyInputPacket();
 		void SendLogoutPacket();
-		void SendIDIssueRequest();
 
+		void AddNetworkComponent(NetworkGameObject& object);
 		void AddNetworkObject(int32_t id, NetworkGameObject& object);
 		void RemoveNetworkObject(int32_t id);
 		void ExchangeObjectID(int32_t oldID, int32_t newID);
@@ -89,6 +87,5 @@ namespace network
 		bool m_login;
 
 		std::unordered_map<int32_t, NetworkGameObject> m_objects;
-		std::list<NetworkComponent> m_unregisterdObjects;
 	};
 }

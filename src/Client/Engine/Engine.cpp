@@ -42,11 +42,17 @@ void Engine::Init(const WindowInfo& info)
 void Engine::Update()
 {
 	GET_SINGLE(CInput)->Update();
+
 	GET_SINGLE(Timer)->Update();
+
 	GET_SINGLE(SceneManager)->Update();
+	GET_SINGLE(SceneManager)->LateUpdate();
+	GET_SINGLE(SceneManager)->FinalUpdate();
+
 	GET_SINGLE(InstancingManager)->ClearBuffer();
 
 	Render();
+
 	ShowFps();
 }
 

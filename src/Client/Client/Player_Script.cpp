@@ -32,10 +32,11 @@ Player_Script::~Player_Script()
 
 void Player_Script::Start()
 {
-	if (GetNetwork()->IsMyPlayer() == false)
-		return;
+	if (GetNetwork()->IsMyPlayer() == true)
+	{
+		GetNetwork()->SendAddPlayer(m_playerType);
+	}
 
-	GetNetwork()->SendAddPlayer(m_playerType);
 	GetAnimator()->Play(m_currState);
 
 	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
@@ -300,22 +301,25 @@ void Player_Script::StartRender(network::CPacket& packet)
 
 	std::cout << std::format("ID : {}\n", id);
 	std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
-	std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
-	std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
+	//std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
+	//std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
 
 	m_currState = magic_enum::enum_value<PLAYER_STATE>(currState)	;
 
 	pos.y -= (m_radius + m_halfHeight);
 
-	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-	matWorld.Translation(pos);
+	//Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	//matWorld.Translation(pos);
+	//GetTransform()->SetWorldMatrix(matWorld);
+
+	Matrix matWorld{ Matrix::CreateRotationY(180.f) };
+	matWorld *= Matrix::CreateTranslation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
+
 	//Matrix matWorld{ Matrix::CreateScale(scale) };
 	//matWorld *= Matrix::CreateFromQuaternion(quat);
 	//matWorld *= Matrix::CreateTranslation(pos);
 	//GetTransform()->SetWorldMatrix(matWorld);
-
-	m_currState = magic_enum::enum_value<PLAYER_STATE>(currState);
 }
 
 void Player_Script::Transform(network::CPacket& packet)
@@ -340,9 +344,14 @@ void Player_Script::Transform(network::CPacket& packet)
 
 	pos.y -= (m_radius + m_halfHeight);
 
-	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-	matWorld.Translation(pos);
+	//Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	//matWorld.Translation(pos);
+	//GetTransform()->SetWorldMatrix(matWorld);
+
+	Matrix matWorld{ Matrix::CreateRotationY(180.f) };
+	matWorld *= Matrix::CreateTranslation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
+
 	//Matrix matWorld{ Matrix::CreateScale(scale) };
 	//matWorld *= Matrix::CreateFromQuaternion(quat);
 	//matWorld *= Matrix::CreateTranslation(pos);

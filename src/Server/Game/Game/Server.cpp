@@ -501,11 +501,6 @@ namespace game
 
 		switch (protocol)
 		{
-			case ProtocolID::MY_ISSUE_PLAYER_ID_REQ:
-			{
-				InputCommandMessage(msg);
-			}
-			break;
 			case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 			{
 				msg.objType = packet.Read<server::OBJECT_TYPE>();
@@ -683,33 +678,6 @@ namespace game
 			break;
 #pragma endregion
 #pragma region[MY]
-			case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
-			{
-				m_sessions[id]->SendPlayerIDIssuePacket(id, postOver->msgProtocol);
-
-				/*for (auto& player : playerObjects)
-				{
-					auto pl{ dynamic_cast<Player*>(player) };
-
-					if (pl->GetID() != postOver->playerID)
-					{
-						session->SendPlayerIDIssuePacket(pl->GetID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
-						continue;
-					}
-
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						if (client->GetID() == pl->GetID())
-							continue;
-
-						client->SendPlayerIDIssuePacket(pl->GetID(), ProtocolID::WR_ISSUE_PLAYER_ID_ACK);
-					}
-				}*/
-			}
-			break;
 #pragma endregion
 #pragma region[WR]
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
@@ -746,6 +714,7 @@ namespace game
 					m_sessions[id]->SendAddAnimateObjPacket(mob);
 					mob->SetTransformSendFlag(true);
 				}
+				std::cout << "pl num, mob num : " << playerObjects.size() << ", " << monsterObjects.size() << "\n";
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:

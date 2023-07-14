@@ -21,9 +21,6 @@
     <Filter Include="소스 파일\Script\00. Scene">
       <UniqueIdentifier>{ffc51424-6759-4955-a77d-a12099f80a5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Script\01. UI">
-      <UniqueIdentifier>{ca12ca84-1c51-45ff-9ffc-c5951463c314}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Script\02. Camera">
       <UniqueIdentifier>{c73e4ffb-1df9-4e67-afca-b4e31b330758}</UniqueIdentifier>
     </Filter>
@@ -57,6 +54,27 @@
     <Filter Include="소스 파일\Script\03. Monster\Boss\Scorpion">
       <UniqueIdentifier>{83fcf50e-5307-4406-b3f3-3cc197ee3e05}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Script\00. Scene\Loader">
+      <UniqueIdentifier>{79aec8c0-a1cf-44e6-8074-73c2bd4c7df2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Defines">
+      <UniqueIdentifier>{fbb7d614-d3b3-4b34-a85a-5bc9d620321f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\00. Scene\Logo">
+      <UniqueIdentifier>{9e62b6ab-5678-4867-ab4c-d275de68f83d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\00. Scene\Loading">
+      <UniqueIdentifier>{b967e154-099f-428c-93ac-f1b2d9ce0113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\00. Scene\Test">
+      <UniqueIdentifier>{4dd14297-8e28-4ee0-89be-a972d2ae46bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\00. Scene\GamePlay">
+      <UniqueIdentifier>{a8fa2d3d-0869-4da4-b446-9e2aa298468c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Script\01. UI">
+      <UniqueIdentifier>{ca12ca84-1c51-45ff-9ffc-c5951463c314}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -79,9 +97,6 @@
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>소스 파일\Utils\pch</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene_Test.h">
-      <Filter>소스 파일\Script\00. Scene</Filter>
     </ClInclude>
     <ClInclude Include="MainPlayer.h">
       <Filter>소스 파일\Script\04. Player</Filter>
@@ -113,6 +128,24 @@
     <ClInclude Include="Monster_Scorpion.h">
       <Filter>소스 파일\Script\03. Monster\Boss\Scorpion</Filter>
     </ClInclude>
+    <ClInclude Include="Loader.h">
+      <Filter>소스 파일\Script\00. Scene\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="Client_Defines.h">
+      <Filter>소스 파일\Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Loading.h">
+      <Filter>소스 파일\Script\00. Scene\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Logo.h">
+      <Filter>소스 파일\Script\00. Scene\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Test.h">
+      <Filter>소스 파일\Script\00. Scene\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_GamePlay.h">
+      <Filter>소스 파일\Script\00. Scene\GamePlay</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -140,9 +173,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>소스 파일\Utils\pch</Filter>
     </ClCompile>
-    <ClCompile Include="Scene_Test.cpp">
-      <Filter>소스 파일\Script\00. Scene</Filter>
-    </ClCompile>
     <ClCompile Include="MainPlayer.cpp">
       <Filter>소스 파일\Script\04. Player</Filter>
     </ClCompile>
@@ -169,6 +199,21 @@
     </ClCompile>
     <ClCompile Include="Monster_Scorpion.cpp">
       <Filter>소스 파일\Script\03. Monster\Boss\Scorpion</Filter>
+    </ClCompile>
+    <ClCompile Include="Loader.cpp">
+      <Filter>소스 파일\Script\00. Scene\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Loading.cpp">
+      <Filter>소스 파일\Script\00. Scene\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Logo.cpp">
+      <Filter>소스 파일\Script\00. Scene\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Test.cpp">
+      <Filter>소스 파일\Script\00. Scene\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_GamePlay.cpp">
+      <Filter>소스 파일\Script\00. Scene\GamePlay</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

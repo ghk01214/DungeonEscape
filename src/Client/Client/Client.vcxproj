@@ -162,9 +162,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera_Script.h" />
+    <ClInclude Include="Client_Defines.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Loader.h" />
     <ClInclude Include="MainPlayer.h" />
     <ClInclude Include="MonsterRangeAttack.h" />
     <ClInclude Include="Monster_Dragon.h" />
@@ -176,6 +178,9 @@
     <ClInclude Include="PlayerRangeAttack.h" />
     <ClInclude Include="Player_Script.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="Scene_GamePlay.h" />
+    <ClInclude Include="Scene_Loading.h" />
+    <ClInclude Include="Scene_Logo.h" />
     <ClInclude Include="Scene_Test.h" />
     <ClInclude Include="Scripts.hpp" />
     <ClInclude Include="targetver.h" />
@@ -184,6 +189,7 @@
     <ClCompile Include="Camera_Script.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="Loader.cpp" />
     <ClCompile Include="MainPlayer.cpp" />
     <ClCompile Include="MonsterRangeAttack.cpp" />
     <ClCompile Include="Monster_Dragon.cpp" />
@@ -199,6 +205,9 @@
     </ClCompile>
     <ClCompile Include="PlayerRangeAttack.cpp" />
     <ClCompile Include="Player_Script.cpp" />
+    <ClCompile Include="Scene_GamePlay.cpp" />
+    <ClCompile Include="Scene_Loading.cpp" />
+    <ClCompile Include="Scene_Logo.cpp" />
     <ClCompile Include="Scene_Test.cpp" />
   </ItemGroup>
   <ItemGroup>

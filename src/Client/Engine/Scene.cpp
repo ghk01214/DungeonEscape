@@ -37,11 +37,6 @@ void CScene::Update()
 	{
 		gameObject->Update();
 	}
-
-	//for (int32_t i = 0; i < m_gameObjects.size(); ++i)
-	//{
-	//	m_gameObjects[i]->Update();
-	//}
 }
 
 void CScene::LateUpdate()
@@ -50,11 +45,6 @@ void CScene::LateUpdate()
 	{
 		gameObject->LateUpdate();
 	}
-
-	//for (int32_t i = 0; i < m_gameObjects.size(); ++i)
-	//{
-	//	m_gameObjects[i]->LateUpdate();
-	//}
 }
 
 void CScene::FinalUpdate()
@@ -63,11 +53,6 @@ void CScene::FinalUpdate()
 	{
 		gameObject->FinalUpdate();
 	}
-
-	//for (int32_t i = 0; i < m_gameObjects.size(); ++i)
-	//{
-	//	m_gameObjects[i]->FinalUpdate();
-	//}
 }
 
 shared_ptr<Camera> CScene::GetMainCamera()
@@ -125,10 +110,14 @@ void CScene::RenderShadow()
 
 void CScene::RenderDeferred()
 {
+	if (m_cameras.empty())
+		return;
+
+	shared_ptr<Camera> mainCamera = m_cameras[0];
+
 	// Deferred OMSet
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->OMSetRenderTargets();
 
-	shared_ptr<Camera> mainCamera = m_cameras[0];
 	mainCamera->SortGameObject();
 	mainCamera->Render_Deferred();
 
@@ -137,7 +126,11 @@ void CScene::RenderDeferred()
 
 void CScene::RenderLights()
 {
+	if (m_cameras.empty())
+		return;
+
 	shared_ptr<Camera> mainCamera = m_cameras[0];
+
 	Camera::S_MatView = mainCamera->GetViewMatrix();
 	Camera::S_MatProjection = mainCamera->GetProjectionMatrix();
 
@@ -154,6 +147,9 @@ void CScene::RenderLights()
 
 void CScene::RenderFinal()
 {
+	if (m_cameras.empty())
+		return;
+
 	// Swapchain OMSet
 	int8 backIndex = GEngine->GetSwapChain()->GetBackBufferIndex();
 	GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SWAP_CHAIN)->OMSetRenderTargets(1, backIndex);
@@ -164,7 +160,11 @@ void CScene::RenderFinal()
 
 void CScene::RenderForward()
 {
+	if (m_cameras.empty())
+		return;
+
 	shared_ptr<Camera> mainCamera = m_cameras[0];
+
 	mainCamera->Render_Forward();
 
 	for (auto& camera : m_cameras)

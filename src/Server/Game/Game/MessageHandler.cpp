@@ -108,7 +108,6 @@ namespace game
 			{
 				case ProtocolID::AU_LOGIN_ACK:
 				case ProtocolID::AU_LOGOUT_ACK:
-				case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
 				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 				{
 					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
@@ -294,20 +293,10 @@ namespace game
 				break;
 #pragma endregion
 #pragma region [MY]
-				case ProtocolID::MY_ISSUE_PLAYER_ID_REQ:
-				case ProtocolID::WR_ISSUE_PLAYER_ID_REQ:
-				{
-#ifndef _DEBUG
-					TIMER_EVENT ev{ magic_enum::enum_value<ProtocolID>(magic_enum::enum_integer(msg.msgProtocol) + 1), msg.playerID };
-#else
-					TIMER_EVENT ev{ ProtocolID::MY_ISSUE_PLAYER_ID_ACK, msg.playerID };
-#endif
-					PushSendMessage(ev);
-				}
-				break;
 				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 				{
 					CreatePlayer(msg);
+					//std::cout << "create player\n";
 				}
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:

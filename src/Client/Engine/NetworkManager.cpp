@@ -31,40 +31,6 @@ namespace network
 		Connect();
 	}
 
-	void NetworkManager::RegisterObject(server::OBJECT_TYPE type, std::shared_ptr<CGameObject> object)
-	{
-		// 해당 오브젝트가 기존에 존재하는 오브젝트인지 검사
-		// 초기값인 -1이 아니라면 등록됬다는 뜻
-		if (object->GetNetwork()->GetID() != -1)
-		{
-			// 존재하면 넘어감
-			MSG_BOX(TEXT("Failed : NetworkManager::RegisterObject - Already exist Object"));
-			return;
-		}
-
-		NetworkGameObject obj{ object };
-		NetworkComponent component{ type, obj };
-		m_unregisterdObjects.push_back(component);
-	}
-
-	void NetworkManager::RegisterObject(server::OBJECT_TYPE type, NetworkGameObject object)
-	{
-		for (auto& obj : object)
-		{
-			// 해당 오브젝트가 기존에 존재하는 오브젝트인지 검사
-			// 초기값인 -1이 아니라면 등록됬다는 뜻
-			if (obj->GetNetwork()->GetID() != -1)
-			{
-				// 존재하면 넘어감
-				MSG_BOX(TEXT("Failed : NetworkManager::RegisterObject - Already exist Object"));
-				return;
-			}
-		}
-
-		NetworkComponent component{ type, object };
-		m_unregisterdObjects.push_back(component);
-	}
-
 	void NetworkManager::Connect()
 	{
 		if (WSADATA wsa; WSAStartup(MAKEWORD(2, 2), &wsa) != NOERROR)
@@ -166,40 +132,9 @@ namespace network
 		Send(packet);
 	}
 
-	void NetworkManager::SendIDIssueRequest()
+	void NetworkManager::AddNetworkComponent(NetworkGameObject& object)
 	{
-		for (auto& component : m_unregisterdObjects)
-		{
-			ProtocolID protocol{ ProtocolID::PROTOCOL_NONE };
-
-			if (component.type != server::OBJECT_TYPE::PLAYER)
-				continue;
-
-			/*switch (component.type)
-			{
-				case OBJECT_TYPE::PLAYER:
-				{
-					protocol = ProtocolID::MY_ISSUE_PLAYER_ID_REQ;
-				}
-				break;
-				case OBJECT_TYPE::REMOTE_PLAYER:
-				{
-					protocol = ProtocolID::WR_ISSUE_PLAYER_ID_REQ;
-				}
-				break;
-				case OBJECT_TYPE::OBJECT:
-				{
-					protocol = ProtocolID::WR_ISSUE_OBJ_ID_REQ;
-				}
-				break;
-				default:
-				break;
-			}*/
-
-			CPacket packet;
-			packet.WriteProtocol(ProtocolID::MY_ISSUE_PLAYER_ID_REQ);
-			Send(packet);
-		}
+		m_objects[m_id] = object;
 	}
 
 	void NetworkManager::AddNetworkObject(int32_t id, NetworkGameObject& object)
@@ -391,6 +326,8 @@ namespace network
 
 				std::cout << "ADD ME[" << m_id << "]" << std::endl << std::endl;*/
 				m_login = true;
+				m_id = m_packet.ReadID();
+
 				std::cout << std::format("Login Success!") << std::endl;
 			}
 			break;
@@ -408,7 +345,7 @@ namespace network
 	{
 		switch (type)
 		{
-			case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
+			/*case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
 			{
 				m_id = m_packet.ReadID();
 
@@ -433,7 +370,7 @@ namespace network
 					std::cout << std::format("My id is {}\n", m_id);
 				}
 			}
-			break;
+			break;*/
 			case ProtocolID::MY_ADD_OBJ_ACK:
 			case ProtocolID::MY_ADD_OBJ_COLLIDER_ACK:
 			{

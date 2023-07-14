@@ -103,16 +103,6 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendIDIssuePacket(GameObject* obj)
-	{
-		network::CPacket packet;
-
-		packet.WriteID(obj->GetID());
-		packet.WriteProtocol(ProtocolID::MY_ISSUE_PLAYER_ID_ACK);
-
-		Send(packet);
-	}
-
 	void CSession::SendAddAnimateObjPacket(GameObject* obj)
 	{
 		network::CPacket packet;

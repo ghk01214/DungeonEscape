@@ -18,7 +18,7 @@ FBXMapLoader::~FBXMapLoader()
 void FBXMapLoader::AddBasicObject(std::wstring path)
 {
 	// 경로로 부터 fbx파일 정보를 읽어온다.
-    std::shared_ptr<MeshData> v = MeshData::LoadFromFBX(path);
+    std::shared_ptr<MeshData> v = GET_SINGLE(Resources)->LoadFBX(path);
 
     vector<MeshRenderInfo> renderInfo = v.get()->GetMeshRenderInfo();
     for (auto& info : renderInfo)

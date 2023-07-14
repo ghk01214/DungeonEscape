@@ -25,35 +25,35 @@
 #include <Network.h>
 
 #include "FBXMapLoader.h"
+#include "Input.h"
 
-std::shared_ptr<CScene> Scene_Test::TestScene(server::FBX_TYPE playerType)
+Scene_Test::Scene_Test()
 {
-	scene = make_shared<CScene>();
+}
 
-	CreateLayer();
-	CreateComputeShader();
-	CreateMainCamera();
-	CreateUICamera();
-	CreateSkyBox();
-	CreateUI();
-	CreateLights();
-	CreateMap();
-	CreateMapObjects();
+void Scene_Test::Awake()
+{
+	__super::Awake();
+}
 
-	CreatePlayer(playerType);
-
-	return scene;
+void Scene_Test::Start()
+{
+	__super::Start();
 }
 
 void Scene_Test::Update()
 {
+	__super::Update();
+
 	SendKeyInput();
 }
 
 void Scene_Test::LateUpdate()
 {
-	auto size{ scene->GetServerRequestQueueSize() };
-	auto queue{ scene->GetServerRequest() };
+	__super::LateUpdate();
+
+	auto size{ GetServerRequestQueueSize() };
+	auto queue{ GetServerRequest() };
 
 	for (int32_t i = 0; i < size; ++i)
 	{
@@ -91,10 +91,20 @@ void Scene_Test::LateUpdate()
 		queue.pop_front();
 	}
 
-	scene->PopRequestQueue(size);
+	PopRequestQueue(size);
 }
 
-void Scene_Test::CreateLayer(void)
+void Scene_Test::FinalUpdate()
+{
+	__super::FinalUpdate();
+}
+
+void Scene_Test::Render()
+{
+	__super::Render();
+}
+
+void Scene_Test::CreateLayer()
 {
 #pragma region LayerMask
 	GGameInstance->SetLayerName(0, L"Default");
@@ -125,7 +135,7 @@ void Scene_Test::CreateComputeShader(void)
 #pragma endregion
 }
 
-void Scene_Test::CreateMainCamera(void)
+void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 {
 #pragma region Camera
 	{
@@ -138,12 +148,12 @@ void Scene_Test::CreateMainCamera(void)
 		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 500.f, -500.f));
 		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
 		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI는 안 찍음
-		scene->AddGameObject(camera);
+		pScene->AddGameObject(camera);
 	}
 #pragma endregion
 }
 
-void Scene_Test::CreateUICamera(void)
+void Scene_Test::CreateUICamera(shared_ptr<CScene> pScene)
 {
 #pragma region UI_Camera
 	{
@@ -151,17 +161,17 @@ void Scene_Test::CreateUICamera(void)
 		camera->SetName(L"Orthographic_Camera");
 		camera->AddComponent(make_shared<Transform>());
 		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, 800*600
-		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 10000.f, 0.f));
+		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
 		camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
 		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
 		camera->GetCamera()->SetCullingMaskAll(); // 다 끄고
-		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI만 찍음
-		scene->AddGameObject(camera);
+		//camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI만 찍음
+		pScene->AddGameObject(camera);
 	}
 #pragma endregion
 }
 
-void Scene_Test::CreateSkyBox(void)
+void Scene_Test::CreateSkyBox(shared_ptr<CScene> pScene)
 {
 #pragma region SkyBox
 	{
@@ -182,12 +192,12 @@ void Scene_Test::CreateSkyBox(void)
 			meshRenderer->SetMaterial(material);
 		}
 		skybox->AddComponent(meshRenderer);
-		scene->AddGameObject(skybox);
+		pScene->AddGameObject(skybox);
 	}
 #pragma endregion
 }
 
-void Scene_Test::CreateUI(void)
+void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
 {
 #pragma region UI_Test
 	for (int32 i = 0; i < 6; i++)
@@ -219,12 +229,12 @@ void Scene_Test::CreateUI(void)
 			meshRenderer->SetMaterial(material);
 		}
 		obj->AddComponent(meshRenderer);
-		scene->AddGameObject(obj);
+		pScene->AddGameObject(obj);
 	}
 #pragma endregion
 }
 
-void Scene_Test::CreateLights(void)
+void Scene_Test::CreateLights(shared_ptr<CScene> pScene)
 {
 #pragma region Directional Light
 	{
@@ -234,12 +244,12 @@ void Scene_Test::CreateLights(void)
 		lightDesc.vAmbient = Vec3(0.9f, 0.9f, 0.9f);
 		lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
 
-		scene->AddDirectionalLight(lightDesc);
+		pScene->AddDirectionalLight(lightDesc);
 	}
 #pragma endregion
 }
 
-void Scene_Test::CreateMap(void)
+void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 {
 	FBXMapLoader mapLoader;
 	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
@@ -266,40 +276,12 @@ void Scene_Test::CreateMap(void)
 	for (auto& mapObject : mapObjects)
 	{
 		mapObject->SetCheckFrustum(false);
-		scene->AddGameObject(mapObject);
-		scene->AddGameObject(mapObject);
+		pScene->AddGameObject(mapObject);
+		pScene->AddGameObject(mapObject);
 	}
 }
 
-void Scene_Test::CreateMapObjects(void)
-{
-	//ObjectDesc objectDesc;
-	//objectDesc.strName = L"moon";
-	//objectDesc.strPath = L"..\\Resources\\FBX\\Moon\\moon.fbx";
-	////objectDesc.strPath = L"..\\Resources\\FBX\\Dragon\\Dragon.fbx";
-	//objectDesc.vPostion = Vec3(0.f, 0.f, 300.f);
-	//objectDesc.vScale = Vec3(30.f, 30.f, 30.f);
-	//objectDesc.script = nullptr;// std::make_shared<Monster_Dragon>();
-
-	//std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath) };
-	//std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
-	//std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>() };
-
-	//for (auto& gameObject : gameObjects)
-	//{
-	//	gameObject->SetName(objectDesc.strName);
-	//	gameObject->SetCheckFrustum(false);
-	//	gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
-	//	gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
-	//	//gameObject->AddComponent(objectDesc.script);
-	//	gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
-	//	gameObject->AddComponent(networkComponent)15
-	//}
-
-	//scene->AddPlayer(gameObjects);
-}
-
-void Scene_Test::CreatePlayer(server::FBX_TYPE player)
+void Scene_Test::CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 {
 	ObjectDesc objectDesc;
 	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
@@ -337,10 +319,11 @@ void Scene_Test::CreatePlayer(server::FBX_TYPE player)
 		gameObject->SetObjectType(server::OBJECT_TYPE::PLAYER);
 	}
 
-	scene->AddPlayer(gameObjects);
+	pScene->AddPlayer(gameObjects);
+	GET_NETWORK->AddNetworkComponent(gameObjects);
 }
 
-void Scene_Test::CreateSphere()
+void Scene_Test::CreateSphere(shared_ptr<CScene> pScene)
 {
 	ObjectDesc objectDesc;
 	objectDesc.strName = L"Mistic";
@@ -359,7 +342,7 @@ void Scene_Test::CreateSphere()
 		gameObject->GetTransform()->SetWorldMatrix(mat);
 	}
 
-	scene->AddGameObject(gameObjects);
+	pScene->AddGameObject(gameObjects);
 }
 
 void Scene_Test::SendKeyInput()
@@ -367,6 +350,7 @@ void Scene_Test::SendKeyInput()
 	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
 	{
 		GET_NETWORK->SendKeyInputPacket();
+		//std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
 	}
 }
 
@@ -509,7 +493,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 	{
 		case server::OBJECT_TYPE::BOSS:
 		{
-			auto boss{ scene->GetBoss() };
+			auto boss{ GetBoss() };
 			network::NetworkGameObject removeObject;
 
 			for (auto& object : boss)
@@ -518,7 +502,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 					removeObject.push_back(object);
 			}
 
-			scene->RemoveBoss(removeObject);
+			RemoveBoss(removeObject);
 
 			std::cout << "REMOVE BOSS" << std::endl;
 
@@ -527,7 +511,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		break;
 		case server::OBJECT_TYPE::MONSTER:
 		{
-			auto monster{ scene->GetMonster() };
+			auto monster{ GetMonster() };
 			network::NetworkGameObject removeObject;
 
 			for (auto& object : monster)
@@ -536,7 +520,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 					removeObject.push_back(object);
 			}
 
-			scene->RemoveMonster(removeObject);
+			RemoveMonster(removeObject);
 
 			std::cout << "REMOVE MONSTER" << std::endl;
 
@@ -561,7 +545,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			if (m_overlappedObjects.contains(id) == false)
 				return;
 
-			auto objects{ scene->GetNetworkObject() };
+			auto objects{ GetNetworkObject() };
 			network::NetworkGameObject removeObjects;
 
 			for (auto& object : objects)
@@ -570,7 +554,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 					removeObjects.push_back(object);
 			}
 
-			scene->RemoveNetworkObject(removeObjects);
+			RemoveNetworkObject(removeObjects);
 
 			//std::cout << "삭제 : " << id << ", " << magic_enum::enum_name(type) << std::endl;
 			m_overlappedObjects.erase(id);
@@ -780,25 +764,26 @@ void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::sha
 	{
 		case server::OBJECT_TYPE::REMOTE_PLAYER:
 		{
-			scene->AddPlayer(gameObjects);
+			AddPlayer(gameObjects);
 			std::cout << "ADD REMOTE PLAYER" << std::endl;
 		}
 		break;
 		case server::OBJECT_TYPE::MONSTER:
 		{
-			scene->AddMonster(gameObjects);
+			AddMonster(gameObjects);
 			std::cout << "ADD MONSTER" << std::endl;
 		}
 		break;
 		case server::OBJECT_TYPE::BOSS:
 		{
-			scene->AddBoss(gameObjects);
+			AddBoss(gameObjects);
 			std::cout << "ADD BOSS" << std::endl;
 		}
 		break;
 		default:
 		{
-			scene->AddNetworkObject(gameObjects);
+			//scene->AddGameObject(gameObjects);
+			AddNetworkObject(gameObjects);
 		}
 		break;
 	}
@@ -846,4 +831,27 @@ std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkToObject(std::ve
 	}
 
 	return objects;
+}
+
+shared_ptr<CScene> Scene_Test::Create(server::FBX_TYPE eType)
+{
+	shared_ptr<Scene_Test> pInstance = std::make_shared<Scene_Test>();
+
+	pInstance->Init(pInstance, eType);
+
+	return pInstance;
+}
+
+void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
+{
+	CreateLayer();
+	CreateComputeShader();
+	CreateMainCamera(pScene);
+	CreateUICamera(pScene);
+	CreateSkyBox(pScene);
+	CreateUI(pScene);
+	CreateLights(pScene);
+	CreateMap(pScene);
+
+	CreatePlayer(pScene, eType);
 }

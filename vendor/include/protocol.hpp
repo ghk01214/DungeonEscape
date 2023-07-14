@@ -35,9 +35,6 @@ enum class ProtocolID : unsigned short
 #pragma region [MY]
 	PROTOCOL_MY_BEGIN = PROTOCOL_AU_END,
 
-	MY_ISSUE_PLAYER_ID_REQ,
-	MY_ISSUE_PLAYER_ID_ACK,
-
 	MY_ADD_ANIMATE_OBJ_REQ,
 	MY_ADD_ANIMATE_OBJ_ACK,
 

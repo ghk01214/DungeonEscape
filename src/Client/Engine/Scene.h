@@ -24,15 +24,14 @@ typedef struct _tagLightDesc {
 class CScene
 {
 public:
-	void Awake();
-	void Start();
-	void Update();
-	void LateUpdate();
-	void FinalUpdate();
+	virtual void Awake(void);
+	virtual void Start(void);
+	virtual void Update(void);
+	virtual void LateUpdate(void);
+	virtual void FinalUpdate(void);
+	virtual void Render();
 
 	shared_ptr<class Camera> GetMainCamera();
-
-	void Render();
 
 	void ClearRTV();
 
