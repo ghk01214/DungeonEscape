@@ -28,14 +28,6 @@ HRESULT CInput::Init(HINSTANCE hInst, HWND hWnd)
 	if (FAILED(DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_pInputSDK, nullptr)))
 		return E_FAIL;
 
-	if (FAILED(m_pInputSDK->CreateDevice(GUID_SysKeyboard, &m_pKeyBoard, nullptr)))
-		return E_FAIL;
-
-	m_pKeyBoard->SetDataFormat(&c_dfDIKeyboard);
-	m_pKeyBoard->SetCooperativeLevel(hWnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
-	m_pKeyBoard->Acquire();
-
-
 	if (FAILED(m_pInputSDK->CreateDevice(GUID_SysMouse, &m_pMouse, nullptr)))
 		return E_FAIL;
 
@@ -46,13 +38,10 @@ HRESULT CInput::Init(HINSTANCE hInst, HWND hWnd)
 
 void CInput::SetUp_InputDeviceState()
 {
-	if (nullptr == m_pKeyBoard ||
-		nullptr == m_pMouse)
+	if (nullptr == m_pMouse)
 		return;
 
 	ZeroMemory(&m_MouseState, sizeof(m_MouseState));
-
-	m_pKeyBoard->GetDeviceState(256, m_KeyBoardState);
 
 	m_pMouse->GetDeviceState(sizeof(m_MouseState), &m_MouseState);
 }
@@ -76,11 +65,11 @@ void CInput::Update()
 
 	for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
 	{
+		KEY_STATE& state = m_states[key];
+
 		// 키가 눌려 있으면 true
 		if (asciiKeys[key] & 0x80)
 		{
-			KEY_STATE& state = m_states[key];
-
 			// 이전 프레임에 키를 누른 상태라면 PRESS
 			if (state == KEY_STATE::PRESS || state == KEY_STATE::DOWN)
 				state = KEY_STATE::PRESS;
@@ -89,8 +78,6 @@ void CInput::Update()
 		}
 		else
 		{
-			KEY_STATE& state = m_states[key];
-
 			// 이전 프레임에 키를 누른 상태라면 UP
 			if (state == KEY_STATE::PRESS || state == KEY_STATE::DOWN)
 				state = KEY_STATE::UP;
@@ -98,6 +85,9 @@ void CInput::Update()
 				state = KEY_STATE::NONE;
 		}
 	}
+
+	// 현재 프레임의 입력 정보 세팅
+	SetUp_InputDeviceState();
 
 	// 모든 키 정보들에 대해 확인해줄 것
 	EncodeKeyInput();
@@ -108,9 +98,6 @@ void CInput::Update()
 	// 현재 프레임의 마우스 좌표 계산
 	::GetCursorPos(&m_curMousePos);
 	::ScreenToClient(GEngine->GetWindow().hWnd, &m_curMousePos);
-
-	// 현재 프레임의 입력 정보 세팅
-	SetUp_InputDeviceState();
 }
 
 void CInput::EncodeKeyInput(void)
@@ -150,7 +137,6 @@ Vec2 CInput::GetMouseMove(void)
 
 	return move;
 }
-
 
 bool CInput::Button_Pressing(MOUSEBUTTONSTATE eDIMBState)
 {

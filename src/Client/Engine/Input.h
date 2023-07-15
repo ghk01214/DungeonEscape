@@ -93,7 +93,6 @@ public:
 	Vec2 GetMouseMove(void);	// 이전 프레임과 현재 프레임의 마우스의 x,y 좌표의 움직이는 정도를 반환하는 함수
 
 public:
-	char Get_DIKeyState(unsigned char byKeyID) { return m_KeyBoardState[byKeyID]; }
 	char Get_DIMButtonState(MOUSEBUTTONSTATE eDIMBState) { return m_MouseState.rgbButtons[eDIMBState];}
 	long Get_DIMMoveState(MOUSEMOVESTATE eDIMMState) { return ((long*)&m_MouseState)[eDIMMState]; }
 
@@ -116,13 +115,10 @@ private:
 	vector<KEY_TYPE> m_useKeyType;
 
 	LPDIRECTINPUT8			m_pInputSDK = nullptr;
-	LPDIRECTINPUTDEVICE8	m_pKeyBoard = nullptr;
 	LPDIRECTINPUTDEVICE8	m_pMouse = nullptr;
 
 private:
-	char				m_KeyBoardState[256];
 	DIMOUSESTATE		m_MouseState;
-	bool				m_bKeyState[0xff];	//0xff
 	bool				m_bButtonState[4];
 };
 
