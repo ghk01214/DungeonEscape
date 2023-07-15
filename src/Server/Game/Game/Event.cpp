@@ -4,6 +4,8 @@
 #include "MonsterAI.h"
 #include "Weeper.h"
 #include "WeeperAI.h"
+#include "Golem.h"
+#include "GolemAI.h"
 #include "SkillObject.h"
 #include "RigidBody.h"
 #include "Collider.h"
@@ -29,13 +31,15 @@ void Event::Tick(float deltaTime)
 	{
 		if (!executed && time < 0.f)			//RemoveReserved 비활성화, executed 거짓, 시간 음수일때만 실행
 		{
-			ExecuteMsg_Once();
-			ExecuteMsg_continuous();
+			ExecuteMsg_Once_Weeper();
+			ExecuteMsg_continuous_Weeper();
+			ExecuteMsg_Once_Golem();
+			ExecuteMsg_continuous_Golem();
 		}
 	}
 }
 
-void Event::ExecuteMsg_Once()
+void Event::ExecuteMsg_Once_Weeper()
 {
 	if (msg == "ANIM_END")
 	{
@@ -254,7 +258,7 @@ void Event::ExecuteMsg_Once()
 	executed = true;
 }
 
-void Event::ExecuteMsg_continuous()
+void Event::ExecuteMsg_continuous_Weeper()
 {
 	if (msg == "WEEPER_CAST4")		//cast4 start 애니메이션 종료 후 호출. 애니메이션은 이미 Cast4_Loop으로 전환됐음.
 	{
@@ -272,4 +276,21 @@ void Event::ExecuteMsg_continuous()
 			executed = true;	//이벤트 소멸
 		}
 	}
+}
+
+void Event::ExecuteMsg_Once_Golem()
+{
+	if (msg == "GOLEM_ATTACK1_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Attack1();
+		}
+	}
+
+}
+
+void Event::ExecuteMsg_continuous_Golem()
+{
 }

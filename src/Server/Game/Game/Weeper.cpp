@@ -125,21 +125,10 @@ void Weeper::CheckState()
 		break;
 		case DEAD:
 		{
-			SetRemoveReserved();
-
-			for (int32_t i = 0; i < SEND_AGAIN; ++i)
-			{
-				game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
-				ev.objID = m_id;
-				ev.objType = m_objType;
-
-				game::MessageHandler::GetInstance()->PushSendMessage(ev);
-			}
 		}
 		break;
 		case DEATH:
 		{
-			std::cout << "BOSS DEFEATED!\n";
 		}
 		break;
 		case DODGE:

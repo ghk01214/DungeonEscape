@@ -20,7 +20,8 @@ public:
 public:
 	void TriggerUpdate();
 	void Trigger_Persistent();
-	void Trigger_SingleStrike();
+	void Trigger_SingleStrike_HandleMonster();
+	void Trigger_SingleStrike_HandlePlayers();
 
 public:
 	void ExcludeTriggerFromSimulation(bool value);

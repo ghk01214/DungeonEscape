@@ -132,6 +132,7 @@ private:
 	int32_t m_mp;
 
 	bool m_firstSingleStrike;
+	bool m_banTriggerApproach = false;		//trigger삭제 후 접근방지
 	bool m_prevOnGround;
 
 	int32_t m_sendState;

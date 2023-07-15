@@ -34,6 +34,7 @@ public:
 	bool GetAIWait();
 	Vec3 GetTargetPosition();
 	Vec3 GetTargetDir();
+	physx::PxVec3 GetXZDir();
 
 protected:
 	Monster* m_monster;

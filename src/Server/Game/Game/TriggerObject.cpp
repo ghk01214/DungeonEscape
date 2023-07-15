@@ -48,7 +48,7 @@ void TriggerObject::Release()
 void TriggerObject::TriggerUpdate()
 {
 	Trigger_Persistent();
-	Trigger_SingleStrike();
+	Trigger_SingleStrike_HandleMonster();
 }
 
 void TriggerObject::Trigger_Persistent()
@@ -83,7 +83,7 @@ void TriggerObject::Trigger_Persistent()
 	}
 }
 
-void TriggerObject::Trigger_SingleStrike()
+void TriggerObject::Trigger_SingleStrike_HandleMonster()
 {
 	if (m_triggerType != server::TRIGGER_TYPE::SINGLE_STRIKE)
 		return;
@@ -125,9 +125,66 @@ void TriggerObject::Trigger_SingleStrike()
 	{
 		auto collider = info.get()->GetFromCollider();
 		auto ownerObj = collider->GetOwnerObject();
-		auto player = dynamic_cast<Monster*>(ownerObj);
+		auto monster = dynamic_cast<Monster*>(ownerObj);
+		if (monster == nullptr)
+			continue;								//조건 1 : 몬스터가 맞는가?
+
+		bool duplicate = false;
+		ExcludeManagement(collider, duplicate);
+		if (duplicate)
+			continue;								//조건 2 : 중복은 아닌가?
+
+		monster->GetController()->GetBody()->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 500.f);
+		// server : 플레이어에게 데미지를 준다는 메시지 전달 필요
+	}
+#pragma endregion
+}
+
+void TriggerObject::Trigger_SingleStrike_HandlePlayers()
+{
+	if (m_triggerType != server::TRIGGER_TYPE::SINGLE_STRIKE)
+		return;
+
+#pragma region 시간 갱신
+	float dt = TimeManager::GetInstance()->GetDeltaTime();
+	if (dt > 100.f)
+		dt = 0.f;
+	m_currentTime += dt;
+
+	if (m_currentTime == 0.f)
+	{
+		ExcludeTriggerFromSimulation(true);							//0초 : 시뮬레이션 비활성화
+		m_originalPosition = m_body->GetPosition();
+	}
+	else if (m_currentTime > m_startTime && m_currentTime < m_endTime)
+	{
+		if (m_body->IsExcludedFromSimulation())
+		{
+			ExcludeTriggerFromSimulation(false);						//시작~끝 : 시뮬레이션 활성화
+			std::cout << "활성화\n";
+		}
+	}
+	else if (m_currentTime > m_endTime)
+	{
+		if (!m_body->IsExcludedFromSimulation())
+		{
+			ExcludeTriggerFromSimulation(true);						//끝~ : 시뮬레이션 비활성화
+			std::cout << "비활성화\n";
+		}
+		return;
+	}
+#pragma endregion
+
+
+#pragma region 충돌체크 + 중복체크
+	auto collisionEnter = m_body->GetCollider(0)->GetTriggerInfo(CollisionInfoType::Enter);
+	for (auto& info : collisionEnter)				//enter
+	{
+		auto collider = info.get()->GetFromCollider();
+		auto ownerObj = collider->GetOwnerObject();
+		auto player = dynamic_cast<Player*>(ownerObj);
 		if (player == nullptr)
-			continue;								//조건 1 : 플레이어인가?
+			continue;								//조건 1 : 플레이어가 맞는가?
 
 		bool duplicate = false;
 		ExcludeManagement(collider, duplicate);

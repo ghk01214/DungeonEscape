@@ -34,7 +34,7 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Monster");
 	objmgr->AddLayer(L"Layer_Map2");
 	objmgr->AddLayer(L"Layer_SkillObject");
-	objmgr->AddLayer(L"Trigger");
+	objmgr->AddLayer(L"Layer_TriggerObject");
 
 	LoadBasicMap3();
 	//LoadMap();

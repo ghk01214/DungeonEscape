@@ -90,6 +90,10 @@ void Player::LateUpdate(double timeDelta)
 
 void Player::Release()
 {
+	m_attackTrigger->SetRemoveReserved();
+	m_attackTrigger = nullptr;
+	m_banTriggerApproach = true;
+
 	m_controller = nullptr;
 	GameObject::Release();
 }
@@ -759,7 +763,10 @@ void Player::PlayerPattern_ShootBall_ForDebug()
 
 void Player::PlayerPattern_SingleStrike()
 {
-	float attackTime[2];
+	if (m_banTriggerApproach)
+		return;
+
+	float attackTime[2] = {};
 
 	switch (m_currState)
 	{
@@ -812,7 +819,7 @@ void Player::PlayerPattern_SingleStrike()
 
 	if (m_firstSingleStrike == true)
 	{
-		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Trigger", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
+		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Layer_TriggerObject", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
 		m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, attackTime[0], attackTime[1]);
 		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
 		triggerBody->AddCollider<BoxCollider>(m_attackTrigger->GetTransform()->GetScale());
