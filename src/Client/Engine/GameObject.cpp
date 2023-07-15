@@ -10,6 +10,7 @@
 #include "BaseCollider.h"
 #include "Animator.h"
 #include "Network.h"
+#include "BillBoard.h"
 
 CGameObject::CGameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 {
@@ -159,6 +160,12 @@ shared_ptr<network::CNetwork> CGameObject::GetNetwork()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::NETWORK);
 	return static_pointer_cast<network::CNetwork>(component);
+}
+
+shared_ptr<BillBoard> CGameObject::GetBillBoard()
+{
+	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::BILL_BOARD);
+	return static_pointer_cast<BillBoard>(component);
 }
 
 void CGameObject::AddComponent(shared_ptr<Component> component)

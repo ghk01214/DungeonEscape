@@ -353,6 +353,31 @@ shared_ptr<MeshData> Resources::LoadFBX(const wstring& path)
 	return meshData;
 }
 
+vector<shared_ptr<Texture>> Resources::LoadTextures(const wstring& key, const wstring& path, uint32 count)
+{
+	vector<shared_ptr<Texture>> textures;
+
+	for (uint32 i = 0; i < count; ++i)
+	{
+		// 파일 확장자 얻기
+		wstring ext = fs::path(path).extension();
+
+		// key 설정
+		wstring keyPath = key + to_wstring(i);
+
+		// 파일 경로 찾기 : 파일 경로 + 파일 이름 + 번호 + 확장자
+		wstring PathPath = fs::path(path).replace_extension();
+		PathPath += (to_wstring(i) + ext);
+
+		// 텍스쳐 로드
+		shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(keyPath, PathPath);
+
+		textures.push_back(texture);
+	}
+
+	return textures;
+}
+
 void Resources::CreateDefaultShader()
 {
 	// Skybox
@@ -414,6 +439,30 @@ void Resources::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg);
 		Add<Shader>(L"Texture", shader);
+	}
+
+	// BillBoard Texture (Forward)
+	{
+		ShaderInfo info =
+		{
+			SHADER_TYPE::FORWARD,
+			RASTERIZER_TYPE::CULL_NONE,
+			DEPTH_STENCIL_TYPE::LESS_NO_WRITE,
+			BLEND_TYPE::ALPHA_BLEND
+		};
+
+		ShaderArg arg =
+		{
+			"VS_Tex",
+			"",
+			"",
+			"",
+			"PS_Tex"
+		};
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg);
+		Add<Shader>(L"BillBoard_Texture", shader);
 	}
 
 	// DirLight

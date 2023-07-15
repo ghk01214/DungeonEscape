@@ -69,6 +69,7 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 	// 폰트
 
 	// 텍스쳐
+	GET_SINGLE(Resources)->LoadTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Fire\\Fire.png", 64);
 
 	// fbx 모델
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx");

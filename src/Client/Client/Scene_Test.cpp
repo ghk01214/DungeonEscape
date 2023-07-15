@@ -27,6 +27,8 @@
 #include "FBXMapLoader.h"
 #include "Input.h"
 
+#include "BB_Fire.h"
+
 Scene_Test::Scene_Test()
 {
 }
@@ -342,6 +344,38 @@ void Scene_Test::CreateSphere(shared_ptr<CScene> pScene)
 		gameObject->GetTransform()->SetWorldMatrix(mat);
 	}
 
+	pScene->AddGameObject(gameObjects);
+}
+
+void Scene_Test::CreateBillBoard(shared_ptr<CScene> pScene)
+{
+	// 오브젝트 생성
+	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
+
+	// 위치 설정
+	gameObjects->AddComponent(make_shared<Transform>());
+	gameObjects->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
+	gameObjects->GetTransform()->SetLocalPosition(Vec3(100.f, 100.f, 0.f));
+
+	// 빌보드 처리
+	gameObjects->AddComponent(make_shared<BB_Fire>());
+
+	// MeshRenderer - 사각형 메쉬, 텍스쳐 설정
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+
+	meshRenderer->SetMesh(mesh);
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+
+	shared_ptr<Texture> texture = gameObjects->GetBillBoard()->GetTexture();
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	material->SetTexture(0, texture);
+	meshRenderer->SetMaterial(material);
+
+	gameObjects->AddComponent(meshRenderer);
+
+	// 오브젝트 추가
 	pScene->AddGameObject(gameObjects);
 }
 
@@ -852,6 +886,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateUI(pScene);
 	CreateLights(pScene);
 	CreateMap(pScene);
+	CreateBillBoard(pScene);
 
 	CreatePlayer(pScene, eType);
 }

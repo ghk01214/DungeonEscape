@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Client_Defines.h"
 #include "Scene.h"
@@ -31,6 +31,7 @@ private:
 	void CreateMap(shared_ptr<CScene> pScene);
 	void CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player);
 	void CreateSphere(shared_ptr<CScene> pScene);
+	void CreateBillBoard(shared_ptr<CScene> pScene);
 
 	void SendKeyInput();
 

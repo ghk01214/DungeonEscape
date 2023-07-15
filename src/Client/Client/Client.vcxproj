@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BB_Fire.h" />
     <ClInclude Include="Camera_Script.h" />
     <ClInclude Include="Client_Defines.h" />
     <ClInclude Include="Game.h" />
@@ -186,6 +187,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BB_Fire.cpp" />
     <ClCompile Include="Camera_Script.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Client.cpp" />

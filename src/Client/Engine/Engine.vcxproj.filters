@@ -160,6 +160,9 @@
     <Filter Include="Utils\01. FBXLoader\MapLoader">
       <UniqueIdentifier>{c0617137-31f7-489d-9a3e-221527ba54df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Component\BillBoard">
+      <UniqueIdentifier>{62bd6622-1ec3-4222-9a45-0b949baababb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -302,6 +305,9 @@
     </ClCompile>
     <ClCompile Include="FBXMapLoader.cpp">
       <Filter>Utils\01. FBXLoader\MapLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="BillBoard.cpp">
+      <Filter>GameObject\Component\BillBoard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -457,6 +463,9 @@
     </ClInclude>
     <ClInclude Include="FBXMapLoader.h">
       <Filter>Utils\01. FBXLoader\MapLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="BillBoard.h">
+      <Filter>GameObject\Component\BillBoard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

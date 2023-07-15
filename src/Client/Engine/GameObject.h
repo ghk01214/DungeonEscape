@@ -11,6 +11,7 @@ class ParticleSystem;
 class Terrain;
 class BaseCollider;
 class Animator;
+class BillBoard;
 
 namespace network
 {
@@ -23,11 +24,11 @@ public:
 	CGameObject();
 	virtual ~CGameObject();
 
-	void Awake();
-	void Start();
-	void Update();
-	void LateUpdate();
-	void FinalUpdate();
+	virtual void Awake();
+	virtual void Start();
+	virtual void Update();
+	virtual void LateUpdate();
+	virtual void FinalUpdate();
 
 	shared_ptr<Component> GetFixedComponent(COMPONENT_TYPE type);
 
@@ -40,6 +41,7 @@ public:
 	shared_ptr<BaseCollider> GetCollider();
 	shared_ptr<Animator> GetAnimator();
 	shared_ptr<network::CNetwork> GetNetwork();
+	shared_ptr<BillBoard> GetBillBoard();
 
 	void AddComponent(shared_ptr<Component> component);
 

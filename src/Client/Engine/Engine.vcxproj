@@ -175,6 +175,7 @@
     <ClInclude Include="..\..\..\vendor\include\protocol.hpp" />
     <ClInclude Include="Animator.h" />
     <ClInclude Include="BaseCollider.h" />
+    <ClInclude Include="BillBoard.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="FBXMapLoader.h" />
     <ClInclude Include="Network.h" />
@@ -232,6 +233,7 @@
     </ClCompile>
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="BaseCollider.cpp" />
+    <ClCompile Include="BillBoard.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FBXMapLoader.cpp" />
     <ClCompile Include="Network.cpp" />
