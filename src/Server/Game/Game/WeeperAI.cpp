@@ -205,6 +205,7 @@ void WeeperAI::DamageCheck()
 
 	if (originalHealth > m_weeper->GetHP())
 	{
+		cout << "hp : " << originalHealth << endl;
 		originalHealth = m_weeper->GetHP();
 		if (m_cast2Counter)
 		{
@@ -227,6 +228,7 @@ void WeeperAI::DamageCheck()
 			}
 			else
 			{
+				std::cout << "canceled" << std::endl;
 				Cast4Cancel_RequiredHit_To_Default();
 				m_weeper->SetState(Weeper::WEEPER_STATE::CAST4_END);
 				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, m_weeper);

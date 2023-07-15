@@ -110,6 +110,7 @@ public:
 
 private:
 	void PlayerPattern_ShootBall();
+	void PlayerPattern_ShootBall_ForDebug();
 	void PlayerPattern_SingleStrike();
 	int32_t IsAttackKeyDown();
 

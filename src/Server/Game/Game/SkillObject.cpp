@@ -404,6 +404,8 @@ void SkillObject::HandlePlayerSkillCollision()
 						if (weeper)
 						{
 							weeper->GetDamaged(10);
+							SetRemoveReserved();						//객체 삭제
+							ServerMessage_SkillHit();					//서버 메시지 처리
 						}
 					}
 					break;
