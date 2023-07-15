@@ -58,8 +58,8 @@ void WeeperAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
-	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
 	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 
 
@@ -162,13 +162,12 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
-				m_weeper->Pattern_Cast4();
-				m_weeper->m_currState = Weeper::CAST1;
+				m_weeper->SetState(Weeper::WEEPER_STATE::CAST4_START);
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
-				if (m_debugmode)
-					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_CAST4_LOOP", 2.73f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("WEEPER_CAST4", 2.73f, m_weeper);
 			}
 			else
 			{
@@ -219,6 +218,21 @@ void WeeperAI::DamageCheck()
 			EventHandler::GetInstance()->DeleteEvent("CAST2_VULNERABLE_OFF");
 			Cast2Vulnerable_OFF();
 		}
+		else if (m_weeper->GetState() == Weeper::WEEPER_STATE::CAST4_LOOP)
+		{
+			m_cast4Cancel_requiredHit -= 1;
+			if (m_cast4Cancel_requiredHit > 0)
+			{
+				return;
+			}
+			else
+			{
+				Cast4Cancel_RequiredHit_To_Default();
+				m_weeper->SetState(Weeper::WEEPER_STATE::CAST4_END);
+				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, m_weeper);
+				EventHandler::GetInstance()->DeleteEvent("WEEPER_CAST4");
+			}
+		}
 	}
 
 
@@ -246,6 +260,12 @@ void WeeperAI::Cast2Vulnerable_OFF()
 {
 	m_vulnerable = false;
 	cout << "vulnerable OFF" << endl;
+}
+
+void WeeperAI::Cast4Cancel_RequiredHit_To_Default()
+{
+	m_cast4Cancel_requiredHit = 3;
+	m_weeper->m_cast4_vertVel = physx::PxVec3(0, 1000, 0);
 }
 
 void WeeperAI::ReportSchedule()

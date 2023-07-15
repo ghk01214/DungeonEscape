@@ -27,8 +27,11 @@ void Event::Tick(float deltaTime)
 
 	if (!target->GetRemoveReserved())
 	{
-		if (!executed && time <0.f)			//RemoveReserved 비활성화, executed 거짓, 시간 음수일때만 실행
-			ExecuteMsg_Once();					
+		if (!executed && time < 0.f)			//RemoveReserved 비활성화, executed 거짓, 시간 음수일때만 실행
+		{
+			ExecuteMsg_Once();
+			ExecuteMsg_continuous();
+		}
 	}
 }
 
@@ -52,6 +55,27 @@ void Event::ExecuteMsg_Once()
 			{
 				weeperObj->SetAnimationEnd();
 			}
+		}
+	}
+
+	if (msg == "ANIM_END_IF_CAST4END")
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			if (weeperObj->GetState() == Weeper::WEEPER_STATE::CAST4_END)
+			{
+				weeperObj->SetAnimationEnd();
+			}
+		}
+	}
+	
+	if (msg == "ANIM_TO_WEEPER_CAST4_LOOP")
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			weeperObj->SetState(Weeper::WEEPER_STATE::CAST4_LOOP);
 		}
 	}
 
@@ -228,4 +252,24 @@ void Event::ExecuteMsg_Once()
 	}
 
 	executed = true;
+}
+
+void Event::ExecuteMsg_continuous()
+{
+	if (msg == "WEEPER_CAST4")		//cast4 start 애니메이션 종료 후 호출. 애니메이션은 이미 Cast4_Loop으로 전환됐음.
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		executed = false;
+		if (!weeperObj)
+			return;
+
+		bool over = weeperObj->Pattern_Cast4();
+		if (over)
+		{
+			weeperObj->GetAI()->Cast4Cancel_RequiredHit_To_Default();			//cast4 캔슬횟수 초기화 + cast4 velocity 초기화 + 
+			weeperObj->SetState(Weeper::WEEPER_STATE::CAST4_END);
+			EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, target);
+			executed = true;	//이벤트 소멸
+		}
+	}
 }

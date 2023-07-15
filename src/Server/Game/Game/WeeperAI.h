@@ -46,6 +46,7 @@ public:
 	void Cast2Counter_OFF();
 	void Cast2Vulnerable_ON();
 	void Cast2Vulnerable_OFF();
+	void Cast4Cancel_RequiredHit_To_Default();
 
 private:
 	void ReportSchedule();		//콘솔출력 목적의 디버그 전용 함수
@@ -60,8 +61,9 @@ private:
 	float m_targetPos_UpdateInterval;	//플레이어 위치 갱신 주기
 	float m_cast2Counter = false;		//Cast2의 nuclear
 	float m_vulnerable = false;			//Cast2의 카운터 취약 순간
+	float m_cast4Cancel_requiredHit = 3;	//Cast4를 중단시키기 위한 피격 횟수
 
 public:
-	bool m_debugmode = false;			//서버 FSM 확인용 변수
+	bool m_debugmode = true;			//서버 FSM 확인용 변수
 };
 

@@ -14,6 +14,7 @@ public:
 
 	void Tick(float timeDelta);
 	void ExecuteMsg_Once();
+	void ExecuteMsg_continuous();
 
 public:
 	std::string			msg;
