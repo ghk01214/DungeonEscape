@@ -320,10 +320,7 @@ void Scene_Test::CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player
 	}
 
 	pScene->AddPlayer(gameObjects);
-<<<<<<< HEAD
 	GET_NETWORK->AddNetworkComponent(gameObjects);
-=======
->>>>>>> feature/newEngine
 }
 
 void Scene_Test::CreateSphere(shared_ptr<CScene> pScene)
@@ -353,7 +350,7 @@ void Scene_Test::SendKeyInput()
 	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
 	{
 		GET_NETWORK->SendKeyInputPacket();
-		//std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
+		std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
 	}
 }
 
@@ -545,12 +542,9 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		case server::OBJECT_TYPE::MONSTER_THUNDERBALL:
 		case server::OBJECT_TYPE::MONSTER_POISONBALL:
 		{
-<<<<<<< HEAD
 			if (m_overlappedObjects.contains(id) == false)
 				return;
 
-=======
->>>>>>> feature/newEngine
 			auto objects{ GetNetworkObject() };
 			network::NetworkGameObject removeObjects;
 
@@ -561,14 +555,11 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			}
 
 			RemoveNetworkObject(removeObjects);
-<<<<<<< HEAD
 
 			//std::cout << "삭제 : " << id << ", " << magic_enum::enum_name(type) << std::endl;
 			m_overlappedObjects.erase(id);
 
 			GET_NETWORK->RemoveNetworkObject(id);
-=======
->>>>>>> feature/newEngine
 		}
 		break;
 		default:
