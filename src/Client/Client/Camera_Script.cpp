@@ -75,11 +75,11 @@ void Camera_Basic::LateUpdate()
 			GetTransform()->SetLocalRotation(rotation);
 		}
 
-		if (INPUT->GetButtonDown(KEY_TYPE::RBUTTON))
-		{
-			const POINT& pos = INPUT->GetMousePos();
-			GET_SINGLE(SceneManager)->Pick(pos.x, pos.y);
-		}
+		//if (INPUT->GetButtonDown(KEY_TYPE::RBUTTON))
+		//{
+		//	const POINT& pos = INPUT->GetMousePos();
+		//	GET_SINGLE(SceneManager)->Pick(pos.x, pos.y);
+		//}
 
 		GetTransform()->SetLocalPosition(pos);
 	}

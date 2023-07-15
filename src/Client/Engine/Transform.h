@@ -15,7 +15,7 @@ public:
 		tagTransformDesc()
 		{
 			SpeedPerSec = 1000.f;
-			RotationPerSec = 15.f;
+			RotationPerSec = 20.f;
 		}
 
 	}TRANSFORMDESC;

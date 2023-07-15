@@ -179,50 +179,38 @@ void Player_Script::MovePlayerCameraLook(void)
 
 	std::shared_ptr<CScene> activeScene = GET_SINGLE(SceneManager)->GetActiveScene();
 	const auto& camera = activeScene->GetMainCamera();
+	const auto& cameraTransform = camera->GetTransform();
 
 	// 카메라가 존재할 경우
 	if (nullptr != camera)
 	{
-		//Vec3 pos = GetTransform()->GetWorldPosition();
-		//
-		//const shared_ptr<Transform>& cameraTransform = camera->GetTransform();
-		//
-		//// 초당 이동 속도
-		//if (INPUT->GetButton(KEY_TYPE::W))
-		//{
-		//	pos.x += cameraTransform->GetLook().x * _speed * DELTA_TIME;
-		//	pos.z += cameraTransform->GetLook().z * _speed * DELTA_TIME;
-		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Forward());
-		//}
-		//if (INPUT->GetButton(KEY_TYPE::S))
-		//{
-		//	pos.x -= cameraTransform->GetLook().x * _speed * DELTA_TIME;
-		//	pos.z -= cameraTransform->GetLook().z * _speed * DELTA_TIME;
-		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Backward());
-		//}
-		//if (INPUT->GetButton(KEY_TYPE::A))
-		//{
-		//	pos.x -= cameraTransform->GetRight().x * _speed * DELTA_TIME;
-		//	pos.z -= cameraTransform->GetRight().z * _speed * DELTA_TIME;
-		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Right());
-		//}
-		//if (INPUT->GetButton(KEY_TYPE::D))
-		//{
-		//	pos.x += cameraTransform->GetRight().x * _speed * DELTA_TIME;
-		//	pos.z += cameraTransform->GetRight().z * _speed * DELTA_TIME;
-		//	TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Left());
-		//}
-		//Matrix matWorld = GetTransform()->GetWorldMatrix();
-		//matWorld.Translation(pos);
-		//GetTransform()->SetWorldMatrix(matWorld);
-		//
-		//TurnPlayer(GetTransform()->GetWorldMatrix().Forward(), camera->GetTransform()->GetLook());
+		// 방향키를 누르면 카메라가 바라보는 방향을 기준으로 회전
 
-		//Vec3 pos{ GetTransform()->GetWorldVec3Position() };
-		//Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-		//matWorld.Translation(pos);
-		//GetTransform()->SetWorldMatrix(matWorld);
+		// W(앞쪽 방향키를 누르면)
+		if (INPUT->GetButton(KEY_TYPE::W))
+		{
+			TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Forward());
+		}
 
+		// W(앞쪽 방향키를 누르면)
+		if (INPUT->GetButton(KEY_TYPE::S))
+		{
+			TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Backward());
+		}
+
+		// W(앞쪽 방향키를 누르면)
+		if (INPUT->GetButton(KEY_TYPE::A))
+		{
+			TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Right());
+		}
+
+		// W(앞쪽 방향키를 누르면)
+		if (INPUT->GetButton(KEY_TYPE::D))
+		{
+			TurnPlayer(GetTransform()->GetWorldMatrix().Backward(), cameraTransform->GetWorldMatrix().Left());
+		}
+
+		// 서버에 카메라 Look 방향 전송
 		GetNetwork()->SendCameraLook(camera->GetTransform()->GetLook());
 	}
 }
@@ -308,18 +296,9 @@ void Player_Script::StartRender(network::CPacket& packet)
 
 	pos.y -= (m_radius + m_halfHeight);
 
-	//Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-	//matWorld.Translation(pos);
-	//GetTransform()->SetWorldMatrix(matWorld);
-
 	Matrix matWorld{ Matrix::CreateRotationY(180.f) };
 	matWorld *= Matrix::CreateTranslation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
-
-	//Matrix matWorld{ Matrix::CreateScale(scale) };
-	//matWorld *= Matrix::CreateFromQuaternion(quat);
-	//matWorld *= Matrix::CreateTranslation(pos);
-	//GetTransform()->SetWorldMatrix(matWorld);
 }
 
 void Player_Script::Transform(network::CPacket& packet)
@@ -344,18 +323,9 @@ void Player_Script::Transform(network::CPacket& packet)
 
 	pos.y -= (m_radius + m_halfHeight);
 
-	//Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-	//matWorld.Translation(pos);
-	//GetTransform()->SetWorldMatrix(matWorld);
-
-	Matrix matWorld{ Matrix::CreateRotationY(180.f) };
-	matWorld *= Matrix::CreateTranslation(pos);
+	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	matWorld.Translation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
-
-	//Matrix matWorld{ Matrix::CreateScale(scale) };
-	//matWorld *= Matrix::CreateFromQuaternion(quat);
-	//matWorld *= Matrix::CreateTranslation(pos);
-	//GetTransform()->SetWorldMatrix(matWorld);
 
 #pragma region [FOR DEBUGGING]
 	//auto t{ GetTransform()->GetWorldPosition() };

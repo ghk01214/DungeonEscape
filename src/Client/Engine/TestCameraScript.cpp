@@ -52,11 +52,11 @@ void TestCameraScript::LateUpdate()
 		rotation.y -= DELTA_TIME * 90.f;
 	}
 
-	if (INPUT->GetButtonDown(KEY_TYPE::RBUTTON))
-	{
-		const POINT& pos = INPUT->GetMousePos();
-		GET_SINGLE(SceneManager)->Pick(pos.x, pos.y);
-	}
+	//if (INPUT->GetButtonDown(KEY_TYPE::RBUTTON))
+	//{
+	//	const POINT& pos = INPUT->GetMousePos();
+	//	GET_SINGLE(SceneManager)->Pick(pos.x, pos.y);
+	//}
 
 	GetTransform()->SetLocalPosition(pos);
 	GetTransform()->SetLocalRotation(rotation);

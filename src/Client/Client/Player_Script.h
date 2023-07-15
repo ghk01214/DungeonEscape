@@ -81,4 +81,6 @@ private:
 
 	float m_radius;
 	float m_halfHeight;
+
+	float m_speed = 50.f;
 };

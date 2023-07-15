@@ -277,7 +277,7 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 	{
 		mapObject->SetCheckFrustum(false);
 		pScene->AddGameObject(mapObject);
-		pScene->AddGameObject(mapObject);
+		//pScene->AddGameObject(mapObject);
 	}
 }
 
@@ -350,7 +350,7 @@ void Scene_Test::SendKeyInput()
 	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
 	{
 		GET_NETWORK->SendKeyInputPacket();
-		//std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
+		std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
 	}
 }
 
