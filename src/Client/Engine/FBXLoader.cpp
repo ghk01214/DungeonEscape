@@ -31,7 +31,7 @@ void FBXLoader::LoadFbx(const wstring& path)
 	ParseNode(m_scene->GetRootNode());
 
 	// 우리 구조에 맞게 Texture / Material 생성
-	if (fs::path(path).filename() == L"NewStage.fbx")
+	if (fs::path(path).filename() == L"Floor.fbx")
 	{
 		std::cout << "Skip" << std::endl;
 		return;

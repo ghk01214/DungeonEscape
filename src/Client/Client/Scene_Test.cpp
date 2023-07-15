@@ -269,7 +269,7 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models3.fbx");
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\NewStage.fbx");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Floor.fbx");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 
@@ -350,7 +350,7 @@ void Scene_Test::SendKeyInput()
 	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
 	{
 		GET_NETWORK->SendKeyInputPacket();
-		std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
+		//std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
 	}
 }
 

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -93,7 +93,7 @@ void TestLevel::LoadMap()
 
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models3.fbx");
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\NewStage.fbx");
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Floor.fbx");
 
 	auto objmgr = ObjectManager::GetInstance();
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
