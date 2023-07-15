@@ -5,34 +5,30 @@
 
 enum class KEY_TYPE
 {
-	UP = VK_UP,
-	DOWN = VK_DOWN,
-	LEFT = VK_LEFT,
-	RIGHT = VK_RIGHT,
-	SPACE = VK_SPACE,
+	UP = DIK_UP,
+	DOWN = DIK_DOWN,
+	LEFT = DIK_LEFT,
+	RIGHT = DIK_RIGHT,
+	SPACE = DIK_SPACE,
 
-	W = 'W',
-	A = 'A',
-	S = 'S',
-	D = 'D',
+	W = DIK_W,
+	A = DIK_A,
+	S = DIK_S,
+	D = DIK_D,
 
-	Q = 'Q',
-	E = 'E',
-	Z = 'Z',
-	C = 'C',
-	R = 'R',
+	Q = DIK_Q,
+	E = DIK_E,
+	Z = DIK_Z,
+	C = DIK_C,
+	R = DIK_R,
 
 	// 여기 있는 번호 키는 키보드 영/한 자판 위에 있는 번호 1 ~ 0 사이의 버튼, 오른쪽에 있는 것은 NUMPAD 숫자.
-	KEY_1 = '1',
-	KEY_2 = '2',
-	KEY_3 = '3',
-	KEY_4 = '4',
+	KEY_1 = DIK_1,
+	KEY_2 = DIK_2,
+	KEY_3 = DIK_3,
+	KEY_4 = DIK_4,
 
-	// 마우스 왼쪽 오른쪽 버튼
-	LBUTTON = VK_LBUTTON,
-	RBUTTON = VK_RBUTTON,
-
-	MAX = 20
+	MAX = 18
 };
 
 enum class KEY_STATE
@@ -115,6 +111,7 @@ private:
 	vector<KEY_TYPE> m_useKeyType;
 
 	LPDIRECTINPUT8			m_pInputSDK = nullptr;
+	LPDIRECTINPUTDEVICE8	m_pKeyBoard = nullptr;
 	LPDIRECTINPUTDEVICE8	m_pMouse = nullptr;
 
 private:

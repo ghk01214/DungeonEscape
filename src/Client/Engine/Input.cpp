@@ -25,9 +25,20 @@ HRESULT CInput::Init(HINSTANCE hInst, HWND hWnd)
 	m_useKeyType.push_back(KEY_TYPE::KEY_3);
 	m_useKeyType.push_back(KEY_TYPE::KEY_4);
 
+
+	// 디바이스 생성
 	if (FAILED(DirectInput8Create(hInst, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_pInputSDK, nullptr)))
 		return E_FAIL;
 
+	// 키보드 초기화
+	if (FAILED(m_pInputSDK->CreateDevice(GUID_SysKeyboard, &m_pKeyBoard, nullptr)))
+		return E_FAIL;
+
+	m_pKeyBoard->SetDataFormat(&c_dfDIKeyboard);
+	m_pKeyBoard->SetCooperativeLevel(hWnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+	m_pKeyBoard->Acquire();
+
+	// 마우스 초기화
 	if (FAILED(m_pInputSDK->CreateDevice(GUID_SysMouse, &m_pMouse, nullptr)))
 		return E_FAIL;
 
@@ -60,7 +71,7 @@ void CInput::Update()
 	BYTE asciiKeys[KEY_TYPE_COUNT] = {};
 
 	// 256개의 virtual key에 대한 배열 정보를 받아와 완료되면 true, 아니면 false 반환
-	if (::GetKeyboardState(asciiKeys) == false)
+	if (m_pKeyBoard->GetDeviceState(256, asciiKeys) != S_OK)
 		return;
 
 	for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
@@ -102,9 +113,6 @@ void CInput::Update()
 	// 현재 프레임의 마우스 좌표 계산
 	::GetCursorPos(&m_curMousePos);
 	::ScreenToClient(GEngine->GetWindow().hWnd, &m_curMousePos);
-
-	// 현재 프레임의 입력 정보 세팅
-	SetUp_InputDeviceState();
 }
 
 void CInput::EncodeKeyInput(void)
