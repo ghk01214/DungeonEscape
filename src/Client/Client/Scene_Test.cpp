@@ -1,33 +1,38 @@
-﻿#include "pch.h"
+﻿
+#include "pch.h"
 #include <NetworkManager.h>
+
 #include "Scene_Test.h"
 #include "GameInstance.h"
+
 #include "SceneManager.h"
 #include "Scene.h"
+#include "GameObject.h"
 
 #include "Engine.h"
+
+#include "Resources.h"
 #include "Material.h"
-#include "GameObject.h"
+#include "MeshData.h"
+#include "Texture.h"
+
 #include "MeshRenderer.h"
 #include "Transform.h"
 #include "Camera.h"
 #include "Light.h"
 #include "Animator.h"
-
-#include "Resources.h"
+#include "BillBoard.h"
 #include "ParticleSystem.h"
 #include "Terrain.h"
 #include "SphereCollider.h"
-#include "MeshData.h"
-
-#include "Scripts.hpp"
 
 #include <Network.h>
 
 #include "FBXMapLoader.h"
 #include "Input.h"
 
-#include "BB_Fire.h"
+#include "Scripts.hpp"
+#include "Skill_Bomb_Script.h"
 
 Scene_Test::Scene_Test()
 {
@@ -329,16 +334,23 @@ void Scene_Test::CreateSphere(shared_ptr<CScene> pScene)
 {
 	ObjectDesc objectDesc;
 	objectDesc.strName = L"Mistic";
-	objectDesc.strPath = L"..\\Resources\\FBX\\Sphere.fbx";
+	objectDesc.strPath = L"..\\Resources\\FBX\\Temp\\gateway.fbx";
 	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
 	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
 
 	std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateMapObject(objectDesc);
-	gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::PLAYER_FIREBALL);
+	//gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::PLAYER_FIREBALL);
 
-	Vec3 pos{ 1500.f, 100.f, -1000.f };
+	Vec3 pos{ 0.f, 0.f, 0.f };
+
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Alpha_Blend_Object");
+
 	for (auto& gameObject : gameObjects)
 	{
+		for (uint32 i = 0; i < gameObject->GetMeshRenderer()->GetMaterialSize(); ++i)
+		{
+			gameObject->GetMeshRenderer()->GetMaterial(i)->SetShader(shader);
+		}
 		gameObject->GetTransform()->SetWorldVec3Position(pos);
 		auto mat{ Matrix::CreateTranslation(pos) };
 		gameObject->GetTransform()->SetWorldMatrix(mat);
@@ -347,18 +359,48 @@ void Scene_Test::CreateSphere(shared_ptr<CScene> pScene)
 	pScene->AddGameObject(gameObjects);
 }
 
+void Scene_Test::CreateSkill(shared_ptr<CScene> pScene)
+{
+	// 오브젝트 생성
+	vector<shared_ptr<CGameObject>> gameObjects = CreateSkillBase(L"BombBase", L"..\\Resources\\FBX\\Skill\\Sphere\\Sphere_Yellow.fbx");
+
+	for (auto& object : gameObjects)
+	{
+		object->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+		object->AddComponent(std::make_shared<Bomb_Script>());
+	}
+
+	// 오브젝트 추가
+	pScene->AddGameObject(gameObjects);
+}
+
 void Scene_Test::CreateBillBoard(shared_ptr<CScene> pScene)
+{
+	// 텍스쳐 생성
+	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->LoadTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Sprite\\Fire.png", 64);
+
+	// 오브젝트 생성
+	shared_ptr<CGameObject> gameObjects = CreateBillBoardBase(textures, 0.03f);
+
+	gameObjects->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
+
+	// 오브젝트 추가
+	pScene->AddGameObject(gameObjects);
+}
+
+std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(vector<shared_ptr<Texture>> textures, float fPassingTime)
 {
 	// 오브젝트 생성
 	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
 
 	// 위치 설정
 	gameObjects->AddComponent(make_shared<Transform>());
-	gameObjects->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
-	gameObjects->GetTransform()->SetLocalPosition(Vec3(100.f, 100.f, 0.f));
 
 	// 빌보드 처리
-	gameObjects->AddComponent(make_shared<BB_Fire>());
+	gameObjects->AddComponent(make_shared<BillBoard>());
+
+	// 빌보드 텍스쳐 설정
+	gameObjects->GetBillBoard()->SetBBInfo(BB_TYPE::ATLAS, textures, fPassingTime);
 
 	// MeshRenderer - 사각형 메쉬, 텍스쳐 설정
 	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
@@ -375,8 +417,32 @@ void Scene_Test::CreateBillBoard(shared_ptr<CScene> pScene)
 
 	gameObjects->AddComponent(meshRenderer);
 
-	// 오브젝트 추가
-	pScene->AddGameObject(gameObjects);
+	return gameObjects;
+}
+
+std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath)
+{
+	// 스킬에 사용할 fbx 오브젝트 로드
+	shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(fbxPath);
+
+	vector<shared_ptr<CGameObject>> gameObjects = meshData->Instantiate();
+
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->SetName(skillName);
+		gameObject->SetCheckFrustum(false);
+
+		uint32 materialSize = gameObject->GetMeshRenderer()->GetMaterialSize();
+
+		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Alpha_Blend_Object");
+
+		for (uint32 i = 0; i < materialSize; ++i)
+		{
+			gameObject->GetMeshRenderer()->GetMaterial(i)->SetShader(shader);
+		}
+	}
+
+	return gameObjects;
 }
 
 void Scene_Test::SendKeyInput()
@@ -885,8 +951,10 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateSkyBox(pScene);
 	CreateUI(pScene);
 	CreateLights(pScene);
-	CreateMap(pScene);
+	//CreateMap(pScene);
 	CreateBillBoard(pScene);
+	CreateSphere(pScene);
+	CreateSkill(pScene);
 
 	CreatePlayer(pScene, eType);
 }

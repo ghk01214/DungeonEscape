@@ -46,9 +46,9 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 viewNormal = input.viewNormal;
     if (g_tex_on_1)
     {
-        // [0,255] ¹üÀ§¿¡¼­ [0,1]·Î º¯È¯
+        // [0,255] ë²”ìœ„ì—ì„œ [0,1]ë¡œ ë³€í™˜
         float3 tangentSpaceNormal = g_tex_1.Sample(g_sam_0, input.uv).xyz;
-        // [0,1] ¹üÀ§¿¡¼­ [-1,1]·Î º¯È¯
+        // [0,1] ë²”ìœ„ì—ì„œ [-1,1]ë¡œ ë³€í™˜
         tangentSpaceNormal = (tangentSpaceNormal - 0.5f) * 2.f;
         float3x3 matTBN = { input.viewTangent, input.viewBinormal, input.viewNormal };
         viewNormal = normalize(mul(tangentSpaceNormal, matTBN));
@@ -106,3 +106,56 @@ float4 PS_Tex(VS_TEX_OUT input) : SV_Target
 }
 
 #endif
+
+
+
+VS_OUT VS_AlphaBlend(VS_IN input)
+{
+    VS_OUT output = (VS_OUT)0;
+
+    output.pos = mul(float4(input.pos, 1.f), g_matWVP);
+    output.uv = input.uv;
+
+    output.viewPos = mul(float4(input.pos, 1.f), g_matWV).xyz;
+    output.viewNormal = normalize(mul(float4(input.normal, 0.f), g_matWV).xyz);
+    output.viewTangent = normalize(mul(float4(input.tangent, 0.f), g_matWV).xyz);
+    output.viewBinormal = normalize(cross(output.viewTangent, output.viewNormal));
+
+    return output;
+}
+
+float4 PS_AlphaBlend(VS_OUT input) : SV_Target
+{
+    float4 color = float4(1.f, 1.f, 1.f, 1.f);
+    if (g_tex_on_0)
+        color = g_tex_0.Sample(g_sam_0, input.uv);
+
+    float3 viewNormal = input.viewNormal;
+    if (g_tex_on_1)
+    {
+        // [0,255] ë²”ìœ„ì—ì„œ [0,1]ë¡œ ë³€í™˜
+        float3 tangentSpaceNormal = g_tex_1.Sample(g_sam_0, input.uv).xyz;
+        // [0,1] ë²”ìœ„ì—ì„œ [-1,1]ë¡œ ë³€í™˜
+        tangentSpaceNormal = (tangentSpaceNormal - 0.5f) * 2.f;
+        float3x3 matTBN = { input.viewTangent, input.viewBinormal, input.viewNormal };
+        viewNormal = normalize(mul(tangentSpaceNormal, matTBN));
+    }
+
+    LightColor totalColor = (LightColor)0.f;
+
+    for (int i = 0; i < g_lightCount; ++i)
+    {
+         LightColor color = CalculateLightColor(i, viewNormal, input.viewPos);
+         totalColor.diffuse += color.diffuse;
+         totalColor.ambient += color.ambient;
+         totalColor.specular += color.specular;
+    }
+
+    color.xyz = (totalColor.diffuse.xyz * color.xyz)
+        + totalColor.ambient.xyz * color.xyz
+        + totalColor.specular.xyz;
+
+    color.a = g_float_2;
+
+    return color;
+}

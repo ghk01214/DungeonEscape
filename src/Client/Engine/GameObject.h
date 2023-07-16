@@ -58,6 +58,9 @@ public:
 
 	void SetObjectType(server::OBJECT_TYPE type) { m_objectType = type; }
 
+	void SetDead(bool bDead) { m_bDead = bDead; }
+	bool GetDead(void) { return m_bDead; }
+
 private:
 	array<shared_ptr<Component>, FIXED_COMPONENT_COUNT> m_components;
 	vector<shared_ptr<MonoBehaviour>> m_scripts;
@@ -67,5 +70,8 @@ private:
 	bool m_static = true;
 
 	server::OBJECT_TYPE m_objectType;
+
+private:
+	bool m_bDead = false;
 };
 

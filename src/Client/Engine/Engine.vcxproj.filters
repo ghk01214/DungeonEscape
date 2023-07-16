@@ -163,6 +163,9 @@
     <Filter Include="GameObject\Component\BillBoard">
       <UniqueIdentifier>{62bd6622-1ec3-4222-9a45-0b949baababb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Component\BlendObject">
+      <UniqueIdentifier>{acea70a9-b54d-465f-b8bf-228ed23b835d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -308,6 +311,9 @@
     </ClCompile>
     <ClCompile Include="BillBoard.cpp">
       <Filter>GameObject\Component\BillBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="BlendObject.cpp">
+      <Filter>GameObject\Component\BlendObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -466,6 +472,9 @@
     </ClInclude>
     <ClInclude Include="BillBoard.h">
       <Filter>GameObject\Component\BillBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="BlendObject.h">
+      <Filter>GameObject\Component\BlendObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

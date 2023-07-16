@@ -78,8 +78,8 @@
     <Filter Include="소스 파일\Objects\05. Skill">
       <UniqueIdentifier>{6f9aab8d-6ade-46d0-8bd4-eecb588714ab}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\05. Skill\BillBoard">
-      <UniqueIdentifier>{122802cb-da02-4d50-9c9f-2e88a7f182a9}</UniqueIdentifier>
+    <Filter Include="소스 파일\Objects\05. Skill\Bomb">
+      <UniqueIdentifier>{4337bf39-ca73-4a1c-b8ca-15e0cf3189a7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -152,8 +152,11 @@
     <ClInclude Include="Scene_GamePlay.h">
       <Filter>소스 파일\Objects\00. Scene\GamePlay</Filter>
     </ClInclude>
-    <ClInclude Include="BB_Fire.h">
-      <Filter>소스 파일\Objects\05. Skill\BillBoard</Filter>
+    <ClInclude Include="Skill_Script.h">
+      <Filter>소스 파일\Objects\05. Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="Skill_Bomb_Script.h">
+      <Filter>소스 파일\Objects\05. Skill\Bomb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -224,8 +227,11 @@
     <ClCompile Include="Scene_GamePlay.cpp">
       <Filter>소스 파일\Objects\00. Scene\GamePlay</Filter>
     </ClCompile>
-    <ClCompile Include="BB_Fire.cpp">
-      <Filter>소스 파일\Objects\05. Skill\BillBoard</Filter>
+    <ClCompile Include="Skill_Script.cpp">
+      <Filter>소스 파일\Objects\05. Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="Skill_Bomb_Script.cpp">
+      <Filter>소스 파일\Objects\05. Skill\Bomb</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

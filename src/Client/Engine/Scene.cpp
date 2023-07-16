@@ -53,6 +53,15 @@ void CScene::FinalUpdate()
 	{
 		gameObject->FinalUpdate();
 	}
+
+	std::vector<shared_ptr<CGameObject>> Objects;
+	for (const shared_ptr<CGameObject>& gameObject : m_gameObjects)
+	{
+		if (!gameObject->GetDead())
+			Objects.push_back(gameObject);
+	}
+
+	m_gameObjects = Objects;
 }
 
 shared_ptr<Camera> CScene::GetMainCamera()

@@ -416,6 +416,30 @@ void Resources::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info);
 		Add<Shader>(L"Forward", shader);
+
+	// Alpha_Blend_Object (Forward)
+	{
+		ShaderInfo info =
+		{
+			SHADER_TYPE::FORWARD,
+			RASTERIZER_TYPE::CULL_BACK,
+			DEPTH_STENCIL_TYPE::LESS_EQUAL,
+			BLEND_TYPE::ALPHA_BLEND
+		};
+
+		ShaderArg arg =
+		{
+			"VS_AlphaBlend",
+			"",
+			"",
+			"",
+			"PS_AlphaBlend"
+		};
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg);
+		Add<Shader>(L"Alpha_Blend_Object", shader);
+	}
 	}
 
 	// Texture (Forward)
@@ -461,7 +485,7 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg);
+		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg); 
 		Add<Shader>(L"BillBoard_Texture", shader);
 	}
 
