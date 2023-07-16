@@ -31,8 +31,14 @@ private:
 	void CreateMap(shared_ptr<CScene> pScene);
 	void CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player);
 	void CreateSphere(shared_ptr<CScene> pScene);
+	void CreateSkill(shared_ptr<CScene> pScene);
 	void CreateBillBoard(shared_ptr<CScene> pScene);
 
+private:
+	std::shared_ptr<CGameObject> CreateBillBoardBase(vector<shared_ptr<class Texture>> textures, float fPassingTime);
+	std::vector<std::shared_ptr<CGameObject>> CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath);
+
+private:
 	void SendKeyInput();
 
 	void ChangeNetworkObjectID(network::CPacket& packet);
