@@ -20,7 +20,7 @@ void Bomb_Script::Start()
 {
 	__super::Start();
 
-	m_duration = 20.f;
+	m_duration = 100.f;
 }
 
 void Bomb_Script::Update()

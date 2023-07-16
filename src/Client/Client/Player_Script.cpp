@@ -33,9 +33,7 @@ Player_Script::~Player_Script()
 void Player_Script::Start()
 {
 	if (GetNetwork()->IsMyPlayer() == true)
-	{
 		GetNetwork()->SendAddPlayer(m_playerType);
-	}
 
 	GetAnimator()->Play(m_currState);
 
@@ -52,7 +50,8 @@ void Player_Script::Update(void)
 void Player_Script::LateUpdate()
 {
 	// 카메라가 바라보고 있는 방향으로 플레이어를 움직임.
-	MovePlayerCameraLook();
+	if (GetNetwork()->IsMyPlayer() == true)
+		MovePlayerCameraLook();
 
 	CheckState();
 	UpdateFrameRepeat();

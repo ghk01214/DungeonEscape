@@ -57,14 +57,16 @@ namespace network
 		}
 	}
 
-	const std::deque<CPacket> CNetwork::GetRecvPackets() const
+	std::deque<CPacket>& CNetwork::GetRecvPackets()
 	{
+		if (m_myPlayer == true)
+			std::cout << m_recvPackets.size() << ", ";
 		return m_recvPackets;
 	}
 
 	const int32_t CNetwork::GetRecvQueueSize() const
 	{
-		return m_recvQueueSize.load();
+		return m_recvQueueSize;
 	}
 
 #pragma region [SEND PACKET]

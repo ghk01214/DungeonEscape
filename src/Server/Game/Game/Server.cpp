@@ -690,7 +690,10 @@ namespace game
 						continue;
 
 					if (pl->GetID() != id)
+					{
+						m_sessions[id]->SendAddAnimateObjPacket(pl);
 						continue;
+					}
 
 					for (auto& client : m_sessions)
 					{
@@ -714,7 +717,6 @@ namespace game
 					m_sessions[id]->SendAddAnimateObjPacket(mob);
 					mob->SetTransformSendFlag(true);
 				}
-				std::cout << "pl num, mob num : " << playerObjects.size() << ", " << monsterObjects.size() << "\n";
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
@@ -823,7 +825,11 @@ namespace game
 
 							client->SendTransformPacket(pl);
 						}
+
+						//std::cout << pl->GetID() << ", ";
 					}
+
+					//std::cout << "\n";
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::BOSS)
 				{

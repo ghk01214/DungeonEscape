@@ -380,7 +380,7 @@ void Scene_Test::CreateBillBoard(shared_ptr<CScene> pScene)
 	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->LoadTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Sprite\\Fire.png", 64);
 
 	// 오브젝트 생성
-	shared_ptr<CGameObject> gameObjects = CreateBillBoardBase(textures, 0.03f);
+	shared_ptr<CGameObject> gameObjects = CreateBillBoardBase(textures, 0.0001f);
 
 	gameObjects->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
 
@@ -450,7 +450,7 @@ void Scene_Test::SendKeyInput()
 	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
 	{
 		GET_NETWORK->SendKeyInputPacket();
-		std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
+		//std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
 	}
 }
 
@@ -509,7 +509,7 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 		matWorld *= Matrix::CreateTranslation(pos);
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 		gameObject->SetObjectType(objType);
-		gameObject->GetAnimator()->PlayFrame(state, updateTime);
+		//gameObject->GetAnimator()->PlayFrame(state, updateTime);
 	}
 
 	AddObjectToScene(objType, gameObjects);
@@ -951,9 +951,9 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateSkyBox(pScene);
 	CreateUI(pScene);
 	CreateLights(pScene);
-	//CreateMap(pScene);
+	CreateMap(pScene);
 	CreateBillBoard(pScene);
-	CreateSphere(pScene);
+	//CreateSphere(pScene);
 	CreateSkill(pScene);
 
 	CreatePlayer(pScene, eType);

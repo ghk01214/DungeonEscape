@@ -63,7 +63,7 @@ void WeeperAI::FillSchedule()
 	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 
 
-	std::cout << "Filled Schedule" << std::endl;
+	//std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
 }
 
@@ -96,7 +96,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);
 
 				m_scheduler.erase(m_scheduler.begin());
-				ReportSchedule();
+				//ReportSchedule();
 
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 1.5f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.f, m_weeper);
@@ -123,7 +123,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 
 				EventHandler::GetInstance()->AddEvent("CAST2_SCATTER_AIRFIRE", 7.f, cast2Ball);		//EVENT:ASCEND예약 (스킬 ascend attribute 부여, 애니메이션 재생, 반격모드 OFF)
 
-				ReportSchedule();
+				//ReportSchedule();
 			}
 			else
 			{
@@ -143,7 +143,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);
 
 				m_scheduler.erase(m_scheduler.begin());
-				ReportSchedule();
+				//ReportSchedule();
 
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 1.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 2.f, m_weeper);
@@ -165,7 +165,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				m_weeper->Pattern_Cast4();
 				m_weeper->m_currState = Weeper::CAST1;
 				m_scheduler.erase(m_scheduler.begin());
-				ReportSchedule();
+				//ReportSchedule();
 
 				if (m_debugmode)
 					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);
@@ -227,25 +227,25 @@ void WeeperAI::DamageCheck()
 void WeeperAI::Cast2Counter_ON()
 {
 	m_cast2Counter = true;
-	cout << "핵폭탄 반격모드 ON" << endl;
+	//cout << "핵폭탄 반격모드 ON" << endl;
 }
 
 void WeeperAI::Cast2Counter_OFF()
 {
 	m_cast2Counter = false;
-	cout << "핵폭탄 반격모드 OFF" << endl;
+	//cout << "핵폭탄 반격모드 OFF" << endl;
 }
 
 void WeeperAI::Cast2Vulnerable_ON()
 {
 	m_vulnerable = true;
-	cout << "vulnerable ON" << endl;
+	//cout << "vulnerable ON" << endl;
 }
 
 void WeeperAI::Cast2Vulnerable_OFF()
 {
 	m_vulnerable = false;
-	cout << "vulnerable OFF" << endl;
+	//cout << "vulnerable OFF" << endl;
 }
 
 void WeeperAI::ReportSchedule()

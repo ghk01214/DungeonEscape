@@ -296,7 +296,6 @@ namespace game
 				case ProtocolID::MY_ADD_ANIMATE_OBJ_REQ:
 				{
 					CreatePlayer(msg);
-					//std::cout << "create player\n";
 				}
 				break;
 				case ProtocolID::MY_KEYINPUT_REQ:

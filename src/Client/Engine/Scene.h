@@ -82,8 +82,8 @@ public:
 	const vector<shared_ptr<CGameObject>>& GetNetworkObject(void) { return m_networkObject; }
 	const shared_ptr<CGameObject>& GetSkyBoxObject(void) { return m_skyBox; }
 
-	const std::deque<network::CPacket>& GetServerRequest() const { return m_requestQueue; }
-	const int32_t GetServerRequestQueueSize() const { return m_requestQueueSize.load(); }
+	const std::deque<network::CPacket>& GetServerRequest() { return m_requestQueue; }
+	const int32_t GetServerRequestQueueSize() const { return m_requestQueueSize; }
 
 private:
 	vector<shared_ptr<CGameObject>>		m_gameObjects;

@@ -366,7 +366,7 @@ void CustomController::Movement_Monster()
 	PxVec3 surfaceNormal{ 0.f };
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)			
+	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)
 	if (m_keyboardInput[SPACE].press && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
@@ -442,8 +442,6 @@ void CustomController::KeyboardReceive(ulong32_t key)
 			case server::KEY_STATE::DOWN:
 			{
 				m_keyboardInput[i].Down();
-
-				//std::cout << magic_enum::enum_name(magic_enum::enum_value<KEY_ORDER>(i)) << ", " << std::boolalpha << m_keyboardInput[i].down << "\n";
 			}
 			break;
 			case server::KEY_STATE::UP:
