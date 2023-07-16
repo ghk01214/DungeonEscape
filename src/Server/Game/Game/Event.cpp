@@ -271,6 +271,7 @@ void Event::ExecuteMsg_continuous_Weeper()
 		if (over)
 		{
 			weeperObj->GetAI()->Cast4Cancel_RequiredHit_To_Default();			//cast4 캔슬횟수 초기화 + cast4 velocity 초기화 + 
+			weeperObj->GetAI()->SetAIWait(false);
 			weeperObj->SetState(Weeper::WEEPER_STATE::CAST4_END);
 			EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, target);
 			executed = true;	//이벤트 소멸

@@ -377,7 +377,10 @@ SkillObject* Weeper::Pattern_Cast3()
 
 bool Weeper::Pattern_Cast4()
 {
-	if (m_cast4_vertVel.y < 10.f)
+	if (m_cast4_vertVel.y < 200.f)
+		m_cast4_vertVel *= 0.9995f;
+
+	else if (m_cast4_vertVel.y < 400.f)
 		m_cast4_vertVel *= 0.999f;
 	else
 		m_cast4_vertVel *= 0.990f;
@@ -395,12 +398,14 @@ bool Weeper::Pattern_Cast4()
 
 	if (m_cast4_vertVel.y < 1.f)
 	{
-		m_cast4_vertVel.y = -100.f;
+		m_cast4_vertVel.y = -10.f;
 
 		if (targetController->IsOnGround())
 		{
-			m_cast4_vertVel = physx::PxVec3(0, 1, 0) * 1000.f;
+			m_cast4_vertVel = physx::PxVec3(0, 1, 0) * 800.f;
+			targetPlayer->SetState(Player::PLAYER_STATE::DAMAGE);
 			return true;
+			
 		}
 	}
 

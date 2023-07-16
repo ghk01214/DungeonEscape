@@ -24,7 +24,7 @@ void WeeperAI::Init()
 
 	//SkillSize 추가
 	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 600));		//z거리 1200
-	AddSkillSize("CAST2", GeometryType::Sphere, Vec3(1200, 1200, 1200));
+	AddSkillSize("CAST2", GeometryType::Box, Vec3(800, 800, 800));
 	AddSkillSize("CAST3", GeometryType::Box, Vec3(400, 400, 400));
 	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 450));
 
@@ -58,9 +58,10 @@ void WeeperAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
-	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 
 
 	std::cout << "Filled Schedule" << std::endl;
@@ -162,6 +163,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
+				m_AIWait = true;
 				m_weeper->SetState(Weeper::WEEPER_STATE::CAST4_START);
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
@@ -267,7 +269,7 @@ void WeeperAI::Cast2Vulnerable_OFF()
 void WeeperAI::Cast4Cancel_RequiredHit_To_Default()
 {
 	m_cast4Cancel_requiredHit = 3;
-	m_weeper->m_cast4_vertVel = physx::PxVec3(0, 1000, 0);
+	m_weeper->m_cast4_vertVel = physx::PxVec3(0, 800, 0);
 }
 
 void WeeperAI::ReportSchedule()
