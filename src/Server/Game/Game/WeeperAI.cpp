@@ -59,7 +59,7 @@ void WeeperAI::FillSchedule()
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
 	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 
 
