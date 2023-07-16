@@ -38,8 +38,6 @@ public:
 public:
 	float GetControllerMoveSpeed();
 	float GetControllerJumpSpeed();
-	Vec3 GetControllerPosition();
-	void SetControllerPosition(Vec3 pos);
 
 	void SetControllerMoveSpeed(float value);
 	void SetControllerJumpSpeed(float value);
