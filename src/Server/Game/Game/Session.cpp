@@ -264,31 +264,51 @@ namespace game
 		Transform* trans{ obj->GetTransform() };
 		auto pos{ trans->GetPosition() };
 		auto quat{ trans->GetRotation() };
-		auto scale{ trans->GetScale() };
-
-		// 오른손 > 왼손
-		/*pos.z = -pos.z;
-		quat.z = -quat.z;*/
-		quat.Normalize();
 
 		// 타깃 id 작성
 		packet.WriteID(obj->GetID());
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::WR_TRANSFORM_ACK);
 
-		// 타깃 렌더링 좌표 작성
-		packet.Write<float>(pos.x);
-		packet.Write<float>(pos.y);
-		packet.Write<float>(pos.z);
+		switch (obj->GetObjectType())
+		{
+			case server::OBJECT_TYPE::PLAYER:
+			case server::OBJECT_TYPE::REMOTE_PLAYER:
+			{
+				// 타깃 렌더링 좌표 작성
+				packet.Write<float>(pos.x);
+				packet.Write<float>(pos.y);
+				packet.Write<float>(pos.z);
 
-		packet.Write<float>(quat.x);
-		packet.Write<float>(quat.y);
-		packet.Write<float>(quat.w);
-		packet.Write<float>(quat.z);
+				packet.Write<float>(quat.y);
+				packet.Write<float>(quat.w);
+			}
+			break;
+			default:
+			{
+				auto scale{ trans->GetScale() };
 
-		packet.Write<float>(scale.x);
-		packet.Write<float>(scale.y);
-		packet.Write<float>(scale.z);
+				// 오른손 > 왼손
+				/*pos.z = -pos.z;
+				quat.z = -quat.z;*/
+				quat.Normalize();
+
+				// 타깃 렌더링 좌표 작성
+				packet.Write<float>(pos.x);
+				packet.Write<float>(pos.y);
+				packet.Write<float>(pos.z);
+
+				packet.Write<float>(quat.x);
+				packet.Write<float>(quat.y);
+				packet.Write<float>(quat.w);
+				packet.Write<float>(quat.z);
+
+				packet.Write<float>(scale.x);
+				packet.Write<float>(scale.y);
+				packet.Write<float>(scale.z);
+			}
+			break;
+		}
 
 		// 패킷 전송
 		Send(packet);

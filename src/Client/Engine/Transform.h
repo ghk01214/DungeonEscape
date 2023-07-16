@@ -73,7 +73,6 @@ public:
 	void TurnAxisY(bool clockWise);
 
 public:
-	float GetWorldMatrixDegreeAxisY(void);
 	Quat GetWorldMatrixQuat(void);
 
 private:

@@ -543,6 +543,17 @@ namespace game
 				InputCommandMessage(msg);
 			}
 			break;
+			case ProtocolID::MY_PLAYER_LOOK_REQ:
+			{
+				Quat look;
+				look.y = packet.Read<float>();
+				look.w = packet.Read<float>();
+
+				msg.playerLook = look;
+
+				InputCommandMessage(msg);
+			}
+			break;
 			default:
 			break;
 		}

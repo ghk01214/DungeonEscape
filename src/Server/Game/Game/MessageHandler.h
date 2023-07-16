@@ -16,6 +16,7 @@ namespace game
 		int32_t					roomID;
 		ulong32_t				keyInput;
 		float					aniPlayTime;
+		Quat					playerLook;
 		Vec3					cameraLook;
 		int32_t					state;
 
@@ -75,6 +76,7 @@ namespace game
 		void SetPlayerAniPlayTime(Message& msg);
 		void SetAniEndFlag(Message& msg);
 		void SetPlayerCameraLook(Message& msg);
+		void SetPlayerLook(Message& msg);
 
 	private:
 		HANDLE m_iocp;

@@ -96,6 +96,18 @@ namespace network
 		GET_NETWORK->Send(packet);
 	}
 
+	void CNetwork::SendPlayerQuat(const Quat& quat)
+	{
+		CPacket packet;
+
+		packet.WriteID(m_networkID);
+		packet.WriteProtocol(ProtocolID::MY_PLAYER_LOOK_REQ);
+		packet.Write<float>(quat.y);
+		packet.Write<float>(quat.w);
+
+		GET_NETWORK->Send(packet);
+	}
+
 	void CNetwork::SendAnimationTime(server::OBJECT_TYPE type, float time)
 	{
 		CPacket packet;

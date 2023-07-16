@@ -86,6 +86,7 @@ void Player::LateUpdate(double timeDelta)
 {
 	m_controller->ClearControllerCollisionInfo();
 	m_transform->ConvertPX(m_controller->GetBody()->GetGlobalPose());
+	m_transform->SetRotation(m_qlook);
 }
 
 void Player::Release()
@@ -201,6 +202,11 @@ void Player::SetAniPlayTime(float time)
 void Player::SetAniEndFlag(bool flag)
 {
 	m_aniEnd = flag;
+}
+
+void Player::SetPlayerQuat(Quat& quat)
+{
+	m_qlook = quat;
 }
 
 void Player::GetDamaged(int32_t damage)

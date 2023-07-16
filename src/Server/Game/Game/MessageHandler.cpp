@@ -318,6 +318,11 @@ namespace game
 					SetPlayerCameraLook(msg);
 				}
 				break;
+				case ProtocolID::MY_PLAYER_LOOK_REQ:
+				{
+					SetPlayerLook(msg);
+				}
+				break;
 #pragma endregion
 #pragma region [WR]
 #pragma endregion
@@ -563,6 +568,25 @@ namespace game
 			if (player->GetID() == msg.playerID)
 			{
 				player->SetControllerCameraLook(msg.cameraLook);
+				break;
+			}
+		}
+	}
+
+	void MessageHandler::SetPlayerLook(Message& msg)
+	{
+		auto playerObjects{ m_objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
+
+		for (auto& playerObj : playerObjects)
+		{
+			auto player{ dynamic_cast<Player*>(playerObj) };
+
+			if (player == nullptr)
+				continue;
+
+			if (player->GetID() == msg.playerID)
+			{
+				player->SetPlayerQuat(msg.playerLook);
 				break;
 			}
 		}

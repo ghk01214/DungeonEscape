@@ -17,6 +17,7 @@ namespace network
 #pragma region [SEND PACKET]
 		void SendAddPlayer(server::FBX_TYPE fbxType);
 		void SendAniIndex(server::OBJECT_TYPE type);
+		void SendPlayerQuat(const Quat& quat);
 		void SendCameraLook(const Vec3& look);
 		void SendAddObject(int32_t tempID, server::OBJECT_TYPE type, server::FBX_TYPE fbxType);
 		void SendRemoveObject(server::OBJECT_TYPE type);

@@ -83,6 +83,7 @@ public:
 	void SetState(int32_t index);
 	void SetAniPlayTime(float time);
 	void SetAniEndFlag(bool flag);
+	void SetPlayerQuat(Quat& quat);
 
 	void GetDamaged(int32_t damage);
 
@@ -136,4 +137,7 @@ private:
 	bool m_prevOnGround;
 
 	int32_t m_sendState;
+
+private:
+	Quat m_qlook;
 };
