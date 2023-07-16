@@ -1,10 +1,15 @@
 ﻿#pragma once
-#pragma once
 
-class Monster;
+#include "Monster.h"
+#include "GolemAI.h"
+
+class SkillObject;
+class TriggerObject;
 
 class Golem : public Monster
 {
+	friend class GolemAI;
+	friend class SkillObject;
 public:
 	enum GOLEM_STATE
 	{
@@ -62,17 +67,29 @@ public:
 	void UpdateFrame();
 
 public:
+	GolemAI* GetAI();
+
+public:
+	void SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geometry, float startTime, float endTime, Vec3 patternSize);
+	void SetUp_PatternObjects();
+public:
+	void Pattern_Attack1();
+	//..
+
+
+public:
 	GOLEM_STATE GetState() const;
 	void SetState(GOLEM_STATE state);
 
 	void SendChangedStateAgain();
 
 private:
+	std::unordered_map<GOLEM_SCHEDULE, TriggerObject*> m_patternTriggerDict;
+
 	GOLEM_STATE m_prevState;
 	GOLEM_STATE m_currState;
 
 	int32_t m_sendState;
 
-private:
-	Vec3 m_patternSize;
+	GolemAI* m_golemAI;
 };

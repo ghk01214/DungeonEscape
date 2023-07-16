@@ -125,21 +125,10 @@ void Weeper::CheckState()
 		break;
 		case DEAD:
 		{
-			SetRemoveReserved();
-
-			for (int32_t i = 0; i < SEND_AGAIN; ++i)
-			{
-				game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
-				ev.objID = m_id;
-				ev.objType = m_objType;
-
-				game::MessageHandler::GetInstance()->PushSendMessage(ev);
-			}
 		}
 		break;
 		case DEATH:
 		{
-			std::cout << "BOSS DEFEATED!\n";
 		}
 		break;
 		case DODGE:
@@ -386,29 +375,36 @@ SkillObject* Weeper::Pattern_Cast3()
 	return skillObject;
 }
 
-void Weeper::Pattern_Cast4()
+bool Weeper::Pattern_Cast4()
 {
-	//투사체 위치 선정
-	physx::PxVec3 monsterPos = m_controller->GetBody()->GetGlobalPose().p;
-	monsterPos.y += 200.f;		//weeper 모델 위치 고려해서 살짝 위로
-	physx::PxVec3 lookDir = TO_PX3(m_weeperAI->m_targetDir);
-	lookDir.getNormalized();
+	if (m_cast4_vertVel.y < 10.f)
+		m_cast4_vertVel *= 0.999f;
+	else
+		m_cast4_vertVel *= 0.990f;
 
-	float monsterRadius = m_controller->GetCollider()->GetRadius();
-	float skillBallHalfExtent = 100.f;
+	auto targetPlayer = m_weeperAI->m_target;
+	auto targetController = targetPlayer->GetController();
+	auto targetBody = targetPlayer->GetController()->GetBody();
 
-	physx::PxVec3 skillBallPosition = monsterPos + lookDir * (monsterRadius + skillBallHalfExtent + 50);
-	Vec3 ballPos = FROM_PX3(skillBallPosition);
+	if (m_cast4_vertVel.y > 0)
+		targetBody->SetVelocity(m_cast4_vertVel);
 
-	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST4_BALL;
+	else
+		targetBody->AddForce(ForceMode::Impulse, m_cast4_vertVel);
 
-	//투사체 생성
-	auto objmgr = ObjectManager::GetInstance();
-	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
-	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, m_weeperAI->m_target, this);
 
-	EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 4.5f, skillObject);		//5초후 추적시작
+	if (m_cast4_vertVel.y < 1.f)
+	{
+		m_cast4_vertVel.y = -100.f;
+
+		if (targetController->IsOnGround())
+		{
+			m_cast4_vertVel = physx::PxVec3(0, 1, 0) * 1000.f;
+			return true;
+		}
+	}
+
+	return false;
 }
 
 int Weeper::Randnum_Cast1_XInterval()

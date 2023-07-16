@@ -75,6 +75,8 @@ void Player::Update(double timeDelta)
 	Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
 	Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
 
+	PlayerPattern_ShootBall_ForDebug();
+
 	GameObject::Update(timeDelta);
 
 	SendTransform();
@@ -88,6 +90,10 @@ void Player::LateUpdate(double timeDelta)
 
 void Player::Release()
 {
+	m_attackTrigger->SetRemoveReserved();
+	m_attackTrigger = nullptr;
+	m_banTriggerApproach = true;
+
 	m_controller = nullptr;
 	GameObject::Release();
 }
@@ -722,9 +728,45 @@ void Player::PlayerPattern_ShootBall()
 	m_controller->Keyboard_ATK_Clear();
 }
 
+void Player::PlayerPattern_ShootBall_ForDebug()
+{
+	static bool wasKDown = false; // static 변수 추가. 이전에 'K'키가 눌려져 있었는지를 기억합니다.
+
+	bool isKDown = GetAsyncKeyState('K') & 0x8000; // 'K'키가 현재 눌려져 있는지 확인합니다.
+
+	if (wasKDown && !isKDown) // 이전에 'K'키가 눌려져 있었는데, 지금은 떼어져 있다면.
+	{
+		SkillObject::SKILLOBJECTTYPE skilltype;
+
+		skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_FIREBALL;
+
+		//투사체 위치 선정
+		physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
+		physx::PxVec3 playerCameraLook = m_controller->GetCameraLook().getNormalized();
+
+		float playerRadius = m_controller->GetCollider()->GetRadius();
+		float skillBallHalfExtent = 50.f;
+
+		physx::PxVec3 skillBallPosition = playerPos + playerCameraLook * (playerRadius + skillBallHalfExtent + 10);
+		Vec3 ballPos = FROM_PX3(skillBallPosition);
+
+		//투사체 생성
+		auto objmgr = ObjectManager::GetInstance();
+		auto layer = objmgr->GetLayer(L"Layer_SkillObject");
+		auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+			(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, nullptr, this);
+		skillObject->PlayerSkillFire(playerCameraLook);
+	}
+
+	wasKDown = isKDown; // 'K'키가 눌려져 있는지의 상태를 업데이트합니다.
+}
+
 void Player::PlayerPattern_SingleStrike()
 {
-	float attackTime[2];
+	if (m_banTriggerApproach)
+		return;
+
+	float attackTime[2] = {};
 
 	switch (m_currState)
 	{
@@ -777,7 +819,7 @@ void Player::PlayerPattern_SingleStrike()
 
 	if (m_firstSingleStrike == true)
 	{
-		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Trigger", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
+		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Layer_TriggerObject", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
 		m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, attackTime[0], attackTime[1]);
 		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
 		triggerBody->AddCollider<BoxCollider>(m_attackTrigger->GetTransform()->GetScale());

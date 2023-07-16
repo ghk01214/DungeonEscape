@@ -214,6 +214,21 @@ Vec3 MonsterAI::GetTargetDir()
 	return m_targetDir;
 }
 
+physx::PxVec3 MonsterAI::GetXZDir()
+{
+	if (!m_target)
+		return PxVec3(0,0,0);
+
+	m_targetPos = m_target->GetControllerPosition();
+	m_targetPos.y = 0;
+	physx::PxVec3 monsterPos = TO_PX3(m_monster->GetControllerPosition());
+	monsterPos.y = 0;
+
+	PxVec3 dir = TO_PX3(m_targetPos) - monsterPos;
+	dir.normalize();
+	return dir;
+}
+
 
 
 

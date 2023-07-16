@@ -66,7 +66,7 @@ public:
 	void Pattern_Cast2_CounterNuclear();
 
 	SkillObject* Pattern_Cast3();
-	void Pattern_Cast4();
+	bool Pattern_Cast4();							//패턴이 끝나면 true 반환
 
 public:
 	int Randnum_Cast1_XInterval();
@@ -78,6 +78,9 @@ public:
 	void SetState(WEEPER_STATE state);
 
 	void SendChangedStateAgain();
+
+private:
+	physx::PxVec3 m_cast4_vertVel = physx::PxVec3(0, 1000, 0);
 
 private:
 	WEEPER_STATE m_prevState;

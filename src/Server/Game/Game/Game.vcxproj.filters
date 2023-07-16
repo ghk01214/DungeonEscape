@@ -203,6 +203,9 @@
     <Filter Include="03. Game\02. Event\01. Event">
       <UniqueIdentifier>{2390eb7b-c91e-4d24-bd7c-23f69e274946}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\Monster\00. MonsterAI\GolemAI">
+      <UniqueIdentifier>{1d70d307-7c82-420d-a985-424d7feb3b20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -376,6 +379,9 @@
     </ClCompile>
     <ClCompile Include="Scorpion.cpp">
       <Filter>03. Game\01. GameObject\Monster\01. Monsters\Scorpion</Filter>
+    </ClCompile>
+    <ClCompile Include="GolemAI.cpp">
+      <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\GolemAI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -576,6 +582,9 @@
     </ClInclude>
     <ClInclude Include="Scorpion.h">
       <Filter>03. Game\01. GameObject\Monster\01. Monsters\Scorpion</Filter>
+    </ClInclude>
+    <ClInclude Include="GolemAI.h">
+      <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\GolemAI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

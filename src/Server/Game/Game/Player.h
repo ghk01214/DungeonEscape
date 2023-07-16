@@ -110,6 +110,7 @@ public:
 
 private:
 	void PlayerPattern_ShootBall();
+	void PlayerPattern_ShootBall_ForDebug();
 	void PlayerPattern_SingleStrike();
 	int32_t IsAttackKeyDown();
 
@@ -131,6 +132,7 @@ private:
 	int32_t m_mp;
 
 	bool m_firstSingleStrike;
+	bool m_banTriggerApproach = false;		//trigger삭제 후 접근방지
 	bool m_prevOnGround;
 
 	int32_t m_sendState;
