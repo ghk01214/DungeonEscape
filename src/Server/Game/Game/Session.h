@@ -36,6 +36,7 @@ namespace game
 		void SendAddObjPacket(GameObject* obj);
 		void SendObjectIDPacket(int32_t objID, int32_t oldObjID);
 		void SendRemovePacket(int32_t id, server::OBJECT_TYPE type);
+		void SendPlayerTransformPacket(GameObject* obj);
 		void SendTransformPacket(GameObject* obj);
 		void SendStatePacket(int32_t id, int32_t stateIndex);
 

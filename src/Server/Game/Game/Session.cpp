@@ -63,31 +63,9 @@ namespace game
 	void CSession::SendLoginPacket(Player* obj)
 	{
 		network::CPacket packet;
-		//Transform* trans{ obj->GetTransform() };
-		//auto pos{ trans->GetPosition() };
-		//auto quat{ trans->GetRotation() };
-		//auto scale{ trans->GetScale() };
 
 		packet.WriteID(m_id);
 		packet.WriteProtocol(ProtocolID::AU_LOGIN_ACK);
-
-		//packet.WriteWString(obj->GetName());
-
-		//packet.Write<float>(pos.x);
-		//packet.Write<float>(pos.y);
-		//packet.Write<float>(pos.z);
-
-		//packet.Write<float>(quat.x);
-		//packet.Write<float>(quat.y);
-		//packet.Write<float>(quat.w);
-		//packet.Write<float>(quat.z);
-
-		//packet.Write<float>(scale.x);
-		//packet.Write<float>(scale.y);
-		//packet.Write<float>(scale.z);
-
-		//packet.Write<int32_t>(obj->GetAniIndex());
-		//packet.Write<float>(obj->GetAniFrame());
 
 		// 패킷 전송
 		Send(packet);
@@ -116,18 +94,36 @@ namespace game
 		packet.WriteID(obj->GetID());
 		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
 
-		packet.Write<float>(pos.x);
-		packet.Write<float>(pos.y);
-		packet.Write<float>(pos.z);
+		switch (objType)
+		{
+			case server::OBJECT_TYPE::PLAYER:
+			case server::OBJECT_TYPE::REMOTE_PLAYER:
+			{
+				packet.Write<float>(pos.x);
+				packet.Write<float>(pos.y);
+				packet.Write<float>(pos.z);
 
-		packet.Write<float>(quat.x);
-		packet.Write<float>(quat.y);
-		packet.Write<float>(quat.w);
-		packet.Write<float>(quat.z);
+				packet.Write<float>(quat.y);
+				packet.Write<float>(quat.w);
+			}
+			break;
+			default:
+			{
+				packet.Write<float>(pos.x);
+				packet.Write<float>(pos.y);
+				packet.Write<float>(pos.z);
 
-		packet.Write<float>(scale.x);
-		packet.Write<float>(scale.y);
-		packet.Write<float>(scale.z);
+				packet.Write<float>(quat.x);
+				packet.Write<float>(quat.y);
+				packet.Write<float>(quat.z);
+				packet.Write<float>(quat.w);
+
+				packet.Write<float>(scale.x);
+				packet.Write<float>(scale.y);
+				packet.Write<float>(scale.z);
+			}
+			break;
+		}
 
 		switch (fbxType)
 		{
@@ -178,28 +174,6 @@ namespace game
 			break;
 		}
 
-		//if (objType == server::OBJECT_TYPE::PLAYER)
-		//{
-		//	auto player{ dynamic_cast<Player*>(obj) };
-		//
-		//	packet.Write<int32_t>(player->GetState());
-		//	packet.Write<float>(player->GetAniPlayTime());
-		//}
-		//else if (fbxType == server::FBX_TYPE::WEEPER1)
-		//{
-		//	auto monster{ dynamic_cast<Weeper*>(obj) };
-		//
-		//	packet.Write<int32_t>(monster->GetState());
-		//	packet.Write<float>(monster->GetAniPlayTime());
-		//}
-		//else if (fbxType == server::FBX_TYPE::DRAGON)
-		//{
-		//	auto monster{ dynamic_cast<Dragon*>(obj) };
-		//
-		//	packet.Write<int32_t>(monster->GetState());
-		//	packet.Write<float>(monster->GetAniPlayTime());
-		//}
-
 		packet.Write<server::OBJECT_TYPE>(objType);
 		packet.Write<server::FBX_TYPE>(fbxType);
 
@@ -223,8 +197,8 @@ namespace game
 
 		packet.Write<float>(quat.x);
 		packet.Write<float>(quat.y);
-		packet.Write<float>(quat.w);
 		packet.Write<float>(quat.z);
+		packet.Write<float>(quat.w);
 
 		packet.Write<float>(scale.x);
 		packet.Write<float>(scale.y);
@@ -258,7 +232,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendTransformPacket(GameObject* obj)
+	void CSession::SendPlayerTransformPacket(GameObject* obj)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -270,45 +244,49 @@ namespace game
 		// 프로토콜 종류 작성
 		packet.WriteProtocol(ProtocolID::WR_TRANSFORM_ACK);
 
-		switch (obj->GetObjectType())
-		{
-			case server::OBJECT_TYPE::PLAYER:
-			case server::OBJECT_TYPE::REMOTE_PLAYER:
-			{
-				// 타깃 렌더링 좌표 작성
-				packet.Write<float>(pos.x);
-				packet.Write<float>(pos.y);
-				packet.Write<float>(pos.z);
+		// 타깃 렌더링 좌표 작성
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
 
-				packet.Write<float>(quat.y);
-				packet.Write<float>(quat.w);
-			}
-			break;
-			default:
-			{
-				auto scale{ trans->GetScale() };
+		packet.Write<float>(quat.y);
+		packet.Write<float>(quat.w);
 
-				// 오른손 > 왼손
-				/*pos.z = -pos.z;
-				quat.z = -quat.z;*/
-				quat.Normalize();
+		// 패킷 전송
+		Send(packet);
+	}
 
-				// 타깃 렌더링 좌표 작성
-				packet.Write<float>(pos.x);
-				packet.Write<float>(pos.y);
-				packet.Write<float>(pos.z);
+	void CSession::SendTransformPacket(GameObject* obj)
+	{
+		network::CPacket packet;
+		Transform* trans{ obj->GetTransform() };
+		auto pos{ trans->GetPosition() };
+		auto quat{ trans->GetRotation() };
+		auto scale{ trans->GetScale() };
 
-				packet.Write<float>(quat.x);
-				packet.Write<float>(quat.y);
-				packet.Write<float>(quat.w);
-				packet.Write<float>(quat.z);
+		// 타깃 id 작성
+		packet.WriteID(obj->GetID());
+		// 프로토콜 종류 작성
+		packet.WriteProtocol(ProtocolID::WR_TRANSFORM_ACK);
 
-				packet.Write<float>(scale.x);
-				packet.Write<float>(scale.y);
-				packet.Write<float>(scale.z);
-			}
-			break;
-		}
+		// 오른손 > 왼손
+		/*pos.z = -pos.z;
+		quat.z = -quat.z;*/
+		quat.Normalize();
+
+		// 타깃 렌더링 좌표 작성
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
+
+		packet.Write<float>(quat.x);
+		packet.Write<float>(quat.y);
+		packet.Write<float>(quat.z);
+		packet.Write<float>(quat.w);
+
+		packet.Write<float>(scale.x);
+		packet.Write<float>(scale.y);
+		packet.Write<float>(scale.z);
 
 		// 패킷 전송
 		Send(packet);
@@ -321,8 +299,6 @@ namespace game
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_CHANGE_STATE_ACK);
 		packet.Write<int32_t>(stateIndex);
-
-		//std::cout << id << " : " <<magic_enum::enum_name(magic_enum::enum_value<Player::PLAYER_STATE>(stateIndex)) << "\n";
 
 		Send(packet);
 	}

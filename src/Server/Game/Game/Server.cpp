@@ -834,7 +834,7 @@ namespace game
 							if (client->GetState() != STATE::INGAME)
 								continue;
 
-							client->SendTransformPacket(pl);
+							client->SendPlayerTransformPacket(pl);
 						}
 
 						//std::cout << pl->GetID() << ", ";
