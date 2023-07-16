@@ -145,3 +145,14 @@ void Transform::TurnAxisY(bool clockWise)
 	SetUp(vUp);
 	SetLook(vLook);
 }
+
+float Transform::GetWorldMatrixDegreeAxisY(void)
+{
+	Vec3 vRotation = XMQuaternionRotationMatrix(_matWorld);
+	return XMConvertToDegrees(vRotation.y);
+}
+
+Quat Transform::GetWorldMatrixQuat(void)
+{
+	return XMQuaternionRotationMatrix(_matWorld);
+}

@@ -72,6 +72,10 @@ public:
 public:
 	void TurnAxisY(bool clockWise);
 
+public:
+	float GetWorldMatrixDegreeAxisY(void);
+	Quat GetWorldMatrixQuat(void);
+
 private:
 	// Parent 기준
 	Vec3 _localPosition = { 0.f, 0.f, 0.f };
