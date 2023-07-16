@@ -31,16 +31,15 @@ void Event::Tick(float deltaTime)
 	{
 		if (!executed && time < 0.f)			//RemoveReserved 비활성화, executed 거짓, 시간 음수일때만 실행
 		{
-			ExecuteMsg_Once_Weeper();
-			ExecuteMsg_continuous_Weeper();
-			ExecuteMsg_Once_Golem();
-			ExecuteMsg_continuous_Golem();
+			ExecuteMsg_Once();
+			ExecuteMsg_continuous();
 		}
 	}
 }
 
-void Event::ExecuteMsg_Once_Weeper()
+void Event::ExecuteMsg_Once()
 {
+	//공용
 	if (msg == "ANIM_END")
 	{
 		auto monsterObj = dynamic_cast<Monster*>(target);
@@ -50,6 +49,59 @@ void Event::ExecuteMsg_Once_Weeper()
 		}
 	}
 
+	if (msg == "AI_WAIT_FREE")
+	{
+		auto monsterObj = dynamic_cast<Monster*>(target);
+		if (monsterObj)
+		{
+			auto monsterAI = monsterObj->GetAI();
+			monsterAI->SetAIWait(false);
+		}
+	}
+
+	if (msg == "SKILL_RELEASE")
+	{
+		auto skillObj = dynamic_cast<SkillObject*>(target);
+		if (skillObj)
+		{
+			skillObj->SetRemoveReserved();
+		}
+	}
+
+	if (msg == "SKILL_GUIDESTART")
+	{
+		auto skillObj = dynamic_cast<SkillObject*>(target);
+		if (skillObj)
+		{
+			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED, true);
+			auto body = skillObj->GetComponent<RigidBody>(L"RigidBody");
+			body->SetAngularDamping(0.f);
+		}
+	}
+
+	if (msg == "SKILL_LEVITATE_END")
+	{
+		auto skillObj = dynamic_cast<SkillObject*>(target);
+		if (skillObj)
+		{
+			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, false);
+			auto body = skillObj->GetComponent<RigidBody>(L"RigidBody");
+			body->SetAngularDamping(0.f);
+		}
+	}
+
+	if (msg == "SKILL_REMOVE")
+	{
+		auto skillObj = dynamic_cast<SkillObject*>(target);
+		if (skillObj)
+		{
+			skillObj->SetRemoveReserved();
+		}
+	}
+
+
+
+	//Weeper
 	if (msg == "ANIM_END_IF_CAST2END")
 	{
 		auto weeperObj = dynamic_cast<Weeper*>(target);
@@ -80,16 +132,6 @@ void Event::ExecuteMsg_Once_Weeper()
 		if (weeperObj)
 		{
 			weeperObj->SetState(Weeper::WEEPER_STATE::CAST4_LOOP);
-		}
-	}
-
-	if (msg == "AI_WAIT_FREE")
-	{
-		auto monsterObj = dynamic_cast<Monster*>(target);
-		if (monsterObj)
-		{
-			auto monsterAI = monsterObj->GetAI();
-			monsterAI->SetAIWait(false);
 		}
 	}
 
@@ -215,50 +257,31 @@ void Event::ExecuteMsg_Once_Weeper()
 		}
 	}
 
-	if (msg == "SKILL_RELEASE")
+
+
+	//Golem
+	if (msg == "GOLEM_ATTACK1_FUNCTIONCALL")
 	{
-		auto skillObj = dynamic_cast<SkillObject*>(target);
-		if (skillObj)
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
 		{
-			skillObj->SetRemoveReserved();
+			golemObj->Pattern_Attack1();
 		}
 	}
 
-	if (msg == "SKILL_GUIDESTART")
+	if (msg == "GOLEM_ATTACK2_FUNCTIONCALL")
 	{
-		auto skillObj = dynamic_cast<SkillObject*>(target);
-		if (skillObj)
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
 		{
-			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED, true);
-			auto body = skillObj->GetComponent<RigidBody>(L"RigidBody");
-			body->SetAngularDamping(0.f);
-		}
-	}
-
-	if (msg == "SKILL_LEVITATE_END")
-	{
-		auto skillObj = dynamic_cast<SkillObject*>(target);
-		if (skillObj)
-		{
-			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, false);
-			auto body = skillObj->GetComponent<RigidBody>(L"RigidBody");
-			body->SetAngularDamping(0.f);
-		}
-	}
-
-	if (msg == "SKILL_REMOVE")
-	{
-		auto skillObj = dynamic_cast<SkillObject*>(target);
-		if (skillObj)
-		{
-			skillObj->SetRemoveReserved();
+			golemObj->Pattern_Attack2();
 		}
 	}
 
 	executed = true;
 }
 
-void Event::ExecuteMsg_continuous_Weeper()
+void Event::ExecuteMsg_continuous()
 {
 	if (msg == "WEEPER_CAST4")		//cast4 start 애니메이션 종료 후 호출. 애니메이션은 이미 Cast4_Loop으로 전환됐음.
 	{
@@ -278,19 +301,3 @@ void Event::ExecuteMsg_continuous_Weeper()
 	}
 }
 
-void Event::ExecuteMsg_Once_Golem()
-{
-	if (msg == "GOLEM_ATTACK1_FUNCTIONCALL")
-	{
-		auto golemObj = dynamic_cast<Golem*>(target);
-		if (golemObj)
-		{
-			golemObj->Pattern_Attack1();
-		}
-	}
-
-}
-
-void Event::ExecuteMsg_continuous_Golem()
-{
-}

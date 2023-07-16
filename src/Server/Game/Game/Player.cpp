@@ -767,37 +767,42 @@ void Player::PlayerPattern_SingleStrike()
 		return;
 
 	float attackTime[2] = {};
-
+	TriggerObject::SKILLTYPE skillType = TriggerObject::SKILLTYPE::NONE;
 	switch (m_currState)
 	{
 		case ATK0:
 		{
 			attackTime[0] = 0.2f;
 			attackTime[1] = 0.43f;
+			skillType = TriggerObject::SKILLTYPE::PLAYER_NANA_ATTACK1;
 		}
 		break;
 		case ATK1:
 		{
 			attackTime[0] = 0.2f;
 			attackTime[1] = 0.39f;
+			skillType = TriggerObject::SKILLTYPE::PLAYER_NANA_ATTACK2;
 		}
 		break;
 		case ATK2:
 		{
 			attackTime[0] = 0.08f;
 			attackTime[1] = 0.19f;
+			skillType = TriggerObject::SKILLTYPE::PLAYER_NANA_ATTACK3;
 		}
 		break;
 		case ATK3:
 		{
 			attackTime[0] = 0.6f;
 			attackTime[1] = 0.75f;
+			skillType = TriggerObject::SKILLTYPE::PLAYER_NANA_ATTACK4;
 		}
 		break;
 		case ATK4:
 		{
 			attackTime[0] = 0.08f;
 			attackTime[1] = 0.27f;
+			skillType = TriggerObject::SKILLTYPE::PLAYER_NANA_ATTACK5;
 		}
 		break;
 		default:
@@ -819,7 +824,7 @@ void Player::PlayerPattern_SingleStrike()
 
 	if (m_firstSingleStrike == true)
 	{
-		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Layer_TriggerObject", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
+		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Layer_TriggerObject", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent), skillType);
 		m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, attackTime[0], attackTime[1]);
 		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
 		triggerBody->AddCollider<BoxCollider>(m_attackTrigger->GetTransform()->GetScale());

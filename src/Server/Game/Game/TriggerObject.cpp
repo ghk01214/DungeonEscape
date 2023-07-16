@@ -7,10 +7,12 @@
 #include "TriggerPairInfo.h"
 #include "Player.h"
 #include "Monster.h"
+#include "Golem.h"
+#include "Event.h"
 #include "CustomController.h"
 
-TriggerObject::TriggerObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
-	: GameObject(position, rotation, scale), m_body(nullptr)
+TriggerObject::TriggerObject(const Vec3& position, const Quat& rotation, const Vec3& scale, SKILLTYPE type)
+	: GameObject(position, rotation, scale), m_body(nullptr), m_skillType(type)
 {
 }
 
@@ -48,7 +50,11 @@ void TriggerObject::Release()
 void TriggerObject::TriggerUpdate()
 {
 	Trigger_Persistent();
-	Trigger_SingleStrike_HandleMonster();
+
+	if(m_skillType < SKILLTYPE::BOUNDARY)
+		Trigger_SingleStrike_HandleMonster();
+	if (m_skillType > SKILLTYPE::BOUNDARY)
+		Trigger_SingleStrike_HandlePlayers();
 }
 
 void TriggerObject::Trigger_Persistent()
@@ -154,7 +160,6 @@ void TriggerObject::Trigger_SingleStrike_HandlePlayers()
 	if (m_currentTime == 0.f)
 	{
 		ExcludeTriggerFromSimulation(true);							//0초 : 시뮬레이션 비활성화
-		m_originalPosition = m_body->GetPosition();
 	}
 	else if (m_currentTime > m_startTime && m_currentTime < m_endTime)
 	{
@@ -191,7 +196,13 @@ void TriggerObject::Trigger_SingleStrike_HandlePlayers()
 		if (duplicate)
 			continue;								//조건 2 : 중복은 아닌가?
 
-		player->GetController()->GetBody()->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 500.f);
+		if(m_skillType == SKILLTYPE::GOLEM_ATTACK1)
+			player->GetController()->GetBody()->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 700.f);
+		else if (m_skillType == SKILLTYPE::GOLEM_ATTACK2)
+			player->GetController()->GetBody()->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 500.f);
+		else
+			player->GetController()->GetBody()->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 500.f);					//디폴트
+
 		// server : 플레이어에게 데미지를 준다는 메시지 전달 필요
 	}
 #pragma endregion

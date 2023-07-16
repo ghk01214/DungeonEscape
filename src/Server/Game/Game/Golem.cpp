@@ -2,7 +2,6 @@
 #include "Golem.h"
 #include "GolemAI.h"
 #include "SkillObject.h"
-#include "TriggerObject.h"
 #include "CustomController.h"
 #include "MessageHandler.h"
 #include "TimeManager.h"
@@ -41,6 +40,7 @@ void Golem::Init()
 {
 	Monster::Init();
 	m_hp = 1000;
+	m_maxHp = 1000;
 
 	m_controller->GetBody()->SetMass(1000.f);
 	SetUp_PatternObjects();
@@ -345,10 +345,10 @@ GolemAI* Golem::GetAI()
 	return m_golemAI;
 }
 
-void Golem::SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geometry, float startTime, float endTime, Vec3 patternSize)
+void Golem::SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geometry, float startTime, float endTime, Vec3 patternSize, TriggerObject::SKILLTYPE type)
 {
 	auto objmgr = ObjectManager::GetInstance();
-	TriggerObject* attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Layer_TriggerObject", Vec3(0,-10000, 0), Quat(0,0,0,0), patternSize);		//생성
+	TriggerObject* attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Layer_TriggerObject", Vec3(0,-10000, 0), Quat(0,0,0,0), patternSize, type);		//생성
 	attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, startTime, endTime);								//설정 : 단일타, 시작시간, 끝시간
 	auto body = attackTrigger->GetComponent<RigidBody>(L"RigidBody");																					
 	
@@ -358,13 +358,24 @@ void Golem::SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geomet
 		body->AddCollider<SphereCollider>(attackTrigger->GetTransform()->GetScale());
 	
 	body->GetCollider(0)->SetTrigger(true);																				//트리거 설정 참
-	
+
 	m_patternTriggerDict[schedulename] = attackTrigger;
 }
 
 void Golem::SetUp_PatternObjects()
 {
-	SetUp_PatternObject(GOLEM_SCHEDULE::ATTACK1, GeometryType::Box, 0.3f, 1.5f, Vec3(100, 500, 100));
+	SetUp_PatternObject(GOLEM_SCHEDULE::ATTACK1, GeometryType::Box, 0.3f, 1.5f, Vec3(200, 200, 300), TriggerObject::SKILLTYPE::GOLEM_ATTACK1);
+	SetUp_PatternObject(GOLEM_SCHEDULE::ATTACK2, GeometryType::Box, 0.3f, 1.53f, Vec3(200, 400, 400), TriggerObject::SKILLTYPE::GOLEM_ATTACK2);
+}
+
+physx::PxQuat Golem::GetRotation_For_Pattern(physx::PxVec3 xzDir)
+{
+	physx::PxVec3 initialDir(0, 0, 1);
+	physx::PxVec3 rotAxis = initialDir.cross(xzDir).getNormalized();
+	physx::PxReal rotAngle = physx::PxAtan2(physx::PxSqrt(1 - physx::PxPow(xzDir.dot(initialDir), 2)), xzDir.dot(initialDir));
+	physx::PxQuat rotation(rotAngle, rotAxis);
+
+	return rotation;
 }
 
 void Golem::Pattern_Attack1()
@@ -373,30 +384,73 @@ void Golem::Pattern_Attack1()
 	physx::PxVec3 xzDir = m_golemAI->GetXZDir();
 
 	auto triggerObj = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK1];
-	auto body = triggerObj->GetComponent<RigidBody>(L"RigidBody");
-	auto shape = body->GetCollider(0)->GetPxShape();
+	auto triggerBody = triggerObj->GetComponent<RigidBody>(L"RigidBody");
+	auto shape = triggerBody->GetCollider(0)->GetPxShape();
 
-	physx::PxVec3 GolemPos = TO_PX3(GetControllerPosition());
+	triggerObj->RestoreOneTimeEffect();									//Exclude 해제, 시간 설정 초기화
 
-	// rotation = 회전 구하기
+	//위치, 회전값 적용
+	physx::PxVec3 golemPos = TO_PX3(GetControllerPosition());
+	physx::PxQuat rotation = GetRotation_For_Pattern(xzDir);
 
 	physx::PxGeometryType::Enum type = shape->getGeometryType();
 	if (type == physx::PxGeometryType::eBOX)
 	{
-		physx::PxVec3 forward = xzDir;  // 이미 정규화된 xzDir를 사용
-		physx::PxVec3 up = physx::PxVec3(0, 1, 0);  // up 벡터 설정
-
-		float halfExtentZ = triggerObj->GetTransform()->GetScale().z;
-		float controllerRaidus = m_controller->GetCollider()->GetRadius();
+		float halfExtentZ = triggerObj->GetTransform()->GetScale().z / 2.f;
+		float controllerRadius = m_controller->GetCollider()->GetRadius();
 
 		//회전과 박스를 고려한 적당한 위치에 생성 (캐릭터 앞에 박스 생성하도록)
-		//skillObject생성
+		auto triggerTrans = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK1]->GetTransform();
+		Vec3 adjustedPos = FROM_PX3(golemPos) + FROM_PX3(xzDir) * (controllerRadius + halfExtentZ);
+
+		triggerBody->SetPosition(adjustedPos, true);
+		triggerBody->SetRotation(FROM_PXQUAT(rotation));
 	}
 
-	if (type == physx::PxGeometryType::eSPHERE)
+	else if (type == physx::PxGeometryType::eSPHERE)
 	{
-		//적당한 위치에 공을 생성. 공은 자신의 주위에 퍼지는 걸 기준으로 한다. 광역기 마냥.
-		//skillObject생성
+		auto triggerTrans = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK1]->GetTransform();
+
+		triggerBody->SetPosition(FROM_PX3(golemPos), true);
+		triggerBody->SetRotation(FROM_PXQUAT(rotation));
+	}
+}
+
+void Golem::Pattern_Attack2()
+{
+	m_golemAI->UpdateTargetPos();
+	physx::PxVec3 xzDir = m_golemAI->GetXZDir();
+
+	auto triggerObj = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK2];
+	auto triggerBody = triggerObj->GetComponent<RigidBody>(L"RigidBody");
+	auto shape = triggerBody->GetCollider(0)->GetPxShape();
+
+	triggerObj->RestoreOneTimeEffect();									//Exclude 해제, 시간 설정 초기화
+
+	//위치, 회전값 적용
+	physx::PxVec3 golemPos = TO_PX3(GetControllerPosition());
+	physx::PxQuat rotation = GetRotation_For_Pattern(xzDir);
+
+	physx::PxGeometryType::Enum type = shape->getGeometryType();
+	if (type == physx::PxGeometryType::eBOX)
+	{
+		float halfExtentZ = triggerObj->GetTransform()->GetScale().z / 2.f;
+		float controllerRadius = m_controller->GetCollider()->GetRadius();
+
+		//회전과 박스를 고려한 적당한 위치에 생성 (캐릭터 앞에 박스 생성하도록)
+		auto triggerTrans = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK2]->GetTransform();
+		Vec3 adjustedPos = FROM_PX3(golemPos) + FROM_PX3(xzDir) * (controllerRadius + halfExtentZ);
+
+		triggerBody->SetPosition(adjustedPos, true);
+		triggerBody->SetRotation(FROM_PXQUAT(rotation));
+	}
+
+	else if (type == physx::PxGeometryType::eSPHERE)
+	{
+		auto triggerTrans = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK2]->GetTransform();
+
+		triggerBody->SetPosition(FROM_PX3(golemPos), true);
+		triggerBody->SetRotation(FROM_PXQUAT(rotation));
 	}
 }
 

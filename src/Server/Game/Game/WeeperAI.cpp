@@ -29,9 +29,6 @@ void WeeperAI::Init()
 	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 450));
 
 	m_weeper->SetControllerMoveSpeed(10.f);
-
-	//Schedule 추가
-	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 }
 
 void WeeperAI::Update(float timeDelta)

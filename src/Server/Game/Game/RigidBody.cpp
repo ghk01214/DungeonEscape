@@ -142,6 +142,8 @@ void RigidBody::SetPosition(const Vec3 position, bool wake)
 	t.p.y = position.y;
 	t.p.z = position.z;
 
+	m_ownerGameObject->GetTransform()->SetPosition(position);
+
 	m_body->setGlobalPose(t, wake);
 }
 
@@ -153,6 +155,8 @@ void RigidBody::SetRotation(const Quat rotation)
 	t.q.y = rotation.y;
 	t.q.z = rotation.z;
 	t.q.w = rotation.w;
+
+	m_ownerGameObject->GetTransform()->SetRotation(rotation);
 
 	m_body->setGlobalPose(t);
 }

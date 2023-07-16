@@ -2,9 +2,9 @@
 
 #include "Monster.h"
 #include "GolemAI.h"
+#include "TriggerObject.h"
 
 class SkillObject;
-class TriggerObject;
 
 class Golem : public Monster
 {
@@ -70,11 +70,12 @@ public:
 	GolemAI* GetAI();
 
 public:
-	void SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geometry, float startTime, float endTime, Vec3 patternSize);
+	void SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geometry, float startTime, float endTime, Vec3 patternSize, TriggerObject::SKILLTYPE type);
 	void SetUp_PatternObjects();
 public:
+	physx::PxQuat GetRotation_For_Pattern(physx::PxVec3 xzDir);
 	void Pattern_Attack1();
-	//..
+	void Pattern_Attack2();
 
 
 public:

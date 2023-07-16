@@ -1,0 +1,7 @@
+서버 연결해서 작업할때는
+
+customController.cpp에서 ONOFF란 주석 찾아서
+	serverconnected = true/false 전환하고,
+	space 키보드 판단 방법도 위/아래 줄로 변경
+
+m_weeperAI에서 변수 m_debugMode도 true/false 전환해야한다.

@@ -40,6 +40,7 @@ void Weeper::Init()
 {
 	Monster::Init();
 	m_hp = 1000;
+	m_maxHp = 1000;
 
 	m_controller->GetBody()->SetMass(1000.f);
 
