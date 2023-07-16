@@ -73,7 +73,7 @@ void Event::ExecuteMsg_Once_Weeper()
 			}
 		}
 	}
-	
+
 	if (msg == "ANIM_TO_WEEPER_CAST4_LOOP")
 	{
 		auto weeperObj = dynamic_cast<Weeper*>(target);
@@ -112,7 +112,7 @@ void Event::ExecuteMsg_Once_Weeper()
 	}
 
 	if (msg == "CAST2_SCATTER_AIRFIRE")											// ExecuteSchedule()의 WEEPER_SCHEDULE::CAST2:에서 호출됐음
-	{															
+	{
 		//원기옥 노말발사 (이 시점에서 보스는 공격받아도 핵폭탄패턴X)
 		auto skillObj = dynamic_cast<SkillObject*>(target);
 		Weeper* owner = dynamic_cast<Weeper*>(skillObj->m_owner);
@@ -148,7 +148,7 @@ void Event::ExecuteMsg_Once_Weeper()
 			for (int i = 0; i < scatterCnt; ++i)
 			{
 				static std::uniform_real_distribution<float> distribution(0.f, scatterTime);
-			
+
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST2_SCATTER_FUNCTIONCALL", distribution(dre), owner);
 			}
 
@@ -157,7 +157,7 @@ void Event::ExecuteMsg_Once_Weeper()
 		}
 	}
 
-	if (msg == "CAST2_NUCLEAR_AIRFIRE")											// Weeper::Pattern_Cast2_CounterNuclear()에 의해 호출되었다. 
+	if (msg == "CAST2_NUCLEAR_AIRFIRE")											// Weeper::Pattern_Cast2_CounterNuclear()에 의해 호출되었다.
 	{																			// 해당 함수에서 반격모드 해제 + 애니메이션 CAST2 END로 변경했음.
 		auto scatterEvent = EventHandler::GetInstance()->GetEvent("CAST2_SCATTER_AIRFIRE");
 		auto skillObj = static_cast<SkillObject*>(scatterEvent->target);
@@ -186,8 +186,8 @@ void Event::ExecuteMsg_Once_Weeper()
 		}
 	}
 
-	if (msg == "CAST2_VULNERABLE_ON")											
-	{																				
+	if (msg == "CAST2_VULNERABLE_ON")
+	{
 		Weeper* weeper = dynamic_cast<Weeper*>(target);
 		if (weeper)
 		{
@@ -270,7 +270,7 @@ void Event::ExecuteMsg_continuous_Weeper()
 		bool over = weeperObj->Pattern_Cast4();
 		if (over)
 		{
-			weeperObj->GetAI()->Cast4Cancel_RequiredHit_To_Default();			//cast4 캔슬횟수 초기화 + cast4 velocity 초기화 + 
+			weeperObj->GetAI()->Cast4Cancel_RequiredHit_To_Default();			//cast4 캔슬횟수 초기화 + cast4 velocity 초기화 +
 			weeperObj->GetAI()->SetAIWait(false);
 			weeperObj->SetState(Weeper::WEEPER_STATE::CAST4_END);
 			EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, target);

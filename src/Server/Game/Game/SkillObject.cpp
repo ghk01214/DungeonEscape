@@ -181,8 +181,8 @@ void SkillObject::Init()
 
 void SkillObject::Update(double timeDelta)
 {
-	SendAddAgain();
-	SendRemoveAgain();
+	//SendAddAgain();
+	//SendRemoveAgain();
 
 	//이동로직 (플레이어는 SkillPattern()에서 최초 힘 적용하면 끝. 보스 스킬만 추가적인 이동로직이 있다)
 	Handle_Attribute();
@@ -305,14 +305,14 @@ void SkillObject::ServerMessage_SkillInit()
 	}
 
 	//std::cout << "skill add : " << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
-	//for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
-	//{
-	game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
-	ev.objType = m_objType;
-	ev.objID = m_id;
+	for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
+	{
+		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
+		ev.objType = m_objType;
+		ev.objID = m_id;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
-	//}
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	}
 
 	m_sendRemove = 0;
 	m_sendAdd = SEND_AGAIN;
@@ -323,14 +323,14 @@ void SkillObject::ServerMessage_SkillHit()
 	//스킬 오브젝트 객체 삭제 전달.
 	//추후 피격 잔상 위치 같이 추가적으로 더 정보를 전달할 수 있음.
 	//std::cout << "skill remove : " << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
-	//for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
-	//{
-	game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
-	ev.objID = m_id;
-	ev.objType = m_objType;
+	for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
+	{
+		game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+		ev.objID = m_id;
+		ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
-	//}
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	}
 
 	m_sendRemove = SEND_AGAIN;
 }

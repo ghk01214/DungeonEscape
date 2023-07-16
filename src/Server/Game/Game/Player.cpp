@@ -55,7 +55,7 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
-	SendChangedStateAgain();
+	//SendChangedStateAgain();
 
 	KeyboardLimit();					//FSM 0단계 : 금지상태에서는 키보드 클리어
 
@@ -471,13 +471,14 @@ void Player::State_Check_Enter()
 	m_prevState = m_currState;
 	m_sendState = SEND_AGAIN;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
-	ev.state = m_currState;
-	ev.objType = m_objType;
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
+		ev.state = m_currState;
+		ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
-
-	//std::cout << "check state : " << magic_enum::enum_name(m_currState) << "\n";
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	}
 }
 
 void Player::Update_Frame_Continuous()
@@ -526,6 +527,7 @@ void Player::Update_Frame_Once()
 	{
 		case ATK0: case ATK1: case ATK2: case ATK3: case ATK4:
 		{
+			std::cout << "공격 종료\n";
 			m_currState = IDLE1;
 		}
 		break;

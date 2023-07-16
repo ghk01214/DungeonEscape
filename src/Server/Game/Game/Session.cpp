@@ -94,36 +94,9 @@ namespace game
 		packet.WriteID(obj->GetID());
 		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
 
-		switch (objType)
-		{
-			case server::OBJECT_TYPE::PLAYER:
-			case server::OBJECT_TYPE::REMOTE_PLAYER:
-			{
-				packet.Write<float>(pos.x);
-				packet.Write<float>(pos.y);
-				packet.Write<float>(pos.z);
-
-				packet.Write<float>(quat.y);
-				packet.Write<float>(quat.w);
-			}
-			break;
-			default:
-			{
-				packet.Write<float>(pos.x);
-				packet.Write<float>(pos.y);
-				packet.Write<float>(pos.z);
-
-				packet.Write<float>(quat.x);
-				packet.Write<float>(quat.y);
-				packet.Write<float>(quat.z);
-				packet.Write<float>(quat.w);
-
-				packet.Write<float>(scale.x);
-				packet.Write<float>(scale.y);
-				packet.Write<float>(scale.z);
-			}
-			break;
-		}
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
 
 		switch (fbxType)
 		{

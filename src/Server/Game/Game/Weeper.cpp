@@ -405,7 +405,7 @@ bool Weeper::Pattern_Cast4()
 			m_cast4_vertVel = physx::PxVec3(0, 1, 0) * 800.f;
 			targetPlayer->SetState(Player::PLAYER_STATE::DAMAGE);
 			return true;
-			
+
 		}
 	}
 

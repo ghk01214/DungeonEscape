@@ -86,6 +86,6 @@ void PlayerRangeAttack::Transform(network::CPacket& packet)
 	matWorld *= Matrix::CreateTranslation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
 
-	auto t{ GetTransform()->GetWorldPosition() };
-	std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
+	//auto t{ GetTransform()->GetWorldPosition() };
+	//std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
 }

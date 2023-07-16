@@ -12,6 +12,7 @@
 #include "TimeManager.h"
 #include "CapsuleCollider.h"
 #include "Monster.h"
+#include "Weeper.h"
 
 namespace game
 {
@@ -133,6 +134,7 @@ namespace game
 				}
 				break;
 				default:
+				std::this_thread::sleep_for(1ms);
 				break;
 			}
 		}

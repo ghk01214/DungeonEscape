@@ -275,7 +275,7 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage1.FBX");
 
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models3.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Floor.fbx");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
@@ -472,17 +472,6 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 	pos.x = packet.Read<float>();
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
-
-	Vec4 quat;
-	quat.x = packet.Read<float>();
-	quat.y = packet.Read<float>();
-	quat.z = packet.Read<float>();
-	quat.w = packet.Read<float>();
-
-	Vec3 scale;
-	scale.x = packet.Read<float>();
-	scale.y = packet.Read<float>();
-	scale.z = packet.Read<float>();
 
 	int32_t state{ packet.Read<int32_t>() };
 	float updateTime{ packet.Read<float>() };

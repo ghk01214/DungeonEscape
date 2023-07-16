@@ -92,7 +92,7 @@ void TestLevel::LoadMap()
 	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1.FBX");
 
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");
-	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models3.fbx");
+	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
 	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Floor.fbx");
 
 	auto objmgr = ObjectManager::GetInstance();

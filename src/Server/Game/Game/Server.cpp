@@ -778,11 +778,6 @@ namespace game
 						if (skill->GetID() != id)
 							continue;
 
-						/*if (skill->GetRemovalFlag() == true)
-							continue;*/
-
-						//std::cout << "add : " << skill->GetID() << ", " << magic_enum::enum_name(skill->GetObjectType()) << "\n";
-
 						for (auto& client : m_sessions)
 						{
 							if (client->GetState() != STATE::INGAME)
@@ -836,11 +831,7 @@ namespace game
 
 							client->SendPlayerTransformPacket(pl);
 						}
-
-						//std::cout << pl->GetID() << ", ";
 					}
-
-					//std::cout << "\n";
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::BOSS)
 				{
@@ -997,8 +988,6 @@ namespace game
 				}
 
 				m_msgHandler->RemoveObject();
-
-				//std::cout << "remove : " << id << ", " << magic_enum::enum_name(postOver->objType) << "\n";
 			}
 			break;
 #pragma endregion
