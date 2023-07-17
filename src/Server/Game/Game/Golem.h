@@ -4,7 +4,6 @@
 #include "GolemAI.h"
 
 class SkillObject;
-class TriggerObject;
 
 class Golem : public Monster
 {
@@ -70,11 +69,11 @@ public:
 	GolemAI* GetAI();
 
 public:
-	void SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geometry, float startTime, float endTime, Vec3 patternSize);
-	void SetUp_PatternObjects();
+	//void SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geometry, float startTime, float endTime, Vec3 patternSize, TriggerObject::SKILLTYPE type);
+	//void SetUp_PatternObjects();
 public:
 	void Pattern_Attack1();
-	//..
+	void Pattern_Attack2();
 
 
 public:
@@ -84,7 +83,7 @@ public:
 	void SendChangedStateAgain();
 
 private:
-	std::unordered_map<GOLEM_SCHEDULE, TriggerObject*> m_patternTriggerDict;
+	//std::unordered_map<GOLEM_SCHEDULE, TriggerObject*> m_patternTriggerDict;
 
 	GOLEM_STATE m_prevState;
 	GOLEM_STATE m_currState;

@@ -356,9 +356,6 @@
     <ClCompile Include="Dragon.cpp">
       <Filter>03. Game\01. GameObject\Monster\01. Monsters\Dragon</Filter>
     </ClCompile>
-    <ClCompile Include="Golem.cpp">
-      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Golem</Filter>
-    </ClCompile>
     <ClCompile Include="MonsterSkill.cpp">
       <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\00. MonsterSkill</Filter>
     </ClCompile>
@@ -379,6 +376,9 @@
     </ClCompile>
     <ClCompile Include="Scorpion.cpp">
       <Filter>03. Game\01. GameObject\Monster\01. Monsters\Scorpion</Filter>
+    </ClCompile>
+    <ClCompile Include="Golem.cpp">
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Golem</Filter>
     </ClCompile>
     <ClCompile Include="GolemAI.cpp">
       <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\GolemAI</Filter>
@@ -559,9 +559,6 @@
     <ClInclude Include="Monsters.hpp">
       <Filter>03. Game\01. GameObject\Monster</Filter>
     </ClInclude>
-    <ClInclude Include="Golem.h">
-      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Golem</Filter>
-    </ClInclude>
     <ClInclude Include="MonsterSkill.h">
       <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\00. MonsterSkill</Filter>
     </ClInclude>
@@ -582,6 +579,9 @@
     </ClInclude>
     <ClInclude Include="Scorpion.h">
       <Filter>03. Game\01. GameObject\Monster\01. Monsters\Scorpion</Filter>
+    </ClInclude>
+    <ClInclude Include="Golem.h">
+      <Filter>03. Game\01. GameObject\Monster\01. Monsters\Golem</Filter>
     </ClInclude>
     <ClInclude Include="GolemAI.h">
       <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\GolemAI</Filter>

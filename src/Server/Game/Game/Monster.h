@@ -48,6 +48,9 @@ public:
 	void SendTransform();
 
 public:
+
+
+public:
 	MonsterAI* GetAI();
 
 public:
@@ -58,6 +61,7 @@ protected:
 	CustomController* m_controller;
 
 	int32_t m_hp;
+	int32_t m_maxHp;
 
 	float m_aniPlayTime;
 	bool m_aniEnd;

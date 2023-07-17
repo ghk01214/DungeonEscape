@@ -25,7 +25,8 @@ Weeper::Weeper(int32_t MonsterID, const Vec3& position, const Quat& rotation, co
 	m_currState{ m_prevState },
 	m_sendState{ 0 }
 {
-	m_hp = 20;
+	m_hp = 1000;
+	m_maxHp = 1000;
 
 	m_name = L"Weeper";
 	m_objType = server::OBJECT_TYPE::BOSS;

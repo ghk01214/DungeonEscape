@@ -6,6 +6,7 @@
 #include "ObjectManager.h"
 #include "Layer.h"
 #include "CustomController.h"
+#include "CapsuleCollider.h"
 #include "PhysDevice.h"
 #include "PhysQuery.h"
 #include "RigidBody.h"
@@ -130,17 +131,15 @@ bool MonsterAI::SkillRangeCheck()
 		return false;									//여기 걸리면 SkillAdd()의 오류. 각 Monster의 Init수정 요구
 
 #pragma region 스킬 위치, 회전값 부여
-	PxVec3 monsterPos = TO_PX3(m_monster->GetControllerPosition());
-	PxTransform trans(PxIdentity);
+	UpdateTargetPos();
+	physx::PxVec3 xzDir = GetXZDir();
 
-	PxVec3 up(0, 1, 0);
-	PxVec3 right = up.cross(TO_PX3(m_targetDir)).getNormalized();
-	PxVec3 realUp = TO_PX3(m_targetDir).cross(right);
-	PxMat33 m(right, realUp, TO_PX3(m_targetDir));
-	PxQuat monsterRot(m);
+	//위치, 회전값 적용
+	physx::PxTransform trans;
+	trans.p = TO_PX3(m_monster->GetControllerPosition());
+	trans.q = GetRotation_For_Pattern(xzDir);
 
-	trans.p = monsterPos;
-	trans.q = monsterRot;
+	float controllerRadius = m_monster->GetController()->GetCollider()->GetRadius();
 #pragma endregion
 
 	PxQueryFilterData filterData(PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC);
@@ -154,7 +153,7 @@ bool MonsterAI::SkillRangeCheck()
 		{
 			auto box = static_cast<PxBoxGeometry*>(skillGeometry);
 			float extentZ = box->halfExtents.z;
-			trans.p += TO_PX3(m_targetDir) * extentZ;
+			trans.p += TO_PX3(xzDir) * (extentZ + controllerRadius);
 
 			query->Overlap(*box, trans, filterData, &overlapBuffer);
 		}
@@ -227,6 +226,16 @@ physx::PxVec3 MonsterAI::GetXZDir()
 	PxVec3 dir = TO_PX3(m_targetPos) - monsterPos;
 	dir.normalize();
 	return dir;
+}
+
+physx::PxQuat MonsterAI::GetRotation_For_Pattern(physx::PxVec3 xzDir)
+{
+	physx::PxVec3 initialDir(0, 0, 1);
+	physx::PxVec3 rotAxis = initialDir.cross(xzDir).getNormalized();
+	physx::PxReal rotAngle = physx::PxAtan2(physx::PxSqrt(1 - physx::PxPow(xzDir.dot(initialDir), 2)), xzDir.dot(initialDir));
+	physx::PxQuat rotation(rotAngle, rotAxis);
+
+	return rotation;
 }
 
 

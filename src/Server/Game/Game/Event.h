@@ -13,10 +13,8 @@ public:
 	~Event();
 
 	void Tick(float timeDelta);
-	void ExecuteMsg_Once_Weeper();		//Execute 함수는 가독성을 위해 분리
-	void ExecuteMsg_continuous_Weeper();		
-	void ExecuteMsg_Once_Golem();
-	void ExecuteMsg_continuous_Golem();
+	void ExecuteMsg_Once();		//Execute 함수는 가독성을 위해 분리
+	void ExecuteMsg_continuous();		
 
 public:
 	std::string			msg;

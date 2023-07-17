@@ -35,7 +35,7 @@ public:
 	Vec3 GetTargetPosition();
 	Vec3 GetTargetDir();
 	physx::PxVec3 GetXZDir();
-
+	physx::PxQuat GetRotation_For_Pattern(physx::PxVec3 xzDir);
 protected:
 	Monster* m_monster;
 	std::vector<MonsterSkill*> m_skillSizeHolder;
