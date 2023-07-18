@@ -50,12 +50,6 @@ enum class ProtocolID : unsigned short
 	MY_TRANSFORM_REQ,	// 플레이어 이동 요청
 	MY_TRANSFORM_ACK,	// 플레이어 이동 응답
 
-	MY_ANI_PLAY_TIME_REQ,
-	MY_ANI_PLAY_TIME_ACK,
-
-	MY_ANI_END_REQ,
-	MY_ANI_END_ACK,
-
 	MY_CHANGE_STATE_REQ,
 	MY_CHANGE_STATE_ACK,
 
@@ -94,6 +88,9 @@ enum class ProtocolID : unsigned short
 
 	WR_TRANSFORM_REQ,
 	WR_TRANSFORM_ACK,
+
+	WR_ANI_END_REQ,
+	WR_ANI_END_ACK,
 
 	WR_CHANGE_STATE_REQ,
 	WR_CHANGE_STATE_ACK,

@@ -124,7 +124,7 @@ void Player_Script::UpdateFrameOnce()
 
 	anim->CalculateUpdateTime();
 
-	if (anim->IsAnimationEnd() == true)
+	if (anim->IsAnimationEnd(m_currState) == true)
 		return;
 
 	anim->PlayNextFrame();

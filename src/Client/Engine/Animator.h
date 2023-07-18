@@ -37,7 +37,7 @@ public:
 	void PlayNextFrame();
 	void RepeatPlay();
 
-	bool IsAnimationEnd();
+	bool IsAnimationEnd(int32_t state);
 	bool IsAnimationOverFrame(float updateTime);
 
 public:

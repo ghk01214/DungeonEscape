@@ -21,8 +21,7 @@ namespace network
 		void SendCameraLook(const Vec3& look);
 		void SendAddObject(int32_t tempID, server::OBJECT_TYPE type, server::FBX_TYPE fbxType);
 		void SendRemoveObject(server::OBJECT_TYPE type);
-		void SendAnimationTime(server::OBJECT_TYPE type, float time);
-		void SendAnimationEnd(server::OBJECT_TYPE type);
+		void SendAnimationEnd(server::OBJECT_TYPE type, int32_t state);
 #pragma endregion
 
 		void InsertPackets(CPacket& packet);

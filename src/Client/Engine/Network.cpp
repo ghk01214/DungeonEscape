@@ -108,25 +108,14 @@ namespace network
 		GET_NETWORK->Send(packet);
 	}
 
-	void CNetwork::SendAnimationTime(server::OBJECT_TYPE type, float time)
+	void CNetwork::SendAnimationEnd(server::OBJECT_TYPE type, int32_t state)
 	{
 		CPacket packet;
 
 		packet.WriteID(m_networkID);
-		packet.WriteProtocol(ProtocolID::MY_ANI_PLAY_TIME_REQ);
+		packet.WriteProtocol(ProtocolID::WR_ANI_END_REQ);
 		packet.Write<server::OBJECT_TYPE>(type);
-		packet.Write<float>(time);
-
-		GET_NETWORK->Send(packet);
-	}
-
-	void CNetwork::SendAnimationEnd(server::OBJECT_TYPE type)
-	{
-		CPacket packet;
-
-		packet.WriteID(m_networkID);
-		packet.WriteProtocol(ProtocolID::MY_ANI_END_REQ);
-		packet.Write<server::OBJECT_TYPE>(type);
+		packet.Write<int32_t>(state);
 
 		GET_NETWORK->Send(packet);
 	}

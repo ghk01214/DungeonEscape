@@ -101,18 +101,16 @@ void Animator::PlayNextFrame()
 	m_frame = min(m_frame, m_aniClipInfo.frameCount - 1);
 	m_nextFrame = min(m_frame + 1, m_aniClipInfo.frameCount - 1);
 	m_frameRatio = static_cast<float>(m_frame - m_frame);
-
-	auto network{ GetGameObject()->GetNetwork() };
-	if (network != nullptr)
-		network->SendAnimationTime(GetGameObject()->GetObjectType(), m_updateTime);
 }
 
-bool Animator::IsAnimationEnd()
+bool Animator::IsAnimationEnd(int32_t state)
 {
 	if (m_updateTime >= m_aniClipInfo.duration)
 	{
 		m_updateTime = 0.f;
-		GetNetwork()->SendAnimationEnd(GetGameObject()->GetObjectType());
+
+		if (GetGameObject()->GetObjectType() != server::OBJECT_TYPE::REMOTE_PLAYER)
+			GetNetwork()->SendAnimationEnd(GetGameObject()->GetObjectType(), state);
 
 		return true;
 	}
@@ -140,8 +138,4 @@ void Animator::RepeatPlay()
 	m_frame = min(m_frame, m_aniClipInfo.frameCount - 1);
 	m_nextFrame = min(m_frame + 1, m_aniClipInfo.frameCount - 1);
 	m_frameRatio = static_cast<float>(m_frame - m_frame);
-
-	auto network{ GetGameObject()->GetNetwork() };
-	if (network != nullptr)
-		network->SendAnimationTime(GetGameObject()->GetObjectType(), m_updateTime);
 }

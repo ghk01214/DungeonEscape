@@ -114,7 +114,7 @@ void Monster_Dragon::UpdateFrameOnce()
 
 	ani->CalculateUpdateTime();
 
-	if (ani->IsAnimationEnd() == true)
+	if (ani->IsAnimationEnd(m_currState) == true)
 		return;
 
 	ani->PlayNextFrame();
