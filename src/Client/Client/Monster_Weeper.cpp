@@ -61,16 +61,8 @@ void Monster_Weeper::CheckState()
 	if (m_prevState == m_currState)
 		return;
 
-	switch (m_currState)
-	{
-		case DEAD:
-		break;
-		default:
-		{
-			GetAnimator()->Play(m_currState);
-		}
-		break;
-	}
+	if (m_currState != DEAD)
+		GetAnimator()->Play(m_currState);
 
 	m_prevState = m_currState;
 }
@@ -83,7 +75,6 @@ void Monster_Weeper::UpdateFrameRepeat()
 		case CAST1: case CAST2_END: case CAST3: case CAST4_START: case CAST4_END:
 		case DAMAGE: case DEATH: case DODGE: case DEAD:
 		case IDLE_BREAK: case TURN_LEFT: case TURN_RIGHT:
-		case CAST2_START:		// 이거는 따로 논의 필요
 		return;
 		default:
 		break;
@@ -97,7 +88,7 @@ void Monster_Weeper::UpdateFrameOnce()
 	switch (m_currState)
 	{
 		// 반복 애니메이션
-		case CAST2_LOOP: case CAST4_LOOP: case IDLE: case DEAD:
+		case CAST2_START: case CAST2_LOOP: case CAST4_LOOP: case IDLE: case DEAD:
 		case STATUE1: case STATUE2: case STATUE3: case TAUNT:
 		case WALK: case WALK_BACK: case WALK_BACK_NO_LEGS:
 		return;
@@ -109,7 +100,7 @@ void Monster_Weeper::UpdateFrameOnce()
 
 	ani->CalculateUpdateTime();
 
-	if (ani->IsAnimationEnd() == true)
+	if (ani->IsAnimationEnd(m_currState) == true)
 		return;
 
 	ani->PlayNextFrame();

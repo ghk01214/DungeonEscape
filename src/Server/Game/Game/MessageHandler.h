@@ -73,7 +73,6 @@ namespace game
 		void Logout(int32_t playerID, int32_t roomID, Player* player);
 		void CreatePlayer(Message& msg);
 		void SetKeyInput(Message& msg);
-		void SetPlayerAniPlayTime(Message& msg);
 		void SetAniEndFlag(Message& msg);
 		void SetPlayerCameraLook(Message& msg);
 		void SetPlayerLook(Message& msg);

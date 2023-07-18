@@ -13,7 +13,7 @@ enum class WEEPER_SCHEDULE
 {
 	HOLD = 0,
 	RESET = 1,				//패턴진행 직전, SetRandomTarget()실행 후, 클라이언트에서 몬스터를 돌릴 틈을 준다.
-	//패턴 3번 쓰면 한번정도 섞어주는 정도	
+	//패턴 3번 쓰면 한번정도 섞어주는 정도
 
 	CAST1 = 2,				//평타 (약한 유도 3개)
 	CAST2 = 3,				//하누마탄 원기옥

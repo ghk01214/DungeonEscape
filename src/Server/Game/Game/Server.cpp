@@ -130,7 +130,6 @@ namespace game
 		m_gameThread = std::thread{ &CServer::GameThread, this };
 		m_timerThread = std::thread{ &MessageHandler::TimerThread, m_msgHandler };
 		m_transformThread = std::thread{ &MessageHandler::TransformThread, m_msgHandler };
-		//m_addRemoveThread = std::thread{ &MessageHandler::AddRemoveThread, m_msgHandler };
 
 		for (auto& thread : m_workerThreads)
 		{
@@ -140,7 +139,6 @@ namespace game
 		m_gameThread.join();
 		m_timerThread.join();
 		m_transformThread.join();
-		//m_addRemoveThread.join();
 	}
 
 	void CServer::WorkerThread()
@@ -516,21 +514,6 @@ namespace game
 				InputCommandMessage(msg);
 			}
 			break;
-			case ProtocolID::MY_ANI_PLAY_TIME_REQ:
-			{
-				msg.aniPlayTime = packet.Read<float>();
-
-				InputCommandMessage(msg);
-			}
-			break;
-			case ProtocolID::MY_ANI_END_REQ:
-			{
-				msg.objID = packet.ReadID();
-				msg.objType = packet.Read<server::OBJECT_TYPE>();
-
-				InputCommandMessage(msg);
-			}
-			break;
 			case ProtocolID::MY_CAMERA_LOOK_REQ:
 			{
 				Vec3 look;
@@ -566,6 +549,15 @@ namespace game
 
 		switch (protocol)
 		{
+			case ProtocolID::WR_ANI_END_REQ:
+			{
+				msg.objID = packet.ReadID();
+				msg.objType = packet.Read<server::OBJECT_TYPE>();
+				msg.state = packet.Read<int32_t>();
+
+				InputCommandMessage(msg);
+			}
+			break;
 			default:
 			break;
 		}

@@ -11,8 +11,7 @@
 #include "CustomController.h"
 #include "TimeManager.h"
 #include "CapsuleCollider.h"
-#include "Monster.h"
-#include "Weeper.h"
+#include "Monsters.hpp"
 
 namespace game
 {
@@ -305,16 +304,6 @@ namespace game
 					SetKeyInput(msg);
 				}
 				break;
-				case ProtocolID::MY_ANI_PLAY_TIME_REQ:
-				{
-					SetPlayerAniPlayTime(msg);
-				}
-				break;
-				case ProtocolID::MY_ANI_END_REQ:
-				{
-					SetAniEndFlag(msg);
-				}
-				break;
 				case ProtocolID::MY_CAMERA_LOOK_REQ:
 				{
 					SetPlayerCameraLook(msg);
@@ -327,6 +316,11 @@ namespace game
 				break;
 #pragma endregion
 #pragma region [WR]
+				case ProtocolID::WR_ANI_END_REQ:
+				{
+					SetAniEndFlag(msg);
+				}
+				break;
 #pragma endregion
 				default:
 				break;
@@ -476,46 +470,6 @@ namespace game
 		}
 	}
 
-	void MessageHandler::SetPlayerAniPlayTime(Message& msg)
-	{
-		if (msg.objType == server::OBJECT_TYPE::PLAYER)
-		{
-			auto playerObjects{ m_objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
-
-			for (auto& playerObj : playerObjects)
-			{
-				auto player{ dynamic_cast<Player*>(playerObj) };
-
-				if (player == nullptr)
-					continue;
-
-				if (player->GetID() == msg.playerID)
-				{
-					player->SetAniPlayTime(msg.aniPlayTime);
-					break;
-				}
-			}
-		}
-		else if (msg.objType == server::OBJECT_TYPE::BOSS)
-		{
-			auto monsterObjects{ m_objMgr->GetLayer(L"Layer_Monster")->GetGameObjects() };
-
-			for (auto& monsterObject : monsterObjects)
-			{
-				auto monster{ dynamic_cast<Monster*>(monsterObject) };
-
-				if (monster == nullptr)
-					continue;
-
-				if (monster->GetID() == msg.objID)
-				{
-					monster->SetAniPlayTime(msg.aniPlayTime);
-					break;
-				}
-			}
-		}
-	}
-
 	void MessageHandler::SetAniEndFlag(Message& msg)
 	{
 		if (msg.objType == server::OBJECT_TYPE::PLAYER)
@@ -529,7 +483,7 @@ namespace game
 				if (player == nullptr)
 					continue;
 
-				if (player->GetID() == msg.objID)
+				if (player->GetID() == msg.playerID)
 				{
 					player->SetAniEndFlag(true);
 					break;
@@ -549,7 +503,48 @@ namespace game
 
 				if (monster->GetID() == msg.objID)
 				{
-					monster->SetAniEndFlag(true);
+					switch (monster->GetFBXType())
+					{
+						case server::FBX_TYPE::WEEPER1:
+						case server::FBX_TYPE::WEEPER2:
+						case server::FBX_TYPE::WEEPER3:
+						case server::FBX_TYPE::WEEPER4:
+						case server::FBX_TYPE::WEEPER5:
+						case server::FBX_TYPE::WEEPER6:
+						case server::FBX_TYPE::WEEPER7:
+						case server::FBX_TYPE::WEEPER_EMISSIVE:
+						{
+							auto state{ dynamic_cast<Weeper*>(monster)->GetState() };
+
+							if (state == magic_enum::enum_value<Weeper::WEEPER_STATE>(msg.state))
+								monster->SetAniEndFlag(true);
+						}
+						break;
+						case server::FBX_TYPE::BLUE_GOLEM:
+						case server::FBX_TYPE::GREEN_GOLEM:
+						case server::FBX_TYPE::RED_GOLEM:
+						{
+							auto state{ dynamic_cast<Golem*>(monster)->GetState() };
+
+							if (state == magic_enum::enum_value<Golem::GOLEM_STATE>(msg.state))
+								monster->SetAniEndFlag(true);
+						}
+						break;
+						case server::FBX_TYPE::BLACK_SCORPION:
+						case server::FBX_TYPE::ORANGE_SCORPION:
+						case server::FBX_TYPE::PURPLE_SCORPION:
+						case server::FBX_TYPE::RED_SCORPION:
+						{
+							auto state{ dynamic_cast<Scorpion*>(monster)->GetState() };
+
+							if (state == magic_enum::enum_value<Scorpion::SCORPION_STATE>(msg.state))
+								monster->SetAniEndFlag(true);
+						}
+						break;
+						default:
+						break;
+					}
+
 					break;
 				}
 			}

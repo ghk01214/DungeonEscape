@@ -43,17 +43,6 @@ void TestLevel::Init()
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
-	//static bool temp{ false };
-
-	//auto layer{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player") };
-
-	//if (layer->GetGameObjects().size() > 0 and temp == false)
-	//{
-	//	auto WeeperObject = ObjectManager::GetInstance()->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 1, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//	temp = true;
-	//}
-
-	//TestFunction();
 }
 
 void TestLevel::LateUpdate(double timeDelta)
@@ -77,38 +66,17 @@ void TestLevel::LoadMap()
 	FBXMapLoader mapLoader;
 
 	// static Mesh 정보 로드
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\CUBE.fbx");
-
-
-	//// actor 정보 로드
-	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Map\\Stage1.FBX");
-
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
+
+	// actor 정보 로드
 	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Floor.fbx");
 
 	auto objmgr = ObjectManager::GetInstance();
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
-	int32_t i = 0;
+
 	for (auto& info : mapInfo)
 	{
-		//switch (i)
-		//{
-		//	case 944: case 945: case 1068:
-		//	case 1069: case 1070: case 1071:
-		//	++i;
-		//	continue;
-		//	break;
-		//}
-
 		const objectLocationInfo& locationInfo = info.second;
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
 			Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
@@ -120,8 +88,6 @@ void TestLevel::LoadMap()
 		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
 		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
 		MeshObject->ApplyRequestedLayers();
-
-		//++i;
 	}
 
 	std::system("cls");
