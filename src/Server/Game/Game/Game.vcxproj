@@ -171,6 +171,7 @@
     <ClCompile Include="GolemAI.cpp" />
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterAI.cpp" />
+    <ClCompile Include="OverlapObject.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="CustomController.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="Monster.h" />
     <ClInclude Include="MonsterAI.h" />
     <ClInclude Include="Monsters.hpp" />
+    <ClInclude Include="OverlapObject.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="CustomController.h" />

@@ -29,6 +29,13 @@ void RigidBody::Init()
 	m_body = device->GetPhysics()->createRigidDynamic(pose);
 	m_body->setMass(10);
 	m_body->userData = this;
+	
+	std::string str = "debug";
+	char* name = new char[str.length() + 1]; // 문자열의 길이 + 널 종료 문자
+	std::copy(str.begin(), str.end(), name); // 문자열 복사
+	name[str.length()] = '\0'; // 널 종료 문자 추가
+
+	m_body->setName(name);
 
 	ApplyFlags();
 	SetTransform(trans);

@@ -5,9 +5,11 @@
 class Player;
 class Monster;
 class MonsterSkill;
+class OverlapObject;
 
 class MonsterAI
 {
+	friend class OverlapObject;
 public:
 	MonsterAI(Monster* monster);
 	~MonsterAI();
@@ -23,11 +25,13 @@ public:
 public:
 	void SetRandomTarget();		//타겟을 변경
 	void UpdateTargetPos();		//0.n초 주기로 타겟 플레이어 위치 갱신 (플레이어 일직선 추적 방지)
+	void Monstermove();
 	void AddSkillSize(std::string scheduleName, GeometryType shape, Vec3 size);
 
 	virtual std::string GetRequestedScheduleName() = 0;
 	physx::PxGeometry* GetRequestedSkillGeometry(std::string schedule);
 	bool SkillRangeCheck();
+	std::vector<Player*> SkillRangeCheck_OverlapObject(std::string scheduleName);
 
 public:
 	void SetAIWait(bool value);

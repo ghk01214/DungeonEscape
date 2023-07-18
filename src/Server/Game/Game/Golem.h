@@ -74,7 +74,7 @@ public:
 public:
 	void Pattern_Attack1();
 	void Pattern_Attack2();
-
+	void OverlapObject_Deactivate();
 
 public:
 	GOLEM_STATE GetState() const;

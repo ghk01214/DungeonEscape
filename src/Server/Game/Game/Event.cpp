@@ -99,8 +99,6 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
-
-
 	//weeper
 	if (msg == "ANIM_END_IF_CAST2END")
 	{
@@ -254,6 +252,36 @@ void Event::ExecuteMsg_Once()
 		if (weeperObj)
 		{
 			weeperObj->Pattern_Cast3();
+		}
+	}
+
+
+
+	//golem
+	if (msg == "GOLEM_ATTACK1_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Attack1();
+		}
+	}
+
+	if (msg == "GOLEM_ATTACK2_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Attack2();
+		}
+	}
+
+	if (msg == "OVERLAPOBJECT_DEACTIVATE")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->OverlapObject_Deactivate();
 		}
 	}
 

@@ -10,6 +10,7 @@
 #include "PhysDevice.h"
 #include "PhysQuery.h"
 #include "RigidBody.h"
+#include "OverlapObject.h"
 
 using namespace physx;
 
@@ -28,7 +29,6 @@ MonsterAI::~MonsterAI()
 
 void MonsterAI::Init()
 {
-
 }
 
 void MonsterAI::Update(float timeDelta)
@@ -101,6 +101,14 @@ void MonsterAI::UpdateTargetPos()
 	PxVec3 dir = TO_PX3(m_targetPos) - TO_PX3(m_monster->GetControllerPosition());
 	dir.normalize();
 	m_targetDir = FROM_PX3(dir);
+}
+
+void MonsterAI::Monstermove()
+{
+	if (m_AIWait)
+		return;
+
+	m_monster->GetController()->MonsterMove(TO_PX3(m_targetDir));
 }
 
 void MonsterAI::AddSkillSize(std::string scheduleName, GeometryType shape, Vec3 size)
@@ -188,6 +196,83 @@ bool MonsterAI::SkillRangeCheck()
 		}
 	}
 	return false;
+}
+
+std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string scheduleName)
+{
+	auto physDevice = PhysDevice::GetInstance();
+	auto query = physDevice->GetQuery();
+
+	std::vector<Player*> validPtrs;
+
+	PxGeometry* skillGeometry = GetRequestedSkillGeometry(scheduleName);
+	if (!skillGeometry)
+		return validPtrs;									//여기 걸리면 SkillAdd()의 오류. 각 Monster의 Init수정 요구
+
+#pragma region 스킬 위치, 회전값 부여
+	physx::PxVec3 xzDir = GetXZDir();
+
+	//위치, 회전값 적용
+	physx::PxTransform trans;
+	trans.p = TO_PX3(m_monster->GetControllerPosition());
+	trans.q = GetRotation_For_Pattern(xzDir);
+
+	float controllerRadius = m_monster->GetController()->GetCollider()->GetRadius();
+#pragma endregion
+
+#pragma region QueryFilter, Buffer 초기화 및 Geometry에 맞춘 Overlap 진행
+	PxQueryFilterData filterData(PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC);
+	constexpr PxU32 bufferSize = 10;  // Set this to whatever size you need
+	PxOverlapHit hitBuffer[bufferSize];
+	PxOverlapBuffer overlapBuffer(hitBuffer, bufferSize);
+
+	switch (skillGeometry->getType())
+	{	//박스의 경우 전방에 배치
+		case PxGeometryType::eBOX:
+		{
+			auto box = static_cast<PxBoxGeometry*>(skillGeometry);
+			float extentZ = box->halfExtents.z;
+			trans.p += TO_PX3(xzDir) * (extentZ + controllerRadius + 20.f);
+
+			query->Overlap(*box, trans, filterData, &overlapBuffer);
+		}
+		break;
+
+		case PxGeometryType::eSPHERE:
+		{
+			auto sphere = static_cast<PxSphereGeometry*>(skillGeometry);
+			query->Overlap(*sphere, trans, filterData, &overlapBuffer);
+		}
+		break;
+
+		case PxGeometryType::eCAPSULE:
+		{
+			auto capsule = static_cast<PxCapsuleGeometry*>(skillGeometry);
+			query->Overlap(*capsule, trans, filterData, &overlapBuffer);
+		}
+		break;
+	}
+
+#pragma endregion 
+
+	for (PxU32 i = 0; i < overlapBuffer.getNbTouches(); ++i)
+	{
+		const PxOverlapHit& hit = overlapBuffer.getTouch(i);
+		PxShape* shape = hit.shape;
+		PxRigidActor* actor = shape->getActor();
+
+		auto body = static_cast<RigidBody*>(actor->userData);
+
+		std::string name = body->GetName();
+		if (name == "Player")
+		{
+			auto player = dynamic_cast<Player*>(body->GetOwnerObject());
+			validPtrs.emplace_back(player);
+			int size = validPtrs.size();
+		}
+	}
+
+	return validPtrs;
 }
 
 void MonsterAI::SetAIWait(bool value)

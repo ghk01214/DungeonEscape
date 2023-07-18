@@ -206,6 +206,9 @@
     <Filter Include="03. Game\01. GameObject\Monster\00. MonsterAI\GolemAI">
       <UniqueIdentifier>{1d70d307-7c82-420d-a985-424d7feb3b20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\OverlapObject">
+      <UniqueIdentifier>{5589447b-1418-410f-9303-c51b99b70780}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -382,6 +385,9 @@
     </ClCompile>
     <ClCompile Include="GolemAI.cpp">
       <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\GolemAI</Filter>
+    </ClCompile>
+    <ClCompile Include="OverlapObject.cpp">
+      <Filter>03. Game\01. GameObject\OverlapObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -585,6 +591,9 @@
     </ClInclude>
     <ClInclude Include="GolemAI.h">
       <Filter>03. Game\01. GameObject\Monster\00. MonsterAI\GolemAI</Filter>
+    </ClInclude>
+    <ClInclude Include="OverlapObject.h">
+      <Filter>03. Game\01. GameObject\OverlapObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

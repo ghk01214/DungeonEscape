@@ -105,7 +105,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			}
 			else
 			{
-				m_weeper->GetController()->MonsterMove(TO_PX3(m_targetDir));
+				Monstermove();
 				m_weeper->m_currState = Weeper::IDLE;
 			}
 		}
@@ -128,7 +128,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			}
 			else
 			{
-				m_weeper->GetController()->MonsterMove(TO_PX3(m_targetDir));
+				Monstermove();
 				m_weeper->m_currState = Weeper::IDLE;
 			}
 		}
@@ -152,7 +152,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			}
 			else
 			{
-				m_weeper->GetController()->MonsterMove(TO_PX3(m_targetDir));
+				Monstermove();
 				m_weeper->m_currState = Weeper::IDLE;
 			}
 		}
@@ -173,7 +173,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			}
 			else
 			{
-				m_weeper->GetController()->MonsterMove(TO_PX3(m_targetDir));
+				Monstermove();
 				m_weeper->m_currState = Weeper::IDLE;
 			}
 		}

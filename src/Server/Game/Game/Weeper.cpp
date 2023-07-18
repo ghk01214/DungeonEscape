@@ -97,7 +97,7 @@ void Weeper::CheckState()
 		break;
 		case CAST2_END:
 		{
-
+			m_currState = WEEPER_STATE::IDLE;
 		}
 		break;
 		case CAST3:

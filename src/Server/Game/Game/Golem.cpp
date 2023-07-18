@@ -18,6 +18,7 @@
 #include "RigidBody.h"
 #include "MonsterAI.h"
 #include "EventHandler.h"
+#include "OverlapObject.h"
 
 Golem::Golem(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	Monster{ MonsterID, position, rotation, scale },
@@ -47,7 +48,9 @@ void Golem::Init()
 
 	m_golemAI = new GolemAI(this);
 	m_golemAI->Init();
+
 	m_AI = m_golemAI;
+	m_overlapObject = new OverlapObject(m_AI);
 }
 
 void Golem::Update(double timeDelta)
@@ -55,6 +58,8 @@ void Golem::Update(double timeDelta)
 	SendChangedStateAgain();
 
 	m_golemAI->Update(timeDelta);
+	if(m_overlapObject)
+		m_overlapObject->Update();
 
 	CheckState();
 	UpdateFrame();
@@ -70,13 +75,9 @@ void Golem::LateUpdate(double timeDelta)
 
 void Golem::Release()
 {
+	SafeRelease(m_overlapObject);
 	SafeRelease(m_golemAI);
 
-	//for (auto& triggerObj : m_patternTriggerDict)
-	//{
-	//	triggerObj.second->GetRemoveReserved();
-	//	m_patternTriggerDict[triggerObj.first] = nullptr;
-	//}
 
 	Monster::Release();
 }
@@ -110,12 +111,12 @@ void Golem::CheckState()
 		break;
 		case STUN:
 		{
-
+	
 		}
 		break;
 		case ATTACK1:
 		{
-
+			m_currState = GOLEM_STATE::IDLE1;
 		}
 		break;
 		case ATTACK2:
@@ -367,79 +368,26 @@ GolemAI* Golem::GetAI()
 
 void Golem::Pattern_Attack1()
 {
-	//m_golemAI->UpdateTargetPos();
-	//physx::PxVec3 xzDir = m_golemAI->GetXZDir();
-	//
-	//auto triggerObj = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK1];
-	//auto triggerBody = triggerObj->GetComponent<RigidBody>(L"RigidBody");
-	//auto shape = triggerBody->GetCollider(0)->GetPxShape();
-	//
-	//triggerObj->RestoreOneTimeEffect();									//Exclude 해제, 시간 설정 초기화
-	//
-	////위치, 회전값 적용
-	//physx::PxVec3 golemPos = TO_PX3(GetControllerPosition());
-	//physx::PxQuat rotation = GetRotation_For_Pattern(xzDir);
-	//
-	//physx::PxGeometryType::Enum type = shape->getGeometryType();
-	//if (type == physx::PxGeometryType::eBOX)
-	//{
-	//	float halfExtentZ = triggerObj->GetTransform()->GetScale().z / 2.f;
-	//	float controllerRadius = m_controller->GetCollider()->GetRadius();
-	//
-	//	//회전과 박스를 고려한 적당한 위치에 생성 (캐릭터 앞에 박스 생성하도록)
-	//	auto triggerTrans = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK1]->GetTransform();
-	//	Vec3 adjustedPos = FROM_PX3(golemPos) + FROM_PX3(xzDir) * (controllerRadius + halfExtentZ);
-	//
-	//	triggerBody->SetPosition(adjustedPos, true);
-	//	triggerBody->SetRotation(FROM_PXQUAT(rotation));
-	//}
-	//
-	//else if (type == physx::PxGeometryType::eSPHERE)
-	//{
-	//	auto triggerTrans = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK1]->GetTransform();
-	//
-	//	triggerBody->SetPosition(FROM_PX3(golemPos), true);
-	//	triggerBody->SetRotation(FROM_PXQUAT(rotation));
-	//}
+	//AddSkillSize에서 줬던 이름으로
+	if(m_overlapObject)
+		m_overlapObject->Activate("ATTACK1");
+
 }
 
 void Golem::Pattern_Attack2()
 {
-	//m_golemAI->UpdateTargetPos();
-	//physx::PxVec3 xzDir = m_golemAI->GetXZDir();
-	//
-	//auto triggerObj = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK2];
-	//auto triggerBody = triggerObj->GetComponent<RigidBody>(L"RigidBody");
-	//auto shape = triggerBody->GetCollider(0)->GetPxShape();
-	//
-	//triggerObj->RestoreOneTimeEffect();									//Exclude 해제, 시간 설정 초기화
-	//
-	////위치, 회전값 적용
-	//physx::PxVec3 golemPos = TO_PX3(GetControllerPosition());
-	//physx::PxQuat rotation = m_AI->GetRotation_For_Pattern(xzDir);
-	//
-	//physx::PxGeometryType::Enum type = shape->getGeometryType();
-	//if (type == physx::PxGeometryType::eBOX)
-	//{
-	//	float halfExtentZ = triggerObj->GetTransform()->GetScale().z / 2.f;
-	//	float controllerRadius = m_controller->GetCollider()->GetRadius();
-	//
-	//	//회전과 박스를 고려한 적당한 위치에 생성 (캐릭터 앞에 박스 생성하도록)
-	//	auto triggerTrans = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK2]->GetTransform();
-	//	Vec3 adjustedPos = FROM_PX3(golemPos) + FROM_PX3(xzDir) * (controllerRadius + halfExtentZ);
-	//
-	//	triggerBody->SetPosition(adjustedPos, true);
-	//	triggerBody->SetRotation(FROM_PXQUAT(rotation));
-	//}
-	//
-	//else if (type == physx::PxGeometryType::eSPHERE)
-	//{
-	//	auto triggerTrans = m_patternTriggerDict[GOLEM_SCHEDULE::ATTACK2]->GetTransform();
-	//
-	//	triggerBody->SetPosition(FROM_PX3(golemPos), true);
-	//	triggerBody->SetRotation(FROM_PXQUAT(rotation));
-	//}
+	if (m_overlapObject)
+		m_overlapObject->Activate("ATTACK2");
 }
+
+void Golem::OverlapObject_Deactivate()
+{
+	//AddSkillSize에서 줬던 이름으로
+	if (m_overlapObject)
+		m_overlapObject->Deactivate();
+}
+
+
 
 Golem::GOLEM_STATE Golem::GetState() const
 {

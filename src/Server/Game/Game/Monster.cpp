@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "RigidBody.h"
 #include "Layer.h"
+#include "OverlapObject.h"
 
 Monster::Monster(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	GameObject{ position, rotation, scale },
@@ -149,6 +150,11 @@ void Monster::SendTransform()
 MonsterAI* Monster::GetAI()
 {
 	return m_AI;
+}
+
+OverlapObject* Monster::GetOverlapObject()
+{
+	return m_overlapObject;
 }
 
 void Monster::SetAnimationEnd()
