@@ -64,7 +64,10 @@ void Monster_Golem::CheckState()
 		return;
 
 	if (m_currState != DEAD)
+	{
 		GetAnimator()->Play(m_currState);
+		m_aniEnd = false;
+	}
 
 	m_prevState = m_currState;
 }
@@ -103,10 +106,14 @@ void Monster_Golem::UpdateFrameOnce()
 
 	ani->CalculateUpdateTime();
 
-	if (ani->IsAnimationEnd(m_currState) == true)
+	if (ani->IsAnimationEnd() == true)
+	{
+		m_aniEnd = true;
 		return;
+	}
 
-	ani->PlayNextFrame();
+	if (m_aniEnd == false)
+		ani->PlayNextFrame();
 }
 
 void Monster_Golem::ParsePackets()

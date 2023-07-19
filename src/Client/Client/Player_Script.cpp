@@ -71,11 +71,13 @@ void Player_Script::CheckState()
 			auto updateTime{ 16.f / ani->GetFramePerSecond() };
 
 			ani->PlayFrame(JUMP_START, updateTime, 0.f);
+			m_aniEnd = false;
 		}
 		break;
 		case JUMP_END:
 		{
 			GetAnimator()->PlayFrame(JUMP_START, GetAnimator()->GetUpdateTime(), 1.f);
+			m_aniEnd = false;
 		}
 		break;
 		case DEAD:
@@ -83,6 +85,7 @@ void Player_Script::CheckState()
 		default:
 		{
 			GetAnimator()->Play(m_currState);
+			m_aniEnd = false;
 		}
 		break;
 	}
@@ -124,10 +127,18 @@ void Player_Script::UpdateFrameOnce()
 
 	anim->CalculateUpdateTime();
 
-	if (anim->IsAnimationEnd(m_currState) == true)
-		return;
+	if (anim->IsAnimationEnd() == true)
+	{
+		if (GetGameObject()->GetObjectType() == server::OBJECT_TYPE::PLAYER)
+			GetNetwork()->SendAnimationEnd(GetGameObject()->GetObjectType(), m_currState);
 
-	anim->PlayNextFrame();
+		m_aniEnd = true;
+
+		return;
+	}
+
+	if (m_aniEnd == false)
+		anim->PlayNextFrame();
 
 	if (m_currState == JUMP_START)
 	{

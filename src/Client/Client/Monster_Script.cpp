@@ -25,6 +25,8 @@ Monster_Script::~Monster_Script()
 
 void Monster_Script::Start()
 {
+	m_aniEnd = false;
+
 	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
 	matWorld *= Matrix::CreateScale(2.5f);
 	GetTransform()->SetWorldMatrix(matWorld);

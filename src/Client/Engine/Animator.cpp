@@ -103,14 +103,11 @@ void Animator::PlayNextFrame()
 	m_frameRatio = static_cast<float>(m_frame - m_frame);
 }
 
-bool Animator::IsAnimationEnd(int32_t state)
+bool Animator::IsAnimationEnd()
 {
 	if (m_updateTime >= m_aniClipInfo.duration)
 	{
 		m_updateTime = 0.f;
-
-		if (GetGameObject()->GetObjectType() != server::OBJECT_TYPE::REMOTE_PLAYER)
-			GetNetwork()->SendAnimationEnd(GetGameObject()->GetObjectType(), state);
 
 		return true;
 	}

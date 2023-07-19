@@ -100,7 +100,7 @@ void Monster_Scorpion::UpdateFrameOnce()
 
 	ani->CalculateUpdateTime();
 
-	if (ani->IsAnimationEnd(m_currState) == true)
+	if (ani->IsAnimationEnd() == true)
 		return;
 
 	ani->PlayNextFrame();

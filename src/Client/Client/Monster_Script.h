@@ -24,4 +24,6 @@ protected:
 protected:
 	float m_radius;
 	float m_halfHeight;
+
+	bool m_aniEnd;
 };

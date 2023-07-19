@@ -83,4 +83,6 @@ private:
 	float m_halfHeight;
 
 	float m_speed = 50.f;
+
+	bool m_aniEnd;
 };

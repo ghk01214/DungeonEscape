@@ -415,8 +415,7 @@ namespace game
 		if (msg.objType == server::OBJECT_TYPE::PLAYER)
 		{
 			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1722.f + msg.playerID * 50.f, 200.f, -1300.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 50.f, 200.f, -1300.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 500.f, 0.f, 9020.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 
 			std::wstring name{};
 
@@ -517,16 +516,6 @@ namespace game
 							auto state{ dynamic_cast<Weeper*>(monster)->GetState() };
 
 							if (state == magic_enum::enum_value<Weeper::WEEPER_STATE>(msg.state))
-								monster->SetAniEndFlag(true);
-						}
-						break;
-						case server::FBX_TYPE::BLUE_GOLEM:
-						case server::FBX_TYPE::GREEN_GOLEM:
-						case server::FBX_TYPE::RED_GOLEM:
-						{
-							auto state{ dynamic_cast<Golem*>(monster)->GetState() };
-
-							if (state == magic_enum::enum_value<Golem::GOLEM_STATE>(msg.state))
 								monster->SetAniEndFlag(true);
 						}
 						break;

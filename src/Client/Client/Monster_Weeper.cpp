@@ -62,7 +62,10 @@ void Monster_Weeper::CheckState()
 		return;
 
 	if (m_currState != DEAD)
+	{
 		GetAnimator()->Play(m_currState);
+		m_aniEnd = false;
+	}
 
 	m_prevState = m_currState;
 }
@@ -100,10 +103,16 @@ void Monster_Weeper::UpdateFrameOnce()
 
 	ani->CalculateUpdateTime();
 
-	if (ani->IsAnimationEnd(m_currState) == true)
-		return;
+	if (ani->IsAnimationEnd() == true)
+	{
+		GetNetwork()->SendAnimationEnd(GetGameObject()->GetObjectType(), m_currState);
+		m_aniEnd = true;
 
-	ani->PlayNextFrame();
+		return;
+	}
+
+	if (m_aniEnd == false)
+		ani->PlayNextFrame();
 }
 
 void Monster_Weeper::ParsePackets()
