@@ -658,13 +658,15 @@ void Player::StunCheck()
 		return;
 	else
 	{
-		m_currState == TIRED;
-		m_controller->Keyboard_ATK_Clear();
-		m_controller->Keyboard_Direction_Clear();
-		m_controller->Keyboard_SpaceBar_Clear();
+		if (m_stun)
+		{
+			m_currState = TIRED;
+			m_controller->Keyboard_ATK_Clear();
+			m_controller->Keyboard_Direction_Clear();
+			m_controller->Keyboard_SpaceBar_Clear();
+		}
 	}
 }
-
 
 void Player::SetControllerMoveSpeed(float value)
 {
