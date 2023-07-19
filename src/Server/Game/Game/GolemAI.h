@@ -16,6 +16,8 @@ enum class GOLEM_SCHEDULE
 	ATTACK2 = 2,
 	ATTACK3 = 3,
 	ATTACK4 = 4,
+
+	ROAR = 5
 };
 
 class GolemAI : public MonsterAI

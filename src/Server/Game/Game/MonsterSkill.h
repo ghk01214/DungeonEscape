@@ -17,5 +17,6 @@ public:
 public:
 	std::string scheduleName;
 	physx::PxGeometry* skillGeometry = nullptr;
+	Vec3 geometrySize;
 };
 

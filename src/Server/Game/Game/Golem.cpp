@@ -61,9 +61,9 @@ void Golem::Update(double timeDelta)
 	if(m_overlapObject)
 		m_overlapObject->Update();
 
-	CheckState();
-	UpdateFrame();
-	UpdateFrameRepeat();
+	CheckState();				//State를 진입할 때
+	UpdateFrameOnce();			//State를 떠날때
+	UpdateFrameRepeat();		//State에 있을 때
 
 	Monster::Update(timeDelta);
 }
@@ -116,27 +116,22 @@ void Golem::CheckState()
 		break;
 		case ATTACK1:
 		{
-			m_currState = GOLEM_STATE::IDLE1;
 		}
 		break;
 		case ATTACK2:
 		{
-
 		}
 		break;
 		case ATTACK3:
 		{
-
 		}
 		break;
 		case ATTACK4:
 		{
-
 		}
 		break;
 		case DAMAGE:
 		{
-
 		}
 		break;
 		case READY:
@@ -197,57 +192,7 @@ void Golem::CheckState()
 
 		}
 		break;
-		case RUN_LEFT:
-		{
-
-		}
-		break;
-		case RUN_RIGHT:
-		{
-
-		}
-		break;
-		case SWIM:
-		{
-
-		}
-		break;
-		case SWIM_BACKWARD:
-		{
-
-		}
-		break;
-		case SWIM_LEFT:
-		{
-
-		}
-		break;
-		case SWIM_RIGHT:
-		{
-
-		}
-		break;
-		case SWIM_IDLE:
-		{
-
-		}
-		break;
 		case WALK:
-		{
-
-		}
-		break;
-		case WALK_BACKWARD:
-		{
-
-		}
-		break;
-		case WALK_LEFT:
-		{
-
-		}
-		break;
-		case WALK_RIGHT:
 		{
 
 		}
@@ -281,7 +226,7 @@ void Golem::UpdateFrameRepeat()
 	}
 }
 
-void Golem::UpdateFrame()
+void Golem::UpdateFrameOnce()
 {
 	switch (m_currState)
 	{
@@ -322,7 +267,6 @@ void Golem::UpdateFrame()
 		break;
 		case READY:
 		{
-			m_currState = ROAR;
 		}
 		break;
 		case DEATH:
@@ -390,6 +334,12 @@ void Golem::Pattern_Attack4()
 {
 	if (m_overlapObject)
 		m_overlapObject->Activate("ATTACK4");
+}
+
+void Golem::Pattern_Roar()
+{
+	if (m_overlapObject)
+		m_overlapObject->Activate("ROAR");
 }
 
 void Golem::OverlapObject_Deactivate()

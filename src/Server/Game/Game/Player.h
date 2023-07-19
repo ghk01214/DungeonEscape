@@ -98,6 +98,9 @@ public:
 	void SkillAttempt();
 	void DeathCheck();				//hp를 따져 DIE0으로 진입
 
+	void SetStun(bool value);
+	void StunCheck();
+
 public:
 	CustomController* GetController();
 	void SetControllerPosition(Vec3 pos);
@@ -135,6 +138,8 @@ private:
 	bool m_firstSingleStrike;
 	bool m_banTriggerApproach = false;		//trigger삭제 후 접근방지
 	bool m_prevOnGround;
+
+	bool m_stun = false;
 
 	int32_t m_sendState;
 

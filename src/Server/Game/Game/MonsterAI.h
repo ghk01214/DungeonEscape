@@ -30,6 +30,7 @@ public:
 
 	virtual std::string GetRequestedScheduleName() = 0;
 	physx::PxGeometry* GetRequestedSkillGeometry(std::string schedule);
+	MonsterSkill* GetRequestedMonsterSkill(std::string schedule);
 	bool SkillRangeCheck();
 
 

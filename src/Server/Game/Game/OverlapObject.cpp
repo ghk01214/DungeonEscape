@@ -6,6 +6,7 @@
 #include "RigidBody.h"
 #include "Collider.h"
 #include "CustomController.h"
+#include "EventHandler.h"
 
 using namespace physx;
 using namespace std;
@@ -48,31 +49,6 @@ void OverlapObject::Active()
 		return;
 
 	std::vector<Player*> validPlayers = m_monsterAI->SkillRangeCheck_OverlapObject(m_currentScheduleName);
-
-	//for (PxU32 i = 0; i < overlapBuffer.getNbTouches(); ++i)
-	//{
-	//	const PxOverlapHit& hit = overlapBuffer.getTouch(i);
-	//	PxRigidActor* actor = hit.actor;
-	//	const char* ptr = actor->getName();
-
-	//	auto body = static_cast<RigidBody*>(actor->userData);
-	//
-	//	std::string name = body->GetName();
-	//	if (name == "Player")
-	//	{
-	//		auto player = dynamic_cast<Player*>(body->GetOwnerObject());
-	//		bool duplicate = IsPlayerDuplicate(player);
-	//		if (duplicate)
-	//		{
-	//			continue;
-	//		}
-	//		else
-	//		{
-	//			ApplyMonsterSkillToPlayer(player);
-	//			m_duplicates.emplace_back(player);
-	//		}
-	//	}
-	//}
 
 	for (auto& player : validPlayers)
 	{
@@ -122,6 +98,7 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 700.f);
 		playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
 	}
+
 	else if (m_currentScheduleName == "ATTACK2")
 	{
 		playerBody->SetVelocity(PxVec3(0));
@@ -144,5 +121,11 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 200.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
+	}
+
+	else if (m_currentScheduleName == "ROAR")
+	{
+		player->SetStun(true);
+		EventHandler::GetInstance()->AddEvent("PLAYER_STUN_OFF", 4.f, player);			//5초 스턴
 	}
 }

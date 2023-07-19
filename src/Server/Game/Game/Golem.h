@@ -63,7 +63,7 @@ public:
 public:
 	void CheckState();
 	void UpdateFrameRepeat();
-	void UpdateFrame();
+	void UpdateFrameOnce();
 
 public:
 	GolemAI* GetAI();
@@ -76,6 +76,7 @@ public:
 	void Pattern_Attack2();
 	void Pattern_Attack3();
 	void Pattern_Attack4();
+	void Pattern_Roar();
 	void OverlapObject_Deactivate();
 
 public:

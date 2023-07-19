@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Event.h"
+#include "Player.h"
 #include "Monster.h"
 #include "MonsterAI.h"
 #include "Weeper.h"
@@ -98,6 +99,16 @@ void Event::ExecuteMsg_Once()
 			skillObj->SetRemoveReserved();
 		}
 	}
+
+	if (msg == "PLAYER_STUN_OFF")
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (playerObj)
+		{
+			playerObj->SetStun(false);
+		}
+	}
+
 
 	//weeper
 	if (msg == "ANIM_END_IF_CAST2END")
@@ -291,6 +302,15 @@ void Event::ExecuteMsg_Once()
 		if (golemObj)
 		{
 			golemObj->Pattern_Attack4();
+		}
+	}
+
+	if (msg == "GOLEM_ROAR_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Roar();
 		}
 	}
 

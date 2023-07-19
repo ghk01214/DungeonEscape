@@ -56,7 +56,7 @@ void Weeper::Update(double timeDelta)
 	m_weeperAI->Update(timeDelta);
 
 	CheckState();
-	UpdateFrame();
+	UpdateFrameOnce();
 
 	Monster::Update(timeDelta);
 }
@@ -97,7 +97,6 @@ void Weeper::CheckState()
 		break;
 		case CAST2_END:
 		{
-			m_currState = WEEPER_STATE::IDLE;
 		}
 		break;
 		case CAST3:
@@ -117,7 +116,6 @@ void Weeper::CheckState()
 		break;
 		case CAST4_END:
 		{
-			m_currState = Weeper::WEEPER_STATE::IDLE;
 		}
 		break;
 		case DAMAGE:
@@ -202,7 +200,7 @@ void Weeper::CheckState()
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
-void Weeper::UpdateFrame()
+void Weeper::UpdateFrameOnce()
 {
 	switch (m_currState)
 	{

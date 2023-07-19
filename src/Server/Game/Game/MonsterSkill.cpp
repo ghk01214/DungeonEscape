@@ -35,6 +35,7 @@ MonsterSkill::MonsterSkill(std::string name, GeometryType type, Vec3 size)
 	}
 
 	scheduleName = name;
+	geometrySize = size;
 }
 
 void MonsterSkill::Release()

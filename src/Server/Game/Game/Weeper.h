@@ -52,7 +52,7 @@ public:
 
 public:
 	void CheckState();
-	void UpdateFrame();
+	void UpdateFrameOnce();
 
 public:
 	WeeperAI* GetAI();

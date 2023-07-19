@@ -128,6 +128,17 @@ physx::PxGeometry* MonsterAI::GetRequestedSkillGeometry(std::string schedule)
 	return nullptr;
 }
 
+MonsterSkill* MonsterAI::GetRequestedMonsterSkill(std::string schedule)
+{
+	for (auto& skill : m_skillSizeHolder)
+	{
+		if (skill->scheduleName == schedule)
+			return skill;
+	}
+
+	return nullptr;
+}
+
 bool MonsterAI::SkillRangeCheck()
 {
 	auto physDevice = PhysDevice::GetInstance();
@@ -182,7 +193,6 @@ bool MonsterAI::SkillRangeCheck()
 		break;
 	}
 
-
 	for (PxU32 i = 0; i < overlapBuffer.getNbTouches(); ++i)
 	{
 		const PxOverlapHit& hit = overlapBuffer.getTouch(i);
@@ -195,6 +205,7 @@ bool MonsterAI::SkillRangeCheck()
 			return true;
 		}
 	}
+
 	return false;
 }
 

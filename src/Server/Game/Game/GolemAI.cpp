@@ -26,9 +26,9 @@ void GolemAI::Init()
 	AddSkillSize("ATTACK1", GeometryType::Box, Vec3(200, 200, 300));				//어퍼컷
 	AddSkillSize("ATTACK2", GeometryType::Box, Vec3(200, 500, 300));				//앞펀치
 	AddSkillSize("ATTACK3", GeometryType::Box, Vec3(200, 500, 300));				//찍기
-	AddSkillSize("ATTACK4", GeometryType::Box, Vec3(300, 200, 300));					//일반 휘두르기
-	//
-	//AddSkillSize("ROAR", GeometryType::Box, Vec3(50, 50, 450));					//포효
+	AddSkillSize("ATTACK4", GeometryType::Box, Vec3(300, 200, 300));				//일반 휘두르기
+
+	AddSkillSize("ROAR", GeometryType::Sphere, Vec3(1000, 1000, 1000));				//포효
 	//AddSkillSize("SPELL", GeometryType::Box, Vec3(50, 50, 450));				//차지 휘두르기 (skillObject 넣어도 될거같다)
 
 	m_golem->SetControllerMoveSpeed(10.f);
@@ -60,6 +60,7 @@ void GolemAI::FillSchedule()
 
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
 
 
 	std::cout << "Filled Schedule" << std::endl;
@@ -180,6 +181,31 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				SetAIWait(true);
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.9f, m_golem);						//같은 시간에 애니메이션 종료 
+			}
+			else
+			{
+				Monstermove();
+				m_golem->m_currState = Golem::GOLEM_STATE::IDLE1;
+			}
+		}
+		break;
+
+		case GOLEM_SCHEDULE::ROAR:
+		{
+			inSkillRange = SkillRangeCheck();
+			if (inSkillRange)
+			{
+				m_scheduler.erase(m_scheduler.begin());
+				ReportSchedule();
+
+				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
+				m_golem->m_currState = Golem::GOLEM_STATE::ROAR;											//STATE : ATTACK1로 변경
+				EventHandler::GetInstance()->AddEvent("GOLEM_ROAR_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
+				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 2.33f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 2.33f, m_golem);							//			같은 시간에 애니메이션 종료 
+
+				SetAIWait(true);
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.6f, m_golem);						//같은 시간에 애니메이션 종료 
 			}
 			else
 			{
