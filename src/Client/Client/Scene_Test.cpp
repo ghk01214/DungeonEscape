@@ -276,7 +276,7 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Floor.fbx");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 
