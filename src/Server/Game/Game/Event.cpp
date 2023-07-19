@@ -276,6 +276,24 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "GOLEM_ATTACK3_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Attack3();
+		}
+	}
+
+	if (msg == "GOLEM_ATTACK4_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Attack4();
+		}
+	}
+
 	if (msg == "OVERLAPOBJECT_DEACTIVATE")
 	{
 		auto golemObj = dynamic_cast<Golem*>(target);

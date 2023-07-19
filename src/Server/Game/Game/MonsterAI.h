@@ -31,7 +31,11 @@ public:
 	virtual std::string GetRequestedScheduleName() = 0;
 	physx::PxGeometry* GetRequestedSkillGeometry(std::string schedule);
 	bool SkillRangeCheck();
-	std::vector<Player*> SkillRangeCheck_OverlapObject(std::string scheduleName);
+
+
+public:
+	std::vector<Player*> SkillRangeCheck_OverlapObject(std::string scheduleName);		//overlapObject 전용 호출 함수. 그 외의 클래스에서 호출하지 않는다.
+	Monster* GetMonster();
 
 public:
 	void SetAIWait(bool value);

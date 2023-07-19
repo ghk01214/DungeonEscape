@@ -1,8 +1,10 @@
 ﻿#include "pch.h"
 #include "OverlapObject.h"
+#include "Monster.h"
 #include "MonsterAI.h"
 #include "Player.h"
 #include "RigidBody.h"
+#include "Collider.h"
 #include "CustomController.h"
 
 using namespace physx;
@@ -99,14 +101,26 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 	auto playerBody = playerController->GetBody();
 	PxVec3 xzDir = m_monsterAI->GetXZDir();
 
+	PxVec3 monsterPos = TO_PX3(m_monsterAI->GetMonster()->GetControllerPosition());
+	PxVec3 playerPos = playerBody->GetPosition();
+	PxVec3 difference = monsterPos - playerPos;
+	float distance = difference.magnitude();			//몬스터 - 플레이어 거리
+
 	//AddSkillSize로 ai에 추가된 MonsterSkill의 이름을 기준으로 작성
 	if (m_currentScheduleName == "ATTACK1")
 	{
+		float dragPower = 150.f;
+		if (distance < 600)
+			dragPower = 75.f;
+		if (distance < 300)
+			dragPower = 30.f;
+		if (distance < 200)
+			dragPower = 1.f;
 		playerBody->SetVelocity(PxVec3(0));
 		playerController->BounceFromAttack();
 		playerBody->SetVelocity(PxVec3(0));
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 700.f);
-		playerBody->AddForce(ForceMode::Impulse, -xzDir * 200.f);
+		playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
 	}
 	else if (m_currentScheduleName == "ATTACK2")
 	{
@@ -116,4 +130,19 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
 	}
 
+	else if (m_currentScheduleName == "ATTACK3")
+	{
+		playerBody->SetVelocity(PxVec3(0));
+		playerController->BounceFromAttack();
+		playerBody->AddForce(ForceMode::Impulse, xzDir * 300.f);
+		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, -1, 0) * 2000.f);
+	}
+
+	else if (m_currentScheduleName == "ATTACK4")
+	{
+		playerBody->SetVelocity(PxVec3(0));
+		playerController->BounceFromAttack();
+		playerBody->AddForce(ForceMode::Impulse, xzDir * 200.f);
+		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
+	}
 }

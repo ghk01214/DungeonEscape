@@ -380,6 +380,18 @@ void Golem::Pattern_Attack2()
 		m_overlapObject->Activate("ATTACK2");
 }
 
+void Golem::Pattern_Attack3()
+{
+	if (m_overlapObject)
+		m_overlapObject->Activate("ATTACK3");
+}
+
+void Golem::Pattern_Attack4()
+{
+	if (m_overlapObject)
+		m_overlapObject->Activate("ATTACK4");
+}
+
 void Golem::OverlapObject_Deactivate()
 {
 	//AddSkillSize에서 줬던 이름으로

@@ -275,6 +275,11 @@ std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string schedu
 	return validPtrs;
 }
 
+Monster* MonsterAI::GetMonster()
+{
+	return m_monster;
+}
+
 void MonsterAI::SetAIWait(bool value)
 {
 	m_AIWait = value;
