@@ -332,7 +332,33 @@ void Event::ExecuteMsg_Once()
 			golemObj->OverlapObject_Deactivate();
 		}
 	}
+	
+	if (msg == "GOLEM_JUMP_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Jump_Ascend();
+		}
+	}
 
+	if (msg == "GOLEM_SELECT_LAND_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Jump_Select_LandPosition();
+		}
+	}
+	
+	if (msg == "GOLEM_JUMP_DESCEND_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Jump_Descend();
+		}
+	}
 
 	if (msg == "ANIM_TO_GOLEM_IDLE")
 	{
@@ -358,6 +384,24 @@ void Event::ExecuteMsg_Once()
 		if (golemObj)
 		{
 			golemObj->SetState(Golem::GOLEM_STATE::RUN);
+		}
+	}
+
+	if (msg == "ANIM_TO_GOLEM_JUMPSTART")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::JUMP_START);
+		}
+	}
+	
+	if (msg == "ANIM_TO_GOLEM_JUMPLOOP")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::JUMP_LOOP);
 		}
 	}
 
@@ -420,6 +464,38 @@ void Event::ExecuteMsg_continuous()
 
 		executed = false;
 		golemObj->GetAI()->Monstermove_ignoreWait();
+	}
+
+	if (msg == "GOLEM_JUMP_LANDCHECK_FUNCTIONCALL")		//Jump에서 착지까지 반복호출
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (!golemObj)
+			return;
+
+		executed = false;
+		bool land = golemObj->Pattern_Jump_LandCheck();
+		if (land)												//착지했다면
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::JUMP_END);	//착지애니메이션 재생
+
+			EventHandler::GetInstance()->AddEvent("ANIM_END", 1.3, golemObj);			//착지애니메이션이 끝났다면 IDLE로
+			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.3, golemObj);		//AI 재개
+			golemObj->GetAI()->SetAIWait(false);
+			executed = true;
+		}
+	}
+
+
+	if (msg == "GOLEM_PHYSICLAYER_TO_DEFAULT")		//Jump에서 착지까지 반복호출
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (!golemObj)
+			return;
+
+		executed = false;
+		bool complete = golemObj->PhysicLayer_SetToDefault();
+		if (complete)
+			executed = true;
 	}
 }
 

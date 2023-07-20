@@ -19,6 +19,7 @@
 #include "MonsterAI.h"
 #include "EventHandler.h"
 #include "OverlapObject.h"
+#include "physx_utils.h"
 
 Golem::Golem(int32_t MonsterID, const Vec3& position, const Quat& rotation, const Vec3& scale) :
 	Monster{ MonsterID, position, rotation, scale },
@@ -251,8 +252,13 @@ void Golem::UpdateFrameOnce()
 			m_golemAI->UpdateTargetPos();		//패턴이 끝났으면 바로 플레이어를 바라보도록
 		}
 		break;
-		case SPELL_START: case JUMP_START:
+		case SPELL_START:
 		{
+		}
+		break;
+		case JUMP_START:
+		{
+			m_currState = IDLE1;
 		}
 		break;
 		case SPELL_END: case JUMP_END:
@@ -355,7 +361,86 @@ void Golem::OverlapObject_Deactivate()
 		m_overlapObject->Deactivate();
 }
 
+void Golem::Pattern_Jump_Ascend()
+{
+	m_controller->GetBody()->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 1000000.f);
+}
 
+void Golem::Pattern_Jump_Select_LandPosition()
+{
+	auto players = ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects();
+	static std::uniform_int_distribution<int> distribution(0, players.size() - 1);
+	int randNum = distribution(dre);
+	auto it = players.begin();
+	std::advance(it, randNum);
+
+	Player* selectedPlayer = dynamic_cast<Player*>(*it);
+	m_landingPosition = selectedPlayer->GetControllerPosition();
+	m_landingPosition.y += 2500.f;
+
+
+	RaycastHit buf;
+	if (selectedPlayer->GetController()->RaycastGround(buf))
+	{
+		buf.point;		//위기표시
+
+	}
+}
+
+void Golem::Pattern_Jump_Descend()
+{
+	auto body = m_controller->GetBody();
+	body->SetVelocity(physx::PxVec3(0, 0, 0));
+	body->SetPosition(m_landingPosition, true);
+	body->AddForce(ForceMode::Impulse, physx::PxVec3(0, -1, 0) * 500000.f);
+	body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_PLAYER,
+				static_cast<PhysicsLayers>(PLAYER | SKILLOBJECT_MONSTER));
+}
+
+bool Golem::Pattern_Jump_LandCheck()
+{
+	RaycastHit hit;
+	m_controller->RaycastGround(hit);
+	if (hit.distance < 0 || hit.distance > 5) 
+		return false;
+	
+
+	auto players = ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects();
+
+	for (auto& obj : players)
+	{
+		auto player = dynamic_cast<Player*>(obj);
+		auto playerController = player->GetController();
+		auto playerBody = player->GetController()->GetBody();
+		if (playerController->IsOnGround())
+		{
+			playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0,1,0) * 1000.f);
+		}
+	}
+
+	EventHandler::GetInstance()->AddEvent("GOLEM_PHYSICLAYER_TO_DEFAULT", 0.5f, this);		//continous
+
+	return true;
+}
+
+bool Golem::PhysicLayer_SetToDefault()
+{
+	auto players = ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects();
+	for (auto& obj : players)
+	{
+		auto player = dynamic_cast<Player*>(obj);
+		auto playerBody = player->GetController()->GetBody();
+		physx::PxVec3 playerPos = playerBody->GetPosition();
+		physx::PxVec3 golemPos = TO_PX3(GetControllerPosition());
+		physx::PxVec3 between = playerPos - golemPos;
+		float distance = between.magnitude();
+		if (distance < 150.f)										//최소 골렘과 150 떨어져야만 몬스터의 물리 레이어를 원래대로 되돌린다.
+			return false;
+	}
+
+	m_controller->GetBody()->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::MONSTER, PhysicsLayers::SKILLOBJECT_MONSTER);
+	return true;
+}
 
 Golem::GOLEM_STATE Golem::GetState() const
 {

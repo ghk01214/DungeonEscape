@@ -72,13 +72,23 @@ public:
 	//void SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geometry, float startTime, float endTime, Vec3 patternSize, TriggerObject::SKILLTYPE type);
 	//void SetUp_PatternObjects();
 public:
+	//모두 OverlapObj조종 함수
 	void Pattern_Attack1();
 	void Pattern_Attack2();
 	void Pattern_Attack3();
 	void Pattern_Attack4();
 	void Pattern_Roar();
 	void Pattern_Run();
-	void OverlapObject_Deactivate();
+	void OverlapObject_Deactivate();		
+
+public:
+	//실제로 점프시키는 함수
+	void Pattern_Jump_Ascend();
+	void Pattern_Jump_Select_LandPosition();
+	void Pattern_Jump_Descend();
+	bool Pattern_Jump_LandCheck();
+
+	bool PhysicLayer_SetToDefault();
 
 public:
 	GOLEM_STATE GetState() const;
@@ -88,6 +98,8 @@ public:
 
 private:
 	//std::unordered_map<GOLEM_SCHEDULE, TriggerObject*> m_patternTriggerDict;
+
+	Vec3 m_landingPosition;
 
 	GOLEM_STATE m_prevState;
 	GOLEM_STATE m_currState;

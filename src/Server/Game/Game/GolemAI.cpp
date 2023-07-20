@@ -3,6 +3,7 @@
 #include "Golem.h"
 #include "Monster.h"
 #include "CustomController.h"
+#include "RigidBody.h"
 #include "SkillObject.h"
 #include "EventHandler.h"
 
@@ -26,11 +27,12 @@ void GolemAI::Init()
 	AddSkillSize("ATTACK1", GeometryType::Box, Vec3(200, 200, 300), false);				//어퍼컷
 	AddSkillSize("ATTACK2", GeometryType::Box, Vec3(200, 500, 300), false);				//앞펀치
 	AddSkillSize("ATTACK3", GeometryType::Box, Vec3(200, 500, 300), false);				//찍기
-	//AddSkillSize("ATTACK4", GeometryType::Box, Vec3(300, 200, 300), false);			//일반 휘두르기
-	AddSkillSize("ATTACK4", GeometryType::Box, Vec3(1000, 1000, 500), false);			//돌진확인을 위한 디버그용값
+	AddSkillSize("ATTACK4", GeometryType::Box, Vec3(300, 200, 300), false);				//일반 휘두르기
+	//AddSkillSize("ATTACK4", GeometryType::Box, Vec3(1000, 1000, 500), false);			//돌진확인을 위한 디버그용값
 
 	AddSkillSize("ROAR", GeometryType::Sphere, Vec3(1000, 1000, 1000), false);			//포효
 	AddSkillSize("RUN", GeometryType::Box, Vec3(150, 150, 150), true);					//돌진
+	AddSkillSize("JUMP", GeometryType::Box, Vec3(1000, 1000, 1000), false);					//돌진
 
 	m_golem->SetControllerMoveSpeed(10.f);
 }
@@ -61,7 +63,7 @@ void GolemAI::FillSchedule()
 
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
 
 
 	std::cout << "Filled Schedule" << std::endl;
@@ -227,11 +229,11 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				
 
 				m_golem->m_currState = Golem::GOLEM_STATE::WALK;											//STATE : WALK으로 변경
-				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE", 0.2f, m_golem);							//이동명령 시작 (Event는 Continous 속성)
+				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE", 0.1f, m_golem);							//이동명령 시작 (Event는 Continous 속성)
 
-				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_RUN_LOOP", 0.7f, m_golem);				//STATE : RUN으로 변경
-				EventHandler::GetInstance()->AddEvent("GOLEM_SET_FASTSPEED", 0.7f, m_golem);				//controller의 속도를 빠르게
-				EventHandler::GetInstance()->AddEvent("GOLEM_RUN_FUNCTIONCALL", 0.7f, m_golem);				//overlapObj 활성화 시작
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_RUN_LOOP", 1.f, m_golem);				//STATE : RUN으로 변경
+				EventHandler::GetInstance()->AddEvent("GOLEM_SET_FASTSPEED", 1.f, m_golem);				//controller의 속도를 빠르게
+				EventHandler::GetInstance()->AddEvent("GOLEM_RUN_FUNCTIONCALL", 1.f, m_golem);				//overlapObj 활성화 시작
 				
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_WALK", 4.f, m_golem);					//STATE : WALK으로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_SET_ORIGINALSPEED", 4.f, m_golem);				//controller의 속도 정상으로
@@ -242,6 +244,34 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				
 				
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 4.5f, m_golem);						//패턴종료 : AI 재개
+			}
+			else
+			{
+				Monstermove();
+				m_golem->m_currState = Golem::GOLEM_STATE::IDLE1;
+			}
+		}
+		break;
+
+		case GOLEM_SCHEDULE::JUMP:
+		{
+			inSkillRange = SkillRangeCheck();
+			if (inSkillRange)
+			{
+				m_scheduler.erase(m_scheduler.begin());
+				ReportSchedule();
+
+				SetAIWait(true);
+
+				m_golem->m_currState = Golem::GOLEM_STATE::READY;
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_JUMPSTART", 2.33, m_golem);
+				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_FUNCTIONCALL", 2.83, m_golem);			//애니메이션 JumpStart의 0.5초에서 상승힘 적용
+
+				EventHandler::GetInstance()->AddEvent("GOLEM_SELECT_LAND_FUNCTIONCALL", 4.83, m_golem);		//위치선정 + 경고장판 + 애니메이션 JUMPLOOP으로
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_JUMPLOOP", 4.83, m_golem);
+				
+				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_DESCEND_FUNCTIONCALL", 6.83, m_golem);	//경고장판 애니메이션이 끝나면 새로운 위치로 이동 + 하강힘 적용
+				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_LANDCHECK_FUNCTIONCALL", 6.83, m_golem);	//랜딩체크. continous속성
 			}
 			else
 			{

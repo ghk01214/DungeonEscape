@@ -214,6 +214,26 @@ bool CustomController::CheckOnGround_Raycast()
 	}
 }
 
+bool CustomController::RaycastGround(RaycastHit& hit)
+{
+	auto device = PhysDevice::GetInstance();
+	auto query = device->GetQuery();
+
+	
+	PhysicsRay ray;
+	ray.direction = PxVec3(0.f, -1.f, 0.f);
+	ray.distance = 2000.f;						//raycast 측정 거리
+	ray.point = m_body->GetPosition()
+		- PxVec3(0.f, (m_collider->GetRadius() + m_collider->GetHalfHeight() - 5.f), 0.f);
+
+	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::MAP), PhysicsQueryType::All, m_body))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 Collider* CustomController::GetColliderBelow()
 {
 	//Raycast를 통해 아래에 있는 콜라이더의 정보를 불러온다

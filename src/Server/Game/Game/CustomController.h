@@ -35,6 +35,7 @@ struct KeyInput
 class RigidBody;
 class CapsuleCollider;
 class Collider;
+class RaycastHit;
 
 class CustomController : public Component
 {
@@ -51,6 +52,7 @@ public:
 	bool CheckOnGround(CollisionInfoType type, physx::PxVec3& surfaceNormal);
 	void GetSlidingVector(CollisionInfoType type);
 	bool CheckOnGround_Raycast();
+	bool RaycastGround(RaycastHit& hit);			//외부 클래스에서 해당 액터와 땅 사이의 거리를 알기 위한 함수
 	Collider* GetColliderBelow();
 	void DirectionInput_Player();
 	void DirectionInput_Monster(physx::PxVec3 targetDir);
