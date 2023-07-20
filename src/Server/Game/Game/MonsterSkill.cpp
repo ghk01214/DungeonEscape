@@ -3,7 +3,7 @@
 
 using namespace physx;
 
-MonsterSkill::MonsterSkill(std::string name, GeometryType type, Vec3 size)
+MonsterSkill::MonsterSkill(std::string name, GeometryType type, Vec3 size, bool set)
 {
 	PxVec3 pxSize = TO_PX3(size);
 
@@ -34,8 +34,10 @@ MonsterSkill::MonsterSkill(std::string name, GeometryType type, Vec3 size)
 		return;
 	}
 
+	centerBox = set;
 	scheduleName = name;
 	geometrySize = size;
+	skillGeometryType = type;
 }
 
 void MonsterSkill::Release()

@@ -128,4 +128,13 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		player->SetStun(true);
 		EventHandler::GetInstance()->AddEvent("PLAYER_STUN_OFF", 4.f, player);			//5초 스턴
 	}
+
+	else if (m_currentScheduleName == "RUN")
+	{
+		playerBody->SetVelocity(PxVec3(0));
+		playerController->BounceFromAttack();
+		playerBody->AddForce(ForceMode::Impulse, xzDir * 700.f);
+		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 150.f);
+		std::cout << "RUN피격확인" << std::endl;
+	}
 }

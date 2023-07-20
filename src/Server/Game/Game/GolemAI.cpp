@@ -23,13 +23,14 @@ void GolemAI::Init()
 	MonsterAI::Init();
 
 	//SkillSize 추가			//triggerObject의 2/3의 크기면 적당함
-	AddSkillSize("ATTACK1", GeometryType::Box, Vec3(200, 200, 300));				//어퍼컷
-	AddSkillSize("ATTACK2", GeometryType::Box, Vec3(200, 500, 300));				//앞펀치
-	AddSkillSize("ATTACK3", GeometryType::Box, Vec3(200, 500, 300));				//찍기
-	AddSkillSize("ATTACK4", GeometryType::Box, Vec3(300, 200, 300));				//일반 휘두르기
+	AddSkillSize("ATTACK1", GeometryType::Box, Vec3(200, 200, 300), false);				//어퍼컷
+	AddSkillSize("ATTACK2", GeometryType::Box, Vec3(200, 500, 300), false);				//앞펀치
+	AddSkillSize("ATTACK3", GeometryType::Box, Vec3(200, 500, 300), false);				//찍기
+	//AddSkillSize("ATTACK4", GeometryType::Box, Vec3(300, 200, 300), false);			//일반 휘두르기
+	AddSkillSize("ATTACK4", GeometryType::Box, Vec3(1000, 1000, 500), false);			//돌진확인을 위한 디버그용값
 
-	AddSkillSize("ROAR", GeometryType::Sphere, Vec3(1000, 1000, 1000));				//포효
-	//AddSkillSize("SPELL", GeometryType::Box, Vec3(50, 50, 450));				//차지 휘두르기 (skillObject 넣어도 될거같다)
+	AddSkillSize("ROAR", GeometryType::Sphere, Vec3(1000, 1000, 1000), false);			//포효
+	AddSkillSize("RUN", GeometryType::Box, Vec3(150, 150, 150), true);					//돌진
 
 	m_golem->SetControllerMoveSpeed(10.f);
 }
@@ -60,7 +61,7 @@ void GolemAI::FillSchedule()
 
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
 
 
 	std::cout << "Filled Schedule" << std::endl;
@@ -206,6 +207,41 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				SetAIWait(true);
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.6f, m_golem);						//같은 시간에 애니메이션 종료 
+			}
+			else
+			{
+				Monstermove();
+				m_golem->m_currState = Golem::GOLEM_STATE::IDLE1;
+			}
+		}
+		break;
+
+		case GOLEM_SCHEDULE::RUN:
+		{
+			if(GetXZDistance() < 2000.f)
+			{
+				m_scheduler.erase(m_scheduler.begin());
+				ReportSchedule();
+
+				SetAIWait(true);																			//패턴시작 : AI 대기
+				
+
+				m_golem->m_currState = Golem::GOLEM_STATE::WALK;											//STATE : WALK으로 변경
+				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE", 0.2f, m_golem);							//이동명령 시작 (Event는 Continous 속성)
+
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_RUN_LOOP", 0.7f, m_golem);				//STATE : RUN으로 변경
+				EventHandler::GetInstance()->AddEvent("GOLEM_SET_FASTSPEED", 0.7f, m_golem);				//controller의 속도를 빠르게
+				EventHandler::GetInstance()->AddEvent("GOLEM_RUN_FUNCTIONCALL", 0.7f, m_golem);				//overlapObj 활성화 시작
+				
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_WALK", 4.f, m_golem);					//STATE : WALK으로 변경
+				EventHandler::GetInstance()->AddEvent("GOLEM_SET_ORIGINALSPEED", 4.f, m_golem);				//controller의 속도 정상으로
+				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 4.f, m_golem);			//overlapObj 비활성화 적용
+				
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 4.5f, m_golem);					//STATE : IDLE로 변경
+				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE_STOP", 4.5f, m_golem);					//이동명령 정지. 
+				
+				
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 4.5f, m_golem);						//패턴종료 : AI 재개
 			}
 			else
 			{

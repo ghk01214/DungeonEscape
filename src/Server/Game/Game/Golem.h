@@ -77,6 +77,7 @@ public:
 	void Pattern_Attack3();
 	void Pattern_Attack4();
 	void Pattern_Roar();
+	void Pattern_Run();
 	void OverlapObject_Deactivate();
 
 public:

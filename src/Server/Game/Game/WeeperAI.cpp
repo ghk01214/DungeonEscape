@@ -23,10 +23,10 @@ void WeeperAI::Init()
 	MonsterAI::Init();
 
 	//SkillSize 추가
-	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 600));		//z거리 1200
-	AddSkillSize("CAST2", GeometryType::Box, Vec3(800, 800, 800));
-	AddSkillSize("CAST3", GeometryType::Box, Vec3(400, 400, 400));
-	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 450));
+	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 600), false);		//z거리 1200
+	AddSkillSize("CAST2", GeometryType::Box, Vec3(800, 800, 800), false);
+	AddSkillSize("CAST3", GeometryType::Box, Vec3(400, 400, 400), false);
+	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 450), false);
 
 	m_weeper->SetControllerMoveSpeed(10.f);
 

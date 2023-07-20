@@ -9,7 +9,7 @@
 class MonsterSkill
 {
 public:
-	MonsterSkill(std::string, GeometryType, Vec3);
+	MonsterSkill(std::string, GeometryType, Vec3, bool);
 
 public:
 	void Release();
@@ -17,6 +17,8 @@ public:
 public:
 	std::string scheduleName;
 	physx::PxGeometry* skillGeometry = nullptr;
+	bool centerBox = false;
 	Vec3 geometrySize;
+	GeometryType skillGeometryType = GeometryType::Box;
 };
 

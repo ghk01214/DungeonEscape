@@ -10,6 +10,7 @@
 #include "SkillObject.h"
 #include "RigidBody.h"
 #include "Collider.h"
+#include "CustomController.h"
 #include "EventHandler.h"
 
 Event::Event(std::string context, float remainTime, GameObject* subject) :
@@ -314,6 +315,15 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "GOLEM_RUN_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Run();
+		}
+	}
+
 	if (msg == "OVERLAPOBJECT_DEACTIVATE")
 	{
 		auto golemObj = dynamic_cast<Golem*>(target);
@@ -323,11 +333,64 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+
+	if (msg == "ANIM_TO_GOLEM_IDLE")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::IDLE1);
+		}
+	}
+
+	if (msg == "ANIM_TO_GOLEM_WALK")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::WALK);
+		}
+	}
+
+	if (msg == "ANIM_TO_GOLEM_RUN_LOOP")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::RUN);
+		}
+	}
+
+	if (msg == "GOLEM_SET_ORIGINALSPEED")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->GetController()->SetMoveSpeedScale(1.f);
+		}
+	}
+
+	if (msg == "GOLEM_SET_FASTSPEED")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->GetController()->SetMoveSpeedScale(5.f);
+		}
+	}
+	
+	if (msg == "GOLEM_MOVE_STOP")
+	{
+		EventHandler::GetInstance()->DeleteEvent("GOLEM_MOVE");
+	}
+
 	executed = true;
 }
 
 void Event::ExecuteMsg_continuous()
 {
+	//exectued = false로 값을 부여안하면 바로 event가 삭제된다. update에서 executeMsg를 우선 실행하기 때문이다.
+
 	if (msg == "WEEPER_CAST4")		//cast4 start 애니메이션 종료 후 호출. 애니메이션은 이미 Cast4_Loop으로 전환됐음.
 	{
 		auto weeperObj = dynamic_cast<Weeper*>(target);
@@ -345,4 +408,19 @@ void Event::ExecuteMsg_continuous()
 			executed = true;	//이벤트 소멸
 		}
 	}
+
+
+
+
+	if (msg == "GOLEM_MOVE")		//cast4 start 애니메이션 종료 후 호출. 애니메이션은 이미 Cast4_Loop으로 전환됐음.
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (!golemObj)
+			return;
+
+		executed = false;
+		golemObj->GetAI()->Monstermove_ignoreWait();
+	}
 }
+
+

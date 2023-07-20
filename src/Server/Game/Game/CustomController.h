@@ -73,6 +73,7 @@ public:
 
 public:
 	void SetMoveSpeed(float value);
+	void SetMoveSpeedScale(float value);
 	float GetMoveSpeed();
 	void SetJumpSpeed(float value);
 	float GetJumpSpeed();
@@ -100,6 +101,7 @@ private:
 
 	float	m_degreeThreshold = 49.9f;
 	float	m_moveSpeed = 30.f;
+	float	m_moveSpeedScale = 1.f;
 	float	m_jumpSpeed = 70.f;
 
 	bool	m_BounceFromAttack = false;

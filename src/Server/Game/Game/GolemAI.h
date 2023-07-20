@@ -17,7 +17,8 @@ enum class GOLEM_SCHEDULE
 	ATTACK3 = 3,
 	ATTACK4 = 4,
 
-	ROAR = 5
+	ROAR = 5,
+	RUN = 6
 };
 
 class GolemAI : public MonsterAI
@@ -42,7 +43,7 @@ public:
 	void DamageCheck();
 	//void Cast2Counter_ON();
 	//void Vulnuerable_ON();
-	//..
+
 
 private:
 	void ReportSchedule();		//콘솔출력 목적의 디버그 전용 함수

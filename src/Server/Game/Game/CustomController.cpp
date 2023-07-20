@@ -392,16 +392,18 @@ void CustomController::Movement_Monster()
 	else
 		m_collider->SetFriction(1.f);
 
+	float newMoveSpeed = m_moveSpeed * m_moveSpeedScale;
+
 	// Apply the adjusted vector to the character's velocity
 	if (m_slidingVector.magnitude() > 0)
 	{
-		m_slidingVector *= m_moveSpeed;
+		m_slidingVector *= newMoveSpeed;
 		m_slidingVector.y = m_body->GetVelocity().y;
 		m_body->SetVelocity(m_slidingVector);	// * movespeed?
 	}
 	else
 	{
-		m_moveDirection *= m_moveSpeed;
+		m_moveDirection *= newMoveSpeed;
 		m_moveDirection.y = m_body->GetVelocity().y;
 		m_body->SetVelocity(m_moveDirection);
 	}
@@ -463,6 +465,11 @@ void CustomController::KeyboardReceive(ulong32_t key)
 void CustomController::SetMoveSpeed(float value)
 {
 	m_moveSpeed = value;
+}
+
+void CustomController::SetMoveSpeedScale(float value)
+{
+	m_moveSpeedScale = value;
 }
 
 float CustomController::GetMoveSpeed()

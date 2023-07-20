@@ -26,12 +26,14 @@ public:
 	void SetRandomTarget();		//타겟을 변경
 	void UpdateTargetPos();		//0.n초 주기로 타겟 플레이어 위치 갱신 (플레이어 일직선 추적 방지)
 	void Monstermove();
-	void AddSkillSize(std::string scheduleName, GeometryType shape, Vec3 size);
+	void Monstermove_ignoreWait();
+	void AddSkillSize(std::string scheduleName, GeometryType shape, Vec3 size, bool centerBox);
 
 	virtual std::string GetRequestedScheduleName() = 0;
 	physx::PxGeometry* GetRequestedSkillGeometry(std::string schedule);
 	MonsterSkill* GetRequestedMonsterSkill(std::string schedule);
 	bool SkillRangeCheck();
+	float GetXZDistance();
 
 
 public:

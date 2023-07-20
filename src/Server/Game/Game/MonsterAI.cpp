@@ -111,9 +111,14 @@ void MonsterAI::Monstermove()
 	m_monster->GetController()->MonsterMove(TO_PX3(m_targetDir));
 }
 
-void MonsterAI::AddSkillSize(std::string scheduleName, GeometryType shape, Vec3 size)
+void MonsterAI::Monstermove_ignoreWait()
 {
-	auto skill = new MonsterSkill(scheduleName, shape, size);
+	m_monster->GetController()->MonsterMove(TO_PX3(m_targetDir));
+}
+
+void MonsterAI::AddSkillSize(std::string scheduleName, GeometryType shape, Vec3 size, bool centerBox)
+{
+	auto skill = new MonsterSkill(scheduleName, shape, size, centerBox);
 	m_skillSizeHolder.emplace_back(skill);
 }
 
@@ -145,6 +150,7 @@ bool MonsterAI::SkillRangeCheck()
 	auto query = physDevice->GetQuery();
 
 	std::string schedule = GetRequestedScheduleName();
+	MonsterSkill* monsterSkill = GetRequestedMonsterSkill(schedule);
 	PxGeometry* skillGeometry = GetRequestedSkillGeometry(schedule);
 	if (!skillGeometry)
 		return false;									//여기 걸리면 SkillAdd()의 오류. 각 Monster의 Init수정 요구
@@ -166,26 +172,28 @@ bool MonsterAI::SkillRangeCheck()
 	PxOverlapHit hitBuffer[bufferSize];
 	PxOverlapBuffer overlapBuffer(hitBuffer, bufferSize);
 
-	switch (skillGeometry->getType())
+	switch (monsterSkill->skillGeometryType)
 	{	//박스의 경우 전방에 배치
-		case PxGeometryType::eBOX:
+		case GeometryType::Box:
 		{
 			auto box = static_cast<PxBoxGeometry*>(skillGeometry);
 			float extentZ = box->halfExtents.z;
-			trans.p += TO_PX3(xzDir) * (extentZ + controllerRadius);
-
+			if (!monsterSkill->centerBox)					//centerBox가 true		중앙에 overlap 진행
+			{												//centerBox가 false		보고 있는 방향으로 overlap 진행
+				trans.p += TO_PX3(xzDir) * (extentZ + controllerRadius + 10);
+			}
 			query->Overlap(*box, trans, filterData, &overlapBuffer);
 		}
 		break;
 
-		case PxGeometryType::eSPHERE:
+		case GeometryType::Sphere:
 		{
 			auto sphere = static_cast<PxSphereGeometry*>(skillGeometry);
 			query->Overlap(*sphere, trans, filterData, &overlapBuffer);
 		}
 		break;
 
-		case PxGeometryType::eCAPSULE:
+		case GeometryType::Capsule:
 		{
 			auto capsule = static_cast<PxCapsuleGeometry*>(skillGeometry);
 			query->Overlap(*capsule, trans, filterData, &overlapBuffer);
@@ -207,6 +215,20 @@ bool MonsterAI::SkillRangeCheck()
 	}
 
 	return false;
+}
+
+float MonsterAI::GetXZDistance()
+{
+	if (!m_target)
+		return -1;
+
+	physx::PxVec3 targetPos = TO_PX3(m_target->GetControllerPosition());
+	targetPos.y = 0;
+	physx::PxVec3 monsterPos = TO_PX3(m_monster->GetControllerPosition());
+	monsterPos.y = 0;
+
+	physx::PxVec3 between = monsterPos - targetPos;
+	return between.magnitude();
 }
 
 std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string scheduleName)
