@@ -368,6 +368,7 @@ void Golem::Pattern_Jump_Ascend()
 
 void Golem::Pattern_Jump_Select_LandPosition()
 {
+	std::cout << "landPos selected" << std::endl;
 	auto players = ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects();
 	static std::uniform_int_distribution<int> distribution(0, players.size() - 1);
 	int randNum = distribution(dre);
@@ -399,22 +400,48 @@ void Golem::Pattern_Jump_Descend()
 
 bool Golem::Pattern_Jump_LandCheck()
 {
+	static std::uniform_real_distribution<float> distribution(0, 2 * physx::PxPi);
+
 	RaycastHit hit;
 	m_controller->RaycastGround(hit);
 	if (hit.distance < 0 || hit.distance > 5) 
 		return false;
 	
-
 	auto players = ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects();
+	physx::PxVec3 golemPosXZ = TO_PX3(GetControllerPosition());
+	golemPosXZ.y = 0;
 
 	for (auto& obj : players)
 	{
 		auto player = dynamic_cast<Player*>(obj);
 		auto playerController = player->GetController();
 		auto playerBody = player->GetController()->GetBody();
+		physx::PxVec3 playerPosXZ = playerBody->GetPosition();
+		playerPosXZ.y = 0;
+
+		physx::PxVec3 between = playerPosXZ - golemPosXZ;
+		float distance = between.magnitude();
+
 		if (playerController->IsOnGround())
 		{
-			playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0,1,0) * 1000.f);
+			playerBody->SetVelocity(physx::PxVec3(0));
+			playerController->BounceFromAttack();		//컨트롤러 넉백 (directionInput봉인)
+			if (distance < playerController->GetCollider()->GetRadius() + m_controller->GetCollider()->GetRadius() + 10.f)
+			{
+				float repelForce = 300.f;
+				float theta = distribution(dre);
+				physx::PxVec3 randomDir(cos(theta), 0, sin(theta));
+				playerBody->AddForce(ForceMode::Impulse, randomDir * repelForce);
+				playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 1200.f);
+
+			}
+			else										//거리가 멀다면 xzDir로 발사
+			{
+				physx::PxVec3 xzDir = m_AI->GetXZDir();
+				float repelForce = 150.f;
+				playerBody->AddForce(ForceMode::Impulse, xzDir * repelForce);
+				playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 800.f);
+			}
 		}
 	}
 
