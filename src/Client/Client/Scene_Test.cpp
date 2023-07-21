@@ -261,7 +261,7 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 	FBXMapLoader mapLoader;
 
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models3.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
@@ -840,14 +840,14 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Scatter Rock";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx";
-			objectDesc.script = std::make_shared<PhysxObject_Script>(type);
+			objectDesc.script = std::make_shared<PhysxObject_Script>();
 		}
 		break;
 		case server::FBX_TYPE::PILLAR_BRIDGE:
 		{
 			objectDesc.strName = L"Pillar Bridge";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Pillar Bridge.fbx";
-			objectDesc.script = std::make_shared<PhysxObject_Script>(type);
+			objectDesc.script = std::make_shared<PhysxObject_Script>();
 		}
 		break;
 #pragma endregion
