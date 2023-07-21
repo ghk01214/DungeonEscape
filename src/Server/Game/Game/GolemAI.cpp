@@ -32,7 +32,8 @@ void GolemAI::Init()
 
 	AddSkillSize("ROAR", GeometryType::Sphere, Vec3(1000, 1000, 1000), false);			//포효
 	AddSkillSize("RUN", GeometryType::Box, Vec3(150, 150, 150), true);					//돌진
-	AddSkillSize("JUMP", GeometryType::Box, Vec3(1000, 1000, 1000), false);					//돌진
+	AddSkillSize("JUMP", GeometryType::Box, Vec3(1000, 1000, 1000), false);				//돌진
+	AddSkillSize("SPELL", GeometryType::Sphere, Vec3(1500, 1500, 1500), true);			//차징 충격파 공격
 
 	m_golem->SetControllerMoveSpeed(10.f);
 }
@@ -62,8 +63,13 @@ void GolemAI::FillSchedule()
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
+
 
 
 	std::cout << "Filled Schedule" << std::endl;
@@ -263,7 +269,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				SetAIWait(true);
 
-				m_golem->m_currState = Golem::GOLEM_STATE::READY;
+				m_golem->m_currState = Golem::GOLEM_STATE::ROAR;
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_JUMPSTART", 2.33, m_golem);
 				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_FUNCTIONCALL", 2.83, m_golem);			//애니메이션 JumpStart의 0.5초에서 상승힘 적용
 
@@ -272,6 +278,41 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				
 				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_DESCEND_FUNCTIONCALL", 6.83, m_golem);	//경고장판 애니메이션이 끝나면 새로운 위치로 이동 + 하강힘 적용
 				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_LANDCHECK_FUNCTIONCALL", 6.83, m_golem);	//랜딩체크. continous속성
+			}
+			else
+			{
+				Monstermove();
+				m_golem->m_currState = Golem::GOLEM_STATE::IDLE1;
+			}
+		}
+		break;
+
+		case GOLEM_SCHEDULE::SPELL:
+		{
+			inSkillRange = SkillRangeCheck();
+			if (inSkillRange)
+			{
+				m_scheduler.erase(m_scheduler.begin());
+				ReportSchedule();
+
+				SetAIWait(true);
+
+				m_golem->m_currState = Golem::GOLEM_STATE::ROAR;
+
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_SPELL_START", 2.33f, m_golem);			//ROAR > SPELL_START 진입
+
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_SPELL_LOOP", 3.83f, m_golem);			//SPELL START > SPELL_LOOP 진입
+				EventHandler::GetInstance()->AddEvent("SPELL_VULNERABLE_ON", 8.83f, m_golem);				//카운터 가능시간 1초
+				EventHandler::GetInstance()->AddEvent("SPELL_VULNERABLE_OFF", 9.83f, m_golem);				//카운터 시간을 놓치면 SPELL_END진입
+
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_SPELL_END", 9.83f, m_golem);			//SPELL LOOP > SPELL_END 진입
+
+				EventHandler::GetInstance()->AddEvent("GOLEM_SPELL_FUNCTIONCALL", 10.43f, m_golem);			//0.6초 후 overlapObj 활성화
+				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 11.43f, m_golem);			//활성화 시간은 1초						대지충격파 유지시간 수정은 여기서
+				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_SPELL_END", 11.33f, m_golem);			//SPELL END > IDLE1 진입
+				
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 13.33f, m_golem);						//IDLE진입 후 2초정도 있다가 AI재개
+
 			}
 			else
 			{
@@ -314,6 +355,11 @@ void GolemAI::DamageCheck()
 	//	}
 	}
 
+}
+
+void GolemAI::Vulnuerable_Set(bool value)
+{
+	m_vulnerable = value;
 }
 
 void GolemAI::ReportSchedule()

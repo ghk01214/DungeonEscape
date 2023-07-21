@@ -17,7 +17,7 @@ public:
 public:
 	std::string scheduleName;
 	physx::PxGeometry* skillGeometry = nullptr;
-	bool centerBox = false;
+	bool exception = false;					//MonsterAI::SkillRangeCheck_OverlapObject()에서 위치가 특수 처리된다. (RUN, SPELL)
 	Vec3 geometrySize;
 	GeometryType skillGeometryType = GeometryType::Box;
 };

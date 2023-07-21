@@ -178,7 +178,7 @@ bool MonsterAI::SkillRangeCheck()
 		{
 			auto box = static_cast<PxBoxGeometry*>(skillGeometry);
 			float extentZ = box->halfExtents.z;
-			if (!monsterSkill->centerBox)					//centerBox가 true		중앙에 overlap 진행
+			if (!monsterSkill->exception)					//centerBox가 true		중앙에 overlap 진행
 			{												//centerBox가 false		보고 있는 방향으로 overlap 진행
 				trans.p += TO_PX3(xzDir) * (extentZ + controllerRadius + 10);
 			}
@@ -231,13 +231,14 @@ float MonsterAI::GetXZDistance()
 	return between.magnitude();
 }
 
-std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string scheduleName)
+std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string scheduleName, OverlapObject* overlapObj)
 {
 	auto physDevice = PhysDevice::GetInstance();
 	auto query = physDevice->GetQuery();
 
 	std::vector<Player*> validPtrs;
 
+	MonsterSkill* monsterSkill = GetRequestedMonsterSkill(scheduleName);
 	PxGeometry* skillGeometry = GetRequestedSkillGeometry(scheduleName);
 	if (!skillGeometry)
 		return validPtrs;									//여기 걸리면 SkillAdd()의 오류. 각 Monster의 Init수정 요구
@@ -264,8 +265,11 @@ std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string schedu
 		case PxGeometryType::eBOX:
 		{
 			auto box = static_cast<PxBoxGeometry*>(skillGeometry);
-			float extentZ = box->halfExtents.z;
-			trans.p += TO_PX3(xzDir) * (extentZ + controllerRadius + 20.f);
+			if (!monsterSkill->exception)
+			{
+				float extentZ = box->halfExtents.z;
+				trans.p += TO_PX3(xzDir) * (extentZ + controllerRadius + 20.f);
+			}
 
 			query->Overlap(*box, trans, filterData, &overlapBuffer);
 		}
@@ -274,6 +278,13 @@ std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string schedu
 		case PxGeometryType::eSPHERE:
 		{
 			auto sphere = static_cast<PxSphereGeometry*>(skillGeometry);
+			if (monsterSkill->exception)
+			{
+				physx::PxVec3 dir = TO_PX3(m_monster->GetAI()->m_targetDir);
+				trans.p += dir * 200.f;				//몬스터가 바라보는 방향으로 200만큼 떨어진곳에서 처리
+				trans.p.y -= m_monster->GetController()->GetCollider()->GetHalfHeight() + 10.f;		//몬스터 컨트롤러 발의 위치에서 터지도록
+				overlapObj->UpdateOverlapPosition(trans.p);
+			}
 			query->Overlap(*sphere, trans, filterData, &overlapBuffer);
 		}
 		break;

@@ -19,7 +19,8 @@ enum class GOLEM_SCHEDULE
 
 	ROAR = 5,
 	RUN = 6,
-	JUMP = 7
+	JUMP = 7,
+	SPELL = 8
 };
 
 class GolemAI : public MonsterAI
@@ -42,8 +43,7 @@ public:
 
 public:
 	void DamageCheck();
-	//void Cast2Counter_ON();
-	//void Vulnuerable_ON();
+	void Vulnuerable_Set(bool value);
 
 
 private:
@@ -54,6 +54,8 @@ private:
 
 private:
 	Golem* m_golem;
+
+	bool m_vulnerable = false;
 
 public:
 	bool m_debugmode = true;			//서버 FSM 확인용 변수

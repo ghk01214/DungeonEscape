@@ -34,7 +34,7 @@ MonsterSkill::MonsterSkill(std::string name, GeometryType type, Vec3 size, bool 
 		return;
 	}
 
-	centerBox = set;
+	exception = set;
 	scheduleName = name;
 	geometrySize = size;
 	skillGeometryType = type;

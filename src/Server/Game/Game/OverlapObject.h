@@ -22,11 +22,16 @@ public:
 	void Active();
 public:
 	bool IsPlayerDuplicate(Player* player);
-	void ApplyMonsterSkillToPlayer(Player* player);
+	bool ApplyMonsterSkillToPlayer(Player* player);
+	bool RaycastPlayer(Player* player);
+
+public:
+	void UpdateOverlapPosition(physx::PxVec3 pos);
 
 private:
 	std::vector<Player*> m_duplicates;
 	std::string m_currentScheduleName;
+	physx::PxVec3 m_currentOverlapPos;
 	bool m_active = false;
 	MonsterAI* m_monsterAI;
 };

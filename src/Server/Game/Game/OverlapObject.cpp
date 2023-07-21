@@ -7,6 +7,9 @@
 #include "Collider.h"
 #include "CustomController.h"
 #include "EventHandler.h"
+#include "RaycastHit.h"
+#include "PhysDevice.h"
+#include "physx_utils.h"
 
 using namespace physx;
 using namespace std;
@@ -48,7 +51,7 @@ void OverlapObject::Active()
 	if (!m_active)
 		return;
 
-	std::vector<Player*> validPlayers = m_monsterAI->SkillRangeCheck_OverlapObject(m_currentScheduleName);
+	std::vector<Player*> validPlayers = m_monsterAI->SkillRangeCheck_OverlapObject(m_currentScheduleName, this);
 
 	for (auto& player : validPlayers)
 	{
@@ -57,8 +60,9 @@ void OverlapObject::Active()
 			continue;
 		else
 		{
-			ApplyMonsterSkillToPlayer(player);
-			m_duplicates.emplace_back(player);
+			bool applied = ApplyMonsterSkillToPlayer(player);		//spell은 raycast후 실패하면 return false
+			if(applied)
+				m_duplicates.emplace_back(player);
 		}
 	}
 }
@@ -71,7 +75,7 @@ bool OverlapObject::IsPlayerDuplicate(Player* player)
 	return true;
 }
 
-void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
+bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 {
 	auto playerController = player->GetController();
 	auto playerBody = playerController->GetBody();
@@ -97,6 +101,8 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerBody->SetVelocity(PxVec3(0));
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 700.f);
 		playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
+
+		return true;
 	}
 
 	else if (m_currentScheduleName == "ATTACK2")
@@ -105,6 +111,8 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 800.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
+
+		return true;
 	}
 
 	else if (m_currentScheduleName == "ATTACK3")
@@ -113,6 +121,8 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 300.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, -1, 0) * 2000.f);
+
+		return true;
 	}
 
 	else if (m_currentScheduleName == "ATTACK4")
@@ -121,12 +131,16 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 200.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
+
+		return true;
 	}
 
 	else if (m_currentScheduleName == "ROAR")
 	{
 		player->SetStun(true);
 		EventHandler::GetInstance()->AddEvent("PLAYER_STUN_OFF", 4.f, player);			//5초 스턴
+
+		return true;
 	}
 
 	else if (m_currentScheduleName == "RUN")
@@ -135,6 +149,55 @@ void OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 700.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 150.f);
-		std::cout << "RUN피격확인" << std::endl;
+
+		return true;
 	}
+
+	else if (m_currentScheduleName == "SPELL")
+	{
+		if (RaycastPlayer(player))
+		{
+			cout << "spell 피격" << endl;
+			playerBody->SetVelocity(PxVec3(0));
+			playerController->BounceFromAttack();
+
+			physx::PxVec3 knockbackDir = playerBody->GetPosition() - m_currentOverlapPos;
+			knockbackDir.normalize();
+
+			playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0,1,0) * 400.f);
+			playerBody->AddForce(ForceMode::Impulse, knockbackDir * 600.f);
+			return true;
+		}
+	}
+
+	return false;		//spell의 raycast 실패시 false를 리턴한다
+}
+
+bool OverlapObject::RaycastPlayer(Player* player)
+{
+	auto device = PhysDevice::GetInstance();
+	auto query = device->GetQuery();
+
+	RaycastHit hit;
+	PhysicsRay ray;
+	physx::PxVec3 dir = TO_PX3(player->GetControllerPosition()) - m_currentOverlapPos;
+	dir.normalize();
+
+	ray.direction = dir;
+	ray.distance = 1500.f;						//raycast 측정 거리. GolemAI::Init()에서 SPELL사이즈와 값과 일치해야한다.
+	ray.point = m_currentOverlapPos;
+																											//몬스터 본인의 강체는 무시
+	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::PLAYER), PhysicsQueryType::All, m_monsterAI->GetMonster()->GetController()->GetBody()))
+	{
+		string name = hit.collider->GetRigidBody()->GetName();
+		if(name == "Player")
+			return true;
+	}
+
+	return false;
+}
+
+void OverlapObject::UpdateOverlapPosition(physx::PxVec3 pos)
+{
+	m_currentOverlapPos = pos;
 }

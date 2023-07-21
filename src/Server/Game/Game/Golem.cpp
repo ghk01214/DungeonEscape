@@ -354,6 +354,12 @@ void Golem::Pattern_Run()
 		m_overlapObject->Activate("RUN");
 }
 
+void Golem::Pattern_Spell()
+{
+	if (m_overlapObject)
+		m_overlapObject->Activate("SPELL");
+}
+
 void Golem::OverlapObject_Deactivate()
 {
 	//AddSkillSize에서 줬던 이름으로

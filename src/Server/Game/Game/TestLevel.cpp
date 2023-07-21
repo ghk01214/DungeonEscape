@@ -186,11 +186,11 @@ void TestLevel::LoadBasicMap3()
 	//centerObj->ApplyRequestedLayers();
 #pragma endregion
 
-#pragma region Z100Box(1000,0,0)
-	//auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(750, 0, 1000), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
-	//auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-	//Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
-	//Box1Obj->ApplyRequestedLayers();
+#pragma region Box(1000,0,0)
+	auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(200, 0, -400), Quat(0, 0, 0, 1), Vec3(300, 500, 300));
+	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+	Box1Obj->ApplyRequestedLayers();
 #pragma endregion
 
 

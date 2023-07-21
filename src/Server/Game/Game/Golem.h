@@ -79,6 +79,7 @@ public:
 	void Pattern_Attack4();
 	void Pattern_Roar();
 	void Pattern_Run();
+	void Pattern_Spell();
 	void OverlapObject_Deactivate();		
 
 public:

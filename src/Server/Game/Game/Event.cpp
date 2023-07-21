@@ -324,6 +324,15 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "GOLEM_SPELL_FUNCTIONCALL")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->Pattern_Spell();
+		}
+	}
+
 	if (msg == "OVERLAPOBJECT_DEACTIVATE")
 	{
 		auto golemObj = dynamic_cast<Golem*>(target);
@@ -405,6 +414,36 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "ANIM_TO_GOLEM_SPELL_LOOP")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::SPELL_LOOP);
+		}
+	}
+
+	if (msg == "ANIM_TO_GOLEM_SPELL_END")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::SPELL_END);
+		}
+	}
+
+	if (msg == "ANIM_END_IF_SPELL_END")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			if (golemObj->GetState() == Golem::GOLEM_STATE::SPELL_END)
+			{
+				golemObj->SetState(Golem::GOLEM_STATE::IDLE1);
+			}
+		}
+	}
+
 	if (msg == "GOLEM_SET_ORIGINALSPEED")
 	{
 		auto golemObj = dynamic_cast<Golem*>(target);
@@ -426,6 +465,24 @@ void Event::ExecuteMsg_Once()
 	if (msg == "GOLEM_MOVE_STOP")
 	{
 		EventHandler::GetInstance()->DeleteEvent("GOLEM_MOVE");
+	}
+
+	if (msg == "SPELL_VULNERABLE_ON")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->GetAI()->Vulnuerable_Set(true);
+		}
+	}
+
+	if (msg == "SPELL_VULNERABLE_OFF")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->GetAI()->Vulnuerable_Set(false);
+		}
 	}
 
 	executed = true;
