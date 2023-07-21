@@ -432,6 +432,15 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "ANIM_TO_GOLEM_STUN")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::STUN);
+		}
+	}
+
 	if (msg == "ANIM_END_IF_SPELL_END")
 	{
 		auto golemObj = dynamic_cast<Golem*>(target);

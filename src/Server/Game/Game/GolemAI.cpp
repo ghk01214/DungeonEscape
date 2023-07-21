@@ -307,8 +307,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_SPELL_END", 9.83f, m_golem);			//SPELL LOOP > SPELL_END 진입
 
-				EventHandler::GetInstance()->AddEvent("GOLEM_SPELL_FUNCTIONCALL", 10.43f, m_golem);			//0.6초 후 overlapObj 활성화
-				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 11.43f, m_golem);			//활성화 시간은 1초						대지충격파 유지시간 수정은 여기서
+				EventHandler::GetInstance()->AddEvent("GOLEM_SPELL_FUNCTIONCALL", 10.36f, m_golem);			//0.53초 후 overlapObj 활성화
+				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 11.36f, m_golem);			//활성화 시간은 1초						대지충격파 유지시간 수정은 여기서
 				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_SPELL_END", 11.33f, m_golem);			//SPELL END > IDLE1 진입
 				
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 13.33f, m_golem);						//IDLE진입 후 2초정도 있다가 AI재개
@@ -349,10 +349,20 @@ void GolemAI::DamageCheck()
 	if (originalHealth > m_golem->GetHP())
 	{
 		originalHealth = m_golem->GetHP();
-	//	if (m_cast2Counter)
-	//	{
-	//		m_weeper->Pattern_Cast2_CounterNuclear();
-	//	}
+		if (m_vulnerable)
+		{
+			m_golem->SetState(Golem::GOLEM_STATE::DAMAGE);
+			EventHandler::GetInstance()->DeleteEvent("ANIM_TO_GOLEM_SPELL_END");
+			EventHandler::GetInstance()->DeleteEvent("GOLEM_SPELL_FUNCTIONCALL");
+			EventHandler::GetInstance()->DeleteEvent("OVERLAPOBJECT_DEACTIVATE");
+			EventHandler::GetInstance()->DeleteEvent("ANIM_END_IF_SPELL_END");
+			EventHandler::GetInstance()->DeleteEvent("AI_WAIT_FREE");				//기존 명령 삭제
+			
+			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_STUN", 1.33f, m_golem);		//DAMAGE애니메이션 1.33초후 STUN으로 변경
+			EventHandler::GetInstance()->AddEvent("ANIM_END", 2.33f * 3.f, m_golem);			//STUN은 6.99초 유지
+			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.33f * 3.f, m_golem);		//STUN이 끝나면 aiwait해제
+			m_vulnerable = false;
+		}
 	}
 
 }
@@ -360,6 +370,10 @@ void GolemAI::DamageCheck()
 void GolemAI::Vulnuerable_Set(bool value)
 {
 	m_vulnerable = value;
+	if (value)
+		cout << "vulnerable ON" << endl;
+	else
+		cout << "vulnerable OFF" << endl;
 }
 
 void GolemAI::ReportSchedule()
