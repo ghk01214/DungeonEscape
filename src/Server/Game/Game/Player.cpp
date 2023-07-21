@@ -76,7 +76,7 @@ void Player::Update(double timeDelta)
 	Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
 	Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
 
-	PlayerPattern_ShootBall_ForDebug();
+	//PlayerPattern_ShootBall_ForDebug();
 
 	GameObject::Update(timeDelta);
 
@@ -278,7 +278,7 @@ void Player::ChangeStateByKeyInput()
 	}
 #pragma endregion
 
-#pragma region 점프처리
+#pragma region [점프처리]
 	if (key[SPACE].down and m_controller->IsOnGround())
 	{
 		m_currState = JUMP_START;
@@ -286,7 +286,7 @@ void Player::ChangeStateByKeyInput()
 	}
 #pragma endregion
 
-#pragma region 스킬처리
+#pragma region [스킬처리]
 	if (key[KEY_1].down)
 	{
 		m_currState = ATK0;

@@ -145,6 +145,9 @@ void Monster::SendTransform()
 	ev.objType = m_objType;
 
 	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
+
+	//auto p{ GetTransform()->GetPosition() };
+	//std::cout << p.x << ", " << p.y << ", " << p.z << "\n";
 }
 
 MonsterAI* Monster::GetAI()

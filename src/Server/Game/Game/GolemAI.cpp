@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "GolemAI.h"
 #include "Golem.h"
 #include "Monster.h"
@@ -62,13 +62,12 @@ void GolemAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
 
 
 
@@ -107,11 +106,11 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK1;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK1_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
 				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.5f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.5f, m_golem);							//			같은 시간에 애니메이션 종료 
-																											//STATE : IDLE로 변경은 STATE_CHECK에서 
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.5f, m_golem);							//			같은 시간에 애니메이션 종료
+																											//STATE : IDLE로 변경은 STATE_CHECK에서
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.7f, m_golem);						//같은 시간에 애니메이션 종료 
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.7f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{
@@ -133,11 +132,11 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK2;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK2_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
 				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.5f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.5f, m_golem);							//			같은 시간에 애니메이션 종료 
-				//STATE : IDLE로 변경은 STATE_CHECK에서 
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.5f, m_golem);							//			같은 시간에 애니메이션 종료
+				//STATE : IDLE로 변경은 STATE_CHECK에서
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.f, m_golem);						//같은 시간에 애니메이션 종료 
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{
@@ -159,11 +158,11 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK3;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
 				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.5f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 2.33f, m_golem);							//			같은 시간에 애니메이션 종료 
-				//STATE : IDLE로 변경은 STATE_CHECK에서 
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 2.33f, m_golem);							//			같은 시간에 애니메이션 종료
+				//STATE : IDLE로 변경은 STATE_CHECK에서
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.f, m_golem);						//같은 시간에 애니메이션 종료 
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{
@@ -185,11 +184,11 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK1;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK4_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
 				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.4f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.6f, m_golem);							//			같은 시간에 애니메이션 종료 
-				//STATE : IDLE로 변경은 STATE_CHECK에서 
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.6f, m_golem);							//			같은 시간에 애니메이션 종료
+				//STATE : IDLE로 변경은 STATE_CHECK에서
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.9f, m_golem);						//같은 시간에 애니메이션 종료 
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.9f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{
@@ -211,10 +210,10 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				m_golem->m_currState = Golem::GOLEM_STATE::ROAR;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ROAR_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
 				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 2.33f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 2.33f, m_golem);							//			같은 시간에 애니메이션 종료 
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 2.33f, m_golem);							//			같은 시간에 애니메이션 종료
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.6f, m_golem);						//같은 시간에 애니메이션 종료 
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.6f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{
@@ -232,7 +231,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				ReportSchedule();
 
 				SetAIWait(true);																			//패턴시작 : AI 대기
-				
+
 
 				m_golem->m_currState = Golem::GOLEM_STATE::WALK;											//STATE : WALK으로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE", 0.1f, m_golem);							//이동명령 시작 (Event는 Continous 속성)
@@ -240,15 +239,15 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_RUN_LOOP", 1.f, m_golem);				//STATE : RUN으로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_SET_FASTSPEED", 1.f, m_golem);				//controller의 속도를 빠르게
 				EventHandler::GetInstance()->AddEvent("GOLEM_RUN_FUNCTIONCALL", 1.f, m_golem);				//overlapObj 활성화 시작
-				
+
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_WALK", 4.f, m_golem);					//STATE : WALK으로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_SET_ORIGINALSPEED", 4.f, m_golem);				//controller의 속도 정상으로
 				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 4.f, m_golem);			//overlapObj 비활성화 적용
-				
+
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 4.5f, m_golem);					//STATE : IDLE로 변경
-				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE_STOP", 4.5f, m_golem);					//이동명령 정지. 
-				
-				
+				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE_STOP", 4.5f, m_golem);					//이동명령 정지.
+
+
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 4.5f, m_golem);						//패턴종료 : AI 재개
 			}
 			else
@@ -275,7 +274,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				EventHandler::GetInstance()->AddEvent("GOLEM_SELECT_LAND_FUNCTIONCALL", 4.83, m_golem);		//위치선정 + 경고장판 + 애니메이션 JUMPLOOP으로
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_JUMPLOOP", 4.83, m_golem);
-				
+
 				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_DESCEND_FUNCTIONCALL", 6.83, m_golem);	//경고장판 애니메이션이 끝나면 새로운 위치로 이동 + 하강힘 적용
 				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_LANDCHECK_FUNCTIONCALL", 6.83, m_golem);	//랜딩체크. continous속성
 			}

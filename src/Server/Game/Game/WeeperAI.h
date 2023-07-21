@@ -64,6 +64,6 @@ private:
 	float m_cast4Cancel_requiredHit = 3;	//Cast4를 중단시키기 위한 피격 횟수
 
 public:
-	bool m_debugmode = true;			//서버 FSM 확인용 변수
+	bool m_debugmode = false;			//서버 FSM 확인용 변수
 };
 

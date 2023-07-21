@@ -81,6 +81,9 @@
     <Filter Include="소스 파일\Objects\05. Skill\Bomb">
       <UniqueIdentifier>{4337bf39-ca73-4a1c-b8ca-15e0cf3189a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\06. Physx Object">
+      <UniqueIdentifier>{e70314d9-2b64-4e23-b097-e7dbdb4fb4cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -158,6 +161,9 @@
     <ClInclude Include="Skill_Bomb_Script.h">
       <Filter>소스 파일\Objects\05. Skill\Bomb</Filter>
     </ClInclude>
+    <ClInclude Include="PhysxObject_Script.h">
+      <Filter>소스 파일\Objects\06. Physx Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -232,6 +238,9 @@
     </ClCompile>
     <ClCompile Include="Skill_Bomb_Script.cpp">
       <Filter>소스 파일\Objects\05. Skill\Bomb</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysxObject_Script.cpp">
+      <Filter>소스 파일\Objects\06. Physx Object</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

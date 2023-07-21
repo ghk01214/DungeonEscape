@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="PhysxObject_Script.h" />
     <ClInclude Include="Skill_Bomb_Script.h" />
     <ClInclude Include="Camera_Script.h" />
     <ClInclude Include="Client_Defines.h" />
@@ -188,6 +189,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PhysxObject_Script.cpp" />
     <ClCompile Include="Skill_Bomb_Script.cpp" />
     <ClCompile Include="Camera_Script.cpp" />
     <ClCompile Include="Game.cpp" />

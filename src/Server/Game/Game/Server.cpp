@@ -791,9 +791,6 @@ namespace game
 						if (map->GetID() != id)
 							continue;
 
-						if (map->GetRemovalFlag() == true)
-							continue;
-
 						for (auto& client : m_sessions)
 						{
 							if (client->GetState() != STATE::INGAME)

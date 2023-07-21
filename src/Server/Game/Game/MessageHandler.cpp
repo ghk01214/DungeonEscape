@@ -415,7 +415,8 @@ namespace game
 		if (msg.objType == server::OBJECT_TYPE::PLAYER)
 		{
 			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 500.f, 0.f, 9020.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 500.f, 0.f, 9020.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(13340, -4310, 20020), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 
 			std::wstring name{};
 

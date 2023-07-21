@@ -12,6 +12,10 @@
 #include "MonsterRangeAttack.h"
 #pragma endregion
 
+#pragma region [OBJECTS]
+#include "PhysxObject_Script.h"
+#pragma endregion
+
 #pragma region [ETC]
 #include "Camera_Script.h"
 #pragma endregion

@@ -259,23 +259,9 @@ void Scene_Test::CreateLights(shared_ptr<CScene> pScene)
 void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 {
 	FBXMapLoader mapLoader;
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Bones.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Floors.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Misc.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Optimized.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Pillars.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Rocks.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Walls.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Wood.fbx");
-
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Items.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Props.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Environments\\Weapons.fbx");
-
-	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Stage1.FBX");
 
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models3.fbx");
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
@@ -450,7 +436,6 @@ void Scene_Test::SendKeyInput()
 	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
 	{
 		GET_NETWORK->SendKeyInputPacket();
-		//std::cout << GET_SINGLE(CInput)->GetKeyInput() << std::endl;
 	}
 }
 
@@ -480,7 +465,7 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 
 	ObjectDesc objectDesc;
-	ClassifyObject(state, fbxType, objectDesc);
+	ClassifyObject(fbxType, objectDesc, state);
 
 	if (objType == server::OBJECT_TYPE::PLAYER)
 		objType = server::OBJECT_TYPE::REMOTE_PLAYER;
@@ -546,7 +531,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	//std::cout << "생성 : " << objID << ", " << magic_enum::enum_name(objType) << std::endl;
 
 	ObjectDesc objectDesc;
-	ClassifyObject(-1, fbxType, objectDesc);
+	ClassifyObject(fbxType, objectDesc);
 
 	network::NetworkGameObject gameObjects{ CreateMapObject(objectDesc) };
 	gameObjects = AddNetworkToObject(gameObjects, objType, objID);
@@ -616,6 +601,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			GET_NETWORK->RemoveNetworkObject(id);
 		}
 		break;
+#pragma region [SKILL]
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
 		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
@@ -630,6 +616,10 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		case server::OBJECT_TYPE::MONSTER_ICEBALL:
 		case server::OBJECT_TYPE::MONSTER_THUNDERBALL:
 		case server::OBJECT_TYPE::MONSTER_POISONBALL:
+#pragma endregion
+#pragma region [OBJECT]
+		case server::OBJECT_TYPE::PHYSX_OBJECT:
+#pragma endregion
 		{
 			if (m_overlappedObjects.contains(id) == false)
 				return;
@@ -643,11 +633,8 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 					removeObjects.push_back(object);
 			}
 
-			RemoveNetworkObject(removeObjects);
-
-			//std::cout << "삭제 : " << id << ", " << magic_enum::enum_name(type) << std::endl;
 			m_overlappedObjects.erase(id);
-
+			RemoveNetworkObject(removeObjects);
 			GET_NETWORK->RemoveNetworkObject(id);
 		}
 		break;
@@ -656,13 +643,14 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 	}
 }
 
-void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, ObjectDesc& objectDesc)
+void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex)
 {
 	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
 	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
 
 	switch (type)
 	{
+#pragma region [PLAYER]
 		case server::FBX_TYPE::NANA:
 		{
 			objectDesc.strName = L"Nana";
@@ -687,6 +675,8 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
+#pragma endregion
+#pragma region [MONSTER]
 		case server::FBX_TYPE::WEEPER1:
 		case server::FBX_TYPE::WEEPER2:
 		case server::FBX_TYPE::WEEPER3:
@@ -756,6 +746,8 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
 		}
 		break;
+#pragma endregion
+#pragma region [SKILL]
 		case server::FBX_TYPE::PLAYER_FIREBALL:
 		{
 			objectDesc.strName = L"Sphere";
@@ -842,6 +834,23 @@ void Scene_Test::ClassifyObject(int32_t stateIndex, server::FBX_TYPE type, Objec
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
+#pragma endregion
+#pragma region [OBJECT]
+		case server::FBX_TYPE::SCATTER_ROCK:
+		{
+			objectDesc.strName = L"Scatter Rock";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx";
+			objectDesc.script = std::make_shared<PhysxObject_Script>(type);
+		}
+		break;
+		case server::FBX_TYPE::PILLAR_BRIDGE:
+		{
+			objectDesc.strName = L"Pillar Bridge";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Pillar Bridge.fbx";
+			objectDesc.script = std::make_shared<PhysxObject_Script>(type);
+		}
+		break;
+#pragma endregion
 		default:
 		break;
 	}

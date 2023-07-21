@@ -76,9 +76,10 @@ void Monster_Golem::UpdateFrameRepeat()
 {
 	switch (m_currState)
 	{
+		// 단발성 애니메이션
 		case ROAR: case SPELL_START: case SPELL_END: case STUN:
 		case ATTACK1: case ATTACK2: case ATTACK3: case ATTACK4:
-		case DAMAGE: case READY: case DEATH: case DEAD:
+		case DAMAGE: case DEATH: case DEAD:
 		case JUMP_START: case JUMP_END:
 		return;
 		default:
@@ -92,7 +93,8 @@ void Monster_Golem::UpdateFrameOnce()
 {
 	switch (m_currState)
 	{
-		case SPELL_LOOP: case LAUGH: case TALK:
+		// 반복 애니메이션
+		case SPELL_LOOP: case LAUGH: case TALK: case READY:
 		case IDLE1: case IDLE2: case JUMP_LOOP: case SWIM_IDLE:
 		case RUN: case RUN_BACKWARD: case RUN_LEFT: case RUN_RIGHT:
 		case SWIM: case SWIM_BACKWARD: case SWIM_LEFT: case SWIM_RIGHT:
