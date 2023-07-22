@@ -19,6 +19,7 @@ public:
 		PLAYER_ICEBALL,
 		PLAYER_THUNDERBALL,
 		PLAYER_POISONBALL,
+		PLAYER_METEOR, 
 
 		BOUNDARY,
 
@@ -42,7 +43,8 @@ public:
 		GUIDED			= 1 << 1,
 		ASCENDING		= 1 << 2,
 		DESCENDING		= 1 << 3,
-		NUCLEAR			= 1 << 4
+		NUCLEAR			= 1 << 4,
+		GUIDED_METEOR   = 1 << 5
 	};
 
 public:
@@ -72,6 +74,7 @@ public:
 	void Handle_Attribute();		//attribute에 따라 지속적으로 실행
 	void Attirbute_Levitate();		//공중 지속
 	void Attribute_Guide();			//유도
+	void Attribute_Guide_MeteorOnly();
 	void Attribute_Ascending();		//공중 발사
 	void Attribute_Descending();
 

@@ -11,6 +11,7 @@
 #include "SphereCollider.h"
 #include "BoxCollider.h"
 #include "TriggerObject.h"
+#include "EventHandler.h"
 
 using namespace std;
 
@@ -735,6 +736,15 @@ void Player::PlayerPattern_ShootBall()
 		break;
 		case ATK3:
 		{
+			//if (m_meteorAvailable)
+			//{
+			//	m_meteorAvailable = false;
+			//	PlayerPattern_ShootMeteor();
+			//	EventHandler::GetInstance()->AddEvent("METEOR_AVAILABLE_SET_TRUE", 5.f, this);
+			//	m_controller->Keyboard_ATK_Clear();
+			//	return;
+			//}
+
 			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_POISONBALL;
 		}
 		break;
@@ -763,39 +773,81 @@ void Player::PlayerPattern_ShootBall()
 	m_controller->Keyboard_ATK_Clear();
 }
 
+void Player::PlayerPattern_ShootMeteor()
+{
+	auto pillarlist = ObjectManager::GetInstance()->GetLayer(L"Layer_Gimmik_Pillar")->GetGameObjects();
+	GameObject* pillar =nullptr;
+	for (auto& t : pillarlist)
+	{
+		pillar = t;
+	}
+
+
+	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_METEOR;
+
+
+	//투사체 위치 선정
+	physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
+	physx::PxVec3 playerCameraLook = m_controller->GetCameraLook().getNormalized();
+
+
+	//physx::PxVec3 skillBallPosition = playerPos;
+	//skillBallPosition.y += 1000.f;
+	//Vec3 ballPos = FROM_PX3(skillBallPosition);
+	Vec3 ballPos;
+	ballPos.x = 9894.f;
+	ballPos.y = 400.f;
+	ballPos.z = 30000.f;
+
+	//투사체 생성
+	auto objmgr = ObjectManager::GetInstance();
+	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
+	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(300,300,300), skilltype, nullptr, this);
+	skillObject->SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED_METEOR, true);
+	skillObject->SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
+	if(pillar)
+		skillObject->m_target = pillar;
+
+	// KeyUp 상태가 전달되기까지의 딜레이가 있어서 로직 종료 시 key 상태 변경
+	m_controller->Keyboard_ATK_Clear();
+}
+
 void Player::PlayerPattern_ATTACK_ForDebug()
 {
 	static bool wasKDown = false; // static 변수 추가. 이전에 'K'키가 눌려져 있었는지를 기억합니다.
 
 	bool isKDown = GetAsyncKeyState('K') & 0x8000; // 'K'키가 현재 눌려져 있는지 확인합니다.
 
-	bool ball = false;
+	bool ball = true;
 
 
 	if (wasKDown && !isKDown) // 이전에 'K'키가 눌려져 있었는데, 지금은 떼어져 있다면.
 	{
 		if (ball)
 		{
-			SkillObject::SKILLOBJECTTYPE skilltype;
+			//SkillObject::SKILLOBJECTTYPE skilltype;
 
-			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_FIREBALL;
+			//skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_FIREBALL;
 
-			//투사체 위치 선정
-			physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
-			physx::PxVec3 playerCameraLook = m_controller->GetCameraLook().getNormalized();
+			////투사체 위치 선정
+			//physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
+			//physx::PxVec3 playerCameraLook = m_controller->GetCameraLook().getNormalized();
 
-			float playerRadius = m_controller->GetCollider()->GetRadius();
-			float skillBallHalfExtent = 50.f;
+			//float playerRadius = m_controller->GetCollider()->GetRadius();
+			//float skillBallHalfExtent = 50.f;
 
-			physx::PxVec3 skillBallPosition = playerPos + playerCameraLook * (playerRadius + skillBallHalfExtent + 10);
-			Vec3 ballPos = FROM_PX3(skillBallPosition);
+			//physx::PxVec3 skillBallPosition = playerPos + playerCameraLook * (playerRadius + skillBallHalfExtent + 10);
+			//Vec3 ballPos = FROM_PX3(skillBallPosition);
 
-			//투사체 생성
-			auto objmgr = ObjectManager::GetInstance();
-			auto layer = objmgr->GetLayer(L"Layer_SkillObject");
-			auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-				(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, nullptr, this);
-			skillObject->PlayerSkillFire(playerCameraLook);
+			////투사체 생성
+			//auto objmgr = ObjectManager::GetInstance();
+			//auto layer = objmgr->GetLayer(L"Layer_SkillObject");
+			//auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+			//	(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, nullptr, this);
+			//skillObject->PlayerSkillFire(playerCameraLook);
+
+			PlayerPattern_ShootMeteor();
 		}
 		else
 		{
@@ -903,4 +955,9 @@ void Player::SendTransform()
 
 	//auto p{ GetTransform()->GetPosition() };
 	//std::cout << p.x << ", " << p.y << ", " << p.z << "\n";
+}
+
+void Player::SetMeteorAttackAvailable(bool value)
+{
+	m_meteorAvailable = value;
 }

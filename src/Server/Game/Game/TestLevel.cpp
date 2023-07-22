@@ -69,11 +69,13 @@ void TestLevel::LoadMap()
 #pragma endregion
 
 	bool debug = true;
+	auto objmgr = ObjectManager::GetInstance();
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(10220, -1000, 32983), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 
 	if (debug)
 	{
 		LoadDebugMap_Bridge();
-		LoadLDebugMap_Boulder();
+		//LoadLDebugMap_Boulder();
 		LoadGimmikObject();
 	}
 	else
@@ -281,16 +283,13 @@ void TestLevel::LoadGimmikObject()
 			pillarObject->Init_After_ColliderAttached();
 
 
-			auto testloc = locationInfo.Position;
-			testloc.y -= 800.f;
+			//auto testloc = locationInfo.Position;
+			//testloc.y -= 800.f;
 			//auto testObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Rock", testloc, Quat(0, 0, 0, 1),Vec3(2000, 10 , 2000));
 			//auto testBody = testObj->GetComponent<RigidBody>(L"RigidBody");
 			//testBody->AddCollider<BoxCollider>(testObj->GetTransform()->GetScale());
 			//testObj->ApplyRequestedLayers();
 
-			testloc.y + 1600.f;
-			testloc.z -= 400.f;
-			auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(testloc.x, -800, testloc.z), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 		}
 	}
 }

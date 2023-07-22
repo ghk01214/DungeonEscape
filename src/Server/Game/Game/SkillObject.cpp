@@ -18,6 +18,7 @@
 #include "Monsters.hpp"
 #include "MonsterAI.h"
 #include "WeeperAI.h"
+#include "PillarObject.h"
 #include "CustomController.h"
 
 
@@ -67,6 +68,14 @@ void SkillObject::Init()
 			m_body->SetMass(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 			m_firePower = 200.f;
+		}
+		break;
+
+		case SKILLOBJECTTYPE::PLAYER_METEOR:
+		{
+			m_body->SetMass(100.f);
+			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
+			m_firePower = 0.f;
 		}
 		break;
 
@@ -478,6 +487,28 @@ void SkillObject::HandlePlayerSkillCollision()
 			SetRemoveReserved();						//객체 삭제
 			ServerMessage_SkillHit();					//서버 메시지 처리
 		}
+
+		//플레이어스킬 : 돌기둥 다리 타격
+		else if (type == server::OBJECT_TYPE::PHYSX_OBJECT)
+		{
+			switch (m_skillType)
+			{
+				case SKILLOBJECTTYPE::PLAYER_METEOR:
+				{
+					auto pillar = dynamic_cast<PillarObject*>(collider->GetOwnerObject());
+					if (pillar)
+					{
+						pillar->ReceivedAttack_Meteor();
+					}
+					SetRemoveReserved();						//객체 삭제
+					ServerMessage_SkillHit();					//서버 메시지 처리
+				}
+				break;
+			}
+
+			SetRemoveReserved();						//객체 삭제
+			ServerMessage_SkillHit();					//서버 메시지 처리
+		}
 	}
 }
 
@@ -629,6 +660,7 @@ void SkillObject::Handle_Attribute()
 {
 	Attirbute_Levitate();
 	Attribute_Guide();
+	Attribute_Guide_MeteorOnly();
 	Attribute_Ascending();
 }
 
@@ -654,6 +686,27 @@ void SkillObject::Attribute_Guide()
 		float guidePower = 15.f;
 
 		physx::PxVec3 TargetPos = TO_PX3(m_target->GetTransform()->GetPosition());
+		physx::PxVec3 TargetDir = TargetPos - m_body->GetPosition();
+		TargetDir.normalize();
+
+		m_body->AddForce(ForceMode::Force, TargetDir * guidePower);
+	}
+}
+
+void SkillObject::Attribute_Guide_MeteorOnly()
+{
+	if (!m_target)								//타겟없으면 취소
+		return;
+
+	if (m_body->IsExcludedFromSimulation())		//삭제예정이면 취소
+		return;
+
+	if (m_skillAttrib & SKILLATTRIBUTE::GUIDED_METEOR)
+	{
+		float guidePower = 2500.f;
+
+		physx::PxVec3 TargetPos = TO_PX3(m_target->GetTransform()->GetPosition());
+		TargetPos.y += 400.f;
 		physx::PxVec3 TargetDir = TargetPos - m_body->GetPosition();
 		TargetDir.normalize();
 

@@ -111,14 +111,18 @@ public:
 	void SetControllerMoveSpeed(float value);
 	void SetControllerJumpSpeed(float value);
 	void SetControllerCameraLook(Vec3& value);
+	void SetMeteorAttackAvailable(bool value);
 
 private:
 	void PlayerPattern_ShootBall();
+	void PlayerPattern_ShootMeteor();
 	void PlayerPattern_SingleStrike(PLAYER_STATE state);
 	void PlayerPattern_ATTACK_ForDebug();
 	int32_t IsAttackKeyDown();
 
 	void SendTransform();
+
+
 
 private:
 	CustomController* m_controller = nullptr;
@@ -140,6 +144,8 @@ private:
 	bool m_prevOnGround;
 
 	bool m_stun = false;
+
+	bool m_meteorAvailable = true;
 
 	int32_t m_sendState;
 

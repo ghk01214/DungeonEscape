@@ -20,7 +20,7 @@ public:
 	void Init_After_ColliderAttached();
 	void ApplyRequestedLayers();
 	void ReceivedAttack_SingleAttack();		//TriggerObj에 의한 공격
-	void ReceivedAttack_Ball();				//SkillObj에 의한 공격
+	void ReceivedAttack_Meteor();				//SkillObj에 의한 공격
 
 public:		//server
 	void ServerMessage_Init();
@@ -29,11 +29,16 @@ public:		//server
 	bool GetRequireFlagTransmit();
 	void SetRequireFlagTransmit(bool set);
 
+	void Reset();
+
 private:
 	RigidBody* m_body = nullptr;
 
 private:	//server
 	bool m_requiresPacketTransmit = false;
+
+
+	physx::PxTransform m_originalTrans;
 };
 
 

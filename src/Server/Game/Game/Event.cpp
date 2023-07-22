@@ -101,12 +101,24 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	//player
+
 	if (msg == "PLAYER_STUN_OFF")
 	{
 		auto playerObj = dynamic_cast<Player*>(target);
 		if (playerObj)
 		{
 			playerObj->SetStun(false);
+		}
+	}
+
+	if (msg == "METEOR_AVAILABLE_SET_TRUE")
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (playerObj)
+		{
+			playerObj->SetMeteorAttackAvailable(true);
+			std::cout << "메테오 재충전" << std::endl;
 		}
 	}
 
