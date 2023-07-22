@@ -4,3 +4,4 @@ src/Client/vendor/lib/FBX/release/libfbxsdk-md.lib filter=lfs diff=lfs merge=lfs
 src/Client/vendor/lib/FBX/release/libfbxsdk-mt.lib filter=lfs diff=lfs merge=lfs -text
 vendor/lib/FBX/debug/libfbxsdk-* filter=lfs diff=lfs merge=lfs -text
 vendor/lib/FBX/release/libfbxsdk-* filter=lfs diff=lfs merge=lfs -text
+*.mp3 filter=lfs diff=lfs merge=lfs -text

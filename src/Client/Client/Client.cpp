@@ -91,6 +91,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		pGame->Update();
 	}
 
+	pGame->Release();
+
 	return (int)msg.wParam;
 }
 

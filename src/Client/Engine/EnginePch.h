@@ -20,8 +20,10 @@
 // 디버깅용 io header
 //#if _DEBUG
 #include <iostream>
+#include <io.h>
 #include <format>
 //#endif
+
 
 #pragma region [CLIENT]
 using namespace std;
@@ -69,6 +71,14 @@ using namespace Microsoft::WRL;
 #pragma comment(lib, "FBX\\release\\libxml2-md.lib")
 #pragma comment(lib, "FBX\\release\\zlib-md.lib")
 #endif
+
+// sound 관련
+#pragma comment(lib, "FMOD\\fmod_vc.lib")
+#pragma comment(lib, "FMOD\\fmodL_vc.lib")
+
+
+
+
 
 
 // 각종 typedef

@@ -502,6 +502,8 @@ src/Server/*/out/
 !src/Client/vendor/lib/DirectXTex/*
 !src/Client/vendor/lib/FBX/*
 !src/Client/vendor/lib/FBX/*/*
+!src/Client/vendor/lib/FBX/*/*
+!src/Client/vendor/lib/FMOD/*
 *.idb
 
 bin/

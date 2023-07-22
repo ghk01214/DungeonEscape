@@ -166,6 +166,9 @@
     <Filter Include="GameObject\Component\BlendObject">
       <UniqueIdentifier>{acea70a9-b54d-465f-b8bf-228ed23b835d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager\Sound">
+      <UniqueIdentifier>{f50dd932-b685-4d4b-9db9-5a59ddd22737}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -314,6 +317,9 @@
     </ClCompile>
     <ClCompile Include="BlendObject.cpp">
       <Filter>GameObject\Component\BlendObject</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundManager.cpp">
+      <Filter>Manager\Sound</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -475,6 +481,9 @@
     </ClInclude>
     <ClInclude Include="BlendObject.h">
       <Filter>GameObject\Component\BlendObject</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.h">
+      <Filter>Manager\Sound</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

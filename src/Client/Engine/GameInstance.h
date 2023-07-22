@@ -9,6 +9,7 @@ class CGameInstance
 {
 public:
 	void Initialize_Engine(const WindowInfo& info);
+	void Release_Engine(void);
 
 public:
 	// scene 생성 관련 함수
