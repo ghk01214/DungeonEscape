@@ -67,7 +67,6 @@ void PillarObject::Init_After_ColliderAttached()
 	m_body->SetMass(1000.f);
 	m_body->SetAngularDamping(0.8f);
 	//m_body->SetAngularDamping(0.0f);
-	m_body->SetLinearDamping(0.2f);
 	m_body->SetSleepThresholder(0.02);
 }
 
@@ -88,7 +87,7 @@ void PillarObject::ReceivedAttack_SingleAttack()
 	}
 
 	m_body->SetAngularDamping(currentDampValue);
-	m_body->AddForce(ForceMode::Impulse, physx::PxVec3(0, 0, 1) * 5000.f);
+	m_body->AddForce(ForceMode::Impulse, physx::PxVec3(0, 0, 1) * 2000.f);
 }
 
 void PillarObject::ReceivedAttack_Meteor()

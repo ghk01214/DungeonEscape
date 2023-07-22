@@ -71,7 +71,7 @@ void Player::Update(double timeDelta)
 	DeathCheck();						//			: IDLE상태에서 HP0면 state를 DIE0으로													//최종 STATE
 
 	PlayerMove();						//			: controller를 사용해 이동한다. state가 move/jump가 아닐 시 키보드 정보 삭제
-	StunCheck();						// 몬스터에 의한 기절
+	StunCheck();						//			몬스터에 의한 기절
 
 	State_Check_Enter();				//FSM 5단계	: 최종적으로 정해진 State진입에 대한 1회성 행동처리(공격함수 호출, 사운드 출력 등..)		//최종 STATE에 대한 처리
 	Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
@@ -736,14 +736,14 @@ void Player::PlayerPattern_ShootBall()
 		break;
 		case ATK3:
 		{
-			//if (m_meteorAvailable)
-			//{
-			//	m_meteorAvailable = false;
-			//	PlayerPattern_ShootMeteor();
-			//	EventHandler::GetInstance()->AddEvent("METEOR_AVAILABLE_SET_TRUE", 5.f, this);
-			//	m_controller->Keyboard_ATK_Clear();
-			//	return;
-			//}
+			if (m_meteorAvailable)
+			{
+				m_meteorAvailable = false;
+				PlayerPattern_ShootMeteor();
+				EventHandler::GetInstance()->AddEvent("METEOR_AVAILABLE_SET_TRUE", 5.f, this);
+				m_controller->Keyboard_ATK_Clear();
+				return;
+			}
 
 			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_POISONBALL;
 		}

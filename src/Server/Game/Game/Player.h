@@ -145,7 +145,7 @@ private:
 
 	bool m_stun = false;
 
-	bool m_meteorAvailable = true;
+	bool m_meteorAvailable = true;			//추후 아이템 획득 등으로 조건 변경
 
 	int32_t m_sendState;
 
