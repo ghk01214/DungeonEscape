@@ -96,6 +96,8 @@ void PillarObject::ReceivedAttack_Meteor()
 	if (currentDampValue != 0.f)
 	{
 		m_body->SetVelocity(physx::PxVec3(0));
+		auto currentAngVel = m_body->GetBody()->getAngularVelocity();
+		m_body->GetBody()->setAngularVelocity(currentAngVel * 0.5f);
 		cout << "메테오 조건 아직" << endl;
 		return;
 	}

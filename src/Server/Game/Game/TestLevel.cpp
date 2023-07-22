@@ -68,7 +68,7 @@ void TestLevel::LoadMap()
 */
 #pragma endregion
 
-	bool debug = false;
+	bool debug = true;
 	auto objmgr = ObjectManager::GetInstance();
 	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(10220, -1000, 32983), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
 

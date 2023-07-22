@@ -249,6 +249,13 @@ void SkillObject::ServerMessage_SkillInit()
 			m_objType = server::OBJECT_TYPE::PLAYER_POISONBALL;
 		}
 		break;
+		case SKILLOBJECTTYPE::PLAYER_METEOR:
+		{
+			m_name = L"PLAYER FIREBALL";
+			m_fbxType = server::FBX_TYPE::PLAYER_FIREBALL;
+			m_objType = server::OBJECT_TYPE::PLAYER_FIREBALL;			//어울리는거로 수정
+		}
+		break;
 		case SKILLOBJECTTYPE::WEEPER_CAST1_BALL:
 		{
 			m_name = L"WEEPER_CAST1_BALL";
