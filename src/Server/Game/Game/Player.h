@@ -114,8 +114,8 @@ public:
 
 private:
 	void PlayerPattern_ShootBall();
-	void PlayerPattern_ShootBall_ForDebug();
-	void PlayerPattern_SingleStrike();
+	void PlayerPattern_SingleStrike(PLAYER_STATE state);
+	void PlayerPattern_ATTACK_ForDebug();
 	int32_t IsAttackKeyDown();
 
 	void SendTransform();

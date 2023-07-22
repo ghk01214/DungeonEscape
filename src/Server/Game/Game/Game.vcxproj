@@ -162,7 +162,7 @@
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="ControllerManagerWrapper.cpp" />
     <ClCompile Include="ControllerWrapper.cpp" />
-    <ClCompile Include="ConvexMeshWrapper.cpp" />
+    <ClCompile Include="MeshWrapper.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="Dragon.cpp" />
     <ClCompile Include="Event.cpp" />
@@ -172,6 +172,7 @@
     <ClCompile Include="Monster.cpp" />
     <ClCompile Include="MonsterAI.cpp" />
     <ClCompile Include="OverlapObject.cpp" />
+    <ClCompile Include="PillarObject.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="RoomManager.cpp" />
     <ClCompile Include="CustomController.cpp" />
@@ -228,7 +229,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ControllerManagerWrapper.h" />
     <ClInclude Include="ControllerWrapper.h" />
-    <ClInclude Include="ConvexMeshWrapper.h" />
+    <ClInclude Include="MeshWrapper.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="Dragon.h" />
     <ClInclude Include="Event.h" />
@@ -239,6 +240,7 @@
     <ClInclude Include="MonsterAI.h" />
     <ClInclude Include="Monsters.hpp" />
     <ClInclude Include="OverlapObject.h" />
+    <ClInclude Include="PillarObject.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="RoomManager.h" />
     <ClInclude Include="CustomController.h" />

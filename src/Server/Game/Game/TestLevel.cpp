@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Monsters.hpp"
 #include "MapObject.h"
+#include "PillarObject.h"
 #include "TriggerObject.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
@@ -30,6 +31,8 @@ void TestLevel::Init()
 {
 	auto objmgr = ObjectManager::GetInstance();
 	objmgr->AddLayer(L"Layer_Map");
+	objmgr->AddLayer(L"Layer_Gimmik_Rock");
+	objmgr->AddLayer(L"Layer_Gimmik_Pillar");
 	objmgr->AddLayer(L"Layer_Player");
 	objmgr->AddLayer(L"Layer_Monster");
 	objmgr->AddLayer(L"Layer_Map2");
@@ -55,108 +58,33 @@ void TestLevel::Release(void)
 
 void TestLevel::LoadMap()
 {
-	// static Mesh 정보 로드
-	/*
-		1. static Mesh 오브젝트를 로드한다. -> 로드해서 어디 넣지?
-		2. MeshCollider가 가지고 있는 static ConvexMeshWrapper 변수에 staticMesh 오브젝트의 정보를 넣는다.
-		3. 맵 fbx 파일을 로드한다.
-		4. 로드한 맵 정보로부터 actor가 사용하는 staticMesh 오브젝트의 정보와 위치를 받아 맵 오브젝트를 생성한다.
-		5. 생성된 맵 오브젝트는 오브젝트 매니저에 넣는다.
-	*/
-	FBXMapLoader mapLoader;
-	FBXMapLoader objectLoader;
-	FBXMapLoader gimmickLoader;
+#pragma region 안내
+/*static Mesh 정보 로드
+	1. static Mesh 오브젝트를 로드한다. -> 로드해서 어디 넣지?
+	2. MeshCollider가 가지고 있는 static ConvexMeshWrapper 변수에 staticMesh 오브젝트의 정보를 넣는다.
+	3. 맵 fbx 파일을 로드한다.
+	4. 로드한 맵 정보로부터 actor가 사용하는 staticMesh 오브젝트의 정보와 위치를 받아 맵 오브젝트를 생성한다.
+	5. 생성된 맵 오브젝트는 오브젝트 매니저에 넣는다.
+*/
+#pragma endregion
 
-	// Static Mesh 정보 로드
-	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");
-	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
+	bool debug = true;
 
-	// Map 정보 로드
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");
-	//mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\ServerDebug.fbx");
-
-	// Map Object 정보 로드
-	//objectLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\MapObjectsRAW.fbx");
-	//objectLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\MapObjects.fbx");
-
-	// Gimmick Object 정보 로드
-	gimmickLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	gimmickLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\GimmickObjects.fbx");
-
-	auto objmgr = ObjectManager::GetInstance();
-	auto& mapInfo = mapLoader.GetMapObjectInfo();
-	//auto& objectInfo = objectLoader.GetMapObjectInfo();
-	auto& gimmickInfo = gimmickLoader.GetMapObjectInfo();
-
-	Vec3 tempPos{};
-
-	for (auto& info : mapInfo)
+	if (debug)
 	{
-		const objectLocationInfo& locationInfo = info.second;
-
-		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
-		   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
-		   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
-		   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
-		);
-
-		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
-		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
-		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
-		MeshObject->ApplyRequestedLayers();
+		LoadDebugMap_Bridge();
+		LoadLDebugMap_Boulder();
+		LoadGimmikObject();
 	}
-
-	/*for (auto& info : objectInfo)
+	else
 	{
-		const objectLocationInfo& locationInfo = info.second;
-
-		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
-		   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
-		   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
-		   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
-		);
-
-		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
-		auto& vertexindexInfo = objectLoader.FindVertexIndicesInfo(info.first);
-		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
-		MeshObject->ApplyRequestedLayers();
-	}*/
-
-	for (auto& info : gimmickInfo)
-	{
-		const objectLocationInfo& locationInfo = info.second;
-		MapObject* MeshObject{ nullptr };
-
-		if (info.first == L"SM_Env_Rock_Square_Simple_01")
-		{
-			auto Box1Obj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map", locationInfo.Position, Quat(0, 0, 0, 1),
-				Vec3(locationInfo.Scale.x * 39.0625, locationInfo.Scale.y * 39.0625, locationInfo.Scale.z * 39.0625));
-
-			auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-			Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
-			Box1Obj->ApplyRequestedLayers();
-			//Box1Body->SetKinematic(false);
-		}
-		else
-		{
-			MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
-			   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
-			   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
-			   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
-			);
-
-			auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
-			auto& vertexindexInfo = gimmickLoader.FindVertexIndicesInfo(info.first);
-			MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
-			MeshObject->ApplyRequestedLayers();
-		}
+		LoadMapObject();
+		LoadPotObject();
+		LoadGimmikObject();
 	}
-
 	std::system("cls");
-
 	std::cout << "Map loading finished\n";
-	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0.f, 0.f, 10520.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(0.f, 0.f, 10520.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+
 }
 
 void TestLevel::LoadBasicMap1()
@@ -255,6 +183,168 @@ void TestLevel::LoadBasicMap3()
 	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 	MapPlaneObject->ApplyRequestedLayers();
 #pragma endregion
+}
+
+void TestLevel::LoadMapObject()
+{
+	auto objmgr = ObjectManager::GetInstance();
+	FBXMapLoader mapLoader;
+	//mapLoader.SetDebugMode(true);
+
+	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");	// Mesh 로드
+	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
+
+	auto& mapInfo = mapLoader.GetMapObjectInfo();
+	for (auto& info : mapInfo)
+	{
+		const objectLocationInfo& locationInfo = info.second;
+
+		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
+		   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+		   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+		   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+		);
+
+		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
+		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+		MeshObject->ApplyRequestedLayers();
+	}
+}
+
+void TestLevel::LoadPotObject()
+{
+	auto objmgr = ObjectManager::GetInstance();
+	FBXMapLoader potLoader;
+
+	potLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\MapObjectsRAW.fbx");		// Mesh 로드
+	potLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\MapObjects.fbx");				// Pot 정보 로드
+
+	auto& potInfo = potLoader.GetMapObjectInfo();
+	for (auto& info : potInfo)
+	{
+		const objectLocationInfo& locationInfo = info.second;
+
+		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
+		   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+		   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+		   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+		);
+
+		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+		auto& vertexindexInfo = potLoader.FindVertexIndicesInfo(info.first);
+		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+		MeshObject->ApplyRequestedLayers();
+	}
+}
+
+void TestLevel::LoadGimmikObject()
+{
+	float doorRockRatio = 39.0625f;
+
+	auto objmgr = ObjectManager::GetInstance();
+	FBXMapLoader gimmickLoader;
+
+	gimmickLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");		// Mesh 로드
+	gimmickLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\GimmickObjects.fbx");			// gimmik 로드
+
+	auto& gimmickInfo = gimmickLoader.GetMapObjectInfo();
+
+	for (auto& info : gimmickInfo)
+	{
+		const objectLocationInfo& locationInfo = info.second;
+		MapObject* MeshObject{ nullptr };
+		PillarObject* pillarObject{ nullptr };
+
+		if (info.first == L"SM_Env_Rock_Square_Simple_01")
+		{
+			auto boxObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Rock", locationInfo.Position, Quat(0, 0, 0, 1),
+				Vec3(locationInfo.Scale.x * doorRockRatio, locationInfo.Scale.y * doorRockRatio, locationInfo.Scale.z * doorRockRatio));
+
+			auto boxBody = boxObj->GetComponent<RigidBody>(L"RigidBody");
+			boxBody->AddCollider<BoxCollider>(boxObj->GetTransform()->GetScale());
+			boxObj->ApplyRequestedLayers();
+		}
+		else if (info.first == L"SM_Env_Rock_Pillar_04")
+		{
+			std::wstring meshname = info.first;
+			pillarObject = objmgr->AddGameObjectToLayer<PillarObject>(L"Layer_Gimmik_Pillar",
+			   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+			   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+			   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+			);
+
+			auto pillarBody = pillarObject->GetComponent<RigidBody>(L"RigidBody");
+			auto& vertexindexInfo = gimmickLoader.FindVertexIndicesInfo(info.first);
+			pillarBody->AddCollider<MeshCollider>(pillarObject->GetTransform()->GetScale(), info.first, vertexindexInfo, true);
+			pillarObject->Init_After_ColliderAttached();
+
+
+			auto testloc = locationInfo.Position;
+			testloc.y -= 800.f;
+			//auto testObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Rock", testloc, Quat(0, 0, 0, 1),Vec3(2000, 10 , 2000));
+			//auto testBody = testObj->GetComponent<RigidBody>(L"RigidBody");
+			//testBody->AddCollider<BoxCollider>(testObj->GetTransform()->GetScale());
+			//testObj->ApplyRequestedLayers();
+
+			testloc.y + 1600.f;
+			testloc.z -= 400.f;
+			auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(testloc.x, -800, testloc.z), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+		}
+	}
+}
+
+void TestLevel::LoadDebugMap_Bridge()
+{
+	auto objmgr = ObjectManager::GetInstance();
+	FBXMapLoader mapLoader;
+
+	mapLoader.AddBasicObject(L" 여기 ");			// Mesh 로드
+	mapLoader.ExtractMapInfo(L" 여기 ");			// Map 로드
+
+	auto& mapInfo = mapLoader.GetMapObjectInfo();
+	for (auto& info : mapInfo)
+	{
+		const objectLocationInfo& locationInfo = info.second;
+
+		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
+		   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+		   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+		   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+		);
+
+		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
+		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+		MeshObject->ApplyRequestedLayers();
+	}
+}
+
+void TestLevel::LoadLDebugMap_Boulder()
+{
+	auto objmgr = ObjectManager::GetInstance();
+	FBXMapLoader mapLoader;
+
+	mapLoader.AddBasicObject(L" 여기 ");			// Mesh 로드
+	mapLoader.ExtractMapInfo(L" 여기 ");			// Map 로드
+
+	auto& mapInfo = mapLoader.GetMapObjectInfo();
+	for (auto& info : mapInfo)
+	{
+		const objectLocationInfo& locationInfo = info.second;
+
+		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
+		   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+		   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+		   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+		);
+
+		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
+		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+		MeshObject->ApplyRequestedLayers();
+	}
 }
 
 void TestLevel::TestFunction()

@@ -181,12 +181,8 @@ void SkillObject::Init()
 
 void SkillObject::Update(double timeDelta)
 {
-	//SendAddAgain();
-	//SendRemoveAgain();
-
 	//이동로직 (플레이어는 SkillPattern()에서 최초 힘 적용하면 끝. 보스 스킬만 추가적인 이동로직이 있다)
 	Handle_Attribute();
-
 
 	//충돌로직
 	if (IsPlayerSkill())

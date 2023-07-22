@@ -1,10 +1,11 @@
 ﻿#pragma once
-class ConvexMeshWrapper
+
+class MeshWrapper
 {
 public:
-	ConvexMeshWrapper(std::wstring path);
-	ConvexMeshWrapper(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices);
-	~ConvexMeshWrapper();
+	MeshWrapper(std::wstring path, bool isConvex = false);
+	MeshWrapper(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices, bool isConvex = false);
+	~MeshWrapper();
 
 private:
 	//Init에서 작동할 함수
@@ -18,18 +19,24 @@ public:
 	bool Release();
 
 private:
+	void CreatePxTriangleMesh(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices, Vec3 extent);
 	void CreatePxConvexMesh(const std::vector<physx::PxVec3>& vertices, const std::vector<uint32_t>& indices, Vec3 extent);
 	void CheckEmptyMesh(std::vector<physx::PxVec3>& vertices, std::vector<uint32_t>& indices);
 
 public:
 	std::wstring GetCurrentPath();
-	physx::PxTriangleMesh* GetConvexMesh();
+	physx::PxTriangleMesh* GetTriangleMesh();
+	physx::PxConvexMesh* GetConvexMesh();
 
 private:
-	physx::PxTriangleMesh* m_convexMesh = nullptr;
+	physx::PxTriangleMesh* m_triangleMesh = nullptr;
+	physx::PxConvexMesh* m_convexMesh = nullptr;
 	std::wstring m_meshPath = L"";
 
 
 	int m_referenceCount = 0;
+
+
+	bool m_isConvex = false;
 };
 

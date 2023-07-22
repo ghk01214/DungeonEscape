@@ -22,6 +22,7 @@ public:
 	void Trigger_Persistent();
 	void Trigger_SingleStrike_HandleMonster();
 	void Trigger_SingleStrike_HandlePlayers();
+	void Trigger_SingleStrike_HandlePillar();
 
 public:
 	void ExcludeTriggerFromSimulation(bool value);

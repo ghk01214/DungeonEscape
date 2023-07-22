@@ -30,6 +30,12 @@ void FBXMapLoader::AddBasicObject(std::wstring path)
         if (m_assetInfo.find(mesh.name) != m_assetInfo.end())
             continue;
 
+        if (m_debugMode)
+        {
+            if (mesh.name != L"SM_Floor_Ceiling")
+                continue;
+        }
+
         // 버텍스 정보 로드
         vertices.clear();
         for (auto& vertex : mesh.vertices)
@@ -125,6 +131,11 @@ Vec3 FBXMapLoader::ConvertFbxDouble3ToVector3(const FbxDouble3& v)
     return Vec3(static_cast<float>(v[0]), static_cast<float>(v[1]), static_cast<float>(v[2]));
 }
 
+void FBXMapLoader::SetDebugMode(bool value)
+{
+    m_debugMode = true;
+}
+
 void FBXMapLoader::ExtractObjectInfoFromFBX(std::wstring path)
 {
     FBXLoader loader;
@@ -133,6 +144,13 @@ void FBXMapLoader::ExtractObjectInfoFromFBX(std::wstring path)
     for (uint32_t i = 0; i < loader.GetMeshCount(); ++i)
     {
         const std::wstring& wstrName = loader.GetMesh(i).name;
+
+        if (m_debugMode)
+        {
+            if (wstrName != L"SM_Floor_Ceiling")
+                continue;
+        }
+
         objectLocationInfo locationInfo{};
         locationInfo.Position = ConvertFbxDouble3ToVector3(loader.GetMesh(i).transform.translation);
         locationInfo.Rotation = ConvertFbxDouble3ToVector3(loader.GetMesh(i).transform.rotation);

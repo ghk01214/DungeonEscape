@@ -5,15 +5,15 @@
 
 	
 
-class ConvexMeshWrapper;
+class MeshWrapper;
 
 class MeshCollider : public Collider
 {
 	virtual physx::PxGeometryHolder CreateGeometry() override;
 
 public:
-	MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent, std::wstring meshName, std::wstring path = L"");
-	MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent, std::wstring meshName, const FBXMeshInfomation& locationInfo);
+	MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent, std::wstring meshName, std::wstring path = L"", bool isConvex = false);
+	MeshCollider(GameObject* ownerGameObject, Component* ownerComponent, RigidBody* body, Vec3 extent, std::wstring meshName, const FBXMeshInfomation& locationInfo, bool isConvex = false);
 	~MeshCollider();
 
 public:
@@ -21,19 +21,21 @@ public:
 	void Release() override;
 
 public:
-	static std::unordered_map<std::wstring, ConvexMeshWrapper*>& GetConvexContainder(void) { return m_convexContainer; }
+	static std::unordered_map<std::wstring, MeshWrapper*>& GetMeshWrapperContainder(void) { return m_meshWrapperContainer; }
 
 protected:
 	physx::PxTriangleMeshGeometry CreateTriangleMeshGeometry();
+	physx::PxConvexMeshGeometry CreateConvexMeshGeometry();
 
 private:
-	ConvexMeshWrapper* GetMyConvexWrapper();
+	MeshWrapper* GetMyMeshWrapper();
 
 private:
 	std::wstring m_meshName = L"";
-	static std::unordered_map<std::wstring, ConvexMeshWrapper*> m_convexContainer;
+	static std::unordered_map<std::wstring, MeshWrapper*> m_meshWrapperContainer;
+	static std::unordered_map<std::wstring, MeshWrapper*> m_staticMeshContainer;
 
-	static std::unordered_map<std::wstring, ConvexMeshWrapper*> m_staticMeshContainer;
+	bool m_isConvex = false;
 };
 
 

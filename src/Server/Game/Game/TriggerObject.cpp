@@ -7,6 +7,7 @@
 #include "TriggerPairInfo.h"
 #include "Player.h"
 #include "Monster.h"
+#include "PillarObject.h"
 #include "CustomController.h"
 
 TriggerObject::TriggerObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
@@ -49,6 +50,7 @@ void TriggerObject::TriggerUpdate()
 {
 	Trigger_Persistent();
 	Trigger_SingleStrike_HandleMonster();
+	Trigger_SingleStrike_HandlePillar();
 }
 
 void TriggerObject::Trigger_Persistent()
@@ -192,6 +194,63 @@ void TriggerObject::Trigger_SingleStrike_HandlePlayers()
 			continue;								//조건 2 : 중복은 아닌가?
 
 		player->GetController()->GetBody()->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 500.f);
+		// server : 플레이어에게 데미지를 준다는 메시지 전달 필요
+	}
+#pragma endregion
+}
+
+void TriggerObject::Trigger_SingleStrike_HandlePillar()
+{
+	if (m_triggerType != server::TRIGGER_TYPE::SINGLE_STRIKE)
+		return;
+
+#pragma region 시간 갱신
+	float dt = TimeManager::GetInstance()->GetDeltaTime();
+	if (dt > 100.f)
+		dt = 0.f;
+	m_currentTime += dt;
+
+	if (m_currentTime == 0.f)
+	{
+		ExcludeTriggerFromSimulation(true);							//0초 : 시뮬레이션 비활성화
+		m_originalPosition = m_body->GetPosition();
+	}
+	else if (m_currentTime > m_startTime && m_currentTime < m_endTime)
+	{
+		if (m_body->IsExcludedFromSimulation())
+		{
+			ExcludeTriggerFromSimulation(false);						//시작~끝 : 시뮬레이션 활성화
+			std::cout << "활성화\n";
+		}
+	}
+	else if (m_currentTime > m_endTime)
+	{
+		if (!m_body->IsExcludedFromSimulation())
+		{
+			ExcludeTriggerFromSimulation(true);						//끝~ : 시뮬레이션 비활성화
+			std::cout << "비활성화\n";
+		}
+		return;
+	}
+#pragma endregion
+
+
+#pragma region 충돌체크 + 중복체크
+	auto collisionEnter = m_body->GetCollider(0)->GetTriggerInfo(CollisionInfoType::Enter);
+	for (auto& info : collisionEnter)				//enter
+	{
+		auto collider = info.get()->GetFromCollider();
+		auto ownerObj = collider->GetOwnerObject();
+		auto pillarObj = dynamic_cast<PillarObject*>(ownerObj);
+		if (pillarObj == nullptr)
+			continue;								//조건 1 : 몬스터가 맞는가?
+
+		bool duplicate = false;
+		ExcludeManagement(collider, duplicate);
+		if (duplicate)
+			continue;								//조건 2 : 중복은 아닌가?
+
+		pillarObj->ReceivedAttack_SingleAttack();
 		// server : 플레이어에게 데미지를 준다는 메시지 전달 필요
 	}
 #pragma endregion

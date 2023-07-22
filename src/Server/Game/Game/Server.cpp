@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "CustomController.h"
 #include "MapObject.h"
+#include "PillarObject.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
 #include "Transform.h"
@@ -649,6 +650,8 @@ namespace game
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
 		auto monsterObjects{ objMgr->GetLayer(L"Layer_Monster")->GetGameObjects() };
 		auto skillObjects{ objMgr->GetLayer(L"Layer_SkillObject")->GetGameObjects() };
+		auto pillarObjects{ objMgr->GetLayer(L"Layer_Gimmik_Pillar")->GetGameObjects() };
+		auto rockObjects{ objMgr->GetLayer(L"Layer_Gimmik_Rock")->GetGameObjects() };
 
 		switch (postOver->msgProtocol)
 		{
@@ -877,6 +880,29 @@ namespace game
 							{
 								client->SendTransformPacket(map);	//트랜스폼 갱신
 								map->SetRequireFlagTransmit(false);														//플래그 체크
+							}
+						}
+					}
+				}
+				else if (postOver->objType == server::OBJECT_TYPE::PHYSX_OBJECT)
+				{
+					for (auto& object : pillarObjects)
+					{
+						auto pillar{ dynamic_cast<PillarObject*>(object) };
+
+						if (pillar == nullptr)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							if (pillar->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
+							{
+								client->SendTransformPacket(pillar);			//트랜스폼 갱신
+								//pillar->SetRequireFlagTransmit(false);		//플래그 체크
+																				//용섭 EDIT : 강체가 스스로 판단해서 플레그 ONOFF를 하게 한다 (Pillar::Late_Update()참고)
 							}
 						}
 					}

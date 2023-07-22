@@ -361,6 +361,8 @@ void RigidBody::SetRotationLockAxis(PhysicsAxis axes, bool value)
 void RigidBody::SetKinematic(bool value)
 {
 	m_body->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, value);
+	bool temp = m_body->getRigidBodyFlags().isSet(PxRigidBodyFlag::eKINEMATIC);
+	temp;
 }
 
 void RigidBody::SetCCDFlag(bool value)

@@ -36,6 +36,9 @@ public:
 	static DirectX::XMFLOAT4 ConvertFbxToDirectQuaternion(const FbxQuaternion& q);
 	static Vec3 ConvertFbxDouble3ToVector3(const FbxDouble3& v);
 
+public:
+	void SetDebugMode(bool value);
+
 private:
 	void ExtractObjectInfoFromFBX(std::wstring path);
 
@@ -49,5 +52,8 @@ private:
 	std::unordered_map<std::wstring, std::wstring> m_objectStaticMesh;	// 맵 fbx 파일에서 추출한 fbx파일 이름, 해당 fbx파일이 사용하는 staticMesh 오브젝트 이름
 
 	std::vector<std::pair<std::wstring, objectLocationInfo>> m_MapObjectInfo;	// 실제 맵 오브젝트 정보
+
+
+	bool m_debugMode = false;
 };
 

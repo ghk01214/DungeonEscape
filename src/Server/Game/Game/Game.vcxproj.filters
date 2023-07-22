@@ -209,6 +209,12 @@
     <Filter Include="03. Game\01. GameObject\OverlapObject">
       <UniqueIdentifier>{5589447b-1418-410f-9303-c51b99b70780}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\GimmikObject">
+      <UniqueIdentifier>{190d1721-c8bf-4fe0-8813-dce238f65016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Game\01. GameObject\GimmikObject\PilliarObject">
+      <UniqueIdentifier>{3aa424de-5693-440f-b03e-c4e2e14ec092}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -323,7 +329,7 @@
     <ClCompile Include="FBXLoader.cpp">
       <Filter>99. Utility\FBXLoader</Filter>
     </ClCompile>
-    <ClCompile Include="ConvexMeshWrapper.cpp">
+    <ClCompile Include="MeshWrapper.cpp">
       <Filter>02. Physx\Collider\Mesh\ConvexMeshWrapper</Filter>
     </ClCompile>
     <ClCompile Include="MessageHandler.cpp">
@@ -388,6 +394,9 @@
     </ClCompile>
     <ClCompile Include="OverlapObject.cpp">
       <Filter>03. Game\01. GameObject\OverlapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="PillarObject.cpp">
+      <Filter>03. Game\01. GameObject\GimmikObject\PilliarObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -523,7 +532,7 @@
     <ClInclude Include="FBXLoader.h">
       <Filter>99. Utility\FBXLoader</Filter>
     </ClInclude>
-    <ClInclude Include="ConvexMeshWrapper.h">
+    <ClInclude Include="MeshWrapper.h">
       <Filter>02. Physx\Collider\Mesh\ConvexMeshWrapper</Filter>
     </ClInclude>
     <ClInclude Include="MessageHandler.h">
@@ -594,6 +603,9 @@
     </ClInclude>
     <ClInclude Include="OverlapObject.h">
       <Filter>03. Game\01. GameObject\OverlapObject</Filter>
+    </ClInclude>
+    <ClInclude Include="PillarObject.h">
+      <Filter>03. Game\01. GameObject\GimmikObject\PilliarObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
