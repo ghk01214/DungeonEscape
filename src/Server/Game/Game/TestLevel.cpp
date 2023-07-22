@@ -300,8 +300,8 @@ void TestLevel::LoadDebugMap_Bridge()
 	auto objmgr = ObjectManager::GetInstance();
 	FBXMapLoader mapLoader;
 
-	mapLoader.AddBasicObject(L" 여기 ");			// Mesh 로드
-	mapLoader.ExtractMapInfo(L" 여기 ");			// Map 로드
+	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\BridgeObj.fbx");			// Mesh 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Bridge.fbx");			// Map 로드
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)
@@ -326,8 +326,8 @@ void TestLevel::LoadLDebugMap_Boulder()
 	auto objmgr = ObjectManager::GetInstance();
 	FBXMapLoader mapLoader;
 
-	mapLoader.AddBasicObject(L" 여기 ");			// Mesh 로드
-	mapLoader.ExtractMapInfo(L" 여기 ");			// Map 로드
+	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\RockRollingObj.fbx");			// Mesh 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\RockRolling.fbx");			// Map 로드
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)
