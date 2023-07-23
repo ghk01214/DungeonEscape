@@ -506,6 +506,8 @@ src/Server/*/out/
 !src/Client/vendor/lib/FMOD/*
 *.idb
 
+!src/Client/Output/*.dll
+
 bin/
 bin-int/
 hooks/
