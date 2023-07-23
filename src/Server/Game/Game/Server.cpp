@@ -916,9 +916,6 @@ namespace game
 						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						if (rock->GetRequireFlagTransmit() == true)
-							continue;
-
 						client->SendTransformPacket(rock, 39.0625f);
 					}
 
@@ -935,9 +932,6 @@ namespace game
 					for (auto& client : m_sessions)
 					{
 						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						if (boulder->GetRequireFlagTransmit() == true)
 							continue;
 
 						client->SendTransformPacket(boulder, 30.f);
