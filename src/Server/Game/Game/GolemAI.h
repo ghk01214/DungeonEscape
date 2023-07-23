@@ -44,7 +44,7 @@ public:
 public:
 	void DamageCheck();
 	void Vulnuerable_Set(bool value);
-
+	void GolemMove();
 
 private:
 	void ReportSchedule();		//콘솔출력 목적의 디버그 전용 함수

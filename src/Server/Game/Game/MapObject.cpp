@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "TimeManager.h"
 #include "Collider.h"
+#include "MessageHandler.h"
 
 MapObject::MapObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
 	: GameObject(position, rotation, scale), m_body(nullptr)
@@ -70,6 +71,39 @@ bool MapObject::GetRequireFlagTransmit()
 void MapObject::SetRequireFlagTransmit(bool value)
 {
 	m_requiresPacketTransmit = value;
+}
+
+void MapObject::ServerMessage_Init(bool scatterRock, bool boulder)
+{
+	m_id = game::MessageHandler::GetInstance()->NewObjectID();
+
+	if (scatterRock)
+	{										//기믹 돌담
+		//m_name = L"PLAYER FIREBALL";
+		//m_fbxType = server::FBX_TYPE::SCATTER_ROCK;
+		//m_objType = server::OBJECT_TYPE::PHYSX_OBJECT;
+		//
+		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
+		//ev.objType = m_objType;
+		//ev.objID = m_id;
+	}
+	else if (boulder)
+	{										//기믹 공
+		//마찬가지로 채워넣기
+	}
+
+	//game::MessageHandler::GetInstance()->PushSendMessage(ev);
+}
+
+void MapObject::ServerMessage_Release()
+{
+	SetRequireFlagTransmit(false);
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+	ev.objID = m_id;
+	ev.objType = m_objType;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void MapObject::ApplyRequestedLayers()

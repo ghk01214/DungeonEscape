@@ -585,6 +585,12 @@ void Player::PlayerMove()
 	if (m_currState != MOVE and m_currState != JUMP_START and m_currState != JUMPING)
 		m_controller->Keyboard_Direction_Clear();
 
+	if (m_stun)
+	{
+		m_controller->Keyboard_Direction_Clear();
+		m_controller->Keyboard_SpaceBar_Clear();
+	}
+
 	m_controller->PlayerMove();
 }
 
@@ -759,6 +765,18 @@ void Player::PlayerPattern_ShootBall()
 	float playerRadius = m_controller->GetCollider()->GetRadius();
 	float skillBallHalfExtent = 50.f;
 
+
+
+
+
+
+	// 07/23 추가한 코드. 방향수정이 잘되면 기존 위의 코드는 정리한다.
+	playerCameraLook = GetForwardVec();
+
+
+
+
+
 	physx::PxVec3 skillBallPosition = playerPos + playerCameraLook * (playerRadius + skillBallHalfExtent + 10);
 	Vec3 ballPos = FROM_PX3(skillBallPosition);
 
@@ -910,6 +928,13 @@ void Player::PlayerPattern_SingleStrike(PLAYER_STATE state)
 	float angle = physx::PxAtan2(cameraDir.z, cameraDir.x);
 	physx::PxQuat cameraRot(angle, physx::PxVec3(0, 1, 0));					//카메라 회전정보
 
+
+
+	// 07/23 추가한 코드. 방향수정이 잘되면 기존 위의 코드는 정리한다.
+	cameraDir = GetForwardVec();
+
+
+
 	float radius = m_controller->GetCollider()->GetRadius();
 	float extent = 100.f;
 	physx::PxVec3 triggerPos = playerPos + cameraDir * (radius + extent);	//트리거 위치
@@ -955,6 +980,17 @@ void Player::SendTransform()
 
 	//auto p{ GetTransform()->GetPosition() };
 	//std::cout << p.x << ", " << p.y << ", " << p.z << "\n";
+}
+
+physx::PxVec3 Player::GetForwardVec()
+{
+	physx::PxQuat quat = TO_PXQUAT(m_qlook);
+	physx::PxVec3 forward(0, 0, 1);  
+
+	physx::PxVec3 lookVec = quat.rotate(forward);
+	lookVec.y = 0;
+	lookVec.normalize();
+	return lookVec;
 }
 
 void Player::SetMeteorAttackAvailable(bool value)

@@ -121,7 +121,7 @@ private:
 	int32_t IsAttackKeyDown();
 
 	void SendTransform();
-
+	physx::PxVec3 GetForwardVec();
 
 
 private:

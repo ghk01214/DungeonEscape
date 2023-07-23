@@ -121,6 +121,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 300.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, -1, 0) * 2000.f);
+		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_STUN_APPLY", 0.f, player);			//continous. 땅에 닿으면 스턴 + 스턴해제 5초후 명령을 내린다.
 
 		return true;
 	}
