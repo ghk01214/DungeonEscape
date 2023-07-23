@@ -58,6 +58,6 @@ private:
 	bool m_vulnerable = false;
 
 public:
-	bool m_debugmode = true;			//서버 FSM 확인용 변수
+	bool m_debugmode = false;			//서버 FSM 확인용 변수
 };
 

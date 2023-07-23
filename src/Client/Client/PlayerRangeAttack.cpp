@@ -81,7 +81,9 @@ void PlayerRangeAttack::Transform(network::CPacket& packet)
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
 
-	Matrix matWorld{ Matrix::CreateScale(scale / 100.f) };
+	float scaleRatio{ packet.Read<float>() };
+
+	Matrix matWorld{ Matrix::CreateScale(scale / scaleRatio) };
 	matWorld *= Matrix::CreateFromQuaternion(quat);
 	matWorld *= Matrix::CreateTranslation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);

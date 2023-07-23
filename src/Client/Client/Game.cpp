@@ -38,7 +38,7 @@ void CGame::Start()
 	//GET_NETWORK->SendIDIssueRequest();
 	//GET_SINGLE(SceneManager)->Start();
 
-	GET_SINGLE(CSoundMgr)->PlayBGM(L"Blue Archive Main Title Constant Moderato Piano Vocal.mp3");
+	//GET_SINGLE(CSoundMgr)->PlayBGM(L"Blue Archive Main Title Constant Moderato Piano Vocal.mp3");
 }
 
 void CGame::Update()

@@ -38,7 +38,7 @@ void MapObject::Update(double timeDelta)
 	//	}
 	//}
 
-	
+
 	GameObject::Update(timeDelta);
 }
 
@@ -47,7 +47,7 @@ void MapObject::LateUpdate(double timeDelta)
 	m_body->ClearCollidersCollisionInfo();
 
 	if (m_body->IsRigidbodySleep())
-	{	
+	{
 		m_requiresPacketTransmit = false;
 	}
 	else
@@ -75,24 +75,34 @@ void MapObject::SetRequireFlagTransmit(bool value)
 
 void MapObject::ServerMessage_Init(bool scatterRock, bool boulder)
 {
-	m_id = game::MessageHandler::GetInstance()->NewObjectID();
-
 	if (scatterRock)
 	{										//기믹 돌담
-		//m_name = L"PLAYER FIREBALL";
-		//m_fbxType = server::FBX_TYPE::SCATTER_ROCK;
-		//m_objType = server::OBJECT_TYPE::PHYSX_OBJECT;
-		//
+		m_id = game::MessageHandler::GetInstance()->NewObjectID();
+
+		m_name = L"BLOCK";
+		m_fbxType = server::FBX_TYPE::SCATTER_ROCK;
+		m_objType = server::OBJECT_TYPE::MAP_OBJECT;
+
 		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
-		//ev.objType = m_objType;
-		//ev.objID = m_id;
+		ev.objType = m_objType;
+		ev.objID = m_id;
+
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
 	}
 	else if (boulder)
 	{										//기믹 공
-		//마찬가지로 채워넣기
-	}
+		m_id = game::MessageHandler::GetInstance()->NewObjectID();
 
-	//game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		m_name = L"ROLLING ROCK";
+		m_fbxType = server::FBX_TYPE::ROLLING_ROCK;
+		m_objType = server::OBJECT_TYPE::MAP_OBJECT;
+
+		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
+		ev.objType = m_objType;
+		ev.objID = m_id;
+
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	}
 }
 
 void MapObject::ServerMessage_Release()

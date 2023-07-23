@@ -1,5 +1,4 @@
-﻿
-#include "pch.h"
+﻿#include "pch.h"
 #include <NetworkManager.h>
 
 #include "Scene_Test.h"
@@ -525,10 +524,10 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
 
+	float scaleRatio{ packet.Read<float>() };
+
 	server::OBJECT_TYPE objType{ packet.Read<server::OBJECT_TYPE>() };
 	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
-
-	//std::cout << "생성 : " << objID << ", " << magic_enum::enum_name(objType) << std::endl;
 
 	ObjectDesc objectDesc;
 	ClassifyObject(fbxType, objectDesc);
@@ -538,13 +537,14 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 
 	for (auto& gameObject : gameObjects)
 	{
-		Matrix matWorld{ Matrix::CreateScale(scale) };
+		Matrix matWorld{ Matrix::CreateScale(scale / scaleRatio) };
 		matWorld *= Matrix::CreateFromQuaternion(quat);
 		matWorld *= Matrix::CreateTranslation(pos);
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 
-		if (magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(objType)
+		if ((magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(objType)
 			and magic_enum::enum_integer(objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::MONSTER_POISONBALL))
+			or (objType == server::OBJECT_TYPE::MAP_OBJECT))
 		{
 			gameObject->AddComponent(objectDesc.script);
 		}
@@ -618,7 +618,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		case server::OBJECT_TYPE::MONSTER_POISONBALL:
 #pragma endregion
 #pragma region [OBJECT]
-		case server::OBJECT_TYPE::PHYSX_OBJECT:
+		case server::OBJECT_TYPE::MAP_OBJECT:
 #pragma endregion
 		{
 			if (m_overlappedObjects.contains(id) == false)
@@ -841,6 +841,14 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Scatter Rock";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx";
 			objectDesc.script = std::make_shared<PhysxObject_Script>();
+		}
+		break;
+		case server::FBX_TYPE::ROLLING_ROCK:
+		{
+			objectDesc.strName = L"Rolling Rock";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone Bullet2.fbx";
+			objectDesc.script = std::make_shared<PhysxObject_Script>();
+			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
 		case server::FBX_TYPE::PILLAR_BRIDGE:

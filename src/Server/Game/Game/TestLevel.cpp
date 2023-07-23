@@ -48,11 +48,11 @@ void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
 
-
 	static bool boulderSummoned = false;
 	if (!boulderSummoned)
 	{
 		bool inRange = ThrowGimmik2Ball_RangeCheck();
+
 		if (inRange)
 		{
 			ThrowGimmik2Ball();
@@ -69,8 +69,6 @@ void TestLevel::Release(void)
 {
 }
 
-
-
 void TestLevel::LoadMap()
 {
 #pragma region 안내
@@ -83,10 +81,10 @@ void TestLevel::LoadMap()
 */
 #pragma endregion
 
-	bool debug = true;
+	bool debug = false;
 	auto objmgr = ObjectManager::GetInstance();
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(10220, -1000, 32983), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); // Bridge 테스트용 위치
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(3760, -1400, 20920), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); //Boulder테스트용 위치 
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(3760, -1400, 20920), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); //Boulder테스트용 위치
 
 	if (debug)
 	{
@@ -100,9 +98,14 @@ void TestLevel::LoadMap()
 		//LoadPotObject();
 		LoadGimmikObject();
 	}
+
 	std::system("cls");
 	std::cout << "Map loading finished\n";
 
+	// Weeper 생성 위치
+	// 0, -749, 11020
+	// Golem 생성 위치
+	// 10220 -1610 42750
 }
 
 void TestLevel::LoadBasicMap1()
@@ -211,7 +214,8 @@ void TestLevel::LoadMapObject()
 
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");	// Mesh 로드
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
+	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server2.fbx");			// Map 로드
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)
@@ -293,7 +297,7 @@ void TestLevel::LoadGimmikObject()
 			boxCollider->SetFriction(0.5f);
 			boxCollider->SetFrictionCombineMode(PhysicsCombineMode::Average);
 
-			//boxObj->ServerMessage_Init(true, false); 0723
+			boxObj->ServerMessage_Init(true, false);
 		}
 		else if (info.first == L"SM_Env_Rock_Pillar_04")
 		{
@@ -304,10 +308,11 @@ void TestLevel::LoadGimmikObject()
 			   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
 			);
 
-			auto pillarBody = pillarObject->GetComponent<RigidBody>(L"RigidBody");
+			// 활성화 시키면 터짐
+			/*auto pillarBody = pillarObject->GetComponent<RigidBody>(L"RigidBody");
 			auto& vertexindexInfo = gimmickLoader.FindVertexIndicesInfo(info.first);
 			pillarBody->AddCollider<MeshCollider>(pillarObject->GetTransform()->GetScale(), info.first, vertexindexInfo, true);
-			pillarObject->Init_After_ColliderAttached();
+			pillarObject->Init_After_ColliderAttached();*/
 
 
 			//auto testloc = locationInfo.Position;
@@ -318,6 +323,19 @@ void TestLevel::LoadGimmikObject()
 			//testObj->ApplyRequestedLayers();
 
 		}
+		/*else if (info.first == L"SM_Env_Rock_Round_03")
+		{
+			auto boulderObj = objmgr->AddGameObjectToLayer<PillarObject>(L"Layer_Gimmik_Boulder",
+			   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+			   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+			   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+			);
+
+			auto boulderBody = boulderObj->GetComponent<RigidBody>(L"RigidBody");
+			auto& vertexindexInfo = gimmickLoader.FindVertexIndicesInfo(info.first);
+			boulderBody->AddCollider<MeshCollider>(boulderObj->GetTransform()->GetScale(), info.first, vertexindexInfo);
+			boulderObj->ApplyRequestedLayers();
+		}*/
 	}
 }
 
@@ -398,7 +416,7 @@ void TestLevel::ThrowGimmik2Ball()
 
 	boulderBody->AddForce(ForceMode::Impulse, dir * boulderPower);
 
-	//boulderObj->ServerMessage_Init(false, true);      0723
+	boulderObj->ServerMessage_Init(false, true);      //0723
 }
 
 bool TestLevel::ThrowGimmik2Ball_RangeCheck()
@@ -420,6 +438,8 @@ bool TestLevel::ThrowGimmik2Ball_RangeCheck()
 		}
 		return false;
 	}
+
+	return false;
 }
 
 void TestLevel::TestFunction()

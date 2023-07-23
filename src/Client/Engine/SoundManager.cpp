@@ -1,5 +1,4 @@
-﻿
-#include "pch.h"
+﻿#include "pch.h"
 #include"FMOD/fmod.hpp"
 #include"FMOD/fmod_errors.h"
 #include "SoundManager.h"
@@ -8,7 +7,7 @@ void CSoundMgr::Init()
 {
 	FMOD_System_Create(&m_pSystem, FMOD_VERSION);
 
-	// 1. 시스템 포인터, 2. 사용할 가상채널 수 , 초기화 방식) 
+	// 1. 시스템 포인터, 2. 사용할 가상채널 수 , 초기화 방식)
 	FMOD_System_Init(m_pSystem, 32, FMOD_INIT_NORMAL, NULL);
 
 	LoadSoundFile();
@@ -114,7 +113,7 @@ void CSoundMgr::PlayBGM(const std::wstring& pSoundKey)
 
 	if (iter == m_mapSound.end())
 		return;
-	
+
 	FMOD_System_PlaySound(m_pSystem,iter->second,nullptr, FALSE, &m_pChannelArr[BGM]);
 	FMOD_Channel_SetMode(m_pChannelArr[BGM], FMOD_LOOP_NORMAL);
 	FMOD_System_Update(m_pSystem);

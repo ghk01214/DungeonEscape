@@ -37,7 +37,8 @@ namespace game
 
 	//===============================================================================
 
-	MessageHandler::MessageHandler()
+	MessageHandler::MessageHandler() :
+		m_objectIDOffest{ 100 }
 	{
 	}
 
@@ -414,9 +415,13 @@ namespace game
 	{
 		if (msg.objType == server::OBJECT_TYPE::PLAYER)
 		{
-			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(1500.f + msg.playerID * 50.f, 100.f, -1500.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 500.f, 0.f, 9020.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
-			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(13340, -4310, 20020), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			// Weeper 조우 위치
+			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 500.f, -750.f, 8520.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			// 돌 부수기 기믹 위치
+			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(3000.f, -1790.f, 20920.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(4010.f, -1790.f, 20670.f + msg.playerID * 100.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			// Golem 조우 위치
+			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(10220.f, -1610.f, 32760.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 
 			std::wstring name{};
 

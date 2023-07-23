@@ -77,7 +77,7 @@ void Player::Update(double timeDelta)
 	Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
 	Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
 
-	PlayerPattern_ATTACK_ForDebug();
+	//PlayerPattern_ATTACK_ForDebug();
 
 	GameObject::Update(timeDelta);
 
@@ -985,7 +985,7 @@ void Player::SendTransform()
 physx::PxVec3 Player::GetForwardVec()
 {
 	physx::PxQuat quat = TO_PXQUAT(m_qlook);
-	physx::PxVec3 forward(0, 0, 1);  
+	physx::PxVec3 forward(0, 0, 1);
 
 	physx::PxVec3 lookVec = quat.rotate(forward);
 	lookVec.y = 0;

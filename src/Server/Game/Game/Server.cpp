@@ -652,6 +652,7 @@ namespace game
 		auto skillObjects{ objMgr->GetLayer(L"Layer_SkillObject")->GetGameObjects() };
 		auto pillarObjects{ objMgr->GetLayer(L"Layer_Gimmik_Pillar")->GetGameObjects() };
 		auto rockObjects{ objMgr->GetLayer(L"Layer_Gimmik_Rock")->GetGameObjects() };
+		auto boulderObjects{ objMgr->GetLayer(L"Layer_Gimmik_Boulder")->GetGameObjects() };
 
 		switch (postOver->msgProtocol)
 		{
@@ -723,43 +724,40 @@ namespace game
 					m_sessions[id]->SendAddAnimateObjPacket(mob);
 					mob->SetTransformSendFlag(true);
 				}
+
+				for (auto& object : rockObjects)
+				{
+					auto rock{ dynamic_cast<MapObject*>(object) };
+
+					if (rock == nullptr)
+						continue;
+
+					m_sessions[id]->SendAddObjPacket(rock, 39.0625f);
+				}
+
+				for (auto& object : boulderObjects)
+				{
+					auto boulder{ dynamic_cast<MapObject*>(object) };
+
+					if (boulder == nullptr)
+						continue;
+
+					m_sessions[id]->SendAddObjPacket(boulder, 30.f);
+				}
+
+				for (auto& object : pillarObjects)
+				{
+					auto pillar{ dynamic_cast<PillarObject*>(object) };
+
+					if (pillar == nullptr)
+						continue;
+
+					m_sessions[id]->SendAddObjPacket(pillar);
+				}
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
 			{
-				/*GameObject* object{ nullptr };
-				std::list<GameObject*> objects{};
-
-				if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT)
-				{
-					objects = mapObjects;
-				}
-				else if (magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(postOver->objType)
-					and magic_enum::enum_integer(postOver->objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::MONSTER_POISONBALL))
-				{
-					objects = skillObjects;
-				}
-
-				for (auto& obj : objects)
-				{
-					if (obj->GetID() != id)
-						continue;
-
-					object = obj;
-					break;
-				}
-
-				if (object == nullptr)
-					return;
-
-				for (auto& client : m_sessions)
-				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
-
-					client->SendAddObjPacket(id, object);
-				}*/
-
 				if (magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(postOver->objType)
 					and magic_enum::enum_integer(postOver->objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::MONSTER_POISONBALL))
 				{
@@ -778,20 +776,21 @@ namespace game
 							if (client->GetState() != STATE::INGAME)
 								continue;
 
-							client->SendAddObjPacket(skill);
+							client->SendAddObjPacket(skill, 100.f);
 						}
 					}
 				}
-				else if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT)
+				else if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT
+					or postOver->objType == server::OBJECT_TYPE::PHYSX_OBJECT)
 				{
-					for (auto& object : mapObjects)
+					for (auto& object : rockObjects)
 					{
-						auto map{ dynamic_cast<MapObject*>(object) };
+						auto rock{ dynamic_cast<MapObject*>(object) };
 
-						if (map == nullptr)
+						if (rock == nullptr)
 							continue;
 
-						if (map->GetID() != id)
+						if (rock->GetID() != id)
 							continue;
 
 						for (auto& client : m_sessions)
@@ -799,9 +798,47 @@ namespace game
 							if (client->GetState() != STATE::INGAME)
 								continue;
 
-							client->SendAddObjPacket(map);
+							client->SendAddObjPacket(rock, 39.0625f);
 						}
 					}
+
+					for (auto& object : boulderObjects)
+					{
+						auto rock{ dynamic_cast<MapObject*>(object) };
+
+						if (rock == nullptr)
+							continue;
+
+						if (rock->GetID() != id)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendAddObjPacket(rock, 30.f);
+						}
+					}
+
+					/*for (auto& object : pillarObjects)
+					{
+						auto pillar{ dynamic_cast<PillarObject*>(object) };
+
+						if (pillar == nullptr)
+							continue;
+
+						if (pillar->GetID() != id)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendAddObjPacket(pillar);
+						}
+					}*/
 				}
 			}
 			break;
@@ -843,47 +880,6 @@ namespace game
 						}
 					}
 				}
-				/*else if (magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(postOver->objType)
-					and magic_enum::enum_integer(postOver->objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::MONSTER_THUNDERBALL))
-				{
-					for (auto& skillObject : skillObjects)
-					{
-						auto skill{ dynamic_cast<SkillObject*>(skillObject) };
-
-						if (skill == nullptr)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(skill);
-						}
-					}
-				}*/
-				else if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT)
-				{
-					for (auto& object : mapObjects)
-					{
-						auto map{ dynamic_cast<MapObject*>(object) };
-
-						if (map == nullptr)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							if (map->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
-							{
-								client->SendTransformPacket(map);	//트랜스폼 갱신
-								map->SetRequireFlagTransmit(false);														//플래그 체크
-							}
-						}
-					}
-				}
 				else if (postOver->objType == server::OBJECT_TYPE::PHYSX_OBJECT)
 				{
 					for (auto& object : pillarObjects)
@@ -898,14 +894,56 @@ namespace game
 							if (client->GetState() != STATE::INGAME)
 								continue;
 
-							if (pillar->GetRequireFlagTransmit() == true)		//위치갱신에 따라 패킷전송 플래그가 켜져있는가?
-							{
-								client->SendTransformPacket(pillar);			//트랜스폼 갱신
-								//pillar->SetRequireFlagTransmit(false);		//플래그 체크
-																				//용섭 EDIT : 강체가 스스로 판단해서 플레그 ONOFF를 하게 한다 (Pillar::Late_Update()참고)
-							}
+							if (pillar->GetRequireFlagTransmit() == false)
+								continue;
+
+							client->SendTransformPacket(pillar, 100.f);
 						}
+
+						pillar->SetRequireFlagTransmit(false);
 					}
+				}
+
+				for (auto& object : rockObjects)
+				{
+					auto rock{ dynamic_cast<MapObject*>(object) };
+
+					if (rock == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (rock->GetRequireFlagTransmit() == true)
+							continue;
+
+						client->SendTransformPacket(rock, 39.0625f);
+					}
+
+					rock->SetRequireFlagTransmit(false);
+				}
+
+				for (auto& object : boulderObjects)
+				{
+					auto boulder{ dynamic_cast<MapObject*>(object) };
+
+					if (boulder == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (boulder->GetRequireFlagTransmit() == true)
+							continue;
+
+						client->SendTransformPacket(boulder, 30.f);
+					}
+
+					boulder->SetRequireFlagTransmit(false); //플래그 체크
 				}
 
 				for (auto& skillObject : skillObjects)
@@ -920,7 +958,7 @@ namespace game
 						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						client->SendTransformPacket(skill);
+						client->SendTransformPacket(skill, 100.f);
 					}
 				}
 			}

@@ -219,7 +219,7 @@ bool CustomController::RaycastGround(RaycastHit& hit)
 	auto device = PhysDevice::GetInstance();
 	auto query = device->GetQuery();
 
-	
+
 	PhysicsRay ray;
 	ray.direction = PxVec3(0.f, -1.f, 0.f);
 	ray.distance = 2000.f;						//raycast 측정 거리
@@ -262,7 +262,7 @@ Collider* CustomController::GetColliderBelow()
 
 void CustomController::DirectionInput_Player()
 {
-	bool serverConnected = false;							//ONOFF
+	bool serverConnected = true;							//ONOFF
 
 	if (serverConnected)
 	{
@@ -327,8 +327,8 @@ void CustomController::Movement_Player()
 	CheckOnGround(CollisionInfoType::Enter, surfaceNormal);
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
 
-	if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)		//ONOFF
-	//if (m_keyboardInput[SPACE].down && m_onGround)
+	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)		//ONOFF
+	if (m_keyboardInput[SPACE].down && m_onGround)
 	{
 		PxVec3 up{ 0.f, 1.f, 0.f };
 		m_body->GetPosition() += up * 0.05f;

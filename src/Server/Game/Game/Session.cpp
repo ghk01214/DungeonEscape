@@ -153,7 +153,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAddObjPacket(GameObject* obj)
+	void CSession::SendAddObjPacket(GameObject* obj, float scaleRatio)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -176,6 +176,8 @@ namespace game
 		packet.Write<float>(scale.x);
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
+
+		packet.Write<float>(scaleRatio);
 
 		packet.Write<server::OBJECT_TYPE>(obj->GetObjectType());
 		packet.Write<server::FBX_TYPE>(obj->GetFBXType());
@@ -229,7 +231,7 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendTransformPacket(GameObject* obj)
+	void CSession::SendTransformPacket(GameObject* obj, float scaleRatio)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
@@ -260,6 +262,8 @@ namespace game
 		packet.Write<float>(scale.x);
 		packet.Write<float>(scale.y);
 		packet.Write<float>(scale.z);
+
+		packet.Write<float>(scaleRatio);
 
 		// 패킷 전송
 		Send(packet);
