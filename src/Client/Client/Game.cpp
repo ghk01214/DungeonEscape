@@ -11,6 +11,8 @@
 #include "Scene_Logo.h"
 #include "Scene_Loading.h"
 
+#include "SoundManager.h"
+
 void CGame::Init(const WindowInfo& Info, const std::wstring& ID, const std::wstring& PWD)
 {
 	GGameInstance->Initialize_Engine(Info);
@@ -35,11 +37,18 @@ void CGame::Start()
 {
 	//GET_NETWORK->SendIDIssueRequest();
 	//GET_SINGLE(SceneManager)->Start();
+
+	GET_SINGLE(CSoundMgr)->PlayBGM(L"Blue Archive Main Title Constant Moderato Piano Vocal.mp3");
 }
 
 void CGame::Update()
 {
 	GEngine->Update();
+}
+
+void CGame::Release(void)
+{
+	GEngine->Release();
 }
 
 void CGame::Open_Scene(SCENE eSceneIndex)

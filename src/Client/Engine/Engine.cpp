@@ -9,6 +9,7 @@
 #include "Resources.h"
 #include "InstancingManager.h"
 #include "NetworkManager.h"
+#include "SoundManager.h"
 
 void Engine::Init(const WindowInfo& info)
 {
@@ -37,6 +38,7 @@ void Engine::Init(const WindowInfo& info)
 	GET_SINGLE(CInput)->Init(info.hInst, info.hWnd);
 	GET_SINGLE(Timer)->Init();
 	GET_SINGLE(Resources)->Init();
+	GET_SINGLE(CSoundMgr)->Init();
 }
 
 void Engine::Update()
@@ -54,6 +56,11 @@ void Engine::Update()
 	Render();
 
 	ShowFps();
+}
+
+void Engine::Release()
+{
+	GET_SINGLE(CSoundMgr)->Release();
 }
 
 void Engine::Render()

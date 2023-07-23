@@ -9,6 +9,11 @@ void CGameInstance::Initialize_Engine(const WindowInfo& info)
 	GEngine->Init(info);
 }
 
+void CGameInstance::Release_Engine(void)
+{
+	GEngine->Release();
+}
+
 void CGameInstance::LoadScene(std::shared_ptr<CScene> scene)
 {
 	m_sceneManager->LoadScene(scene);

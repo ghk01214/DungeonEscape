@@ -22,6 +22,7 @@ class Engine
 public:
 	void Init(const WindowInfo& info);
 	void Update();
+	void Release();
 
 public:
 	const WindowInfo& GetWindow() { return m_window; }
