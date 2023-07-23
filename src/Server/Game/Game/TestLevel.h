@@ -21,7 +21,7 @@ public:
 	void LoadGimmikObject();
 
 	void LoadDebugMap_Bridge();
-	void LoadLDebugMap_Boulder();
+	void LoadDebugMap_Boulder();
 
 
 	void TestFunction();
@@ -31,5 +31,9 @@ public:
 	virtual void Update(double timeDelta) override;
 	virtual void LateUpdate(double timeDelta) override;
 	virtual void Release() override;
+
+public:
+	void ThrowGimmik2Ball();
+	bool ThrowGimmik2Ball_RangeCheck();
 };
 

@@ -31,6 +31,7 @@ void TestLevel::Init()
 {
 	auto objmgr = ObjectManager::GetInstance();
 	objmgr->AddLayer(L"Layer_Map");
+	objmgr->AddLayer(L"Layer_Gimmik_Boulder");
 	objmgr->AddLayer(L"Layer_Gimmik_Rock");
 	objmgr->AddLayer(L"Layer_Gimmik_Pillar");
 	objmgr->AddLayer(L"Layer_Player");
@@ -39,13 +40,25 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	LoadBasicMap3();
-	//LoadMap();
+	//LoadBasicMap3();
+	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
+
+
+	static bool boulderSummoned = false;
+	if (!boulderSummoned)
+	{
+		bool inRange = ThrowGimmik2Ball_RangeCheck();
+		if (inRange)
+		{
+			ThrowGimmik2Ball();
+			boulderSummoned = true;
+		}
+	}
 }
 
 void TestLevel::LateUpdate(double timeDelta)
@@ -55,6 +68,8 @@ void TestLevel::LateUpdate(double timeDelta)
 void TestLevel::Release(void)
 {
 }
+
+
 
 void TestLevel::LoadMap()
 {
@@ -70,12 +85,13 @@ void TestLevel::LoadMap()
 
 	bool debug = true;
 	auto objmgr = ObjectManager::GetInstance();
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(10220, -1000, 32983), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(10220, -1000, 32983), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); // Bridge 테스트용 위치
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(3760, -1400, 20920), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); //Boulder테스트용 위치 
 
 	if (debug)
 	{
-		LoadDebugMap_Bridge();
-		//LoadLDebugMap_Boulder();
+		//LoadDebugMap_Bridge();
+		LoadDebugMap_Boulder();
 		LoadGimmikObject();
 	}
 	else
@@ -267,6 +283,15 @@ void TestLevel::LoadGimmikObject()
 			auto boxBody = boxObj->GetComponent<RigidBody>(L"RigidBody");
 			boxBody->AddCollider<BoxCollider>(boxObj->GetTransform()->GetScale());
 			boxObj->ApplyRequestedLayers();
+			boxBody->SetKinematic(false);
+			boxBody->SetRigidBodySleep(false);
+			boxBody->SetMass(100.f);
+
+			auto boxCollider = boxBody->GetCollider(0);
+			boxCollider->SetRestitution(0.4f);
+			boxCollider->SetRestitutionCombineMode(PhysicsCombineMode::Average);
+			boxCollider->SetFriction(0.5f);
+			boxCollider->SetFrictionCombineMode(PhysicsCombineMode::Average);
 		}
 		else if (info.first == L"SM_Env_Rock_Pillar_04")
 		{
@@ -320,7 +345,7 @@ void TestLevel::LoadDebugMap_Bridge()
 	}
 }
 
-void TestLevel::LoadLDebugMap_Boulder()
+void TestLevel::LoadDebugMap_Boulder()
 {
 	auto objmgr = ObjectManager::GetInstance();
 	FBXMapLoader mapLoader;
@@ -343,6 +368,53 @@ void TestLevel::LoadLDebugMap_Boulder()
 		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
 		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
 		MeshObject->ApplyRequestedLayers();
+	}
+}
+
+void TestLevel::ThrowGimmik2Ball()
+{
+	auto objmgr = ObjectManager::GetInstance();
+
+	float boulderPower = 100000.f;
+	auto boulderObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Boulder", Vec3(4373,-500,20945), Quat(0, 0, 0, 1), Vec3(300,300,300));
+	auto boulderBody = boulderObj->GetComponent<RigidBody>(L"RigidBody");
+
+	boulderBody->AddCollider<SphereCollider>(boulderObj->GetTransform()->GetScale());
+	boulderObj->ApplyRequestedLayers();
+	boulderBody->SetKinematic(false);
+	boulderBody->SetRigidBodySleep(false);
+	boulderBody->SetMass(500.f);
+
+	auto boulderCollider = boulderBody->GetCollider(0);
+	boulderCollider->SetRestitution(0.8f);
+	boulderCollider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
+	boulderCollider->SetFriction(0.4f);
+	boulderCollider->SetFrictionCombineMode(PhysicsCombineMode::Average);
+
+	physx::PxVec3 dir = physx::PxVec3(10200,-3640, 20910) - boulderBody->GetPosition();
+	dir.normalize();
+
+	boulderBody->AddForce(ForceMode::Impulse, dir * boulderPower);
+}
+
+bool TestLevel::ThrowGimmik2Ball_RangeCheck()
+{
+	auto playerLists = ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects();
+	for (auto& obj : playerLists)
+	{
+		Player* player = dynamic_cast<Player*>(obj);
+		if (!player)
+			continue;
+
+		Vec3 pos = player->GetControllerPosition();
+		if (pos.x > 3826 && pos.x < 4731)
+		{
+			if (pos.z > 20565 && pos.z < 21355)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }
 
