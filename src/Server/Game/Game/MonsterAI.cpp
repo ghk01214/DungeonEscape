@@ -10,6 +10,7 @@
 #include "PhysDevice.h"
 #include "PhysQuery.h"
 #include "RigidBody.h"
+#include "Transform.h"
 #include "OverlapObject.h"
 
 using namespace physx;
@@ -164,6 +165,8 @@ bool MonsterAI::SkillRangeCheck()
 	trans.p = TO_PX3(m_monster->GetControllerPosition());
 	trans.q = GetRotation_For_Pattern(xzDir);
 
+	m_monster->GetTransform()->SetRotation(FROM_PXQUAT(trans.q));
+
 	float controllerRadius = m_monster->GetController()->GetCollider()->GetRadius();
 #pragma endregion
 
@@ -244,7 +247,7 @@ std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string schedu
 		return validPtrs;									//여기 걸리면 SkillAdd()의 오류. 각 Monster의 Init수정 요구
 
 #pragma region 스킬 위치, 회전값 부여
-	physx::PxVec3 xzDir = GetXZDir();
+	physx::PxVec3 xzDir = GetOldXZDir();
 
 	//위치, 회전값 적용
 	physx::PxTransform trans;
@@ -352,12 +355,27 @@ physx::PxVec3 MonsterAI::GetXZDir()
 	if (!m_target)
 		return PxVec3(0,0,0);
 
-	m_targetPos = m_target->GetControllerPosition();
-	m_targetPos.y = 0;
+	Vec3 targetPos = m_target->GetControllerPosition();
+	targetPos.y = 0;
 	physx::PxVec3 monsterPos = TO_PX3(m_monster->GetControllerPosition());
 	monsterPos.y = 0;
 
-	PxVec3 dir = TO_PX3(m_targetPos) - monsterPos;
+	PxVec3 dir = TO_PX3(targetPos) - monsterPos;
+	dir.normalize();
+	return dir;
+}
+
+physx::PxVec3 MonsterAI::GetOldXZDir()
+{
+	if (!m_target)
+		return PxVec3(0, 0, 0);
+
+	Vec3 targetPos = m_targetPos;
+	targetPos.y = 0;
+	physx::PxVec3 monsterPos = TO_PX3(m_monster->GetControllerPosition());
+	monsterPos.y = 0;
+
+	PxVec3 dir = TO_PX3(targetPos) - monsterPos;
 	dir.normalize();
 	return dir;
 }

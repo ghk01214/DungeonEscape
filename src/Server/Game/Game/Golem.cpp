@@ -293,29 +293,6 @@ GolemAI* Golem::GetAI()
 	return m_golemAI;
 }
 
-//void Golem::SetUp_PatternObject(GOLEM_SCHEDULE schedulename, GeometryType geometry, float startTime, float endTime, Vec3 patternSize, TriggerObject::SKILLTYPE type)
-//{
-//	auto objmgr = ObjectManager::GetInstance();
-//	TriggerObject* attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Layer_TriggerObject", Vec3(0,-10000, 0), Quat(0,0,0,0), patternSize, type);		//생성
-//	attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, startTime, endTime);								//설정 : 단일타, 시작시간, 끝시간
-//	auto body = attackTrigger->GetComponent<RigidBody>(L"RigidBody");																					
-//	
-//	if(geometry == GeometryType::Box)																					//콜라이더 부착
-//		body->AddCollider<BoxCollider>(attackTrigger->GetTransform()->GetScale());
-//	else if (geometry == GeometryType::Sphere)
-//		body->AddCollider<SphereCollider>(attackTrigger->GetTransform()->GetScale());
-//	
-//	body->GetCollider(0)->SetTrigger(true);																				//트리거 설정 참
-//
-//	m_patternTriggerDict[schedulename] = attackTrigger;
-//}
-
-//void Golem::SetUp_PatternObjects()
-//{
-//	SetUp_PatternObject(GOLEM_SCHEDULE::ATTACK1, GeometryType::Box, 0.3f, 1.5f, Vec3(200, 200, 300), TriggerObject::SKILLTYPE::GOLEM_ATTACK1);
-//	SetUp_PatternObject(GOLEM_SCHEDULE::ATTACK2, GeometryType::Box, 0.3f, 1.53f, Vec3(200, 400, 400), TriggerObject::SKILLTYPE::GOLEM_ATTACK2);
-//}
-
 void Golem::Pattern_Attack1()
 {
 	//AddSkillSize에서 줬던 이름으로

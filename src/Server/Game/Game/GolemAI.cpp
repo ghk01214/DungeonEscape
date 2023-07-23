@@ -77,7 +77,7 @@ void GolemAI::FillSchedule()
 
 void GolemAI::ExecuteSchedule(float deltaTime)
 {
-	if (m_golem->m_currState != Golem::GOLEM_STATE::IDLE1 && m_golem->m_currState != Golem::GOLEM_STATE::IDLE2)
+	if (m_golem->m_currState != Golem::GOLEM_STATE::IDLE1 && m_golem->m_currState != Golem::GOLEM_STATE::WALK)
 		return;			// 기본스탠딩, 이동도중에만 패턴수행이 가능하다.
 
 	static float directionUpdateInterval = 0.f;
