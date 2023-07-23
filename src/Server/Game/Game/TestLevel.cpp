@@ -275,7 +275,7 @@ void TestLevel::LoadGimmikObject()
 		MapObject* MeshObject{ nullptr };
 		PillarObject* pillarObject{ nullptr };
 
-		if (info.first == L"SM_Env_Rock_Square_Simple_01")
+		if (info.first == L"SM_Env_Rock_Square_Simple_01")		//돌담
 		{
 			auto boxObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Rock", locationInfo.Position, Quat(0, 0, 0, 1),
 				Vec3(locationInfo.Scale.x * doorRockRatio, locationInfo.Scale.y * doorRockRatio, locationInfo.Scale.z * doorRockRatio));
@@ -292,6 +292,8 @@ void TestLevel::LoadGimmikObject()
 			boxCollider->SetRestitutionCombineMode(PhysicsCombineMode::Average);
 			boxCollider->SetFriction(0.5f);
 			boxCollider->SetFrictionCombineMode(PhysicsCombineMode::Average);
+
+			//boxObj->ServerMessage_Init(true, false); 0723
 		}
 		else if (info.first == L"SM_Env_Rock_Pillar_04")
 		{
@@ -395,6 +397,8 @@ void TestLevel::ThrowGimmik2Ball()
 	dir.normalize();
 
 	boulderBody->AddForce(ForceMode::Impulse, dir * boulderPower);
+
+	//boulderObj->ServerMessage_Init(false, true);      0723
 }
 
 bool TestLevel::ThrowGimmik2Ball_RangeCheck()
