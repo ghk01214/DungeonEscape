@@ -563,7 +563,6 @@ void Event::ExecuteMsg_continuous()
 		}
 	}
 
-
 	if (msg == "GOLEM_PHYSICLAYER_TO_DEFAULT")		//Jump에서 착지까지 반복호출
 	{
 		auto golemObj = dynamic_cast<Golem*>(target);

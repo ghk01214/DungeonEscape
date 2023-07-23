@@ -585,6 +585,12 @@ void Player::PlayerMove()
 	if (m_currState != MOVE and m_currState != JUMP_START and m_currState != JUMPING)
 		m_controller->Keyboard_Direction_Clear();
 
+	if (m_stun)
+	{
+		m_controller->Keyboard_Direction_Clear();
+		m_controller->Keyboard_SpaceBar_Clear();
+	}
+
 	m_controller->PlayerMove();
 }
 
