@@ -11,6 +11,7 @@ public:
 
 public:
 	void Loading(SCENE eNextScene);
+	server::FBX_TYPE LogIn();
 
 public:
 	virtual void Awake();

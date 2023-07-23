@@ -6,6 +6,8 @@
 #include "Scene_Test.h"
 #include "GameInstance.h"
 
+#include <NetworkManager.h>
+
 Scene_Loading::Scene_Loading()
 {
 }
@@ -21,6 +23,37 @@ void Scene_Loading::Loading(SCENE eNextScene)
 		MSG_BOX(L"Failed to load Scene_Loading::Loading");
 		return;
 	}
+}
+
+server::FBX_TYPE Scene_Loading::LogIn()
+{
+	std::wstring SERVER_ADDR{};
+	std::wstring ID{};
+	std::wstring PWD{};
+	//std::wcout << L"IP ADDRESS : ";
+	//std::wcin >> SERVER_ADDR;
+	//std::wcout << L"ID : ";
+	//std::wcin >> ID;
+	//std::wcout << L"PASSWORD : ";
+	//std::wcin >> PWD;
+	SERVER_ADDR = L"127.0.0.1";
+
+	GET_NETWORK->Init(SERVER_ADDR);
+	GET_NETWORK->SendLoginPacket(ID, PWD);
+
+	int32_t classNum{ 2 };
+	std::wcout << std::format(L"Warrior = 1\n");
+	std::wcout << std::format(L"Magician = 2\n");
+	std::wcout << std::format(L"Priest = 3\n");
+	std::wcout << std::format(L"Choose player class : ");
+	std::wcin >> classNum;
+
+	if (classNum == 1)
+		return server::FBX_TYPE::NANA;
+	else if (classNum == 2)
+		return server::FBX_TYPE::MISTIC;
+	else if (classNum == 3)
+		return server::FBX_TYPE::CARMEL;
 }
 
 void Scene_Loading::Awake()
@@ -42,13 +75,15 @@ void Scene_Loading::Update()
 	// 로더의 로딩이 완료되었을 경우
 	if (m_pLoader->Get_Finished())
 	{
+		auto playerClass{ LogIn() };
+
 		shared_ptr<CScene> pScene = nullptr;
 
 		switch (m_eNextScene)
 		{
 			case SCENE_GAMEPLAY:
 			//pScene = Scene_GamePlay::Create();
-			pScene = Scene_Test::Create(server::FBX_TYPE::MISTIC);
+			pScene = Scene_Test::Create(playerClass);
 			break;
 			/*case LEVEL_BOSS:
 			break;*/

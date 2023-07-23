@@ -328,7 +328,7 @@ namespace network
 				m_login = true;
 				m_id = m_packet.ReadID();
 
-				std::cout << std::format("Login Success!") << std::endl;
+				//std::cout << std::format("Login Success!") << std::endl;
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_ACK:

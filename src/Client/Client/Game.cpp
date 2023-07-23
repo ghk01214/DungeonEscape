@@ -13,16 +13,9 @@
 
 #include "SoundManager.h"
 
-void CGame::Init(const WindowInfo& Info, const std::wstring& ID, const std::wstring& PWD)
+void CGame::Init(const WindowInfo& Info)
 {
 	GGameInstance->Initialize_Engine(Info);
-
-	int32_t classNum{ 2 };
-	//std::wcout << std::format(L"Warrior = 1\n");
-	//std::wcout << std::format(L"Magician = 2\n");
-	//std::wcout << std::format(L"Priest = 3\n");
-	//std::wcout << std::format(L"Choose player class : \n");
-	//std::wcin >> classNum;
 
 	//shared_ptr<CScene> pScene = Scene_Test::Create(magic_enum::enum_value<server::FBX_TYPE>(classNum));
 
@@ -30,7 +23,7 @@ void CGame::Init(const WindowInfo& Info, const std::wstring& ID, const std::wstr
 
 	//GET_SINGLE(SceneManager)->LoadScene(pScene);
 
-	GET_NETWORK->SendLoginPacket(ID, PWD);
+	//GET_NETWORK->SendLoginPacket(ID, PWD);
 }
 
 void CGame::Start()
