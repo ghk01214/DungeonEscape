@@ -574,6 +574,22 @@ void Event::ExecuteMsg_continuous()
 		if (complete)
 			executed = true;
 	}
+
+	if (msg == "GOLEM_ATTACK3_STUN_APPLY")		//Jump에서 착지까지 반복호출
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (!playerObj)
+			return;
+
+		executed = false;
+		bool ground = playerObj->GetController()->IsOnGround();
+		if (ground)
+		{
+			playerObj->SetStun(true);
+			EventHandler::GetInstance()->AddEvent("PLAYER_STUN_OFF", 4.f, playerObj);			//5초 스턴
+			executed = true;
+		}
+	}
 }
 
 
