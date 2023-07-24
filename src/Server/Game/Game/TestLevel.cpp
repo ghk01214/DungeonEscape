@@ -88,8 +88,8 @@ void TestLevel::LoadMap()
 
 	if (debug)
 	{
-		//LoadDebugMap_Bridge();
-		LoadDebugMap_Boulder();
+		LoadDebugMap_Bridge();
+		//LoadDebugMap_Boulder();
 		LoadGimmikObject();
 	}
 	else
@@ -106,6 +106,9 @@ void TestLevel::LoadMap()
 	// 0, -749, 11020
 	// Golem 생성 위치
 	// 10220 -1610 42750
+
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0.f, -749.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(10220.f, -1610.f, 42750.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 }
 
 void TestLevel::LoadBasicMap1()
@@ -215,7 +218,7 @@ void TestLevel::LoadMapObject()
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");	// Mesh 로드
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server2.fbx");			// Map 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)
@@ -308,11 +311,10 @@ void TestLevel::LoadGimmikObject()
 			   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
 			);
 
-			// 활성화 시키면 터짐
-			/*auto pillarBody = pillarObject->GetComponent<RigidBody>(L"RigidBody");
+			auto pillarBody = pillarObject->GetComponent<RigidBody>(L"RigidBody");
 			auto& vertexindexInfo = gimmickLoader.FindVertexIndicesInfo(info.first);
 			pillarBody->AddCollider<MeshCollider>(pillarObject->GetTransform()->GetScale(), info.first, vertexindexInfo, true);
-			pillarObject->Init_After_ColliderAttached();*/
+			pillarObject->Init_After_ColliderAttached();
 
 
 			//auto testloc = locationInfo.Position;
@@ -323,19 +325,6 @@ void TestLevel::LoadGimmikObject()
 			//testObj->ApplyRequestedLayers();
 
 		}
-		/*else if (info.first == L"SM_Env_Rock_Round_03")
-		{
-			auto boulderObj = objmgr->AddGameObjectToLayer<PillarObject>(L"Layer_Gimmik_Boulder",
-			   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
-			   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
-			   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
-			);
-
-			auto boulderBody = boulderObj->GetComponent<RigidBody>(L"RigidBody");
-			auto& vertexindexInfo = gimmickLoader.FindVertexIndicesInfo(info.first);
-			boulderBody->AddCollider<MeshCollider>(boulderObj->GetTransform()->GetScale(), info.first, vertexindexInfo);
-			boulderObj->ApplyRequestedLayers();
-		}*/
 	}
 }
 

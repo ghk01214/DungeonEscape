@@ -103,9 +103,9 @@ namespace game
 		m_msgHandler = MessageHandler::GetInstance();
 
 		m_roomManager->Init();
-		m_gameInstance->Init();
 		m_msgHandler->Init(m_iocp);
 		//m_database->Init(m_iocp);
+		m_gameInstance->Init();
 	}
 
 	// accept 등록
@@ -637,14 +637,6 @@ namespace game
 
 	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* postOver)
 	{
-		/*CSession* session{ nullptr };
-
-		if (postOver->playerID != -1)
-			session = m_sessions[postOver->playerID];
-
-		if (session != nullptr and session->GetState() != STATE::INGAME)
-			return;*/
-
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
@@ -780,8 +772,7 @@ namespace game
 						}
 					}
 				}
-				else if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT
-					or postOver->objType == server::OBJECT_TYPE::PHYSX_OBJECT)
+				else if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT)
 				{
 					for (auto& object : rockObjects)
 					{
@@ -820,8 +811,10 @@ namespace game
 							client->SendAddObjPacket(rock, 30.f);
 						}
 					}
-
-					/*for (auto& object : pillarObjects)
+				}
+				else if (postOver->objType == server::OBJECT_TYPE::PHYSX_OBJECT)
+				{
+					for (auto& object : pillarObjects)
 					{
 						auto pillar{ dynamic_cast<PillarObject*>(object) };
 
@@ -838,7 +831,7 @@ namespace game
 
 							client->SendAddObjPacket(pillar);
 						}
-					}*/
+					}
 				}
 			}
 			break;
@@ -876,31 +869,8 @@ namespace game
 							if (client->GetState() != STATE::INGAME)
 								continue;
 
-							client->SendTransformPacket(mob);
+							client->SendTransformPacket(mob, 50.f);
 						}
-					}
-				}
-				else if (postOver->objType == server::OBJECT_TYPE::PHYSX_OBJECT)
-				{
-					for (auto& object : pillarObjects)
-					{
-						auto pillar{ dynamic_cast<PillarObject*>(object) };
-
-						if (pillar == nullptr)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							if (pillar->GetRequireFlagTransmit() == false)
-								continue;
-
-							client->SendTransformPacket(pillar, 100.f);
-						}
-
-						pillar->SetRequireFlagTransmit(false);
 					}
 				}
 
@@ -918,8 +888,6 @@ namespace game
 
 						client->SendTransformPacket(rock, 39.0625f);
 					}
-
-					rock->SetRequireFlagTransmit(false);
 				}
 
 				for (auto& object : boulderObjects)
@@ -936,8 +904,22 @@ namespace game
 
 						client->SendTransformPacket(boulder, 30.f);
 					}
+				}
 
-					boulder->SetRequireFlagTransmit(false); //플래그 체크
+				for (auto& object : pillarObjects)
+				{
+					auto pillar{ dynamic_cast<PillarObject*>(object) };
+
+					if (pillar == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						client->SendTransformPacket(pillar);
+					}
 				}
 
 				for (auto& skillObject : skillObjects)

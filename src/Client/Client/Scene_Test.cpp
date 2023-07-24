@@ -247,6 +247,7 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
@@ -255,7 +256,6 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 	{
 		mapObject->SetCheckFrustum(false);
 		pScene->AddGameObject(mapObject);
-		//pScene->AddGameObject(mapObject);
 	}
 }
 
@@ -592,6 +592,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
 		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
 		case server::OBJECT_TYPE::PLAYER_POISONBALL:
+		case server::OBJECT_TYPE::PLAYER_METEOR:
 		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL:
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
@@ -605,6 +606,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 #pragma endregion
 #pragma region [OBJECT]
 		case server::OBJECT_TYPE::MAP_OBJECT:
+		case server::OBJECT_TYPE::PHYSX_OBJECT:
 #pragma endregion
 		{
 			if (m_overlappedObjects.contains(id) == false)
@@ -762,6 +764,13 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.script = std::make_shared<PlayerRangeAttack>();
 		}
 		break;
+		case server::FBX_TYPE::PLAYER_METEOR:
+		{
+			objectDesc.strName = L"Sphere";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Rolling Rock.fbx";
+			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+		}
+		break;
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast1";
@@ -832,9 +841,8 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		case server::FBX_TYPE::ROLLING_ROCK:
 		{
 			objectDesc.strName = L"Rolling Rock";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone Bullet2.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Rolling Rock.fbx";
 			objectDesc.script = std::make_shared<PhysxObject_Script>();
-			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
 		case server::FBX_TYPE::PILLAR_BRIDGE:
@@ -874,7 +882,6 @@ void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::sha
 		break;
 		default:
 		{
-			//scene->AddGameObject(gameObjects);
 			AddNetworkObject(gameObjects);
 		}
 		break;
@@ -941,7 +948,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateMainCamera(pScene);
 	CreateUICamera(pScene);
 	CreateSkyBox(pScene);
-	CreateUI(pScene);
+	//CreateUI(pScene);
 	CreateLights(pScene);
 	CreateMap(pScene);
 	CreateBillBoard(pScene);

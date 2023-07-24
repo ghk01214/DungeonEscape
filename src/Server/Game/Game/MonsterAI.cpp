@@ -76,7 +76,7 @@ void MonsterAI::SetRandomTarget()
 	while (1)
 	{
 		auto newTarget = players->SelectRandomObject<Player>();						//랜덤 플레이어 선택
-		if (m_target == newTarget && players->GetGameObjects().size() > 1)			//남은 플레이어가 1명보다 많고, 랜덤선정이 중복플레이어를 타겟으로 삼으면 continue 
+		if (m_target == newTarget && players->GetGameObjects().size() > 1)			//남은 플레이어가 1명보다 많고, 랜덤선정이 중복플레이어를 타겟으로 삼으면 continue
 			continue;
 
 		if (newTarget)																//유효값 확인
@@ -300,7 +300,7 @@ std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string schedu
 		break;
 	}
 
-#pragma endregion 
+#pragma endregion
 
 	for (PxU32 i = 0; i < overlapBuffer.getNbTouches(); ++i)
 	{

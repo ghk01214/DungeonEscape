@@ -751,7 +751,7 @@ void Player::PlayerPattern_ShootBall()
 				return;
 			}
 
-			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_POISONBALL;
+			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_METEOR;
 		}
 		break;
 		default:
@@ -771,7 +771,7 @@ void Player::PlayerPattern_ShootBall()
 
 
 	// 07/23 추가한 코드. 방향수정이 잘되면 기존 위의 코드는 정리한다.
-	playerCameraLook = GetForwardVec();
+	playerCameraLook = -GetForwardVec();
 
 
 

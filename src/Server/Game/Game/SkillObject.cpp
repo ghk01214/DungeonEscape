@@ -252,8 +252,8 @@ void SkillObject::ServerMessage_SkillInit()
 		case SKILLOBJECTTYPE::PLAYER_METEOR:
 		{
 			m_name = L"PLAYER FIREBALL";
-			m_fbxType = server::FBX_TYPE::PLAYER_FIREBALL;
-			m_objType = server::OBJECT_TYPE::PLAYER_FIREBALL;			//어울리는거로 수정
+			m_fbxType = server::FBX_TYPE::PLAYER_METEOR;
+			m_objType = server::OBJECT_TYPE::PLAYER_METEOR;			//어울리는거로 수정
 		}
 		break;
 		case SKILLOBJECTTYPE::WEEPER_CAST1_BALL:
@@ -507,8 +507,6 @@ void SkillObject::HandlePlayerSkillCollision()
 					{
 						pillar->ReceivedAttack_Meteor();
 					}
-					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillHit();					//서버 메시지 처리
 				}
 				break;
 			}

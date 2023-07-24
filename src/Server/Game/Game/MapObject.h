@@ -16,10 +16,6 @@ public:
 	virtual void LateUpdate(double timeDelta) override;
 	virtual void Release();
 
-public:		//server
-	bool GetRequireFlagTransmit();
-	void SetRequireFlagTransmit(bool value);
-
 public:
 	void ServerMessage_Init(bool scatterRock, bool boulder);
 	void ServerMessage_Release();							//SetRemoveReserved()이후 바로 호출해야하는 함수
@@ -29,8 +25,4 @@ public:
 
 private:
 	RigidBody* m_body = nullptr;
-
-private:	//server
-	bool m_requiresPacketTransmit = false;
-	bool m_syncObject = false;
 };

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "PhysxObject_Script.h"
 
 #include "Transform.h"
@@ -71,7 +71,7 @@ void PhysxObject_Script::Transform(network::CPacket& packet)
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
-	SimpleMath::Quaternion quat;
+	Quat quat;
 	quat.x = packet.Read<float>();
 	quat.y = packet.Read<float>();
 	quat.z = packet.Read<float>();

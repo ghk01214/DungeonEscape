@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Monster_Script.h"
 
 #include "Animator.h"
@@ -73,7 +73,7 @@ void Monster_Script::Transform(network::CPacket& packet)
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
-	Vec4 quat;
+	Quat quat;
 	quat.x = packet.Read<float>();
 	quat.y = packet.Read<float>();
 	quat.z = packet.Read<float>();
@@ -83,6 +83,8 @@ void Monster_Script::Transform(network::CPacket& packet)
 	scale.x = packet.Read<float>();
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
+
+	float scaleRatio{ packet.Read<float>() };
 
 	pos.y -= m_halfHeight;
 

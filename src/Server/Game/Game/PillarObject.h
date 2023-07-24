@@ -26,16 +26,12 @@ public:		//server
 	void ServerMessage_Init();
 	void ServerMessage_Release();			//SetRemoveReserved()이후 바로 호출해야하는 함수
 
-	bool GetRequireFlagTransmit();
-	void SetRequireFlagTransmit(bool set);
-
 	void Reset();
 
 private:
 	RigidBody* m_body = nullptr;
 
 private:	//server
-	bool m_requiresPacketTransmit = false;
 
 
 	physx::PxTransform m_originalTrans;
