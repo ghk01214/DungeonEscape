@@ -81,8 +81,11 @@
     <Filter Include="소스 파일\Objects\05. Skill\Bomb">
       <UniqueIdentifier>{4337bf39-ca73-4a1c-b8ca-15e0cf3189a7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\06. Physx Object">
-      <UniqueIdentifier>{e70314d9-2b64-4e23-b097-e7dbdb4fb4cd}</UniqueIdentifier>
+    <Filter Include="소스 파일\Objects\01. UI\Logo">
+      <UniqueIdentifier>{332588ac-9884-408a-8df7-5ba932235a60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\06. PhysxObject">
+      <UniqueIdentifier>{97ae9657-f1ac-4ed5-85e0-a38f4ce4a87f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -149,9 +152,6 @@
     <ClInclude Include="Scene_Logo.h">
       <Filter>소스 파일\Objects\00. Scene\Logo</Filter>
     </ClInclude>
-    <ClInclude Include="Scene_Test.h">
-      <Filter>소스 파일\Objects\00. Scene\Test</Filter>
-    </ClInclude>
     <ClInclude Include="Scene_GamePlay.h">
       <Filter>소스 파일\Objects\00. Scene\GamePlay</Filter>
     </ClInclude>
@@ -161,8 +161,17 @@
     <ClInclude Include="Skill_Bomb_Script.h">
       <Filter>소스 파일\Objects\05. Skill\Bomb</Filter>
     </ClInclude>
+    <ClInclude Include="Logo_Start.h">
+      <Filter>소스 파일\Objects\01. UI\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="Logo_Script.h">
+      <Filter>소스 파일\Objects\01. UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Test.h">
+      <Filter>소스 파일\Objects\00. Scene\Test</Filter>
+    </ClInclude>
     <ClInclude Include="PhysxObject_Script.h">
-      <Filter>소스 파일\Objects\06. Physx Object</Filter>
+      <Filter>소스 파일\Objects\06. PhysxObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -227,9 +236,6 @@
     <ClCompile Include="Scene_Logo.cpp">
       <Filter>소스 파일\Objects\00. Scene\Logo</Filter>
     </ClCompile>
-    <ClCompile Include="Scene_Test.cpp">
-      <Filter>소스 파일\Objects\00. Scene\Test</Filter>
-    </ClCompile>
     <ClCompile Include="Scene_GamePlay.cpp">
       <Filter>소스 파일\Objects\00. Scene\GamePlay</Filter>
     </ClCompile>
@@ -239,8 +245,17 @@
     <ClCompile Include="Skill_Bomb_Script.cpp">
       <Filter>소스 파일\Objects\05. Skill\Bomb</Filter>
     </ClCompile>
+    <ClCompile Include="Logo_Start.cpp">
+      <Filter>소스 파일\Objects\01. UI\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="Logo_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Test.cpp">
+      <Filter>소스 파일\Objects\00. Scene\Test</Filter>
+    </ClCompile>
     <ClCompile Include="PhysxObject_Script.cpp">
-      <Filter>소스 파일\Objects\06. Physx Object</Filter>
+      <Filter>소스 파일\Objects\06. PhysxObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

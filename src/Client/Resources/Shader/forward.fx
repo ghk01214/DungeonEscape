@@ -46,9 +46,9 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 viewNormal = input.viewNormal;
     if (g_tex_on_1)
     {
-        // [0,255] 범위에서 [0,1]로 변환
+        // [0,255] 踰붿쐞?먯꽌 [0,1]濡?蹂??
         float3 tangentSpaceNormal = g_tex_1.Sample(g_sam_0, input.uv).xyz;
-        // [0,1] 범위에서 [-1,1]로 변환
+        // [0,1] 踰붿쐞?먯꽌 [-1,1]濡?蹂??
         tangentSpaceNormal = (tangentSpaceNormal - 0.5f) * 2.f;
         float3x3 matTBN = { input.viewTangent, input.viewBinormal, input.viewNormal };
         viewNormal = normalize(mul(tangentSpaceNormal, matTBN));
@@ -133,9 +133,9 @@ float4 PS_AlphaBlend(VS_OUT input) : SV_Target
     float3 viewNormal = input.viewNormal;
     if (g_tex_on_1)
     {
-        // [0,255] 범위에서 [0,1]로 변환
+        // [0,255] 踰붿쐞?먯꽌 [0,1]濡?蹂??
         float3 tangentSpaceNormal = g_tex_1.Sample(g_sam_0, input.uv).xyz;
-        // [0,1] 범위에서 [-1,1]로 변환
+        // [0,1] 踰붿쐞?먯꽌 [-1,1]濡?蹂??
         tangentSpaceNormal = (tangentSpaceNormal - 0.5f) * 2.f;
         float3x3 matTBN = { input.viewTangent, input.viewBinormal, input.viewNormal };
         viewNormal = normalize(mul(tangentSpaceNormal, matTBN));
@@ -156,6 +156,29 @@ float4 PS_AlphaBlend(VS_OUT input) : SV_Target
         + totalColor.specular.xyz;
 
     color.a = g_float_2;
+
+    return color;
+}
+
+
+
+VS_TEX_OUT VS_TexLogoUI(VS_TEX_IN input)
+{
+    VS_TEX_OUT output = (VS_TEX_OUT)0;
+
+    output.pos = mul(float4(input.pos, 1.f), g_matWVP);
+    output.uv = input.uv;
+
+    return output;
+}
+
+float4 PS_TexLogoUI(VS_TEX_OUT input) : SV_Target
+{
+    float4 color = float4(1.f, 1.f, 1.f, 1.f);
+    if (g_tex_on_0)
+        color = g_tex_0.Sample(g_sam_0, input.uv);
+
+    color.a *= g_float_2;
 
     return color;
 }

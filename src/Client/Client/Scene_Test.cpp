@@ -33,6 +33,8 @@
 #include "Scripts.hpp"
 #include "Skill_Bomb_Script.h"
 
+#include "PhysxObject_Script.h"
+
 Scene_Test::Scene_Test()
 {
 }
@@ -112,10 +114,8 @@ void Scene_Test::Render()
 
 void Scene_Test::CreateLayer()
 {
-#pragma region LayerMask
 	GGameInstance->SetLayerName(0, L"Default");
 	GGameInstance->SetLayerName(1, L"UI");
-#pragma endregion
 }
 
 void Scene_Test::CreateComputeShader(void)
@@ -143,38 +143,30 @@ void Scene_Test::CreateComputeShader(void)
 
 void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 {
-#pragma region Camera
-	{
-		shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
-		camera->SetName(L"Main_Camera");
-		camera->AddComponent(make_shared<Transform>());
-		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45도
-		camera->AddComponent(make_shared<Camera_Basic>());
-		camera->GetCamera()->SetFar(30000.f);
-		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 500.f, -500.f));
-		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
-		camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI는 안 찍음
-		pScene->AddGameObject(camera);
-	}
-#pragma endregion
+	shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
+	camera->SetName(L"Main_Camera");
+	camera->AddComponent(make_shared<Transform>());
+	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45도
+	camera->AddComponent(make_shared<Camera_Basic>());
+	camera->GetCamera()->SetFar(30000.f);
+	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 500.f, -500.f));
+	uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
+	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI는 안 찍음
+	pScene->AddGameObject(camera);
 }
 
 void Scene_Test::CreateUICamera(shared_ptr<CScene> pScene)
 {
-#pragma region UI_Camera
-	{
-		shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
-		camera->SetName(L"Orthographic_Camera");
-		camera->AddComponent(make_shared<Transform>());
-		camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, 800*600
-		camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
-		camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
-		uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
-		camera->GetCamera()->SetCullingMaskAll(); // 다 끄고
-		//camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI만 찍음
-		pScene->AddGameObject(camera);
-	}
-#pragma endregion
+	shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
+	camera->SetName(L"Orthographic_Camera");
+	camera->AddComponent(make_shared<Transform>());
+	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, 800*600
+	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
+	camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
+	uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
+	camera->GetCamera()->SetCullingMaskAll(); // 다 끄고
+	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI만 찍음
+	pScene->AddGameObject(camera);
 }
 
 void Scene_Test::CreateSkyBox(shared_ptr<CScene> pScene)
@@ -205,13 +197,12 @@ void Scene_Test::CreateSkyBox(shared_ptr<CScene> pScene)
 
 void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
 {
-#pragma region UI_Test
 	for (int32 i = 0; i < 6; i++)
 	{
 		shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 		obj->AddComponent(make_shared<Transform>());
-		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
 		obj->GetTransform()->SetLocalPosition(Vec3(-350.f + (i * 120), 250.f, 500.f));
 		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
 		{
@@ -237,22 +228,17 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
 		obj->AddComponent(meshRenderer);
 		pScene->AddGameObject(obj);
 	}
-#pragma endregion
 }
 
 void Scene_Test::CreateLights(shared_ptr<CScene> pScene)
 {
-#pragma region Directional Light
-	{
-		LightDesc lightDesc;
-		lightDesc.vDirection = Vec3(0.f, -1.f, 0.5f);
-		lightDesc.vDiffuse = Vec3(1.f, 1.f, 1.f);
-		lightDesc.vAmbient = Vec3(0.9f, 0.9f, 0.9f);
-		lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
+	LightDesc lightDesc;
+	lightDesc.vDirection = Vec3(0.f, -1.f, 0.5f);
+	lightDesc.vDiffuse = Vec3(1.f, 1.f, 1.f);
+	lightDesc.vAmbient = Vec3(0.9f, 0.9f, 0.9f);
+	lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
 
-		pScene->AddDirectionalLight(lightDesc);
-	}
-#pragma endregion
+	pScene->AddDirectionalLight(lightDesc);
 }
 
 void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
@@ -959,7 +945,6 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateLights(pScene);
 	CreateMap(pScene);
 	CreateBillBoard(pScene);
-	//CreateSphere(pScene);
 	CreateSkill(pScene);
 
 	CreatePlayer(pScene, eType);

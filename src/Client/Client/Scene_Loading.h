@@ -3,7 +3,7 @@
 #include "Client_Defines.h"
 #include "Scene.h"
 
-class Scene_Loading : public CScene
+class Scene_Loading final : public CScene
 {
 public:
 	explicit Scene_Loading();

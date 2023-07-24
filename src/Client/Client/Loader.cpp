@@ -2,6 +2,7 @@
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
+#include "Engine.h"
 
 shared_ptr<CLoader> CLoader::Create(SCENE eScene)
 {
@@ -67,27 +68,59 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 	m_isFinished = false;
 
 	// 폰트
+	Loading_GamePlayLevel_Font();
 
 	// 텍스쳐
-	GET_SINGLE(Resources)->LoadTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Fire\\Fire.png", 64);
+	Loading_GamePlayLevel_Texture();
+
+	// 셰이더
+	Loading_GamePlayLevel_Shader();
 
 	// fbx 모델
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models2.fbx");
+	Loading_GamePlayLevel_Fbx();
 
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Bullet1.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Bullet2.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Spike.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone.fbx");
+	m_isFinished = true;
 
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Pillar Bridge.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx");
+	return S_OK;
+}
 
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball2.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx");
+HRESULT CLoader::Loading_GamePlayLevel_Font()
+{
+	return S_OK;
+}
 
+HRESULT CLoader::Loading_GamePlayLevel_Texture()
+{
+	GET_SINGLE(Resources)->LoadTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Fire\\Fire.png", 64);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_GamePlayLevel_Shader()
+{ 
+	// ComputeShader 생성
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
+
+	// UAV 용 Texture 생성
+	shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
+		DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
+		CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
+		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
+	shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"ComputeShader");
+	material->SetShader(shader);
+	material->SetInt(0, 1);
+	GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
+
+	// 쓰레드 그룹 (1 * 1024 * 1)
+	material->Dispatch(1, 1024, 1);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_GamePlayLevel_Fbx()
+{
+	// fbx 모델
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx");
@@ -100,8 +133,6 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 	//GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Orange Scorpion.fbx");
 	//GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Purple Scorpion.fbx");
 	//GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Red Scorpion.fbx");
-
-	m_isFinished = true;
 
 	return S_OK;
 }

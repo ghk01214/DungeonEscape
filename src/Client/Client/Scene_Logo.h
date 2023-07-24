@@ -1,4 +1,5 @@
-﻿
+﻿#pragma once
+
 #include "Client_Defines.h"
 #include "Scene.h"
 
@@ -16,6 +17,14 @@ public:
 	virtual void FinalUpdate();
 	virtual void Render();
 
+private:
+	void Init(void);
+	void CreateLayer(void);
+	void CreateUICamera(void);
+	void CreateUI(void);
+	void LoadTextures(void);
+	void CreateLights(void);
+
 public:
-	static shared_ptr<Scene_Logo> Create();
+	static shared_ptr<CScene> Create();
 };

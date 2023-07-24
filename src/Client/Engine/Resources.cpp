@@ -416,6 +416,7 @@ void Resources::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info);
 		Add<Shader>(L"Forward", shader);
+	}
 
 	// Alpha_Blend_Object (Forward)
 	{
@@ -440,8 +441,6 @@ void Resources::CreateDefaultShader()
 		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg);
 		Add<Shader>(L"Alpha_Blend_Object", shader);
 	}
-	}
-
 	// Texture (Forward)
 	{
 		ShaderInfo info =
@@ -487,6 +486,30 @@ void Resources::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg); 
 		Add<Shader>(L"BillBoard_Texture", shader);
+	}
+
+	// Logo Texture (Forward)
+	{
+		ShaderInfo info =
+		{
+			SHADER_TYPE::FORWARD,
+			RASTERIZER_TYPE::CULL_NONE,
+			DEPTH_STENCIL_TYPE::LESS_NO_WRITE,
+			BLEND_TYPE::ALPHA_BLEND
+		};
+
+		ShaderArg arg =
+		{
+			"VS_TexLogoUI",
+			"",
+			"",
+			"",
+			"PS_TexLogoUI"
+		};
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg);
+		Add<Shader>(L"Logo_texture", shader);
 	}
 
 	// DirLight
