@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GolemAI.h"
 #include "Golem.h"
 #include "Monster.h"
@@ -7,6 +7,7 @@
 #include "SkillObject.h"
 #include "EventHandler.h"
 #include "Transform.h"
+#include "MessageHandler.h"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ void GolemAI::Init()
 	AddSkillSize("JUMP", GeometryType::Box, Vec3(1000, 1000, 1000), false);				//돌진
 	AddSkillSize("SPELL", GeometryType::Sphere, Vec3(1500, 1500, 1500), true);			//차징 충격파 공격
 
-	m_golem->SetControllerMoveSpeed(10.f);
+	m_golem->SetControllerMoveSpeed(45.f);
 }
 
 void GolemAI::Update(float timeDelta)
@@ -63,14 +64,14 @@ void GolemAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
 
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
@@ -110,7 +111,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK1_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
 				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.5f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
 				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.5f, m_golem);							//			같은 시간에 애니메이션 종료
-																											//STATE : IDLE로 변경은 STATE_CHECK에서
+				//STATE : IDLE로 변경은 STATE_CHECK에서
 
 				SetAIWait(true);
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.7f, m_golem);						//같은 시간에 애니메이션 종료

@@ -52,6 +52,8 @@ void Player::Init()
 	{
 		m_triggerDictionary[magic_enum::enum_value<server::TRIGGER_TYPE>(i)] = false;
 	}
+
+	m_controller->SetMoveSpeed(60.f);
 }
 
 void Player::Update(double timeDelta)

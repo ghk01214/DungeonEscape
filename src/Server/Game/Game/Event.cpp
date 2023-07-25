@@ -488,7 +488,8 @@ void Event::ExecuteMsg_Once()
 		auto golemObj = dynamic_cast<Golem*>(target);
 		if (golemObj)
 		{
-			golemObj->GetController()->SetMoveSpeedScale(5.f);
+			// 달릴 때 이동속도
+			golemObj->GetController()->SetMoveSpeedScale(2.f);
 		}
 	}
 

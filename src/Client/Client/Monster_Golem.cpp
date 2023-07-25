@@ -69,6 +69,9 @@ void Monster_Golem::CheckState()
 		m_aniEnd = false;
 	}
 
+	if (m_currState == WALK or m_currState == RUN)
+		GetAnimator()->SetAniSpeed(1.5f);
+
 	m_prevState = m_currState;
 }
 
