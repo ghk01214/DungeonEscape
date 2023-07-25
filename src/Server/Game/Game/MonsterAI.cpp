@@ -159,6 +159,7 @@ bool MonsterAI::SkillRangeCheck()
 #pragma region 스킬 위치, 회전값 부여
 	UpdateTargetPos();
 	physx::PxVec3 xzDir = GetXZDir();
+	m_monsterLook = FROM_PX3(xzDir);
 
 	//위치, 회전값 적용
 	physx::PxTransform trans;

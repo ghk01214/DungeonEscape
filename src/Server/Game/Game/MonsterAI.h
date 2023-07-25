@@ -54,6 +54,7 @@ protected:
 	Player* m_target = nullptr;
 	Vec3 m_targetPos;
 	Vec3 m_targetDir;
+	Vec3 m_monsterLook;
 
 	bool m_AIWait = false;					//카운터 대기를 위해
 
