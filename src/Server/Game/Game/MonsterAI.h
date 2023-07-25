@@ -46,6 +46,7 @@ public:
 	Vec3 GetTargetPosition();
 	Vec3 GetTargetDir();
 	physx::PxVec3 GetXZDir();
+	physx::PxVec3 GetReverseXZDir();
 	physx::PxVec3 GetOldXZDir();
 	physx::PxQuat GetRotation_For_Pattern(physx::PxVec3 xzDir);
 protected:

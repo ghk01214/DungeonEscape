@@ -166,7 +166,8 @@ bool MonsterAI::SkillRangeCheck()
 	trans.p = TO_PX3(m_monster->GetControllerPosition());
 	trans.q = GetRotation_For_Pattern(xzDir);
 
-	m_monster->GetTransform()->SetRotation(FROM_PXQUAT(trans.q));
+	//m_monster->GetTransform()->SetRotation(FROM_PXQUAT(trans.q));
+	m_monster->GetTransform()->SetRotation(FROM_PXQUAT(GetRotation_For_Pattern(GetReverseXZDir())));
 
 	float controllerRadius = m_monster->GetController()->GetCollider()->GetRadius();
 #pragma endregion
@@ -362,6 +363,21 @@ physx::PxVec3 MonsterAI::GetXZDir()
 	monsterPos.y = 0;
 
 	PxVec3 dir = TO_PX3(targetPos) - monsterPos;
+	dir.normalize();
+	return dir;
+}
+
+physx::PxVec3 MonsterAI::GetReverseXZDir()
+{
+	if (!m_target)
+		return PxVec3(0, 0, 0);
+
+	Vec3 targetPos = m_target->GetControllerPosition();
+	targetPos.y = 0;
+	physx::PxVec3 monsterPos = TO_PX3(m_monster->GetControllerPosition());
+	monsterPos.y = 0;
+
+	PxVec3 dir = monsterPos - TO_PX3(targetPos);
 	dir.normalize();
 	return dir;
 }
