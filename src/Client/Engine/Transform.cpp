@@ -48,6 +48,11 @@ void Transform::PushData()
 	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushGraphicsData(&transformParams, sizeof(transformParams));
 }
 
+Vec3 Transform::GetScale()
+{
+	return Vec3(XMVectorGetX(XMVector3Length(_matWorld.Right())), XMVectorGetX(XMVector3Length(_matWorld.Up())), XMVectorGetX(XMVector3Length(_matWorld.Backward())));
+}
+
 void Transform::LookAt(const Vec3& dir)
 {
 	Vec3 front = dir;

@@ -47,6 +47,7 @@ public:
 	Vec3 GetRight() { return _matWorld.Right(); }
 	Vec3 GetUp() { return _matWorld.Up(); }
 	Vec3 GetLook() { return _matWorld.Backward(); }
+	Vec3 GetScale();
 	void SetRight(const Vec3& right) { _matWorld.Right(right); }
 	void SetUp(const Vec3& up) { return _matWorld.Up(up); }
 	void SetLook(const Vec3& look) { return _matWorld.Backward(look); }
