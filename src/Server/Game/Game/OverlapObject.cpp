@@ -148,8 +148,8 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 	{
 		playerBody->SetVelocity(PxVec3(0));
 		playerController->BounceFromAttack();
-		playerBody->AddForce(ForceMode::Impulse, xzDir * 700.f);
-		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 150.f);
+		playerBody->AddForce(ForceMode::Impulse, xzDir * 1000.f);
+		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 250.f);
 
 		return true;
 	}

@@ -112,7 +112,7 @@ void Golem::CheckState()
 		break;
 		case STUN:
 		{
-	
+
 		}
 		break;
 		case ATTACK1:
@@ -387,9 +387,9 @@ bool Golem::Pattern_Jump_LandCheck()
 
 	RaycastHit hit;
 	m_controller->RaycastGround(hit);
-	if (hit.distance < 0 || hit.distance > 5) 
+	if (hit.distance < 0 || hit.distance > 5)
 		return false;
-	
+
 	auto players = ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects();
 	physx::PxVec3 golemPosXZ = TO_PX3(GetControllerPosition());
 	golemPosXZ.y = 0;
@@ -444,7 +444,7 @@ bool Golem::PhysicLayer_SetToDefault()
 		physx::PxVec3 golemPos = TO_PX3(GetControllerPosition());
 		physx::PxVec3 between = playerPos - golemPos;
 		float distance = between.magnitude();
-		if (distance < 150.f)										//최소 골렘과 150 떨어져야만 몬스터의 물리 레이어를 원래대로 되돌린다.
+		if (distance < 300.f)										//최소 골렘과 150 떨어져야만 몬스터의 물리 레이어를 원래대로 되돌린다.
 			return false;
 	}
 

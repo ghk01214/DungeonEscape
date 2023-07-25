@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Session.h"
 #include "Transform.h"
 #include "Monsters.hpp"
@@ -86,8 +86,6 @@ namespace game
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
 		auto pos{ trans->GetPosition() };
-		auto quat{ trans->GetRotation() };
-		auto scale{ trans->GetScale() };
 		auto objType{ obj->GetObjectType() };
 		auto fbxType{ obj->GetFBXType() };
 

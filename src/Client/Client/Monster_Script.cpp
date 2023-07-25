@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Monster_Script.h"
 
 #include "Animator.h"
@@ -73,6 +73,10 @@ void Monster_Script::Transform(network::CPacket& packet)
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
+	//Vec3 rot;
+	//rot.x = packet.Read<float>();
+	//rot.y = packet.Read<float>();
+	//rot.z = packet.Read<float>();
 	Quat quat;
 	quat.x = packet.Read<float>();
 	quat.y = packet.Read<float>();
@@ -88,9 +92,18 @@ void Monster_Script::Transform(network::CPacket& packet)
 
 	pos.y -= m_halfHeight;
 
-	GetTransform()->SetWorldVec3Position(pos);
-	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-	matWorld.Translation(pos);
+	Matrix matWorld{ Matrix::CreateScale(scale / scaleRatio) };
+	if (quat.y == 0.f)
+	{
+		matWorld = GetTransform()->GetWorldMatrix();
+		matWorld.Translation(pos);
+	}
+	else
+	{
+		matWorld *= Matrix::CreateFromQuaternion(Quat{ 0.f, quat.y, 0.f, quat.w });
+		matWorld *= Matrix::CreateTranslation(pos);
+	}
+
 	GetTransform()->SetWorldMatrix(matWorld);
 
 #pragma region [FOR DEBUGGING]

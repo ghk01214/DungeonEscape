@@ -56,8 +56,8 @@ void PillarObject::Init_After_ColliderAttached()
 	PhysicsAxis axesToLock = static_cast<PhysicsAxis>(static_cast<int>(PhysicsAxis::Z) | static_cast<int>(PhysicsAxis::Y));
 	m_body->SetRotationLockAxis(axesToLock, true);
 	m_body->SetMass(1000.f);
-	//m_body->SetAngularDamping(0.8f);
-	m_body->SetAngularDamping(0.0f);
+	m_body->SetAngularDamping(0.8f);
+	//m_body->SetAngularDamping(0.0f);
 	m_body->SetSleepThresholder(0.02);
 }
 

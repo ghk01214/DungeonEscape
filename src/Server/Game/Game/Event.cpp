@@ -353,7 +353,7 @@ void Event::ExecuteMsg_Once()
 			golemObj->OverlapObject_Deactivate();
 		}
 	}
-	
+
 	if (msg == "GOLEM_JUMP_FUNCTIONCALL")
 	{
 		auto golemObj = dynamic_cast<Golem*>(target);
@@ -371,7 +371,7 @@ void Event::ExecuteMsg_Once()
 			golemObj->Pattern_Jump_Select_LandPosition();
 		}
 	}
-	
+
 	if (msg == "GOLEM_JUMP_DESCEND_FUNCTIONCALL")
 	{
 		auto golemObj = dynamic_cast<Golem*>(target);
@@ -416,13 +416,22 @@ void Event::ExecuteMsg_Once()
 			golemObj->SetState(Golem::GOLEM_STATE::JUMP_START);
 		}
 	}
-	
+
 	if (msg == "ANIM_TO_GOLEM_JUMPLOOP")
 	{
 		auto golemObj = dynamic_cast<Golem*>(target);
 		if (golemObj)
 		{
 			golemObj->SetState(Golem::GOLEM_STATE::JUMP_LOOP);
+		}
+	}
+
+	if (msg == "ANIM_TO_GOLEM_SPELL_START")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::SPELL_START);
 		}
 	}
 
@@ -482,7 +491,7 @@ void Event::ExecuteMsg_Once()
 			golemObj->GetController()->SetMoveSpeedScale(5.f);
 		}
 	}
-	
+
 	if (msg == "GOLEM_MOVE_STOP")
 	{
 		EventHandler::GetInstance()->DeleteEvent("GOLEM_MOVE");

@@ -80,7 +80,7 @@ public:
 	void Pattern_Roar();
 	void Pattern_Run();
 	void Pattern_Spell();
-	void OverlapObject_Deactivate();		
+	void OverlapObject_Deactivate();
 
 public:
 	//실제로 점프시키는 함수

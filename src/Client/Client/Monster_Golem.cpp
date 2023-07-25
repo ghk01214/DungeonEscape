@@ -20,7 +20,7 @@ Monster_Golem::Monster_Golem() :
 	m_currState{ m_prevState }
 {
 	m_radius = 100.f;
-	m_halfHeight = 100.f;
+	m_halfHeight = 250.f;
 }
 
 Monster_Golem::Monster_Golem(int32_t stateIndex) :
@@ -28,7 +28,7 @@ Monster_Golem::Monster_Golem(int32_t stateIndex) :
 	m_currState{ m_prevState }
 {
 	m_radius = 100.f;
-	m_halfHeight = 100.f;
+	m_halfHeight = 250.f;
 }
 
 Monster_Golem::~Monster_Golem()

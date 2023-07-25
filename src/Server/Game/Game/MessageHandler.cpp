@@ -421,9 +421,9 @@ namespace game
 			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(3000.f, -1790.f, 20920.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(4010.f, -1790.f, 20670.f + msg.playerID * 100.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 			// 돌 다리 기믹 위치
-			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(10220.f, -1610.f, 32760.f - msg.playerID * 1000.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(10220.f, -1610.f, 32760.f - msg.playerID * 1000.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 			// Golem 조우 위치
-			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(10220.f, -1610.f, 38540.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(10220.f, -1610.f, 38540.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 
 			std::wstring name{};
 

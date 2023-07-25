@@ -6,6 +6,7 @@
 #include "RigidBody.h"
 #include "SkillObject.h"
 #include "EventHandler.h"
+#include "Transform.h"
 
 using namespace std;
 
@@ -31,7 +32,7 @@ void GolemAI::Init()
 	//AddSkillSize("ATTACK4", GeometryType::Box, Vec3(1000, 1000, 500), false);			//돌진확인을 위한 디버그용값
 
 	AddSkillSize("ROAR", GeometryType::Sphere, Vec3(1000, 1000, 1000), false);			//포효
-	AddSkillSize("RUN", GeometryType::Box, Vec3(150, 150, 150), true);					//돌진
+	AddSkillSize("RUN", GeometryType::Box, Vec3(250, 250, 250), true);					//돌진
 	AddSkillSize("JUMP", GeometryType::Box, Vec3(1000, 1000, 1000), false);				//돌진
 	AddSkillSize("SPELL", GeometryType::Sphere, Vec3(1500, 1500, 1500), true);			//차징 충격파 공격
 
@@ -62,14 +63,14 @@ void GolemAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
-
-
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
 
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
@@ -304,7 +305,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("GOLEM_SPELL_FUNCTIONCALL", 10.36f, m_golem);			//0.53초 후 overlapObj 활성화
 				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 11.36f, m_golem);			//활성화 시간은 1초						대지충격파 유지시간 수정은 여기서
 				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_SPELL_END", 11.33f, m_golem);			//SPELL END > IDLE1 진입
-				
+
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 13.33f, m_golem);						//IDLE진입 후 2초정도 있다가 AI재개
 
 			}
@@ -350,7 +351,7 @@ void GolemAI::DamageCheck()
 			EventHandler::GetInstance()->DeleteEvent("OVERLAPOBJECT_DEACTIVATE");
 			EventHandler::GetInstance()->DeleteEvent("ANIM_END_IF_SPELL_END");
 			EventHandler::GetInstance()->DeleteEvent("AI_WAIT_FREE");				//기존 명령 삭제
-			
+
 			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_STUN", 1.33f, m_golem);		//DAMAGE애니메이션 1.33초후 STUN으로 변경
 			EventHandler::GetInstance()->AddEvent("ANIM_END", 2.33f * 3.f, m_golem);			//STUN은 6.99초 유지
 			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.33f * 3.f, m_golem);		//STUN이 끝나면 aiwait해제
