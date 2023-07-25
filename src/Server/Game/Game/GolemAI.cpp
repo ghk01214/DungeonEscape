@@ -66,10 +66,10 @@ void GolemAI::FillSchedule()
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
 
 	std::cout << "Filled Schedule" << std::endl;
@@ -103,6 +103,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
+				QuatUpdateForClient();
+
 				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK1;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK1_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
@@ -115,8 +117,6 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 			}
 			else
 			{
-				//Monstermove();
-				//m_golem->m_currState = Golem::GOLEM_STATE::IDLE1;
 				GolemMove();
 			}
 		}
@@ -129,6 +129,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 			{
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
+
+				QuatUpdateForClient();
 
 				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK2;											//STATE : ATTACK1로 변경
@@ -155,6 +157,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
+				QuatUpdateForClient();
+
 				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK3;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
@@ -179,6 +183,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 			{
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
+
+				QuatUpdateForClient();
 
 				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK4;											//STATE : ATTACK1로 변경
@@ -205,6 +211,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
+				QuatUpdateForClient();
+
 				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
 				m_golem->m_currState = Golem::GOLEM_STATE::ROAR;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ROAR_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
@@ -223,13 +231,15 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 		case GOLEM_SCHEDULE::RUN:
 		{
+			QuatUpdateForClient();
 			if(GetXZDistance() < 2000.f)
 			{
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
-				SetAIWait(true);																			//패턴시작 : AI 대기
+				QuatUpdateForClient();
 
+				SetAIWait(true);																			//패턴시작 : AI 대기
 
 				m_golem->m_currState = Golem::GOLEM_STATE::WALK;											//STATE : WALK으로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE", 0.1f, m_golem);							//이동명령 시작 (Event는 Continous 속성)
@@ -263,6 +273,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
+				QuatUpdateForClient();
+
 				SetAIWait(true);
 
 				m_golem->m_currState = Golem::GOLEM_STATE::ROAR;
@@ -289,6 +301,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 			{
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
+
+				QuatUpdateForClient();
 
 				SetAIWait(true);
 
@@ -374,6 +388,17 @@ void GolemAI::GolemMove()
 {
 	Monstermove();
 	m_golem->SetState(Golem::GOLEM_STATE::WALK);
+}
+
+void GolemAI::QuatUpdateForClient()
+{
+	UpdateTargetPos();
+	Quat q = FROM_PXQUAT(GetRotation_For_Pattern(GetReverseXZDir()));
+
+	if (q.x != 0 || q.z != 0)
+		return;
+
+	//전송.
 }
 
 void GolemAI::ReportSchedule()
