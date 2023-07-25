@@ -40,8 +40,8 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	LoadBasicMap3();
-	//LoadMap();
+	//LoadBasicMap3();
+	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)

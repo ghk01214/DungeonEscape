@@ -17,10 +17,10 @@
 
 #include "Camera.h"
 
-Player_Script::Player_Script(server::FBX_TYPE type) :
+Player_Script::Player_Script(server::FBX_TYPE type, int32_t state) :
 	m_playerType{ type },
 	m_prevState{ IDLE1 },
-	m_currState{ m_prevState },
+	m_currState{ magic_enum::enum_value<PLAYER_STATE>(state) },
 	m_radius{ 50.f },
 	m_halfHeight{ 50.f }
 {
@@ -260,7 +260,8 @@ void Player_Script::ParsePackets()
 			break;
 			case ProtocolID::WR_CHANGE_STATE_ACK:
 			{
-				m_currState = magic_enum::enum_value<PLAYER_STATE>(packet.Read<int32_t>());
+				int32_t state{ packet.Read<int32_t>() };
+				m_currState = magic_enum::enum_value<PLAYER_STATE>(state);
 			}
 			break;
 			default:
@@ -283,45 +284,26 @@ void Player_Script::StartRender(network::CPacket& packet)
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
-	//Vec4 quat;
-	//quat.x = packet.Read<float>();
-	//quat.y = packet.Read<float>();
-	//quat.z = packet.Read<float>();
-	//quat.w = packet.Read<float>();
-	float y{ packet.Read<float>() };
-	float w{ packet.Read<float>() };
+	Vec3 scale;
+	scale.x = packet.Read<float>();
+	scale.y = packet.Read<float>();
+	scale.z = packet.Read<float>();
 
-	//Vec3 scale;
-	//scale.x = packet.Read<float>();
-	//scale.y = packet.Read<float>();
-	//scale.z = packet.Read<float>();
+	float scaleRatio{ packet.Read<float>() };
 
 	int32_t currState{ packet.Read<int32_t>() };
-	float updateTime{ packet.Read<float>() };
+	//float updateTime{ packet.Read<float>() };
 
 	std::cout << std::format("ID : {}\n", id);
 	std::cout << std::format("pos : {}, {}, {}\n", pos.x, pos.y, pos.z);
-	//std::cout << std::format("quat : {}, {}, {}, {}\n", quat.x, quat.y, quat.z, quat.w);
-	//std::cout << std::format("scale : {}, {}, {}\n\n", scale.x, scale.y, scale.z);
 
 	m_currState = magic_enum::enum_value<PLAYER_STATE>(currState);
 
 	pos.y -= (m_radius + m_halfHeight);
 
-	Matrix matWorld{};
-
-	if (GetGameObject()->GetObjectType() == server::OBJECT_TYPE::PLAYER)
-	{
-		matWorld = GetTransform()->GetWorldMatrix();
-		matWorld.Translation(pos);
-		GetTransform()->SetWorldMatrix(matWorld);
-	}
-	else
-	{
-		matWorld = Matrix::CreateFromQuaternion(Quat{ 0.f, y, 0.f, w });
-		matWorld *= Matrix::CreateTranslation(pos);
-		GetTransform()->SetWorldMatrix(matWorld);
-	}
+	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	matWorld.Translation(pos);
+	GetTransform()->SetWorldMatrix(matWorld);
 }
 
 void Player_Script::Transform(network::CPacket& packet)
@@ -333,18 +315,8 @@ void Player_Script::Transform(network::CPacket& packet)
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
-	//Vec4 quat;
-	//quat.x = packet.Read<float>();
-	//quat.y = packet.Read<float>();
-	//quat.z = packet.Read<float>();
-	//quat.w = packet.Read<float>();
 	float y{ packet.Read<float>() };
 	float w{ packet.Read<float>() };
-
-	//Vec3 scale;
-	//scale.x = packet.Read<float>();
-	//scale.y = packet.Read<float>();
-	//scale.z = packet.Read<float>();
 
 	pos.y -= (m_radius + m_halfHeight);
 
@@ -354,17 +326,22 @@ void Player_Script::Transform(network::CPacket& packet)
 	{
 		matWorld = GetTransform()->GetWorldMatrix();
 		matWorld.Translation(pos);
-		GetTransform()->SetWorldMatrix(matWorld);
 	}
 	else
 	{
 		matWorld = Matrix::CreateFromQuaternion(Quat{ 0.f, y, 0.f, w });
 		matWorld *= Matrix::CreateTranslation(pos);
-		GetTransform()->SetWorldMatrix(matWorld);
 	}
+
+	GetTransform()->SetWorldMatrix(matWorld);
 
 #pragma region [FOR DEBUGGING]
 	//auto t{ GetTransform()->GetWorldPosition() };
 	//std::cout << std::format("player id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
 #pragma endregion
+}
+
+void Player_Script::SetState(int32_t state)
+{
+	m_currState = magic_enum::enum_value<PLAYER_STATE>(state);
 }

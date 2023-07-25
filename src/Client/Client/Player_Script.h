@@ -49,7 +49,7 @@ public:
 
 public:
 	Player_Script() = default;
-	Player_Script(server::FBX_TYPE type);
+	Player_Script(server::FBX_TYPE type, int32_t state = 12);
 	~Player_Script();
 
 public:
@@ -72,6 +72,9 @@ private:
 
 	void StartRender(network::CPacket& packet);
 	void Transform(network::CPacket& packet);
+
+private:
+	void SetState(int32_t state);
 
 private:
 	server::FBX_TYPE m_playerType;
