@@ -107,8 +107,8 @@ void TestLevel::LoadMap()
 	// Golem 생성 위치
 	// 10220 -1610 42750
 
-	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0.f, -749.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(10220.f, -1610.f, 42750.f), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0.f, -749.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(10220.f, -1610.f, 42750.f), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 }
 
 void TestLevel::LoadBasicMap1()

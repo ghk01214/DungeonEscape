@@ -99,6 +99,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
+				QuatUpdateForClient();
+
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 1.5f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.5f, m_weeper);
@@ -125,6 +127,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("CAST2_SCATTER_AIRFIRE", 7.f, cast2Ball);		//EVENT:ASCEND예약 (스킬 ascend attribute 부여, 애니메이션 재생, 반격모드 OFF)
 
 				ReportSchedule();
+
+				QuatUpdateForClient();
 			}
 			else
 			{
@@ -145,6 +149,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
+
+				QuatUpdateForClient();
 
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 1.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 2.f, m_weeper);
@@ -167,6 +173,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				m_weeper->SetState(Weeper::WEEPER_STATE::CAST4_START);
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
+
+				QuatUpdateForClient();
 
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_CAST4_LOOP", 2.73f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST4", 2.73f, m_weeper);

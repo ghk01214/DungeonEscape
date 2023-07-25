@@ -12,6 +12,7 @@
 #include "RigidBody.h"
 #include "Transform.h"
 #include "OverlapObject.h"
+#include "MessageHandler.h"
 
 using namespace physx;
 
@@ -121,6 +122,23 @@ void MonsterAI::AddSkillSize(std::string scheduleName, GeometryType shape, Vec3 
 {
 	auto skill = new MonsterSkill(scheduleName, shape, size, centerBox);
 	m_skillSizeHolder.emplace_back(skill);
+}
+
+void MonsterAI::QuatUpdateForClient()
+{
+	UpdateTargetPos();
+	Quat q = FROM_PXQUAT(GetRotation_For_Pattern(GetReverseXZDir()));
+
+	if (q.x != 0 || q.z != 0)
+		return;
+
+	//전송.
+	m_monster->m_rotation = q;
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_MONSTER_QUAT_ACK };
+	ev.objID = m_monster->m_id;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 physx::PxGeometry* MonsterAI::GetRequestedSkillGeometry(std::string schedule)
@@ -406,12 +424,3 @@ physx::PxQuat MonsterAI::GetRotation_For_Pattern(physx::PxVec3 xzDir)
 
 	return rotation;
 }
-
-Quat MonsterAI::GetRotation()
-{
-	return m_rotation;
-}
-
-
-
-

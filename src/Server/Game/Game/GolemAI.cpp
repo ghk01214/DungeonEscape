@@ -390,23 +390,6 @@ void GolemAI::GolemMove()
 	m_golem->SetState(Golem::GOLEM_STATE::WALK);
 }
 
-void GolemAI::QuatUpdateForClient()
-{
-	UpdateTargetPos();
-	Quat q = FROM_PXQUAT(GetRotation_For_Pattern(GetReverseXZDir()));
-
-	if (q.x != 0 || q.z != 0)
-		return;
-
-	//전송.
-	m_rotation = q;
-
-	game::TIMER_EVENT ev{ ProtocolID::WR_MONSTER_QUAT_ACK };
-	ev.objID = m_golem->m_id;
-
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
-}
-
 void GolemAI::ReportSchedule()
 {
 	for (int i = 0; i < m_scheduler.size(); ++i)

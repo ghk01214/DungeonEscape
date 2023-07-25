@@ -148,6 +148,11 @@ void Monster_Weeper::ParsePackets()
 				m_currState = magic_enum::enum_value<WEEPER_STATE>(packet.Read<int32_t>());
 			}
 			break;
+			case ProtocolID::WR_MONSTER_QUAT_ACK:
+			{
+				Rotate(packet);
+			}
+			break;
 			default:
 			break;
 		}
