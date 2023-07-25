@@ -4,6 +4,7 @@
 
 #include "Scene_GamePlay.h"
 #include "Scene_Test.h"
+#include "Scene_Lobby.h"
 #include "GameInstance.h"
 
 #include <NetworkManager.h>
@@ -88,15 +89,21 @@ void Scene_Loading::Update()
 	// 로더의 로딩이 완료되었을 경우
 	if (m_pLoader->Get_Finished())
 	{
-		auto playerClass{ LogIn() };
-
 		shared_ptr<CScene> pScene = nullptr;
 
 		switch (m_eNextScene)
 		{
 			case SCENE_GAMEPLAY:
-			//pScene = Scene_GamePlay::Create();
-			pScene = Scene_Test::Create(playerClass);
+			{
+				//pScene = Scene_GamePlay::Create();
+				auto playerClass{ LogIn() };
+				pScene = Scene_Test::Create(playerClass);
+			}
+			break;
+			case SCENE_LOBBY:
+			{
+				pScene = Scene_Lobby::Create();
+			}
 			break;
 			/*case LEVEL_BOSS:
 			break;*/

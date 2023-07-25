@@ -39,6 +39,10 @@ public:
 	HRESULT Loading_GamePlayLevel_Shader();
 	HRESULT Loading_GamePlayLevel_Fbx();
 
+public:
+	HRESULT Loading_ForLobby();
+	HRESULT Loading_ForLobby_Font();
+	HRESULT Loading_ForLobby_Texture();
 
 private:
 	SCENE			m_eScene = SCENE_END;

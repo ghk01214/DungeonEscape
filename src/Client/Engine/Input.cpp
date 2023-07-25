@@ -67,6 +67,9 @@ void CInput::Update()
 		return;
 	}
 
+	// 현재 프레임의 입력 정보 세팅
+	SetUp_InputDeviceState();
+
 	// winapi가 제공하는 모든 키(VirtualKey) 정보에 대해 입력을 받을 준비
 	BYTE asciiKeys[KEY_TYPE_COUNT] = {};
 
@@ -100,9 +103,6 @@ void CInput::Update()
 			}
 		}
 	}
-
-	// 현재 프레임의 입력 정보 세팅
-	SetUp_InputDeviceState();
 
 	// 모든 키 정보들에 대해 확인해줄 것
 	EncodeKeyInput();
@@ -172,14 +172,14 @@ bool CInput::Button_Down(MOUSEBUTTONSTATE eDIMBState)
 		return false;
 
 	// 이전에 눌림이 없고, 현재 눌림이 있는 경우
-	if (!m_bButtonState[eDIMBState] && (Get_DIMButtonState(eDIMBState) & 0x8000))
+	if (!m_bButtonState[eDIMBState] && (Get_DIMButtonState(eDIMBState) & 0x80))
 	{
 		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
 		return true;
 	}
 
-	if (m_bButtonState[eDIMBState] && !(Get_DIMButtonState(eDIMBState) & 0x8000))
-		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
+	//if (m_bButtonState[eDIMBState] && !(Get_DIMButtonState(eDIMBState) & 0x80))
+	//	m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
 
 	return false;
 }
@@ -191,14 +191,14 @@ bool CInput::Button_Up(MOUSEBUTTONSTATE eDIMBState)
 		return false;
 
 	// 이전에 눌림이 있고, 현재 눌리지 않았을 경우
-	if (m_bButtonState[eDIMBState] && !(Get_DIMButtonState(eDIMBState) & 0x8000))
+	if (m_bButtonState[eDIMBState] && !(Get_DIMButtonState(eDIMBState) & 0x80))
 	{
 		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
 		return true;
 	}
 
-	if (!m_bButtonState[eDIMBState] && (Get_DIMButtonState(eDIMBState) & 0x8000))
-		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
+	//if (!m_bButtonState[eDIMBState] && (Get_DIMButtonState(eDIMBState) & 0x80))
+	//	m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
 
 	return false;
 }

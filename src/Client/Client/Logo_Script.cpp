@@ -3,6 +3,9 @@
 
 #include "Timer.h"
 
+#include "SceneManager.h"
+#include "Scene_Loading.h"
+
 #include "MeshRenderer.h"
 #include "Material.h"
 
@@ -27,6 +30,11 @@ void Logo_Script::Start()
 
 void Logo_Script::Update()
 {
+	if (m_bLogoEnd == true)
+	{
+		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_LOBBY));
+	}
+
 	m_accTime += DELTA_TIME;
 
 	// fade에 걸리는 시간관련 자동 상태변경

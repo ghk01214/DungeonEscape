@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "Scene_Loading.h"
+#include "Scene_Lobby.h"
 
 #include "Camera.h"
 #include "Transform.h"
@@ -30,10 +31,11 @@ void Scene_Logo::Update()
 {
 	__super::Update();
 
-	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::SPACE))
-	{
-		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_GAMEPLAY));
-	}
+	//if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::SPACE))
+	//{
+	//	GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_LOBBY));
+	//	GET_SINGLE(SceneManager)->LoadScene(Scene_Lobby::Create());
+	//}
 }
 
 void Scene_Logo::LateUpdate()
@@ -119,7 +121,7 @@ void Scene_Logo::CreateUI(void)
 
 	vector<shared_ptr<Texture>> textures;
 	textures.push_back(GET_SINGLE(Resources)->Get<Texture>(L"Logo_School"));
-	textures.push_back(GET_SINGLE(Resources)->Get<Texture>(L"Logo_InGame"));
+	//textures.push_back(GET_SINGLE(Resources)->Get<Texture>(L"Logo_InGame"));
 
 	shared_ptr<Logo_Start> behaviour = make_shared<Logo_Start>();
 	behaviour->SetLogoInfo(2.f, 1.f, 1.f, textures);

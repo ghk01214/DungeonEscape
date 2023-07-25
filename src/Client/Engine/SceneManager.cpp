@@ -25,6 +25,9 @@ void SceneManager::Start()
 
 void SceneManager::Update()
 {
+	if (m_activeScene != m_nextScene)
+		m_activeScene = m_nextScene;
+
 	if (m_activeScene == nullptr)
 		return;
 
@@ -56,10 +59,10 @@ void SceneManager::Render()
 
 void SceneManager::LoadScene(std::shared_ptr<CScene> scene)
 {
-	m_activeScene = scene;
+	m_nextScene = scene;
 
-	m_activeScene->Awake();
-	m_activeScene->Start();
+	m_nextScene->Awake();
+	m_nextScene->Start();
 }
 
 void SceneManager::SetLayerName(uint8 index, const wstring& name)

@@ -21,7 +21,7 @@ enum
 
 class SceneManager
 {
-	DECLARE_SINGLE(SceneManager);  
+	DECLARE_SINGLE(SceneManager);
 
 public:
 	void Start();
@@ -45,5 +45,7 @@ private:
 
 	array<wstring, MAX_LAYER> m_layerNames;
 	map<wstring, uint8> m_layerIndex;
+
+	std::shared_ptr<CScene> m_nextScene = nullptr;
 };
 
