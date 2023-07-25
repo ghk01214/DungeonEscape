@@ -133,6 +133,12 @@ namespace game
 					std::this_thread::sleep_for(1ms);
 				}
 				break;
+				case ProtocolID::WR_MONSTER_QUAT_ACK:
+				{
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					std::this_thread::sleep_for(1ms);
+				}
+				break;
 				default:
 				std::this_thread::sleep_for(1ms);
 				break;

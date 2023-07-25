@@ -20,6 +20,7 @@ protected:
 
 protected:
 	void Transform(network::CPacket& packet);
+	void Rotate(network::CPacket& packet);
 
 protected:
 	float m_radius;

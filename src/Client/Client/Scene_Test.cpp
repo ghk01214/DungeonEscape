@@ -443,6 +443,13 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
+	Vec3 scale;
+	scale.x = packet.Read<float>();
+	scale.y = packet.Read<float>();
+	scale.z = packet.Read<float>();
+
+	float scaleRatio{ packet.Read<float>() };
+
 	int32_t state{ packet.Read<int32_t>() };
 	float updateTime{ packet.Read<float>() };
 
@@ -460,15 +467,23 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 
 	for (auto& gameObject : gameObjects)
 	{
-		Matrix matWorld{ gameObject->GetTransform()->GetWorldMatrix() };
+		Matrix matWorld{ Matrix::CreateScale(scale / scaleRatio) };
 
 		if (objType == server::OBJECT_TYPE::REMOTE_PLAYER)
+		{
+			matWorld = gameObject->GetTransform()->GetWorldMatrix();
 			matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
+		}
 
 		matWorld *= Matrix::CreateTranslation(pos);
+
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 		gameObject->SetObjectType(objType);
-		//gameObject->GetAnimator()->PlayFrame(state, updateTime);
+
+		if (magic_enum::enum_value<Monster_Golem::GOLEM_STATE>(state) == Monster_Golem::GOLEM_STATE::WALK)
+			gameObject->GetAnimator()->PlayFrame(state, updateTime, 2.f);
+		else if (objType == server::OBJECT_TYPE::BOSS)
+			gameObject->GetAnimator()->PlayFrame(state, updateTime);
 	}
 
 	AddObjectToScene(objType, gameObjects);
@@ -643,7 +658,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Nana";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx";
-			objectDesc.script = std::make_shared<Player_Script>(type);
+			objectDesc.script = std::make_shared<Player_Script>(type, stateIndex);
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
@@ -651,7 +666,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Mistic";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
-			objectDesc.script = std::make_shared<Player_Script>(type);
+			objectDesc.script = std::make_shared<Player_Script>(type, stateIndex);
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
@@ -659,7 +674,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Carmel";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx";
-			objectDesc.script = std::make_shared<Player_Script>(type);
+			objectDesc.script = std::make_shared<Player_Script>(type, stateIndex);
 			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;

@@ -54,6 +54,7 @@ public:
 public:
 	MonsterAI* GetAI();
 	OverlapObject* GetOverlapObject();
+	Quat GetRotation();
 
 public:
 	//Server혼자 FSM실험을 위해 만든 임시함수. 추후 무력화 기믹에서 사용할 예정
@@ -71,4 +72,5 @@ protected:
 
 protected:
 	MonsterAI* m_AI;
+	Quat m_rotation;
 };

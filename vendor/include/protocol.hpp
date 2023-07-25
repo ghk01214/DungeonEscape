@@ -98,6 +98,9 @@ enum class ProtocolID : unsigned short
 	WR_CAMERA_LOOK_REQ,
 	WR_CAMERA_LOOK_ACK,
 
+	WR_MONSTER_QUAT_REQ,
+	WR_MONSTER_QUAT_ACK,
+
 	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion
 

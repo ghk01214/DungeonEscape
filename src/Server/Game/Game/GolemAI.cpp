@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "GolemAI.h"
 #include "Golem.h"
 #include "Monster.h"
@@ -231,8 +231,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 		case GOLEM_SCHEDULE::RUN:
 		{
-			QuatUpdateForClient();
-			if(GetXZDistance() < 2000.f)
+			if (GetXZDistance() < 2000.f)
 			{
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
@@ -399,6 +398,12 @@ void GolemAI::QuatUpdateForClient()
 		return;
 
 	//전송.
+	m_rotation = q;
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_MONSTER_QUAT_ACK };
+	ev.objID = m_golem->m_id;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void GolemAI::ReportSchedule()

@@ -160,6 +160,11 @@ OverlapObject* Monster::GetOverlapObject()
 	return m_overlapObject;
 }
 
+Quat Monster::GetRotation()
+{
+	return m_AI->GetRotation();
+}
+
 void Monster::SetAnimationEnd()
 {
 	m_aniEnd = true;

@@ -2,6 +2,8 @@
 
 #include "Player.h"
 
+class Monster;
+
 namespace network
 {
 	class OVERLAPPEDEX;
@@ -32,13 +34,14 @@ namespace game
 
 		void SendLoginPacket(Player* obj);
 		void SendPlayerIDIssuePacket(int32_t id, ProtocolID protocol);
-		void SendAddAnimateObjPacket(GameObject* obj);
+		void SendAddAnimateObjPacket(GameObject* obj, float scaleRatio = 1.f);
 		void SendAddObjPacket(GameObject* obj, float scaleRatio = 1.f);
 		void SendObjectIDPacket(int32_t objID, int32_t oldObjID);
 		void SendRemovePacket(int32_t id, server::OBJECT_TYPE type);
 		void SendPlayerTransformPacket(GameObject* obj);
 		void SendTransformPacket(GameObject* obj, float scaleRatio = 1.f);
 		void SendStatePacket(int32_t id, int32_t stateIndex);
+		void SendMonsterQuaternionPacket(Monster* obj);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

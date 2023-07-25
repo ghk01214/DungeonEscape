@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Monster_Golem.h"
 
 #include "Animator.h"
@@ -149,6 +149,11 @@ void Monster_Golem::ParsePackets()
 			case ProtocolID::WR_CHANGE_STATE_ACK:
 			{
 				m_currState = magic_enum::enum_value<GOLEM_STATE>(packet.Read<int32_t>());
+			}
+			break;
+			case ProtocolID::WR_MONSTER_QUAT_ACK:
+			{
+				Rotate(packet);
 			}
 			break;
 			default:

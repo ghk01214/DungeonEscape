@@ -713,7 +713,7 @@ namespace game
 					if (mob == nullptr)
 						continue;
 
-					m_sessions[id]->SendAddAnimateObjPacket(mob);
+					m_sessions[id]->SendAddAnimateObjPacket(mob, 50.f);
 					mob->SetTransformSendFlag(true);
 				}
 
@@ -981,33 +981,6 @@ namespace game
 			break;
 			case ProtocolID::WR_REMOVE_ACK:
 			{
-				/*if (postOver->objType == server::OBJECT_TYPE::BOSS)
-				{
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						client->SendRemovePacket(postOver->objID, postOver->objType);
-					}
-				}
-				else if (postOver->objType == server::OBJECT_TYPE::PLAYER_FIREBALL
-					or postOver->objType == server::OBJECT_TYPE::PLAYER_ICEBALL
-					or postOver->objType == server::OBJECT_TYPE::PLAYER_THUNDERBALL
-					or postOver->objType == server::OBJECT_TYPE::PLAYER_POISONBALL
-					or postOver->objType == server::OBJECT_TYPE::MONSTER_FIREBALL
-					or postOver->objType == server::OBJECT_TYPE::MONSTER_ICEBALL
-					or postOver->objType == server::OBJECT_TYPE::MONSTER_THUNDERBALL
-					or postOver->objType == server::OBJECT_TYPE::MONSTER_POISONBALL)
-				{
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						client->SendRemovePacket(postOver->objID, postOver->objType);
-					}
-				}*/
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
@@ -1017,6 +990,28 @@ namespace game
 				}
 
 				m_msgHandler->RemoveObject();
+			}
+			break;
+			case ProtocolID::WR_MONSTER_QUAT_ACK:
+			{
+				for (auto& monster : monsterObjects)
+				{
+					auto mob{ dynamic_cast<Monster*>(monster) };
+
+					if (mob == nullptr)
+						return;
+
+					if (mob->GetID() != id)
+						return;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						client->SendMonsterQuaternionPacket(mob);
+					}
+				}
 			}
 			break;
 #pragma endregion

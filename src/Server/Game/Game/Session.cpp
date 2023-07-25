@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Session.h"
 #include "Transform.h"
 #include "Monsters.hpp"
@@ -81,11 +81,12 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendAddAnimateObjPacket(GameObject* obj)
+	void CSession::SendAddAnimateObjPacket(GameObject* obj, float scaleRatio)
 	{
 		network::CPacket packet;
 		Transform* trans{ obj->GetTransform() };
 		auto pos{ trans->GetPosition() };
+		auto scale{ obj->GetTransform()->GetScale() };
 		auto objType{ obj->GetObjectType() };
 		auto fbxType{ obj->GetFBXType() };
 
@@ -95,6 +96,12 @@ namespace game
 		packet.Write<float>(pos.x);
 		packet.Write<float>(pos.y);
 		packet.Write<float>(pos.z);
+
+		packet.Write<float>(scale.x);
+		packet.Write<float>(scale.y);
+		packet.Write<float>(scale.z);
+
+		packet.Write<float>(scaleRatio);
 
 		switch (fbxType)
 		{
@@ -274,6 +281,19 @@ namespace game
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_CHANGE_STATE_ACK);
 		packet.Write<int32_t>(stateIndex);
+
+		Send(packet);
+	}
+
+	void CSession::SendMonsterQuaternionPacket(Monster* obj)
+	{
+		network::CPacket packet;
+		auto rotation{ obj->GetRotation() };
+
+		packet.WriteID(obj->GetID());
+		packet.WriteProtocol(ProtocolID::WR_MONSTER_QUAT_ACK);
+		packet.Write<float>(rotation.y);
+		packet.Write<float>(rotation.w);
 
 		Send(packet);
 	}

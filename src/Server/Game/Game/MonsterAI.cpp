@@ -407,6 +407,11 @@ physx::PxQuat MonsterAI::GetRotation_For_Pattern(physx::PxVec3 xzDir)
 	return rotation;
 }
 
+Quat MonsterAI::GetRotation()
+{
+	return m_rotation;
+}
+
 
 
 

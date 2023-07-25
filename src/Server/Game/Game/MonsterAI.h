@@ -49,6 +49,7 @@ public:
 	physx::PxVec3 GetReverseXZDir();
 	physx::PxVec3 GetOldXZDir();
 	physx::PxQuat GetRotation_For_Pattern(physx::PxVec3 xzDir);
+	Quat GetRotation();
 protected:
 	Monster* m_monster;
 	std::vector<MonsterSkill*> m_skillSizeHolder;
@@ -56,6 +57,7 @@ protected:
 	Vec3 m_targetPos;
 	Vec3 m_targetDir;
 	Vec3 m_monsterLook;
+	Quat m_rotation;
 
 	bool m_AIWait = false;					//카운터 대기를 위해
 

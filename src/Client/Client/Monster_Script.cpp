@@ -27,9 +27,9 @@ void Monster_Script::Start()
 {
 	m_aniEnd = false;
 
-	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
-	matWorld *= Matrix::CreateScale(2.5f);
-	GetTransform()->SetWorldMatrix(matWorld);
+	//Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	//matWorld *= Matrix::CreateScale(2.5f);
+	//GetTransform()->SetWorldMatrix(matWorld);
 }
 
 void Monster_Script::Update()
@@ -73,10 +73,6 @@ void Monster_Script::Transform(network::CPacket& packet)
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
-	//Vec3 rot;
-	//rot.x = packet.Read<float>();
-	//rot.y = packet.Read<float>();
-	//rot.z = packet.Read<float>();
 	Quat quat;
 	quat.x = packet.Read<float>();
 	quat.y = packet.Read<float>();
@@ -90,9 +86,13 @@ void Monster_Script::Transform(network::CPacket& packet)
 
 	float scaleRatio{ packet.Read<float>() };
 
+	quat.x = 0.f;
+	quat.z = 0.f;
+
 	pos.y -= m_halfHeight;
 
 	Matrix matWorld{ Matrix::CreateScale(scale / scaleRatio) };
+
 	if (quat.y == 0.f)
 	{
 		matWorld = GetTransform()->GetWorldMatrix();
@@ -100,7 +100,7 @@ void Monster_Script::Transform(network::CPacket& packet)
 	}
 	else
 	{
-		matWorld *= Matrix::CreateFromQuaternion(Quat{ 0.f, quat.y, 0.f, quat.w });
+		matWorld *= Matrix::CreateFromQuaternion(quat);
 		matWorld *= Matrix::CreateTranslation(pos);
 	}
 
@@ -110,4 +110,23 @@ void Monster_Script::Transform(network::CPacket& packet)
 	//auto t{ GetTransform()->GetWorldPosition() };
 	//std::cout << std::format("monster id - {}, t : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
 #pragma endregion
+}
+
+void Monster_Script::Rotate(network::CPacket& packet)
+{
+	int32_t id{ packet.ReadID() };
+
+	Quat quat;
+	quat.x = 0.f;
+	quat.y = packet.Read<float>();
+	quat.z = 0.f;
+	quat.w = packet.Read<float>();
+
+	auto pos{ GetTransform()->GetWorldMatrix().Translation() };
+	auto scale{ GetTransform()->GetScale() };
+
+	Matrix matWorld{ Matrix::CreateScale(scale) };
+	matWorld *= Matrix::CreateFromQuaternion(quat);
+	matWorld *= Matrix::CreateTranslation(pos);
+	GetTransform()->SetWorldMatrix(matWorld);
 }
