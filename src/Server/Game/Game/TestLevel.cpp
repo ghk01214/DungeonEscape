@@ -40,8 +40,8 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	//LoadBasicMap3();
-	LoadMap();
+	LoadBasicMap4();
+	//LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -181,9 +181,9 @@ void TestLevel::LoadBasicMap3()
 {
 	auto objmgr = ObjectManager::GetInstance();
 	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(-300.f, 1000.f, 0.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	//auto PlayerObject2 = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 2, Vec3(-300.f, 1000.f, 100.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	auto PlayerObject2 = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 2, Vec3(-300.f, 1000.f, 300.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
 
 #pragma region CenterBox(0,0,0)
@@ -203,6 +203,20 @@ void TestLevel::LoadBasicMap3()
 
 #pragma region Plane
 	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(750, 0, 0), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
+	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+	MapPlaneObject->ApplyRequestedLayers();
+#pragma endregion
+}
+
+void TestLevel::LoadBasicMap4()
+{
+	auto objmgr = ObjectManager::GetInstance();
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0, -750.0749, 7000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	
+#pragma region Plane
+	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(500.f, -750.f, 8520.f), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
 	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 	MapPlaneObject->ApplyRequestedLayers();

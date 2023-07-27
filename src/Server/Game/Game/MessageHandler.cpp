@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -422,7 +422,7 @@ namespace game
 		if (msg.objType == server::OBJECT_TYPE::PLAYER)
 		{
 			// Weeper 조우 위치
-			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 500.f, -750.f, 8520.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(0.f + msg.playerID * 500.f, -500.f, 8520.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 			// 돌 부수기 기믹 위치
 			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(3000.f, -1790.f, 20920.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
 			//Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, Vec3(4010.f, -1790.f, 20670.f + msg.playerID * 100.f), Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };

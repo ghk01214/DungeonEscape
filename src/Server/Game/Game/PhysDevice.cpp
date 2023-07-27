@@ -101,7 +101,7 @@ void PhysDevice::StepSim(double timeDelta)
 #else
 	// 릴리즈 모드
 	//m_Scene->simulate(timeDelta * 10.f);
-	m_Scene->simulate(1 / 360.f);
+	m_Scene->simulate(1 / 120.f);
 #endif
 	m_Scene->fetchResults(true);
 }

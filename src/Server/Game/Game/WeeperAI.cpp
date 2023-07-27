@@ -58,10 +58,19 @@ void WeeperAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
+	static std::uniform_int_distribution<int> count(1,3);
+	static std::uniform_int_distribution<int> schedule(static_cast<int>(WEEPER_SCHEDULE::CAST1), static_cast<int>(WEEPER_SCHEDULE::CAST4));
+
+	for (int i = 0; i < count(dre); ++i)
+	{
+		m_scheduler.emplace_back(static_cast<WEEPER_SCHEDULE>(schedule(dre)));
+		//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	}
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
+
 
 
 	std::cout << "Filled Schedule" << std::endl;

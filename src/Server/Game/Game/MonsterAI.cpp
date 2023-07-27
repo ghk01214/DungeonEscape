@@ -70,15 +70,14 @@ void MonsterAI::SetRandomTarget()
 	if (!players)
 		return;
 
-	if (players->GetGameObjects().size() < 1)
+	if (players->GetGameObjects().size() < 1)										//플레이어가 한명밖에 없으면 함수종료
 		return;
 
 	Vec3 monsterPos = m_monster->GetControllerPosition();
+
 	while (1)
 	{
 		auto newTarget = players->SelectRandomObject<Player>();						//랜덤 플레이어 선택
-		if (m_target == newTarget && players->GetGameObjects().size() > 1)			//남은 플레이어가 1명보다 많고, 랜덤선정이 중복플레이어를 타겟으로 삼으면 continue
-			continue;
 
 		if (newTarget)																//유효값 확인
 		{
@@ -91,6 +90,8 @@ void MonsterAI::SetRandomTarget()
 			}
 		}
 	}
+
+
 }
 
 void MonsterAI::UpdateTargetPos()
