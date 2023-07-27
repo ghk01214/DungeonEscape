@@ -1,4 +1,4 @@
-﻿// Client.cpp : 애플리케이션에 대한 진입점을 정의합니다.
+// Client.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
 
 #include "pch.h"
@@ -203,8 +203,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 		case WM_DESTROY:
 		{
-			GET_NETWORK->EndThreadProcess();
-			GET_NETWORK->CloseThread();
+			if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
+			{
+				GET_NETWORK->EndThreadProcess();
+				GET_NETWORK->CloseThread();
+			}
+
 			PostQuitMessage(0);
 		}
 		break;
