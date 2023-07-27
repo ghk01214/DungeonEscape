@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Button_Script.h" />
     <ClInclude Include="Lobby_Script.h" />
     <ClInclude Include="Lobby_StartButton.h" />
     <ClInclude Include="Logo_Script.h" />
@@ -192,8 +193,10 @@
     <ClInclude Include="Scripts.hpp" />
     <ClInclude Include="Skill_Script.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="UI_Script.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Button_Script.cpp" />
     <ClCompile Include="Lobby_Script.cpp" />
     <ClCompile Include="Lobby_StartButton.cpp" />
     <ClCompile Include="Logo_Script.cpp" />
@@ -225,6 +228,7 @@
     <ClCompile Include="Scene_Loading.cpp" />
     <ClCompile Include="Scene_Logo.cpp" />
     <ClCompile Include="Skill_Script.cpp" />
+    <ClCompile Include="UI_Script.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc" />

@@ -93,6 +93,9 @@
     <Filter Include="소스 파일\Objects\01. UI\Lobby">
       <UniqueIdentifier>{1150c4ec-3cd6-4fe1-a21a-ee139df8ca0e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\Interface">
+      <UniqueIdentifier>{3c41b792-484a-41b4-92fc-83b35010d9f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -170,9 +173,6 @@
     <ClInclude Include="Logo_Start.h">
       <Filter>소스 파일\Objects\01. UI\Logo</Filter>
     </ClInclude>
-    <ClInclude Include="Logo_Script.h">
-      <Filter>소스 파일\Objects\01. UI</Filter>
-    </ClInclude>
     <ClInclude Include="Scene_Test.h">
       <Filter>소스 파일\Objects\00. Scene\Test</Filter>
     </ClInclude>
@@ -187,6 +187,15 @@
     </ClInclude>
     <ClInclude Include="Lobby_StartButton.h">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="Logo_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Button_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -263,9 +272,6 @@
     <ClCompile Include="Logo_Start.cpp">
       <Filter>소스 파일\Objects\01. UI\Logo</Filter>
     </ClCompile>
-    <ClCompile Include="Logo_Script.cpp">
-      <Filter>소스 파일\Objects\01. UI</Filter>
-    </ClCompile>
     <ClCompile Include="Scene_Test.cpp">
       <Filter>소스 파일\Objects\00. Scene\Test</Filter>
     </ClCompile>
@@ -280,6 +286,15 @@
     </ClCompile>
     <ClCompile Include="Lobby_StartButton.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="Logo_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Button_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

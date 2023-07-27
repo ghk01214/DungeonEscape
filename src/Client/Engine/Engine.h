@@ -43,6 +43,7 @@ public:
 	void RenderEnd();
 
 	void ResizeWindow(int32 width, int32 height);
+	void ResizeWindow(LPARAM lparam);
 
 private:
 	void ShowFps();
