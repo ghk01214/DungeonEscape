@@ -10,6 +10,7 @@
 #include "Resources.h"
 #include "Engine.h"
 
+#include "Lobby_Script.h"
 #include "Lobby_StartButton.h"
 
 Scene_Lobby::Scene_Lobby()
