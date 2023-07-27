@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "Lobby_Script.h"
+#include "Button_Script.h"
 
-class Lobby_StartButton : public Lobby_Script
+class Lobby_StartButton : public Button_Script
 {
 public:
 	enum TEXTURE_TYPE
@@ -23,9 +23,5 @@ public:
 	virtual void LateUpdate() override;
 
 public:
-	Vec3 m_pos;
-	Vec3 m_scale;
-
-	bool m_click;
 	bool m_lobbyEnd;
 };
