@@ -2,9 +2,7 @@
 #include "Scene_Loading.h"
 #include "Loader.h"
 
-#include "Scene_GamePlay.h"
-#include "Scene_Test.h"
-#include "Scene_Lobby.h"
+#include "Scenes.hpp"
 #include "GameInstance.h"
 
 #include <NetworkManager.h>
@@ -103,6 +101,11 @@ void Scene_Loading::Update()
 			case SCENE_LOBBY:
 			{
 				pScene = Scene_Lobby::Create();
+			}
+			break;
+			case SCENE_CHARACTER_SELECT:
+			{
+				pScene = Scene_CharacterSelection::Create();
 			}
 			break;
 			/*case LEVEL_BOSS:
