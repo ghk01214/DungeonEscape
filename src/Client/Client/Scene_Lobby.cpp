@@ -30,11 +30,6 @@ void Scene_Lobby::Start()
 void Scene_Lobby::Update()
 {
 	__super::Update();
-
-	/*if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::SPACE))
-	{
-		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_GAMEPLAY));
-	}*/
 }
 
 void Scene_Lobby::LateUpdate()
