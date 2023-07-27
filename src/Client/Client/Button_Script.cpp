@@ -48,7 +48,6 @@ void Button_Script::Update()
 	m_mousePos.y -= height / 2;
 	m_mousePos.y = -m_mousePos.y;
 
-	m_pos.y = -(height / 4);
 	m_scale.x = m_scaleRatio.x * width;
 	m_scale.y = m_scaleRatio.y * height;
 }

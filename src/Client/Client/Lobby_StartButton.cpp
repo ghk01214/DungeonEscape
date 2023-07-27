@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Lobby_StartButton.h"
 
 #include "MeshRenderer.h"
@@ -33,6 +33,8 @@ void Lobby_StartButton::Update()
 		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_GAMEPLAY));
 
 	__super::Update();
+
+	m_pos.y = -(static_cast<float>(GEngine->GetWindow().height) / 4);
 
 	if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))
 	{
