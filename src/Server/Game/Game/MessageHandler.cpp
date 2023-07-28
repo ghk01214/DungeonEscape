@@ -421,13 +421,13 @@ namespace game
 	{
 		if (msg.objType == server::OBJECT_TYPE::PLAYER)
 		{
-			// 골렘 방 스폰 위치
-			Vec3 pos{ 16220.f, -3888.f, 36900.f };
+			Vec3 golemTestPos(16229, -3541, 35577);				//골렘 입장위치		16229, -3541, 35577
+			Vec3 weeperTestPos(11628, -1640, 21309);			//위퍼 입장위치		11628, -1640, 21309
+			Vec3 gimmk1TestPos(3250, -1600, 22170);				//다리				3250, -1600, 22170
+			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457
+			Vec3 pos = golemTestPos;
 
-			// Weeper 방 스폰 위치
-			//Vec3 pos{ 0.f, -760.f, 8860.f };
-
-			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(50.f, 50.f, 50.f)) };
+			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
 
 			std::wstring name{};
 
