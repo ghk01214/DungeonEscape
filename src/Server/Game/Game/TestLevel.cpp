@@ -101,16 +101,16 @@ void TestLevel::LoadMap()
 	std::cout << "Map loading finished\n";
 
 	// Weeper 생성 위치
-	// 0, -749, 11020
+	//Vec3 weeperPos{ 0.f, -760.f, 11580.f };
 	// Golem 생성 위치
-	// 10220 -1610 42750
+	Vec3 golemPos{ 16220.f, -3889.f, 40470.f };
 
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Player", 3, Vec3(0.f, -549.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(10220, -1000, 32983), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); // Bridge 테스트용 위치
 	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(3760, -1400, 20920), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); //Boulder테스트용 위치
-	
-	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0.f, -749.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(10220.f, -1610.f, 42750.f), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, weeperPos, Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, golemPos, Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 }
 
 void TestLevel::LoadBasicMap1()
@@ -243,8 +243,9 @@ void TestLevel::LoadBasicMap4()
 			MeshObject->ApplyRequestedLayers();
 		}
 
+		Vec3 golemPos{ 16220.f, -3889.f, 40470.f };
 		//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(10200.000, -1000.000, 38000), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
-		auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(10200.000, -1000.000, 42000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+		auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, golemPos, Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 		std::cout << "golem room done" << std::endl;
 	}
 #pragma endregion
