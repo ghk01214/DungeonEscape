@@ -20,12 +20,12 @@ public:
 	virtual void Render();
 
 private:
-	void Init(void);
-	void CreateLayer(void);
-	void CreateUICamera(void);
-	void CreateUI(void);
-	void LoadTextures(void);
-	void CreateLights(void);
+	void Init();
+	void CreateLayer();
+	void CreateUICamera();
+	void CreateUI();
+	void LoadTextures();
+	void CreateLights();
 
 public:
 	static std::shared_ptr<CScene> Create();

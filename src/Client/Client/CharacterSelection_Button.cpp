@@ -4,9 +4,9 @@
 #include "MeshRenderer.h"
 #include "Material.h"
 #include "Input.h"
-#include "Engine.h"
 #include "Timer.h"
 
+#include "SceneManager.h"
 #include "Scene_Loading.h"
 
 CharacterSelection_Button::CharacterSelection_Button() :

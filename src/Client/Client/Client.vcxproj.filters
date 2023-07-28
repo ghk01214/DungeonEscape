@@ -96,6 +96,9 @@
     <Filter Include="소스 파일\Objects\01. UI\Interface">
       <UniqueIdentifier>{3c41b792-484a-41b4-92fc-83b35010d9f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\Loading">
+      <UniqueIdentifier>{a89f9447-0913-4781-8fb1-fd07c1c6fcd4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -206,6 +209,9 @@
     <ClInclude Include="CharacterSelection_Button.h">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClInclude>
+    <ClInclude Include="Loading_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Loading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -310,6 +316,9 @@
     </ClCompile>
     <ClCompile Include="CharacterSelection_Button.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="Loading_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Loading</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

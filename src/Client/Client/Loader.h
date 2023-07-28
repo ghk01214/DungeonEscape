@@ -15,6 +15,7 @@ public:
 	SCENE Get_SceneIndex() { return m_eScene; }
 	constexpr bool Get_Finished() const { return m_isFinished; }
 	const std::wstring& Get_LoadingText() const { return m_szLoading; }
+	constexpr int32_t GetProgress() const { return m_progress; }
 
 private:
 	HRESULT Loading(SCENE eScene);
@@ -41,6 +42,7 @@ private:
 	SCENE			m_eScene = SCENE_END;
 	bool			m_isFinished = false;
 	wstring			m_szLoading;
+	int32_t			m_progress;
 
 private:
 	HANDLE				m_hThread = 0;

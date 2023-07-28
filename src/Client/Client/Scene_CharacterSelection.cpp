@@ -65,7 +65,7 @@ void Scene_CharacterSelection::Render()
 	__super::Render();
 }
 
-void Scene_CharacterSelection::Init(void)
+void Scene_CharacterSelection::Init()
 {
 	LoadTextures();
 
@@ -75,12 +75,12 @@ void Scene_CharacterSelection::Init(void)
 	CreateLights();
 }
 
-void Scene_CharacterSelection::CreateLayer(void)
+void Scene_CharacterSelection::CreateLayer()
 {
 	GGameInstance->SetLayerName(0, L"UI");
 }
 
-void Scene_CharacterSelection::CreateUICamera(void)
+void Scene_CharacterSelection::CreateUICamera()
 {
 	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
 	camera->SetName(L"Orthographic_Camera");
@@ -99,7 +99,7 @@ void Scene_CharacterSelection::CreateUICamera(void)
 	AddGameObject(camera);
 }
 
-void Scene_CharacterSelection::CreateUI(void)
+void Scene_CharacterSelection::CreateUI()
 {
 	float width = static_cast<float>(GEngine->GetWindow().width);
 	float height = static_cast<float>(GEngine->GetWindow().height);
@@ -158,7 +158,7 @@ void Scene_CharacterSelection::CreateUI(void)
 	}
 }
 
-void Scene_CharacterSelection::LoadTextures(void)
+void Scene_CharacterSelection::LoadTextures()
 {
 	GET_SINGLE(Resources)->Load<Texture>(L"Nana", L"..\\Resources\\Texture\\Character Select\\Nana.png");
 	GET_SINGLE(Resources)->Load<Texture>(L"Mistic", L"..\\Resources\\Texture\\Character Select\\Mistic.png");
@@ -169,7 +169,7 @@ void Scene_CharacterSelection::LoadTextures(void)
 	GET_SINGLE(Resources)->Load<Texture>(L"Carmel_Selected", L"..\\Resources\\Texture\\Character Select\\Carmel_Selected.png");
 }
 
-void Scene_CharacterSelection::CreateLights(void)
+void Scene_CharacterSelection::CreateLights()
 {
 	LightDesc lightDesc;
 	lightDesc.vDirection = Vec3(0.f, -1.f, 0.5f);

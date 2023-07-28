@@ -73,19 +73,27 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 	// 여기서 리소스 추가
 
 	m_isFinished = false;
+	m_progress = 0;
 
 	// 폰트
 	Loading_GamePlayLevel_Font();
 
+	m_progress = 25;
+
 	// 텍스쳐
 	Loading_GamePlayLevel_Texture();
+
+	m_progress = 50;
 
 	// 셰이더
 	Loading_GamePlayLevel_Shader();
 
+	m_progress = 75;
+
 	// fbx 모델
 	Loading_GamePlayLevel_Fbx();
 
+	m_progress = 100;
 	m_isFinished = true;
 
 	return S_OK;
@@ -160,10 +168,15 @@ HRESULT CLoader::Loading_ForLobby()
 	// 여기서 리소스 추가
 
 	m_isFinished = false;
+	m_progress = 0;
 
 	Loading_ForLobby_Font();
+
+	m_progress = 50;
+
 	Loading_ForLobby_Texture();
 
+	m_progress = 100;
 	m_isFinished = true;
 
 	return S_OK;
@@ -190,8 +203,12 @@ HRESULT CLoader::Loading_ForCharacterSelection()
 	m_isFinished = false;
 
 	Loading_ForCharacterSelection_Font();
+
+	m_progress = 50;
+
 	Loading_ForCharacterSelection_Texture();
 
+	m_progress = 100;
 	m_isFinished = true;
 
 	return S_OK;
