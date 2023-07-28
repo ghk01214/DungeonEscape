@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -41,6 +41,8 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
 	//LoadBasicMap4();
+
+	LoadUnit_DebugMode();
 	LoadMap();
 }
 
@@ -67,6 +69,27 @@ void TestLevel::LateUpdate(double timeDelta)
 
 void TestLevel::Release(void)
 {
+}
+
+void TestLevel::LoadUnit_DebugMode()
+{
+	auto objmgr = ObjectManager::GetInstance();
+
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(16229, -3541, 35577), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
+																																							//골렘 입장위치		16229, -3541, 35577
+																																							//위퍼 입장위치		11628, -1640, 21309
+																																							//다리				3250, -1600, 22170
+																																							//돌테스트			15609, -976, 26457
+
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+
+	//몬스터
+	//위퍼 위치15037.582, -1550.337, 21630.693; 0.000, 0.000, 0.707, 0.707; 
+	//골렘 16200, -3000, 40000
+
+
+	//15000.000, -2389.500, 21050.000; 0.000, 0.000, 0.000, 1.000; 
+
 }
 
 void TestLevel::LoadMap()
@@ -99,18 +122,6 @@ void TestLevel::LoadMap()
 
 	std::system("cls");
 	std::cout << "Map loading finished\n";
-
-	// Weeper 생성 위치
-	//Vec3 weeperPos{ 0.f, -760.f, 11580.f };
-	// Golem 생성 위치
-	Vec3 golemPos{ 16220.f, -3889.f, 40470.f };
-
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Player", 3, Vec3(0.f, -549.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(10220, -1000, 32983), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); // Bridge 테스트용 위치
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(3760, -1400, 20920), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); //Boulder테스트용 위치
-
-	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, weeperPos, Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, golemPos, Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 }
 
 void TestLevel::LoadBasicMap1()
@@ -340,6 +351,8 @@ void TestLevel::LoadGimmikObject()
 
 		if (info.first == L"SM_Env_Rock_Square_Simple_01")		//돌담
 		{
+			continue;			//임시
+
 			auto boxObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Rock", locationInfo.Position, Quat(0, 0, 0, 1),
 				Vec3(locationInfo.Scale.x * doorRockRatio, locationInfo.Scale.y * doorRockRatio, locationInfo.Scale.z * doorRockRatio));
 

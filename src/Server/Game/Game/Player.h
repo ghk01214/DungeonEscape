@@ -11,40 +11,40 @@ class Player : public GameObject
 public:
 	enum PLAYER_STATE
 	{
-		AERT,
-		ATK0,
-		ATK1,
-		ATK2,
-		ATK3,
-		ATK4,
+		AERT,			// 0.96
+		ATK0,			// 0.8(공격 0.24)
+		ATK1,			// 0.8(공격 0.24)
+		ATK2,			// 0.8(공격 0.12)
+		ATK3,			// 0.8(공격 0.64)
+		ATK4,			// 0.8(공격 0.12)
 
-		BLOCK,
-		DAMAGE,
+		BLOCK,			// 0.8
+		DAMAGE,			// 0.8
 
-		DASH,
-		DIE0,
-		DIE1,
-		DIE2,
-		IDLE1,
-		IDLE2,
-		IDLE3,
-		JUMP_START,
-		MOVE,
-		MOVE_LEFT,
-		MOVE_RIGHT,
-		REST,
-		RUN,
-		RUN_LEFT,
-		RUN_RIGHT,
-		SHOOT,
-		SLEEP,
-		SWOON,			// 기절
-		TIRED,
-		VICTORY1,
-		VICTORY2,
-		WALK,
-		WALK_LEFT,
-		WALK_RIGHT,
+		DASH,			// 1.0
+		DIE0,			// 2.0
+		DIE1,			// 2.0
+		DIE2,			// 1.2
+		IDLE1,			// 1.24
+		IDLE2,			// 2.8
+		IDLE3,			// 4.4
+		JUMP_START,		// 1.2
+		MOVE,			// 0.8
+		MOVE_LEFT,		// 0.8
+		MOVE_RIGHT,		// 0.8
+		REST,			// 3.04
+		RUN,			// 0.52
+		RUN_LEFT,		// 0.52
+		RUN_RIGHT,		// 0.52
+		SHOOT,			// 0.64 (공격 0.28)
+		SLEEP,			// 2.0
+		SWOON,			// 기절 1.2
+		TIRED,			// 1.0
+		VICTORY1,		// 0.8
+		VICTORY2,		// 1.04
+		WALK,			// 1.0
+		WALK_LEFT,		// 1.0
+		WALK_RIGHT,		// 1.0
 
 		JUMPING,
 		JUMP_END,

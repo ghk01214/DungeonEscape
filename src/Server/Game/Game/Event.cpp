@@ -603,6 +603,20 @@ void Event::ExecuteMsg_continuous()
 			executed = true;
 		}
 	}
+
+	if (msg == "GOLEM_ATTACK3_HIT_APPLY")		//Jump에서 착지까지 반복호출
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (!playerObj)
+			return;
+
+		executed = false;
+		bool ground = playerObj->GetController()->IsOnGround();
+		if (ground)
+		{
+			playerObj->SetState(Player::PLAYER_STATE::DAMAGE);
+		}
+	}
 }
 
 
