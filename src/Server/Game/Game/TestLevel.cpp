@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -371,7 +371,7 @@ void TestLevel::LoadGimmikObject()
 
 			boxObj->ServerMessage_Init(true, false);
 		}
-		else if (info.first == L"SM_Env_Rock_Pillar_04")
+		else if (info.first == L"SM_Env_Wall_Pillar_Large_Round_01")
 		{
 			std::wstring meshname = info.first;
 			pillarObject = objmgr->AddGameObjectToLayer<PillarObject>(L"Layer_Gimmik_Pillar",
