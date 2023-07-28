@@ -865,6 +865,54 @@ namespace game
 							client->SendPlayerTransformPacket(pl);
 						}
 					}
+
+					for (auto& object : rockObjects)
+					{
+						auto rock{ dynamic_cast<MapObject*>(object) };
+
+						if (rock == nullptr)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendTransformPacket(rock, 39.0625f);
+						}
+					}
+
+					for (auto& object : boulderObjects)
+					{
+						auto boulder{ dynamic_cast<MapObject*>(object) };
+
+						if (boulder == nullptr)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendTransformPacket(boulder, 30.f);
+						}
+					}
+
+					for (auto& object : pillarObjects)
+					{
+						auto pillar{ dynamic_cast<PillarObject*>(object) };
+
+						if (pillar == nullptr)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendTransformPacket(pillar);
+						}
+					}
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::BOSS)
 				{
@@ -882,54 +930,6 @@ namespace game
 
 							client->SendTransformPacket(mob, 50.f);
 						}
-					}
-				}
-
-				for (auto& object : rockObjects)
-				{
-					auto rock{ dynamic_cast<MapObject*>(object) };
-
-					if (rock == nullptr)
-						continue;
-
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						client->SendTransformPacket(rock, 39.0625f);
-					}
-				}
-
-				for (auto& object : boulderObjects)
-				{
-					auto boulder{ dynamic_cast<MapObject*>(object) };
-
-					if (boulder == nullptr)
-						continue;
-
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						client->SendTransformPacket(boulder, 30.f);
-					}
-				}
-
-				for (auto& object : pillarObjects)
-				{
-					auto pillar{ dynamic_cast<PillarObject*>(object) };
-
-					if (pillar == nullptr)
-						continue;
-
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						client->SendTransformPacket(pillar);
 					}
 				}
 

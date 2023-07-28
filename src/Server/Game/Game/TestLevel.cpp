@@ -215,9 +215,6 @@ void TestLevel::LoadBasicMap4()
 	auto objmgr = ObjectManager::GetInstance();
 	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0, -750.0749, 7000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
-
-	
-
 	bool golemRoom = true;
 	bool defaultMap = !golemRoom;
 
@@ -227,7 +224,7 @@ void TestLevel::LoadBasicMap4()
 	{
 		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");	// Mesh 로드
 		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
-		mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Golem Room.fbx");			// Map 로드 //Server, Golem Room
+		mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드 //Server, Golem Room
 		auto& mapInfo = mapLoader.GetMapObjectInfo();
 		for (auto& info : mapInfo)
 		{
