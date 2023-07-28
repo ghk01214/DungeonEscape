@@ -12,8 +12,9 @@ public:
 	Event(std::string context, float remainTime, GameObject* subject);
 	~Event();
 
-	void Tick(float timeDelta);
-	void ExecuteMsg_Once();		//Execute 함수는 가독성을 위해 분리
+	void Tick(float timeDelta);			//시간만 소모한다
+	void Tick_TimeInterval();			//실제로 명령을 수행한다.
+	void ExecuteMsg_Once();			
 	void ExecuteMsg_continuous();		
 
 public:

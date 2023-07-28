@@ -107,7 +107,8 @@ void TestLevel::LoadMap()
 	// Golem 생성 위치
 	// 10220 -1610 42750
 
-	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0.f, -749.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Player", 3, Vec3(0.f, -549.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0.f, -749.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(10220.f, -1610.f, 42750.f), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 }
 
@@ -215,13 +216,45 @@ void TestLevel::LoadBasicMap4()
 	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0, -750.0749, 7000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(500.f, -550.f, 8520.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(0,200,-42), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
+
+	bool golemRoom = true;
+	bool defaultMap = !golemRoom;
+
+#pragma region GolemRoom
+	FBXMapLoader mapLoader;
+	if (golemRoom)
+	{
+		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");	// Mesh 로드
+		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
+		mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드 //Server, Golem Room
+		auto& mapInfo = mapLoader.GetMapObjectInfo();
+		for (auto& info : mapInfo)
+		{
+			const objectLocationInfo& locationInfo = info.second;
+
+			auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
+			   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+			   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+			   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+			);
+
+			auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+			auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
+			MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo, true);
+			MeshObject->ApplyRequestedLayers();
+		}
+	}
+#pragma endregion
+
 #pragma region Plane
-	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(500.f, -750.f, 8520.f), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
-	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
-	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
-	MapPlaneObject->ApplyRequestedLayers();
-	//L"..\\..\\..\\Client\\Resources\\FBX\\Golem Room.fbx"
+	if (defaultMap)
+	{
+		auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, -42), Quat(0, 0, 0, 1), Vec3(500, 2, 500));
+		auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+		MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+		MapPlaneObject->ApplyRequestedLayers();
+	}
 #pragma endregion
 }
 

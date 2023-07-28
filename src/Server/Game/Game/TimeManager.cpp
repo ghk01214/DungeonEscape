@@ -94,9 +94,9 @@ int TimeManager::HandleAccumulated()
 {
     int cycleCount = static_cast<int>(m_accumulateTime / m_fixedTimeScale);
     m_accumulateTime -= cycleCount * m_fixedTimeScale;
-    if (cycleCount > 10)
+    if (cycleCount > 100)
     {
-        cycleCount = 10;
+        cycleCount = 100;
         m_accumulateTime = 0.f;
     }
 

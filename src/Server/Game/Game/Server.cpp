@@ -18,6 +18,7 @@
 #include "MessageHandler.h"
 #include "Monster.h"
 #include "SkillObject.h"
+#include "EventHandler.h"
 
 #include "Weeper.h"
 
@@ -255,6 +256,8 @@ namespace game
 
 			if (interExtrapolation > 1)
 				std::cout << interExtrapolation << std::endl;
+
+			m_gameInstance->m_eventHandler->Tick(timeDelta);
 
 			if (interExtrapolation)
 			{
