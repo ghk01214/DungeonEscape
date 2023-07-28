@@ -35,6 +35,9 @@ void MonsterAI::Init()
 
 void MonsterAI::Update(float timeDelta)
 {
+	if (!m_start)
+		MonsterStart();
+
 	if (m_AIWait)
 		return;
 
@@ -70,15 +73,14 @@ void MonsterAI::SetRandomTarget()
 	if (!players)
 		return;
 
-	if (players->GetGameObjects().size() < 1)
+	if (players->GetGameObjects().size() < 1 && m_target == nullptr)				//플레이어가 한명밖에 없다면 
 		return;
 
 	Vec3 monsterPos = m_monster->GetControllerPosition();
+
 	while (1)
 	{
 		auto newTarget = players->SelectRandomObject<Player>();						//랜덤 플레이어 선택
-		if (m_target == newTarget && players->GetGameObjects().size() > 1)			//남은 플레이어가 1명보다 많고, 랜덤선정이 중복플레이어를 타겟으로 삼으면 continue
-			continue;
 
 		if (newTarget)																//유효값 확인
 		{
@@ -91,6 +93,8 @@ void MonsterAI::SetRandomTarget()
 			}
 		}
 	}
+
+
 }
 
 void MonsterAI::UpdateTargetPos()
@@ -345,6 +349,34 @@ std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string schedu
 Monster* MonsterAI::GetMonster()
 {
 	return m_monster;
+}
+
+void MonsterAI::MonsterStart()
+{
+	Layer* layer = ObjectManager::GetInstance()->GetLayer(L"Layer_Player");
+	if (!layer)
+		return;									//레이어 유효값 체크
+
+	auto players = layer->GetGameObjects();				//빈 레이어인지 체크
+	if (players.size() < 1)
+		return;
+
+	for (auto& p : players)
+	{
+		auto player = dynamic_cast<Player*>(p);
+		if (player)
+		{
+			physx::PxVec3 between = TO_PX3(m_monster->GetControllerPosition()) - TO_PX3(player->GetControllerPosition());
+			if (between.magnitude() < 4000.f)			//플레이어와의 거리 체크
+			{
+				m_start = true;
+				SetAIWait(false);
+				return;
+			}
+		}
+	}
+
+	return;
 }
 
 void MonsterAI::SetAIWait(bool value)

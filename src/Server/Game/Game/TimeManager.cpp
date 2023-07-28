@@ -55,6 +55,10 @@ void TimeManager::Update()
     m_frameTime += m_deltaTime;
     m_deltaTimeInVar += m_deltaTime;
 
+
+    //보간
+    m_accumulateTime += m_deltaTime;
+
     if (m_frameTime > 1.f)
     {
         m_fps = static_cast<uint32_t>(m_frameCountIn1s / m_frameTime);
@@ -74,4 +78,27 @@ const bool TimeManager::Is1FrameInVar()
     }
 
     return false;
+}
+
+void TimeManager::SetAccumulated(float value)
+{
+    m_accumulateTime = value;
+}
+
+float TimeManager::GetAccumulated()
+{
+    return m_accumulateTime;
+}
+
+int TimeManager::HandleAccumulated()
+{
+    int cycleCount = static_cast<int>(m_accumulateTime / m_fixedTimeScale);
+    m_accumulateTime -= cycleCount * m_fixedTimeScale;
+    if (cycleCount > 100)
+    {
+        cycleCount = 100;
+        m_accumulateTime = 0.f;
+    }
+
+    return cycleCount;
 }

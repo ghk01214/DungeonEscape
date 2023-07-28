@@ -92,18 +92,13 @@ void PhysDevice::Init()
 #pragma endregion
 }
 
-void PhysDevice::StepSim(double timeDelta)
+void PhysDevice::StepSim(int interExtrapolation)
 {
-	// 디버그 모드
-#if _DEBUG
-	//m_Scene->simulate(1 / 240.f);
-	m_Scene->simulate(1/120.f);
-#else
-	// 릴리즈 모드
-	//m_Scene->simulate(timeDelta * 10.f);
-	m_Scene->simulate(1 / 360.f);
-#endif
-	m_Scene->fetchResults(true);
+	for (int i = 0; i < interExtrapolation; ++i)
+	{
+		m_Scene->simulate(1 / 30.f);
+		m_Scene->fetchResults(true);
+	}
 }
 
 void PhysDevice::PreUpdate()
@@ -111,10 +106,10 @@ void PhysDevice::PreUpdate()
 	m_eventCallback->Notify();
 }
 
-void PhysDevice::Update(double timeDelta)
+void PhysDevice::Update(double timeDelta, int interExtrapolation)
 {
 	ClearEventCallback();
-	StepSim(timeDelta);
+	StepSim(interExtrapolation);
 }
 
 void PhysDevice::LateUpdate(double timeDelta)

@@ -8,6 +8,14 @@ EventHandler::EventHandler()
 {
 }
 
+void EventHandler::Tick(double timeDelta)
+{
+    for (int i = 0; i < m_events.size(); ++i)
+    {
+        m_events[i]->Tick(timeDelta);
+    }
+}
+
 void EventHandler::Init()
 {
 }
@@ -16,7 +24,7 @@ void EventHandler::Update(double timeDelta)
 {
     for (int i = 0; i < m_events.size(); ++i)
     {
-        m_events[i]->Tick(timeDelta);
+        m_events[i]->Tick_TimeInterval();
     }
 }
 

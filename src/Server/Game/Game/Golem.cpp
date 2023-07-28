@@ -52,6 +52,8 @@ void Golem::Init()
 
 	m_AI = m_golemAI;
 	m_overlapObject = new OverlapObject(m_AI);
+
+	m_controller->SetMoveSpeed(20.f);
 }
 
 void Golem::Update(double timeDelta)

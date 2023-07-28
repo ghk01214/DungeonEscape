@@ -91,15 +91,15 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 	{
 		float dragPower = 150.f;
 		if (distance < 600)
-			dragPower = 75.f;
+			dragPower = 65.f;
 		if (distance < 300)
-			dragPower = 30.f;
+			dragPower = 25.f;
 		if (distance < 200)
 			dragPower = 1.f;
 		playerBody->SetVelocity(PxVec3(0));
 		playerController->BounceFromAttack();
 		playerBody->SetVelocity(PxVec3(0));
-		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 700.f);
+		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 900.f);
 		playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
 
 		return true;

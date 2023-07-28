@@ -22,7 +22,7 @@ Player_Script::Player_Script(server::FBX_TYPE type, int32_t state) :
 	m_prevState{ IDLE1 },
 	m_currState{ magic_enum::enum_value<PLAYER_STATE>(state) },
 	m_radius{ 50.f },
-	m_halfHeight{ 50.f }
+	m_halfHeight{ 100.f }		// 플레이어 발 높이 위치 변경
 {
 }
 

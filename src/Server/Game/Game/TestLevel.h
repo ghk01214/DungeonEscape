@@ -14,6 +14,7 @@ public:
 	void LoadBasicMap1();
 	void LoadBasicMap2();		//서버와 연관없는 물리 함수 구현을 위한 맵 로딩
 	void LoadBasicMap3();
+	void LoadBasicMap4();
 
 
 	void LoadMapObject();

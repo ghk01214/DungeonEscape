@@ -19,7 +19,7 @@ enum class WEEPER_SCHEDULE
 	CAST2 = 3,				//하누마탄 원기옥
 	CAST3 = 4,				//광역 연속운석
 	CAST4 = 5,				//강화 평타. 강화운석 타겟발사
-	DODGE = 5				//회피동작
+	DODGE = 6				//회피동작
 };
 
 class WeeperAI : public MonsterAI
@@ -64,6 +64,6 @@ private:
 	float m_cast4Cancel_requiredHit = 3;	//Cast4를 중단시키기 위한 피격 횟수
 
 public:
-	bool m_debugmode = false;			//서버 FSM 확인용 변수
+	bool m_debugmode = true;			//서버 FSM 확인용 변수
 };
 

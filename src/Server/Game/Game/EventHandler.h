@@ -14,6 +14,9 @@ private:
 	virtual ~EventHandler() = default;
 
 public:
+	void Tick(double timeDelta);
+
+public:
 	void Init();
 	void Update(double timeDelta);
 	void LateUpdate(double timeDelta);

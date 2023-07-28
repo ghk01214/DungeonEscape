@@ -28,7 +28,10 @@ void Event::Tick(float deltaTime)
 		return;
 
 	time -= deltaTime;
+}
 
+void Event::Tick_TimeInterval()
+{
 	if (!target->GetRemoveReserved())
 	{
 		if (!executed && time < 0.f)			//RemoveReserved 비활성화, executed 거짓, 시간 음수일때만 실행

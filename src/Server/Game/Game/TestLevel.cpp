@@ -40,7 +40,7 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	//LoadBasicMap3();
+	//LoadBasicMap4();
 	LoadMap();
 }
 
@@ -83,8 +83,6 @@ void TestLevel::LoadMap()
 
 	bool debug = false;
 	auto objmgr = ObjectManager::GetInstance();
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(10220, -1000, 32983), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); // Bridge 테스트용 위치
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(3760, -1400, 20920), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); //Boulder테스트용 위치
 
 	if (debug)
 	{
@@ -103,12 +101,16 @@ void TestLevel::LoadMap()
 	std::cout << "Map loading finished\n";
 
 	// Weeper 생성 위치
-	// 0, -749, 11020
+	//Vec3 weeperPos{ 0.f, -760.f, 11580.f };
 	// Golem 생성 위치
-	// 10220 -1610 42750
+	Vec3 golemPos{ 16220.f, -3889.f, 40470.f };
 
-	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0.f, -749.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(10220.f, -1610.f, 42750.f), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Player", 3, Vec3(0.f, -549.f, 11020.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(10220, -1000, 32983), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); // Bridge 테스트용 위치
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(3760, -1400, 20920), Quat(0, 0, 0, 1), Vec3(50, 50, 50)); //Boulder테스트용 위치
+
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, weeperPos, Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, golemPos, Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 }
 
 void TestLevel::LoadBasicMap1()
@@ -181,9 +183,9 @@ void TestLevel::LoadBasicMap3()
 {
 	auto objmgr = ObjectManager::GetInstance();
 	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(-300.f, 1000.f, 0.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	//auto PlayerObject2 = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 2, Vec3(-300.f, 1000.f, 100.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
-	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	auto PlayerObject2 = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 2, Vec3(-300.f, 1000.f, 300.f), Quat(0, 0, 0, 1), Vec3(50, 50, 50));
+	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
 
 #pragma region CenterBox(0,0,0)
@@ -206,6 +208,60 @@ void TestLevel::LoadBasicMap3()
 	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 	MapPlaneObject->ApplyRequestedLayers();
+#pragma endregion
+}
+
+void TestLevel::LoadBasicMap4()
+{
+	auto objmgr = ObjectManager::GetInstance();
+
+	bool golemRoom = true;
+	bool defaultMap = !golemRoom;
+
+#pragma region GolemRoom
+	FBXMapLoader mapLoader;
+
+	if (golemRoom)
+	{
+		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");		// Mesh 로드
+		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
+		mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Golem Room.fbx");			// Map 로드 //Server, Golem Room
+		auto& mapInfo = mapLoader.GetMapObjectInfo();
+		for (auto& info : mapInfo)
+		{
+			const objectLocationInfo& locationInfo = info.second;
+
+			auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
+			   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+			   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+			   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+			);
+
+			auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+			auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
+			MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+			MeshObject->ApplyRequestedLayers();
+		}
+
+		Vec3 golemPos{ 16220.f, -3889.f, 40470.f };
+		//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(10200.000, -1000.000, 38000), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
+		auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, golemPos, Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+		std::cout << "golem room done" << std::endl;
+	}
+#pragma endregion
+
+#pragma region Plane
+	if (defaultMap)
+	{
+		auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, -42), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
+		auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+		MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+		MapPlaneObject->ApplyRequestedLayers();
+
+		auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(0,200,-42), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
+		auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(0, 200, 2000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+		//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0, -750.0749, 7000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	}
 #pragma endregion
 }
 
@@ -302,7 +358,7 @@ void TestLevel::LoadGimmikObject()
 
 			boxObj->ServerMessage_Init(true, false);
 		}
-		else if (info.first == L"SM_Env_Rock_Pillar_04")
+		else if (info.first == L"SM_Env_Wall_Pillar_Large_Round_01")
 		{
 			std::wstring meshname = info.first;
 			pillarObject = objmgr->AddGameObjectToLayer<PillarObject>(L"Layer_Gimmik_Pillar",

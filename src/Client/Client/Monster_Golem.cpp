@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Monster_Golem.h"
 
 #include "Animator.h"
@@ -20,7 +20,7 @@ Monster_Golem::Monster_Golem() :
 	m_currState{ m_prevState }
 {
 	m_radius = 100.f;
-	m_halfHeight = 250.f;
+	m_halfHeight = 250.f;		// 몬스터 발 높이 위치 변경
 }
 
 Monster_Golem::Monster_Golem(int32_t stateIndex) :
@@ -28,7 +28,7 @@ Monster_Golem::Monster_Golem(int32_t stateIndex) :
 	m_currState{ m_prevState }
 {
 	m_radius = 100.f;
-	m_halfHeight = 250.f;
+	m_halfHeight = 250.f;		// 몬스터 발 높이 위치 변경
 }
 
 Monster_Golem::~Monster_Golem()
@@ -69,8 +69,9 @@ void Monster_Golem::CheckState()
 		m_aniEnd = false;
 	}
 
-	if (m_currState == WALK or m_currState == RUN)
+	if (m_currState == WALK or m_currState == RUN or m_currState == ATTACK1)
 		GetAnimator()->SetAniSpeed(1.5f);
+
 
 	m_prevState = m_currState;
 }
