@@ -91,16 +91,16 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 	{
 		float dragPower = 150.f;
 		if (distance < 600)
-			dragPower = 65.f;
+			dragPower = 10.f;
 		if (distance < 300)
-			dragPower = 25.f;
+			dragPower = 2.f;
 		if (distance < 200)
-			dragPower = 1.f;
+			dragPower = 0.1f;
 		playerBody->SetVelocity(PxVec3(0));
 		playerController->BounceFromAttack();
 		playerBody->SetVelocity(PxVec3(0));
-		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 900.f);
-		playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
+		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 1000.f);
+		//playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
 
 		return true;
 	}
@@ -111,7 +111,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 800.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
-		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_HIT_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
+		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 		return true;
 	}
@@ -133,6 +133,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 200.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
+		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 		return true;
 	}
@@ -151,6 +152,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 1000.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 250.f);
+		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 		return true;
 	}
@@ -168,6 +170,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 
 			playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0,1,0) * 400.f);
 			playerBody->AddForce(ForceMode::Impulse, knockbackDir * 600.f);
+			EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 			return true;
 		}
 	}

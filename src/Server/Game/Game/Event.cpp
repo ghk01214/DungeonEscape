@@ -28,6 +28,11 @@ void Event::Tick(float deltaTime)
 		return;
 
 	time -= deltaTime;
+
+	if (msg == "ANIM_END_IF_SPELL_END")
+	{
+		std::cout << "remaining TIme : " << time << std::endl;
+	}
 }
 
 void Event::Tick_TimeInterval()
@@ -598,13 +603,12 @@ void Event::ExecuteMsg_continuous()
 		bool ground = playerObj->GetController()->IsOnGround();
 		if (ground)
 		{
-			playerObj->SetStun(true);
-			EventHandler::GetInstance()->AddEvent("PLAYER_STUN_OFF", 4.f, playerObj);			//5초 스턴
+			playerObj->SetState(Player::PLAYER_STATE::DAMAGE);
 			executed = true;
 		}
 	}
 
-	if (msg == "GOLEM_ATTACK3_HIT_APPLY")		//Jump에서 착지까지 반복호출
+	if (msg == "GOLEM_ATTACK_DAMAGE_APPLY")		//Jump에서 착지까지 반복호출
 	{
 		auto playerObj = dynamic_cast<Player*>(target);
 		if (!playerObj)
@@ -615,6 +619,7 @@ void Event::ExecuteMsg_continuous()
 		if (ground)
 		{
 			playerObj->SetState(Player::PLAYER_STATE::DAMAGE);
+			executed = true;
 		}
 	}
 }
