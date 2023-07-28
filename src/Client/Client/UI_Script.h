@@ -22,5 +22,6 @@ public:
 protected:
 	uint32_t m_curTextureCount = 0;
 	std::vector<shared_ptr<Texture>> m_textures;
-};
 
+	float m_alpha;
+};

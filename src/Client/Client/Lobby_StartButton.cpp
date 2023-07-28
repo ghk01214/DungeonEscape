@@ -1,9 +1,10 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Lobby_StartButton.h"
 
 #include "MeshRenderer.h"
 #include "Material.h"
 #include "Input.h"
+#include "Engine.h"
 
 #include "SceneManager.h"
 #include "Scene_Loading.h"
@@ -30,7 +31,7 @@ void Lobby_StartButton::Start()
 void Lobby_StartButton::Update()
 {
 	if (m_lobbyEnd == true)
-		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_GAMEPLAY));
+		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_CHARACTER_SELECT));
 
 	__super::Update();
 

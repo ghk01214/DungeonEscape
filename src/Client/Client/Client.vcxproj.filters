@@ -197,6 +197,15 @@
     <ClInclude Include="UI_Script.h">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
     </ClInclude>
+    <ClInclude Include="Scene_CharacterSelection.h">
+      <Filter>소스 파일\Objects\00. Scene\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes.hpp">
+      <Filter>소스 파일\Objects\00. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterSelection_Button.h">
+      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -295,6 +304,12 @@
     </ClCompile>
     <ClCompile Include="UI_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_CharacterSelection.cpp">
+      <Filter>소스 파일\Objects\00. Scene\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterSelection_Button.cpp">
+      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

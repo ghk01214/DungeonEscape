@@ -96,6 +96,7 @@ public:
 	bool      Button_Pressing(MOUSEBUTTONSTATE eDIMBState);
 	bool      Button_Down(MOUSEBUTTONSTATE eDIMBState);
 	bool      Button_Up(MOUSEBUTTONSTATE eDIMBState);
+	bool      Button_OneClick(MOUSEBUTTONSTATE eDIMBState);
 
 
 

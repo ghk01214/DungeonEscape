@@ -4,6 +4,14 @@
 
 class Button_Script : public UI_Script
 {
+protected:
+	enum TEXTURE_TYPE
+	{
+		BUTTON,
+		BUTTON_PRESSED,
+
+		MAX
+	};
 public:
 	Button_Script();
 	virtual ~Button_Script();
@@ -13,6 +21,9 @@ public:
 	virtual void Start() override;
 	virtual void Update() override;
 	virtual void LateUpdate() override;
+
+public:
+	constexpr bool GetClick() const { return m_click; }
 
 protected:
 	class CInput* m_input;

@@ -24,7 +24,7 @@ void Scene_Loading::Loading(SCENE eNextScene)
 	}
 }
 
-server::FBX_TYPE Scene_Loading::LogIn()
+void Scene_Loading::LogIn()
 {
 	std::wstring SERVER_ADDR{};
 	std::wstring ID{};
@@ -39,33 +39,11 @@ server::FBX_TYPE Scene_Loading::LogIn()
 
 	GET_NETWORK->Init(SERVER_ADDR);
 	GET_NETWORK->SendLoginPacket(ID, PWD);
+}
 
-	int32_t classNum{ 0 };
-
-	while (true)
-	{
-		std::wcout << std::format(L"Warrior = 1\n");
-		std::wcout << std::format(L"Magician = 2\n");
-		std::wcout << std::format(L"Priest = 3\n");
-		std::wcout << std::format(L"Choose player class : ");
-		std::wcin >> classNum;
-
-		if (classNum < 1 or classNum > 3)
-		{
-			std::wcout << std::format(L"잘못된 숫자를 입력했습니다. 다시 입력해 주십시오.") << std::endl;
-			std::system("pause");
-			std::system("cls");
-		}
-		else
-			break;
-	}
-
-	if (classNum == 1)
-		return server::FBX_TYPE::NANA;
-	else if (classNum == 2)
-		return server::FBX_TYPE::MISTIC;
-	else
-		return server::FBX_TYPE::CARMEL;
+void Scene_Loading::SetSelectedCharacter(server::FBX_TYPE character)
+{
+	m_character = character;
 }
 
 void Scene_Loading::Awake()
@@ -94,8 +72,9 @@ void Scene_Loading::Update()
 			case SCENE_GAMEPLAY:
 			{
 				//pScene = Scene_GamePlay::Create();
-				auto playerClass{ LogIn() };
-				pScene = Scene_Test::Create(playerClass);
+				LogIn();
+
+				pScene = Scene_Test::Create(m_character);
 			}
 			break;
 			case SCENE_LOBBY:

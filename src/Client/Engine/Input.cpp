@@ -202,3 +202,23 @@ bool CInput::Button_Up(MOUSEBUTTONSTATE eDIMBState)
 
 	return false;
 }
+
+// 버튼의 클릭 위치가 중요한게 아니라 클릭 했는지가 중요한 경우
+bool CInput::Button_OneClick(MOUSEBUTTONSTATE eDIMBState)
+{
+	// 예외처리
+	if (eDIMBState < DIMB_LBUTTON || eDIMBState >= DIMB_END)
+		return false;
+
+	// 이전에 눌림이 없고, 현재 눌림이 있는 경우
+	if (!m_bButtonState[eDIMBState] && (Get_DIMButtonState(eDIMBState) & 0x80))
+	{
+		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
+		return true;
+	}
+
+	if (m_bButtonState[eDIMBState] && !(Get_DIMButtonState(eDIMBState) & 0x80))
+		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
+
+	return false;
+}

@@ -7,7 +7,8 @@
 #include "Material.h"
 
 UI_Script::UI_Script() :
-	m_curTextureCount{ 0 }
+	m_curTextureCount{ 0 },
+	m_alpha{ 1.f }
 {
 }
 
@@ -21,12 +22,6 @@ void UI_Script::Awake()
 
 void UI_Script::Start()
 {
-	uint32_t size = GetMeshRenderer()->GetMaterialSize();
-
-	for (uint32_t i = 0; i < size; ++i)
-	{
-		GetMeshRenderer()->GetMaterial(i)->SetFloat(2, 1.f);
-	}
 }
 
 void UI_Script::Update()

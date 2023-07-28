@@ -109,6 +109,7 @@ void Scene_Lobby::CreateUI(void)
 			std::shared_ptr<Material> material = std::make_shared<Material>();
 			material->SetShader(shader);
 			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
 			meshRenderer->SetMaterial(material);
 		}
 
@@ -146,6 +147,7 @@ void Scene_Lobby::CreateUI(void)
 			std::shared_ptr<Material> material = std::make_shared<Material>();
 			material->SetShader(shader);
 			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
 			meshRenderer->SetMaterial(material);
 		}
 

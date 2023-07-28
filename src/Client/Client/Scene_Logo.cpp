@@ -30,12 +30,6 @@ void Scene_Logo::Start()
 void Scene_Logo::Update()
 {
 	__super::Update();
-
-	//if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::SPACE))
-	//{
-	//	GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_LOBBY));
-	//	GET_SINGLE(SceneManager)->LoadScene(Scene_Lobby::Create());
-	//}
 }
 
 void Scene_Logo::LateUpdate()
@@ -121,7 +115,6 @@ void Scene_Logo::CreateUI(void)
 
 	vector<shared_ptr<Texture>> textures;
 	textures.push_back(GET_SINGLE(Resources)->Get<Texture>(L"Logo_School"));
-	//textures.push_back(GET_SINGLE(Resources)->Get<Texture>(L"Logo_InGame"));
 
 	shared_ptr<Logo_Start> behaviour = make_shared<Logo_Start>();
 	behaviour->SetLogoInfo(2.f, 1.f, 1.f, textures);
@@ -133,7 +126,6 @@ void Scene_Logo::CreateUI(void)
 void Scene_Logo::LoadTextures(void)
 {
 	GET_SINGLE(Resources)->Load<Texture>(L"Logo_School", L"..\\Resources\\Texture\\Logo\\Logo_School.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Logo_InGame", L"..\\Resources\\Texture\\Logo\\Logo_InGame.PNG");
 }
 
 void Scene_Logo::CreateLights(void)

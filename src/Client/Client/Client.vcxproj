@@ -162,12 +162,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Button_Script.h" />
+    <ClInclude Include="CharacterSelection_Button.h" />
     <ClInclude Include="Lobby_Script.h" />
     <ClInclude Include="Lobby_StartButton.h" />
     <ClInclude Include="Logo_Script.h" />
     <ClInclude Include="Logo_Start.h" />
     <ClInclude Include="PhysxObject_Script.h" />
+    <ClInclude Include="Scenes.hpp" />
     <ClInclude Include="Scene_Lobby.h" />
+    <ClInclude Include="Scene_CharacterSelection.h" />
     <ClInclude Include="Scene_Test.h" />
     <ClInclude Include="Skill_Bomb_Script.h" />
     <ClInclude Include="Camera_Script.h" />
@@ -197,12 +200,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Button_Script.cpp" />
+    <ClCompile Include="CharacterSelection_Button.cpp" />
     <ClCompile Include="Lobby_Script.cpp" />
     <ClCompile Include="Lobby_StartButton.cpp" />
     <ClCompile Include="Logo_Script.cpp" />
     <ClCompile Include="Logo_Start.cpp" />
     <ClCompile Include="PhysxObject_Script.cpp" />
     <ClCompile Include="Scene_Lobby.cpp" />
+    <ClCompile Include="Scene_CharacterSelection.cpp" />
     <ClCompile Include="Scene_Test.cpp" />
     <ClCompile Include="Skill_Bomb_Script.cpp" />
     <ClCompile Include="Camera_Script.cpp" />

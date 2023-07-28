@@ -34,6 +34,9 @@ unsigned int APIENTRY ThreadEntryFunc(CLoader* pArg)
 		case SCENE_LOBBY:
 		pLoader->Loading_ForLobby();
 		break;
+		case SCENE_CHARACTER_SELECT:
+		pLoader->Loading_ForCharacterSelection();
+		break;
 	}
 
 	LeaveCriticalSection(pLoader->Get_CriticalSection());
@@ -64,6 +67,7 @@ HRESULT CLoader::Loading(SCENE eScene)
 	return S_OK;
 }
 
+#pragma region [GAME PLAY LEVEL]
 HRESULT CLoader::Loading_ForGamePlayLevel()
 {
 	// 여기서 리소스 추가
@@ -148,7 +152,9 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 
 	return S_OK;
 }
+#pragma endregion
 
+#pragma region [LOBBY]
 HRESULT CLoader::Loading_ForLobby()
 {
 	// 여기서 리소스 추가
@@ -176,3 +182,36 @@ HRESULT CLoader::Loading_ForLobby_Texture()
 
 	return S_OK;
 }
+#pragma endregion
+
+#pragma region [CHARACTER SELECTION]
+HRESULT CLoader::Loading_ForCharacterSelection()
+{
+	m_isFinished = false;
+
+	Loading_ForCharacterSelection_Font();
+	Loading_ForCharacterSelection_Texture();
+
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForCharacterSelection_Font()
+{
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_ForCharacterSelection_Texture()
+{
+	GET_SINGLE(Resources)->Load<Texture>(L"Nana", L"..\\Resources\\Texture\\Character Select\\Nana.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Mistic", L"..\\Resources\\Texture\\Character Select\\Mistic.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Carmel", L"..\\Resources\\Texture\\Character Select\\Carmel.png");
+
+	GET_SINGLE(Resources)->Load<Texture>(L"Nana_Selected", L"..\\Resources\\Texture\\Character Select\\Nana_Selected.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Mistic_Selected", L"..\\Resources\\Texture\\Character Select\\Mistic_Selected.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Carmel_Selected", L"..\\Resources\\Texture\\Character Select\\Carmel_Selected.png");
+
+	return S_OK;
+}
+#pragma endregion
