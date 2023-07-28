@@ -251,7 +251,7 @@ namespace game
 		{
 			TimeManager::GetInstance()->Update();
 
-			float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
+			double timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
 			int interExtrapolation = TimeManager::GetInstance()->HandleAccumulated();
 
 

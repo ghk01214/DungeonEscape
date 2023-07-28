@@ -13,7 +13,7 @@
 #include "CustomController.h"
 #include "EventHandler.h"
 
-Event::Event(std::string context, float remainTime, GameObject* subject) :
+Event::Event(std::string context, double remainTime, GameObject* subject) :
 	msg(context), time(remainTime), target(subject)
 {
 }
@@ -22,7 +22,7 @@ Event::~Event()
 {
 }
 
-void Event::Tick(float deltaTime)
+void Event::Tick(double deltaTime)
 {
 	if (executed)
 		return;

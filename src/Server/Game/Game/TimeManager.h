@@ -12,8 +12,8 @@ public:
 	void Init();
 	void Release();
 public:
-	float GetDeltaTime() { return m_deltaTime; }
-	float GetDeltaTimeInVar() { return m_deltaTimeInVar; }
+	double GetDeltaTime() { return m_deltaTime; }
+	double GetDeltaTimeInVar() { return m_deltaTimeInVar; }
     void Reset();
 
 	void Update();
