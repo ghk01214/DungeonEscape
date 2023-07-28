@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Monster_Golem.h"
 
 #include "Animator.h"
@@ -69,8 +69,9 @@ void Monster_Golem::CheckState()
 		m_aniEnd = false;
 	}
 
-	if (m_currState == WALK or m_currState == RUN)
+	if (m_currState == WALK or m_currState == RUN or m_currState == ATTACK1)
 		GetAnimator()->SetAniSpeed(1.5f);
+
 
 	m_prevState = m_currState;
 }
