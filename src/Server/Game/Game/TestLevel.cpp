@@ -214,9 +214,9 @@ void TestLevel::LoadBasicMap4()
 {
 	auto objmgr = ObjectManager::GetInstance();
 	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0, -750.0749, 7000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(0,200,-42), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
+
+	
 
 	bool golemRoom = true;
 	bool defaultMap = !golemRoom;
@@ -227,7 +227,7 @@ void TestLevel::LoadBasicMap4()
 	{
 		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");	// Mesh 로드
 		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
-		mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드 //Server, Golem Room
+		mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Golem Room.fbx");			// Map 로드 //Server, Golem Room
 		auto& mapInfo = mapLoader.GetMapObjectInfo();
 		for (auto& info : mapInfo)
 		{
@@ -241,9 +241,12 @@ void TestLevel::LoadBasicMap4()
 
 			auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
 			auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
-			MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo, true);
+			MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
 			MeshObject->ApplyRequestedLayers();
 		}
+
+		auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(10200.000, -1000.000, 38000), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
+		auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(10200.000, -1000.000, 42000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 	}
 #pragma endregion
 
@@ -254,6 +257,8 @@ void TestLevel::LoadBasicMap4()
 		auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 		MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 		MapPlaneObject->ApplyRequestedLayers();
+
+		//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(0,200,-42), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
 	}
 #pragma endregion
 }

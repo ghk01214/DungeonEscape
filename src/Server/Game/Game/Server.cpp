@@ -254,8 +254,8 @@ namespace game
 			float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
 			int interExtrapolation = TimeManager::GetInstance()->HandleAccumulated();
 
-			if (interExtrapolation > 1)
-				std::cout << interExtrapolation << std::endl;
+			//if (interExtrapolation > 1)
+			//	std::cout << interExtrapolation << std::endl;
 
 			m_gameInstance->m_eventHandler->Tick(timeDelta);
 

@@ -36,8 +36,6 @@ void GolemAI::Init()
 	AddSkillSize("RUN", GeometryType::Box, Vec3(250, 250, 250), true);					//돌진
 	AddSkillSize("JUMP", GeometryType::Box, Vec3(1000, 1000, 1000), false);				//돌진
 	AddSkillSize("SPELL", GeometryType::Sphere, Vec3(1500, 1500, 1500), true);			//차징 충격파 공격
-
-	m_golem->SetControllerMoveSpeed(45.f);
 }
 
 void GolemAI::Update(float timeDelta)
@@ -66,12 +64,12 @@ void GolemAI::FillSchedule()
 
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
 
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();

@@ -43,6 +43,6 @@ public:
 	float GetAccumulated();
 	int HandleAccumulated();				//accumulate값을 조정하고, 남은 값을 accumulate값에 저장. 나눗셈값을 리턴.
 private:
-	float m_fixedTimeScale = 0.0015;
+	float m_fixedTimeScale = 0.0017f;
 	float m_accumulateTime = 0.f;
 };
