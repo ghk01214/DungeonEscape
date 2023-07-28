@@ -259,9 +259,12 @@ namespace game
 
 			if (interExtrapolation)
 			{
+				m_gameInstance->m_eventHandler->Update(timeDelta);
 				m_gameInstance->Update(timeDelta, interExtrapolation);
 				m_gameInstance->LateUpdate(timeDelta, interExtrapolation);
 			}
+
+			m_gameInstance->m_eventHandler->LateUpdate(timeDelta);
 		}
 	}
 

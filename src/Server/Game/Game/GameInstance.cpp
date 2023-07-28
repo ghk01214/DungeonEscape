@@ -52,7 +52,7 @@ void GameInstance::Update(double timeDelta, int interExtrapolation)
 
 	m_testLevel->Update(timeDelta);		//
 	m_objectManager->Update(timeDelta);	//
-	m_eventHandler->Update(timeDelta);	//timescale 주기마다 1회 업데이트
+	//m_eventHandler->Update(timeDelta);	//timescale 주기마다 1회 업데이트
 
 	//clear Eventcallback > fetch/simulate
 	m_physDevice->Update(timeDelta, interExtrapolation);	//fetch > sim은 초과한 주기만큼 수행한다.
@@ -65,7 +65,7 @@ void GameInstance::LateUpdate(double timeDelta, int interExtrapolation)
 
 	m_testLevel->LateUpdate(timeDelta);
 	m_objectManager->LateUpdate(timeDelta);			//timescale 주기마다 notify > clearInfo 루프를 돈다.
-	m_eventHandler->LateUpdate(timeDelta);
+	//m_eventHandler->LateUpdate(timeDelta);
 
 	m_physDevice->LateUpdate(timeDelta);	
 }

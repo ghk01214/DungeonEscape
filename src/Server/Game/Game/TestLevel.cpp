@@ -40,10 +40,10 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	//LoadBasicMap4();
+	LoadBasicMap4();
 
-	LoadUnit_DebugMode();
-	LoadMap();
+	//LoadUnit_DebugMode();
+	//LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -227,7 +227,7 @@ void TestLevel::LoadBasicMap4()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	bool golemRoom = true;
+	bool golemRoom = false;
 	bool defaultMap = !golemRoom;
 
 #pragma region GolemRoom

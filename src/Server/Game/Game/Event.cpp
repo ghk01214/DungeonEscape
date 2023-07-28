@@ -29,10 +29,10 @@ void Event::Tick(float deltaTime)
 
 	time -= deltaTime;
 
-	if (msg == "ANIM_END_IF_SPELL_END")
-	{
-		std::cout << "remaining TIme : " << time << std::endl;
-	}
+	//if (msg == "ANIM_END_IF_SPELL_END")
+	//{
+	//	std::cout << "remaining TIme : " << time << std::endl;
+	//}
 }
 
 void Event::Tick_TimeInterval()
