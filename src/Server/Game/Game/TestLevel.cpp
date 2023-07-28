@@ -40,8 +40,8 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	LoadBasicMap4();
-	//LoadMap();
+	//LoadBasicMap4();
+	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -358,7 +358,7 @@ void TestLevel::LoadGimmikObject()
 
 			boxObj->ServerMessage_Init(true, false);
 		}
-		else if (info.first == L"SM_Env_Rock_Pillar_04")
+		else if (info.first == L"SM_Env_Wall_Pillar_Large_Round_01")
 		{
 			std::wstring meshname = info.first;
 			pillarObject = objmgr->AddGameObjectToLayer<PillarObject>(L"Layer_Gimmik_Pillar",
