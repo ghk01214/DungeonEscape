@@ -251,8 +251,16 @@ namespace game
 			TimeManager::GetInstance()->Update();
 
 			float timeDelta{ TimeManager::GetInstance()->GetDeltaTime() };
-			m_gameInstance->Update(timeDelta);
-			m_gameInstance->LateUpdate(timeDelta);
+			int interExtrapolation = TimeManager::GetInstance()->HandleAccumulated();
+
+			if (interExtrapolation > 1)
+				std::cout << interExtrapolation << std::endl;
+
+			if (interExtrapolation)
+			{
+				m_gameInstance->Update(timeDelta, interExtrapolation);
+				m_gameInstance->LateUpdate(timeDelta, interExtrapolation);
+			}
 		}
 	}
 

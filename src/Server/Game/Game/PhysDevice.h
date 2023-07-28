@@ -19,9 +19,9 @@ private:
 public:
 	void Init();
 	void PreUpdate();								
-	void StepSim(double timeDelta);
+	void StepSim(int interExtrapolation);
 	void ClearEventCallback();						//순서를 반드시 지켜주세요.
-	void Update(double timeDelta);					//PhysDevice::PreUpdate() > ObjMgr::Update() > PhysDevice::Update() > PhysDevice::Late_Update()
+	void Update(double timeDelta, int interExtrapolation);					//PhysDevice::PreUpdate() > ObjMgr::Update() > PhysDevice::Update() > PhysDevice::Late_Update()
 	void LateUpdate(double timeDelta);
 	void Release();
 public:

@@ -215,6 +215,7 @@ void TestLevel::LoadBasicMap4()
 	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0, -750.0749, 7000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(500.f, -550.f, 8520.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 #pragma region Plane
 	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(500.f, -750.f, 8520.f), Quat(0, 0, 0, 1), Vec3(5000, 2, 5000));
 	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");

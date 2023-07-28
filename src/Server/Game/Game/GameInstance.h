@@ -18,8 +18,8 @@ private:
 
 public:
 	void Init();
-	void Update(double timeDelta);
-	void LateUpdate(double timeDelta);
+	void Update(double timeDelta, int interExtrapolation);
+	void LateUpdate(double timeDelta, int interExtrapolation);
 	void Release();
 
 	ObjectManager*	m_objectManager = nullptr;
