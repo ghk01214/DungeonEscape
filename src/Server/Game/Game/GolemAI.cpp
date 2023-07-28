@@ -27,7 +27,7 @@ void GolemAI::Init()
 
 	//SkillSize 추가			//triggerObject의 2/3의 크기면 적당함
 	AddSkillSize("ATTACK1", GeometryType::Box, Vec3(200, 200, 300), false);				//어퍼컷
-	AddSkillSize("ATTACK2", GeometryType::Box, Vec3(200, 500, 300), false);				//앞펀치
+	AddSkillSize("ATTACK2", GeometryType::Box, Vec3(200, 700, 300), false);				//앞펀치
 	AddSkillSize("ATTACK3", GeometryType::Box, Vec3(200, 500, 300), false);				//찍기
 	AddSkillSize("ATTACK4", GeometryType::Box, Vec3(300, 200, 300), false);				//일반 휘두르기
 	//AddSkillSize("ATTACK4", GeometryType::Box, Vec3(1000, 1000, 500), false);			//돌진확인을 위한 디버그용값
@@ -41,8 +41,6 @@ void GolemAI::Init()
 void GolemAI::Update(float timeDelta)
 {
 	MonsterAI::Update(timeDelta);
-
-	auto state = m_golem->m_currState;	//debg
 
 	DamageCheck();
 }
@@ -106,13 +104,13 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK1;											//STATE : ATTACK1로 변경
-				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK1_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
-				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.5f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.5f, m_golem);							//			같은 시간에 애니메이션 종료
+				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK1_FUNCTIONCALL", 0.33f, m_golem);		//0.5초 후 overlapObj 활성화
+				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.f, m_golem);							//			같은 시간에 애니메이션 종료
 				//STATE : IDLE로 변경은 STATE_CHECK에서
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.7f, m_golem);						//같은 시간에 애니메이션 종료
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.1f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{

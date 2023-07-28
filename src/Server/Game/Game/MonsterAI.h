@@ -42,6 +42,8 @@ public:
 	Monster* GetMonster();
 
 public:
+	void MonsterStart();						//거리내에 플레이어가 감지되면 target값을 채우고 ai 업데이트 시작.
+
 	void SetAIWait(bool value);
 	bool GetAIWait();
 	Vec3 GetTargetPosition();
@@ -59,9 +61,11 @@ protected:
 	Vec3 m_targetDir;
 	Vec3 m_monsterLook;
 
-	bool m_AIWait = false;					//카운터 대기를 위해
+	bool m_AIWait = true;					
 
 	float m_detectRange;					//몬스터 인식 범위
 	float m_targetPos_UpdateInterval;		//플레이어 위치 갱신 주기
+
+	bool m_start = false;					//작동시작
 };
 

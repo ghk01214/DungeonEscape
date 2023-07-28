@@ -38,8 +38,6 @@ void WeeperAI::Update(float timeDelta)
 {
 	MonsterAI::Update(timeDelta);
 
-	auto state = m_weeper->m_currState;	//debg
-
 	DamageCheck();
 }
 
