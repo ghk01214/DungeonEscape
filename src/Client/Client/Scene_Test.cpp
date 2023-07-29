@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include <NetworkManager.h>
 
 #include "Scene_Test.h"
@@ -778,7 +778,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Weeper Cast2";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
-			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
+			objectDesc.vScale = { 0.3f, 0.3f, 0.3f };
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
@@ -786,6 +786,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Weeper Cast3";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+			objectDesc.vScale = { 2.f, 2.f, 2.f };
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST4_BALL:
