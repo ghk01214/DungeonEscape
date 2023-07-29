@@ -20,6 +20,43 @@ void MonsterRangeAttack::Update()
 
 void MonsterRangeAttack::LateUpdate()
 {
+	ParsePackets();
+}
+
+void MonsterRangeAttack::ParsePackets()
+{
+	auto size{ GetNetwork()->GetRecvQueueSize() };
+
+	if (size == 0)
+		return;
+
+	auto packets{ GetNetwork()->GetRecvPackets() };
+
+	if (packets.empty() == true)
+		return;
+
+	GetNetwork()->ClearRecvQueue(size);
+
+	for (int32_t i = 0; i < size; ++i)
+	{
+		if (packets.empty() == true)
+			return;
+
+		auto packet{ packets.front() };
+
+		switch (packet.ReadProtocol())
+		{
+			case ProtocolID::WR_TRANSFORM_ACK:
+			{
+				Transform(packet);
+			}
+			break;
+			default:
+			break;
+		}
+
+		packets.pop_front();
+	}
 }
 
 void MonsterRangeAttack::Transform(network::CPacket& packet)
