@@ -111,6 +111,25 @@
 		MAX
 	};
 
+	enum class PATTERN_TYPE
+	{
+		NONE = 0,
+
+		WEEPER1,
+		WEEPER2,
+		WEEPER3,
+		WEEPER4,
+
+		GOLEM1,
+		GOLEM2,
+		GOLEM3,
+		GOLEM4,
+		GOLEM5,
+		GOLEM6,
+
+		MAX
+	};
+
 	enum class FBX_TYPE : uint8_t
 	{
 		NONE = 0,

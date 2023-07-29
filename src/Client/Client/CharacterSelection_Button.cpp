@@ -44,7 +44,7 @@ void CharacterSelection_Button::Update()
 	{
 		//if (m_pos.y - (m_scale.y / 2) <= m_mousePos.y and m_mousePos.y <= m_pos.y + (m_scale.y / 2))
 		{
-			if (m_input->Button_OneClick(CInput::DIMB_LBUTTON) == true)
+			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true and m_click == false)
 				m_click = true;
 		}
 	}
@@ -88,7 +88,7 @@ void CharacterSelection_Button::FadeOutToShowLoadingScene()
 
 	accTime += DELTA_TIME;
 
-	if (accTime > 3.f)
+	if (accTime > 3.f and m_click == true)
 	{
 		auto nextScene{ std::dynamic_pointer_cast<Scene_Loading>(Scene_Loading::Create(SCENE_GAMEPLAY)) };
 

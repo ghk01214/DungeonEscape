@@ -15,7 +15,9 @@
 #include <NetworkManager.h>
 #include <Network.h>
 
-Monster_Script::Monster_Script()
+Monster_Script::Monster_Script() :
+	m_aniEnd{ false },
+	m_pattern{ server::PATTERN_TYPE::NONE }
 {
 }
 
@@ -129,4 +131,12 @@ void Monster_Script::Rotate(network::CPacket& packet)
 	matWorld *= Matrix::CreateFromQuaternion(quat);
 	matWorld *= Matrix::CreateTranslation(pos);
 	GetTransform()->SetWorldMatrix(matWorld);
+}
+
+void Monster_Script::SetPatternType(network::CPacket& packet)
+{
+	int32_t id{ packet.ReadID() };
+	int32_t patternIndex{ packet.Read<int32_t>() };
+
+	m_pattern = magic_enum::enum_cast<server::PATTERN_TYPE>(patternIndex).value();
 }

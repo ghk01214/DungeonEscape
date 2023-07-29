@@ -85,6 +85,7 @@ namespace network
 		int32_t m_id;
 
 		bool m_login;
+		bool m_alreadyAdded;
 
 		std::unordered_map<int32_t, NetworkGameObject> m_objects;
 	};

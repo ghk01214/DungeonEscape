@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include <NetworkManager.h>
 
 #include "Scene_Test.h"
@@ -438,6 +438,9 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 {
 	int32_t id{ packet.ReadID() };
 
+	if (m_overlappedObjects.contains(id) == true)
+		return;
+
 	Vec3 pos;
 	pos.x = packet.Read<float>();
 	pos.y = packet.Read<float>();
@@ -488,6 +491,8 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 
 	AddObjectToScene(objType, gameObjects);
 	GET_NETWORK->AddNetworkObject(id, gameObjects);
+
+	m_overlappedObjects.insert(id);
 
 	switch (objType)
 	{
@@ -568,6 +573,9 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 	{
 		case server::OBJECT_TYPE::BOSS:
 		{
+			if (m_overlappedObjects.contains(id) == false)
+				return;
+
 			auto boss{ GetBoss() };
 			network::NetworkGameObject removeObject;
 
@@ -582,10 +590,14 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			std::cout << "REMOVE BOSS" << std::endl;
 
 			GET_NETWORK->RemoveNetworkObject(id);
+			m_overlappedObjects.erase(id);
 		}
 		break;
 		case server::OBJECT_TYPE::MONSTER:
 		{
+			if (m_overlappedObjects.contains(id) == false)
+				return;
+
 			auto monster{ GetMonster() };
 			network::NetworkGameObject removeObject;
 
@@ -600,6 +612,8 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			std::cout << "REMOVE MONSTER" << std::endl;
 
 			GET_NETWORK->RemoveNetworkObject(id);
+
+			m_overlappedObjects.erase(id);
 		}
 		break;
 #pragma region [SKILL]
@@ -790,15 +804,22 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Weeper Cast1";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+			objectDesc.script = std::make_shared<WeeperSkill1_Script>();
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
+		{
+			objectDesc.strName = L"Weeper Cast2";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
+			objectDesc.script = std::make_shared<WeeperSkill2_Script>();
+			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
+		}
+		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
 			objectDesc.strName = L"Weeper Cast2";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+			objectDesc.script = std::make_shared<WeeperSkill2Scatter_Script>();
 			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
 		}
 		break;
@@ -806,14 +827,14 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Weeper Cast3";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+			objectDesc.script = std::make_shared<WeeperSkill3_Script>();
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST4_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast4";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Stone Bullet2.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+			objectDesc.script = std::make_shared<WeeperSkill1_Script>();
 		}
 		break;
 		case server::FBX_TYPE::MONSTER_ICEBALL:

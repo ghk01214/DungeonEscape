@@ -297,4 +297,15 @@ namespace game
 
 		Send(packet);
 	}
+
+	void CSession::SendMonsterPatternPacket(int32_t id, int32_t patternIndex)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_MONSTER_PATTERN_ACK);
+		packet.Write<int32_t>(patternIndex);
+
+		Send(packet);
+	}
 }

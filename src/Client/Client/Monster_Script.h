@@ -21,10 +21,13 @@ protected:
 protected:
 	void Transform(network::CPacket& packet);
 	void Rotate(network::CPacket& packet);
+	void SetPatternType(network::CPacket& packet);
 
 protected:
 	float m_radius;
 	float m_halfHeight;
 
 	bool m_aniEnd;
+
+	server::PATTERN_TYPE m_pattern;
 };

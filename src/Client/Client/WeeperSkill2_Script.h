@@ -1,16 +1,15 @@
 ﻿#pragma once
 
-#include "MonoBehaviour.h"
+#include "MonsterRangeAttack.h"
 
-class MonsterRangeAttack : public MonoBehaviour
+class WeeperSkill2_Script : public MonsterRangeAttack
 {
 public:
 	virtual void Start() override;
 	virtual void Update() override;
 	virtual void LateUpdate() override;
 
-protected:
-	void Transform(network::CPacket& packet);
-
+public:
+	void ParsePackets();
 };
 

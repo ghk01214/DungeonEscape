@@ -6,6 +6,8 @@
 #include "SkillObject.h"
 #include "EventHandler.h"
 
+#include "MessageHandler.h"
+
 using namespace std;
 
 WeeperAI::WeeperAI(Weeper* weeper) :
@@ -63,12 +65,12 @@ void WeeperAI::FillSchedule()
 	//{
 	//	m_scheduler.emplace_back(static_cast<WEEPER_SCHEDULE>(schedule(dre)));
 	//}
-	
+
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
-	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
-	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 
 
 
@@ -112,6 +114,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 1.5f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.5f, m_weeper);
+
+				ServerMessage_SendMonsterPattern(schedule);
 			}
 			else
 			{
@@ -137,6 +141,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				ReportSchedule();
 
 				QuatUpdateForClient();
+
+				ServerMessage_SendMonsterPattern(schedule);
 			}
 			else
 			{
@@ -163,6 +169,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 1.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 2.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 3.f, m_weeper);
+
+				ServerMessage_SendMonsterPattern(schedule);
 			}
 			else
 			{
@@ -186,6 +194,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_CAST4_LOOP", 2.73f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST4", 2.73f, m_weeper);
+
+				ServerMessage_SendMonsterPattern(schedule);
 			}
 			else
 			{
@@ -296,4 +306,21 @@ void WeeperAI::ReportSchedule()
 		std::cout << i << " : " << magic_enum::enum_name(m_scheduler[i]) << std::endl;
 	}
 	std::cout << std::endl << std::endl;
+}
+
+void WeeperAI::ServerMessage_SendMonsterPattern(WEEPER_SCHEDULE schedule)
+{
+	game::TIMER_EVENT ev{ ProtocolID::WR_MONSTER_PATTERN_ACK };
+	ev.objID = m_weeper->m_id;
+
+	if (schedule == WEEPER_SCHEDULE::CAST1)
+		ev.state = magic_enum::enum_integer(server::PATTERN_TYPE::WEEPER1);
+	else if (schedule == WEEPER_SCHEDULE::CAST2)
+		ev.state = magic_enum::enum_integer(server::PATTERN_TYPE::WEEPER2);
+	else if (schedule == WEEPER_SCHEDULE::CAST3)
+		ev.state = magic_enum::enum_integer(server::PATTERN_TYPE::WEEPER3);
+	else if (schedule == WEEPER_SCHEDULE::CAST4)
+		ev.state = magic_enum::enum_integer(server::PATTERN_TYPE::WEEPER4);
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

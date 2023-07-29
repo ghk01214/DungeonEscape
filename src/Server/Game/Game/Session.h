@@ -42,6 +42,7 @@ namespace game
 		void SendTransformPacket(GameObject* obj, float scaleRatio = 1.f);
 		void SendStatePacket(int32_t id, int32_t stateIndex);
 		void SendMonsterQuaternionPacket(Monster* obj);
+		void SendMonsterPatternPacket(int32_t id, int32_t patternIndex);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

@@ -99,6 +99,9 @@
     <Filter Include="소스 파일\Objects\01. UI\Loading">
       <UniqueIdentifier>{a89f9447-0913-4781-8fb1-fd07c1c6fcd4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\03. Monster\Boss\Weeper\Attack">
+      <UniqueIdentifier>{ef8aa004-b73a-4e80-a7d0-2dd4d6134003}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -212,6 +215,18 @@
     <ClInclude Include="Loading_Script.h">
       <Filter>소스 파일\Objects\01. UI\Loading</Filter>
     </ClInclude>
+    <ClInclude Include="WeeperSkill1_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="WeeperSkill2_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="WeeperSkill3_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="WeeperSkill2Scatter_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -319,6 +334,18 @@
     </ClCompile>
     <ClCompile Include="Loading_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperSkill1_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperSkill2_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperSkill3_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperSkill2Scatter_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
