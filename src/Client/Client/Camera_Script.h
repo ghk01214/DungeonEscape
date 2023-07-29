@@ -16,6 +16,8 @@ private:
 	float m_speed;
 	float m_lengthX;
 	float m_lengthY;
-	float m_rotation;
+	float m_rotationAxisY;
+	float m_rotationAxisX;
+	float m_distance;
 };
 
