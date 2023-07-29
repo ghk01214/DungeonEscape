@@ -4,6 +4,7 @@
 
 class CustomController;
 class TriggerObject;
+class OverlapObject2;
 
 class Player : public GameObject
 {
@@ -113,6 +114,11 @@ public:
 	void SetControllerCameraLook(Vec3& value);
 	void SetMeteorAttackAvailable(bool value);
 
+public:
+	void TimeUpdate_Trigger(double deltaTime);
+	void Set_OverlapObject(bool activate);
+	physx::PxQuat GetRotation_For_Overlap(physx::PxVec3 xzDir);
+
 private:
 	void PlayerPattern_ShootBall();
 	void PlayerPattern_ShootMeteor();
@@ -127,6 +133,7 @@ private:
 private:
 	CustomController* m_controller = nullptr;
 	TriggerObject* m_attackTrigger = nullptr;
+	OverlapObject2* m_overlapObj = nullptr;
 
 	PLAYER_STATE m_prevState;
 	PLAYER_STATE m_currState;

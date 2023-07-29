@@ -185,6 +185,15 @@ void Player_Script::TurnPlayer(Vec3 from, Vec3 to)
 
 void Player_Script::MovePlayerCameraLook(void)
 {
+	switch (m_currState)
+	{
+		case DAMAGE: case ATK0: case ATK1:
+		case ATK2: case ATK3: case ATK4: case SHOOT:
+		return;
+		default:
+		break;
+	}
+
 	const auto& transform = GetTransform();
 
 	std::shared_ptr<CScene> activeScene = GET_SINGLE(SceneManager)->GetActiveScene();

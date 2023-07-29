@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include <NetworkManager.h>
 
 #include "Scene_Test.h"
@@ -34,7 +34,7 @@
 #include "Scripts.hpp"
 #include "Skill_Bomb_Script.h"
 
-#include "PhysxObject_Script.h"
+#include "HP_Script.h"
 
 Scene_Test::Scene_Test()
 {
@@ -103,6 +103,7 @@ void Scene_Test::LateUpdate()
 	PopRequestQueue(size);
 }
 
+#pragma region
 void Scene_Test::FinalUpdate()
 {
 	__super::FinalUpdate();
@@ -196,41 +197,6 @@ void Scene_Test::CreateSkyBox(shared_ptr<CScene> pScene)
 #pragma endregion
 }
 
-void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
-{
-	for (int32 i = 0; i < 6; i++)
-	{
-		shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-		obj->AddComponent(make_shared<Transform>());
-		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(-350.f + (i * 120), 250.f, 500.f));
-		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-		{
-			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-			meshRenderer->SetMesh(mesh);
-		}
-		{
-			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Texture");
-
-			shared_ptr<Texture> texture;
-			if (i < 3)
-				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->GetRTTexture(i);
-			else if (i < 5)
-				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->GetRTTexture(i - 3);
-			else
-				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->GetRTTexture(0);
-
-			shared_ptr<Material> material = make_shared<Material>();
-			material->SetShader(shader);
-			material->SetTexture(0, texture);
-			meshRenderer->SetMaterial(material);
-		}
-		obj->AddComponent(meshRenderer);
-		pScene->AddGameObject(obj);
-	}
-}
-
 void Scene_Test::CreateLights(shared_ptr<CScene> pScene)
 {
 	LightDesc lightDesc;
@@ -240,24 +206,6 @@ void Scene_Test::CreateLights(shared_ptr<CScene> pScene)
 	lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
 
 	pScene->AddDirectionalLight(lightDesc);
-}
-
-void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
-{
-	FBXMapLoader mapLoader;
-
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
-
-	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
-
-	for (auto& mapObject : mapObjects)
-	{
-		mapObject->SetCheckFrustum(false);
-		pScene->AddGameObject(mapObject);
-	}
 }
 
 void Scene_Test::CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player)
@@ -329,6 +277,132 @@ void Scene_Test::CreateSphere(shared_ptr<CScene> pScene)
 	}
 
 	pScene->AddGameObject(gameObjects);
+}
+
+void Scene_Test::SendKeyInput()
+{
+	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
+		GET_NETWORK->SendKeyInputPacket();
+}
+#pragma endregion
+
+void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
+{
+	CreateHPnSPBar();
+}
+
+void Scene_Test::CreateHPnSPBar()
+{
+	float width{ static_cast<float>(GEngine->GetWindow().width) };
+	float height{ static_cast<float>(GEngine->GetWindow().height) };
+
+	// 배경 바
+	for (int32_t i = 0; i < 2; ++i)
+	{
+		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+		obj->AddComponent(std::make_shared<Transform>());
+
+		float yPos{ -(height / 2.f) + 10.f * (i * 2 + 1) };
+
+		obj->GetTransform()->SetLocalScale(Vec3(250.f, 20.f, 1.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(0.f, yPos, 1.1f));
+
+		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+		{
+			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+			meshRenderer->SetMesh(mesh);
+		}
+
+		{
+			std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+			std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Bar");
+
+			std::shared_ptr<Material> material = std::make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
+			meshRenderer->SetMaterial(material);
+		}
+
+		obj->AddComponent(meshRenderer);
+
+		std::shared_ptr<Bar_Script> behaviour = std::make_shared<Bar_Script>();
+		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Bar"));
+
+		obj->AddComponent(behaviour);
+
+		AddGameObject(obj);
+	}
+
+	// HP & SP
+	for (int32_t i = 0; i < 2; ++i)
+	{
+		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+		obj->AddComponent(std::make_shared<Transform>());
+
+		float yPos{ 0.f };
+		std::wstring name{};
+
+		if (i == 0)
+		{
+			yPos = -(height / 2.f) + 31.f;
+			name = L"HP";
+		}
+		else
+		{
+			yPos = -(height / 2.f) + 11.f;
+			name = L"MP";
+		}
+
+		obj->GetTransform()->SetLocalScale(Vec3(240.f, 9.f, 1.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(0.f, yPos, 1.f));
+
+		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+		{
+			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+			meshRenderer->SetMesh(mesh);
+		}
+
+		{
+			std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+			std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(name);
+
+			std::shared_ptr<Material> material = std::make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
+			meshRenderer->SetMaterial(material);
+		}
+
+		obj->AddComponent(meshRenderer);
+
+		std::shared_ptr<HP_Script> behaviour = std::make_shared<HP_Script>();
+		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name));
+
+		obj->AddComponent(behaviour);
+
+		AddGameObject(obj);
+	}
+}
+
+void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
+{
+	FBXMapLoader mapLoader;
+
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
+	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
+
+	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
+
+	for (auto& mapObject : mapObjects)
+	{
+		mapObject->SetCheckFrustum(false);
+		pScene->AddGameObject(mapObject);
+	}
 }
 
 void Scene_Test::CreateSkill(shared_ptr<CScene> pScene)
@@ -464,14 +538,6 @@ std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateSkillBase(const std:
 	return gameObjects;
 }
 
-void Scene_Test::SendKeyInput()
-{
-	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
-	{
-		GET_NETWORK->SendKeyInputPacket();
-	}
-}
-
 void Scene_Test::ChangeNetworkObjectID(network::CPacket& packet)
 {
 	int32_t newID{ packet.ReadID() };
@@ -605,126 +671,6 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	GET_NETWORK->AddNetworkObject(objID, gameObjects);
 
 	m_overlappedObjects.insert(objID);
-}
-
-void Scene_Test::RemoveObject(network::CPacket& packet)
-{
-	int32_t id{ packet.ReadID() };
-	auto type{ packet.Read<server::OBJECT_TYPE>() };
-
-	Print(magic_enum::enum_name(type));
-
-	switch (type)
-	{
-		case server::OBJECT_TYPE::REMOTE_PLAYER:
-		{
-			if (m_overlappedObjects.contains(id) == false)
-				return;
-
-			auto player{ GetPlayer() };
-			network::NetworkGameObject removeObject;
-
-			for (auto& object : player)
-			{
-				if (object->GetNetwork()->GetID() == id)
-					removeObject.push_back(object);
-			}
-
-			RemovePlayer(removeObject);
-
-			std::cout << "REMOVE REMOTE PLAYER" << std::endl;
-
-			GET_NETWORK->RemoveNetworkObject(id);
-			m_overlappedObjects.erase(id);
-		}
-		break;
-		case server::OBJECT_TYPE::BOSS:
-		{
-			if (m_overlappedObjects.contains(id) == false)
-				return;
-
-			auto boss{ GetBoss() };
-			network::NetworkGameObject removeObject;
-
-			for (auto& object : boss)
-			{
-				if (object->GetNetwork()->GetID() == id)
-					removeObject.push_back(object);
-			}
-
-			RemoveBoss(removeObject);
-
-			std::cout << "REMOVE BOSS" << std::endl;
-
-			GET_NETWORK->RemoveNetworkObject(id);
-			m_overlappedObjects.erase(id);
-		}
-		break;
-		case server::OBJECT_TYPE::MONSTER:
-		{
-			if (m_overlappedObjects.contains(id) == false)
-				return;
-
-			auto monster{ GetMonster() };
-			network::NetworkGameObject removeObject;
-
-			for (auto& object : monster)
-			{
-				if (object->GetNetwork()->GetID() == id)
-					removeObject.push_back(object);
-			}
-
-			RemoveMonster(removeObject);
-
-			std::cout << "REMOVE MONSTER" << std::endl;
-
-			GET_NETWORK->RemoveNetworkObject(id);
-
-			m_overlappedObjects.erase(id);
-		}
-		break;
-#pragma region [SKILL]
-		case server::OBJECT_TYPE::PLAYER_FIREBALL:
-		case server::OBJECT_TYPE::PLAYER_ICEBALL:
-		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
-		case server::OBJECT_TYPE::PLAYER_POISONBALL:
-		case server::OBJECT_TYPE::PLAYER_METEOR:
-		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
-		case server::OBJECT_TYPE::WEEPER_CAST2_BALL:
-		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
-		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_NUCLEAR:
-		case server::OBJECT_TYPE::WEEPER_CAST3_BALL:
-		case server::OBJECT_TYPE::WEEPER_CAST4_BALL:
-		case server::OBJECT_TYPE::MONSTER_FIREBALL:
-		case server::OBJECT_TYPE::MONSTER_ICEBALL:
-		case server::OBJECT_TYPE::MONSTER_THUNDERBALL:
-		case server::OBJECT_TYPE::MONSTER_POISONBALL:
-#pragma endregion
-#pragma region [OBJECT]
-		case server::OBJECT_TYPE::MAP_OBJECT:
-		case server::OBJECT_TYPE::PHYSX_OBJECT:
-#pragma endregion
-		{
-			if (m_overlappedObjects.contains(id) == false)
-				return;
-
-			auto objects{ GetNetworkObject() };
-			network::NetworkGameObject removeObjects;
-
-			for (auto& object : objects)
-			{
-				if (object->GetNetwork()->GetID() == id)
-					removeObjects.push_back(object);
-			}
-
-			m_overlappedObjects.erase(id);
-			RemoveNetworkObject(removeObjects);
-			GET_NETWORK->RemoveNetworkObject(id);
-		}
-		break;
-		default:
-		break;
-	}
 }
 
 void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex)
@@ -880,7 +826,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Weeper Cast2";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
-			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
+			objectDesc.vScale = { 0.3f, 0.3f, 0.3f };
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
@@ -888,6 +834,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Weeper Cast3";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+			objectDesc.vScale = { 2.f, 2.f, 2.f };
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST4_BALL:
@@ -1058,6 +1005,124 @@ void Scene_Test::AddObjectEffectScript(std::shared_ptr<CGameObject>& gameObject,
 	}
 }
 
+void Scene_Test::RemoveObject(network::CPacket& packet)
+{
+	int32_t id{ packet.ReadID() };
+	auto type{ packet.Read<server::OBJECT_TYPE>() };
+
+	switch (type)
+	{
+		case server::OBJECT_TYPE::REMOTE_PLAYER:
+		{
+			if (m_overlappedObjects.contains(id) == false)
+				return;
+
+			auto player{ GetPlayer() };
+			network::NetworkGameObject removeObject;
+
+			for (auto& object : player)
+			{
+				if (object->GetNetwork()->GetID() == id)
+					removeObject.push_back(object);
+			}
+
+			RemovePlayer(removeObject);
+
+			std::cout << "REMOVE REMOTE PLAYER" << std::endl;
+
+			GET_NETWORK->RemoveNetworkObject(id);
+			m_overlappedObjects.erase(id);
+		}
+		break;
+		case server::OBJECT_TYPE::BOSS:
+		{
+			if (m_overlappedObjects.contains(id) == false)
+				return;
+
+			auto boss{ GetBoss() };
+			network::NetworkGameObject removeObject;
+
+			for (auto& object : boss)
+			{
+				if (object->GetNetwork()->GetID() == id)
+					removeObject.push_back(object);
+			}
+
+			RemoveBoss(removeObject);
+
+			std::cout << "REMOVE BOSS" << std::endl;
+
+			GET_NETWORK->RemoveNetworkObject(id);
+			m_overlappedObjects.erase(id);
+		}
+		break;
+		case server::OBJECT_TYPE::MONSTER:
+		{
+			if (m_overlappedObjects.contains(id) == false)
+				return;
+
+			auto monster{ GetMonster() };
+			network::NetworkGameObject removeObject;
+
+			for (auto& object : monster)
+			{
+				if (object->GetNetwork()->GetID() == id)
+					removeObject.push_back(object);
+			}
+
+			RemoveMonster(removeObject);
+
+			std::cout << "REMOVE MONSTER" << std::endl;
+
+			GET_NETWORK->RemoveNetworkObject(id);
+
+			m_overlappedObjects.erase(id);
+		}
+		break;
+#pragma region [SKILL]
+		case server::OBJECT_TYPE::PLAYER_FIREBALL:
+		case server::OBJECT_TYPE::PLAYER_ICEBALL:
+		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
+		case server::OBJECT_TYPE::PLAYER_POISONBALL:
+		case server::OBJECT_TYPE::PLAYER_METEOR:
+		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
+		case server::OBJECT_TYPE::WEEPER_CAST2_BALL:
+		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_NUCLEAR:
+		case server::OBJECT_TYPE::WEEPER_CAST3_BALL:
+		case server::OBJECT_TYPE::WEEPER_CAST4_BALL:
+		case server::OBJECT_TYPE::MONSTER_FIREBALL:
+		case server::OBJECT_TYPE::MONSTER_ICEBALL:
+		case server::OBJECT_TYPE::MONSTER_THUNDERBALL:
+		case server::OBJECT_TYPE::MONSTER_POISONBALL:
+#pragma endregion
+#pragma region [OBJECT]
+		case server::OBJECT_TYPE::MAP_OBJECT:
+		case server::OBJECT_TYPE::PHYSX_OBJECT:
+#pragma endregion
+		{
+			if (m_overlappedObjects.contains(id) == false)
+				return;
+
+			auto objects{ GetNetworkObject() };
+			network::NetworkGameObject removeObjects;
+
+			for (auto& object : objects)
+			{
+				if (object->GetNetwork()->GetID() == id)
+					removeObjects.push_back(object);
+			}
+
+			m_overlappedObjects.erase(id);
+			RemoveNetworkObject(removeObjects);
+			GET_NETWORK->RemoveNetworkObject(id);
+		}
+		break;
+		default:
+		break;
+	}
+}
+
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateMapObject(ObjectDesc& objectDesc)
 {
 	shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath);
@@ -1118,7 +1183,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateMainCamera(pScene);
 	CreateUICamera(pScene);
 	CreateSkyBox(pScene);
-	//CreateUI(pScene);
+	CreateUI(pScene);
 	CreateLights(pScene);
 	CreateMap(pScene);
 	//CreateBillBoard(pScene);

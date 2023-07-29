@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
+#include "Player.h"
 
 ImplementSingletone(ObjectManager);
 
@@ -72,6 +73,27 @@ bool ObjectManager::RemoveLayer(const std::wstring& layerTag)
         return true;
     }
     return false;
+}
+
+void ObjectManager::TimeUpdate_PlayerTrigger(double timeDelta)
+{
+    auto layer = ObjectManager::GetInstance()->GetLayer(L"Layer_Player");
+    if (!layer)
+        return;
+
+    auto list = layer->GetGameObjects();
+
+    if (list.size() < 1)
+        return;
+
+    for (auto& ptr : list)
+    {
+        auto player = dynamic_cast<Player*>(ptr);
+        if (player)
+            continue;
+
+        player->TimeUpdate_Trigger(timeDelta);
+    }
 }
 
 void ObjectManager::RemoveGameObjectFromLayer(const std::wstring& layerTag, GameObject* gameObject)

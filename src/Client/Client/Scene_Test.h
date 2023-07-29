@@ -40,6 +40,8 @@ private:
 	std::shared_ptr<CGameObject> CreateEffectBase(vector<shared_ptr<class Texture>> textures, float fPassingTime);
 	std::vector<std::shared_ptr<CGameObject>> CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath);
 
+	void CreateHPnSPBar();
+
 private:
 	void SendKeyInput();
 

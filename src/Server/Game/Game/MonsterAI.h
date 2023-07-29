@@ -48,6 +48,7 @@ public:
 	bool GetAIWait();
 	Vec3 GetTargetPosition();
 	Vec3 GetTargetDir();
+	Player* GetTarget();
 	physx::PxVec3 GetXZDir();
 	physx::PxVec3 GetReverseXZDir();
 	physx::PxVec3 GetOldXZDir();

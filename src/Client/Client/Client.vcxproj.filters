@@ -105,6 +105,9 @@
     <Filter Include="소스 파일\Objects\07. Effect\Weeper">
       <UniqueIdentifier>{04f9d6a2-9d34-4ab1-83a1-6c720373d309}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game">
+      <UniqueIdentifier>{02a96ad3-9cb0-4c9f-b1f9-a752b4f716e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -232,6 +235,15 @@
     </ClInclude>
     <ClInclude Include="Effect_Script.h">
       <Filter>소스 파일\Objects\07. Effect</Filter>
+<<<<<<< HEAD
+=======
+    </ClInclude>
+    <ClInclude Include="HP_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Bar_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+>>>>>>> f265e0f5521fa4886290da7ad31dd89b42c31116
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -355,6 +367,15 @@
     </ClCompile>
     <ClCompile Include="Effect_Script.cpp">
       <Filter>소스 파일\Objects\07. Effect</Filter>
+<<<<<<< HEAD
+=======
+    </ClCompile>
+    <ClCompile Include="HP_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Bar_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+>>>>>>> f265e0f5521fa4886290da7ad31dd89b42c31116
     </ClCompile>
   </ItemGroup>
 </Project>
