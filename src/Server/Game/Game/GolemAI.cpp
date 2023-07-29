@@ -60,14 +60,14 @@ void GolemAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
 
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
@@ -105,7 +105,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK1;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK1_FUNCTIONCALL", 0.33f, m_golem);		//overlapObj 활성화
-				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.f, m_golem);			//overlapObj 비활성화(+중복목록 초기화)
+				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 0.63f, m_golem);			//overlapObj 비활성화(+중복목록 초기화)
 				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.f, m_golem);							//			같은 시간에 애니메이션 종료
 				//STATE : IDLE로 변경은 STATE_CHECK에서
 
@@ -132,12 +132,12 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK2;											//STATE : ATTACK1로 변경
 				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK2_FUNCTIONCALL", 0.55f, m_golem);		//0.55초 후 overlapObj 활성화
-				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.5f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.5f, m_golem);							//			같은 시간에 애니메이션 종료
+				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 0.9f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.02f, m_golem);							//			같은 시간에 애니메이션 종료
 				//STATE : IDLE로 변경은 STATE_CHECK에서
 
-				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.f, m_golem);						//같은 시간에 애니메이션 종료
+				//SetAIWait(true);
+				//EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.05f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{
@@ -158,13 +158,13 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				//실제로 공격판정이 들어가는건 애니메이션이 살짝 진행된 후
 				m_golem->m_currState = Golem::GOLEM_STATE::ATTACK3;											//STATE : ATTACK1로 변경
-				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_FUNCTIONCALL", 0.5f, m_golem);			//0.5초 후 overlapObj 활성화
-				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 1.5f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 2.33f, m_golem);							//			같은 시간에 애니메이션 종료
+				EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_FUNCTIONCALL", 0.35f, m_golem);		//0.5초 후 overlapObj 활성화
+				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 0.6f, m_golem);			//1.5초 후	overlapObj 비활성화(+중복목록 초기화)
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.165f, m_golem);							//			같은 시간에 애니메이션 종료
 				//STATE : IDLE로 변경은 STATE_CHECK에서
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.5f, m_golem);						//같은 시간에 애니메이션 종료
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.2f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{
@@ -311,10 +311,11 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("SPELL_VULNERABLE_OFF", 9.83f, m_golem);				//카운터 시간을 놓치면 SPELL_END진입
 
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_SPELL_END", 9.83f, m_golem);			//SPELL LOOP > SPELL_END 진입
+				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_SPELL_END", 11.33f, m_golem);			//SPELL END > IDLE1 진입
 
 				EventHandler::GetInstance()->AddEvent("GOLEM_SPELL_FUNCTIONCALL", 10.36f, m_golem);			//0.53초 후 overlapObj 활성화
 				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 11.36f, m_golem);			//활성화 시간은 1초						대지충격파 유지시간 수정은 여기서
-				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_SPELL_END", 11.33f, m_golem);			//SPELL END > IDLE1 진입
+
 
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 13.33f, m_golem);						//IDLE진입 후 2초정도 있다가 AI재개
 

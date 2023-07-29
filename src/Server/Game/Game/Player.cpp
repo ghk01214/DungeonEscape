@@ -371,7 +371,7 @@ void Player::State_Check_Enter()
 		break;
 		case IDLE1:
 		{
-
+			std::cout << "dmgcheck" << std::endl;
 		}
 		break;
 		case IDLE2:
@@ -537,7 +537,6 @@ void Player::Update_Frame_Once()
 		break;
 		case DAMAGE:
 		{
-			std::cout << "확인" << std::endl;
 			m_currState = IDLE1;
 		}
 		break;

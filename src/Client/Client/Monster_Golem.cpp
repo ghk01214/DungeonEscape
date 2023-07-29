@@ -69,8 +69,12 @@ void Monster_Golem::CheckState()
 		m_aniEnd = false;
 	}
 
-	if (m_currState == WALK or m_currState == RUN or m_currState == ATTACK1)
+	if (m_currState == WALK or m_currState == RUN or m_currState == ATTACK1 or m_currState == ATTACK2)
 		GetAnimator()->SetAniSpeed(1.5f);
+	else if (m_currState == ATTACK3)
+		GetAnimator()->SetAniSpeed(2.f);
+	else
+		GetAnimator()->SetAniSpeed(1.f);
 
 
 	m_prevState = m_currState;
