@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -75,14 +75,14 @@ void TestLevel::LoadUnit_DebugMode()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(16229, -3541, 35577), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(15609, -976, 26457), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
 																																							//골렘 입장위치		16229, -3541, 35577
 																																							//위퍼 입장위치		11628, -1640, 21309
 																																							//다리				3250, -1600, 22170
 																																							//돌테스트			15609, -976, 26457
 
 	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
-	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
 	//몬스터
 	//위퍼 위치15037.582, -1550.337, 21630.693; 0.000, 0.000, 0.707, 0.707;
@@ -352,8 +352,6 @@ void TestLevel::LoadGimmikObject()
 
 		if (info.first == L"SM_Env_Rock_Square_Simple_01")		//돌담
 		{
-			continue;			//임시
-
 			auto boxObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Rock", locationInfo.Position, Quat(0, 0, 0, 1),
 				Vec3(locationInfo.Scale.x * doorRockRatio, locationInfo.Scale.y * doorRockRatio, locationInfo.Scale.z * doorRockRatio));
 
@@ -366,7 +364,7 @@ void TestLevel::LoadGimmikObject()
 
 			auto boxCollider = boxBody->GetCollider(0);
 			boxCollider->SetRestitution(0.4f);
-			boxCollider->SetRestitutionCombineMode(PhysicsCombineMode::Average);
+			boxCollider->SetRestitutionCombineMode(PhysicsCombineMode::Min);
 			boxCollider->SetFriction(0.5f);
 			boxCollider->SetFrictionCombineMode(PhysicsCombineMode::Average);
 
@@ -404,7 +402,7 @@ void TestLevel::LoadDebugMap_Bridge()
 	FBXMapLoader mapLoader;
 
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\BridgeObj.fbx");			// Mesh 로드
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Bridge.fbx");			// Map 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Bridge.fbx");					// Map 로드
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)
@@ -454,8 +452,8 @@ void TestLevel::ThrowGimmik2Ball()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	float boulderPower = 100000.f;
-	auto boulderObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Boulder", Vec3(4373,-500,20945), Quat(0, 0, 0, 1), Vec3(300,300,300));
+	float boulderPower = 100000.f;													//16276.514, -1140.000, 26758.246; 0.000, 0.000, 0.707, 0.707; 
+	auto boulderObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Boulder", Vec3(16276.514, -140, 26758.246), Quat(0, 0, 0, 1), Vec3(300,300,300));
 	auto boulderBody = boulderObj->GetComponent<RigidBody>(L"RigidBody");
 
 	boulderBody->AddCollider<SphereCollider>(boulderObj->GetTransform()->GetScale());
@@ -470,7 +468,7 @@ void TestLevel::ThrowGimmik2Ball()
 	boulderCollider->SetFriction(0.4f);
 	boulderCollider->SetFrictionCombineMode(PhysicsCombineMode::Average);
 
-	physx::PxVec3 dir = physx::PxVec3(10200,-3640, 20910) - boulderBody->GetPosition();
+	physx::PxVec3 dir = physx::PxVec3(16215, -2608, 35219) - boulderBody->GetPosition();
 	dir.normalize();
 
 	boulderBody->AddForce(ForceMode::Impulse, dir * boulderPower);
@@ -488,14 +486,8 @@ bool TestLevel::ThrowGimmik2Ball_RangeCheck()
 			continue;
 
 		Vec3 pos = player->GetControllerPosition();
-		if (pos.x > 3826 && pos.x < 4731)
-		{
-			if (pos.z > 20565 && pos.z < 21355)
-			{
-				return true;
-			}
-		}
-		return false;
+		if(TO_PX3(pos - Vec3(16028, -1140, 29001)).magnitude() < 1500)
+			return true;
 	}
 
 	return false;

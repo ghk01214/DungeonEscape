@@ -79,7 +79,7 @@ void Player::Update(double timeDelta)
 	Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
 	Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
 
-	//PlayerPattern_ATTACK_ForDebug();
+	PlayerPattern_ATTACK_ForDebug();
 
 	GameObject::Update(timeDelta);
 
@@ -371,7 +371,6 @@ void Player::State_Check_Enter()
 		break;
 		case IDLE1:
 		{
-			std::cout << "dmgcheck" << std::endl;
 		}
 		break;
 		case IDLE2:
