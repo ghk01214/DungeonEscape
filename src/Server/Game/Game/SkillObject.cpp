@@ -101,7 +101,7 @@ void SkillObject::Init()
 			m_body->GetBody()->setAngularDamping(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::NEW_LEVITATE, true);
 		}
 		break;
 
@@ -655,19 +655,21 @@ void SkillObject::MonsterSkillFire(physx::PxVec3 dir)
 void SkillObject::WeeperNuclearFire()
 {
 	auto weeper = dynamic_cast<Weeper*>(m_owner);
-	physx::PxVec3 dir = TO_PX3(weeper->GetAI()->GetTargetDir());
+	auto targetPlayer = weeper->GetAI()->GetTarget();
+	physx::PxVec3 dir = TO_PX3(targetPlayer->GetControllerPosition() - weeper->GetControllerPosition());
 	dir.normalize();
-	float power = 10000.f;
+	float power = 3500.f;
 
-	m_skillType = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER;							//충돌판단을 위한 타입변경
-	m_skillAttrib = static_cast<SKILLATTRIBUTE>(m_skillAttrib & ~SKILLATTRIBUTE::LEVITATE);			//공중 attirb 제거
-	m_body->SetMass(1000.f);																		//무겁게 변경
-	m_body->AddForce(ForceMode::Acceleration, dir * power);													//던진다
+	m_skillType = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR;							//충돌판단을 위한 타입변경
+	SetAttribute(SKILLATTRIBUTE::NEW_LEVITATE, false);													//공중 attirb 제거
+	m_body->SetMass(100.f);																			//무겁게 변경
+	m_body->AddForce(ForceMode::Acceleration, dir * power);												//던진다
 }
 
 void SkillObject::Handle_Attribute()
 {
 	Attirbute_Levitate();
+	Attirbute_New_Levitate();
 	Attribute_Guide();
 	Attribute_Guide_MeteorOnly();
 	Attribute_Ascending();
@@ -679,6 +681,22 @@ void SkillObject::Attirbute_Levitate()
 	{
 		physx::PxVec3 gravity = PhysDevice::GetInstance()->GetGravity();
 		m_body->AddForce(ForceMode::Force, -gravity * m_body->GetMass());
+	}
+}
+
+void SkillObject::Attirbute_New_Levitate()
+{
+	if (m_skillAttrib & SKILLATTRIBUTE::NEW_LEVITATE)
+	{
+		physx::PxVec3 gravity = PhysDevice::GetInstance()->GetGravity() * 1.00f;
+		m_body->AddForce(ForceMode::Force, -gravity * m_body->GetMass());
+
+		physx::PxVec3 currentVel = m_body->GetVelocity();
+		if (currentVel.y < 0)
+		{
+			currentVel.y = 0;
+			m_body->SetVelocity(currentVel);
+		}
 	}
 }
 

@@ -67,10 +67,9 @@ void WeeperAI::FillSchedule()
 	//}
 
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 
 
 
@@ -114,6 +113,11 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 1.5f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.5f, m_weeper);
+
+				SetAIWait(true);
+				EventHandler::GetInstance()->AddEvent("TIMER", 9.f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("TIMER", 15.f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("TIMER", 20.f, m_weeper);
 
 				ServerMessage_SendMonsterPattern(schedule);
 			}

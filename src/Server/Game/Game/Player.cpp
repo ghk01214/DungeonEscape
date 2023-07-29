@@ -846,29 +846,29 @@ void Player::PlayerPattern_ATTACK_ForDebug()
 	{
 		if (ball)
 		{
-			//SkillObject::SKILLOBJECTTYPE skilltype;
+			SkillObject::SKILLOBJECTTYPE skilltype;
 
-			//skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_FIREBALL;
+			skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_FIREBALL;
 
-			////투사체 위치 선정
-			//physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
-			//physx::PxVec3 playerCameraLook = m_controller->GetCameraLook().getNormalized();
+			//투사체 위치 선정
+			physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
+			physx::PxVec3 playerCameraLook = m_controller->GetCameraLook().getNormalized();
 
-			//float playerRadius = m_controller->GetCollider()->GetRadius();
-			//float skillBallHalfExtent = 50.f;
+			float playerRadius = m_controller->GetCollider()->GetRadius();
+			float skillBallHalfExtent = 50.f;
 
-			//physx::PxVec3 skillBallPosition = playerPos + playerCameraLook * (playerRadius + skillBallHalfExtent + 10);
-			//Vec3 ballPos = FROM_PX3(skillBallPosition);
+			physx::PxVec3 skillBallPosition = playerPos + playerCameraLook * (playerRadius + skillBallHalfExtent + 10);
+			Vec3 ballPos = FROM_PX3(skillBallPosition);
 
-			////투사체 생성
-			//auto objmgr = ObjectManager::GetInstance();
-			//auto layer = objmgr->GetLayer(L"Layer_SkillObject");
-			//auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-			//	(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, nullptr, this);
-			//skillObject->PlayerSkillFire(playerCameraLook);
+			//투사체 생성
+			auto objmgr = ObjectManager::GetInstance();
+			auto layer = objmgr->GetLayer(L"Layer_SkillObject");
+			auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
+				(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(skillBallHalfExtent, skillBallHalfExtent, skillBallHalfExtent), skilltype, nullptr, this);
+			skillObject->PlayerSkillFire(playerCameraLook);
 
-			PlayerPattern_ShootMeteor();
-			PlayerPattern_SingleStrike(ATK0);
+			//PlayerPattern_ShootMeteor();
+			//PlayerPattern_SingleStrike(ATK0);
 		}
 		else
 		{

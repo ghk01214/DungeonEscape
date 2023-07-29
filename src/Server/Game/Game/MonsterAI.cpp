@@ -402,6 +402,11 @@ Vec3 MonsterAI::GetTargetDir()
 	return m_targetDir;
 }
 
+Player* MonsterAI::GetTarget()
+{
+	return m_target;
+}
+
 physx::PxVec3 MonsterAI::GetXZDir()
 {
 	if (!m_target)
