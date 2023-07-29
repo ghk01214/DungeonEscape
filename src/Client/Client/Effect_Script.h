@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "Effect_Script.h"
+#include "MonoBehaviour.h"
 
-class WeeperSkill2Scatter_Script : public Effect_Script
+class Effect_Script : public MonoBehaviour
 {
 public:
 	virtual void Start() override;

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include <NetworkManager.h>
 
 #include "Scene_Test.h"
@@ -489,6 +489,7 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 
 	switch (objType)
 	{
+		case server::OBJECT_TYPE::REMOTE_PLAYER:
 		case server::OBJECT_TYPE::MONSTER:
 		case server::OBJECT_TYPE::BOSS:
 		{
@@ -548,6 +549,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 			gameObject->AddComponent(objectDesc.script);
 		}
 
+		AddObjectEffectScript(gameObject, fbxType);
 		gameObject->SetObjectType(objType);
 	}
 
@@ -562,8 +564,32 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 	int32_t id{ packet.ReadID() };
 	auto type{ packet.Read<server::OBJECT_TYPE>() };
 
+	Print(magic_enum::enum_name(type));
+
 	switch (type)
 	{
+		case server::OBJECT_TYPE::REMOTE_PLAYER:
+		{
+			if (m_overlappedObjects.contains(id) == false)
+				return;
+
+			auto player{ GetPlayer() };
+			network::NetworkGameObject removeObject;
+
+			for (auto& object : player)
+			{
+				if (object->GetNetwork()->GetID() == id)
+					removeObject.push_back(object);
+			}
+
+			RemovePlayer(removeObject);
+
+			std::cout << "REMOVE REMOTE PLAYER" << std::endl;
+
+			GET_NETWORK->RemoveNetworkObject(id);
+			m_overlappedObjects.erase(id);
+		}
+		break;
 		case server::OBJECT_TYPE::BOSS:
 		{
 			if (m_overlappedObjects.contains(id) == false)
@@ -797,22 +823,15 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Weeper Cast1";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
-			objectDesc.script = std::make_shared<WeeperSkill1_Script>();
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
-		{
-			objectDesc.strName = L"Weeper Cast2";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
-			objectDesc.script = std::make_shared<WeeperSkill2_Script>();
-			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
-		}
-		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
 			objectDesc.strName = L"Weeper Cast2";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
-			objectDesc.script = std::make_shared<WeeperSkill2Scatter_Script>();
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
 		}
 		break;
@@ -820,14 +839,14 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Weeper Cast3";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<WeeperSkill3_Script>();
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST4_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast4";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Stone Bullet2.fbx";
-			objectDesc.script = std::make_shared<WeeperSkill1_Script>();
+			objectDesc.script = std::make_shared<MonsterRangeAttack>();
 		}
 		break;
 		case server::FBX_TYPE::MONSTER_ICEBALL:
@@ -913,6 +932,76 @@ void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::sha
 		{
 			AddNetworkObject(gameObjects);
 		}
+		break;
+	}
+}
+
+void Scene_Test::AddObjectEffectScript(std::shared_ptr<CGameObject>& gameObject, server::FBX_TYPE type)
+{
+	switch (type)
+	{
+		case server::FBX_TYPE::PLAYER_FIREBALL:
+		{
+
+		}
+		break;
+		case server::FBX_TYPE::PLAYER_ICEBALL:
+		{
+
+		}
+		break;
+		case server::FBX_TYPE::PLAYER_POISONBALL:
+		{
+
+		}
+		break;
+		case server::FBX_TYPE::PLAYER_THUNDERBALL:
+		{
+
+		}
+		break;
+		case server::FBX_TYPE::PLAYER_METEOR:
+		{
+
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST1_BALL:
+		{
+			gameObject->AddComponent(std::make_shared<WeeperSkill1_Script>());
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST2_BALL:
+		{
+			gameObject->AddComponent(std::make_shared<WeeperSkill2_Script>());
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			gameObject->AddComponent(std::make_shared<WeeperSkill2Scatter_Script>());
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST3_BALL:
+		{
+			gameObject->AddComponent(std::make_shared<WeeperSkill3_Script>());
+		}
+		break;
+		case server::FBX_TYPE::MONSTER_ICEBALL:
+		{
+		}
+		break;
+		case server::FBX_TYPE::MONSTER_THUNDERBALL:
+		{
+		}
+		break;
+		case server::FBX_TYPE::MONSTER_POISONBALL:
+		{
+		}
+		break;
+		case server::FBX_TYPE::MONSTER_DARKBALL:
+		{
+		}
+		break;
+		default:
 		break;
 	}
 }

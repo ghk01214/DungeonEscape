@@ -163,6 +163,7 @@
   <ItemGroup>
     <ClInclude Include="Button_Script.h" />
     <ClInclude Include="CharacterSelection_Button.h" />
+    <ClInclude Include="Effect_Script.h" />
     <ClInclude Include="Loading_Script.h" />
     <ClInclude Include="Lobby_Script.h" />
     <ClInclude Include="Lobby_StartButton.h" />
@@ -206,6 +207,7 @@
   <ItemGroup>
     <ClCompile Include="Button_Script.cpp" />
     <ClCompile Include="CharacterSelection_Button.cpp" />
+    <ClCompile Include="Effect_Script.cpp" />
     <ClCompile Include="Loading_Script.cpp" />
     <ClCompile Include="Lobby_Script.cpp" />
     <ClCompile Include="Lobby_StartButton.cpp" />

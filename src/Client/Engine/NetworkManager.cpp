@@ -424,7 +424,7 @@ namespace network
 			{
 				int32_t id{ m_packet.ReadID() };
 
-				if (id < 3)
+				if (id == m_id)
 					RemovePlayer(id);
 				else
 					GET_SCENE->PushServerRequest(m_packet);
