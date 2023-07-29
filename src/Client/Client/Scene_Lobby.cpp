@@ -128,7 +128,7 @@ void Scene_Lobby::CreateUI(void)
 
 		obj->AddComponent(behaviour);
 
-		//AddGameObject(obj);
+		AddGameObject(obj);
 	}
 
 	// START BUTTON
