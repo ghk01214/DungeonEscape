@@ -24,6 +24,7 @@
 #include "ParticleSystem.h"
 #include "Terrain.h"
 #include "SphereCollider.h"
+#include "Effect.h"
 
 #include <Network.h>
 
@@ -359,6 +360,22 @@ void Scene_Test::CreateBillBoard(shared_ptr<CScene> pScene)
 	pScene->AddGameObject(gameObjects);
 }
 
+void Scene_Test::CreateEffect(shared_ptr<CScene> pScene)
+{
+	// 텍스쳐 생성
+	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->GetEffectTextures(L"Effect_CircleFrame_DarkBlue");
+
+	// 오브젝트 생성
+	shared_ptr<CGameObject> gameObjects = CreateEffectBase(textures, 0.0001f);
+
+	gameObjects->GetTransform()->SetLocalScale(Vec3(200.f, 200.f, 1.f));
+	Matrix matWorld = Matrix::CreateTranslation(0.f, 0.f, 0.f);
+	gameObjects->GetTransform()->SetWorldMatrix(matWorld);
+
+	// 오브젝트 추가
+	pScene->AddGameObject(gameObjects);
+}
+
 std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(vector<shared_ptr<Texture>> textures, float fPassingTime)
 {
 	// 오브젝트 생성
@@ -381,6 +398,37 @@ std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(vector<shared_ptr<T
 	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
 
 	shared_ptr<Texture> texture = gameObjects->GetBillBoard()->GetTexture();
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	material->SetTexture(0, texture);
+	meshRenderer->SetMaterial(material);
+
+	gameObjects->AddComponent(meshRenderer);
+
+	return gameObjects;
+}
+
+std::shared_ptr<CGameObject> Scene_Test::CreateEffectBase(vector<shared_ptr<class Texture>> textures, float fPassingTime)
+{
+	// 오브젝트 생성
+	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
+
+	// 위치 설정
+	gameObjects->AddComponent(make_shared<Transform>());
+
+	// 이펙트 설정
+	shared_ptr<Effect> effect = make_shared<Effect>();
+	effect->SetEffectInfo(textures, fPassingTime);
+	gameObjects->AddComponent(effect);
+
+	// MeshRenderer - 사각형 메쉬, 텍스쳐 설정
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+
+	meshRenderer->SetMesh(mesh);
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+
+	shared_ptr<Texture> texture = gameObjects->GetEffect()->GetTexture();
 	shared_ptr<Material> material = make_shared<Material>();
 	material->SetShader(shader);
 	material->SetTexture(0, texture);
@@ -967,21 +1015,25 @@ void Scene_Test::AddObjectEffectScript(std::shared_ptr<CGameObject>& gameObject,
 		break;
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
 		{
+			// 빨간 공
 			gameObject->AddComponent(std::make_shared<WeeperSkill1_Script>());
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
 		{
+			// 원기옥(큰 돌)
 			gameObject->AddComponent(std::make_shared<WeeperSkill2_Script>());
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
+			// 작은 돌
 			gameObject->AddComponent(std::make_shared<WeeperSkill2Scatter_Script>());
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
 		{
+			// 파란 공
 			gameObject->AddComponent(std::make_shared<WeeperSkill3_Script>());
 		}
 		break;
@@ -1069,8 +1121,10 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	//CreateUI(pScene);
 	CreateLights(pScene);
 	CreateMap(pScene);
-	CreateBillBoard(pScene);
+	//CreateBillBoard(pScene);
 	CreateSkill(pScene);
+
+	CreateEffect(pScene);
 
 	CreatePlayer(pScene, eType);
 }

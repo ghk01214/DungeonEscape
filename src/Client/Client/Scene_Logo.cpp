@@ -13,6 +13,8 @@
 
 #include "Logo_Start.h"
 
+#include "FontManager.h"
+
 Scene_Logo::Scene_Logo()
 {
 }
@@ -60,6 +62,8 @@ void Scene_Logo::Init(void)
 void Scene_Logo::CreateLayer(void)
 {
 	GGameInstance->SetLayerName(0, L"UI");
+
+	GET_SINGLE(FontManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 }
 
 void Scene_Logo::CreateUICamera(void)

@@ -17,6 +17,7 @@
 #include "Terrain.h"
 #include "SphereCollider.h"
 #include "MeshData.h"
+#include "FontManager.h"
 
 void SceneManager::Start()
 {
@@ -32,6 +33,12 @@ void SceneManager::Update()
 		return;
 
 	m_activeScene->Update();
+
+	const vector<shared_ptr<CGameObject>>& fonts = GET_SINGLE(FontManager)->GetFontObject();
+	for (auto& font : fonts)
+	{
+		font->Update();
+	}
 }
 
 void SceneManager::LateUpdate()
@@ -40,6 +47,12 @@ void SceneManager::LateUpdate()
 		return;
 
 	m_activeScene->LateUpdate();
+
+	const vector<shared_ptr<CGameObject>>& fonts = GET_SINGLE(FontManager)->GetFontObject();
+	for (auto& font : fonts)
+	{
+		font->LateUpdate();
+	}
 }
 
 void SceneManager::FinalUpdate()
@@ -48,6 +61,12 @@ void SceneManager::FinalUpdate()
 		return;
 
 	m_activeScene->FinalUpdate();
+
+	const vector<shared_ptr<CGameObject>>& fonts = GET_SINGLE(FontManager)->GetFontObject();
+	for (auto& font : fonts)
+	{
+		font->FinalUpdate();
+	}
 }
 
 // TEMP

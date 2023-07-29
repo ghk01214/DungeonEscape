@@ -178,7 +178,10 @@
     <ClInclude Include="BillBoard.h" />
     <ClInclude Include="BlendObject.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="Effect.h" />
     <ClInclude Include="FBXMapLoader.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FontManager.h" />
     <ClInclude Include="Network.h" />
     <ClInclude Include="CommandQueue.h" />
     <ClInclude Include="Component.h" />
@@ -238,7 +241,10 @@
     <ClCompile Include="BillBoard.cpp" />
     <ClCompile Include="BlendObject.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Effect.cpp" />
     <ClCompile Include="FBXMapLoader.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="CommandQueue.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -295,6 +301,7 @@
     <FxCompile Include="..\Resources\Shader\animation.fx" />
     <FxCompile Include="..\Resources\Shader\compute.fx" />
     <FxCompile Include="..\Resources\Shader\deferred.fx" />
+    <FxCompile Include="..\Resources\Shader\font.fx" />
     <FxCompile Include="..\Resources\Shader\forward.fx" />
     <FxCompile Include="..\Resources\Shader\lighting.fx" />
     <FxCompile Include="..\Resources\Shader\math.fx" />

@@ -1,10 +1,11 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "ParticleSystem.h"
 #include "StructuredBuffer.h"
 #include "Mesh.h"
 #include "Resources.h"
 #include "Transform.h"
 #include "Timer.h"
+#include "Texture.h"
 
 ParticleSystem::ParticleSystem() : Component(COMPONENT_TYPE::PARTICLE_SYSTEM)
 {
@@ -16,16 +17,21 @@ ParticleSystem::ParticleSystem() : Component(COMPONENT_TYPE::PARTICLE_SYSTEM)
 
 	m_mesh = GET_SINGLE(Resources)->LoadPointMesh();
 	m_material = GET_SINGLE(Resources)->Get<Material>(L"Particle");
-	shared_ptr<Texture> tex = GET_SINGLE(Resources)->Load<Texture>(
-		L"Bubbles", L"..\\Resources\\Texture\\Particle\\bubble.png");
-
-	m_material->SetTexture(0, tex);
 
 	m_computeMaterial = GET_SINGLE(Resources)->Get<Material>(L"ComputeParticle");
 }
 
 ParticleSystem::~ParticleSystem()
 {
+}
+
+void ParticleSystem::SetParticleInfo(shared_ptr<Texture> texture)
+{
+	m_material->SetTexture(0, texture);
+
+	// 변수 원하는대로
+	// 지금 제대로 만들어볼까
+	// 여기 넣었다고 치자 인자로 받아서
 }
 
 void ParticleSystem::FinalUpdate()
@@ -53,6 +59,10 @@ void ParticleSystem::FinalUpdate()
 
 void ParticleSystem::Render()
 {
+	// 이러면 설정된 텍스쳐가 없으면 렌더 안하니깐 안터짐
+	if (nullptr == m_material->GetTexture(0))
+		return;
+
 	GetTransform()->PushData();
 
 	m_particleBuffer->PushGraphicsData(SRV_REGISTER::t9);

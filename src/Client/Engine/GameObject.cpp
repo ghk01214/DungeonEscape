@@ -11,6 +11,8 @@
 #include "Animator.h"
 #include "Network.h"
 #include "BillBoard.h"
+#include "Effect.h"
+#include "Font.h"
 
 CGameObject::CGameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 {
@@ -166,6 +168,18 @@ shared_ptr<BillBoard> CGameObject::GetBillBoard()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::BILL_BOARD);
 	return static_pointer_cast<BillBoard>(component);
+}
+
+shared_ptr<Effect> CGameObject::GetEffect()
+{
+	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::Effect);
+	return static_pointer_cast<Effect>(component);
+}
+
+shared_ptr<Font> CGameObject::GetFont()
+{
+	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::FONT);
+	return static_pointer_cast<Font>(component);
 }
 
 void CGameObject::AddComponent(shared_ptr<Component> component)

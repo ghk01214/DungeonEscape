@@ -13,6 +13,8 @@ enum class COMPONENT_TYPE : uint8
 	ANIMATOR,
 	NETWORK,
 	BILL_BOARD,
+	Effect,
+	FONT,
 	// ...
 	MONO_BEHAVIOUR,
 	END,

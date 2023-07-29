@@ -154,6 +154,7 @@ void Monster_Weeper::ParsePackets()
 			case ProtocolID::WR_CHANGE_STATE_ACK:
 			{
 				m_currState = magic_enum::enum_value<WEEPER_STATE>(packet.Read<int32_t>());
+				// 서버에서 명령이 내려옴.
 			}
 			break;
 			case ProtocolID::WR_MONSTER_QUAT_ACK:

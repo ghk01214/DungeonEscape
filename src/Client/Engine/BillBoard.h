@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-
 #include "Component.h"
 
 enum class BB_TYPE

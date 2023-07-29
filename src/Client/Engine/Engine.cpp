@@ -10,6 +10,7 @@
 #include "InstancingManager.h"
 #include "NetworkManager.h"
 #include "SoundManager.h"
+#include "FontManager.h"
 
 void Engine::Init(const WindowInfo& info)
 {
@@ -39,6 +40,9 @@ void Engine::Init(const WindowInfo& info)
 	GET_SINGLE(Timer)->Init();
 	GET_SINGLE(Resources)->Init();
 	GET_SINGLE(CSoundMgr)->Init();
+
+	// 20개의 폰트를 예약
+	GET_SINGLE(FontManager)->ReserveFontObjects(20);
 }
 
 void Engine::Update()
@@ -47,6 +51,7 @@ void Engine::Update()
 
 	GET_SINGLE(Timer)->Update();
 
+	GET_SINGLE(FontManager)->Reset();
 	GET_SINGLE(SceneManager)->Update();
 	GET_SINGLE(SceneManager)->LateUpdate();
 	GET_SINGLE(SceneManager)->FinalUpdate();

@@ -1,7 +1,7 @@
 
 cbuffer TRANSFORM_PARAMS : register(b0)
 {
-    row_major matrix matWVP;    // directX에선 row_major 방식으로 행렬을 다루는 반면, shader에선 column_major로 행렬을 다루고 있기 때문에 사용방식을 맞춰주기 위해 이렇게 작성한다.
+    row_major matrix matWVP;    // directX?먯꽑 row_major 諛⑹떇?쇰줈 ?됰젹???ㅻ（??諛섎㈃, shader?먯꽑 column_major濡??됰젹???ㅻ（怨??덇린 ?뚮Ц???ъ슜諛⑹떇??留욎떠二쇨린 ?꾪빐 ?대젃寃??묒꽦?쒕떎.
 };
 
 cbuffer MATERIAL_PARAMS : register(b1)
@@ -45,7 +45,7 @@ VS_OUT VS_Main(VS_IN input)
 {
     VS_OUT output = (VS_OUT)0;
 
-    output.pos = mul(float4(input.pos, 1.f), matWVP);   // 좌표를 추출하기 위해 float4, w = 1.f 로 확장, 방향만 사용할 예정이면 w = 0.f로 확장
+    output.pos = mul(float4(input.pos, 1.f), matWVP);   // 醫뚰몴瑜?異붿텧?섍린 ?꾪빐 float4, w = 1.f 濡??뺤옣, 諛⑺뼢留??ъ슜???덉젙?대㈃ w = 0.f濡??뺤옣
     output.color = input.color;
     output.uv = input.uv;
 

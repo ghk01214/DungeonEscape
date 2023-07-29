@@ -25,6 +25,7 @@ public:
 	void Render_Deferred();
 	void Render_Forward();
 	void Render_Shadow();
+	void Render_Font();
 
 	void SetCullingMaskLayerOnOff(uint8 layer, bool on)
 	{
@@ -69,6 +70,7 @@ private:
 	vector<shared_ptr<CGameObject>>	m_vecForward;
 	vector<shared_ptr<CGameObject>>	m_vecParticle;
 	vector<shared_ptr<CGameObject>>	m_vecShadow;
+	vector<shared_ptr<CGameObject>>	m_vecFont;
 
 public:
 	// TEMP
