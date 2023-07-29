@@ -99,14 +99,14 @@
     <Filter Include="소스 파일\Objects\01. UI\Loading">
       <UniqueIdentifier>{a89f9447-0913-4781-8fb1-fd07c1c6fcd4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\03. Monster\Boss\Weeper\Attack">
-      <UniqueIdentifier>{ef8aa004-b73a-4e80-a7d0-2dd4d6134003}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Objects\03. Monster\07. Effect">
+    <Filter Include="소스 파일\Objects\07. Effect">
       <UniqueIdentifier>{29c21a5e-788b-45da-9723-982cc078b074}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\03. Monster\07. Effect\Weeper">
+    <Filter Include="소스 파일\Objects\07. Effect\Weeper">
       <UniqueIdentifier>{04f9d6a2-9d34-4ab1-83a1-6c720373d309}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game">
+      <UniqueIdentifier>{02a96ad3-9cb0-4c9f-b1f9-a752b4f716e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -222,19 +222,25 @@
       <Filter>소스 파일\Objects\01. UI\Loading</Filter>
     </ClInclude>
     <ClInclude Include="WeeperSkill1_Script.h">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect\Weeper</Filter>
+      <Filter>소스 파일\Objects\07. Effect\Weeper</Filter>
     </ClInclude>
     <ClInclude Include="WeeperSkill2_Script.h">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect\Weeper</Filter>
+      <Filter>소스 파일\Objects\07. Effect\Weeper</Filter>
     </ClInclude>
     <ClInclude Include="WeeperSkill2Scatter_Script.h">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect\Weeper</Filter>
+      <Filter>소스 파일\Objects\07. Effect\Weeper</Filter>
     </ClInclude>
     <ClInclude Include="WeeperSkill3_Script.h">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect\Weeper</Filter>
+      <Filter>소스 파일\Objects\07. Effect\Weeper</Filter>
     </ClInclude>
     <ClInclude Include="Effect_Script.h">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect</Filter>
+      <Filter>소스 파일\Objects\07. Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="HP_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Bar_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -345,19 +351,25 @@
       <Filter>소스 파일\Objects\01. UI\Loading</Filter>
     </ClCompile>
     <ClCompile Include="WeeperSkill1_Script.cpp">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect\Weeper</Filter>
+      <Filter>소스 파일\Objects\07. Effect\Weeper</Filter>
     </ClCompile>
     <ClCompile Include="WeeperSkill2_Script.cpp">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect\Weeper</Filter>
+      <Filter>소스 파일\Objects\07. Effect\Weeper</Filter>
     </ClCompile>
     <ClCompile Include="WeeperSkill2Scatter_Script.cpp">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect\Weeper</Filter>
+      <Filter>소스 파일\Objects\07. Effect\Weeper</Filter>
     </ClCompile>
     <ClCompile Include="WeeperSkill3_Script.cpp">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect\Weeper</Filter>
+      <Filter>소스 파일\Objects\07. Effect\Weeper</Filter>
     </ClCompile>
     <ClCompile Include="Effect_Script.cpp">
-      <Filter>소스 파일\Objects\03. Monster\07. Effect</Filter>
+      <Filter>소스 파일\Objects\07. Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="HP_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Bar_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
