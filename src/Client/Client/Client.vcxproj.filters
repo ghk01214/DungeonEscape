@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="소스 파일">
@@ -235,15 +235,12 @@
     </ClInclude>
     <ClInclude Include="Effect_Script.h">
       <Filter>소스 파일\Objects\07. Effect</Filter>
-<<<<<<< HEAD
-=======
     </ClInclude>
     <ClInclude Include="HP_Script.h">
       <Filter>소스 파일\Objects\01. UI\In Game</Filter>
     </ClInclude>
     <ClInclude Include="Bar_Script.h">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
->>>>>>> f265e0f5521fa4886290da7ad31dd89b42c31116
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -367,15 +364,12 @@
     </ClCompile>
     <ClCompile Include="Effect_Script.cpp">
       <Filter>소스 파일\Objects\07. Effect</Filter>
-<<<<<<< HEAD
-=======
     </ClCompile>
     <ClCompile Include="HP_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\In Game</Filter>
     </ClCompile>
     <ClCompile Include="Bar_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
->>>>>>> f265e0f5521fa4886290da7ad31dd89b42c31116
     </ClCompile>
   </ItemGroup>
 </Project>
