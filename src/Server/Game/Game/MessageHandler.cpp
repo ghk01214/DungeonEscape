@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -429,7 +429,8 @@ namespace game
 			Vec3 weeperTestPos(0, -720, 8500);					//위퍼 입장위치		0, -720, 8500
 			Vec3 gimmk1TestPos(3890, -1462, 21062);				//다리				3890, -1462, 21062
 			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457
-			Vec3 pos = weeperTestPos;
+			Vec3 pos = golemTestPos;
+			pos = weeperTestPos;
 
 			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
 

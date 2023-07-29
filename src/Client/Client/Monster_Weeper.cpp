@@ -76,6 +76,9 @@ void Monster_Weeper::CheckState()
 	}
 
 	m_prevState = m_currState;
+
+	auto a{ GetAnimator()->GetAniClipInfo(m_currState) };
+	std::wcout << a.animName << L", " << a.duration << "\n";
 }
 
 void Monster_Weeper::UpdateFrameRepeat()

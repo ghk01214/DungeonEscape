@@ -317,7 +317,7 @@ void SkillObject::ServerMessage_SkillInit()
 	}
 
 	//std::cout << "skill add : " << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
-	for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
 		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
 		ev.objType = m_objType;
@@ -335,7 +335,7 @@ void SkillObject::ServerMessage_SkillHit()
 	//스킬 오브젝트 객체 삭제 전달.
 	//추후 피격 잔상 위치 같이 추가적으로 더 정보를 전달할 수 있음.
 	//std::cout << "skill remove : " << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
-	for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
 		game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
 		ev.objID = m_id;
@@ -511,7 +511,7 @@ void SkillObject::HandlePlayerSkillCollision()
 					}
 				}
 				break;
-			} 
+			}
 
 			//SetRemoveReserved();						//객체 삭제
 			//ServerMessage_SkillHit();					//서버 메시지 처리
