@@ -124,8 +124,10 @@ void Player::IsOnGround()
 
 	auto distance{ m_controller->GetDistanceFromGround() };
 
-	if (IsEqual(distance, -1.f) == true or distance > 300.f)
+	if (IsEqual(distance, -1.f) == true or distance > 20.f)
 	{
+		if (m_currState == JUMP_START)
+			return;
 		m_currState = JUMPING;
 	}
 }
