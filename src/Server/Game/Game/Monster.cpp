@@ -74,6 +74,16 @@ int32_t Monster::GetHP() const
 	return m_hp;
 }
 
+void Monster::SetHP(float value)
+{
+	m_hp = value;
+}
+
+void Monster::SetHP_Modify(float value)
+{
+	m_hp += value;
+}
+
 float Monster::GetAniPlayTime() const
 {
 	return m_aniPlayTime;

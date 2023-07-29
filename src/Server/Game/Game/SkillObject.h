@@ -44,7 +44,8 @@ public:
 		ASCENDING		= 1 << 2,
 		DESCENDING		= 1 << 3,
 		NUCLEAR			= 1 << 4,
-		GUIDED_METEOR   = 1 << 5
+		GUIDED_METEOR   = 1 << 5,
+		NEW_LEVITATE    = 1 << 6
 	};
 
 public:
@@ -73,6 +74,7 @@ public:
 public:
 	void Handle_Attribute();		//attribute에 따라 지속적으로 실행
 	void Attirbute_Levitate();		//공중 지속
+	void Attirbute_New_Levitate();		//공중 지속
 	void Attribute_Guide();			//유도
 	void Attribute_Guide_MeteorOnly();
 	void Attribute_Ascending();		//공중 발사

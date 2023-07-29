@@ -111,7 +111,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 800.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
-		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
+		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.1f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 		return true;
 	}
@@ -122,7 +122,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 300.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, -1, 0) * 2000.f);
-		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_STUN_APPLY", 0.f, player);			//continous. 땅에 닿으면 스턴 + 스턴해제 5초후 명령을 내린다.
+		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_STUN_APPLY", 0.1f, player);			//continous. 땅에 닿으면 스턴 + 스턴해제 5초후 명령을 내린다.
 
 		return true;
 	}
@@ -133,7 +133,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 200.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
-		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
+		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.1f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 		return true;
 	}
@@ -170,7 +170,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 
 			playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0,1,0) * 400.f);
 			playerBody->AddForce(ForceMode::Impulse, knockbackDir * 600.f);
-			EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
+			EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.1f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 			return true;
 		}
 	}

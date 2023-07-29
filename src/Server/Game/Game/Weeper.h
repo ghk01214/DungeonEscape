@@ -12,18 +12,18 @@ class Weeper : public Monster
 public:
 	enum WEEPER_STATE
 	{
-		CAST1,
-		CAST2_END,
-		CAST2_LOOP,
-		CAST2_START,
-		CAST3,
-		CAST4_END,
-		CAST4_LOOP,
-		CAST4_START,
-		DAMAGE,
-		DEATH,
-		DODGE,
-		IDLE,
+		CAST1,				 // 6.36(공격 0.82 ~ 2.0)
+		CAST2_END,			 // 1.87(공격 0.24 ~ 0.89)
+		CAST2_LOOP,			 // 2.20
+		CAST2_START,		 // 2.20
+		CAST3,				 // 7.36(공격 0.85 ~ 2.0)
+		CAST4_END,			 // 4.03
+		CAST4_LOOP,			 // 3.03
+		CAST4_START,		 // 2.7
+		DAMAGE,				 // 2.37
+		DEATH,				 // 4.19
+		DODGE,				 // 2.03
+		IDLE,				 // 6.36
 		IDLE_BREAK,
 		STATUE1,
 		STATUE2,

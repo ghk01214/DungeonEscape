@@ -53,7 +53,7 @@ void PillarObject::Init_After_ColliderAttached()
 	m_body->SetKinematic(false);
 	m_body->SetRigidBodySleep(false);
 
-	PhysicsAxis axesToLock = static_cast<PhysicsAxis>(static_cast<int>(PhysicsAxis::Z) | static_cast<int>(PhysicsAxis::Y));
+	PhysicsAxis axesToLock = static_cast<PhysicsAxis>(static_cast<int>(PhysicsAxis::X) | static_cast<int>(PhysicsAxis::Y));
 	m_body->SetRotationLockAxis(axesToLock, true);
 	m_body->SetMass(1000.f);
 	m_body->SetAngularDamping(0.8f);
@@ -68,33 +68,36 @@ void PillarObject::ApplyRequestedLayers()
 
 void PillarObject::ReceivedAttack_SingleAttack()
 {
-	float currentDampValue = m_body->GetBody()->getAngularDamping();
+	static float currentDampValue = 0.8f;
 
-	currentDampValue -= 0.07f;
-	if (currentDampValue < 0)
+	currentDampValue -= 0.1f;
+	if (currentDampValue < 0.4)
 	{
-		currentDampValue = 0.f;
+		currentDampValue = 0.3;
 		cout << "돌기둥 약화 완료" << endl;
+		m_body->SetAngularDamping(0.3f);
 	}
-
-	m_body->SetAngularDamping(currentDampValue);
-	m_body->AddForce(ForceMode::Impulse, physx::PxVec3(0, 0, 1) * 2000.f);
+	else
+	{
+		cout << "돌기둥 약화 진행중" << endl;
+		cout << "현재 damping값 " << currentDampValue << endl;
+	}
 }
 
 void PillarObject::ReceivedAttack_Meteor()
 {
 	float currentDampValue = m_body->GetBody()->getAngularDamping();
-	if (currentDampValue != 0.f)
+	if (currentDampValue > 0.3f)
 	{
 		m_body->SetVelocity(physx::PxVec3(0));
 		auto currentAngVel = m_body->GetBody()->getAngularVelocity();
 		m_body->GetBody()->setAngularVelocity(currentAngVel * 0.5f);
-		cout << "메테오 조건 아직" << endl;
+		cout << " pilliar : 메테오 충돌 인지완료. damping값 0이 아니다. 조건 불만족." << endl;
 		return;
 	}
 	else
 	{
-		cout << "메테오 조건 만족" << endl;
+		cout << "pilliar : 메테오 충돌 인지완료. damping값 0이다. 조건 만족. 다리가 연결되어야 한다." << endl;
 	}
 }
 

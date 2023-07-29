@@ -109,8 +109,13 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
-	//player
+	if (msg == "TIMER")
+	{
+		std::cout << "timer" << std::endl;
+	}
 
+
+	//player
 	if (msg == "PLAYER_STUN_OFF")
 	{
 		auto playerObj = dynamic_cast<Player*>(target);
@@ -127,6 +132,34 @@ void Event::ExecuteMsg_Once()
 		{
 			playerObj->SetMeteorAttackAvailable(true);
 			std::cout << "메테오 재충전" << std::endl;
+		}
+	}
+
+	if (msg == "REMOVE_PLAYER_METEOR")
+	{
+		auto meteorObj = dynamic_cast<SkillObject*>(target);
+		if (meteorObj)
+		{
+			meteorObj->SetRemoveReserved();
+			meteorObj->ServerMessage_SkillHit();
+		}
+	}
+
+	if (msg == "PLAYER_OVERLAPOBJ_ACTIVATE")
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (playerObj)
+		{
+			playerObj->Set_OverlapObject(true);
+		}
+	}
+
+	if (msg == "PLAYER_OVERLAPOBJ_DEACTIVATE")
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (playerObj)
+		{
+			playerObj->Set_OverlapObject(false);
 		}
 	}
 
@@ -236,8 +269,7 @@ void Event::ExecuteMsg_Once()
 		Weeper* weeper = static_cast<Weeper*>(target);
 		WeeperAI* weeperAI = weeper->GetAI();
 
-		EventHandler::GetInstance()->DeleteEvent("CAST2_SCATTER_AIRFIRE");		// 1. Cast2 노말 진행 이벤트 삭제
-		//weeper->SetState(Weeper::WEEPER_STATE::CAST2_END);					// 2. Cast2 원기옥 던지기 애니메이션 재생
+		EventHandler::GetInstance()->DeleteEvent("CAST2_SCATTER_AIRFIRE");		// Cast2 노말 진행 이벤트 삭제
 		if (weeperAI->m_debugmode)
 			EventHandler::GetInstance()->AddEvent("ANIM_END", 4.f, weeper);		//디버그 전용 애니메이션 종료 코드
 		EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 6.f, weeper);		//AI wait 해제 (던지는 애니메이션이 끝나고 몇초 후 이동 가능하도록)

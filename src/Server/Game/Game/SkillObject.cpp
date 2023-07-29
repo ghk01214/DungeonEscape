@@ -101,7 +101,7 @@ void SkillObject::Init()
 			m_body->GetBody()->setAngularDamping(0.5f);
 			m_body->AddCollider<SphereCollider>(GetTransform()->GetScale());
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::NEW_LEVITATE, true);
 		}
 		break;
 
@@ -317,7 +317,7 @@ void SkillObject::ServerMessage_SkillInit()
 	}
 
 	//std::cout << "skill add : " << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
-	for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
 		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
 		ev.objType = m_objType;
@@ -335,7 +335,7 @@ void SkillObject::ServerMessage_SkillHit()
 	//스킬 오브젝트 객체 삭제 전달.
 	//추후 피격 잔상 위치 같이 추가적으로 더 정보를 전달할 수 있음.
 	//std::cout << "skill remove : " << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
-	for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
 		game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
 		ev.objID = m_id;
@@ -506,13 +506,17 @@ void SkillObject::HandlePlayerSkillCollision()
 					if (pillar)
 					{
 						pillar->ReceivedAttack_Meteor();
+						SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED_METEOR, false);
+						SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, false);
 					}
 				}
 				break;
 			}
 
-			SetRemoveReserved();						//객체 삭제
-			ServerMessage_SkillHit();					//서버 메시지 처리
+			//SetRemoveReserved();						//객체 삭제
+			//ServerMessage_SkillHit();					//서버 메시지 처리
+			//삭제는 5초 후 진행		GimmikMeteor
+			EventHandler::GetInstance()->AddEvent("REMOVE_PLAYER_METEOR", 3.f, this);
 		}
 	}
 }
@@ -651,19 +655,21 @@ void SkillObject::MonsterSkillFire(physx::PxVec3 dir)
 void SkillObject::WeeperNuclearFire()
 {
 	auto weeper = dynamic_cast<Weeper*>(m_owner);
-	physx::PxVec3 dir = TO_PX3(weeper->GetAI()->GetTargetDir());
+	auto targetPlayer = weeper->GetAI()->GetTarget();
+	physx::PxVec3 dir = TO_PX3(targetPlayer->GetControllerPosition() - weeper->GetControllerPosition());
 	dir.normalize();
-	float power = 10000.f;
+	float power = 3500.f;
 
-	m_skillType = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER;							//충돌판단을 위한 타입변경
-	m_skillAttrib = static_cast<SKILLATTRIBUTE>(m_skillAttrib & ~SKILLATTRIBUTE::LEVITATE);			//공중 attirb 제거
-	m_body->SetMass(1000.f);																		//무겁게 변경
-	m_body->AddForce(ForceMode::Acceleration, dir * power);													//던진다
+	m_skillType = SkillObject::SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR;							//충돌판단을 위한 타입변경
+	SetAttribute(SKILLATTRIBUTE::NEW_LEVITATE, false);													//공중 attirb 제거
+	m_body->SetMass(100.f);																			//무겁게 변경
+	m_body->AddForce(ForceMode::Acceleration, dir * power);												//던진다
 }
 
 void SkillObject::Handle_Attribute()
 {
 	Attirbute_Levitate();
+	Attirbute_New_Levitate();
 	Attribute_Guide();
 	Attribute_Guide_MeteorOnly();
 	Attribute_Ascending();
@@ -675,6 +681,22 @@ void SkillObject::Attirbute_Levitate()
 	{
 		physx::PxVec3 gravity = PhysDevice::GetInstance()->GetGravity();
 		m_body->AddForce(ForceMode::Force, -gravity * m_body->GetMass());
+	}
+}
+
+void SkillObject::Attirbute_New_Levitate()
+{
+	if (m_skillAttrib & SKILLATTRIBUTE::NEW_LEVITATE)
+	{
+		physx::PxVec3 gravity = PhysDevice::GetInstance()->GetGravity() * 1.00f;
+		m_body->AddForce(ForceMode::Force, -gravity * m_body->GetMass());
+
+		physx::PxVec3 currentVel = m_body->GetVelocity();
+		if (currentVel.y < 0)
+		{
+			currentVel.y = 0;
+			m_body->SetVelocity(currentVel);
+		}
 	}
 }
 
@@ -711,7 +733,7 @@ void SkillObject::Attribute_Guide_MeteorOnly()
 		float guidePower = 2500.f;
 
 		physx::PxVec3 TargetPos = TO_PX3(m_target->GetTransform()->GetPosition());
-		TargetPos.y += 400.f;
+		TargetPos.y += 1100.f;
 		physx::PxVec3 TargetDir = TargetPos - m_body->GetPosition();
 		TargetDir.normalize();
 

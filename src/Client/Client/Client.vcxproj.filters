@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="소스 파일">
@@ -104,6 +104,9 @@
     </Filter>
     <Filter Include="소스 파일\Objects\07. Effect\Weeper">
       <UniqueIdentifier>{04f9d6a2-9d34-4ab1-83a1-6c720373d309}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game">
+      <UniqueIdentifier>{02a96ad3-9cb0-4c9f-b1f9-a752b4f716e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -233,6 +236,12 @@
     <ClInclude Include="Effect_Script.h">
       <Filter>소스 파일\Objects\07. Effect</Filter>
     </ClInclude>
+    <ClInclude Include="HP_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Bar_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -355,6 +364,12 @@
     </ClCompile>
     <ClCompile Include="Effect_Script.cpp">
       <Filter>소스 파일\Objects\07. Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="HP_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Bar_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

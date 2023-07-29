@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "CustomController.h"
 #include "CollisionPairInfo.h"
 #include "PhysDevice.h"
@@ -326,7 +326,7 @@ void CustomController::Movement_Player()
 
 	CheckOnGround(CollisionInfoType::Enter, surfaceNormal);
 	CheckOnGround(CollisionInfoType::Stay, surfaceNormal);
-
+	
 	//if ((GetAsyncKeyState(VK_SPACE) & 0x8000) && m_onGround)		//ONOFF
 	if (m_keyboardInput[SPACE].down && m_onGround)
 	{

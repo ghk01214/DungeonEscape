@@ -313,7 +313,7 @@ void Weeper::Pattern_Cast1()
 SkillObject* Weeper::Pattern_Cast2()
 {
 	physx::PxVec3 ballPos = m_controller->GetBody()->GetGlobalPose().p;
-	ballPos.y += 700.f;		//weeper 모델 위치 고려해서 살짝 위로
+	ballPos.y += 800.f;		//weeper 모델 위치 고려해서 살짝 위로
 
 	float monsterRadius = m_controller->GetCollider()->GetRadius();
 	float skillBallHalfExtent = 200.f;

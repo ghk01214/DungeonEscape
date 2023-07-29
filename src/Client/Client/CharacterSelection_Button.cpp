@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "Input.h"
 #include "Timer.h"
+#include "Transform.h"
 
 #include "SceneManager.h"
 #include "Scene_Loading.h"

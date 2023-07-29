@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
@@ -183,6 +183,10 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Zap_Spiral_Green", L"..\\Resources\\Texture\\Effect\\Zap Spiral\\green\\tile.png", 48);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Zap_Spiral_Yellow", L"..\\Resources\\Texture\\Effect\\Zap Spiral\\yellow\\tile.png", 48);
 		
+	GET_SINGLE(Resources)->Load<Texture>(L"Bar", L"..\\Resources\\Texture\\In Game\\bar.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"HP", L"..\\Resources\\Texture\\In Game\\hp.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"MP", L"..\\Resources\\Texture\\In Game\\mp.png");
+
 	return S_OK;
 }
 

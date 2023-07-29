@@ -161,9 +161,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Bar_Script.h" />
     <ClInclude Include="Button_Script.h" />
     <ClInclude Include="CharacterSelection_Button.h" />
     <ClInclude Include="Effect_Script.h" />
+    <ClInclude Include="HP_Script.h" />
     <ClInclude Include="Loading_Script.h" />
     <ClInclude Include="Lobby_Script.h" />
     <ClInclude Include="Lobby_StartButton.h" />
@@ -205,9 +207,11 @@
     <ClInclude Include="WeeperSkill2Scatter_Script.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bar_Script.cpp" />
     <ClCompile Include="Button_Script.cpp" />
     <ClCompile Include="CharacterSelection_Button.cpp" />
     <ClCompile Include="Effect_Script.cpp" />
+    <ClCompile Include="HP_Script.cpp" />
     <ClCompile Include="Loading_Script.cpp" />
     <ClCompile Include="Lobby_Script.cpp" />
     <ClCompile Include="Lobby_StartButton.cpp" />
