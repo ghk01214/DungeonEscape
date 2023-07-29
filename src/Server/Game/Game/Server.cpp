@@ -1026,6 +1026,25 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::WR_MONSTER_PATTERN_ACK:
+			{
+				for (auto& player : playerObjects)
+				{
+					auto pl{ dynamic_cast<Player*>(player) };
+
+					if (pl == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						client->SendMonsterPatternPacket(id, postOver->state);
+					}
+				}
+			}
+			break;
 #pragma endregion
 			default:
 			break;

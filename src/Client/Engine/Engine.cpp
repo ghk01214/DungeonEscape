@@ -92,6 +92,15 @@ void Engine::ResizeWindow(int32 width, int32 height)
 	::SetWindowPos(m_window.hWnd, 0, 100, 100, width, height, 0);
 }
 
+void Engine::ResizeWindow(LPARAM lparam)
+{
+	m_window.width = LOWORD(lparam);
+	m_window.height = HIWORD(lparam);
+
+	RECT rect = { 0, 0, m_window.width, m_window.height };
+	::AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+}
+
 void Engine::ShowFps()
 {
 	uint32 fps = GET_SINGLE(Timer)->GetFps();

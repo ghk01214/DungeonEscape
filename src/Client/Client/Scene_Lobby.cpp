@@ -10,6 +10,7 @@
 #include "Resources.h"
 #include "Engine.h"
 
+#include "Lobby_Script.h"
 #include "Lobby_StartButton.h"
 
 Scene_Lobby::Scene_Lobby()
@@ -29,11 +30,6 @@ void Scene_Lobby::Start()
 void Scene_Lobby::Update()
 {
 	__super::Update();
-
-	/*if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::SPACE))
-	{
-		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_GAMEPLAY));
-	}*/
 }
 
 void Scene_Lobby::LateUpdate()
@@ -113,6 +109,7 @@ void Scene_Lobby::CreateUI(void)
 			std::shared_ptr<Material> material = std::make_shared<Material>();
 			material->SetShader(shader);
 			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
 			meshRenderer->SetMaterial(material);
 		}
 
@@ -150,6 +147,7 @@ void Scene_Lobby::CreateUI(void)
 			std::shared_ptr<Material> material = std::make_shared<Material>();
 			material->SetShader(shader);
 			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
 			meshRenderer->SetMaterial(material);
 		}
 

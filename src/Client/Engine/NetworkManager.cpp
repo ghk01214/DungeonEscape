@@ -27,6 +27,7 @@ namespace network
 		m_id = 0;
 		m_login = false;
 		m_serverAddr = serverAddr;
+		m_alreadyAdded = false;
 
 		Connect();
 	}
@@ -392,42 +393,21 @@ namespace network
 	{
 		switch (type)
 		{
-			case ProtocolID::WR_ISSUE_PLAYER_ID_ACK:
-			{
-				int32_t id{ m_packet.ReadID() };
-
-				/*std::list<NetworkComponent>::iterator iter;
-				for (iter = m_unregisterdObjects.begin(); iter != m_unregisterdObjects.end(); ++iter)
-				{
-					if (iter->type == OBJECT_TYPE::REMOTE_PLAYER)
-						break;
-				}
-
-				if (iter != m_unregisterdObjects.end())
-				{
-					m_objects[id] = iter->object;
-
-					for (auto& obj : m_objects[id])
-					{
-						obj->GetNetwork()->SetID(id);
-					}
-
-					m_unregisterdObjects.erase(iter);
-
-					std::cout << std::format("Remote id is {}\n", id);
-				}*/
-			}
-			break;
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
 				int32_t id{ m_packet.ReadID() };
 
 				if (id == m_id)
 				{
+					if (m_alreadyAdded == true)
+						break;
+
 					for (auto& obj : m_objects[id])
 					{
 						obj->GetNetwork()->InsertPackets(m_packet);
 					}
+
+					m_alreadyAdded = true;
 				}
 				else
 				{

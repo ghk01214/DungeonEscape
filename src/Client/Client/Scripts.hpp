@@ -10,6 +10,11 @@
 #include "Monster_Scorpion.h"
 #include "Monster_Dragon.h"
 #include "MonsterRangeAttack.h"
+
+#include "WeeperSkill1_Script.h"
+#include "WeeperSkill2_Script.h"
+#include "WeeperSkill3_Script.h"
+#include "WeeperSkill2Scatter_Script.h"
 #pragma endregion
 
 #pragma region [OBJECTS]

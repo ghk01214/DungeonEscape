@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -81,15 +81,15 @@ void TestLevel::LoadUnit_DebugMode()
 																																							//다리				3250, -1600, 22170
 																																							//돌테스트			15609, -976, 26457
 
-	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
-	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
 	//몬스터
-	//위퍼 위치15037.582, -1550.337, 21630.693; 0.000, 0.000, 0.707, 0.707; 
+	//위퍼 위치15037.582, -1550.337, 21630.693; 0.000, 0.000, 0.707, 0.707;
 	//골렘 16200, -3000, 40000
 
 
-	//15000.000, -2389.500, 21050.000; 0.000, 0.000, 0.000, 1.000; 
+	//15000.000, -2389.500, 21050.000; 0.000, 0.000, 0.000, 1.000;
 
 }
 

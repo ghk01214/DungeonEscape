@@ -44,6 +44,14 @@ void Monster_Weeper::Update()
 {
 	ParsePackets();
 
+	// 패턴이 변경됐을 때만 변경된 패턴 번호 출력
+	static server::PATTERN_TYPE prevPattern{ server::PATTERN_TYPE::NONE };
+	if (prevPattern != m_pattern)
+	{
+		Print(magic_enum::enum_name(m_pattern));
+		prevPattern = m_pattern;
+	}
+
 	Monster_Script::Update();
 }
 
@@ -151,6 +159,11 @@ void Monster_Weeper::ParsePackets()
 			case ProtocolID::WR_MONSTER_QUAT_ACK:
 			{
 				Rotate(packet);
+			}
+			break;
+			case ProtocolID::WR_MONSTER_PATTERN_ACK:
+			{
+				SetPatternType(packet);
 			}
 			break;
 			default:

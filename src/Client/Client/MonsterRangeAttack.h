@@ -9,8 +9,7 @@ public:
 	virtual void Update() override;
 	virtual void LateUpdate() override;
 
-private:
-	void ParsePackets();
+protected:
 	void Transform(network::CPacket& packet);
 
 };

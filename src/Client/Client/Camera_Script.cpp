@@ -13,7 +13,9 @@ Camera_Basic::Camera_Basic() :
 	m_speed{ 2000.f },
 	m_lengthX{ 1000.f },
 	m_lengthY{ 600.f },
-	m_rotation{ 0.f }
+	m_rotationAxisX{ 0.f },
+	m_rotationAxisY{ 0.f },
+	m_distance{ 1.f }
 {
 }
 
@@ -94,17 +96,39 @@ void Camera_Basic::LateUpdate()
 		// 자전
 		transform->SetLocalRotation(Vec3(12.f, 0.f, 0.f));
 		// 이동
-		transform->SetLocalPosition(Vec3(0.f, m_lengthY, -m_lengthX));
+		Vec2 movement{ m_lengthX * m_distance, m_lengthY * m_distance };
+		transform->SetLocalPosition(Vec3(0.f, movement.y + 40.f, -movement.x));
 		// 공전
-		Matrix matWorld = Matrix::CreateRotationY(XMConvertToRadians(m_rotation)) * Matrix::CreateTranslation(playerTransform->GetWorldMatrix().Translation());
+		Matrix matWorld = Matrix::CreateRotationX(XMConvertToRadians(m_rotationAxisX)) * Matrix::CreateRotationY(XMConvertToRadians(m_rotationAxisY)) * Matrix::CreateTranslation(playerTransform->GetWorldMatrix().Translation());
 		transform->SetWorldMatrix(matWorld);
 		// 부모
 		//transform->SetParent(playerTransform);
 
-		Vec2 move = GET_SINGLE(CInput)->GetMouseMove();
+		// X축 회전
+		{
+			long MouseMoveY = GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_Y);
+			m_rotationAxisX += MouseMoveY * DELTA_TIME * 5.f;
 
-		long MouseMoveX = GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_X);
-		
-		m_rotation += MouseMoveX * DELTA_TIME * 5.f;
+			if (m_rotationAxisX < -30.f)
+				m_rotationAxisX = -30.f;
+			else if (m_rotationAxisX > 30.f)
+				m_rotationAxisX = 30.f;
+		}
+		// Y축 회전
+		{
+			long MouseMoveX = GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_X);
+			m_rotationAxisY += MouseMoveX * DELTA_TIME * 5.f;
+		}
+		// 마우스 휠 이동
+		{
+			m_distance -= GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_WHEEL) * 0.0003f;	// 1틱 -> 120
+
+			if (m_distance < 0.4)
+				m_distance = 0.4;
+
+			else if (m_distance > 1.2f)
+				m_distance = 1.2f;
+		}
+
 	}
 }

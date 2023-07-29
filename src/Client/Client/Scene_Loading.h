@@ -11,7 +11,11 @@ public:
 
 public:
 	void Loading(SCENE eNextScene);
-	server::FBX_TYPE LogIn();
+	void LogIn();
+
+	std::shared_ptr<class CLoader> GetLoader() { return m_pLoader; }
+
+	void SetSelectedCharacter(server::FBX_TYPE character);
 
 public:
 	virtual void Awake();
@@ -21,9 +25,20 @@ public:
 	virtual void FinalUpdate();
 	virtual void Render();
 
+public:
+	void Init();
+	void CreateLayer();
+	void CreateUICamera();
+	void CreateUI();
+	void LoadTextures();
+	void CreateLights();
+
 private:
 	SCENE			m_eNextScene = SCENE_END;
-	shared_ptr<class CLoader> m_pLoader = nullptr;
+	std::shared_ptr<class CLoader> m_pLoader = nullptr;
+
+	server::FBX_TYPE m_character;
+	//std::vector<std::shared_ptr<Texture>> m_textures;
 
 public:
 	static shared_ptr<CScene> Create(SCENE eNextScene);

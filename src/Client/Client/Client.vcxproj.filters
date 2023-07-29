@@ -93,6 +93,15 @@
     <Filter Include="소스 파일\Objects\01. UI\Lobby">
       <UniqueIdentifier>{1150c4ec-3cd6-4fe1-a21a-ee139df8ca0e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\Interface">
+      <UniqueIdentifier>{3c41b792-484a-41b4-92fc-83b35010d9f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\Loading">
+      <UniqueIdentifier>{a89f9447-0913-4781-8fb1-fd07c1c6fcd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\03. Monster\Boss\Weeper\Attack">
+      <UniqueIdentifier>{ef8aa004-b73a-4e80-a7d0-2dd4d6134003}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -170,9 +179,6 @@
     <ClInclude Include="Logo_Start.h">
       <Filter>소스 파일\Objects\01. UI\Logo</Filter>
     </ClInclude>
-    <ClInclude Include="Logo_Script.h">
-      <Filter>소스 파일\Objects\01. UI</Filter>
-    </ClInclude>
     <ClInclude Include="Scene_Test.h">
       <Filter>소스 파일\Objects\00. Scene\Test</Filter>
     </ClInclude>
@@ -187,6 +193,39 @@
     </ClInclude>
     <ClInclude Include="Lobby_StartButton.h">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="Logo_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Button_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_CharacterSelection.h">
+      <Filter>소스 파일\Objects\00. Scene\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenes.hpp">
+      <Filter>소스 파일\Objects\00. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterSelection_Button.h">
+      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+    </ClInclude>
+    <ClInclude Include="Loading_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="WeeperSkill1_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="WeeperSkill2_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="WeeperSkill3_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="WeeperSkill2Scatter_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -263,9 +302,6 @@
     <ClCompile Include="Logo_Start.cpp">
       <Filter>소스 파일\Objects\01. UI\Logo</Filter>
     </ClCompile>
-    <ClCompile Include="Logo_Script.cpp">
-      <Filter>소스 파일\Objects\01. UI</Filter>
-    </ClCompile>
     <ClCompile Include="Scene_Test.cpp">
       <Filter>소스 파일\Objects\00. Scene\Test</Filter>
     </ClCompile>
@@ -280,6 +316,36 @@
     </ClCompile>
     <ClCompile Include="Lobby_StartButton.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="Logo_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Button_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_CharacterSelection.cpp">
+      <Filter>소스 파일\Objects\00. Scene\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterSelection_Button.cpp">
+      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="Loading_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperSkill1_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperSkill2_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperSkill3_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperSkill2Scatter_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Attack</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -112,7 +112,6 @@ namespace game
 				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 				{
 					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
 				}
 				break;
 				case ProtocolID::WR_ADD_OBJ_ACK:
@@ -121,7 +120,6 @@ namespace game
 					postOver.objType = ev.objType;
 
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
 				}
 				break;
 				case ProtocolID::WR_CHANGE_STATE_ACK:
@@ -130,19 +128,25 @@ namespace game
 					postOver.state = ev.state;
 
 					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
 				}
 				break;
 				case ProtocolID::WR_MONSTER_QUAT_ACK:
 				{
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
+				}
+				break;
+				case ProtocolID::WR_MONSTER_PATTERN_ACK:
+				{
+					postOver.state = ev.state;
+
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
 				}
 				break;
 				default:
-				std::this_thread::sleep_for(1ms);
 				break;
 			}
+
+			std::this_thread::sleep_for(1ms);
 		}
 	}
 
@@ -422,10 +426,10 @@ namespace game
 		if (msg.objType == server::OBJECT_TYPE::PLAYER)
 		{
 			Vec3 golemTestPos(16229, -3541, 35577);				//골렘 입장위치		16229, -3541, 35577
-			Vec3 weeperTestPos(11628, -1640, 21309);			//위퍼 입장위치		11628, -1640, 21309
+			Vec3 weeperTestPos(0, -720, 8500);					//위퍼 입장위치		0, -720, 7500
 			Vec3 gimmk1TestPos(3250, -1600, 22170);				//다리				3250, -1600, 22170
 			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457
-			Vec3 pos = golemTestPos;
+			Vec3 pos = weeperTestPos;
 
 			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
 
@@ -459,7 +463,10 @@ namespace game
 		TIMER_EVENT ev{ ProtocolID::WR_ADD_ANIMATE_OBJ_ACK, msg.playerID };
 		ev.objType = msg.objType;
 
-		PushSendMessage(ev);
+		for (int32_t i = 0; i < 2; ++i)
+		{
+			PushSendMessage(ev);
+		}
 	}
 
 	void MessageHandler::SetKeyInput(Message& msg)
