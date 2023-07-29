@@ -30,6 +30,9 @@ public:
 	bool RemoveLayer(const std::wstring& layerTag);
 
 public:
+	void TimeUpdate_PlayerTrigger(double timeDelta);		//player의 triggerObj 전용
+
+public:
 	template <typename T, typename... Args>
 	T* AddGameObjectToLayer(const std::wstring& layerTag, Args&&... args)
 	{

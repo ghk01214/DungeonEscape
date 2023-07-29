@@ -215,6 +215,9 @@
     <Filter Include="03. Game\01. GameObject\GimmikObject\PilliarObject">
       <UniqueIdentifier>{3aa424de-5693-440f-b03e-c4e2e14ec092}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\OverlapObject2">
+      <UniqueIdentifier>{c334c9c1-151d-4cb5-89c4-0af1bd17cc31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -397,6 +400,9 @@
     </ClCompile>
     <ClCompile Include="PillarObject.cpp">
       <Filter>03. Game\01. GameObject\GimmikObject\PilliarObject</Filter>
+    </ClCompile>
+    <ClCompile Include="OverlapObject2.cpp">
+      <Filter>03. Game\01. GameObject\OverlapObject2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -606,6 +612,9 @@
     </ClInclude>
     <ClInclude Include="PillarObject.h">
       <Filter>03. Game\01. GameObject\GimmikObject\PilliarObject</Filter>
+    </ClInclude>
+    <ClInclude Include="OverlapObject2.h">
+      <Filter>03. Game\01. GameObject\OverlapObject2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

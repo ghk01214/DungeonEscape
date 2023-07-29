@@ -427,9 +427,9 @@ namespace game
 		{
 			Vec3 golemTestPos(16229, -3541, 35577);				//골렘 입장위치		16229, -3541, 35577
 			Vec3 weeperTestPos(0, -720, 8500);					//위퍼 입장위치		0, -720, 7500
-			Vec3 gimmk1TestPos(3250, -1500, 22170);				//다리				3250, -1600, 22170	
+			Vec3 gimmk1TestPos(3890, -1462, 21062);				//다리				3890, -1462, 21062
 			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457
-			Vec3 pos = gimmk2TestPos;
+			Vec3 pos = golemTestPos;
 
 			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
 

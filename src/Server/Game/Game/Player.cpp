@@ -11,6 +11,7 @@
 #include "SphereCollider.h"
 #include "BoxCollider.h"
 #include "TriggerObject.h"
+#include "OverlapObject2.h"
 #include "EventHandler.h"
 
 using namespace std;
@@ -46,14 +47,17 @@ void Player::Init()
 	SetObjectType(server::OBJECT_TYPE::PLAYER);
 
 	m_controller->GetBody()->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PLAYER, PhysicsLayers::SKILLOBJECT_PLAYER);
-	m_controller->SetJumpSpeed(60.f);
+	m_controller->SetJumpSpeed(70.f);
+	m_controller->SetMoveSpeed(40.f);
 
 	for (int32_t i = magic_enum::enum_integer(server::TRIGGER_TYPE::NONE) + 1; i < magic_enum::enum_integer(server::TRIGGER_TYPE::MAX); ++i)
 	{
 		m_triggerDictionary[magic_enum::enum_value<server::TRIGGER_TYPE>(i)] = false;
 	}
 
-	m_controller->SetMoveSpeed(40.f);
+	m_overlapObj = new OverlapObject2(this);
+	m_overlapObj->Init();
+
 }
 
 void Player::Update(double timeDelta)
@@ -81,6 +85,9 @@ void Player::Update(double timeDelta)
 
 	PlayerPattern_ATTACK_ForDebug();
 
+	if (m_overlapObj)
+		m_overlapObj->Update();
+
 	GameObject::Update(timeDelta);
 
 	SendTransform();
@@ -100,6 +107,7 @@ void Player::Release()
 	m_banTriggerApproach = true;
 
 	m_controller = nullptr;
+	SafeRelease(m_overlapObj);
 	GameObject::Release();
 }
 
@@ -766,15 +774,8 @@ void Player::PlayerPattern_ShootBall()
 	float skillBallHalfExtent = 50.f;
 
 
-
-
-
-
 	// 07/23 추가한 코드. 방향수정이 잘되면 기존 위의 코드는 정리한다.
 	playerCameraLook = -GetForwardVec();
-
-
-
 
 
 	physx::PxVec3 skillBallPosition = playerPos + playerCameraLook * (playerRadius + skillBallHalfExtent + 10);
@@ -800,24 +801,16 @@ void Player::PlayerPattern_ShootMeteor()
 		pillar = t;
 	}
 
-
 	SkillObject::SKILLOBJECTTYPE skilltype = SkillObject::SKILLOBJECTTYPE::PLAYER_METEOR;
 
+	Vec3 ballPos(3645.371, 800.000, 21171.279);
+	bool randX = rand() % 2 == 0;
+	if (randX)
+		ballPos.z += 400.f;
+	else
+		ballPos.z -= 400.f;
 
-	//투사체 위치 선정
-	physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
-	physx::PxVec3 playerCameraLook = m_controller->GetCameraLook().getNormalized();
-
-
-	//physx::PxVec3 skillBallPosition = playerPos;
-	//skillBallPosition.y += 1000.f;
-	//Vec3 ballPos = FROM_PX3(skillBallPosition);
-	Vec3 ballPos;
-	ballPos.x = 9894.f;
-	ballPos.y = 400.f;
-	ballPos.z = 30000.f;
-
-	//투사체 생성
+	//투사체 생성		
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
@@ -826,6 +819,13 @@ void Player::PlayerPattern_ShootMeteor()
 	skillObject->SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
 	if(pillar)
 		skillObject->m_target = pillar;
+	auto meteorBody = skillObject->GetComponent<RigidBody>(L"RigidBody");
+	auto meteorCollider = meteorBody->GetCollider(0);
+	meteorCollider->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_PLAYER, PhysicsLayers::MAP);
+
+	meteorCollider->SetRestitution(0.3f);
+	meteorCollider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
+
 
 	// KeyUp 상태가 전달되기까지의 딜레이가 있어서 로직 종료 시 key 상태 변경
 	m_controller->Keyboard_ATK_Clear();
@@ -866,6 +866,7 @@ void Player::PlayerPattern_ATTACK_ForDebug()
 			//skillObject->PlayerSkillFire(playerCameraLook);
 
 			PlayerPattern_ShootMeteor();
+			PlayerPattern_SingleStrike(ATK0);
 		}
 		else
 		{
@@ -878,82 +879,138 @@ void Player::PlayerPattern_ATTACK_ForDebug()
 
 void Player::PlayerPattern_SingleStrike(PLAYER_STATE state)
 {
-	if (m_banTriggerApproach)
-		return;
+#pragma region 옛코드
+	//if (m_banTriggerApproach)
+	//	return;
+	//
+	//float attackTime[2] = {};
+	//
+	//switch (state)
+	//{
+	//	case ATK0:
+	//	{
+	//		attackTime[0] = 0.2f;
+	//		attackTime[1] = 0.43f;
+	//	}
+	//	break;
+	//	case ATK1:
+	//	{
+	//		attackTime[0] = 0.2f;
+	//		attackTime[1] = 0.39f;
+	//	}
+	//	break;
+	//	case ATK2:
+	//	{
+	//		attackTime[0] = 0.08f;
+	//		attackTime[1] = 0.19f;
+	//	}
+	//	break;
+	//	case ATK3:
+	//	{
+	//		attackTime[0] = 0.6f;
+	//		attackTime[1] = 0.75f;
+	//	}
+	//	break;
+	//	case ATK4:
+	//	{
+	//		attackTime[0] = 0.08f;
+	//		attackTime[1] = 0.27f;
+	//	}
+	//	break;
+	//	default:
+	//	break;
+	//}
+	////공격 활성화 시간
+	//
+	//auto objmgr = ObjectManager::GetInstance();
+	//physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());				//플레이어 위치
+	//physx::PxVec3 cameraDir = m_controller->GetCameraLook();
+	//cameraDir.y = 0;  // y 컴포넌트를 0으로 설정
+	//cameraDir.normalize();  // 벡터를 정규화
+	//float angle = physx::PxAtan2(cameraDir.z, cameraDir.x);
+	//physx::PxQuat cameraRot(angle, physx::PxVec3(0, 1, 0));					//카메라 회전정보
 
-	float attackTime[2] = {};
 
+
+	//// 07/23 추가한 코드. 방향수정이 잘되면 기존 위의 코드는 정리한다.
+	//cameraDir = GetForwardVec();
+
+
+
+	//float radius = m_controller->GetCollider()->GetRadius();
+	//float extent = 100.f;
+	//physx::PxVec3 triggerPos = playerPos + cameraDir * (radius + extent);	//트리거 위치
+
+	//if (m_firstSingleStrike == true)
+	//{
+	//	m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Layer_TriggerObject", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
+	//	m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, attackTime[0], attackTime[1]);
+	//	auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
+	//	triggerBody->AddCollider<BoxCollider>(m_attackTrigger->GetTransform()->GetScale());
+	//	triggerBody->GetCollider(0)->SetTrigger(true);
+	//	m_firstSingleStrike = false;
+	//}
+	//else
+	//{
+	//	m_attackTrigger->RestoreOneTimeEffect();
+	//	auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
+	//	triggerBody->SetPosition(FROM_PX3(triggerPos), true);
+	//}
+
+#pragma endregion
+
+	//투사체 위치 선정
+	physx::PxVec3 playerPos = m_controller->GetBody()->GetGlobalPose().p;
+	physx::PxVec3 xzDir = m_controller->GetCameraLook().getNormalized();
+
+	float playerRadius = m_controller->GetCollider()->GetRadius();
+	float skillHalfExtent = 100.f;
+
+	xzDir = -GetForwardVec();
+
+	physx::PxVec3 pos = playerPos + xzDir * (playerRadius + skillHalfExtent + 10);
+	physx::PxQuat rot = GetRotation_For_Overlap(xzDir);
+
+
+	m_overlapObj->UpdateOverlapPosition(pos, rot);
+
+	float start = 0.f;
+	float end = 0.f;
 	switch (state)
 	{
 		case ATK0:
 		{
-			attackTime[0] = 0.2f;
-			attackTime[1] = 0.43f;
+			start = 0.2f;
+			end = 0.43f;
 		}
 		break;
 		case ATK1:
 		{
-			attackTime[0] = 0.2f;
-			attackTime[1] = 0.39f;
+			start = 0.2f;
+			end = 0.39f;
 		}
 		break;
 		case ATK2:
 		{
-			attackTime[0] = 0.08f;
-			attackTime[1] = 0.19f;
+			start = 0.08f;
+			end = 0.19f;
 		}
 		break;
 		case ATK3:
 		{
-			attackTime[0] = 0.6f;
-			attackTime[1] = 0.75f;
+			start = 0.6f;
+			end = 0.75f;
 		}
 		break;
 		case ATK4:
 		{
-			attackTime[0] = 0.08f;
-			attackTime[1] = 0.27f;
+			start = 0.08f;
+			end = 0.27f;
 		}
-		break;
-		default:
-		break;
 	}
-	//공격 활성화 시간
 
-	auto objmgr = ObjectManager::GetInstance();
-	physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());				//플레이어 위치
-	physx::PxVec3 cameraDir = m_controller->GetCameraLook();
-	cameraDir.y = 0;  // y 컴포넌트를 0으로 설정
-	cameraDir.normalize();  // 벡터를 정규화
-	float angle = physx::PxAtan2(cameraDir.z, cameraDir.x);
-	physx::PxQuat cameraRot(angle, physx::PxVec3(0, 1, 0));					//카메라 회전정보
-
-
-
-	// 07/23 추가한 코드. 방향수정이 잘되면 기존 위의 코드는 정리한다.
-	cameraDir = GetForwardVec();
-
-
-
-	float radius = m_controller->GetCollider()->GetRadius();
-	float extent = 100.f;
-	physx::PxVec3 triggerPos = playerPos + cameraDir * (radius + extent);	//트리거 위치
-
-	if (m_firstSingleStrike == true)
-	{
-		m_attackTrigger = objmgr->AddGameObjectToLayer<TriggerObject>(L"Layer_TriggerObject", FROM_PX3(triggerPos), FROM_PXQUAT(cameraRot), Vec3(extent, extent, extent));
-		m_attackTrigger->SetTriggerType(server::TRIGGER_TYPE::SINGLE_STRIKE, attackTime[0], attackTime[1]);
-		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
-		triggerBody->AddCollider<BoxCollider>(m_attackTrigger->GetTransform()->GetScale());
-		triggerBody->GetCollider(0)->SetTrigger(true);
-		m_firstSingleStrike = false;
-	}
-	else
-	{
-		m_attackTrigger->RestoreOneTimeEffect();
-		auto triggerBody = m_attackTrigger->GetComponent<RigidBody>(L"RigidBody");
-		triggerBody->SetPosition(FROM_PX3(triggerPos), true);
-	}
+	EventHandler::GetInstance()->AddEvent("PLAYER_OVERLAPOBJ_ACTIVATE", start, this);
+	EventHandler::GetInstance()->AddEvent("PLAYER_OVERLAPOBJ_DEACTIVATE", end, this);
 
 	m_controller->Keyboard_ATK_Clear();
 }
@@ -996,4 +1053,33 @@ physx::PxVec3 Player::GetForwardVec()
 void Player::SetMeteorAttackAvailable(bool value)
 {
 	m_meteorAvailable = value;
+}
+
+void Player::TimeUpdate_Trigger(double deltaTime)
+{
+	if (m_attackTrigger == nullptr)
+		return;
+
+	m_attackTrigger->TimeUpdate(deltaTime);
+}
+
+void Player::Set_OverlapObject(bool activate)
+{
+	if (!m_overlapObj)
+		return;
+
+	if (activate)
+		m_overlapObj->Activate();
+	else
+		m_overlapObj->Deactivate();
+}
+
+physx::PxQuat Player::GetRotation_For_Overlap(physx::PxVec3 xzDir)
+{
+	physx::PxVec3 initialDir(0, 0, 1);
+	physx::PxVec3 rotAxis = initialDir.cross(xzDir).getNormalized();
+	physx::PxReal rotAngle = physx::PxAtan2(physx::PxSqrt(1 - physx::PxPow(xzDir.dot(initialDir), 2)), xzDir.dot(initialDir));
+	physx::PxQuat rotation(rotAngle, rotAxis);
+
+	return rotation;
 }

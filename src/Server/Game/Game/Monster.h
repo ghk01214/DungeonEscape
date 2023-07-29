@@ -27,6 +27,8 @@ public:
 	Vec3 GetControllerPosition();
 	void SetControllerPosition(Vec3 pos);
 	int32_t GetHP() const;
+	void SetHP(float value);
+	void SetHP_Modify(float value);
 	float GetAniPlayTime() const;
 
 	void SetFBXType(server::FBX_TYPE fbxType) override;

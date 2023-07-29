@@ -75,13 +75,13 @@ void TestLevel::LoadUnit_DebugMode()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(15609, -976, 26457), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(3890, -1462, 21062), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
 																																							//골렘 입장위치		16229, -3541, 35577
 																																							//위퍼 입장위치		11628, -1640, 21309
-																																							//다리				3250, -1600, 22170
+																																							//다리				3890, -1462, 21062
 																																							//돌테스트			15609, -976, 26457
-
-	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	//15609, -976, 26457
+	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
 	//몬스터
@@ -383,15 +383,6 @@ void TestLevel::LoadGimmikObject()
 			auto& vertexindexInfo = gimmickLoader.FindVertexIndicesInfo(info.first);
 			pillarBody->AddCollider<MeshCollider>(pillarObject->GetTransform()->GetScale(), info.first, vertexindexInfo, true);
 			pillarObject->Init_After_ColliderAttached();
-
-
-			//auto testloc = locationInfo.Position;
-			//testloc.y -= 800.f;
-			//auto testObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Rock", testloc, Quat(0, 0, 0, 1),Vec3(2000, 10 , 2000));
-			//auto testBody = testObj->GetComponent<RigidBody>(L"RigidBody");
-			//testBody->AddCollider<BoxCollider>(testObj->GetTransform()->GetScale());
-			//testObj->ApplyRequestedLayers();
-
 		}
 	}
 }
@@ -452,7 +443,7 @@ void TestLevel::ThrowGimmik2Ball()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	float boulderPower = 100000.f;													//16276.514, -1140.000, 26758.246; 0.000, 0.000, 0.707, 0.707; 
+	float boulderPower = 100000.f;												 
 	auto boulderObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Boulder", Vec3(16276.514, -140, 26758.246), Quat(0, 0, 0, 1), Vec3(300,300,300));
 	auto boulderBody = boulderObj->GetComponent<RigidBody>(L"RigidBody");
 
@@ -468,7 +459,7 @@ void TestLevel::ThrowGimmik2Ball()
 	boulderCollider->SetFriction(0.4f);
 	boulderCollider->SetFrictionCombineMode(PhysicsCombineMode::Average);
 
-	physx::PxVec3 dir = physx::PxVec3(16215, -2608, 35219) - boulderBody->GetPosition();
+	physx::PxVec3 dir = physx::PxVec3(16215, -2558, 35219) - boulderBody->GetPosition();
 	dir.normalize();
 
 	boulderBody->AddForce(ForceMode::Impulse, dir * boulderPower);

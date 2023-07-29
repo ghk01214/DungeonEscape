@@ -110,7 +110,6 @@ void Event::ExecuteMsg_Once()
 	}
 
 	//player
-
 	if (msg == "PLAYER_STUN_OFF")
 	{
 		auto playerObj = dynamic_cast<Player*>(target);
@@ -127,6 +126,34 @@ void Event::ExecuteMsg_Once()
 		{
 			playerObj->SetMeteorAttackAvailable(true);
 			std::cout << "메테오 재충전" << std::endl;
+		}
+	}
+
+	if (msg == "REMOVE_PLAYER_METEOR")
+	{
+		auto meteorObj = dynamic_cast<SkillObject*>(target);
+		if (meteorObj)
+		{
+			meteorObj->SetRemoveReserved();
+			meteorObj->ServerMessage_SkillHit();
+		}
+	}
+
+	if (msg == "PLAYER_OVERLAPOBJ_ACTIVATE")
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (playerObj)
+		{
+			playerObj->Set_OverlapObject(true);
+		}
+	}
+
+	if (msg == "PLAYER_OVERLAPOBJ_DEACTIVATE")
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (playerObj)
+		{
+			playerObj->Set_OverlapObject(false);
 		}
 	}
 

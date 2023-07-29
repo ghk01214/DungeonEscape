@@ -21,8 +21,10 @@ public:
 	void TriggerUpdate();
 	void Trigger_Persistent();
 	void Trigger_SingleStrike_HandleMonster();
-	void Trigger_SingleStrike_HandlePlayers();
 	void Trigger_SingleStrike_HandlePillar();
+
+public:
+	void TimeUpdate(double deltaTime);
 
 public:
 	void ExcludeTriggerFromSimulation(bool value);
@@ -30,7 +32,7 @@ public:
 	void RestoreOneTimeEffect();
 
 public:
-	void SetTriggerType(server::TRIGGER_TYPE, float startTime = -1.f, float endTime = -1.f);
+	void SetTriggerType(server::TRIGGER_TYPE, double startTime = -1.f, double endTime = -1.f);
 	server::TRIGGER_TYPE GetTriggerType();
 private:
 	RigidBody* m_body = nullptr;
@@ -38,9 +40,9 @@ private:
 private:
 	server::TRIGGER_TYPE m_triggerType = server::TRIGGER_TYPE::NONE;
 	std::vector<Collider*> m_excludeColliders;		//중복처리 방지용 컨테이너(1회성 트리거 한정)
-	float m_startTime = -1.f;
-	float m_endTime = -1.f;			
-	float m_currentTime = -1.f;						//트리거 활성화 시간 + 시작/끝(1회성 트리거 한정)
+	double m_startTime = -1.f;
+	double m_endTime = -1.f;
+	double m_currentTime = -1.f;						//트리거 활성화 시간 + 시작/끝(1회성 트리거 한정)
 
 	physx::PxVec3 m_originalPosition = physx::PxVec3(0);
 };

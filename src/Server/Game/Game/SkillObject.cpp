@@ -506,13 +506,17 @@ void SkillObject::HandlePlayerSkillCollision()
 					if (pillar)
 					{
 						pillar->ReceivedAttack_Meteor();
+						SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED_METEOR, false);
+						SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, false);
 					}
 				}
 				break;
-			}
+			} 
 
-			SetRemoveReserved();						//객체 삭제
-			ServerMessage_SkillHit();					//서버 메시지 처리
+			//SetRemoveReserved();						//객체 삭제
+			//ServerMessage_SkillHit();					//서버 메시지 처리
+			//삭제는 5초 후 진행		GimmikMeteor
+			EventHandler::GetInstance()->AddEvent("REMOVE_PLAYER_METEOR", 3.f, this);
 		}
 	}
 }
@@ -711,7 +715,7 @@ void SkillObject::Attribute_Guide_MeteorOnly()
 		float guidePower = 2500.f;
 
 		physx::PxVec3 TargetPos = TO_PX3(m_target->GetTransform()->GetPosition());
-		TargetPos.y += 400.f;
+		TargetPos.y += 1100.f;
 		physx::PxVec3 TargetDir = TargetPos - m_body->GetPosition();
 		TargetDir.normalize();
 
