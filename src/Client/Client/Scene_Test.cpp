@@ -471,13 +471,6 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 	for (auto& gameObject : gameObjects)
 	{
 		Matrix matWorld{ Matrix::CreateScale(scale / scaleRatio) };
-
-		if (objType == server::OBJECT_TYPE::REMOTE_PLAYER)
-		{
-			matWorld = gameObject->GetTransform()->GetWorldMatrix();
-			matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
-		}
-
 		matWorld *= Matrix::CreateTranslation(pos);
 
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
