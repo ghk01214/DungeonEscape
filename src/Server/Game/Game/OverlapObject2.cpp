@@ -249,7 +249,7 @@ void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 	}
 
 
-	Vec3 effectPos = m_player->LocationForBilboard(monster->GetAI());		//이펙트 위치
+	Vec3 effectPos = m_player->LocationForBilboard_VictimMonster(monster);		//이펙트 위치
 
 	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = m_player->GetID();

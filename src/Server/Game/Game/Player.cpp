@@ -687,7 +687,7 @@ void Player::StunCheck()
 	}
 }
 
-Vec3 Player::LocationForBilboard(MonsterAI* overlapOwner)
+Vec3 Player::LocationForBilboard_VictimPlayer(MonsterAI* overlapOwner)
 {
 	auto monster = overlapOwner->GetMonster();
 
@@ -711,6 +711,31 @@ Vec3 Player::LocationForBilboard(MonsterAI* overlapOwner)
 
 	return tempPos;
 }
+
+Vec3 Player::LocationForBilboard_VictimMonster(Monster* monster)
+{
+	physx::PxVec3 fakeVariable(0);
+	physx::PxVec3 monsterPos = TO_PX3(monster->GetControllerPosition());
+	physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());
+
+	physx::PxVec3 dir = monsterPos - playerPos;
+
+	dir.normalize();
+
+
+	monsterPos += (dir * 100.f);
+	fakeVariable = playerPos;
+
+	Vec3 tempPos;
+	tempPos.x = monsterPos.x;
+	tempPos.y = monsterPos.y;
+	tempPos.z = monsterPos.z;
+
+
+	return tempPos;
+}
+
+
 
 void Player::SetControllerMoveSpeed(float value)
 {

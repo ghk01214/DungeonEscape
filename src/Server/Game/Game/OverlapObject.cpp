@@ -215,7 +215,7 @@ void OverlapObject::UpdateOverlapPosition(physx::PxVec3 pos)
 
 void OverlapObject::ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type)
 {
-	auto effectPos{ player->LocationForBilboard(m_monsterAI) };
+	auto effectPos{ player->LocationForBilboard_VictimPlayer(m_monsterAI) };
 
 	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = player->GetID();

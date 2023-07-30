@@ -103,7 +103,8 @@ public:
 	void SetStun(bool value);
 	void StunCheck();
 
-	Vec3 LocationForBilboard(MonsterAI* overlapOwner);
+	Vec3 LocationForBilboard_VictimPlayer(MonsterAI* overlapOwner);
+	Vec3 LocationForBilboard_VictimMonster(Monster* monster);
 
 public:
 	CustomController* GetController();
