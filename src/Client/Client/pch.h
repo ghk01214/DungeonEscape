@@ -4,8 +4,8 @@
 
 #include "EnginePch.h"
 
-
 extern HINSTANCE g_hInst;
+extern std::wstring serverIP_Address;
 
 template<typename... Args>
 inline void Print(const Args&... args)

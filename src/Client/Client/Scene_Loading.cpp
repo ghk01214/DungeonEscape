@@ -45,7 +45,7 @@ void Scene_Loading::LogIn()
 	//std::wcin >> PWD;
 	SERVER_ADDR = L"127.0.0.1";
 
-	GET_NETWORK->Init(SERVER_ADDR);
+	GET_NETWORK->Init(serverIP_Address);
 	GET_NETWORK->SendLoginPacket(ID, PWD);
 }
 

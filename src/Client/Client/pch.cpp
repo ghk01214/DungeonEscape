@@ -1,5 +1,7 @@
 ﻿#include "pch.h"
 
+std::wstring serverIP_Address;
+
 void PrintVec3(const Vec3& v)
 {
 	std::cout << std::format("{}, {}, {}", v.x, v.y, v.z) << std::endl;

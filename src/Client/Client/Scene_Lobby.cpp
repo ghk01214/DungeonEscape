@@ -27,13 +27,45 @@ void Scene_Lobby::Awake()
 void Scene_Lobby::Start()
 {
 	__super::Start();
+
+	m_ipAddress.clear();
 }
 
 void Scene_Lobby::Update()
 {
 	__super::Update();
 
-	GET_SINGLE(FontManager)->RenderFonts(L"xasdasd", Vec2(-300.f, 200.f), Vec2(20.f, 20.f), 10.f);
+	auto input{ GET_SINGLE(CInput) };
+
+	if (input->GetButtonDown(KEY_TYPE::KEY_1) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_1))
+		m_ipAddress += L'1';
+	else if (input->GetButtonDown(KEY_TYPE::KEY_2) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_2))
+		m_ipAddress += L'2';
+	else if (input->GetButtonDown(KEY_TYPE::KEY_3) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_3))
+		m_ipAddress += L'3';
+	else if (input->GetButtonDown(KEY_TYPE::KEY_4) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_4))
+		m_ipAddress += L'4';
+	else if (input->GetButtonDown(KEY_TYPE::KEY_5) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_5))
+		m_ipAddress += L'5';
+	else if (input->GetButtonDown(KEY_TYPE::KEY_6) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_6))
+		m_ipAddress += L'6';
+	else if (input->GetButtonDown(KEY_TYPE::KEY_7) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_7))
+		m_ipAddress += L'7';
+	else if (input->GetButtonDown(KEY_TYPE::KEY_8) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_8))
+		m_ipAddress += L'8';
+	else if (input->GetButtonDown(KEY_TYPE::KEY_9) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_9))
+		m_ipAddress += L'9';
+	else if (input->GetButtonDown(KEY_TYPE::KEY_0) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_0))
+		m_ipAddress += L'0';
+	else if (input->GetButtonDown(KEY_TYPE::DOT) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_DOT))
+		m_ipAddress += L'.';
+	else if (input->GetButtonDown(KEY_TYPE::BACKSAPCE) == true and m_ipAddress.empty() == false)
+		m_ipAddress.pop_back();
+	else if (input->GetButtonDown(KEY_TYPE::ENTER) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_ENTER) == true)
+		serverIP_Address = m_ipAddress;
+
+	if (m_ipAddress.empty() == false)
+		GET_SINGLE(FontManager)->RenderFonts(m_ipAddress, Vec2(-300.f, 200.f), Vec2(10.f, 10.f), 10.f);
 }
 
 void Scene_Lobby::LateUpdate()

@@ -27,4 +27,7 @@ private:
 
 public:
 	static std::shared_ptr<CScene> Create();
+
+private:
+	std::wstring m_ipAddress;
 };
