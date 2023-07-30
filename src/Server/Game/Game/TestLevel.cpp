@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -81,12 +81,12 @@ void TestLevel::LoadUnit_DebugMode()
 																																							//다리				3890, -1462, 21062
 																																							//돌테스트			15609, -976, 26457
 	//15609, -976, 26457
-	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
-	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16220.f, -3700.f, 45890.f), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
 	//몬스터
 	//위퍼 위치15037.582, -1550.337, 21630.693; 0.000, 0.000, 0.707, 0.707;
-	//골렘 16200, -3000, 40000
+	//골렘 16220, -3700, 45890
 }
 
 void TestLevel::LoadMap()
@@ -439,7 +439,7 @@ void TestLevel::ThrowGimmik2Ball()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	float boulderPower = 100000.f;												 
+	float boulderPower = 100000.f;
 	auto boulderObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Boulder", Vec3(16276.514, -140, 26758.246), Quat(0, 0, 0, 1), Vec3(300,300,300));
 	auto boulderBody = boulderObj->GetComponent<RigidBody>(L"RigidBody");
 
