@@ -89,8 +89,8 @@ void SkillObject::Init()
 			collider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
 			collider->SetRestitution(0.8f);
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
-			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.6f, this);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::WAIT_LEVITATE, true);
+			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.3f, this);
 		}
 		break;
 
@@ -680,6 +680,7 @@ void SkillObject::WeeperNuclearFire()
 
 void SkillObject::Handle_Attribute()
 {
+	Attribute_WaitLevitate();
 	Attirbute_Levitate();
 	Attirbute_New_Levitate();
 	Attribute_Guide();
@@ -687,11 +688,28 @@ void SkillObject::Handle_Attribute()
 	Attribute_Ascending();
 }
 
+void SkillObject::Attribute_WaitLevitate()
+{
+	if (m_skillAttrib & SKILLATTRIBUTE::WAIT_LEVITATE)
+	{
+		physx::PxVec3 gravity = PhysDevice::GetInstance()->GetGravity();
+		gravity *= 1.f;
+		m_body->AddForce(ForceMode::Force, -gravity * m_body->GetMass());
+		physx::PxVec3 currentVel = m_body->GetVelocity();
+		if (currentVel.y < 0)
+		{
+			currentVel.y = 0;
+			m_body->SetVelocity(currentVel);
+		}
+	}
+}
+
 void SkillObject::Attirbute_Levitate()
 {
 	if (m_skillAttrib & SKILLATTRIBUTE::LEVITATE)
 	{
 		physx::PxVec3 gravity = PhysDevice::GetInstance()->GetGravity();
+		gravity *= 1.025f;
 		m_body->AddForce(ForceMode::Force, -gravity * m_body->GetMass());
 	}
 }
@@ -843,5 +861,7 @@ void SkillObject::Nuclear_Attribute_Explosion()
 
 		playerController->BounceFromAttack();					//플레이어 input 무효화 (땅 착지전까지)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(knockbackDir.x * horizontalStrength, verticalStrength, knockbackDir.z * horizontalStrength));
+
+		EventHandler::GetInstance()->AddEvent("NUCLEAR_ATTACK_DAMAGE_APPLY", 0.3f, player);
 	}
 }

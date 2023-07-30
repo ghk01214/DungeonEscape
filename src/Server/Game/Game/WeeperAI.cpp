@@ -66,8 +66,8 @@ void WeeperAI::FillSchedule()
 	//	m_scheduler.emplace_back(static_cast<WEEPER_SCHEDULE>(schedule(dre)));
 	//}
 
-	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
-	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
 	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 
@@ -115,9 +115,10 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.5f, m_weeper);
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("TIMER", 9.f, m_weeper);
-				EventHandler::GetInstance()->AddEvent("TIMER", 15.f, m_weeper);
-				EventHandler::GetInstance()->AddEvent("TIMER", 20.f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 7.1f, m_weeper);
+				//EventHandler::GetInstance()->AddEvent("TIMER", 9.f, m_weeper);
+				//EventHandler::GetInstance()->AddEvent("TIMER", 15.f, m_weeper);
+				//EventHandler::GetInstance()->AddEvent("TIMER", 20.f, m_weeper);
 
 				ServerMessage_SendMonsterPattern(schedule);
 			}
@@ -247,8 +248,10 @@ void WeeperAI::DamageCheck()
 		{
 			//CAST2_SCATTER_BREAKDOWN 이벤트에서 호출됨 : 불필요 이벤트 삭제 필요.
 			m_weeper->SetState(Weeper::WEEPER_STATE::TAUNT);
-			EventHandler::GetInstance()->AddEvent("WEEPER_COUNTERSTAGGER_END", 5.f, m_weeper);
+			EventHandler::GetInstance()->AddEvent("WEEPER_COUNTERSTAGGER_END", 4.7f, m_weeper);
+			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 4.9f, m_weeper);
 			EventHandler::GetInstance()->DeleteEvent("CAST2_VULNERABLE_OFF");
+			EventHandler::GetInstance()->DeleteEvent("CAST2_AI_WAIT_FREE");
 			Cast2Vulnerable_OFF();
 		}
 		else if (m_weeper->GetState() == Weeper::WEEPER_STATE::CAST4_LOOP)

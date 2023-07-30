@@ -29,10 +29,10 @@ void Event::Tick(double deltaTime)
 
 	time -= deltaTime;
 
-	//if (msg == "ANIM_END_IF_SPELL_END")
-	//{
-	//	std::cout << "remaining TIme : " << time << std::endl;
-	//}
+	if (msg == "WEEPER_COUNTERSTAGGER_END")
+	{
+		std::cout << "remaining TIme : " << time << std::endl;
+	}
 }
 
 void Event::Tick_TimeInterval()
@@ -49,7 +49,7 @@ void Event::Tick_TimeInterval()
 
 void Event::ExecuteMsg_Once()
 {
-	//공용
+	//monster공용
 	if (msg == "ANIM_END")
 	{
 		auto monsterObj = dynamic_cast<Monster*>(target);
@@ -69,6 +69,17 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "CAST2_AI_WAIT_FREE")
+	{
+		auto monsterObj = dynamic_cast<Monster*>(target);
+		if (monsterObj)
+		{
+			auto monsterAI = monsterObj->GetAI();
+			monsterAI->SetAIWait(false);
+		}
+	}
+
+	//skillobject공용
 	if (msg == "SKILL_RELEASE")
 	{
 		auto skillObj = dynamic_cast<SkillObject*>(target);
@@ -83,6 +94,8 @@ void Event::ExecuteMsg_Once()
 		auto skillObj = dynamic_cast<SkillObject*>(target);
 		if (skillObj)
 		{
+			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::WAIT_LEVITATE, false);
+			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
 			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED, true);
 			auto body = skillObj->GetComponent<RigidBody>(L"RigidBody");
 			body->SetAngularDamping(0.f);
@@ -109,6 +122,8 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+
+	//임시
 	if (msg == "TIMER")
 	{
 		std::cout << "timer" << std::endl;
@@ -239,26 +254,22 @@ void Event::ExecuteMsg_Once()
 		if (skillObj)
 		{
 			owner->SetState(Weeper::WEEPER_STATE::CAST2_END);						//CAST2 END로 애니메이션 진입
-			if (ownerAI->m_debugmode)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 4.f, owner);		//디버그 전용 애니메이션 종료 코드
-			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 6.f, owner);
+			EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST2END", 1.87f, owner);
 
-			EventHandler::GetInstance()->AddEvent("CAST2_VULNERABLE_ON", 4.f, owner);		//애니메이션 종료 시간쯤 Vulnerable 1.5초 정도 ON
-			EventHandler::GetInstance()->AddEvent("CAST2_VULNERABLE_OFF", 5.5f, owner);
+			EventHandler::GetInstance()->AddEvent("CAST2_VULNERABLE_ON", 2.f, owner);		
+			EventHandler::GetInstance()->AddEvent("CAST2_VULNERABLE_OFF", 3.5f, owner);		//애니메이션 끝나고 1.5초간 카운터 가능. 
+			EventHandler::GetInstance()->AddEvent("CAST2_AI_WAIT_FREE", 4.5f, owner);
 
-			skillObj->SetRemoveReserved();											//Ascend 속성의 오브젝트는 삭제
+			skillObj->SetRemoveReserved();													//Ascend 속성의 오브젝트는 삭제
 
-			int scatterCnt = 50;
-			float scatterTime = 4.f;
+			int scatterCnt = 30;
+			float scatterTime = 3.5f;
 			for (int i = 0; i < scatterCnt; ++i)
 			{
 				static std::uniform_real_distribution<float> distribution(0.f, scatterTime);
 
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST2_SCATTER_FUNCTIONCALL", distribution(dre), owner);
 			}
-
-			//addevent(카운터 진입시간)
-			//addevent(카운터 탈출시간)
 		}
 	}
 
@@ -270,10 +281,10 @@ void Event::ExecuteMsg_Once()
 		WeeperAI* weeperAI = weeper->GetAI();
 
 		EventHandler::GetInstance()->DeleteEvent("CAST2_SCATTER_AIRFIRE");		// Cast2 노말 진행 이벤트 삭제
-		if (weeperAI->m_debugmode)
-			EventHandler::GetInstance()->AddEvent("ANIM_END", 4.f, weeper);		//디버그 전용 애니메이션 종료 코드
-		EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 6.f, weeper);		//AI wait 해제 (던지는 애니메이션이 끝나고 몇초 후 이동 가능하도록)
-		EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST2END", 6.f, weeper);		//클라에서 애니메이션 종료 못들어도 종료
+
+		EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST2END", 1.87f, weeper);		//클라에서 애니메이션 종료 못들어도 종료
+		EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 4.f, weeper);					//AI wait 해제 (던지는 애니메이션이 끝나고 몇초 후 이동 가능하도록)
+
 
 		skillObj->WeeperNuclearFire();
 		skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::NUCLEAR, true);
@@ -318,6 +329,7 @@ void Event::ExecuteMsg_Once()
 			weeperObj->Pattern_Cast3();
 		}
 	}
+
 
 
 
@@ -581,7 +593,24 @@ void Event::ExecuteMsg_continuous()
 		}
 	}
 
+	if (msg == "NUCLEAR_ATTACK_DAMAGE_APPLY")		//Jump에서 착지까지 반복호출
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (!playerObj)
+			return;
 
+		executed = false;
+		bool ground = playerObj->GetController()->IsOnGround();
+		if (ground)
+		{
+			if (playerObj->GetState() == Player::PLAYER_STATE::DAMAGE)
+				playerObj->SetState(Player::PLAYER_STATE::IDLE1);
+			else
+				playerObj->SetState(Player::PLAYER_STATE::DAMAGE);
+
+			executed = true;
+		}
+	}
 
 
 	if (msg == "GOLEM_MOVE")		//cast4 start 애니메이션 종료 후 호출. 애니메이션은 이미 Cast4_Loop으로 전환됐음.

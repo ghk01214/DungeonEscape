@@ -45,7 +45,8 @@ public:
 		DESCENDING		= 1 << 3,
 		NUCLEAR			= 1 << 4,
 		GUIDED_METEOR   = 1 << 5,
-		NEW_LEVITATE    = 1 << 6
+		NEW_LEVITATE    = 1 << 6,
+		WAIT_LEVITATE   = 1 << 7
 	};
 
 public:
@@ -74,6 +75,7 @@ public:
 	void WeeperNuclearFire();
 public:
 	void Handle_Attribute();		//attribute에 따라 지속적으로 실행
+	void Attribute_WaitLevitate();	
 	void Attirbute_Levitate();		//공중 지속
 	void Attirbute_New_Levitate();		//공중 지속
 	void Attribute_Guide();			//유도

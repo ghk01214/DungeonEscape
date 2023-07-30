@@ -357,7 +357,7 @@ void Weeper::Pattern_Cast2_CounterNuclear()
 {
 	m_weeperAI->Cast2Counter_OFF();			//카운터 모드 종료
 	SetState(WEEPER_STATE::CAST2_END);
-	EventHandler::GetInstance()->AddEvent("CAST2_NUCLEAR_AIRFIRE", 0.5f, this);
+	EventHandler::GetInstance()->AddEvent("CAST2_NUCLEAR_AIRFIRE", 0.7f, this);
 }
 
 SkillObject* Weeper::Pattern_Cast3()
@@ -428,7 +428,7 @@ float Weeper::Randnum_Cast1_YInterval()
 {
 	static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	static std::default_random_engine generator(seed);
-	static std::uniform_int_distribution<int> distribution(-5, 5);
+	static std::uniform_int_distribution<int> distribution(-3, 3);
 
 	int number = 0;
 	while (number == 0) {
