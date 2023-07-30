@@ -35,8 +35,8 @@ void MonsterAI::Init()
 
 void MonsterAI::Update(float timeDelta)
 {
-	if (!m_start)
-		MonsterStart();
+	//if (!m_start)
+	//	MonsterStart();
 
 	if (m_AIWait)
 		return;
@@ -79,7 +79,7 @@ void MonsterAI::SetRandomTarget()
 		return;
 	}
 
-	if (players->GetGameObjects().size() < 2 && m_target != nullptr)		//1명밖에 없고 target이 있다		
+	if (players->GetGameObjects().size() < 2 && m_target != nullptr)		//1명밖에 없고 target이 있다
 	{
 		return;
 	}

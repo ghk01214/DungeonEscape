@@ -50,7 +50,7 @@ void OverlapObject2::UpdateOverlapPosition(physx::PxVec3 pos, physx::PxQuat quat
 	m_rot = quat;
 }
 
-void OverlapObject2::UpdateOverlapType(string name)
+void OverlapObject2::UpdateOverlapType(std::string name)
 {
 	m_attackType = name;
 }
@@ -228,9 +228,12 @@ bool OverlapObject2::ApplySkillToMonster(Monster* monster)
 
 void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 {
+	server::EFFECT_TYPE type;
+
 	if (m_attackType == "ATTACK0")
 	{
 		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+		type = server::EFFECT_TYPE::SLASH;
 	}
 	else if (m_attackType == "ATTACK1")
 	{
@@ -251,8 +254,7 @@ void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = m_player->GetID();
 	ev.state = magic_enum::enum_integer(type);
-	//ev.effectPos = effectPos;
+	ev.effectPos = effectPos;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	//game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
-

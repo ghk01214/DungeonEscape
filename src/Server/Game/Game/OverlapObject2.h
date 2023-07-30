@@ -19,7 +19,7 @@ public:
 
 public:
 	void UpdateOverlapPosition(physx::PxVec3 pos, physx::PxQuat quat);
-	void UpdateOverlapType(string name);
+	void UpdateOverlapType(std::string name);
 	void Activate();
 	void Deactivate();
 
@@ -40,7 +40,7 @@ private:
 	physx::PxQuat m_rot;
 	bool m_active = false;
 	physx::PxBoxGeometry* m_box = nullptr;
-	string m_attackType;
+	std::string m_attackType;
 
 	Player* m_player;
 };
