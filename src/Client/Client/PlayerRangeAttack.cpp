@@ -20,11 +20,15 @@ void PlayerRangeAttack::Start()
 
 void PlayerRangeAttack::Update()
 {
-	auto pos{ GetTransform()->GetWorldPosition() };
+	if (GetGameObject()->GetObjectType() == server::OBJECT_TYPE::PLAYER_FIREBALL)
+	{
+		auto pos{ GetTransform()->GetWorldPosition() };
 
-	//pos.y += 100.f;
+		pos.y += 50.f;
 
-	//GET_SINGLE(EffectManager)->PlayBillBoard(L"Effect_Shield_Electric_Green", pos, Vec3(300.f, 300.f, 1.f), 1.f, 0.006f);
+		GET_SINGLE(EffectManager)->SetBillBoardInfo(1, pos, Vec3(300.f, 300.f, 1.f), 0.004f);
+		GET_SINGLE(EffectManager)->PlayBillBoard(1);
+	}
 }
 
 void PlayerRangeAttack::LateUpdate()

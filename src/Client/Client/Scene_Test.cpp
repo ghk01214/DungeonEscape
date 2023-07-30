@@ -806,6 +806,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
 			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+			objectDesc.vScale = { 2.5f, 2.5f, 2.5f };
 		}
 		break;
 		case server::FBX_TYPE::PLAYER_THUNDERBALL:
@@ -1031,6 +1032,12 @@ void Scene_Test::AddEffectTextures()
 	effect.scale = { 500.f, 500.f, 1.f };
 	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Explode", effect.speed));
 	m_billboardInfo[server::EFFECT_TYPE::EXPLODE] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Fire", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::FIRE] = effect;
 
 #pragma region [HIT]
 	effect.index = index++;
