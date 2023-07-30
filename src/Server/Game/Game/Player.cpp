@@ -1041,6 +1041,15 @@ void Player::PlayerPattern_SingleStrike(PLAYER_STATE state)
 	EventHandler::GetInstance()->AddEvent("PLAYER_OVERLAPOBJ_ACTIVATE", start, this);
 	EventHandler::GetInstance()->AddEvent("PLAYER_OVERLAPOBJ_DEACTIVATE", end, this);
 
+	if(m_currState == PLAYER_STATE::ATK0)
+		m_overlapObj->UpdateOverlapType("ATTACK0");
+	else if (m_currState == PLAYER_STATE::ATK1)
+		m_overlapObj->UpdateOverlapType("ATTACK1");
+	else if (m_currState == PLAYER_STATE::ATK2)
+		m_overlapObj->UpdateOverlapType("ATTACK2");
+	else if (m_currState == PLAYER_STATE::ATK3)
+		m_overlapObj->UpdateOverlapType("ATTACK3");
+
 	m_controller->Keyboard_ATK_Clear();
 }
 

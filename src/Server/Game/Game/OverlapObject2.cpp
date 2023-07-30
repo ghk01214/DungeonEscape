@@ -50,6 +50,11 @@ void OverlapObject2::UpdateOverlapPosition(physx::PxVec3 pos, physx::PxQuat quat
 	m_rot = quat;
 }
 
+void OverlapObject2::UpdateOverlapType(string name)
+{
+	m_attackType = name;
+}
+
 void OverlapObject2::Activate()
 {
 	m_active = true;
@@ -204,10 +209,15 @@ bool OverlapObject2::ApplySkillToMonster(Monster* monster)
 	std::wstring monstername = monster->GetName();
 	if (monstername == L"Weeper")
 	{
+
 	}
 	else
 	{
+
 	}
+
+
+	ServerMessage_RenderEffect(monster);
 
 
 	monster->GetDamaged(10);
@@ -216,12 +226,30 @@ bool OverlapObject2::ApplySkillToMonster(Monster* monster)
 }
 
 
-void OverlapObject2::ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type)
+void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 {
-	//auto effectPos{ player->LocationForBilboard(m_monsterAI) };
+	if (m_attackType == "ATTACK0")
+	{
+		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+	}
+	else if (m_attackType == "ATTACK1")
+	{
+		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+	}
+	else if (m_attackType == "ATTACK2")
+	{
+		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+	}
+	else if (m_attackType == "ATTACK3")
+	{
+		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+	}
+
+
+	Vec3 effectPos = m_player->LocationForBilboard(monster->GetAI());		//이펙트 위치
 
 	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
-	ev.objID = player->GetID();
+	ev.objID = m_player->GetID();
 	ev.state = magic_enum::enum_integer(type);
 	//ev.effectPos = effectPos;
 

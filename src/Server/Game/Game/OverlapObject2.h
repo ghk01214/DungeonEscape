@@ -19,6 +19,7 @@ public:
 
 public:
 	void UpdateOverlapPosition(physx::PxVec3 pos, physx::PxQuat quat);
+	void UpdateOverlapType(string name);
 	void Activate();
 	void Deactivate();
 
@@ -31,7 +32,7 @@ public:
 
 	physx::PxQuat GetRotation_For_Overlap(physx::PxVec3 xzDir);
 
-	void ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type);
+	void ServerMessage_RenderEffect(Monster* monster);
 
 private:
 	std::vector<GameObject*> m_duplicates;
@@ -39,6 +40,7 @@ private:
 	physx::PxQuat m_rot;
 	bool m_active = false;
 	physx::PxBoxGeometry* m_box = nullptr;
+	string m_attackType;
 
 	Player* m_player;
 };
