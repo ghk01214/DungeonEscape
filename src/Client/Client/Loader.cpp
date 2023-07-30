@@ -119,6 +119,8 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_CircleFrame_Red", L"..\\Resources\\Texture\\Effect\\Circle Frame\\red\\tile.png", 40);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_CircleFrame_Yellow", L"..\\Resources\\Texture\\Effect\\Circle Frame\\yellow\\tile.png", 32);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Circle_Wave", L"..\\Resources\\Texture\\Effect\\Circle Wave\\tile.png", 6);
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Explode", L"..\\Resources\\Texture\\Effect\\Explode\\tile.png", 20);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Explosion_Star_Particle", L"..\\Resources\\Texture\\Effect\\Explosion Star Particle\\tile.png", 15);
@@ -130,6 +132,8 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Flash_In_Green", L"..\\Resources\\Texture\\Effect\\Flash In\\green\\tile.png", 34);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Flash_In_LightBlue", L"..\\Resources\\Texture\\Effect\\Flash In\\light blue\\tile.png", 34);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Flash_In_Red", L"..\\Resources\\Texture\\Effect\\Flash In\\red\\tile.png", 34);
+
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Hit", L"..\\Resources\\Texture\\Effect\\Hit\\tile.png", 4);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_DarkBlue", L"..\\Resources\\Texture\\Effect\\Implode\\dark blue\\tile.png", 29);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_DarkGray", L"..\\Resources\\Texture\\Effect\\Implode\\dark gray\\tile.png", 29);
@@ -143,15 +147,38 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implosion_Gray", L"..\\Resources\\Texture\\Effect\\Implosion\\gray\\tile.png", 32);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implosion_Green", L"..\\Resources\\Texture\\Effect\\Implosion\\green\\tile.png", 32);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact1", L"..\\Resources\\Texture\\Effect\\Impact1\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact2", L"..\\Resources\\Texture\\Effect\\Impact2\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact3", L"..\\Resources\\Texture\\Effect\\Impact3\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact4", L"..\\Resources\\Texture\\Effect\\Impact4\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact5", L"..\\Resources\\Texture\\Effect\\Impact5\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact6", L"..\\Resources\\Texture\\Effect\\Impact6\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact7", L"..\\Resources\\Texture\\Effect\\Impact7\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact8", L"..\\Resources\\Texture\\Effect\\Impact8\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact9", L"..\\Resources\\Texture\\Effect\\Impact9\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact10", L"..\\Resources\\Texture\\Effect\\Impact10\\tile.png", 4);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact11", L"..\\Resources\\Texture\\Effect\\Impact11\\tile.png", 4);
+
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact13", L"..\\Resources\\Texture\\Effect\\Impact13\\tile.png", 5);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact14", L"..\\Resources\\Texture\\Effect\\Impact14\\tile.png", 5);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact15", L"..\\Resources\\Texture\\Effect\\Impact15\\tile.png", 5);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact16", L"..\\Resources\\Texture\\Effect\\Impact16\\tile.png", 5);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact17", L"..\\Resources\\Texture\\Effect\\Impact17\\tile.png", 5);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact18", L"..\\Resources\\Texture\\Effect\\Impact18\\tile.png", 5);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact19", L"..\\Resources\\Texture\\Effect\\Impact19\\tile.png", 5);
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_Dispersal", L"..\\Resources\\Texture\\Effect\\In Dispersal\\tile.png", 33);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_StarBurst_Gray", L"..\\Resources\\Texture\\Effect\\In Star Burst\\gray\\tile.png", 40);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_StarBurst_Infinity", L"..\\Resources\\Texture\\Effect\\In Star Burst\\infinity\\tile.png", 40);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Paralys", L"..\\Resources\\Texture\\Effect\\Paralys\\tile.png", 21);
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Shield_Electric_DarkGray", L"..\\Resources\\Texture\\Effect\\Shield Electric\\dark gray\\tile.png", 30);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Shield_Electric_Green", L"..\\Resources\\Texture\\Effect\\Shield Electric\\green\\tile.png", 30);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Slash", L"..\\Resources\\Texture\\Effect\\Slash\\tile.png", 5);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Slash_Special", L"..\\Resources\\Texture\\Effect\\Slash Special\\tile.png", 18);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Smokey_Flicker_Flare_Dark", L"..\\Resources\\Texture\\Effect\\Smokey Flicker Flare\\dark\\tile.png", 48);
 
@@ -164,6 +191,17 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Star_Out_Area_Elipse_Dark", L"..\\Resources\\Texture\\Effect\\Star Out Area Elipse\\dark\\tile.png", 40);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Star_Out_Area_Elipse_Red", L"..\\Resources\\Texture\\Effect\\Star Out Area Elipse\\red\\tile.png", 40);
+
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Sword1", L"..\\Resources\\Texture\\Effect\\Sword1\\tile.png", 6);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Fire_Sword", L"..\\Resources\\Texture\\Effect\\Fire Sword\\tile.png", 14);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Ice_Sword", L"..\\Resources\\Texture\\Effect\\Ice Sword\\tile.png", 13);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Lightning_Sword", L"..\\Resources\\Texture\\Effect\\Lightning Sword\\tile.png", 14);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Star_Sword", L"..\\Resources\\Texture\\Effect\\Star Sword\\tile.png", 24);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_V_Sword", L"..\\Resources\\Texture\\Effect\\V Sword\\tile.png", 16);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Light_Wave_Sword", L"..\\Resources\\Texture\\Effect\\Light Wave Sword\\tile.png", 16);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Lune_Sword", L"..\\Resources\\Texture\\Effect\\Lune Sword\\tile.png", 28);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Cross_Sword", L"..\\Resources\\Texture\\Effect\\Cross Sword\\tile.png", 19);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Spell_Sword", L"..\\Resources\\Texture\\Effect\\Spell Sword\\tile.png", 25);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Teleport_Circle", L"..\\Resources\\Texture\\Effect\\teleport circle\\tile.png", 16);
 

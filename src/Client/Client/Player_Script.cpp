@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Player_Script.h"
 
 #include "Animator.h"
@@ -14,6 +14,8 @@
 
 #include <NetworkManager.h>
 #include <Network.h>
+
+#include <EffectManager.h>
 
 #include "Camera.h"
 

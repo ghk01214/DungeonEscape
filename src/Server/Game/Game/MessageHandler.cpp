@@ -444,6 +444,8 @@ namespace game
 			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457
 			Vec3 pos = golemTestPos;
 
+			pos.x += msg.playerID * 500.f;
+
 			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
 
 			std::wstring name{};

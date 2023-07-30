@@ -6,6 +6,15 @@
 
 #include <unordered_set>
 
+struct EffectInfo
+{
+	int32_t index;
+	Vec3 pos;
+	Vec3 scale;
+	float speed;
+	float alpha = 1.f;
+};
+
 class Scene_Test final : public CScene
 {
 public:
@@ -49,12 +58,12 @@ private:
 	void CreateAnimatedRemoteObject(network::CPacket& packet);
 	void CreateRemoteObject(network::CPacket& packet);
 	void RemoveObject(network::CPacket& packet);
-	std::wstring ClassifyEffect(server::EFFECT_TYPE effect);
-	void PlayEffect();
+	void PlayEffect(network::CPacket& packet);
 
 	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
 	void AddObjectEffectScript(std::shared_ptr<CGameObject>& gameObject, server::FBX_TYPE type);
+	void AddEffectTextures();
 
 public:
 	std::vector<std::shared_ptr<CGameObject>> CreateMapObject(ObjectDesc& objectDesc);
@@ -69,19 +78,11 @@ private:
 
 	std::unordered_set<int32_t> m_overlappedObjects;
 
-	bool m_playEffect;
-	bool m_playExplode;
-
-	Vec3 m_explodePos;
-
-	int32_t m_effectIndex;
-	Vec3 m_effectPos;
-	std::unordered_map<int32_t, std::wstring> m_effectName;
-
 public:
 	static shared_ptr<CScene> Create(server::FBX_TYPE eType);
 
 private:
-	vector<uint32> m_effects;
-	vector<uint32> m_billboards;
+	std::vector<int32_t> m_effects;
+	std::vector<int32_t> m_billboards;
+	std::unordered_map<server::EFFECT_TYPE, EffectInfo> m_billboardInfo;
 };

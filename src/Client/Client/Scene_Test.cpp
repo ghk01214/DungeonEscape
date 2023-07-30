@@ -50,9 +50,6 @@ void Scene_Test::Awake()
 void Scene_Test::Start()
 {
 	__super::Start();
-
-	m_playEffect = false;
-	m_playExplode = false;
 }
 
 void Scene_Test::Update()
@@ -60,20 +57,6 @@ void Scene_Test::Update()
 	__super::Update();
 
 	SendKeyInput();
-
-	if (m_playEffect == true)
-		PlayEffect();
-
-	if (m_playExplode == true)
-		GET_SINGLE(EffectManager)->PlayBillBoard(m_effectName[m_effectIndex], m_explodePos, Vec3(600.f, 600.f, 1.f), 1.f, 0.006f);
-
-	Vec3 vPos = GetPlayer().begin()->get()->GetTransform()->GetWorldMatrix().Translation();
-	vPos.y += 20.f;
-	//GET_SINGLE(EffectManager)->PlayBillBoard(L"Effect_Flash_In_Red", vPos, Vec3(300.f, 300.f, 1.f), 1.f, 0.004f);
-
-	vPos.x += 200.f;
-	GET_SINGLE(EffectManager)->SetBillBoardInfo(m_billboards[0], vPos, Vec3(300.f, 300.f, 1.f), 0.004f);
-	GET_SINGLE(EffectManager)->PlayBillBoard(m_billboards[0]);
 }
 
 void Scene_Test::LateUpdate()
@@ -119,18 +102,7 @@ void Scene_Test::LateUpdate()
 			break;
 			case ProtocolID::WR_RENDER_EFFECT_ACK:
 			{
-				m_playEffect = true;
-
-				//int32_t effectIndex{ request.Read<int32_t>() };
-				m_effectIndex = request.Read<int32_t>();
-				//ClassifyEffect(magic_enum::enum_value<server::EFFECT_TYPE>(m_effectIndex));
-				m_effectName[m_effectIndex] = ClassifyEffect(magic_enum::enum_value<server::EFFECT_TYPE>(m_effectIndex));
-
-				m_effectPos.x = request.Read<float>();
-				m_effectPos.y = request.Read<float>();
-				m_effectPos.z = request.Read<float>();
-
-				//PlayEffect(request);
+				PlayEffect(request);
 			}
 			break;
 			default:
@@ -437,6 +409,7 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
 	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom.fbx");
 
 	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
 
@@ -1048,6 +1021,229 @@ void Scene_Test::AddObjectEffectScript(std::shared_ptr<CGameObject>& gameObject,
 	}
 }
 
+void Scene_Test::AddEffectTextures()
+{
+	int32_t index{ 0 };
+
+	EffectInfo effect;
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Explode", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::EXPLODE] = effect;
+
+#pragma region [HIT]
+	effect.index = index++;
+	effect.speed = 0.003f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_In_Dispersal", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IN_DISPERSAL] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.0045f;
+	effect.scale = { 2000.f, 2000.f, 1.f };
+	effect.alpha = 0.5f;
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Circle_Wave", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::CIRCLE_WAVE] = effect;
+
+	effect.alpha = 1.f;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Hit", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::HIT] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact1", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT1] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact2", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT2] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact3", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT3] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact4", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT4] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact5", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT5] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact6", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT6] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact7", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT7] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact8", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT8] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact9", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT9] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact10", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT10] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact11", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT11] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact13", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT13] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact14", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT14] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact15", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT15] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact16", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT16] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 400.f, 400.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact17", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT17] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact18", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT18] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 800.f, 800.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact19", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::IMPACT19] = effect;
+#pragma endregion
+
+	effect.index = index++;
+	effect.speed = 0.004f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Paralys", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::PARALYS] = effect;
+
+#pragma region [SWORD]
+	effect.index = index++;
+	effect.speed = 0.0065f;
+	effect.scale = { 400.f, 400.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Slash", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::SLASH] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.00625f;
+	effect.scale = { 400.f, 400.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Slash_Special", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::SLASH_SPECIAL] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.0065f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Sword1", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::SWORD1] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Fire_Sword", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::FIRE_SWORD] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Ice_Sword", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::ICE_SWORD] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Lightning_Sword", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::LIGHTNING_SWORD] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Star_Sword", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::STAR_SWORD] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_V_Sword", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::V_SWORD] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Light_Wave_Sword", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::LIGHT_WAVE_SWORD] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Lune_Sword", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::LUNE_SWORD] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Cross_Sword", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::CROSS_SWORD] = effect;
+
+	effect.index = index++;
+	effect.speed = 0.006f;
+	effect.scale = { 500.f, 500.f, 1.f };
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Spell_Sword", effect.speed));
+	m_billboardInfo[server::EFFECT_TYPE::SPELL_SWORD] = effect;
+#pragma endregion
+}
+
 void Scene_Test::RemoveObject(network::CPacket& packet)
 {
 	int32_t id{ packet.ReadID() };
@@ -1131,12 +1327,14 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			auto objects{ GetNetworkObject() };
 			network::NetworkGameObject removeObjects;
 
+			auto effect{ m_billboardInfo[server::EFFECT_TYPE::EXPLODE] };
+
 			for (auto& object : objects)
 			{
 				if (object->GetNetwork()->GetID() == id)
 				{
 					removeObjects.push_back(object);
-					m_explodePos = object->GetTransform()->GetWorldPosition();
+					effect.pos = object->GetTransform()->GetWorldPosition();
 				}
 			}
 
@@ -1144,9 +1342,8 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			RemoveNetworkObject(removeObjects);
 			GET_NETWORK->RemoveNetworkObject(id);
 
-			m_playExplode = true;
-			m_effectIndex = magic_enum::enum_integer(server::EFFECT_TYPE::EXPLODE);
-			m_effectName[m_effectIndex] = L"Effect_Explode";
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_billboards[effect.index], effect.pos, effect.scale, effect.speed);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_billboards[effect.index]);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
@@ -1191,28 +1388,20 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 	}
 }
 
-std::wstring Scene_Test::ClassifyEffect(server::EFFECT_TYPE effect)
+void Scene_Test::PlayEffect(network::CPacket& packet)
 {
-	switch (effect)
-	{
-		case server::EFFECT_TYPE::IN_DISPERSAL:
-		{
-			return L"Effect_In_Dispersal";
-		}
-		break;
-		case server::EFFECT_TYPE::IN_STAR_BURST_INFINITY:
-		{
-			return L"Effect_In_StarBurst_Infinity";
-		}
-	}
-}
+	int32_t effectIndex{ packet.Read<int32_t>() };
 
-void Scene_Test::PlayEffect()
-{
-	//auto pos{ GET_PLAYER[GET_NETWORK->GetID()]->GetTransform()->GetWorldPosition() };
-	//pos.y += 20.f;
+	Vec3 effectPos{};
+	effectPos.x = packet.Read<float>();
+	effectPos.y = packet.Read<float>();
+	effectPos.z = packet.Read<float>();
+	server::EFFECT_TYPE effectType{ magic_enum::enum_value<server::EFFECT_TYPE>(effectIndex) };
 
-	GET_SINGLE(EffectManager)->PlayBillBoard(m_effectName[m_effectIndex], m_effectPos, Vec3(600.f, 600.f, 1.f), 1.f, 0.004f);
+	auto info{ m_billboardInfo[effectType] };
+
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(m_billboards[info.index], effectPos, info.scale, info.speed, info.alpha);
+	GET_SINGLE(EffectManager)->PlayBillBoard(m_billboards[info.index]);
 }
 
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateMapObject(ObjectDesc& objectDesc)
@@ -1285,6 +1474,5 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 
 	CreatePlayer(pScene, eType);
 
-	m_effects.push_back(GET_SINGLE(EffectManager)->CreateEffect(L"Effect_Flash_In_Red", 0.004f));
-	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Flash_In_Red", 0.004f));
+	AddEffectTextures();
 }

@@ -6,6 +6,7 @@ class CustomController;
 class TriggerObject;
 class OverlapObject2;
 class MonsterAI;
+class Monster;
 
 class Player : public GameObject
 {

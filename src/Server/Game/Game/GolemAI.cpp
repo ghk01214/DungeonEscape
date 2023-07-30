@@ -60,10 +60,10 @@ void GolemAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
+	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
 	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);

@@ -35,8 +35,8 @@ void MonsterAI::Init()
 
 void MonsterAI::Update(float timeDelta)
 {
-	//if (!m_start)
-	//	MonsterStart();
+	if (!m_start)
+		MonsterStart();
 
 	if (m_AIWait)
 		return;

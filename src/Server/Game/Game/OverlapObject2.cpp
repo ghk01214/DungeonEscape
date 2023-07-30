@@ -232,20 +232,19 @@ void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 
 	if (m_attackType == "ATTACK0")
 	{
-		// 여기서 적용시킬 이펙트에 대해 뭔가해라
-		type = server::EFFECT_TYPE::SLASH;
+		type = server::EFFECT_TYPE::CROSS_SWORD;
 	}
 	else if (m_attackType == "ATTACK1")
 	{
-		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+		type = server::EFFECT_TYPE::SLASH_SPECIAL;
 	}
 	else if (m_attackType == "ATTACK2")
 	{
-		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+		type = server::EFFECT_TYPE::STAR_SWORD;
 	}
 	else if (m_attackType == "ATTACK3")
 	{
-		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+		type = server::EFFECT_TYPE::LUNE_SWORD;
 	}
 
 
@@ -256,31 +255,34 @@ void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 	ev.state = magic_enum::enum_integer(type);
 	ev.effectPos = effectPos;
 
-	//game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void OverlapObject2::ServerMessage_RenderEffect_SingleStrike()
 {
-	m_pos;
 	server::EFFECT_TYPE type;
 
 	if (m_attackType == "ATTACK0")
 	{
-		type = server::EFFECT_TYPE::SLASH;
+		type = server::EFFECT_TYPE::SWORD1;
 	}
 	else if (m_attackType == "ATTACK1")
 	{
-		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+		type = server::EFFECT_TYPE::SLASH;
 	}
 	else if (m_attackType == "ATTACK2")
 	{
-		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+		type = server::EFFECT_TYPE::SWORD1;
 	}
 	else if (m_attackType == "ATTACK3")
 	{
-		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+		type = server::EFFECT_TYPE::SLASH;
 	}
 
-	//messageHandler
+	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	ev.objID = m_player->GetID();
+	ev.state = magic_enum::enum_integer(type);
+	ev.effectPos = FROM_PX3(m_pos);
 
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

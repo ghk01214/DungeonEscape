@@ -116,7 +116,7 @@ void TestLevel::LoadMap()
 	{
 		LoadMapObject();
 		//LoadPotObject();
-		//LoadGimmikObject();
+		LoadGimmikObject();
 	}
 
 	std::system("cls");
@@ -284,7 +284,7 @@ void TestLevel::LoadMapObject()
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");	// Mesh 로드
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Debug.fbx");			// Map 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)

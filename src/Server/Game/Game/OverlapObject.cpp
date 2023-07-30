@@ -117,7 +117,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
 		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
-		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_STAR_BURST_INFINITY);
+		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::HIT);
 
 		return true;
 	}
@@ -130,6 +130,8 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, -1, 0) * 2000.f);
 		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_STUN_APPLY", 0.1f, player);			//continous. 땅에 닿으면 스턴 + 스턴해제 5초후 명령을 내린다.
 
+		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IMPACT17);
+
 		return true;
 	}
 
@@ -141,6 +143,8 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
 		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.1f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
+		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IMPACT13);
+
 		return true;
 	}
 
@@ -148,6 +152,9 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 	{
 		player->SetStun(true);
 		EventHandler::GetInstance()->AddEvent("PLAYER_STUN_OFF", 4.f, player);			//5초 스턴
+
+		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::CIRCLE_WAVE);
+		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::PARALYS);
 
 		return true;
 	}
@@ -159,6 +166,8 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 1000.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 250.f);
 		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
+
+		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::HIT);
 
 		return true;
 	}
@@ -177,6 +186,9 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 			playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0,1,0) * 400.f);
 			playerBody->AddForce(ForceMode::Impulse, knockbackDir * 600.f);
 			EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.1f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
+
+			ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_DISPERSAL);
+
 			return true;
 		}
 	}
@@ -215,7 +227,14 @@ void OverlapObject::UpdateOverlapPosition(physx::PxVec3 pos)
 
 void OverlapObject::ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type)
 {
-	auto effectPos{ player->LocationForBilboard_VictimPlayer(m_monsterAI) };
+	Vec3 effectPos{};
+
+	if (type == server::EFFECT_TYPE::CIRCLE_WAVE)
+		effectPos = player->LocationForBilboard_VictimMonster(m_monsterAI->GetMonster());
+	else
+		effectPos = player->LocationForBilboard_VictimPlayer(m_monsterAI);
+
+	effectPos.y += 50.f;
 
 	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = player->GetID();
