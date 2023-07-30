@@ -77,9 +77,6 @@ enum class ProtocolID : unsigned short
 	WR_ADD_ANIMATE_OBJ_REQ,
 	WR_ADD_ANIMATE_OBJ_ACK,
 
-	WR_ADD_MONSTER_REQ,
-	WR_ADD_MONSTER_ACK,
-
 	WR_ADD_OBJ_REQ,
 	WR_ADD_OBJ_ACK,
 

@@ -43,7 +43,7 @@ void Monster::Update(double timeDelta)
 {
 	GameObject::Update(timeDelta);
 
-	//SendTransform();
+	SendTransform();
 }
 
 void Monster::LateUpdate(double timeDelta)

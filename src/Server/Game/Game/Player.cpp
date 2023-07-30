@@ -486,8 +486,7 @@ void Player::State_Check_Enter()
 
 	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
-		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
-		ev.objID = m_id;
+		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
 		ev.state = m_currState;
 		ev.objType = m_objType;
 

@@ -34,7 +34,6 @@ private:
 	void CreateSkill(shared_ptr<CScene> pScene);
 	void CreateBillBoard(shared_ptr<CScene> pScene);
 	void CreateEffect(shared_ptr<CScene> pScene);
-	void CreateMonster();
 
 private:
 	std::shared_ptr<CGameObject> CreateBillBoardBase(vector<shared_ptr<class Texture>> textures, float fPassingTime);
@@ -67,9 +66,6 @@ private:
 	std::unordered_map<int32_t, int32_t> m_objectIDMap;		// temp obj id, new obj id
 
 	std::unordered_set<int32_t> m_overlappedObjects;
-
-	std::vector<std::shared_ptr<CGameObject>> m_weeper;
-	std::vector<std::shared_ptr<CGameObject>> m_golem;
 
 public:
 	static shared_ptr<CScene> Create(server::FBX_TYPE eType);
