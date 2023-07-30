@@ -158,6 +158,73 @@ namespace game
 		Send(packet);
 	}
 
+	void CSession::SendAddMonsterObjPacket(Monster* obj, float scaleRatio)
+	{
+		network::CPacket packet;
+		Transform* trans{ obj->GetTransform() };
+		auto pos{ trans->GetPosition() };
+		auto scale{ obj->GetTransform()->GetScale() };
+		auto objType{ obj->GetObjectType() };
+		auto fbxType{ obj->GetFBXType() };
+
+		packet.WriteID(obj->GetID());
+		packet.WriteProtocol(ProtocolID::WR_ADD_ANIMATE_OBJ_ACK);
+
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
+
+		packet.Write<float>(scale.x);
+		packet.Write<float>(scale.y);
+		packet.Write<float>(scale.z);
+
+		packet.Write<float>(scaleRatio);
+
+		switch (fbxType)
+		{
+		case server::FBX_TYPE::WEEPER1:
+		case server::FBX_TYPE::WEEPER2:
+		case server::FBX_TYPE::WEEPER3:
+		case server::FBX_TYPE::WEEPER4:
+		case server::FBX_TYPE::WEEPER5:
+		case server::FBX_TYPE::WEEPER6:
+		case server::FBX_TYPE::WEEPER7:
+		case server::FBX_TYPE::WEEPER_EMISSIVE:
+		{
+			auto monster{ dynamic_cast<Weeper*>(obj) };
+
+			packet.Write<int32_t>(monster->GetState());
+			packet.Write<float>(monster->GetAniPlayTime());
+		}
+		break;
+		case server::FBX_TYPE::BLUE_GOLEM:
+		case server::FBX_TYPE::GREEN_GOLEM:
+		case server::FBX_TYPE::RED_GOLEM:
+		{
+			auto monster{ dynamic_cast<Golem*>(obj) };
+
+			packet.Write<int32_t>(monster->GetState());
+			packet.Write<float>(monster->GetAniPlayTime());
+		}
+		break;
+		case server::FBX_TYPE::DRAGON:
+		{
+			auto monster{ dynamic_cast<Dragon*>(obj) };
+
+			packet.Write<int32_t>(monster->GetState());
+			packet.Write<float>(monster->GetAniPlayTime());
+		}
+		break;
+		default:
+			break;
+		}
+
+		packet.Write<server::OBJECT_TYPE>(objType);
+		packet.Write<server::FBX_TYPE>(fbxType);
+
+		Send(packet);
+	}
+
 	void CSession::SendAddObjPacket(GameObject* obj, float scaleRatio)
 	{
 		network::CPacket packet;

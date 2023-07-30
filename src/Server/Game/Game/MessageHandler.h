@@ -52,7 +52,6 @@ namespace game
 
 		void TimerThread();
 		void TransformThread();
-		void AddRemoveThread();
 	public:
 		void PushRecvMessage(Message& msg);
 		void PushSendMessage(TIMER_EVENT& ev);

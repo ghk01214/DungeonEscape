@@ -133,6 +133,7 @@ namespace game
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
 				}
 				break;
+				case ProtocolID::WR_ADD_MONSTER_ACK:
 				case ProtocolID::WR_MONSTER_QUAT_ACK:
 				{
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
@@ -172,52 +173,6 @@ namespace game
 			if (ev.wakeUpTime > currentTime)
 			{
 				m_transformQueue.push(ev);
-				std::this_thread::sleep_for(1ms);
-				continue;
-			}
-
-			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
-			postOver.msgProtocol = ev.type;
-			postOver.objType = ev.objType;
-			//postOver.roomID = ev.roomID;
-
-			switch (ev.objType)
-			{
-				case server::OBJECT_TYPE::PLAYER:
-				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
-				}
-				break;
-				default:
-				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
-				}
-				break;
-			}
-		}
-	}
-
-	void MessageHandler::AddRemoveThread()
-	{
-		using namespace std::chrono_literals;
-
-		while (true)
-		{
-			TIMER_EVENT ev;
-			auto currentTime{ CURRENT_TIME };
-			bool success{ m_addRemoveQueue.try_pop(ev) };
-
-			if (success == false)
-			{
-				std::this_thread::sleep_for(1ms);
-				continue;
-			}
-
-			if (ev.wakeUpTime > currentTime)
-			{
-				m_addRemoveQueue.push(ev);
 				std::this_thread::sleep_for(1ms);
 				continue;
 			}
@@ -434,7 +389,8 @@ namespace game
 			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457
 			Vec3 pos = golemTestPos;
 
-			pos.x += msg.playerID * 100.f;
+			//pos.z = 38990.f;
+			pos.x += msg.playerID * 500.f;
 
 			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
 

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Monster_Golem.h"
 
 #include "Animator.h"
@@ -44,7 +44,8 @@ void Monster_Golem::Start()
 
 void Monster_Golem::Update()
 {
-	ParsePackets();
+	if (GetNetwork() != nullptr)
+		ParsePackets();
 
 	Monster_Script::Update();
 }

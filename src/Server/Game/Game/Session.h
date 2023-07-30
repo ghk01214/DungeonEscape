@@ -35,6 +35,7 @@ namespace game
 		void SendLoginPacket(Player* obj);
 		void SendPlayerIDIssuePacket(int32_t id, ProtocolID protocol);
 		void SendAddAnimateObjPacket(GameObject* obj, float scaleRatio = 1.f);
+		void SendAddMonsterObjPacket(Monster* obj, float scaleRatio = 1.f);
 		void SendAddObjPacket(GameObject* obj, float scaleRatio = 1.f);
 		void SendObjectIDPacket(int32_t objID, int32_t oldObjID);
 		void SendRemovePacket(int32_t id, server::OBJECT_TYPE type);

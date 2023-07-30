@@ -61,6 +61,58 @@ void TestLevel::Update(double timeDelta)
 			boulderSummoned = true;
 		}
 	}
+
+	static bool weeper{ false };
+	if (weeper == false)
+	{
+		auto objmgr = ObjectManager::GetInstance();
+		auto players{ objmgr->GetLayer(L"Layer_Player")->GetGameObjects() };
+
+		for (auto& player : players)
+		{
+			if (player == nullptr)
+				continue;
+
+			if (player->GetTransform()->GetPosition().z > 7510.f)
+			{
+				auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+				weeper = true;
+
+				game::TIMER_EVENT ev{ ProtocolID::WR_ADD_MONSTER_ACK };
+				ev.objID = WeeperObject->GetID();
+
+				game::MessageHandler::GetInstance()->PushSendMessage(ev);
+
+				break;
+			}
+		}
+	}
+
+	static bool golem{ false };
+	if (golem == false)
+	{
+		auto objmgr = ObjectManager::GetInstance();
+		auto players{ objmgr->GetLayer(L"Layer_Player")->GetGameObjects() };
+
+		for (auto& player : players)
+		{
+			if (player == nullptr)
+				continue;
+
+			if (player->GetTransform()->GetPosition().z > 40493.f)
+			{
+				auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16220, -3700, 45890), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+				golem = true;
+
+				game::TIMER_EVENT ev{ ProtocolID::WR_ADD_MONSTER_ACK };
+				ev.objID = GolemObject->GetID();
+
+				game::MessageHandler::GetInstance()->PushSendMessage(ev);
+
+				break;
+			}
+		}
+	}
 }
 
 void TestLevel::LateUpdate(double timeDelta)
@@ -82,7 +134,7 @@ void TestLevel::LoadUnit_DebugMode()
 																																							//다리				3890, -1462, 21062
 																																							//돌테스트			15609, -976, 26457
 	//15609, -976, 26457
-	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16220, -3700, 45890), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(16220, -3700, 45890), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
 	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
@@ -116,7 +168,7 @@ void TestLevel::LoadMap()
 	{
 		LoadMapObject();
 		//LoadPotObject();
-		LoadGimmikObject();
+		//LoadGimmikObject();
 	}
 
 	std::system("cls");
@@ -284,7 +336,7 @@ void TestLevel::LoadMapObject()
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");	// Mesh 로드
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\ServerDebug.fbx");			// Map 로드
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)

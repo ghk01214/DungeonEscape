@@ -118,7 +118,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_CircleFrame_Purple", L"..\\Resources\\Texture\\Effect\\Circle Frame\\purple\\tile.png", 40);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_CircleFrame_Red", L"..\\Resources\\Texture\\Effect\\Circle Frame\\red\\tile.png", 40);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_CircleFrame_Yellow", L"..\\Resources\\Texture\\Effect\\Circle Frame\\yellow\\tile.png", 32);
-	
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Explode", L"..\\Resources\\Texture\\Effect\\Explode\\tile.png", 20);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Explosion_Star_Particle", L"..\\Resources\\Texture\\Effect\\Explosion Star Particle\\tile.png", 15);
@@ -130,7 +130,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Flash_In_Green", L"..\\Resources\\Texture\\Effect\\Flash In\\green\\tile.png", 34);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Flash_In_LightBlue", L"..\\Resources\\Texture\\Effect\\Flash In\\light blue\\tile.png", 34);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Flash_In_Red", L"..\\Resources\\Texture\\Effect\\Flash In\\red\\tile.png", 34);
-	
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_DarkBlue", L"..\\Resources\\Texture\\Effect\\Implode\\dark blue\\tile.png", 29);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_DarkGray", L"..\\Resources\\Texture\\Effect\\Implode\\dark gray\\tile.png", 29);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_Gray", L"..\\Resources\\Texture\\Effect\\Implode\\gray\\tile.png", 29);
@@ -139,12 +139,12 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_Purple", L"..\\Resources\\Texture\\Effect\\Implode\\purple\\tile.png", 29);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_Red", L"..\\Resources\\Texture\\Effect\\Implode\\red\\tile.png", 29);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_Yellow", L"..\\Resources\\Texture\\Effect\\Implode\\yellow\\tile.png", 29);
-	
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implosion_Gray", L"..\\Resources\\Texture\\Effect\\Implosion\\gray\\tile.png", 32);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implosion_Green", L"..\\Resources\\Texture\\Effect\\Implosion\\green\\tile.png", 32);
-	
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_Dispersal", L"..\\Resources\\Texture\\Effect\\In Dispersal\\tile.png", 33);
-	
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_StarBurst_Gray", L"..\\Resources\\Texture\\Effect\\In Star Burst\\gray\\tile.png", 40);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_StarBurst_Infinity", L"..\\Resources\\Texture\\Effect\\In Star Burst\\infinity\\tile.png", 40);
 
@@ -182,7 +182,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Zap_Spiral_Gray", L"..\\Resources\\Texture\\Effect\\Zap Spiral\\gray\\tile.png", 48);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Zap_Spiral_Green", L"..\\Resources\\Texture\\Effect\\Zap Spiral\\green\\tile.png", 48);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Zap_Spiral_Yellow", L"..\\Resources\\Texture\\Effect\\Zap Spiral\\yellow\\tile.png", 48);
-		
+
 	GET_SINGLE(Resources)->Load<Texture>(L"Bar", L"..\\Resources\\Texture\\In Game\\bar.png");
 	GET_SINGLE(Resources)->Load<Texture>(L"HP", L"..\\Resources\\Texture\\In Game\\hp.png");
 	GET_SINGLE(Resources)->Load<Texture>(L"MP", L"..\\Resources\\Texture\\In Game\\mp.png");
