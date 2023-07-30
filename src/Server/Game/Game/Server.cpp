@@ -760,6 +760,31 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::WR_ADD_MONSTER_ACK:
+			{
+				for (auto& monster : monsterObjects)
+				{
+					auto mob{ dynamic_cast<Monster*>(monster) };
+
+					if (mob == nullptr)
+						continue;
+
+					if (mob->GetID() != id)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						client->SendAddMonsterObjPacket(mob, 50.f);
+					}
+
+					mob->SetTransformSendFlag(true);
+					break;
+				}
+			}
+			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
 			{
 				if (magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(postOver->objType)
@@ -914,9 +939,9 @@ namespace game
 							client->SendTransformPacket(pillar);
 						}
 					}
-				}
+				/*}
 				else if (postOver->objType == server::OBJECT_TYPE::BOSS)
-				{
+				{*/
 					for (auto& monster : monsterObjects)
 					{
 						auto mob{ dynamic_cast<Monster*>(monster) };
@@ -962,6 +987,9 @@ namespace game
 						if (pl == nullptr)
 							continue;
 
+						if (pl->GetID() != id)
+							continue;
+
 						for (auto& client : m_sessions)
 						{
 							if (client->GetState() != STATE::INGAME)
@@ -978,6 +1006,9 @@ namespace game
 						auto mob{ dynamic_cast<Monster*>(monster) };
 
 						if (mob == nullptr)
+							continue;
+
+						if (mob->GetID() != id)
 							continue;
 
 						for (auto& client : m_sessions)

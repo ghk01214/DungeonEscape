@@ -19,7 +19,7 @@ Monster_Weeper::Monster_Weeper() :
 	m_prevState{ IDLE },
 	m_currState{ m_prevState }
 {
-	m_radius = 100.f;
+	m_radius = 50.f;
 	m_halfHeight = 50.f;		// 몬스터 발 높이 위치 변경
 }
 
@@ -27,7 +27,7 @@ Monster_Weeper::Monster_Weeper(int32_t stateIndex) :
 	m_prevState{ magic_enum::enum_value<WEEPER_STATE>(stateIndex) },
 	m_currState{ m_prevState }
 {
-	m_radius = 100.f;
+	m_radius = 50.f;
 	m_halfHeight = 50.f;		// 몬스터 발 높이 위치 변경
 }
 
@@ -42,7 +42,8 @@ void Monster_Weeper::Start()
 
 void Monster_Weeper::Update()
 {
-	ParsePackets();
+	if (GetNetwork() != nullptr)
+		ParsePackets();
 
 	// 패턴이 변경됐을 때만 변경된 패턴 번호 출력
 	static server::PATTERN_TYPE prevPattern{ server::PATTERN_TYPE::NONE };
@@ -76,9 +77,6 @@ void Monster_Weeper::CheckState()
 	}
 
 	m_prevState = m_currState;
-
-	auto a{ GetAnimator()->GetAniClipInfo(m_currState) };
-	std::wcout << a.animName << L", " << a.duration << "\n";
 }
 
 void Monster_Weeper::UpdateFrameRepeat()

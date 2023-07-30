@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include <NetworkManager.h>
 
 #include "Scene_Test.h"
@@ -263,6 +263,36 @@ void Scene_Test::CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player
 
 	pScene->AddPlayer(gameObjects);
 	GET_NETWORK->AddNetworkComponent(gameObjects);
+}
+
+void Scene_Test::CreateMonster()
+{
+	ObjectDesc objectDesc;
+	objectDesc.strName = L"Weeper1";
+	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\Weeper1.fbx";
+	objectDesc.vPostion = { 0.f, 0.f, 0.f };
+	objectDesc.vScale = { 1.f, 1.f, 1.f };
+	objectDesc.script = std::make_shared<Monster_Weeper>();
+
+	m_weeper = CreateAnimatedObject(objectDesc);
+
+	for (auto& gameObject : m_weeper)
+	{
+		gameObject->SetObjectType(server::OBJECT_TYPE::BOSS);
+	}
+
+	objectDesc.strName = L"Blue Golem";
+	objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx";
+	objectDesc.vPostion = { 0.f, 0.f, 0.f };
+	objectDesc.vScale = { 1.f, 1.f, 1.f };
+	objectDesc.script = std::make_shared<Monster_Golem>();
+
+	m_golem = CreateAnimatedObject(objectDesc);
+
+	for (auto& gameObject : m_golem)
+	{
+		gameObject->SetObjectType(server::OBJECT_TYPE::BOSS);
+	}
 }
 
 void Scene_Test::CreateSphere(shared_ptr<CScene> pScene)
@@ -594,7 +624,15 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 	if (objType == server::OBJECT_TYPE::PLAYER)
 		objType = server::OBJECT_TYPE::REMOTE_PLAYER;
 
-	std::vector<std::shared_ptr<CGameObject>> gameObjects{ CreateAnimatedObject(objectDesc) };
+	std::vector<std::shared_ptr<CGameObject>> gameObjects;
+
+	if (fbxType == server::FBX_TYPE::WEEPER1)
+		gameObjects = m_weeper;
+	else if (fbxType == server::FBX_TYPE::BLUE_GOLEM)
+		gameObjects = m_golem;
+	else
+		gameObjects = CreateAnimatedObject(objectDesc);
+
 	gameObjects = AddNetworkToObject(gameObjects, objType, id);
 
 	for (auto& gameObject : gameObjects)
@@ -1207,4 +1245,5 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateEffect(pScene);
 
 	CreatePlayer(pScene, eType);
+	CreateMonster();
 }

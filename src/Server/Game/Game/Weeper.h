@@ -28,7 +28,7 @@ public:
 		STATUE1,
 		STATUE2,
 		STATUE3,
-		TAUNT,
+		TAUNT,				 // 4.70
 		TURN_LEFT,
 		TURN_RIGHT,
 		WALK,
