@@ -20,7 +20,14 @@ public:
 
 public:	
 	void SetEffectInfo(std::vector<shared_ptr<class Texture>> textures, float m_fTime);
+	void SetPassingTime(float fTime) { m_fPassingTime = fTime; }
 	void SetAlpha(float alpha) { m_fAlpha = alpha; }
+
+	bool GetPlayOnce(void) { return m_bPlayOnce; }
+	void SetPlayOnce(bool bPlayOnce);
+
+	bool GetContinue(void) { return m_bContinuePlay; };
+	bool SetContinue(bool bContinue) { m_bContinuePlay = bContinue; }
 
 private:
 	std::vector<shared_ptr<class Texture>> m_textures;	// 객체가 사용하고 있는 텍스쳐 정보
@@ -31,5 +38,8 @@ private:
 	uint32 m_curTextureNumber = 0;	// 현재 그려지고 있는 텍스쳐의 번호
 
 	float m_fAlpha = 1.f;	// 텍스쳐의 알파값(투명도)
+
+	bool m_bPlayOnce = false;
+	bool m_bContinuePlay = true;
 };
 

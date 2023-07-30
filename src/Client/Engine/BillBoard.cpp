@@ -28,6 +28,23 @@ void BillBoard::Start()
 
 void BillBoard::Update()
 {
+	// 이전 프레임의 텍스쳐가 최대 숫자일 경우
+	if (m_curTextureNumber == (m_textures.size() - 1))
+		// 한번만 플레이 정보를 true로 한다.
+		m_bPlayOnce = true;
+
+	// 한번만 재생 정보가 true일 경우
+	if (m_bPlayOnce)
+	{
+		// 지속 재생을 false로, 텍스쳐 정보를 0으로 세팅 후 멈춘다.
+		// 외부에서 m_bPlayOnce 정보를 false로 바꾸면 m_bContinuePlay가 true가 되고 이것이 그려진다. m_bContinuePlay의 감지는 이펙트 매니저에서 처리한다. 해당 변수가 true면 화면에 그려진다.
+		m_bContinuePlay = false;
+		m_curTextureNumber = 0;
+		return;
+	}
+	else
+		m_bContinuePlay = true;
+
 	// 카메라가 있는지 확인
 	shared_ptr<CScene> curScene = GET_SINGLE(SceneManager)->GetActiveScene();
 
@@ -106,4 +123,10 @@ void BillBoard::SetBBInfo(BB_TYPE eType, std::vector<shared_ptr<class Texture>> 
 	m_width = width;
 	m_height = height;
 	m_count = maxCount;
+}
+
+void BillBoard::SetPlayOnce(bool bPlayOnce)
+{
+	m_bPlayOnce = bPlayOnce;
+	m_bContinuePlay = true;
 }

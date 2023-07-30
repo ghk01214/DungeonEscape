@@ -10,9 +10,21 @@ class EffectManager
 public:
 	void ReserveEffects(uint32 num);	// 한 화면에 그려지는 최대 이펙트 수
 	void PushEffectTexture(const std::wstring& effectName, vector<shared_ptr<Texture>> textures);
-	void Play(const std::wstring& effectName, Vec3 vPos, Vec3 vScale, Vec3 vRotation, float fAlpha = 1.f, float fPassingTime = 0.001);
-	void PlayBillBoard(const std::wstring& effectName, Vec3 vPos, Vec3 vScale, float fAlpha = 1.f, float fPassingTime = 0.001);
+
+	uint32 CreateEffect(const std::wstring& effectName, float passingTime);
+	uint32 CreateBillBoard(const std::wstring& effectName, float passingTime);
+
+	/*void Play(const std::wstring& effectName, Vec3 vPos, Vec3 vScale, Vec3 vRotation, float fAlpha = 1.f, float fPassingTime = 0.001);
+	void PlayBillBoard(const std::wstring& effectName, Vec3 vPos, Vec3 vScale, float fAlpha = 1.f, float fPassingTime = 0.001);*/
+
+	void Play(uint32 iEffectNumber);
+	void PlayBillBoard(uint32 iEffectNumber);
+
+	void SetEffectInfo(uint32 iEffectNumber, Vec3 vPos, Vec3 vScale, Vec3 vRotation, float fPassingTime = 0.001, float fAlpha = 1.f);
+	void SetBillBoardInfo(uint32 iEffectNumber, Vec3 vPos, Vec3 vScale, float fPassingTime = 0.001, float fAlpha = 1.f);
+
 	void Reset(void);
+	void Push(void);
 
 	void SetSceneIndex(uint32 index) { m_sceneIndex = index; }
 

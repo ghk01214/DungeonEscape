@@ -71,7 +71,9 @@ void Scene_Test::Update()
 	vPos.y += 20.f;
 	//GET_SINGLE(EffectManager)->PlayBillBoard(L"Effect_Flash_In_Red", vPos, Vec3(300.f, 300.f, 1.f), 1.f, 0.004f);
 
-	//GET_SINGLE(EffectManager)->Play(L"Effect_Flash_In_Red", vPos, Vec3(300.f, 300.f, 1.f), Vec3(0.f, 0.f, 0.f), 1.f, 0.004f);
+	vPos.x += 200.f;
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(m_billboards[0], vPos, Vec3(300.f, 300.f, 1.f), 0.004f);
+	GET_SINGLE(EffectManager)->PlayBillBoard(m_billboards[0]);
 }
 
 void Scene_Test::LateUpdate()
@@ -1282,4 +1284,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateEffect(pScene);
 
 	CreatePlayer(pScene, eType);
+
+	m_effects.push_back(GET_SINGLE(EffectManager)->CreateEffect(L"Effect_Flash_In_Red", 0.004f));
+	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Flash_In_Red", 0.004f));
 }

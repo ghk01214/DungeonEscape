@@ -42,8 +42,8 @@ void Engine::Init(const WindowInfo& info)
 	GET_SINGLE(Resources)->Init();
 	GET_SINGLE(CSoundMgr)->Init();
 
-	GET_SINGLE(FontManager)->ReserveFontObjects(20);	// 20개의 폰트를 예약
-	GET_SINGLE(EffectManager)->ReserveEffects(40);	// 40개의 이펙트를 예약
+	GET_SINGLE(FontManager)->ReserveFontObjects(40);	// 40개의 폰트를 예약
+	GET_SINGLE(EffectManager)->ReserveEffects(1000);	// 1000개의 이펙트를 예약
 }
 
 void Engine::Update()
@@ -54,6 +54,7 @@ void Engine::Update()
 
 	GET_SINGLE(FontManager)->Reset();
 	GET_SINGLE(EffectManager)->Reset();
+	GET_SINGLE(EffectManager)->Push();
 
 	GET_SINGLE(SceneManager)->Update();
 	GET_SINGLE(SceneManager)->LateUpdate();

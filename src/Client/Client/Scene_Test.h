@@ -80,4 +80,8 @@ private:
 
 public:
 	static shared_ptr<CScene> Create(server::FBX_TYPE eType);
+
+private:
+	vector<uint32> m_effects;
+	vector<uint32> m_billboards;
 };

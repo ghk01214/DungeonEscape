@@ -85,54 +85,128 @@ void EffectManager::PushEffectTexture(const std::wstring& effectName, vector<sha
 	m_effectTextures[effectName] = textures;
 }
 
-void EffectManager::Play(const std::wstring& effectName, Vec3 vPos, Vec3 vScale, Vec3 vRotation, float fAlpha, float fPassingTime)
+uint32 EffectManager::CreateEffect(const std::wstring& effectName, float passingTime)
 {
-	assert(m_effectCount < m_maxCount);
+	assert(!m_effectTextures[effectName].empty());
 
+	m_effectReserveObjects[m_effectCount]->GetEffect()->SetEffectInfo(m_effectTextures[effectName], passingTime);
+
+	return m_effectCount++;
+}
+
+uint32 EffectManager::CreateBillBoard(const std::wstring& effectName, float passingTime)
+{
+	assert(!m_effectTextures[effectName].empty());
+
+	m_billboardReserveObjects[m_billboardCount]->GetBillBoard()->SetBBInfo(BB_TYPE::ATLAS, m_effectTextures[effectName], passingTime);
+
+	return m_billboardCount++;
+}
+
+//void EffectManager::Play(const std::wstring& effectName, Vec3 vPos, Vec3 vScale, Vec3 vRotation, float fAlpha, float fPassingTime)
+//{
+//	assert(m_effectCount < m_maxCount);
+//
+//	// 출력 레이어 설정 -> 카메라
+//	m_effectReserveObjects[m_effectCount]->SetLayerIndex(m_sceneIndex);
+//
+//	// 이펙트 텍스쳐 설정
+//	m_effectReserveObjects[m_effectCount]->GetEffect()->SetEffectInfo(m_effectTextures[effectName], fPassingTime);
+//
+//	// 위치 설정
+//	std::shared_ptr<Transform> transform = m_effectReserveObjects[m_effectCount]->GetTransform();
+//	transform->SetLocalScale(vScale);
+//	transform->SetLocalRotation(vRotation);
+//	Matrix matWorld = Matrix::CreateTranslation(vPos);
+//	transform->SetWorldMatrix(matWorld);
+//
+//	m_renderObjects.push_back(m_effectReserveObjects[m_effectCount]);
+//
+//	++m_effectCount;
+//}
+//
+//void EffectManager::PlayBillBoard(const std::wstring& effectName, Vec3 vPos, Vec3 vScale, float fAlpha, float fPassingTime)
+//{
+//	assert(m_billboardCount < m_maxCount);
+//
+//	// 출력 레이어 설정 -> 카메라
+//	m_billboardReserveObjects[m_billboardCount]->SetLayerIndex(m_sceneIndex);
+//
+//	// 이펙트 텍스쳐 설정
+//	m_billboardReserveObjects[m_billboardCount]->GetBillBoard()->SetBBInfo(BB_TYPE::ATLAS, m_effectTextures[effectName], fPassingTime);
+//	m_billboardReserveObjects[m_billboardCount]->GetBillBoard()->SetAlpha(fAlpha);
+//
+//	// 위치 설정
+//	std::shared_ptr<Transform> transform = m_billboardReserveObjects[m_billboardCount]->GetTransform();
+//	transform->SetLocalScale(vScale);
+//	Matrix matWorld = Matrix::CreateTranslation(vPos);
+//	transform->SetWorldMatrix(matWorld);
+//
+//	m_renderObjects.push_back(m_billboardReserveObjects[m_billboardCount]);
+//
+//	++m_billboardCount;
+//}
+
+void EffectManager::Play(uint32 iEffectNumber)
+{
+	m_effectReserveObjects[iEffectNumber]->GetEffect()->SetPlayOnce(false);
+}
+
+void EffectManager::PlayBillBoard(uint32 iEffectNumber)
+{
+	m_billboardReserveObjects[iEffectNumber]->GetBillBoard()->SetPlayOnce(false);
+}
+
+void EffectManager::SetEffectInfo(uint32 iEffectNumber, Vec3 vPos, Vec3 vScale, Vec3 vRotation, float fPassingTime, float fAlpha)
+{
 	// 출력 레이어 설정 -> 카메라
-	m_effectReserveObjects[m_effectCount]->SetLayerIndex(m_sceneIndex);
+	m_effectReserveObjects[iEffectNumber]->SetLayerIndex(m_sceneIndex);
 
-	// 이펙트 텍스쳐 설정
-	m_effectReserveObjects[m_effectCount]->GetEffect()->SetEffectInfo(m_effectTextures[effectName], fPassingTime);
+	// 이펙트 텍스쳐 넘어가는 시간 설정
+	m_effectReserveObjects[iEffectNumber]->GetEffect()->SetAlpha(fAlpha);
+	m_effectReserveObjects[iEffectNumber]->GetEffect()->SetPassingTime(fPassingTime);
 
 	// 위치 설정
-	std::shared_ptr<Transform> transform = m_effectReserveObjects[m_effectCount]->GetTransform();
+	std::shared_ptr<Transform> transform = m_effectReserveObjects[iEffectNumber]->GetTransform();
 	transform->SetLocalScale(vScale);
 	transform->SetLocalRotation(vRotation);
 	Matrix matWorld = Matrix::CreateTranslation(vPos);
 	transform->SetWorldMatrix(matWorld);
-
-	m_renderObjects.push_back(m_effectReserveObjects[m_effectCount]);
-
-	++m_effectCount;
 }
 
-void EffectManager::PlayBillBoard(const std::wstring& effectName, Vec3 vPos, Vec3 vScale, float fAlpha, float fPassingTime)
+void EffectManager::SetBillBoardInfo(uint32 iEffectNumber, Vec3 vPos, Vec3 vScale, float fPassingTime, float fAlpha)
 {
-	assert(m_billboardCount < m_maxCount);
-
 	// 출력 레이어 설정 -> 카메라
-	m_billboardReserveObjects[m_billboardCount]->SetLayerIndex(m_sceneIndex);
+	m_billboardReserveObjects[iEffectNumber]->SetLayerIndex(m_sceneIndex);
 
-	// 이펙트 텍스쳐 설정
-	m_billboardReserveObjects[m_billboardCount]->GetBillBoard()->SetBBInfo(BB_TYPE::ATLAS, m_effectTextures[effectName], fPassingTime);
-	m_billboardReserveObjects[m_billboardCount]->GetBillBoard()->SetAlpha(fAlpha);
+	// 이펙트 텍스쳐 넘어가는 시간 설정
+	m_billboardReserveObjects[iEffectNumber]->GetBillBoard()->SetPassingTime(fPassingTime);
+	m_billboardReserveObjects[iEffectNumber]->GetBillBoard()->SetAlpha(fAlpha);
 
 	// 위치 설정
-	std::shared_ptr<Transform> transform = m_billboardReserveObjects[m_billboardCount]->GetTransform();
+	std::shared_ptr<Transform> transform = m_billboardReserveObjects[iEffectNumber]->GetTransform();
 	transform->SetLocalScale(vScale);
 	Matrix matWorld = Matrix::CreateTranslation(vPos);
 	transform->SetWorldMatrix(matWorld);
-
-	m_renderObjects.push_back(m_billboardReserveObjects[m_billboardCount]);
-
-	++m_billboardCount;
 }
 
 void EffectManager::Reset(void)
 {
-	m_effectCount = 0;
-	m_billboardCount = 0;
 	m_renderObjects.clear();
+}
+
+void EffectManager::Push(void)
+{
+	for (uint32 i = 0; i < m_effectCount; ++i)
+	{
+		if (m_effectReserveObjects[i]->GetEffect()->GetContinue())
+			m_renderObjects.push_back(m_effectReserveObjects[i]);
+	}
+
+	for (uint32 i = 0; i < m_billboardCount; ++i)
+	{
+		if (m_billboardReserveObjects[i]->GetBillBoard()->GetContinue())
+			m_renderObjects.push_back(m_billboardReserveObjects[i]);
+	}
 }
 

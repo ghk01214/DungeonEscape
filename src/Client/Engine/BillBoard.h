@@ -30,6 +30,13 @@ public:
 public:
 	void SetBBInfo(BB_TYPE eType, std::vector<shared_ptr<class Texture>> textures, float m_fTime, uint32 width = 1, uint32 height = 1, uint32 maxCount = 1);
 	void SetAlpha(float alpha) { m_fAlpha = alpha; }
+	void SetPassingTime(float fTime) { m_fPassingTime = fTime; }
+
+	bool GetPlayOnce(void) { return m_bPlayOnce; }
+	void SetPlayOnce(bool bPlayOnce);
+
+	bool GetContinue(void) { return m_bContinuePlay; };
+	bool SetContinue(bool bContinue) { m_bContinuePlay = bContinue; }
 
 private:
 	std::vector<shared_ptr<class Texture>> m_textures;	// 객체가 사용하고 있는 텍스쳐 정보
@@ -45,5 +52,7 @@ private:
 	uint32 m_width = 1;
 	uint32 m_height = 1;
 	uint32 m_count = 1;
-};
 
+	bool m_bPlayOnce = false;
+	bool m_bContinuePlay = true;
+};
