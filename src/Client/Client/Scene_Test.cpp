@@ -1424,8 +1424,33 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 {
 	server::SOUND_TYPE soundType{ packet.Read<server::SOUND_TYPE>() };
 
-	GET_SINGLE(CSoundMgr)->StopSound(CSoundMgr::BGM);
-	GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+	switch (soundType)
+	{
+		case server::SOUND_TYPE::BATTLE:
+		{
+			GET_SINGLE(CSoundMgr)->StopSound(CSoundMgr::BGM);
+			GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+			GET_SINGLE(CSoundMgr)->BGMVolumeDown(0.2f);
+		}
+		break;
+		case server::SOUND_TYPE::PUNCH:
+		{
+			GET_SINGLE(CSoundMgr)->PlaySound(L"Punch.wav", CSoundMgr::EFFECT, 0.7f);
+		}
+		break;
+		case server::SOUND_TYPE::SMASH:
+		{
+			GET_SINGLE(CSoundMgr)->PlaySound(L"Smash.ogg", CSoundMgr::EFFECT, 0.7f);
+		}
+		break;
+		case server::SOUND_TYPE::ROAR:
+		{
+			GET_SINGLE(CSoundMgr)->PlaySound(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
+		}
+		break;
+		default:
+		break;
+	}
 }
 
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateMapObject(ObjectDesc& objectDesc)

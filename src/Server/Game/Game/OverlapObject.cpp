@@ -105,6 +105,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		//playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
 
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_DISPERSAL);
+		ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);
 
 		return true;
 	}
@@ -118,6 +119,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::HIT);
+		ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);
 
 		return true;
 	}
@@ -131,6 +133,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK3_STUN_APPLY", 0.1f, player);			//continous. 땅에 닿으면 스턴 + 스턴해제 5초후 명령을 내린다.
 
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IMPACT17);
+		ServerMessage_PlaySound(server::SOUND_TYPE::SMASH);
 
 		return true;
 	}
@@ -144,6 +147,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.1f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IMPACT13);
+		ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);
 
 		return true;
 	}
@@ -155,6 +159,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::CIRCLE_WAVE);
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::PARALYS);
+		ServerMessage_PlaySound(server::SOUND_TYPE::ROAR);
 
 		return true;
 	}
@@ -188,6 +193,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 			EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.1f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 			ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_DISPERSAL);
+			ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);
 
 			return true;
 		}
@@ -240,6 +246,15 @@ void OverlapObject::ServerMessage_RenderEffect(Player* player, server::EFFECT_TY
 	ev.objID = player->GetID();
 	ev.state = magic_enum::enum_integer(type);
 	ev.effectPos = effectPos;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+}
+
+void OverlapObject::ServerMessage_PlaySound(server::SOUND_TYPE type)
+{
+	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
+	ev.objID = m_monsterAI->GetMonster()->GetID();
+	ev.state = magic_enum::enum_integer(type);
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

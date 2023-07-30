@@ -317,6 +317,11 @@
 		WORLD,
 		BATTLE,
 
+		PUNCH,
+		SMASH,
+		LANDING,
+		ROAR,
+
 		MAX
 	};
 }

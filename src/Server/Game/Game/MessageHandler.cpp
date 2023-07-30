@@ -210,52 +210,6 @@ namespace game
 		}
 	}
 
-	void MessageHandler::AddRemoveThread()
-	{
-		using namespace std::chrono_literals;
-
-		while (true)
-		{
-			TIMER_EVENT ev;
-			auto currentTime{ CURRENT_TIME };
-			bool success{ m_addRemoveQueue.try_pop(ev) };
-
-			if (success == false)
-			{
-				std::this_thread::sleep_for(1ms);
-				continue;
-			}
-
-			if (ev.wakeUpTime > currentTime)
-			{
-				m_addRemoveQueue.push(ev);
-				std::this_thread::sleep_for(1ms);
-				continue;
-			}
-
-			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
-			postOver.msgProtocol = ev.type;
-			postOver.objType = ev.objType;
-			//postOver.roomID = ev.roomID;
-
-			switch (ev.objType)
-			{
-				case server::OBJECT_TYPE::PLAYER:
-				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
-				}
-				break;
-				default:
-				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
-				}
-				break;
-			}
-		}
-	}
-
 	void MessageHandler::ExecuteMessage()
 	{
 		int32_t size{ m_recvQueueSize };
@@ -370,11 +324,6 @@ namespace game
 	void MessageHandler::PushTransformMessage(TIMER_EVENT& ev)
 	{
 		m_transformQueue.push(ev);
-	}
-
-	void MessageHandler::PushAddRemoveMessage(TIMER_EVENT& ev)
-	{
-		m_addRemoveQueue.push(ev);
 	}
 
 	int32_t MessageHandler::NewObjectID()
