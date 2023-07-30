@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 enum ProtocolBase : unsigned short
 {
@@ -103,6 +103,12 @@ enum class ProtocolID : unsigned short
 
 	WR_MONSTER_PATTERN_REQ,
 	WR_MONSTER_PATTERN_ACK,
+
+	WR_PLAYER_HP_REQ,
+	WR_PLAYER_HP_ACK,
+
+	WR_PLAYER_MP_REQ,
+	WR_PLAYER_MP_ACK,
 
 	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion

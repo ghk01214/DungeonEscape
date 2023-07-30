@@ -273,6 +273,16 @@ void Player_Script::ParsePackets()
 				m_currState = magic_enum::enum_value<PLAYER_STATE>(state);
 			}
 			break;
+			case ProtocolID::WR_PLAYER_HP_ACK:
+			{
+				m_hp = packet.Read<int32_t>();
+			}
+			break;
+			case ProtocolID::WR_PLAYER_MP_ACK:
+			{
+				m_mp = packet.Read<int32_t>();
+			}
+			break;
 			default:
 			break;
 		}

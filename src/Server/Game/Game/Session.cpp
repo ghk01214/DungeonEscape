@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Session.h"
 #include "Transform.h"
 #include "Monsters.hpp"
@@ -305,6 +305,27 @@ namespace game
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_MONSTER_PATTERN_ACK);
 		packet.Write<int32_t>(patternIndex);
+
+		Send(packet);
+	}
+	void CSession::SendPlayerHPPacket(Player* obj)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(obj->GetID());
+		packet.WriteProtocol(ProtocolID::WR_PLAYER_HP_ACK);
+		packet.Write<int32_t>(obj->GetHP());
+
+		Send(packet);
+	}
+
+	void CSession::SendPlayerMPPacket(Player* obj)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(obj->GetID());
+		packet.WriteProtocol(ProtocolID::WR_PLAYER_MP_ACK);
+		packet.Write<int32_t>(obj->GetMP());
 
 		Send(packet);
 	}

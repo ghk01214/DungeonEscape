@@ -110,6 +110,8 @@ namespace game
 				case ProtocolID::AU_LOGIN_ACK:
 				case ProtocolID::AU_LOGOUT_ACK:
 				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
+				case ProtocolID::WR_PLAYER_HP_ACK:
+				case ProtocolID::WR_PLAYER_MP_ACK:
 				{
 					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
 				}

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Session.h"
 #include "GameInstance.h"
 #include "RoomManager.h"
@@ -1041,6 +1041,56 @@ namespace game
 							continue;
 
 						client->SendMonsterPatternPacket(id, postOver->state);
+					}
+				}
+			}
+			break;
+			case ProtocolID::WR_PLAYER_HP_ACK:
+			{
+				for (auto& player : playerObjects)
+				{
+					auto pl{ dynamic_cast<Player*>(player) };
+
+					if (pl == nullptr)
+						continue;
+
+					if (pl->GetID() != id)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (client->GetID() != id)
+							continue;
+
+						client->SendPlayerHPPacket(pl);
+					}
+				}
+			}
+			break;
+			case ProtocolID::WR_PLAYER_MP_ACK:
+			{
+				for (auto& player : playerObjects)
+				{
+					auto pl{ dynamic_cast<Player*>(player) };
+
+					if (pl == nullptr)
+						continue;
+
+					if (pl->GetID() != id)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (client->GetID() != id)
+							continue;
+
+						client->SendPlayerMPPacket(pl);
 					}
 				}
 			}
