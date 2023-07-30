@@ -33,8 +33,6 @@ void Scene_Lobby::Update()
 {
 	__super::Update();
 
-	GET_SINGLE(FontManager)->RenderFonts(L"123", Vec2(0.f, 0.f), Vec2(10.f, 10.f), 200.f);
-
 	GET_SINGLE(FontManager)->RenderFonts(L"xasdasd", Vec2(-300.f, 200.f), Vec2(20.f, 20.f), 10.f);
 }
 

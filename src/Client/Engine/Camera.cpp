@@ -46,6 +46,7 @@ void Camera::SortGameObject()
 	m_vecForward.clear();
 	m_vecDeferred.clear();
 	m_vecParticle.clear();
+	m_vecFont.clear();
 
 	for (auto& gameObject : gameObjects)
 	{
@@ -89,7 +90,7 @@ void Camera::SortGameObject()
 
 	for (auto& font : fonts)
 	{
-		m_vecForward.push_back(font);
+		m_vecFont.push_back(font);
 	}
 
 	// effect 오브젝트 forward에 추가
@@ -147,6 +148,7 @@ void Camera::Render_Forward()
 	S_MatProjection = m_matProjection;
 
 	GET_SINGLE(InstancingManager)->Render(m_vecForward);
+	GET_SINGLE(InstancingManager)->Render(m_vecFont);
 
 	for (auto& gameObject : m_vecParticle)
 	{
