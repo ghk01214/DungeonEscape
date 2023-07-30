@@ -58,7 +58,7 @@ void Golem::Init()
 
 void Golem::Update(double timeDelta)
 {
-	SendChangedStateAgain();
+	//SendChangedStateAgain();
 
 	m_golemAI->Update(timeDelta);
 	if(m_overlapObject)
@@ -207,7 +207,7 @@ void Golem::CheckState()
 	m_prevState = m_currState;
 	m_sendState = SEND_AGAIN;
 
-	//for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
 		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
 		ev.state = m_currState;

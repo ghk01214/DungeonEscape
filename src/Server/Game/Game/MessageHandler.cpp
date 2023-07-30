@@ -130,7 +130,7 @@ namespace game
 					postOver.objType = ev.objType;
 					postOver.state = ev.state;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
 				}
 				break;
 				case ProtocolID::WR_MONSTER_QUAT_ACK:
@@ -433,6 +433,8 @@ namespace game
 			Vec3 gimmk1TestPos(3890, -1462, 21062);				//다리				3890, -1462, 21062
 			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457
 			Vec3 pos = golemTestPos;
+
+			pos.x += msg.playerID * 100.f;
 
 			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
 

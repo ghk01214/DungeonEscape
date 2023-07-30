@@ -76,7 +76,6 @@ void Monster_Golem::CheckState()
 	else
 		GetAnimator()->SetAniSpeed(1.f);
 
-
 	m_prevState = m_currState;
 }
 

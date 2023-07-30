@@ -962,6 +962,9 @@ namespace game
 						if (pl == nullptr)
 							continue;
 
+						if (pl->GetID() != id)
+							continue;
+
 						for (auto& client : m_sessions)
 						{
 							if (client->GetState() != STATE::INGAME)
@@ -978,6 +981,9 @@ namespace game
 						auto mob{ dynamic_cast<Monster*>(monster) };
 
 						if (mob == nullptr)
+							continue;
+
+						if (mob->GetID() != id)
 							continue;
 
 						for (auto& client : m_sessions)

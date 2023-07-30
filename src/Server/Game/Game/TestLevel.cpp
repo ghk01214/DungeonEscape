@@ -82,8 +82,8 @@ void TestLevel::LoadUnit_DebugMode()
 																																							//다리				3890, -1462, 21062
 																																							//돌테스트			15609, -976, 26457
 	//15609, -976, 26457
-	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
-	
+	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16220, -3700, 45890), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+
 	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
 	//몬스터

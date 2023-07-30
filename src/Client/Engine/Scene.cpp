@@ -197,7 +197,10 @@ void CScene::PopRequestQueue(int32_t size)
 	for (int32_t i = 0; i < size; ++i)
 	{
 		if (m_requestQueue.empty() == true)
+		{
+			m_requestQueueSize = 0;
 			return;
+		}
 
 		m_requestQueue.pop_front();
 		--m_requestQueueSize;
