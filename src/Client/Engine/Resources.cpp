@@ -2,6 +2,7 @@
 #include "Resources.h"
 #include "Engine.h"
 #include "MeshData.h"
+#include "EffectManager.h"
 
 void Resources::Init()
 {
@@ -418,6 +419,11 @@ vector<shared_ptr<Texture>> Resources::LoadEffectTextures(const wstring& key, co
 	vector<shared_ptr<Texture>> textures = LoadTextures(key, path, count);
 
 	m_effects[key] = textures;
+
+	if (!m_effects[key].empty())
+	{
+		GET_SINGLE(EffectManager)->PushEffectTexture(key, textures);
+	}
 
 	return textures;
 }

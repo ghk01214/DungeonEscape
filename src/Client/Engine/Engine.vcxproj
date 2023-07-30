@@ -179,6 +179,7 @@
     <ClInclude Include="BlendObject.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Effect.h" />
+    <ClInclude Include="EffectManager.h" />
     <ClInclude Include="FBXMapLoader.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontManager.h" />
@@ -242,6 +243,7 @@
     <ClCompile Include="BlendObject.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="EffectManager.cpp" />
     <ClCompile Include="FBXMapLoader.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FontManager.cpp" />

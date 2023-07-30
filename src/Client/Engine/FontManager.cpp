@@ -14,7 +14,7 @@
 
 void FontManager::Reset(void)
 {
-	for (uint32 i = 0; i < m_objectCount; ++i)
+	for (uint32 i = 0; i < m_effectCount; ++i)
 	{
 		std::shared_ptr<Font> font = m_fontReserveObjects[i]->GetFont();
 		shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadFontMesh(font->GetTextVB("temp"));
@@ -22,26 +22,26 @@ void FontManager::Reset(void)
 		m_fontReserveObjects[i]->GetMeshRenderer()->SetMesh(mesh);
 	}
 
-	m_objectCount = 0;
+	m_effectCount = 0;
 	m_fontRenderObjects.clear();
 }
 
 void FontManager::RenderFonts(const wstring& text, Vec2 vPos, Vec2 vSize, float gap)
 {
-	assert(m_objectCount < m_maxCount);
+	assert(m_effectCount < m_maxCount);
 
-	m_fontReserveObjects[m_objectCount]->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+	m_fontReserveObjects[m_effectCount]->SetLayerIndex(m_UIIndex);
 
 	// 폰트 크기 및 문장(텍스트) 설정
-	std::shared_ptr<Font> font = m_fontReserveObjects[m_objectCount]->GetFont();
+	std::shared_ptr<Font> font = m_fontReserveObjects[m_effectCount]->GetFont();
 	font->SetFontGap(gap);
 
 	std::string strText{ text.begin(), text.end() };
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadFontMesh(font->GetTextVB(strText));
-	m_fontReserveObjects[m_objectCount]->GetMeshRenderer()->SetMesh(mesh);
+	m_fontReserveObjects[m_effectCount]->GetMeshRenderer()->SetMesh(mesh);
 
 	// 위치 설정
-	std::shared_ptr<Transform> transform = m_fontReserveObjects[m_objectCount]->GetTransform();
+	std::shared_ptr<Transform> transform = m_fontReserveObjects[m_effectCount]->GetTransform();
 
 	transform->SetLocalScale(Vec3(vSize.x, vSize.y, 1.f));
 
@@ -49,9 +49,9 @@ void FontManager::RenderFonts(const wstring& text, Vec2 vPos, Vec2 vSize, float 
 	transform->SetWorldMatrix(matWorld);
 
 	// 렌더링 오브젝트에 추가
-	m_fontRenderObjects.push_back(m_fontReserveObjects[m_objectCount]);
+	m_fontRenderObjects.push_back(m_fontReserveObjects[m_effectCount]);
 
-	++m_objectCount;
+	++m_effectCount;
 }
 
 void FontManager::ReserveFontObjects(uint32 num)

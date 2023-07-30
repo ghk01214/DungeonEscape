@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
@@ -70,27 +70,27 @@ HRESULT CLoader::Loading(SCENE eScene)
 #pragma region [GAME PLAY LEVEL]
 HRESULT CLoader::Loading_ForGamePlayLevel()
 {
-	// 여기서 리소스 추가
+	// ?ш린??由ъ냼??異붽?
 
 	m_isFinished = false;
 	m_progress = 0;
 
-	// 폰트
+	// ?고듃
 	Loading_GamePlayLevel_Font();
 
 	m_progress = 25;
 
-	// 텍스쳐
+	// ?띿뒪爾?
 	Loading_GamePlayLevel_Texture();
 
 	m_progress = 50;
 
-	// 셰이더
+	// ?곗씠??
 	Loading_GamePlayLevel_Shader();
 
 	m_progress = 75;
 
-	// fbx 모델
+	// fbx 紐⑤뜽
 	Loading_GamePlayLevel_Fbx();
 
 	m_progress = 100;
@@ -192,10 +192,10 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 
 HRESULT CLoader::Loading_GamePlayLevel_Shader()
 {
-	// ComputeShader 생성
+	// ComputeShader ?앹꽦
 	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
 
-	// UAV 용 Texture 생성
+	// UAV ??Texture ?앹꽦
 	shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
 		DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
 		CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
@@ -206,7 +206,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Shader()
 	material->SetInt(0, 1);
 	GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
 
-	// 쓰레드 그룹 (1 * 1024 * 1)
+	// ?곕젅??洹몃９ (1 * 1024 * 1)
 	material->Dispatch(1, 1024, 1);
 
 	return S_OK;
@@ -214,7 +214,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Shader()
 
 HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 {
-	// fbx 모델
+	// fbx 紐⑤뜽
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx");
@@ -244,7 +244,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 #pragma region [LOBBY]
 HRESULT CLoader::Loading_ForLobby()
 {
-	// 여기서 리소스 추가
+	// ?ш린??由ъ냼??異붽?
 
 	m_isFinished = false;
 	m_progress = 0;

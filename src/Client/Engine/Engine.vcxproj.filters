@@ -178,6 +178,9 @@
     <Filter Include="GameObject\Component\Font">
       <UniqueIdentifier>{4aef647d-0a29-4d88-ba48-46495414f579}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Manager\Effect">
+      <UniqueIdentifier>{b45d9475-cac0-40ac-8913-6a73e8dbac5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -338,6 +341,9 @@
     </ClCompile>
     <ClCompile Include="FontManager.cpp">
       <Filter>Manager\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectManager.cpp">
+      <Filter>Manager\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -511,6 +517,9 @@
     </ClInclude>
     <ClInclude Include="FontManager.h">
       <Filter>Manager\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectManager.h">
+      <Filter>Manager\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

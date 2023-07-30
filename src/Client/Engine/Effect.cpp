@@ -46,6 +46,7 @@ void Effect::Update()
 			uint32 size = meshRenderer->GetMaterialSize();
 			for (uint32 i = 0; i < size; ++i)
 			{
+				meshRenderer->GetMaterial(i)->SetFloat(2, m_fAlpha);
 				meshRenderer->GetMaterial(i)->SetTexture(0, m_textures[m_curTextureNumber]);
 			}
 		}

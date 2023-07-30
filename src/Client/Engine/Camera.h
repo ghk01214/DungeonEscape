@@ -25,7 +25,6 @@ public:
 	void Render_Deferred();
 	void Render_Forward();
 	void Render_Shadow();
-	void Render_Font();
 
 	void SetCullingMaskLayerOnOff(uint8 layer, bool on)
 	{

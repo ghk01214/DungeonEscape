@@ -18,6 +18,7 @@
 #include "SphereCollider.h"
 #include "MeshData.h"
 #include "FontManager.h"
+#include "EffectManager.h"
 
 void SceneManager::Start()
 {
@@ -39,6 +40,12 @@ void SceneManager::Update()
 	{
 		font->Update();
 	}
+
+	const vector<shared_ptr<CGameObject>>& effects = GET_SINGLE(EffectManager)->GetEffectObject();
+	for (auto& effect : effects)
+	{
+		effect->Update();
+	}
 }
 
 void SceneManager::LateUpdate()
@@ -53,6 +60,12 @@ void SceneManager::LateUpdate()
 	{
 		font->LateUpdate();
 	}
+
+	const vector<shared_ptr<CGameObject>>& effects = GET_SINGLE(EffectManager)->GetEffectObject();
+	for (auto& effect : effects)
+	{
+		effect->LateUpdate();
+	}
 }
 
 void SceneManager::FinalUpdate()
@@ -66,6 +79,12 @@ void SceneManager::FinalUpdate()
 	for (auto& font : fonts)
 	{
 		font->FinalUpdate();
+	}
+
+	const vector<shared_ptr<CGameObject>>& effects = GET_SINGLE(EffectManager)->GetEffectObject();
+	for (auto& effect : effects)
+	{
+		effect->FinalUpdate();
 	}
 }
 

@@ -20,7 +20,7 @@ public:
 private:
 	vector<shared_ptr<CGameObject>> m_fontReserveObjects;
 	vector<shared_ptr<CGameObject>> m_fontRenderObjects;
-	uint32 m_objectCount = 0;
+	uint32 m_effectCount = 0;
 	uint32 m_maxCount = 0;
 	uint32 m_UIIndex = 0;
 };
