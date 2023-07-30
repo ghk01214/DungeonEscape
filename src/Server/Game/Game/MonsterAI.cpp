@@ -73,25 +73,41 @@ void MonsterAI::SetRandomTarget()
 	if (!players)
 		return;
 
-	if (players->GetGameObjects().size() < 1 && m_target == nullptr)				//플레이어가 한명밖에 없다면 
+	if (players->GetGameObjects().size() < 2 && m_target == nullptr)		//1명밖에 없고 target이 없다
+	{
+		m_target = players->SelectRandomObject<Player>();
 		return;
+	}
 
-	Vec3 monsterPos = m_monster->GetControllerPosition();
+	if (players->GetGameObjects().size() < 2 && m_target != nullptr)		//1명밖에 없고 target이 있다		
+	{
+		return;
+	}
+
 
 	while (1)
 	{
-		auto newTarget = players->SelectRandomObject<Player>();						//랜덤 플레이어 선택
-
-		if (newTarget)																//유효값 확인
+		auto newTarget = players->SelectRandomObject<Player>();				//랜덤 플레이어 선택
+		if (newTarget == m_target)
+			continue;
+		else
 		{
 			m_target = newTarget;
-			m_targetPos = m_target->GetControllerPosition();
-			if (Vec3::DistanceBetween(monsterPos, m_targetPos) < m_detectRange)		//몬스터 인식범위 확인
-			{
-				UpdateTargetPos();													//몬스터가 바라보는 방향 및 플레이어 위치 갱신
-				return;
-			}
+			std::cout << "target변경" << std::endl;
 		}
+		return;
+
+		//	Vec3 monsterPos = m_monster->GetControllerPosition();
+		//if (newTarget)																//유효값 확인
+		//{
+		//	m_target = newTarget;
+		//	m_targetPos = m_target->GetControllerPosition();
+		//	if (Vec3::DistanceBetween(monsterPos, m_targetPos) < m_detectRange)		//몬스터 인식범위 확인
+		//	{
+		//		UpdateTargetPos();													//몬스터가 바라보는 방향 및 플레이어 위치 갱신
+		//		return;
+		//	}
+		//}
 	}
 
 

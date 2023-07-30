@@ -607,8 +607,8 @@ void Event::ExecuteMsg_continuous()
 			golemObj->SetState(Golem::GOLEM_STATE::JUMP_END);	//착지애니메이션 재생
 
 			EventHandler::GetInstance()->AddEvent("ANIM_END", 1.3, golemObj);			//착지애니메이션이 끝났다면 IDLE로
-			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.3, golemObj);		//AI 재개
-			golemObj->GetAI()->SetAIWait(false);
+			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.3, golemObj);		//AI 재개
+			//golemObj->GetAI()->SetAIWait(false);
 			executed = true;
 		}
 	}
@@ -650,7 +650,11 @@ void Event::ExecuteMsg_continuous()
 		bool ground = playerObj->GetController()->IsOnGround();
 		if (ground)
 		{
-			playerObj->SetState(Player::PLAYER_STATE::DAMAGE);
+			if (playerObj->GetState() == Player::PLAYER_STATE::DAMAGE)
+				playerObj->SetState(Player::PLAYER_STATE::IDLE1);
+			else
+				playerObj->SetState(Player::PLAYER_STATE::DAMAGE);
+
 			executed = true;
 		}
 	}

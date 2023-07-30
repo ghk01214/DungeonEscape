@@ -111,7 +111,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerController->BounceFromAttack();
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 800.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
-		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.1f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
+		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 		return true;
 	}

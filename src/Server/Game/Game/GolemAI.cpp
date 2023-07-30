@@ -27,7 +27,7 @@ void GolemAI::Init()
 
 	//SkillSize 추가			//triggerObject의 2/3의 크기면 적당함
 	AddSkillSize("ATTACK1", GeometryType::Box, Vec3(200, 200, 300), false);				//어퍼컷
-	AddSkillSize("ATTACK2", GeometryType::Box, Vec3(200, 700, 300), false);				//앞펀치
+	AddSkillSize("ATTACK2", GeometryType::Box, Vec3(200, 900, 300), false);				//앞펀치
 	AddSkillSize("ATTACK3", GeometryType::Box, Vec3(200, 500, 300), false);				//찍기
 	AddSkillSize("ATTACK4", GeometryType::Box, Vec3(300, 200, 300), false);				//일반 휘두르기
 	//AddSkillSize("ATTACK4", GeometryType::Box, Vec3(1000, 1000, 500), false);			//돌진확인을 위한 디버그용값
@@ -62,12 +62,12 @@ void GolemAI::FillSchedule()
 
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
+	//m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
 
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
@@ -136,8 +136,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("ANIM_END", 1.02f, m_golem);							//			같은 시간에 애니메이션 종료
 				//STATE : IDLE로 변경은 STATE_CHECK에서
 
-				//SetAIWait(true);
-				//EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.05f, m_golem);						//같은 시간에 애니메이션 종료
+				SetAIWait(true);
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 1.05f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{
@@ -217,7 +217,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 2.33f, m_golem);				//			같은 시간에 애니메이션 종료
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 2.6f, m_golem);						//같은 시간에 애니메이션 종료
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 3.33f, m_golem);						//같은 시간에 애니메이션 종료
 			}
 			else
 			{
@@ -252,7 +252,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE_STOP", 4.5f, m_golem);					//이동명령 정지.
 
 
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 4.5f, m_golem);						//패턴종료 : AI 재개
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 5.5f, m_golem);						//패턴종료 : AI 재개
 			}
 			else
 			{
@@ -281,7 +281,7 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_JUMPLOOP", 4.83, m_golem);
 
 				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_DESCEND_FUNCTIONCALL", 6.83, m_golem);	//경고장판 애니메이션이 끝나면 새로운 위치로 이동 + 하강힘 적용
-				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_LANDCHECK_FUNCTIONCALL", 6.83, m_golem);	//랜딩체크. continous속성
+				EventHandler::GetInstance()->AddEvent("GOLEM_JUMP_LANDCHECK_FUNCTIONCALL", 6.83, m_golem);	//랜딩체크. continous속성 - 착지했을 때 애니메이션 재생 및 aiwait 해제
 			}
 			else
 			{
