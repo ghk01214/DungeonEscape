@@ -33,6 +33,8 @@ public:
 	physx::PxQuat GetRotation_For_Overlap(physx::PxVec3 xzDir);
 
 	void ServerMessage_RenderEffect(Monster* monster);
+	void ServerMessage_RenderEffect_SingleStrike();
+
 
 private:
 	std::vector<GameObject*> m_duplicates;

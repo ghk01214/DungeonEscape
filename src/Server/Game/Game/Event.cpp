@@ -151,6 +151,8 @@ void Event::ExecuteMsg_Once()
 		if (playerObj)
 		{
 			playerObj->Set_OverlapObject(true);
+
+			//MessageHandler
 		}
 	}
 

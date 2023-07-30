@@ -1132,7 +1132,11 @@ void Player::Set_OverlapObject(bool activate)
 		return;
 
 	if (activate)
+	{
 		m_overlapObj->Activate();
+		m_overlapObj->ServerMessage_RenderEffect_SingleStrike();		//용섭
+
+	}
 	else
 		m_overlapObj->Deactivate();
 }

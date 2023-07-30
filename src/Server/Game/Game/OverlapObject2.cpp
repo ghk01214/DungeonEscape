@@ -258,3 +258,29 @@ void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 
 	//game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
+
+void OverlapObject2::ServerMessage_RenderEffect_SingleStrike()
+{
+	m_pos;
+	server::EFFECT_TYPE type;
+
+	if (m_attackType == "ATTACK0")
+	{
+		type = server::EFFECT_TYPE::SLASH;
+	}
+	else if (m_attackType == "ATTACK1")
+	{
+		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+	}
+	else if (m_attackType == "ATTACK2")
+	{
+		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+	}
+	else if (m_attackType == "ATTACK3")
+	{
+		// 여기서 적용시킬 이펙트에 대해 뭔가해라
+	}
+
+	//messageHandler
+
+}
