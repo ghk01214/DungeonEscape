@@ -19,7 +19,7 @@ Monster_Weeper::Monster_Weeper() :
 	m_prevState{ IDLE },
 	m_currState{ m_prevState }
 {
-	m_radius = 100.f;
+	m_radius = 50.f;
 	m_halfHeight = 50.f;		// 몬스터 발 높이 위치 변경
 }
 
@@ -27,7 +27,7 @@ Monster_Weeper::Monster_Weeper(int32_t stateIndex) :
 	m_prevState{ magic_enum::enum_value<WEEPER_STATE>(stateIndex) },
 	m_currState{ m_prevState }
 {
-	m_radius = 100.f;
+	m_radius = 50.f;
 	m_halfHeight = 50.f;		// 몬스터 발 높이 위치 변경
 }
 
