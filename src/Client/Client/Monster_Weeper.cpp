@@ -76,6 +76,9 @@ void Monster_Weeper::CheckState()
 	}
 
 	m_prevState = m_currState;
+
+	auto a{ GetAnimator()->GetAniClipInfo(m_currState) };
+	std::wcout << a.animName << L", " << a.duration << "\n";
 }
 
 void Monster_Weeper::UpdateFrameRepeat()
@@ -154,6 +157,7 @@ void Monster_Weeper::ParsePackets()
 			case ProtocolID::WR_CHANGE_STATE_ACK:
 			{
 				m_currState = magic_enum::enum_value<WEEPER_STATE>(packet.Read<int32_t>());
+				// 서버에서 명령이 내려옴.
 			}
 			break;
 			case ProtocolID::WR_MONSTER_QUAT_ACK:

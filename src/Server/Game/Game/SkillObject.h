@@ -61,6 +61,7 @@ public:
 public:
 	void ServerMessage_SkillInit();
 	void ServerMessage_SkillHit();
+	void ServerMessage_SkillRemove();
 
 public:
 	void HandlePlayerSkillCollision();							//플레이어 스킬의 충돌 판단	(피격 : 몬스터)

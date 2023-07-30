@@ -12,6 +12,8 @@ class Terrain;
 class BaseCollider;
 class Animator;
 class BillBoard;
+class Effect;
+class Font;
 
 namespace network
 {
@@ -42,6 +44,8 @@ public:
 	shared_ptr<Animator> GetAnimator();
 	shared_ptr<network::CNetwork> GetNetwork();
 	shared_ptr<BillBoard> GetBillBoard();
+	shared_ptr<Effect> GetEffect();
+	shared_ptr<Font> GetFont();
 
 	void AddComponent(shared_ptr<Component> component);
 

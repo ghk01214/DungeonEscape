@@ -308,4 +308,36 @@ namespace game
 
 		Send(packet);
 	}
+
+	void CSession::SendSkillHitPacket(int32_t id)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_SKILL_HIT_ACK);
+
+		Send(packet);
+	}
+
+	void CSession::SendPlayerHPPacket(Player* obj)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(obj->GetID());
+		packet.WriteProtocol(ProtocolID::WR_PLAYER_HP_ACK);
+		packet.Write<int32_t>(obj->GetHP());
+
+		Send(packet);
+	}
+
+	void CSession::SendPlayerMPPacket(Player* obj)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(obj->GetID());
+		packet.WriteProtocol(ProtocolID::WR_PLAYER_MP_ACK);
+		packet.Write<int32_t>(obj->GetMP());
+
+		Send(packet);
+	}
 }

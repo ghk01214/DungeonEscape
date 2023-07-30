@@ -192,12 +192,15 @@ void Weeper::CheckState()
 	m_prevState = m_currState;
 	m_sendState = SEND_AGAIN;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
-	ev.state = m_currState;
-	ev.objID = m_id;
-	ev.objType = m_objType;
+	//for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
+		ev.state = m_currState;
+		ev.objID = m_id;
+		ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	}
 }
 
 void Weeper::UpdateFrameOnce()

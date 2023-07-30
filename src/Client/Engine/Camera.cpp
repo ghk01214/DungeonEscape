@@ -10,6 +10,8 @@
 #include "Shader.h"
 #include "ParticleSystem.h"
 #include "InstancingManager.h"
+#include "FontManager.h"
+#include "EffectManager.h"
 
 Matrix Camera::S_MatView;
 Matrix Camera::S_MatProjection;
@@ -44,6 +46,7 @@ void Camera::SortGameObject()
 	m_vecForward.clear();
 	m_vecDeferred.clear();
 	m_vecParticle.clear();
+	m_vecFont.clear();
 
 	for (auto& gameObject : gameObjects)
 	{
@@ -80,6 +83,22 @@ void Camera::SortGameObject()
 		{
 			m_vecParticle.push_back(gameObject);
 		}
+	}
+
+	// font 오브젝트 forward에 추가
+	const vector<shared_ptr<CGameObject>>& fonts = GET_SINGLE(FontManager)->GetFontObject();
+
+	for (auto& font : fonts)
+	{
+		m_vecFont.push_back(font);
+	}
+
+	// effect 오브젝트 forward에 추가
+	const vector<shared_ptr<CGameObject>>& effects = GET_SINGLE(EffectManager)->GetEffectObject();
+
+	for (auto& effect : effects)
+	{
+		m_vecForward.push_back(effect);
 	}
 }
 
@@ -129,6 +148,7 @@ void Camera::Render_Forward()
 	S_MatProjection = m_matProjection;
 
 	GET_SINGLE(InstancingManager)->Render(m_vecForward);
+	GET_SINGLE(InstancingManager)->Render(m_vecFont);
 
 	for (auto& gameObject : m_vecParticle)
 	{

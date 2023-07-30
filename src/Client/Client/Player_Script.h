@@ -88,4 +88,7 @@ private:
 	float m_speed = 50.f;
 
 	bool m_aniEnd;
+
+	int32_t m_hp;
+	int32_t m_mp;
 };

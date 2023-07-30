@@ -4,6 +4,7 @@
 class Material;
 class Mesh;
 class StructuredBuffer;
+class Texture;
 
 struct ParticleInfo
 {
@@ -26,6 +27,9 @@ class ParticleSystem : public Component
 public:
 	ParticleSystem();
 	virtual ~ParticleSystem();
+
+public:
+	void SetParticleInfo(shared_ptr<Texture> texture);
 
 public:
 	virtual void FinalUpdate();

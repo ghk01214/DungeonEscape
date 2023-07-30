@@ -33,9 +33,11 @@ private:
 	void CreateSphere(shared_ptr<CScene> pScene);
 	void CreateSkill(shared_ptr<CScene> pScene);
 	void CreateBillBoard(shared_ptr<CScene> pScene);
+	void CreateEffect(shared_ptr<CScene> pScene);
 
 private:
 	std::shared_ptr<CGameObject> CreateBillBoardBase(vector<shared_ptr<class Texture>> textures, float fPassingTime);
+	std::shared_ptr<CGameObject> CreateEffectBase(vector<shared_ptr<class Texture>> textures, float fPassingTime);
 	std::vector<std::shared_ptr<CGameObject>> CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath);
 
 	void CreateHPnSPBar();

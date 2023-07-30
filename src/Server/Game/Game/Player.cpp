@@ -812,7 +812,7 @@ void Player::PlayerPattern_ShootMeteor()
 	else
 		ballPos.z -= 400.f;
 
-	//투사체 생성		
+	//투사체 생성
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>

@@ -46,9 +46,9 @@ float4 PS_Main(VS_OUT input) : SV_Target
     float3 viewNormal = input.viewNormal;
     if (g_tex_on_1)
     {
-        // [0,255] 踰붿쐞?먯꽌 [0,1]濡?蹂??
+        // [0,255] ?類????????[0,1]???怨뚮뼚???
         float3 tangentSpaceNormal = g_tex_1.Sample(g_sam_0, input.uv).xyz;
-        // [0,1] 踰붿쐞?먯꽌 [-1,1]濡?蹂??
+        // [0,1] ?類????????[-1,1]???怨뚮뼚???
         tangentSpaceNormal = (tangentSpaceNormal - 0.5f) * 2.f;
         float3x3 matTBN = { input.viewTangent, input.viewBinormal, input.viewNormal };
         viewNormal = normalize(mul(tangentSpaceNormal, matTBN));
@@ -102,6 +102,8 @@ float4 PS_Tex(VS_TEX_OUT input) : SV_Target
     if (g_tex_on_0)
         color = g_tex_0.Sample(g_sam_0, input.uv);
 
+    color.a *= g_float_2;
+
     return color;
 }
 
@@ -133,9 +135,9 @@ float4 PS_AlphaBlend(VS_OUT input) : SV_Target
     float3 viewNormal = input.viewNormal;
     if (g_tex_on_1)
     {
-        // [0,255] 踰붿쐞?먯꽌 [0,1]濡?蹂??
+        // [0,255] ?類????????[0,1]???怨뚮뼚???
         float3 tangentSpaceNormal = g_tex_1.Sample(g_sam_0, input.uv).xyz;
-        // [0,1] 踰붿쐞?먯꽌 [-1,1]濡?蹂??
+        // [0,1] ?類????????[-1,1]???怨뚮뼚???
         tangentSpaceNormal = (tangentSpaceNormal - 0.5f) * 2.f;
         float3x3 matTBN = { input.viewTangent, input.viewBinormal, input.viewNormal };
         viewNormal = normalize(mul(tangentSpaceNormal, matTBN));

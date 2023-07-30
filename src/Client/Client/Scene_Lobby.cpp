@@ -13,6 +13,8 @@
 #include "Lobby_Script.h"
 #include "Lobby_StartButton.h"
 
+#include "FontManager.h"
+
 Scene_Lobby::Scene_Lobby()
 {
 }
@@ -30,6 +32,8 @@ void Scene_Lobby::Start()
 void Scene_Lobby::Update()
 {
 	__super::Update();
+
+	GET_SINGLE(FontManager)->RenderFonts(L"xasdasd", Vec2(-300.f, 200.f), Vec2(20.f, 20.f), 10.f);
 }
 
 void Scene_Lobby::LateUpdate()
@@ -60,6 +64,8 @@ void Scene_Lobby::Init(void)
 void Scene_Lobby::CreateLayer(void)
 {
 	GGameInstance->SetLayerName(0, L"UI");
+
+	GET_SINGLE(FontManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 }
 
 void Scene_Lobby::CreateUICamera(void)

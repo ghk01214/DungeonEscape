@@ -25,8 +25,12 @@ public:
 	template<typename T>
 	OBJECT_TYPE GetObjectType();
 
+	template<typename T>
+	bool Replace(const wstring& key, shared_ptr<T> object);
+
 	shared_ptr<Mesh> LoadPointMesh();
 	shared_ptr<Mesh> LoadRectangleMesh();
+	shared_ptr<Mesh> LoadFontMesh(vector<Vertex> vec);
 	shared_ptr<Mesh> LoadCubeMesh();
 	shared_ptr<Mesh> LoadSphereMesh();
 	shared_ptr<Mesh> LoadTerrainMesh(int32 sizeX = 15, int32 sizeZ = 15);
@@ -41,6 +45,10 @@ public:
 
 	// 텍스쳐를 여러장 로드하는 함수
 	vector<shared_ptr<Texture>> LoadTextures(const wstring& key, const wstring& path, uint32 count);
+	vector<shared_ptr<Texture>> LoadEffectTextures(const wstring& key, const wstring& path, uint32 count);
+
+public:
+	vector<shared_ptr<Texture>> GetEffectTextures(const std::wstring& path);
 
 private:
 	void CreateDefaultShader();
@@ -49,6 +57,9 @@ private:
 private:
 	using KeyObjMap = std::map<wstring/*key*/, shared_ptr<Object>>;
 	array<KeyObjMap, OBJECT_TYPE_COUNT> m_resources;
+
+private:
+	map<std::wstring, vector<shared_ptr<Texture>>> m_effects;
 };
 
 template<typename T>
@@ -113,4 +124,15 @@ inline OBJECT_TYPE Resources::GetObjectType()
 		return OBJECT_TYPE::COMPONENT;
 	else
 		return OBJECT_TYPE::NONE;
+}
+
+template<typename T>
+bool Resources::Replace(const wstring& key, shared_ptr<T> object)
+{
+	OBJECT_TYPE objectType = GetObjectType<T>();
+	KeyObjMap& keyObjMap = m_resources[static_cast<uint8>(objectType)];
+
+	keyObjMap[key] = object;
+
+	return true;
 }

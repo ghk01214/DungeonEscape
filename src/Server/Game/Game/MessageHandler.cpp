@@ -110,12 +110,15 @@ namespace game
 				case ProtocolID::AU_LOGIN_ACK:
 				case ProtocolID::AU_LOGOUT_ACK:
 				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
+				case ProtocolID::WR_PLAYER_HP_ACK:
+				case ProtocolID::WR_PLAYER_MP_ACK:
 				{
 					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
 				}
 				break;
 				case ProtocolID::WR_ADD_OBJ_ACK:
 				case ProtocolID::WR_REMOVE_ACK:
+				case ProtocolID::WR_SKILL_HIT_ACK:
 				{
 					postOver.objType = ev.objType;
 
@@ -425,7 +428,7 @@ namespace game
 	{
 		if (msg.objType == server::OBJECT_TYPE::PLAYER)
 		{
-			Vec3 golemTestPos(16229, -3541, 35577);				//골렘 입장위치		16229, -3541, 35577
+			Vec3 golemTestPos(16220.f, -3700.f, 41560.f);		//골렘 입장위치		16220, -3700, 45890
 			Vec3 weeperTestPos(0, -720, 8500);					//위퍼 입장위치		0, -720, 8500
 			Vec3 gimmk1TestPos(3890, -1462, 21062);				//다리				3890, -1462, 21062
 			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457

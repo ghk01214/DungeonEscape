@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Player_Script.h"
 
 #include "Animator.h"
@@ -35,7 +35,8 @@ void Player_Script::Start()
 	if (GetNetwork()->IsMyPlayer() == true)
 		GetNetwork()->SendAddPlayer(m_playerType);
 
-	GetAnimator()->Play(m_currState);
+	if (magic_enum::enum_integer(m_currState) < 32)
+		GetAnimator()->Play(m_currState);
 
 	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
 	matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
@@ -271,6 +272,16 @@ void Player_Script::ParsePackets()
 			{
 				int32_t state{ packet.Read<int32_t>() };
 				m_currState = magic_enum::enum_value<PLAYER_STATE>(state);
+			}
+			break;
+			case ProtocolID::WR_PLAYER_HP_ACK:
+			{
+				m_hp = packet.Read<int32_t>();
+			}
+			break;
+			case ProtocolID::WR_PLAYER_MP_ACK:
+			{
+				m_mp = packet.Read<int32_t>();
 			}
 			break;
 			default:

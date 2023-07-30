@@ -24,6 +24,7 @@
 #include "ParticleSystem.h"
 #include "Terrain.h"
 #include "SphereCollider.h"
+#include "Effect.h"
 
 #include <Network.h>
 
@@ -34,6 +35,8 @@
 #include "Skill_Bomb_Script.h"
 
 #include "HP_Script.h"
+
+#include "EffectManager.h"
 
 Scene_Test::Scene_Test()
 {
@@ -54,6 +57,12 @@ void Scene_Test::Update()
 	__super::Update();
 
 	SendKeyInput();
+
+	Vec3 vPos = GetPlayer().begin()->get()->GetTransform()->GetWorldMatrix().Translation();
+	vPos.y += 20.f;
+	GET_SINGLE(EffectManager)->PlayBillBoard(L"Effect_Flash_In_Red", vPos, Vec3(300.f, 300.f, 1.f), 1.f, 0.004f);
+
+	//GET_SINGLE(EffectManager)->Play(L"Effect_Flash_In_Red", vPos, Vec3(300.f, 300.f, 1.f), Vec3(0.f, 0.f, 0.f), 1.f, 0.004f);
 }
 
 void Scene_Test::LateUpdate()
@@ -92,6 +101,11 @@ void Scene_Test::LateUpdate()
 				RemoveObject(request);
 			}
 			break;
+			case ProtocolID::WR_SKILL_HIT_ACK:
+			{
+
+			}
+			break;
 			default:
 			break;
 		}
@@ -117,6 +131,8 @@ void Scene_Test::CreateLayer()
 {
 	GGameInstance->SetLayerName(0, L"Default");
 	GGameInstance->SetLayerName(1, L"UI");
+
+	GET_SINGLE(EffectManager)->SetSceneIndex(0);
 }
 
 void Scene_Test::CreateComputeShader(void)
@@ -125,7 +141,7 @@ void Scene_Test::CreateComputeShader(void)
 	{
 		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
 
-		// UAV 용 Texture 생성
+		// UAV ??Texture ?앹꽦
 		shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
 			DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
 			CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
@@ -136,7 +152,7 @@ void Scene_Test::CreateComputeShader(void)
 		material->SetInt(0, 1);
 		GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
 
-		// 쓰레드 그룹 (1 * 1024 * 1)
+		// ?곕젅??洹몃９ (1 * 1024 * 1)
 		material->Dispatch(1, 1024, 1);
 	}
 #pragma endregion
@@ -147,12 +163,12 @@ void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 	shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
 	camera->SetName(L"Main_Camera");
 	camera->AddComponent(make_shared<Transform>());
-	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45도
+	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
 	camera->AddComponent(make_shared<Camera_Basic>());
 	camera->GetCamera()->SetFar(30000.f);
 	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 500.f, -500.f));
 	uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
-	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI는 안 찍음
+	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, true); // UI????李띿쓬
 	pScene->AddGameObject(camera);
 }
 
@@ -165,8 +181,8 @@ void Scene_Test::CreateUICamera(shared_ptr<CScene> pScene)
 	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
 	camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
 	uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
-	camera->GetCamera()->SetCullingMaskAll(); // 다 끄고
-	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI만 찍음
+	camera->GetCamera()->SetCullingMaskAll(); // ???꾧퀬
+	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI留?李띿쓬
 	pScene->AddGameObject(camera);
 }
 
@@ -295,7 +311,7 @@ void Scene_Test::CreateHPnSPBar()
 	float width{ static_cast<float>(GEngine->GetWindow().width) };
 	float height{ static_cast<float>(GEngine->GetWindow().height) };
 
-	// 배경 바
+	// 諛곌꼍 諛?
 	for (int32_t i = 0; i < 2; ++i)
 	{
 		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
@@ -406,7 +422,7 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 
 void Scene_Test::CreateSkill(shared_ptr<CScene> pScene)
 {
-	// 오브젝트 생성
+	// ?ㅻ툕?앺듃 ?앹꽦
 	vector<shared_ptr<CGameObject>> gameObjects = CreateSkillBase(L"BombBase", L"..\\Resources\\FBX\\Skill\\Sphere\\Sphere_Yellow.fbx");
 
 	for (auto& object : gameObjects)
@@ -415,39 +431,55 @@ void Scene_Test::CreateSkill(shared_ptr<CScene> pScene)
 		object->AddComponent(std::make_shared<Bomb_Script>());
 	}
 
-	// 오브젝트 추가
+	// ?ㅻ툕?앺듃 異붽?
 	pScene->AddGameObject(gameObjects);
 }
 
 void Scene_Test::CreateBillBoard(shared_ptr<CScene> pScene)
 {
-	// 텍스쳐 생성
+	// ?띿뒪爾??앹꽦
 	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->LoadTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Sprite\\Fire.png", 64);
 
-	// 오브젝트 생성
+	// ?ㅻ툕?앺듃 ?앹꽦
 	shared_ptr<CGameObject> gameObjects = CreateBillBoardBase(textures, 0.0001f);
 
 	gameObjects->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
 
-	// 오브젝트 추가
+	// ?ㅻ툕?앺듃 異붽?
+	pScene->AddGameObject(gameObjects);
+}
+
+void Scene_Test::CreateEffect(shared_ptr<CScene> pScene)
+{
+	// ?띿뒪爾??앹꽦
+	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->GetEffectTextures(L"Effect_CircleFrame_DarkBlue");
+
+	// ?ㅻ툕?앺듃 ?앹꽦
+	shared_ptr<CGameObject> gameObjects = CreateEffectBase(textures, 0.0001f);
+
+	gameObjects->GetTransform()->SetLocalScale(Vec3(200.f, 200.f, 1.f));
+	Matrix matWorld = Matrix::CreateTranslation(0.f, 0.f, 0.f);
+	gameObjects->GetTransform()->SetWorldMatrix(matWorld);
+
+	// ?ㅻ툕?앺듃 異붽?
 	pScene->AddGameObject(gameObjects);
 }
 
 std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(vector<shared_ptr<Texture>> textures, float fPassingTime)
 {
-	// 오브젝트 생성
+	// ?ㅻ툕?앺듃 ?앹꽦
 	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
 
-	// 위치 설정
+	// ?꾩튂 ?ㅼ젙
 	gameObjects->AddComponent(make_shared<Transform>());
 
-	// 빌보드 처리
+	// 鍮뚮낫??泥섎━
 	gameObjects->AddComponent(make_shared<BillBoard>());
 
-	// 빌보드 텍스쳐 설정
+	// 鍮뚮낫???띿뒪爾??ㅼ젙
 	gameObjects->GetBillBoard()->SetBBInfo(BB_TYPE::ATLAS, textures, fPassingTime);
 
-	// MeshRenderer - 사각형 메쉬, 텍스쳐 설정
+	// MeshRenderer - ?ш컖??硫붿돩, ?띿뒪爾??ㅼ젙
 	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
 
@@ -465,9 +497,40 @@ std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(vector<shared_ptr<T
 	return gameObjects;
 }
 
+std::shared_ptr<CGameObject> Scene_Test::CreateEffectBase(vector<shared_ptr<class Texture>> textures, float fPassingTime)
+{
+	// ?ㅻ툕?앺듃 ?앹꽦
+	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
+
+	// ?꾩튂 ?ㅼ젙
+	gameObjects->AddComponent(make_shared<Transform>());
+
+	// ?댄럺???ㅼ젙
+	shared_ptr<Effect> effect = make_shared<Effect>();
+	effect->SetEffectInfo(textures, fPassingTime);
+	gameObjects->AddComponent(effect);
+
+	// MeshRenderer - ?ш컖??硫붿돩, ?띿뒪爾??ㅼ젙
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+
+	meshRenderer->SetMesh(mesh);
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+
+	shared_ptr<Texture> texture = gameObjects->GetEffect()->GetTexture();
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	material->SetTexture(0, texture);
+	meshRenderer->SetMaterial(material);
+
+	gameObjects->AddComponent(meshRenderer);
+
+	return gameObjects;
+}
+
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath)
 {
-	// 스킬에 사용할 fbx 오브젝트 로드
+	// ?ㅽ궗???ъ슜??fbx ?ㅻ툕?앺듃 濡쒕뱶
 	shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(fbxPath);
 
 	vector<shared_ptr<CGameObject>> gameObjects = meshData->Instantiate();
@@ -778,7 +841,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Weeper Cast2";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
-			objectDesc.vScale = { 0.5f, 0.5f, 0.5f };
+			objectDesc.vScale = { 0.3f, 0.3f, 0.3f };
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
@@ -786,6 +849,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Weeper Cast3";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>();
+			objectDesc.vScale = { 2.f, 2.f, 2.f };
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST4_BALL:
@@ -913,21 +977,25 @@ void Scene_Test::AddObjectEffectScript(std::shared_ptr<CGameObject>& gameObject,
 		break;
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
 		{
+			// 鍮④컙 怨?
 			gameObject->AddComponent(std::make_shared<WeeperSkill1_Script>());
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
 		{
+			// ?먭린??????
 			gameObject->AddComponent(std::make_shared<WeeperSkill2_Script>());
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
+			// ?묒? ??
 			gameObject->AddComponent(std::make_shared<WeeperSkill2Scatter_Script>());
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
 		{
+			// ?뚮? 怨?
 			gameObject->AddComponent(std::make_shared<WeeperSkill3_Script>());
 		}
 		break;
@@ -1133,8 +1201,10 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateUI(pScene);
 	CreateLights(pScene);
 	CreateMap(pScene);
-	CreateBillBoard(pScene);
+	//CreateBillBoard(pScene);
 	CreateSkill(pScene);
+
+	CreateEffect(pScene);
 
 	CreatePlayer(pScene, eType);
 }

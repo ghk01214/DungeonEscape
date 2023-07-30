@@ -1045,6 +1045,78 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::WR_SKILL_HIT_ACK:
+			{
+				for (auto& object : skillObjects)
+				{
+					auto skill{ dynamic_cast<SkillObject*>(object) };
+
+					if (skill == nullptr)
+						continue;
+
+					if (skill->GetID() != id)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						client->SendSkillHitPacket(id);
+					}
+				}
+			}
+			break;
+			case ProtocolID::WR_PLAYER_HP_ACK:
+			{
+				for (auto& player : playerObjects)
+				{
+					auto pl{ dynamic_cast<Player*>(player) };
+
+					if (pl == nullptr)
+						continue;
+
+					if (pl->GetID() != id)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (client->GetID() != id)
+							continue;
+
+						client->SendPlayerHPPacket(pl);
+					}
+				}
+			}
+			break;
+			case ProtocolID::WR_PLAYER_MP_ACK:
+			{
+				for (auto& player : playerObjects)
+				{
+					auto pl{ dynamic_cast<Player*>(player) };
+
+					if (pl == nullptr)
+						continue;
+
+					if (pl->GetID() != id)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						if (client->GetID() != id)
+							continue;
+
+						client->SendPlayerMPPacket(pl);
+					}
+				}
+			}
+			break;
 #pragma endregion
 			default:
 			break;

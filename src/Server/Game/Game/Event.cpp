@@ -141,7 +141,7 @@ void Event::ExecuteMsg_Once()
 		if (meteorObj)
 		{
 			meteorObj->SetRemoveReserved();
-			meteorObj->ServerMessage_SkillHit();
+			meteorObj->ServerMessage_SkillRemove();
 		}
 	}
 

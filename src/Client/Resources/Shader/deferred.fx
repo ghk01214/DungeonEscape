@@ -81,9 +81,9 @@ PS_OUT PS_Main(VS_OUT input)
     float3 viewNormal = input.viewNormal;
     if (g_tex_on_1 == 1)
     {
-        // [0,255] 범위에서 [0,1]로 변환
+        // [0,255] 踰붿쐞?먯꽌 [0,1]濡?蹂??
         float3 tangentSpaceNormal = g_tex_1.Sample(g_sam_0, input.uv).xyz;
-        // [0,1] 범위에서 [-1,1]로 변환
+        // [0,1] 踰붿쐞?먯꽌 [-1,1]濡?蹂??
         tangentSpaceNormal = (tangentSpaceNormal - 0.5f) * 2.f;
         float3x3 matTBN = { input.viewTangent, input.viewBinormal, input.viewNormal };
         viewNormal = normalize(mul(tangentSpaceNormal, matTBN));

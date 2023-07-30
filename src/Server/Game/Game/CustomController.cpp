@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "CustomController.h"
 #include "CollisionPairInfo.h"
 #include "PhysDevice.h"

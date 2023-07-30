@@ -2,6 +2,7 @@
 #include "Resources.h"
 #include "Engine.h"
 #include "MeshData.h"
+#include "EffectManager.h"
 
 void Resources::Init()
 {
@@ -54,6 +55,41 @@ shared_ptr<Mesh> Resources::LoadRectangleMesh()
 	shared_ptr<Mesh> mesh = make_shared<Mesh>();
 	mesh->Create(vec, idx);
 	Add(L"Rectangle", mesh);
+
+	return mesh;
+}
+
+shared_ptr<Mesh> Resources::LoadFontMesh(vector<Vertex> vec)
+{
+	wstring strSize = to_wstring(vec.size());
+	wstring meshName{ L"Font" };
+	meshName += strSize;
+
+	shared_ptr<Mesh> findMesh = Get<Mesh>(meshName.c_str());
+
+	if (findMesh)
+		return findMesh;
+	
+	vector<uint32> idx(vec.size() / 4 * 6);
+
+	// 앞면
+	for (size_t i = 0, k = 0; i < idx.size(); i += 6, k += 4)
+	{
+		// 0 3
+		// 1 2
+
+		idx[i + 0] = (uint32)k + 0;
+		idx[i + 1] = (uint32)k + 1;
+		idx[i + 2] = (uint32)k + 2;
+
+		idx[i + 3] = (uint32)k + 0;
+		idx[i + 4] = (uint32)k + 2;
+		idx[i + 5] = (uint32)k + 3;
+	}
+
+	shared_ptr<Mesh> mesh = make_shared<Mesh>();
+	mesh->Create(vec, idx);
+	Replace(meshName.c_str(), mesh);
 
 	return mesh;
 }
@@ -378,6 +414,33 @@ vector<shared_ptr<Texture>> Resources::LoadTextures(const wstring& key, const ws
 	return textures;
 }
 
+vector<shared_ptr<Texture>> Resources::LoadEffectTextures(const wstring& key, const wstring& path, uint32 count)
+{
+	vector<shared_ptr<Texture>> textures = LoadTextures(key, path, count);
+
+	m_effects[key] = textures;
+
+	if (!m_effects[key].empty())
+	{
+		GET_SINGLE(EffectManager)->PushEffectTexture(key, textures);
+	}
+
+	return textures;
+}
+
+vector<shared_ptr<Texture>> Resources::GetEffectTextures(const std::wstring& path)
+{
+	if (m_effects[path].empty())
+	{
+		std::wstring str{ L"Resources::GetEffectTextures - " };
+		str += path;
+
+		MSG_BOX(str.c_str());
+	}
+
+	return m_effects[path];
+}
+
 void Resources::CreateDefaultShader()
 {
 	// Skybox
@@ -510,6 +573,7 @@ void Resources::CreateDefaultShader()
 		shared_ptr<Shader> shader = make_shared<Shader>();
 		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg);
 		Add<Shader>(L"Logo_texture", shader);
+		Add<Shader>(L"Effect", shader);
 	}
 
 	// DirLight
@@ -692,6 +756,30 @@ void Resources::CreateDefaultShader()
 		shader->CreateComputeShader(L"..\\Resources\\Shader\\animation.fx", "CS_Main", "cs_5_0");
 		Add<Shader>(L"ComputeAnimation", shader);
 	}
+
+	// Font
+	{
+		ShaderInfo info =
+		{
+			SHADER_TYPE::FORWARD,
+			RASTERIZER_TYPE::CULL_NONE,
+			DEPTH_STENCIL_TYPE::NO_DEPTH_TEST_NO_WRITE,
+			BLEND_TYPE::ALPHA_BLEND
+		};
+
+		ShaderArg arg =
+		{
+			"VS_Font",
+			"",
+			"",
+			"",
+			"PS_Font"
+		};
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\font.fx", info, arg);
+		Add<Shader>(L"Font", shader);
+	}
 }
 
 void Resources::CreateDefaultMaterial()
@@ -809,5 +897,15 @@ void Resources::CreateDefaultMaterial()
 		material->SetShader(shader);
 
 		Add<Material>(L"ComputeAnimation", material);
+	}
+
+	// Font
+	{
+		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Font");
+		shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Font", L"..\\Resources\\Font\\example.png");
+		shared_ptr<Material> material = make_shared<Material>();
+		material->SetShader(shader);
+		material->SetTexture(0, texture);
+		Add<Material>(L"Font", material);
 	}
 }

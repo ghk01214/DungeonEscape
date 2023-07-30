@@ -169,6 +169,18 @@
     <Filter Include="Manager\Sound">
       <UniqueIdentifier>{f50dd932-b685-4d4b-9db9-5a59ddd22737}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Component\Effect">
+      <UniqueIdentifier>{20c705f8-5f9d-47a3-a81a-4479dc02f3fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Font">
+      <UniqueIdentifier>{84630ac5-c932-4507-9048-4c4fcba699be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Component\Font">
+      <UniqueIdentifier>{4aef647d-0a29-4d88-ba48-46495414f579}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager\Effect">
+      <UniqueIdentifier>{b45d9475-cac0-40ac-8913-6a73e8dbac5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -320,6 +332,18 @@
     </ClCompile>
     <ClCompile Include="SoundManager.cpp">
       <Filter>Manager\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect.cpp">
+      <Filter>GameObject\Component\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>GameObject\Component\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>Manager\Font</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectManager.cpp">
+      <Filter>Manager\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -485,6 +509,18 @@
     <ClInclude Include="SoundManager.h">
       <Filter>Manager\Sound</Filter>
     </ClInclude>
+    <ClInclude Include="Effect.h">
+      <Filter>GameObject\Component\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>GameObject\Component\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>Manager\Font</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectManager.h">
+      <Filter>Manager\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Resources\Shader\default.hlsli">
@@ -532,6 +568,9 @@
       <Filter>Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Resources\Shader\math.fx">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Resources\Shader\font.fx">
       <Filter>Shader</Filter>
     </FxCompile>
   </ItemGroup>
