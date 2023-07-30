@@ -145,6 +145,16 @@ namespace game
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
 				}
 				break;
+				case ProtocolID::WR_RENDER_EFFECT_ACK:
+				{
+					postOver.state = ev.state;
+					postOver.effectPosX = ev.effectPos.x;
+					postOver.effectPosY = ev.effectPos.y;
+					postOver.effectPosZ = ev.effectPos.z;
+
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+				}
+				break;
 				default:
 				break;
 			}

@@ -50,6 +50,9 @@ void Scene_Test::Awake()
 void Scene_Test::Start()
 {
 	__super::Start();
+
+	m_playEffect = false;
+	m_playExplode = false;
 }
 
 void Scene_Test::Update()
@@ -58,9 +61,15 @@ void Scene_Test::Update()
 
 	SendKeyInput();
 
+	if (m_playEffect == true)
+		PlayEffect();
+
+	if (m_playExplode == true)
+		GET_SINGLE(EffectManager)->PlayBillBoard(m_effectName[m_effectIndex], m_explodePos, Vec3(600.f, 600.f, 1.f), 1.f, 0.006f);
+
 	Vec3 vPos = GetPlayer().begin()->get()->GetTransform()->GetWorldMatrix().Translation();
 	vPos.y += 20.f;
-	GET_SINGLE(EffectManager)->PlayBillBoard(L"Effect_Flash_In_Red", vPos, Vec3(300.f, 300.f, 1.f), 1.f, 0.004f);
+	//GET_SINGLE(EffectManager)->PlayBillBoard(L"Effect_Flash_In_Red", vPos, Vec3(300.f, 300.f, 1.f), 1.f, 0.004f);
 
 	//GET_SINGLE(EffectManager)->Play(L"Effect_Flash_In_Red", vPos, Vec3(300.f, 300.f, 1.f), Vec3(0.f, 0.f, 0.f), 1.f, 0.004f);
 }
@@ -104,6 +113,22 @@ void Scene_Test::LateUpdate()
 			case ProtocolID::WR_SKILL_HIT_ACK:
 			{
 
+			}
+			break;
+			case ProtocolID::WR_RENDER_EFFECT_ACK:
+			{
+				m_playEffect = true;
+
+				//int32_t effectIndex{ request.Read<int32_t>() };
+				m_effectIndex = request.Read<int32_t>();
+				//ClassifyEffect(magic_enum::enum_value<server::EFFECT_TYPE>(m_effectIndex));
+				m_effectName[m_effectIndex] = ClassifyEffect(magic_enum::enum_value<server::EFFECT_TYPE>(m_effectIndex));
+
+				m_effectPos.x = request.Read<float>();
+				m_effectPos.y = request.Read<float>();
+				m_effectPos.z = request.Read<float>();
+
+				//PlayEffect(request);
 			}
 			break;
 			default:
@@ -798,6 +823,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
 			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+			objectDesc.vScale = { 2.5f, 2.5f, 2.5f };
 		}
 		break;
 		case server::FBX_TYPE::PLAYER_ICEBALL:
@@ -1096,6 +1122,31 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		break;
 #pragma region [SKILL]
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
+		{
+			if (m_overlappedObjects.contains(id) == false)
+				return;
+
+			auto objects{ GetNetworkObject() };
+			network::NetworkGameObject removeObjects;
+
+			for (auto& object : objects)
+			{
+				if (object->GetNetwork()->GetID() == id)
+				{
+					removeObjects.push_back(object);
+					m_explodePos = object->GetTransform()->GetWorldPosition();
+				}
+			}
+
+			m_overlappedObjects.erase(id);
+			RemoveNetworkObject(removeObjects);
+			GET_NETWORK->RemoveNetworkObject(id);
+
+			m_playExplode = true;
+			m_effectIndex = magic_enum::enum_integer(server::EFFECT_TYPE::EXPLODE);
+			m_effectName[m_effectIndex] = L"Effect_Explode";
+		}
+		break;
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
 		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
 		case server::OBJECT_TYPE::PLAYER_POISONBALL:
@@ -1136,6 +1187,30 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		default:
 		break;
 	}
+}
+
+std::wstring Scene_Test::ClassifyEffect(server::EFFECT_TYPE effect)
+{
+	switch (effect)
+	{
+		case server::EFFECT_TYPE::IN_DISPERSAL:
+		{
+			return L"Effect_In_Dispersal";
+		}
+		break;
+		case server::EFFECT_TYPE::IN_STAR_BURST_INFINITY:
+		{
+			return L"Effect_In_StarBurst_Infinity";
+		}
+	}
+}
+
+void Scene_Test::PlayEffect()
+{
+	//auto pos{ GET_PLAYER[GET_NETWORK->GetID()]->GetTransform()->GetWorldPosition() };
+	//pos.y += 20.f;
+
+	GET_SINGLE(EffectManager)->PlayBillBoard(m_effectName[m_effectIndex], m_effectPos, Vec3(600.f, 600.f, 1.f), 1.f, 0.004f);
 }
 
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateMapObject(ObjectDesc& objectDesc)
@@ -1198,7 +1273,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateMainCamera(pScene);
 	CreateUICamera(pScene);
 	CreateSkyBox(pScene);
-	CreateUI(pScene);
+	//CreateUI(pScene);
 	CreateLights(pScene);
 	CreateMap(pScene);
 	//CreateBillBoard(pScene);

@@ -32,6 +32,7 @@ namespace game
 		int32_t									roomID;
 		server::OBJECT_TYPE						objType;
 		int32_t									state;
+		Vec3									effectPos;
 
 		TIMER_EVENT(ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE, int32_t playerID = -1);
 

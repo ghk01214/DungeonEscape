@@ -340,4 +340,19 @@ namespace game
 
 		Send(packet);
 	}
+
+	void CSession::SendRenderEffectPacket(int32_t id, int32_t effectIndex, Vec3 effectPos)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_RENDER_EFFECT_ACK);
+		packet.Write<int32_t>(effectIndex);
+
+		packet.Write<float>(effectPos.x);
+		packet.Write<float>(effectPos.y);
+		packet.Write<float>(effectPos.z);
+
+		Send(packet);
+	}
 }

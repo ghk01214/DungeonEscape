@@ -11,6 +11,8 @@
 #include "PhysDevice.h"
 #include "physx_utils.h"
 
+#include "MessageHandler.h"
+
 using namespace physx;
 using namespace std;
 
@@ -110,7 +112,7 @@ std::vector<Monster*> OverlapObject2::OverlapCheck_Monster()
 
 	if (!m_box)
 		return validPtrs;									//여기 걸리면 SkillAdd()의 오류. 각 Monster의 Init수정 요구
-									
+
 	physx::PxTransform trans;								//스킬 위치, 회전값 부여
 	trans.p = m_pos;
 	trans.q = m_rot;
@@ -121,7 +123,7 @@ std::vector<Monster*> OverlapObject2::OverlapCheck_Monster()
 	PxOverlapBuffer overlapBuffer(hitBuffer, bufferSize);
 
 	query->Overlap(*m_box, trans, filterData, &overlapBuffer);
-	
+
 	for (PxU32 i = 0; i < overlapBuffer.getNbTouches(); ++i)
 	{
 		const PxOverlapHit& hit = overlapBuffer.getTouch(i);
@@ -140,7 +142,7 @@ std::vector<Monster*> OverlapObject2::OverlapCheck_Monster()
 			validPtrs.emplace_back(monster);
 			int size = validPtrs.size();
 		}
-	}				
+	}
 
 	return validPtrs;
 }
@@ -213,4 +215,16 @@ bool OverlapObject2::ApplySkillToMonster(Monster* monster)
 	return true;
 }
 
+
+void OverlapObject2::ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type)
+{
+	//auto effectPos{ player->LocationForBilboard(m_monsterAI) };
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	ev.objID = player->GetID();
+	ev.state = magic_enum::enum_integer(type);
+	//ev.effectPos = effectPos;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+}
 

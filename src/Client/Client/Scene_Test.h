@@ -49,6 +49,8 @@ private:
 	void CreateAnimatedRemoteObject(network::CPacket& packet);
 	void CreateRemoteObject(network::CPacket& packet);
 	void RemoveObject(network::CPacket& packet);
+	std::wstring ClassifyEffect(server::EFFECT_TYPE effect);
+	void PlayEffect();
 
 	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
@@ -66,6 +68,15 @@ private:
 	std::unordered_map<int32_t, int32_t> m_objectIDMap;		// temp obj id, new obj id
 
 	std::unordered_set<int32_t> m_overlappedObjects;
+
+	bool m_playEffect;
+	bool m_playExplode;
+
+	Vec3 m_explodePos;
+
+	int32_t m_effectIndex;
+	Vec3 m_effectPos;
+	std::unordered_map<int32_t, std::wstring> m_effectName;
 
 public:
 	static shared_ptr<CScene> Create(server::FBX_TYPE eType);

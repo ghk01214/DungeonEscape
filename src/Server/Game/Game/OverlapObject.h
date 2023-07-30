@@ -28,6 +28,8 @@ public:
 public:
 	void UpdateOverlapPosition(physx::PxVec3 pos);
 
+	void ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type);
+
 private:
 	std::vector<Player*> m_duplicates;
 	std::string m_currentScheduleName;

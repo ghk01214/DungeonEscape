@@ -13,6 +13,8 @@
 #include "TriggerObject.h"
 #include "OverlapObject2.h"
 #include "EventHandler.h"
+#include "MonsterAI.h"
+#include "Monster.h"
 
 using namespace std;
 
@@ -683,6 +685,31 @@ void Player::StunCheck()
 			m_controller->Keyboard_SpaceBar_Clear();
 		}
 	}
+}
+
+Vec3 Player::LocationForBilboard(MonsterAI* overlapOwner)
+{
+	auto monster = overlapOwner->GetMonster();
+
+	physx::PxVec3 fakeVariable(0);
+	physx::PxVec3 monsterPos = TO_PX3(monster->GetControllerPosition());
+	physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());
+
+	physx::PxVec3 dir = playerPos - monsterPos;
+
+	dir.normalize();
+
+
+	playerPos += (dir * 100.f);
+	fakeVariable = playerPos;
+
+	Vec3 tempPos;
+	tempPos.x = playerPos.x;
+	tempPos.y = playerPos.y;
+	tempPos.z = playerPos.z;
+
+
+	return tempPos;
 }
 
 void Player::SetControllerMoveSpeed(float value)

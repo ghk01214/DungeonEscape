@@ -113,6 +113,9 @@ enum class ProtocolID : unsigned short
 	WR_PLAYER_MP_REQ,
 	WR_PLAYER_MP_ACK,
 
+	WR_RENDER_EFFECT_REQ,
+	WR_RENDER_EFFECT_ACK,
+
 	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion
 

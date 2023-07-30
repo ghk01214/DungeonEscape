@@ -82,8 +82,8 @@ void TestLevel::LoadUnit_DebugMode()
 																																							//다리				3890, -1462, 21062
 																																							//돌테스트			15609, -976, 26457
 	//15609, -976, 26457
-	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
-	
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+
 	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
 	//몬스터
@@ -116,7 +116,7 @@ void TestLevel::LoadMap()
 	{
 		LoadMapObject();
 		//LoadPotObject();
-		LoadGimmikObject();
+		//LoadGimmikObject();
 	}
 
 	std::system("cls");
@@ -284,7 +284,7 @@ void TestLevel::LoadMapObject()
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");	// Mesh 로드
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Debug.fbx");			// Map 로드
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
 	for (auto& info : mapInfo)

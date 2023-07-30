@@ -12,12 +12,19 @@
 #include <NetworkManager.h>
 #include <Network.h>
 
+#include <EffectManager.h>
+
 void PlayerRangeAttack::Start()
 {
 }
 
 void PlayerRangeAttack::Update()
 {
+	auto pos{ GetTransform()->GetWorldPosition() };
+
+	//pos.y += 100.f;
+
+	//GET_SINGLE(EffectManager)->PlayBillBoard(L"Effect_Shield_Electric_Green", pos, Vec3(300.f, 300.f, 1.f), 1.f, 0.006f);
 }
 
 void PlayerRangeAttack::LateUpdate()
@@ -80,6 +87,8 @@ void PlayerRangeAttack::Transform(network::CPacket& packet)
 	scale.x = packet.Read<float>();
 	scale.y = packet.Read<float>();
 	scale.z = packet.Read<float>();
+
+	//scale = Vec3{ 0.f };
 
 	float scaleRatio{ packet.Read<float>() };
 

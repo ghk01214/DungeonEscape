@@ -31,7 +31,7 @@ public:
 
 	physx::PxQuat GetRotation_For_Overlap(physx::PxVec3 xzDir);
 
-	
+	void ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type);
 
 private:
 	std::vector<GameObject*> m_duplicates;

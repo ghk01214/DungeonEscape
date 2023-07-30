@@ -1117,6 +1117,19 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::WR_RENDER_EFFECT_ACK:
+			{
+				Vec3 pos{ postOver->effectPosX, postOver->effectPosY, postOver->effectPosZ };
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendRenderEffectPacket(id, postOver->state, pos);
+				}
+			}
+			break;
 #pragma endregion
 			default:
 			break;

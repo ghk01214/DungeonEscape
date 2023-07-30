@@ -20,6 +20,8 @@ public:
 	const vector<shared_ptr<CGameObject>>& GetEffectObject(void) { return m_renderObjects; }
 	const vector<shared_ptr<CGameObject>>& GetBillBoardObject(void) { return m_billboardReserveObjects; }
 
+	uint32_t GetBillboardCount() { return m_billboardCount; }
+
 private:
 	vector<shared_ptr<CGameObject>> m_effectObjects;
 	map<std::wstring, vector<shared_ptr<Texture>>> m_effectTextures;

@@ -38,6 +38,10 @@ namespace network
 		int32_t roomID;
 		int32_t state;
 
+		float effectPosX;
+		float effectPosY;
+		float effectPosZ;
+
 		server::OBJECT_TYPE objType;
 	};
 }

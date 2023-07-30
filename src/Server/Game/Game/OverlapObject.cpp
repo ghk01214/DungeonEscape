@@ -11,6 +11,8 @@
 #include "PhysDevice.h"
 #include "physx_utils.h"
 
+#include "MessageHandler.h"
+
 using namespace physx;
 using namespace std;
 
@@ -102,6 +104,8 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 1000.f);
 		//playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
 
+		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_DISPERSAL);
+
 		return true;
 	}
 
@@ -112,6 +116,8 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		playerBody->AddForce(ForceMode::Impulse, xzDir * 800.f);
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(0, 1, 0) * 200.f);
 		EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
+
+		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_STAR_BURST_INFINITY);
 
 		return true;
 	}
@@ -205,4 +211,16 @@ bool OverlapObject::RaycastPlayer(Player* player)
 void OverlapObject::UpdateOverlapPosition(physx::PxVec3 pos)
 {
 	m_currentOverlapPos = pos;
+}
+
+void OverlapObject::ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type)
+{
+	auto effectPos{ player->LocationForBilboard(m_monsterAI) };
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	ev.objID = player->GetID();
+	ev.state = magic_enum::enum_integer(type);
+	ev.effectPos = effectPos;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

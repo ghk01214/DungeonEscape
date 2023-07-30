@@ -5,6 +5,7 @@
 class CustomController;
 class TriggerObject;
 class OverlapObject2;
+class MonsterAI;
 
 class Player : public GameObject
 {
@@ -101,6 +102,8 @@ public:
 
 	void SetStun(bool value);
 	void StunCheck();
+
+	Vec3 LocationForBilboard(MonsterAI* overlapOwner);
 
 public:
 	CustomController* GetController();
