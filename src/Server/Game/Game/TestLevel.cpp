@@ -135,9 +135,8 @@ void TestLevel::LoadUnit_DebugMode()
 	//15609, -976, 26457
 
 	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 40000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
-	
-																						
-	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(24.121, -300.000, 11349.413), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(24.121, -300.000, 11349.413), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
 	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(16220, -3700, 45890), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
