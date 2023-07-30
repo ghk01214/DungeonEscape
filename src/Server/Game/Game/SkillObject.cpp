@@ -332,6 +332,18 @@ void SkillObject::ServerMessage_SkillInit()
 
 void SkillObject::ServerMessage_SkillHit()
 {
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TIMER_EVENT ev{ ProtocolID::WR_SKILL_HIT_ACK };
+		ev.objID = m_id;
+		ev.objType = m_objType;
+
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	}
+}
+
+void SkillObject::ServerMessage_SkillRemove()
+{
 	//스킬 오브젝트 객체 삭제 전달.
 	//추후 피격 잔상 위치 같이 추가적으로 더 정보를 전달할 수 있음.
 	//std::cout << "skill remove : " << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
@@ -417,7 +429,7 @@ void SkillObject::HandlePlayerSkillCollision()
 						{
 							weeper->GetDamaged(10);
 							SetRemoveReserved();						//객체 삭제
-							ServerMessage_SkillHit();					//서버 메시지 처리
+							ServerMessage_SkillRemove();					//서버 메시지 처리
 						}
 					}
 					break;
@@ -431,7 +443,7 @@ void SkillObject::HandlePlayerSkillCollision()
 						{
 							golem->GetDamaged(10);
 							SetRemoveReserved();						//객체 삭제
-							ServerMessage_SkillHit();					//서버 메시지 처리
+							ServerMessage_SkillRemove();					//서버 메시지 처리
 						}
 					}
 					break;
@@ -451,7 +463,7 @@ void SkillObject::HandlePlayerSkillCollision()
 
 				m_body->ExcludeFromSimulation(true);
 				SetRemoveReserved();						//객체 삭제
-				ServerMessage_SkillHit();					//서버 메시지 처리
+				ServerMessage_SkillRemove();					//서버 메시지 처리
 			}
 
 
@@ -461,7 +473,7 @@ void SkillObject::HandlePlayerSkillCollision()
 		else if (type == server::OBJECT_TYPE::PLAYER)
 		{
 			SetRemoveReserved();						//객체 삭제
-			ServerMessage_SkillHit();					//서버 메시지 처리
+			ServerMessage_SkillRemove();					//서버 메시지 처리
 		}
 
 		//플레이어스킬 : 맵 타격
@@ -492,7 +504,7 @@ void SkillObject::HandlePlayerSkillCollision()
 			}
 
 			SetRemoveReserved();						//객체 삭제
-			ServerMessage_SkillHit();					//서버 메시지 처리
+			ServerMessage_SkillRemove();					//서버 메시지 처리
 		}
 
 		//플레이어스킬 : 돌기둥 다리 타격
@@ -561,7 +573,7 @@ void SkillObject::HandleMonsterSkillCollision()
 				}
 
 				SetRemoveReserved();						//객체 삭제
-				ServerMessage_SkillHit();					//서버 메시지 처리
+				ServerMessage_SkillRemove();					//서버 메시지 처리
 
 
 			}
@@ -575,13 +587,13 @@ void SkillObject::HandleMonsterSkillCollision()
 				case SKILLOBJECTTYPE::PLAYER_FIREBALL:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillHit();					//서버 메시지 처리
+					ServerMessage_SkillRemove();					//서버 메시지 처리
 				}
 				break;
 				case SKILLOBJECTTYPE::PLAYER_POISONBALL:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillHit();					//서버 메시지 처리
+					ServerMessage_SkillRemove();					//서버 메시지 처리
 				}
 				break;
 				case SKILLOBJECTTYPE::WEEPER_CAST1_BALL:
@@ -589,20 +601,20 @@ void SkillObject::HandleMonsterSkillCollision()
 					if (m_mapEncountered)
 					{
 						SetRemoveReserved();						//객체 삭제
-						ServerMessage_SkillHit();					//서버 메시지 처리
+						ServerMessage_SkillRemove();					//서버 메시지 처리
 					}
 				}
 				break;
 				case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillHit();					//서버 메시지 처리
+					ServerMessage_SkillRemove();					//서버 메시지 처리
 				}
 				break;
 				case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillHit();					//서버 메시지 처리
+					ServerMessage_SkillRemove();					//서버 메시지 처리
 
 					if (m_skillAttrib & SKILLATTRIBUTE::NUCLEAR)
 					{
@@ -613,7 +625,7 @@ void SkillObject::HandleMonsterSkillCollision()
 				case SKILLOBJECTTYPE::WEEPER_CAST3_BALL:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillHit();					//서버 메시지 처리
+					ServerMessage_SkillRemove();					//서버 메시지 처리
 				}
 				break;
 			}

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Session.h"
 #include "GameInstance.h"
 #include "RoomManager.h"
@@ -1041,6 +1041,28 @@ namespace game
 							continue;
 
 						client->SendMonsterPatternPacket(id, postOver->state);
+					}
+				}
+			}
+			break;
+			case ProtocolID::WR_SKILL_HIT_ACK:
+			{
+				for (auto& object : skillObjects)
+				{
+					auto skill{ dynamic_cast<SkillObject*>(object) };
+
+					if (skill == nullptr)
+						continue;
+
+					if (skill->GetID() != id)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						client->SendSkillHitPacket(id);
 					}
 				}
 			}

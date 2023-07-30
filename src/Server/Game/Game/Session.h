@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Player.h"
 
@@ -43,6 +43,7 @@ namespace game
 		void SendStatePacket(int32_t id, int32_t stateIndex);
 		void SendMonsterQuaternionPacket(Monster* obj);
 		void SendMonsterPatternPacket(int32_t id, int32_t patternIndex);
+		void SendSkillHitPacket(int32_t id);
 		void SendPlayerHPPacket(Player* obj);
 		void SendPlayerMPPacket(Player* obj);
 

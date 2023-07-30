@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -118,6 +118,7 @@ namespace game
 				break;
 				case ProtocolID::WR_ADD_OBJ_ACK:
 				case ProtocolID::WR_REMOVE_ACK:
+				case ProtocolID::WR_SKILL_HIT_ACK:
 				{
 					postOver.objType = ev.objType;
 

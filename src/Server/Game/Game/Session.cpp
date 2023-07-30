@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Session.h"
 #include "Transform.h"
 #include "Monsters.hpp"
@@ -308,6 +308,17 @@ namespace game
 
 		Send(packet);
 	}
+
+	void CSession::SendSkillHitPacket(int32_t id)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_SKILL_HIT_ACK);
+
+		Send(packet);
+	}
+
 	void CSession::SendPlayerHPPacket(Player* obj)
 	{
 		network::CPacket packet;

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include <NetworkManager.h>
 
 #include "Scene_Test.h"
@@ -91,6 +91,11 @@ void Scene_Test::LateUpdate()
 			case ProtocolID::WR_REMOVE_ACK:
 			{
 				RemoveObject(request);
+			}
+			break;
+			case ProtocolID::WR_SKILL_HIT_ACK:
+			{
+
 			}
 			break;
 			default:
