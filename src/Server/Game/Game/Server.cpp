@@ -1130,6 +1130,19 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::WR_CHANGE_SOUND_ACK:
+			{
+				auto soundType{ magic_enum::enum_value<server::SOUND_TYPE>(postOver->state) };
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendChangeSoundPacket(soundType);
+				}
+			}
+			break;
 #pragma endregion
 			default:
 			break;

@@ -355,4 +355,15 @@ namespace game
 
 		Send(packet);
 	}
+
+	void CSession::SendChangeSoundPacket(server::SOUND_TYPE soundType)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(m_id);
+		packet.WriteProtocol(ProtocolID::WR_CHANGE_SOUND_ACK);
+		packet.Write<server::SOUND_TYPE>(soundType);
+
+		Send(packet);
+	}
 }

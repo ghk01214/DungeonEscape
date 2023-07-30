@@ -417,6 +417,7 @@ namespace network
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
 			case ProtocolID::WR_RENDER_EFFECT_ACK:
+			case ProtocolID::WR_CHANGE_SOUND_ACK:
 			{
 				GET_SCENE->PushServerRequest(m_packet);
 			}

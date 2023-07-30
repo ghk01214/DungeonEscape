@@ -37,6 +37,8 @@
 #include "HP_Script.h"
 
 #include "EffectManager.h"
+#include "SoundManager.h"
+#include "Timer.h"
 
 Scene_Test::Scene_Test()
 {
@@ -50,6 +52,8 @@ void Scene_Test::Awake()
 void Scene_Test::Start()
 {
 	__super::Start();
+
+	GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
 }
 
 void Scene_Test::Update()
@@ -103,6 +107,11 @@ void Scene_Test::LateUpdate()
 			case ProtocolID::WR_RENDER_EFFECT_ACK:
 			{
 				PlayEffect(request);
+			}
+			break;
+			case ProtocolID::WR_CHANGE_SOUND_ACK:
+			{
+				ChangeSound(request);
 			}
 			break;
 			default:
@@ -1409,6 +1418,14 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 
 	GET_SINGLE(EffectManager)->SetBillBoardInfo(m_billboards[info.index], effectPos, info.scale, info.speed, info.alpha);
 	GET_SINGLE(EffectManager)->PlayBillBoard(m_billboards[info.index]);
+}
+
+void Scene_Test::ChangeSound(network::CPacket& packet)
+{
+	server::SOUND_TYPE soundType{ packet.Read<server::SOUND_TYPE>() };
+
+	GET_SINGLE(CSoundMgr)->StopSound(CSoundMgr::BGM);
+	GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
 }
 
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateMapObject(ObjectDesc& objectDesc)

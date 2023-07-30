@@ -14,6 +14,7 @@
 #include <NetworkManager.h>
 
 #include "Loading_Script.h"
+#include "SoundManager.h"
 
 Scene_Loading::Scene_Loading()
 {
@@ -69,6 +70,8 @@ void Scene_Loading::Update()
 	__super::Update();
 
 	// 특정 키를 누르면 넘어가도록 설정
+	if (m_eNextScene == SCENE_GAMEPLAY)
+		GET_SINGLE(CSoundMgr)->StopAll();
 
 	// 로더의 로딩이 완료되었을 경우
 	if (m_pLoader->Get_Finished())

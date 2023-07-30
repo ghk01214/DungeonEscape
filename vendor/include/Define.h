@@ -308,4 +308,15 @@
 
 		MAX
 	};
+
+	enum class SOUND_TYPE
+	{
+		NONE = 0,
+
+		OPENING,
+		WORLD,
+		BATTLE,
+
+		MAX
+	};
 }

@@ -61,6 +61,32 @@ void TestLevel::Update(double timeDelta)
 			boulderSummoned = true;
 		}
 	}
+
+	static bool meetMonster = false;
+	if (meetMonster == false)
+	{
+		auto players{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects() };
+
+		for (auto& player : players)
+		{
+			auto pl{ dynamic_cast<Player*>(player) };
+
+			if (pl == nullptr)
+				continue;
+
+			if (pl->GetTransform()->GetPosition().z > 40490.f)
+			{
+				game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
+				ev.objID = pl->GetID();
+				ev.state = magic_enum::enum_integer(server::SOUND_TYPE::BATTLE);
+
+				game::MessageHandler::GetInstance()->PushSendMessage(ev);
+
+				meetMonster = true;
+				break;
+			}
+		}
+	}
 }
 
 void TestLevel::LateUpdate(double timeDelta)

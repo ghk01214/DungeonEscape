@@ -53,14 +53,12 @@ namespace game
 
 		void TimerThread();
 		void TransformThread();
-		void AddRemoveThread();
 	public:
 		void PushRecvMessage(Message& msg);
 		void PushSendMessage(TIMER_EVENT& ev);
 		void ExecuteMessage();
 
 		void PushTransformMessage(TIMER_EVENT& ev);
-		void PushAddRemoveMessage(TIMER_EVENT& ev);
 
 	public:
 		int32_t NewObjectID();
@@ -84,7 +82,6 @@ namespace game
 		tbb::concurrent_queue<Message> m_recvQueue;
 		tbb::concurrent_priority_queue<TIMER_EVENT> m_sendQueue;
 		tbb::concurrent_priority_queue<TIMER_EVENT> m_transformQueue;
-		tbb::concurrent_priority_queue<TIMER_EVENT> m_addRemoveQueue;
 
 		std::atomic_int32_t m_recvQueueSize;
 

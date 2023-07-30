@@ -14,6 +14,7 @@
 #include "Lobby_StartButton.h"
 
 #include "FontManager.h"
+#include "SoundManager.h"
 
 Scene_Lobby::Scene_Lobby()
 {
@@ -29,6 +30,8 @@ void Scene_Lobby::Start()
 	__super::Start();
 
 	m_ipAddress.clear();
+
+	GET_SINGLE(CSoundMgr)->PlayBGM(L"Opening.ogg");
 }
 
 void Scene_Lobby::Update()
