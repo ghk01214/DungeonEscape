@@ -15,6 +15,8 @@
 #include <NetworkManager.h>
 #include <Network.h>
 
+#include <SoundManager.h>
+
 Monster_Golem::Monster_Golem() :
 	m_prevState{ IDLE1 },
 	m_currState{ m_prevState }
@@ -69,13 +71,30 @@ void Monster_Golem::CheckState()
 		m_aniEnd = false;
 	}
 
-	if (m_currState == WALK or m_currState == RUN or m_currState == ATTACK1 or m_currState == ATTACK2)
-		GetAnimator()->SetAniSpeed(1.5f);
-	else if (m_currState == ATTACK3)
-		GetAnimator()->SetAniSpeed(2.f);
-	else
-		GetAnimator()->SetAniSpeed(1.f);
-
+	switch (m_currState)
+	{
+		case ATTACK1: case ATTACK2:
+		case RUN: case WALK:
+		{
+			GetAnimator()->SetAniSpeed(1.5f);
+		}
+		break;
+		case ATTACK3:
+		{
+			GetAnimator()->SetAniSpeed(2.f);
+		}
+		break;
+		case ROAR:
+		{
+			GET_SINGLE(CSoundMgr)->PlaySound(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
+		}
+		break;
+		default:
+		{
+			GetAnimator()->SetAniSpeed(1.f);
+		}
+		break;
+	}
 
 	m_prevState = m_currState;
 }

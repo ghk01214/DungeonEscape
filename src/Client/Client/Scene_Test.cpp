@@ -53,6 +53,7 @@ void Scene_Test::Start()
 {
 	__super::Start();
 
+	GET_SINGLE(CSoundMgr)->StopAll();
 	GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
 }
 
@@ -1337,35 +1338,47 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 #pragma region [SKILL]
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
 		{
+			RemoveNonAnimatedObject(id);
+
+			GET_SINGLE(CSoundMgr)->PlaySound(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
+		}
+		break;
+		case server::OBJECT_TYPE::PLAYER_ICEBALL:
+		{
+			RemoveNonAnimatedObject(id);
+
+			GET_SINGLE(CSoundMgr)->PlaySound(L"Ice Hit.wav", CSoundMgr::EFFECT, 0.7f);
+		}
+		break;
+		case server::OBJECT_TYPE::PLAYER_POISONBALL:
+		{
+			RemoveNonAnimatedObject(id);
+
+			GET_SINGLE(CSoundMgr)->PlaySound(L"PoisonAcid Hit.wav", CSoundMgr::EFFECT, 0.7f);
+		}
+		break;
+		case server::OBJECT_TYPE::PLAYER_METEOR:
+		{
 			if (m_overlappedObjects.contains(id) == false)
 				return;
 
 			auto objects{ GetNetworkObject() };
 			network::NetworkGameObject removeObjects;
 
-			auto effect{ m_billboardInfo[server::EFFECT_TYPE::EXPLODE] };
-
 			for (auto& object : objects)
 			{
 				if (object->GetNetwork()->GetID() == id)
-				{
 					removeObjects.push_back(object);
-					effect.pos = object->GetTransform()->GetWorldPosition();
-				}
 			}
 
 			m_overlappedObjects.erase(id);
 			RemoveNetworkObject(removeObjects);
 			GET_NETWORK->RemoveNetworkObject(id);
 
-			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_billboards[effect.index], effect.pos, effect.scale, effect.speed);
-			GET_SINGLE(EffectManager)->PlayBillBoard(m_billboards[effect.index]);
+			GET_SINGLE(CSoundMgr)->PlaySound(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
-		case server::OBJECT_TYPE::PLAYER_ICEBALL:
 		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
-		case server::OBJECT_TYPE::PLAYER_POISONBALL:
-		case server::OBJECT_TYPE::PLAYER_METEOR:
 		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL:
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
@@ -1402,6 +1415,33 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		default:
 		break;
 	}
+}
+
+void Scene_Test::RemoveNonAnimatedObject(int32_t id)
+{
+	if (m_overlappedObjects.contains(id) == false)
+		return;
+
+	auto objects{ GetNetworkObject() };
+	network::NetworkGameObject removeObjects;
+
+	auto effect{ m_billboardInfo[server::EFFECT_TYPE::EXPLODE] };
+
+	for (auto& object : objects)
+	{
+		if (object->GetNetwork()->GetID() == id)
+		{
+			removeObjects.push_back(object);
+			effect.pos = object->GetTransform()->GetWorldPosition();
+		}
+	}
+
+	m_overlappedObjects.erase(id);
+	RemoveNetworkObject(removeObjects);
+	GET_NETWORK->RemoveNetworkObject(id);
+
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(m_billboards[effect.index], effect.pos, effect.scale, effect.speed);
+	GET_SINGLE(EffectManager)->PlayBillBoard(m_billboards[effect.index]);
 }
 
 void Scene_Test::PlayEffect(network::CPacket& packet)
@@ -1444,6 +1484,7 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 		}
 		break;
 		case server::SOUND_TYPE::ROAR:
+
 		{
 			GET_SINGLE(CSoundMgr)->PlaySound(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
 		}

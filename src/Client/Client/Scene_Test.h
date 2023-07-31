@@ -58,6 +58,7 @@ private:
 	void CreateAnimatedRemoteObject(network::CPacket& packet);
 	void CreateRemoteObject(network::CPacket& packet);
 	void RemoveObject(network::CPacket& packet);
+	void RemoveNonAnimatedObject(int32_t id);
 	void PlayEffect(network::CPacket& packet);
 	void ChangeSound(network::CPacket& packet);
 

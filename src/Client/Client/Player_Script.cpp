@@ -16,6 +16,7 @@
 #include <Network.h>
 
 #include <EffectManager.h>
+#include <SoundManager.h>
 
 #include "Camera.h"
 
