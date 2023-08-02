@@ -23,6 +23,6 @@ public:
 public:
 	void ApplyRequestedLayers();
 
-private:
+protected:
 	RigidBody* m_body = nullptr;
 };

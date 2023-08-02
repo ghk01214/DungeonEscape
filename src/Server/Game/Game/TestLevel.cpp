@@ -6,6 +6,7 @@
 #include "MapObject.h"
 #include "PillarObject.h"
 #include "TriggerObject.h"
+#include "TriggerObject2.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
 #include "CapsuleCollider.h"
@@ -40,10 +41,10 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	//LoadBasicMap4();
+	LoadBasicMap4();
 
-	LoadUnit_DebugMode();
-	LoadMap();
+	//LoadUnit_DebugMode();
+	//LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -280,53 +281,26 @@ void TestLevel::LoadBasicMap4()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	bool golemRoom = false;
-	bool defaultMap = !golemRoom;
-
-#pragma region GolemRoom
-	FBXMapLoader mapLoader;
-
-	if (golemRoom)
-	{
-		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models.fbx");		// Mesh 로드
-		mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\Models2.fbx");
-		mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Golem Room.fbx");			// Map 로드 //Server, Golem Room
-		auto& mapInfo = mapLoader.GetMapObjectInfo();
-		for (auto& info : mapInfo)
-		{
-			const objectLocationInfo& locationInfo = info.second;
-
-			auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
-			   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
-			   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
-			   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
-			);
-
-			auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
-			auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
-			MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
-			MeshObject->ApplyRequestedLayers();
-		}
-
-		Vec3 golemPos{ 16220.f, -3889.f, 40470.f };
-		//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(10200.000, -1000.000, 38000), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
-		auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, golemPos, Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-		std::cout << "golem room done" << std::endl;
-	}
-#pragma endregion
 
 #pragma region Plane
-	if (defaultMap)
-	{
-		auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, -42), Quat(0, 0, 0, 1), Vec3(7000, 2, 7000));
-		auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
-		MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
-		MapPlaneObject->ApplyRequestedLayers();
 
-		auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(0,200,-42), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
-		//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(0, 200, 2000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-		auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0, 200, 700), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
-	}
+	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, -42), Quat(0, 0, 0, 1), Vec3(7000, 2, 7000));
+	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
+	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
+	MapPlaneObject->ApplyRequestedLayers();
+
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 3, Vec3(0, 200, -42), Quat(0, 0, 0, 1), Vec3(75, 75, 75));
+	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 3, Vec3(0, 200, 2000), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(0, 200, 700), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+
+	auto Box1Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), true);
+	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+
+	auto Box2Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-200, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
+	auto Box2Body = Box2Obj->GetComponent<RigidBody>(L"RigidBody");
+	Box2Body->AddCollider<BoxCollider>(Box2Obj->GetTransform()->GetScale());
+
 #pragma endregion
 }
 

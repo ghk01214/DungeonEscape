@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+//더이상 사용하지 않는 클래스다.
+
 #include "GameObject.h"
 
 class RigidBody;

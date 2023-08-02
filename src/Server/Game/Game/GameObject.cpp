@@ -26,8 +26,14 @@ void GameObject::Update(double timeDelta)
     {
         auto body = GetComponent<RigidBody>(L"RigidBody");
         if (body == nullptr)
+        {
+            SetRemovalFlag(true);
             return;
-        body->ExcludeFromSimulation(true);
+        }
+        else
+        {
+            body->ExcludeFromSimulation(true);
+        }
     }
 
     m_removeReserved -= 1;
