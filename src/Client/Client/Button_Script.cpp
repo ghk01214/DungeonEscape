@@ -2,9 +2,9 @@
 #include "UI_Script.h"
 #include "Button_Script.h"
 
-#include "Transform.h"
-#include "Input.h"
-#include "Engine.h"
+#include <Transform.h>
+#include <Input.h>
+#include <Engine.h>
 
 Button_Script::Button_Script() :
 	m_click{ false },

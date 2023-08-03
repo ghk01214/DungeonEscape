@@ -1,13 +1,12 @@
 ﻿#include "pch.h"
 #include "Logo_Script.h"
 
-#include "Timer.h"
+#include <Timer.h>
+#include <MeshRenderer.h>
+#include <Material.h>
+#include <SceneManager.h>
 
-#include "SceneManager.h"
 #include "Scene_Loading.h"
-
-#include "MeshRenderer.h"
-#include "Material.h"
 
 Logo_Script::Logo_Script()
 {

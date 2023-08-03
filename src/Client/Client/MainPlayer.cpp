@@ -1,8 +1,9 @@
 ﻿#include "pch.h"
 #include "MainPlayer.h"
-#include "MeshData.h"
-#include "Resources.h"
-#include "MeshRenderer.h"
+
+#include <MeshData.h>
+#include <Resources.h>
+#include <MeshRenderer.h>
 
 CMainPlayer::CMainPlayer()
 {

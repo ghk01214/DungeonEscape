@@ -1,20 +1,16 @@
 ﻿#include "pch.h"
 #include "Monster_Golem.h"
 
-#include "Animator.h"
-#include "Input.h"
-
-#include "Transform.h"
-#include "Timer.h"
-
+#include <Animator.h>
+#include <Input.h>
+#include <Transform.h>
+#include <Timer.h>
 #include <SceneManager.h>
 #include <Scene.h>
 #include <GameObject.h>
 #include <Transform.h>
-
 #include <NetworkManager.h>
 #include <Network.h>
-
 #include <SoundManager.h>
 
 Monster_Golem::Monster_Golem() :

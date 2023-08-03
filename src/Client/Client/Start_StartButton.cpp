@@ -1,34 +1,34 @@
 ﻿#include "pch.h"
-#include "Lobby_StartButton.h"
+#include "Start_StartButton.h"
 
-#include "MeshRenderer.h"
-#include "Material.h"
-#include "Input.h"
-#include "Engine.h"
+#include <MeshRenderer.h>
+#include <Material.h>
+#include <Input.h>
+#include <Engine.h>
+#include <SceneManager.h>
 
-#include "SceneManager.h"
 #include "Scene_Loading.h"
 
-Lobby_StartButton::Lobby_StartButton() :
+Start_StartButton::Start_StartButton() :
 	m_lobbyEnd{ false }
 {
 }
 
-Lobby_StartButton::~Lobby_StartButton()
+Start_StartButton::~Start_StartButton()
 {
 }
 
-void Lobby_StartButton::Awake()
+void Start_StartButton::Awake()
 {
 	__super::Awake();
 }
 
-void Lobby_StartButton::Start()
+void Start_StartButton::Start()
 {
 	__super::Start();
 }
 
-void Lobby_StartButton::Update()
+void Start_StartButton::Update()
 {
 	if (m_lobbyEnd == true)
 		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_CHARACTER_SELECT));
@@ -64,7 +64,7 @@ void Lobby_StartButton::Update()
 	}
 }
 
-void Lobby_StartButton::LateUpdate()
+void Start_StartButton::LateUpdate()
 {
 	__super::LateUpdate();
 }

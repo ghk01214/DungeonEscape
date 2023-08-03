@@ -1,13 +1,13 @@
 ﻿#include "pch.h"
 #include "CharacterSelection_Button.h"
 
-#include "MeshRenderer.h"
-#include "Material.h"
-#include "Input.h"
-#include "Timer.h"
-#include "Transform.h"
+#include <MeshRenderer.h>
+#include <Material.h>
+#include <Input.h>
+#include <Timer.h>
+#include <Transform.h>
+#include <SceneManager.h>
 
-#include "SceneManager.h"
 #include "Scene_Loading.h"
 
 CharacterSelection_Button::CharacterSelection_Button() :

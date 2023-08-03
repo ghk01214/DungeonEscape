@@ -2,7 +2,7 @@
 
 #include "Button_Script.h"
 
-class Lobby_StartButton : public Button_Script
+class Start_StartButton : public Button_Script
 {
 public:
 	enum TEXTURE_TYPE
@@ -13,8 +13,8 @@ public:
 		MAX
 	};
 public:
-	Lobby_StartButton();
-	virtual ~Lobby_StartButton();
+	Start_StartButton();
+	virtual ~Start_StartButton();
 
 public:
 	virtual void Awake() override;

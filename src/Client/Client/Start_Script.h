@@ -2,11 +2,11 @@
 
 #include "UI_Script.h"
 
-class Lobby_Script : public UI_Script
+class Start_Script : public UI_Script
 {
 public:
-	Lobby_Script();
-	virtual ~Lobby_Script();
+	Start_Script();
+	virtual ~Start_Script();
 
 public:
 	virtual void Awake() override;

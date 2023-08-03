@@ -1,10 +1,9 @@
 ﻿#include "pch.h"
 #include "UI_Script.h"
 
-#include "Timer.h"
-
-#include "MeshRenderer.h"
-#include "Material.h"
+#include <Timer.h>
+#include <MeshRenderer.h>
+#include <Material.h>
 
 UI_Script::UI_Script() :
 	m_curTextureCount{ 0 },

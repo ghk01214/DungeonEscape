@@ -87,9 +87,6 @@
     <Filter Include="소스 파일\Objects\06. PhysxObject">
       <UniqueIdentifier>{97ae9657-f1ac-4ed5-85e0-a38f4ce4a87f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\00. Scene\Lobby">
-      <UniqueIdentifier>{7e0adb38-9509-43c8-8aa0-17255d380cab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Objects\01. UI\Lobby">
       <UniqueIdentifier>{1150c4ec-3cd6-4fe1-a21a-ee139df8ca0e}</UniqueIdentifier>
     </Filter>
@@ -107,6 +104,15 @@
     </Filter>
     <Filter Include="소스 파일\Objects\01. UI\In Game">
       <UniqueIdentifier>{02a96ad3-9cb0-4c9f-b1f9-a752b4f716e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\00. Scene\Start">
+      <UniqueIdentifier>{f362c834-16bf-44f0-9884-fde20fca0adb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\00. Scene\Room Selection">
+      <UniqueIdentifier>{ed3cf61c-e447-48ef-a0ee-92c8afdff96b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\00. Scene\Character Selection">
+      <UniqueIdentifier>{7e0adb38-9509-43c8-8aa0-17255d380cab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -191,13 +197,10 @@
     <ClInclude Include="PhysxObject_Script.h">
       <Filter>소스 파일\Objects\06. PhysxObject</Filter>
     </ClInclude>
-    <ClInclude Include="Scene_Lobby.h">
-      <Filter>소스 파일\Objects\00. Scene\Lobby</Filter>
-    </ClInclude>
-    <ClInclude Include="Lobby_Script.h">
+    <ClInclude Include="Start_Script.h">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClInclude>
-    <ClInclude Include="Lobby_StartButton.h">
+    <ClInclude Include="Start_StartButton.h">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClInclude>
     <ClInclude Include="Logo_Script.h">
@@ -210,7 +213,7 @@
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Scene_CharacterSelection.h">
-      <Filter>소스 파일\Objects\00. Scene\Lobby</Filter>
+      <Filter>소스 파일\Objects\00. Scene\Character Selection</Filter>
     </ClInclude>
     <ClInclude Include="Scenes.hpp">
       <Filter>소스 파일\Objects\00. Scene</Filter>
@@ -241,6 +244,12 @@
     </ClInclude>
     <ClInclude Include="Bar_Script.h">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_Start.h">
+      <Filter>소스 파일\Objects\00. Scene\Start</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene_RoomSelection.h">
+      <Filter>소스 파일\Objects\00. Scene\Room Selection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -323,13 +332,10 @@
     <ClCompile Include="PhysxObject_Script.cpp">
       <Filter>소스 파일\Objects\06. PhysxObject</Filter>
     </ClCompile>
-    <ClCompile Include="Scene_Lobby.cpp">
-      <Filter>소스 파일\Objects\00. Scene\Lobby</Filter>
-    </ClCompile>
-    <ClCompile Include="Lobby_Script.cpp">
+    <ClCompile Include="Start_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClCompile>
-    <ClCompile Include="Lobby_StartButton.cpp">
+    <ClCompile Include="Start_StartButton.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClCompile>
     <ClCompile Include="Logo_Script.cpp">
@@ -342,7 +348,7 @@
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
     </ClCompile>
     <ClCompile Include="Scene_CharacterSelection.cpp">
-      <Filter>소스 파일\Objects\00. Scene\Lobby</Filter>
+      <Filter>소스 파일\Objects\00. Scene\Character Selection</Filter>
     </ClCompile>
     <ClCompile Include="CharacterSelection_Button.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
@@ -370,6 +376,12 @@
     </ClCompile>
     <ClCompile Include="Bar_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_Start.cpp">
+      <Filter>소스 파일\Objects\00. Scene\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene_RoomSelection.cpp">
+      <Filter>소스 파일\Objects\00. Scene\Room Selection</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,19 +1,16 @@
 ﻿#include "pch.h"
 #include "Scene_Logo.h"
 
-#include "GameInstance.h"
+#include <Camera.h>
+#include <Transform.h>
+#include <MeshRenderer.h>
+#include <Resources.h>
+#include <Engine.h>
+#include <FontManager.h>
+
+#include "Scene_Start.h"
 #include "Scene_Loading.h"
-#include "Scene_Lobby.h"
-
-#include "Camera.h"
-#include "Transform.h"
-#include "MeshRenderer.h"
-#include "Resources.h"
-#include "Engine.h"
-
 #include "Logo_Start.h"
-
-#include "FontManager.h"
 
 Scene_Logo::Scene_Logo()
 {

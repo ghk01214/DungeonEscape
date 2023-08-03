@@ -1,24 +1,19 @@
 ﻿#include "pch.h"
 #include "Player_Script.h"
 
-#include "Animator.h"
-#include "Input.h"
-
-#include "Transform.h"
-#include "Timer.h"
-
+#include <Animator.h>
+#include <Input.h>
+#include <Transform.h>
+#include <Timer.h>
 #include <SceneManager.h>
 #include <Scene.h>
 #include <GameObject.h>
 #include <Transform.h>
-
+#include <Camera.h>
 #include <NetworkManager.h>
 #include <Network.h>
-
 #include <EffectManager.h>
 #include <SoundManager.h>
-
-#include "Camera.h"
 
 Player_Script::Player_Script(server::FBX_TYPE type, int32_t state) :
 	m_playerType{ type },

@@ -1,13 +1,13 @@
-﻿
-#include "pch.h"
+﻿#include "pch.h"
 #include "Camera_Script.h"
-#include "Transform.h"
-#include "Camera.h"
-#include "GameObject.h"
-#include "Input.h"
-#include "Timer.h"
-#include "SceneManager.h"
-#include "Scene.h"
+
+#include <Transform.h>
+#include <Camera.h>
+#include <GameObject.h>
+#include <Input.h>
+#include <Timer.h>
+#include <SceneManager.h>
+#include <Scene.h>
 
 Camera_Basic::Camera_Basic() :
 	m_speed{ 2000.f },

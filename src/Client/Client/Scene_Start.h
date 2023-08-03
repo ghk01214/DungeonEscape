@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 #include "Client_Defines.h"
-#include "Scene.h"
+#include <Scene.h>
 
-class Scene_Lobby final : public CScene
+class Scene_Start final : public CScene
 {
 public:
-	explicit Scene_Lobby();
-	virtual ~Scene_Lobby() = default;
+	explicit Scene_Start();
+	virtual ~Scene_Start() = default;
 
 public:
 	virtual void Awake();

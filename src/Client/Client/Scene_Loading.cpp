@@ -1,20 +1,17 @@
 ﻿#include "pch.h"
 #include "Scene_Loading.h"
-#include "Loader.h"
+
+#include <Camera.h>
+#include <Transform.h>
+#include <MeshRenderer.h>
+#include <Resources.h>
+#include <Engine.h>
+#include <NetworkManager.h>
+#include <SoundManager.h>
 
 #include "Scenes.hpp"
-#include "GameInstance.h"
-
-#include "Camera.h"
-#include "Transform.h"
-#include "MeshRenderer.h"
-#include "Resources.h"
-#include "Engine.h"
-
-#include <NetworkManager.h>
-
+#include "Loader.h"
 #include "Loading_Script.h"
-#include "SoundManager.h"
 
 Scene_Loading::Scene_Loading()
 {
@@ -88,7 +85,7 @@ void Scene_Loading::Update()
 			break;
 			case SCENE_LOBBY:
 			{
-				pScene = Scene_Lobby::Create();
+				pScene = Scene_Start::Create();
 			}
 			break;
 			case SCENE_CHARACTER_SELECT:

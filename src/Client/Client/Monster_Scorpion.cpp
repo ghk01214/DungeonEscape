@@ -1,19 +1,17 @@
 ﻿#include "pch.h"
 #include "Monster_Scorpion.h"
 
-#include "Animator.h"
-#include "Input.h"
-
-#include "Transform.h"
-#include "Timer.h"
-
+#include <Animator.h>
+#include <Input.h>
+#include <Transform.h>
+#include <Timer.h>
 #include <SceneManager.h>
 #include <Scene.h>
 #include <GameObject.h>
 #include <Transform.h>
-
 #include <NetworkManager.h>
 #include <Network.h>
+#include <SoundManager.h>
 
 Monster_Scorpion::Monster_Scorpion() :
 	m_prevState{ IDLE1 },

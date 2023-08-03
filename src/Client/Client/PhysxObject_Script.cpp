@@ -1,14 +1,12 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "PhysxObject_Script.h"
 
-#include "Transform.h"
-#include "Timer.h"
-
+#include <Transform.h>
+#include <Timer.h>
 #include <SceneManager.h>
 #include <Scene.h>
 #include <GameObject.h>
 #include <Transform.h>
-
 #include <NetworkManager.h>
 #include <Network.h>
 

@@ -2,14 +2,13 @@
 #include "CharacterSelection_Button.h"
 #include "Scene_CharacterSelection.h"
 
-#include "GameInstance.h"
-#include "Scene_Loading.h"
+#include <Camera.h>
+#include <Transform.h>
+#include <MeshRenderer.h>
+#include <Resources.h>
+#include <Engine.h>
 
-#include "Camera.h"
-#include "Transform.h"
-#include "MeshRenderer.h"
-#include "Resources.h"
-#include "Engine.h"
+#include "Scene_Loading.h"
 
 Scene_CharacterSelection::Scene_CharacterSelection() :
 	m_selected{ false }
@@ -85,10 +84,10 @@ void Scene_CharacterSelection::CreateUICamera()
 	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
 	camera->SetName(L"Orthographic_Camera");
 
-	camera->AddComponent(make_shared<Transform>());
+	camera->AddComponent(std::make_shared<Transform>());
 	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
 
-	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, 800*600
+	camera->AddComponent(std::make_shared<Camera>()); // Near=1, Far=1000, 800*600
 	camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
 
 	uint8_t layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
@@ -182,7 +181,7 @@ void Scene_CharacterSelection::CreateLights()
 
 shared_ptr<CScene> Scene_CharacterSelection::Create()
 {
-	std::shared_ptr<Scene_CharacterSelection> pInstance = std::make_shared<Scene_CharacterSelection>();
+	std::shared_ptr<Scene_CharacterSelection> pInstance{ std::make_shared<Scene_CharacterSelection>() };
 
 	pInstance->Init();
 

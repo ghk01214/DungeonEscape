@@ -2,13 +2,11 @@
 #include "Loader.h"
 #include "Loading_Script.h"
 
-#include "MeshRenderer.h"
-#include "Material.h"
+#include <MeshRenderer.h>
+#include <Material.h>
+#include <SceneManager.h>
 
-#include "SceneManager.h"
 #include "Scene_Loading.h"
-
-#include "Loader.h"
 
 Loading_Script::Loading_Script()
 {

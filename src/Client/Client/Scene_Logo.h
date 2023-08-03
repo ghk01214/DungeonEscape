@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Client_Defines.h"
-#include "Scene.h"
+#include <Scene.h>
 
 class Scene_Logo final : public CScene
 {

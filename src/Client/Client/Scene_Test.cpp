@@ -1,44 +1,33 @@
 ﻿#include "pch.h"
-#include <NetworkManager.h>
-
 #include "Scene_Test.h"
-#include "GameInstance.h"
 
-#include "SceneManager.h"
-#include "Scene.h"
-#include "GameObject.h"
-
-#include "Engine.h"
-
-#include "Resources.h"
-#include "Material.h"
-#include "MeshData.h"
-#include "Texture.h"
-
-#include "MeshRenderer.h"
-#include "Transform.h"
-#include "Camera.h"
-#include "Light.h"
-#include "Animator.h"
-#include "BillBoard.h"
-#include "ParticleSystem.h"
-#include "Terrain.h"
-#include "SphereCollider.h"
-#include "Effect.h"
-
+#include <NetworkManager.h>
+#include <SceneManager.h>
+#include <GameObject.h>
+#include <Engine.h>
+#include <Resources.h>
+#include <Material.h>
+#include <MeshData.h>
+#include <MeshRenderer.h>
+#include <Transform.h>
+#include <Camera.h>
+#include <Light.h>
+#include <Animator.h>
+#include <BillBoard.h>
+#include <ParticleSystem.h>
+#include <Terrain.h>
+#include <SphereCollider.h>
+#include <Effect.h>
 #include <Network.h>
-
-#include "FBXMapLoader.h"
-#include "Input.h"
+#include <FBXMapLoader.h>
+#include <Input.h>
+#include <EffectManager.h>
+#include <SoundManager.h>
+#include <Timer.h>
 
 #include "Scripts.hpp"
 #include "Skill_Bomb_Script.h"
-
 #include "HP_Script.h"
-
-#include "EffectManager.h"
-#include "SoundManager.h"
-#include "Timer.h"
 
 Scene_Test::Scene_Test()
 {

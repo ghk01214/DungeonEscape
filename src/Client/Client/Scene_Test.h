@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "Client_Defines.h"
-#include "Scene.h"
-#include "MonoBehaviour.h"
+#include <Scene.h>
+#include <MonoBehaviour.h>
 
 #include <unordered_set>
 

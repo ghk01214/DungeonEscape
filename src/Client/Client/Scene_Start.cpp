@@ -1,31 +1,28 @@
 ﻿#include "pch.h"
-#include "Scene_Lobby.h"
+#include "Scene_Start.h"
 
-#include "GameInstance.h"
+#include <Camera.h>
+#include <Transform.h>
+#include <MeshRenderer.h>
+#include <Resources.h>
+#include <Engine.h>
+#include <FontManager.h>
+#include <SoundManager.h>
+
 #include "Scene_Loading.h"
+#include "Start_Script.h"
+#include "Start_StartButton.h"
 
-#include "Camera.h"
-#include "Transform.h"
-#include "MeshRenderer.h"
-#include "Resources.h"
-#include "Engine.h"
-
-#include "Lobby_Script.h"
-#include "Lobby_StartButton.h"
-
-#include "FontManager.h"
-#include "SoundManager.h"
-
-Scene_Lobby::Scene_Lobby()
+Scene_Start::Scene_Start()
 {
 }
 
-void Scene_Lobby::Awake()
+void Scene_Start::Awake()
 {
 	__super::Awake();
 }
 
-void Scene_Lobby::Start()
+void Scene_Start::Start()
 {
 	__super::Start();
 
@@ -34,7 +31,7 @@ void Scene_Lobby::Start()
 	GET_SINGLE(CSoundMgr)->PlayBGM(L"Opening.ogg");
 }
 
-void Scene_Lobby::Update()
+void Scene_Start::Update()
 {
 	__super::Update();
 
@@ -71,22 +68,22 @@ void Scene_Lobby::Update()
 	//	GET_SINGLE(FontManager)->RenderFonts(m_ipAddress, Vec2(-300.f, 200.f), Vec2(10.f, 10.f), 10.f);
 }
 
-void Scene_Lobby::LateUpdate()
+void Scene_Start::LateUpdate()
 {
 	__super::LateUpdate();
 }
 
-void Scene_Lobby::FinalUpdate()
+void Scene_Start::FinalUpdate()
 {
 	__super::FinalUpdate();
 }
 
-void Scene_Lobby::Render()
+void Scene_Start::Render()
 {
 	__super::Render();
 }
 
-void Scene_Lobby::Init(void)
+void Scene_Start::Init(void)
 {
 	LoadTextures();
 
@@ -96,14 +93,14 @@ void Scene_Lobby::Init(void)
 	CreateLights();
 }
 
-void Scene_Lobby::CreateLayer(void)
+void Scene_Start::CreateLayer(void)
 {
 	GGameInstance->SetLayerName(0, L"UI");
 
 	GET_SINGLE(FontManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 }
 
-void Scene_Lobby::CreateUICamera(void)
+void Scene_Start::CreateUICamera(void)
 {
 	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
 	camera->SetName(L"Orthographic_Camera");
@@ -122,7 +119,7 @@ void Scene_Lobby::CreateUICamera(void)
 	AddGameObject(camera);
 }
 
-void Scene_Lobby::CreateUI(void)
+void Scene_Start::CreateUI(void)
 {
 	float width = static_cast<float>(GEngine->GetWindow().width);
 	float height = static_cast<float>(GEngine->GetWindow().height);
@@ -156,7 +153,7 @@ void Scene_Lobby::CreateUI(void)
 
 		obj->AddComponent(meshRenderer);
 
-		std::shared_ptr<Lobby_Script> behaviour = std::make_shared<Lobby_Script>();
+		std::shared_ptr<Start_Script> behaviour = std::make_shared<Start_Script>();
 		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Lobby_InGame"));
 
 		obj->AddComponent(behaviour);
@@ -194,7 +191,7 @@ void Scene_Lobby::CreateUI(void)
 
 		obj->AddComponent(meshRenderer);
 
-		std::shared_ptr<Lobby_StartButton> behaviour = std::make_shared<Lobby_StartButton>();
+		std::shared_ptr<Start_StartButton> behaviour = std::make_shared<Start_StartButton>();
 		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"NewStart"));
 		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"NewStart_Pressed"));
 
@@ -204,14 +201,14 @@ void Scene_Lobby::CreateUI(void)
 	}
 }
 
-void Scene_Lobby::LoadTextures(void)
+void Scene_Start::LoadTextures(void)
 {
 	GET_SINGLE(Resources)->Load<Texture>(L"Lobby_InGame", L"..\\Resources\\Texture\\Lobby\\Lobby_InGame.PNG");
 	GET_SINGLE(Resources)->Load<Texture>(L"NewStart", L"..\\Resources\\Texture\\Lobby\\NewStart.png");
 	GET_SINGLE(Resources)->Load<Texture>(L"NewStart_Pressed", L"..\\Resources\\Texture\\Lobby\\NewStart_Pressed.png");
 }
 
-void Scene_Lobby::CreateLights(void)
+void Scene_Start::CreateLights(void)
 {
 	LightDesc lightDesc;
 	lightDesc.vDirection = Vec3(0.f, -1.f, 0.5f);
@@ -222,9 +219,9 @@ void Scene_Lobby::CreateLights(void)
 	AddDirectionalLight(lightDesc);
 }
 
-shared_ptr<CScene> Scene_Lobby::Create()
+shared_ptr<CScene> Scene_Start::Create()
 {
-	std::shared_ptr<Scene_Lobby> pInstance = std::make_shared<Scene_Lobby>();
+	std::shared_ptr<Scene_Start> pInstance = std::make_shared<Scene_Start>();
 
 	pInstance->Init();
 
