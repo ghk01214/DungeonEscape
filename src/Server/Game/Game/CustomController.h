@@ -112,7 +112,6 @@ private:
 	CapsuleCollider* m_collider = nullptr;
 
 #pragma region keyboardVariable
-	std::vector<server::KEY_TYPE> m_useKeyType;
 	std::vector<KeyInput> m_keyboardInput;
 #pragma endregion
 	bool m_isPlayer = false;
