@@ -379,17 +379,22 @@ SkillObject* Weeper::Pattern_Cast3()
 
 bool Weeper::Pattern_Cast4()
 {
-	if (m_cast4_vertVel.y < 200.f)
-		m_cast4_vertVel *= 0.9995f;
+	if (m_cast4_vertVel.y < 10.f)
+		m_cast4_vertVel *= 0.9985f;
 
-	else if (m_cast4_vertVel.y < 400.f)
-		m_cast4_vertVel *= 0.999f;
+	else if (m_cast4_vertVel.y < 200.f)
+		m_cast4_vertVel *= 0.995f;
+
+	else if (m_cast4_vertVel.y < 500.f)
+		m_cast4_vertVel *= 0.96f;
 	else
-		m_cast4_vertVel *= 0.990f;
+		m_cast4_vertVel *= 0.92f;
 
 	auto targetPlayer = m_weeperAI->m_target;
 	auto targetController = targetPlayer->GetController();
 	auto targetBody = targetPlayer->GetController()->GetBody();
+
+	targetController->Keyboard_All_Clear();							//해당 마법에 당할때는 키보드 무력화
 
 	if (m_cast4_vertVel.y > 0)
 		targetBody->SetVelocity(m_cast4_vertVel);
@@ -400,17 +405,24 @@ bool Weeper::Pattern_Cast4()
 
 	if (m_cast4_vertVel.y < 1.f)
 	{
-		m_cast4_vertVel.y = -10.f;
+		m_cast4_vertVel.y = -30.f;
 
 		if (targetController->IsOnGround())
 		{
+			//타격
 			m_cast4_vertVel = physx::PxVec3(0, 1, 0) * 800.f;
-			targetPlayer->SetState(Player::PLAYER_STATE::DAMAGE);
+			Pattern_Cast4_Effect(targetPlayer);
 			return true;
 		}
 	}
 
 	return false;
+}
+
+void Weeper::Pattern_Cast4_Effect(Player* player)
+{
+	//적용된 힘은 pattern_cast4참고. 해당 함수가 호출된 if문에서 y값을 음수로 준다. 해당 값을 조절하면 내리꽂는 속도를 조절 가능하다.
+	player->SetState(Player::PLAYER_STATE::DAMAGE);
 }
 
 int Weeper::Randnum_Cast1_XInterval()

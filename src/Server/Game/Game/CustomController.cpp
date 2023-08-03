@@ -559,6 +559,13 @@ void CustomController::Keyboard_ATK_Clear()
 	m_keyboardInput[KEY_ORDER::KEY_4].None();
 }
 
+void CustomController::Keyboard_All_Clear()
+{
+	Keyboard_Direction_Clear();
+	Keyboard_SpaceBar_Clear();
+	Keyboard_ATK_Clear();
+}
+
 void CustomController::BounceFromAttack()
 {
 	m_BounceFromAttack = true;

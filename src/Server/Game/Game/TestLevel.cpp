@@ -259,13 +259,17 @@ void TestLevel::LoadBasicMap4()
 	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 	MapPlaneObject->ApplyRequestedLayers();
 
-	auto Box1Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), true);
-	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
 
-	auto Box2Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-200, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
-	auto Box2Body = Box2Obj->GetComponent<RigidBody>(L"RigidBody");
-	Box2Body->AddCollider<BoxCollider>(Box2Obj->GetTransform()->GetScale());	
+	//auto Box1Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), true);
+	//auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+	//Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+	//
+	//auto Box2Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-200, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
+	//auto Box2Body = Box2Obj->GetComponent<RigidBody>(L"RigidBody");
+	//Box2Body->AddCollider<BoxCollider>(Box2Obj->GetTransform()->GetScale());	
+
+
 }
 
 void TestLevel::LoadMapObject()

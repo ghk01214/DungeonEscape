@@ -27,7 +27,7 @@ void WeeperAI::Init()
 	//SkillSize 추가
 	AddSkillSize("CAST1", GeometryType::Box, Vec3(50, 50, 600), false);		//z거리 1200
 	AddSkillSize("CAST2", GeometryType::Box, Vec3(800, 800, 800), false);
-	AddSkillSize("CAST3", GeometryType::Box, Vec3(400, 400, 400), false);
+	AddSkillSize("CAST3", GeometryType::Box, Vec3(50, 50, 600), false);
 	AddSkillSize("CAST4", GeometryType::Box, Vec3(50, 50, 450), false);
 
 	m_weeper->SetControllerMoveSpeed(10.f);
@@ -69,7 +69,7 @@ void WeeperAI::FillSchedule()
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
 	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
 	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
-	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 
 
 
@@ -102,8 +102,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			if (inSkillRange)
 			{
 				m_weeper->m_currState = Weeper::CAST1;
-				if (m_debugmode)
-					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);
+				
 
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
@@ -115,9 +114,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST1_FUNCTIONCALL", 2.5f, m_weeper);
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("TIMER", 9.f, m_weeper);
-				EventHandler::GetInstance()->AddEvent("TIMER", 15.f, m_weeper);
-				EventHandler::GetInstance()->AddEvent("TIMER", 20.f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 6.36, m_weeper);
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 7.f, m_weeper);
 
 				ServerMessage_SendMonsterPattern(schedule);
 			}
@@ -162,8 +160,6 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			if (inSkillRange)
 			{
 				m_weeper->m_currState = Weeper::CAST1;
-				if (m_debugmode)
-					EventHandler::GetInstance()->AddEvent("ANIM_END", 7.f, m_weeper);
 
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
@@ -173,6 +169,10 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 1.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 2.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 3.f, m_weeper);
+
+				SetAIWait(true);
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.36f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 8.f, m_weeper);
 
 				ServerMessage_SendMonsterPattern(schedule);
 			}

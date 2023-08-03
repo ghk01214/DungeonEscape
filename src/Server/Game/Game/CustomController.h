@@ -71,7 +71,7 @@ public:
 	void Keyboard_Direction_Clear();		//FSM에서 directionInput()에 제한을 걸기 위한 함수
 	void Keyboard_SpaceBar_Clear();			//FSM에서 move()에 제한을 걸기 위한 함수
 	void Keyboard_ATK_Clear();				//FSM에서 공격 키보드를 비우기 위한 함수
-
+	void Keyboard_All_Clear();
 
 public:
 	void SetMoveSpeed(float value);

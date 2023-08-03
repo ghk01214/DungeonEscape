@@ -84,6 +84,8 @@ void Event::ExecuteMsg_Once()
 		if (skillObj)
 		{
 			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED, true);
+			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::NEW_LEVITATE, false);
+			skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
 			auto body = skillObj->GetComponent<RigidBody>(L"RigidBody");
 			body->SetAngularDamping(0.f);
 		}

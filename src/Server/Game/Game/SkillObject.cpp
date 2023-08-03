@@ -89,7 +89,7 @@ void SkillObject::Init()
 			collider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
 			collider->SetRestitution(0.8f);
 
-			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
+			SetAttribute(SkillObject::SKILLATTRIBUTE::NEW_LEVITATE, true);
 			EventHandler::GetInstance()->AddEvent("SKILL_GUIDESTART", 3.6f, this);
 		}
 		break;
@@ -692,7 +692,7 @@ void SkillObject::Attirbute_Levitate()
 	if (m_skillAttrib & SKILLATTRIBUTE::LEVITATE)
 	{
 		physx::PxVec3 gravity = PhysDevice::GetInstance()->GetGravity();
-		m_body->AddForce(ForceMode::Force, -gravity * m_body->GetMass());
+		m_body->AddForce(ForceMode::Force, -gravity * m_body->GetMass() * 0.96f);
 	}
 }
 
