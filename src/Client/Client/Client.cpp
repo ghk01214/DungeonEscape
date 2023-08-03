@@ -8,9 +8,11 @@
 #include <NetworkManager.h>
 #include <Engine.h>
 
-//#if _DEBUG
-//#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
-//#endif
+//#define RELEASE
+
+#ifndef RELEASE
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+#endif
 
 #define MAX_LOADSTRING 100
 
@@ -52,9 +54,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	MSG msg;
 
-	g_windowInfo.width = 800;
-	g_windowInfo.height = 600;
+#ifdef RELEASE
+	g_windowInfo.width = 1920;
+	g_windowInfo.height = 1080;
 	g_windowInfo.windowed = true;
+#else
+	g_windowInfo.width = 800;
+	g_windowInfo.height = 6000;
+	g_windowInfo.windowed = true;
+#endif
 
 	std::unique_ptr<CGame> pGame = std::make_unique<CGame>();
 	pGame->Init(g_windowInfo);
