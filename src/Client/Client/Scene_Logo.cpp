@@ -92,6 +92,12 @@ void Scene_Logo::CreateUI(void)
 	float width = static_cast<float>(GEngine->GetWindow().width);
 	float height = static_cast<float>(GEngine->GetWindow().height);
 
+	if (width > 800.f)
+		width = 800.f;
+
+	if (height > 600.f)
+		height = 600.f;
+
 	obj->GetTransform()->SetLocalScale(Vec3(width, height, 1.f));
 	obj->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 500.f));
 
