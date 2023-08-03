@@ -213,6 +213,7 @@
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TriggerObject.cpp" />
+    <ClCompile Include="TriggerObject2.cpp" />
     <ClCompile Include="TriggerPairInfo.cpp" />
     <ClCompile Include="Vec3.cpp" />
     <ClCompile Include="Weeper.cpp" />
@@ -284,6 +285,7 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="transform_utils.h" />
     <ClInclude Include="TriggerObject.h" />
+    <ClInclude Include="TriggerObject2.h" />
     <ClInclude Include="TriggerPairInfo.h" />
     <ClInclude Include="Vec3.h" />
     <ClInclude Include="Weeper.h" />

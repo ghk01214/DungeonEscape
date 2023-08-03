@@ -218,6 +218,9 @@
     <Filter Include="03. Game\01. GameObject\OverlapObject2">
       <UniqueIdentifier>{c334c9c1-151d-4cb5-89c4-0af1bd17cc31}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\TriggerObject2">
+      <UniqueIdentifier>{2ac2446a-6de6-466a-aa84-02c49c9f3267}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -403,6 +406,9 @@
     </ClCompile>
     <ClCompile Include="OverlapObject2.cpp">
       <Filter>03. Game\01. GameObject\OverlapObject2</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerObject2.cpp">
+      <Filter>03. Game\01. GameObject\TriggerObject2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -615,6 +621,9 @@
     </ClInclude>
     <ClInclude Include="OverlapObject2.h">
       <Filter>03. Game\01. GameObject\OverlapObject2</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerObject2.h">
+      <Filter>03. Game\01. GameObject\TriggerObject2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
