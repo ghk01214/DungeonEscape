@@ -1602,7 +1602,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateSkyBox(pScene);
 	//CreateUI(pScene);
 	CreateLights(pScene);
-	CreateMap(pScene);
+	//CreateMap(pScene);
 	//CreateBillBoard(pScene);
 	CreateSkill(pScene);
 

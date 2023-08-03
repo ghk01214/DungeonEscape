@@ -281,9 +281,6 @@
     <ClInclude Include="Scene_Start.h">
       <Filter>소스 파일\Objects\00. Scene\Start</Filter>
     </ClInclude>
-    <ClInclude Include="Scene_RoomSelection.h">
-      <Filter>소스 파일\Objects\00. Scene\Room Selection</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -424,9 +421,6 @@
     </ClCompile>
     <ClCompile Include="Scene_Start.cpp">
       <Filter>소스 파일\Objects\00. Scene\Start</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene_RoomSelection.cpp">
-      <Filter>소스 파일\Objects\00. Scene\Room Selection</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
