@@ -486,7 +486,7 @@ void Resources::CreateDefaultShader()
 		ShaderInfo info =
 		{
 			SHADER_TYPE::FORWARD,
-			RASTERIZER_TYPE::CULL_BACK,
+			RASTERIZER_TYPE::CULL_NONE,
 			DEPTH_STENCIL_TYPE::LESS_EQUAL,
 			BLEND_TYPE::ALPHA_BLEND
 		};

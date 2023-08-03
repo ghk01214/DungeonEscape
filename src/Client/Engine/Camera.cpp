@@ -85,14 +85,18 @@ void Camera::SortGameObject()
 		}
 	}
 
-	// font 오브젝트 forward에 추가
-	const vector<shared_ptr<CGameObject>>& fonts = GET_SINGLE(FontManager)->GetFontObject();
-
-	for (auto& font : fonts)
+	// 폰트 객체는 ORTHOGRAPHIC 일 경우에만 그린다. 
+	if (_type == PROJECTION_TYPE::ORTHOGRAPHIC)
 	{
-		m_vecFont.push_back(font);
-	}
+		// font 오브젝트 forward에 추가
+		const vector<shared_ptr<CGameObject>>& fonts = GET_SINGLE(FontManager)->GetFontObject();
 
+		for (auto& font : fonts)
+		{
+			m_vecFont.push_back(font);
+		}
+	}
+	 
 	// effect 오브젝트 forward에 추가
 	const vector<shared_ptr<CGameObject>>& effects = GET_SINGLE(EffectManager)->GetEffectObject();
 

@@ -4,6 +4,8 @@
 #include <Scene.h>
 #include <MonoBehaviour.h>
 
+class InfoUI_Script;
+
 #include <unordered_set>
 
 struct EffectInfo
@@ -49,7 +51,9 @@ private:
 	std::shared_ptr<CGameObject> CreateEffectBase(vector<shared_ptr<class Texture>> textures, float fPassingTime);
 	std::vector<std::shared_ptr<CGameObject>> CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath);
 
+private:
 	void CreateHPnSPBar();
+	void CreateFade(shared_ptr<CScene> pScene);
 
 private:
 	void SendKeyInput();
@@ -87,4 +91,7 @@ private:
 	std::vector<int32_t> m_effects;
 	std::vector<int32_t> m_billboards;
 	std::unordered_map<server::EFFECT_TYPE, EffectInfo> m_billboardInfo;
+
+private:
+	std::shared_ptr<InfoUI_Script> m_InfoUIScript = make_shared<InfoUI_Script>();
 };

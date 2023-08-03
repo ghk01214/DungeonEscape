@@ -101,6 +101,7 @@ void Camera_Basic::LateUpdate()
 		// 공전
 		Matrix matWorld = Matrix::CreateRotationX(XMConvertToRadians(m_rotationAxisX)) * Matrix::CreateRotationY(XMConvertToRadians(m_rotationAxisY)) * Matrix::CreateTranslation(playerTransform->GetWorldMatrix().Translation());
 		transform->SetWorldMatrix(matWorld);
+
 		// 부모
 		//transform->SetParent(playerTransform);
 

@@ -12,6 +12,10 @@ public:
 	virtual void Update() override;
 	virtual void LateUpdate() override;
 
+public:
+	Vec2 GetDistanceAxisXY(void) { return Vec2{ m_lengthX * m_distance, m_lengthY * m_distance }; }
+	Vec2 GetRotationAxisXY(void) { return Vec2{ m_rotationAxisY, m_rotationAxisX }; }
+
 private:
 	float m_speed;
 	float m_lengthX;

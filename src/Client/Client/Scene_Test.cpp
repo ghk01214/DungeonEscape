@@ -29,6 +29,15 @@
 #include "Skill_Bomb_Script.h"
 #include "HP_Script.h"
 
+#include "EffectManager.h"
+#include "SoundManager.h"
+#include "Timer.h"
+
+#include "InfoUI_Script.h"
+#include "Fade_Script.h"
+
+#include "FontManager.h"
+
 Scene_Test::Scene_Test()
 {
 }
@@ -129,8 +138,10 @@ void Scene_Test::CreateLayer()
 {
 	GGameInstance->SetLayerName(0, L"Default");
 	GGameInstance->SetLayerName(1, L"UI");
+	//GGameInstance->SetLayerName(2, L"Senematic");
 
-	GET_SINGLE(EffectManager)->SetSceneIndex(0);
+	GET_SINGLE(EffectManager)->SetSceneIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"Default"));
+	GET_SINGLE(FontManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 }
 
 void Scene_Test::CreateComputeShader(void)
@@ -162,7 +173,12 @@ void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 	camera->SetName(L"Main_Camera");
 	camera->AddComponent(make_shared<Transform>());
 	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
-	camera->AddComponent(make_shared<Camera_Basic>());
+
+	shared_ptr<Camera_Basic> pCameraScript = make_shared<Camera_Basic>();
+	m_InfoUIScript->SetCameraScript(pCameraScript);
+
+	camera->AddComponent(pCameraScript);
+
 	camera->GetCamera()->SetFar(30000.f);
 	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 500.f, -500.f));
 	uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
@@ -180,7 +196,10 @@ void Scene_Test::CreateUICamera(shared_ptr<CScene> pScene)
 	camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
 	uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
 	camera->GetCamera()->SetCullingMaskAll(); // ???꾧퀬
-	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI留?李띿쓬
+	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI留?李띿쓬 
+
+	camera->AddComponent(m_InfoUIScript);
+
 	pScene->AddGameObject(camera);
 }
 
@@ -398,6 +417,44 @@ void Scene_Test::CreateHPnSPBar()
 
 		AddGameObject(obj);
 	}
+}
+
+void Scene_Test::CreateFade(shared_ptr<CScene> pScene)
+{
+	shared_ptr<CGameObject> gameObject = make_shared<CGameObject>();
+	gameObject->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+
+	gameObject->AddComponent(make_shared<Transform>());
+
+	float width = static_cast<float>(GEngine->GetWindow().width);
+	float height = static_cast<float>(GEngine->GetWindow().height);
+
+	gameObject->GetTransform()->SetLocalScale(Vec3(width, height, 1.f));
+	gameObject->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 1.f));
+
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+
+	meshRenderer->SetMesh(mesh);
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+
+	shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Lobby_InGame");
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	material->SetTexture(0, texture);
+	meshRenderer->SetMaterial(material);
+
+	gameObject->AddComponent(meshRenderer);
+
+
+	shared_ptr<Fade_Script> fade_script = make_shared<Fade_Script>();
+	vector<std::shared_ptr<Texture>> vTextures;
+	vTextures.push_back(texture);
+
+	fade_script->SetLogoInfo(1.f, 1.f, 1.f, vTextures);
+	gameObject->AddComponent(fade_script);
+
+	pScene->AddGameObject(gameObject);
 }
 
 void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
@@ -1554,4 +1611,6 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreatePlayer(pScene, eType);
 
 	AddEffectTextures();
+
+	CreateFade(pScene);
 }

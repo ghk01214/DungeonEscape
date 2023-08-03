@@ -114,13 +114,31 @@
     <Filter Include="소스 파일\Objects\00. Scene\Character Selection">
       <UniqueIdentifier>{7e0adb38-9509-43c8-8aa0-17255d380cab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\08. Trigger">
+      <UniqueIdentifier>{1ecff825-3366-4b22-8828-504c2204651e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\08. Trigger\Box">
+      <UniqueIdentifier>{8329705e-7bd8-4f72-b5e2-7b773d9bc9d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\02. Camera\Basic">
+      <UniqueIdentifier>{1332d2c3-8ee0-409c-8ff2-b60f2d246352}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\02. Camera\Senematic">
+      <UniqueIdentifier>{c6ad6890-ac4c-4291-8802-ec51a2edada0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\02. Camera\InfoUI">
+      <UniqueIdentifier>{7c7c982a-c6a0-42b9-8675-33e380f70241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\HP">
+      <UniqueIdentifier>{56d095b7-ec87-4086-b99e-6d8d74ecc4b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\Fade">
+      <UniqueIdentifier>{09b16139-f0c5-498f-9cf9-2535a01d7371}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
       <Filter>소스 파일\Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera_Script.h">
-      <Filter>소스 파일\Objects\02. Camera</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
       <Filter>소스 파일\Utils\Client</Filter>
@@ -239,11 +257,26 @@
     <ClInclude Include="Effect_Script.h">
       <Filter>소스 파일\Objects\07. Effect</Filter>
     </ClInclude>
-    <ClInclude Include="HP_Script.h">
-      <Filter>소스 파일\Objects\01. UI\In Game</Filter>
-    </ClInclude>
     <ClInclude Include="Bar_Script.h">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerBox.h">
+      <Filter>소스 파일\Objects\08. Trigger\Box</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera_Script.h">
+      <Filter>소스 파일\Objects\02. Camera\Basic</Filter>
+    </ClInclude>
+    <ClInclude Include="Scenematic_Script.h">
+      <Filter>소스 파일\Objects\02. Camera\Senematic</Filter>
+    </ClInclude>
+    <ClInclude Include="InfoUI_Script.h">
+      <Filter>소스 파일\Objects\02. Camera\InfoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="HP_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\HP</Filter>
+    </ClInclude>
+    <ClInclude Include="Fade_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\Fade</Filter>
     </ClInclude>
     <ClInclude Include="Scene_Start.h">
       <Filter>소스 파일\Objects\00. Scene\Start</Filter>
@@ -268,9 +301,6 @@
   <ItemGroup>
     <ClCompile Include="Game.cpp">
       <Filter>소스 파일\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera_Script.cpp">
-      <Filter>소스 파일\Objects\02. Camera</Filter>
     </ClCompile>
     <ClCompile Include="Client.cpp">
       <Filter>소스 파일\Utils\Client</Filter>
@@ -371,11 +401,26 @@
     <ClCompile Include="Effect_Script.cpp">
       <Filter>소스 파일\Objects\07. Effect</Filter>
     </ClCompile>
-    <ClCompile Include="HP_Script.cpp">
-      <Filter>소스 파일\Objects\01. UI\In Game</Filter>
-    </ClCompile>
     <ClCompile Include="Bar_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="TriggerBox.cpp">
+      <Filter>소스 파일\Objects\08. Trigger\Box</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera_Script.cpp">
+      <Filter>소스 파일\Objects\02. Camera\Basic</Filter>
+    </ClCompile>
+    <ClCompile Include="Scenematic_Script.cpp">
+      <Filter>소스 파일\Objects\02. Camera\Senematic</Filter>
+    </ClCompile>
+    <ClCompile Include="InfoUI_Script.cpp">
+      <Filter>소스 파일\Objects\02. Camera\InfoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="HP_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\HP</Filter>
+    </ClCompile>
+    <ClCompile Include="Fade_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\Fade</Filter>
     </ClCompile>
     <ClCompile Include="Scene_Start.cpp">
       <Filter>소스 파일\Objects\00. Scene\Start</Filter>
