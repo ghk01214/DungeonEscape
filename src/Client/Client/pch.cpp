@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 
-std::wstring serverIP_Address;
+std::wstring serverIP_Address{ L"127.0.0.1" };
 
 void PrintVec3(const Vec3& v)
 {
