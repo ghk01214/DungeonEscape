@@ -140,6 +140,16 @@ void Monster::SetControllerCameraLook(Vec3& value)
 	m_controller->CameraLookReceive(value);
 }
 
+void Monster::SetMonsterImmobile()
+{
+	m_controller->GetBody()->SetKinematic(true);
+}
+
+void Monster::SetMonsterMobile()
+{
+	m_controller->GetBody()->SetKinematic(false);
+}
+
 void Monster::GetDamaged(int32_t damage)
 {
 	m_hp -= damage;

@@ -46,6 +46,8 @@ public:
 	void SetControllerJumpSpeed(float value);
 	void SetControllerCameraLook(Vec3& value);
 
+	void SetMonsterImmobile();
+	void SetMonsterMobile();
 public:
 	void GetDamaged(int32_t damage);
 	void SendTransform();

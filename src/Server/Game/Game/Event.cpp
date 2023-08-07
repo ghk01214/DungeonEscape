@@ -59,6 +59,15 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "MONSTER_MOBILE")
+	{
+		auto monsterObj = dynamic_cast<Monster*>(target);
+		if (monsterObj)
+		{
+			monsterObj->SetMonsterMobile();
+		}
+	}
+
 	if (msg == "AI_WAIT_FREE")
 	{
 		auto monsterObj = dynamic_cast<Monster*>(target);
@@ -66,6 +75,7 @@ void Event::ExecuteMsg_Once()
 		{
 			auto monsterAI = monsterObj->GetAI();
 			monsterAI->SetAIWait(false);
+			monsterObj->SetMonsterMobile();
 		}
 	}
 
@@ -243,12 +253,13 @@ void Event::ExecuteMsg_Once()
 		if (skillObj)
 		{
 			owner->SetState(Weeper::WEEPER_STATE::CAST2_END);						//CAST2 END로 애니메이션 진입
-			if (ownerAI->m_debugmode)
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 4.f, owner);		//디버그 전용 애니메이션 종료 코드
-			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 6.f, owner);
+			
+			EventHandler::GetInstance()->AddEvent("ANIM_END", 1.87f, owner);		//디버그 전용 애니메이션 종료 코드
+
 
 			EventHandler::GetInstance()->AddEvent("CAST2_VULNERABLE_ON", 4.f, owner);		//애니메이션 종료 시간쯤 Vulnerable 1.5초 정도 ON
 			EventHandler::GetInstance()->AddEvent("CAST2_VULNERABLE_OFF", 5.5f, owner);
+			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 5.7f, owner);
 
 			skillObj->SetRemoveReserved();											//Ascend 속성의 오브젝트는 삭제
 
@@ -274,10 +285,10 @@ void Event::ExecuteMsg_Once()
 		WeeperAI* weeperAI = weeper->GetAI();
 
 		EventHandler::GetInstance()->DeleteEvent("CAST2_SCATTER_AIRFIRE");		// Cast2 노말 진행 이벤트 삭제
-		if (weeperAI->m_debugmode)
-			EventHandler::GetInstance()->AddEvent("ANIM_END", 4.f, weeper);		//디버그 전용 애니메이션 종료 코드
-		EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 6.f, weeper);		//AI wait 해제 (던지는 애니메이션이 끝나고 몇초 후 이동 가능하도록)
-		EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST2END", 6.f, weeper);		//클라에서 애니메이션 종료 못들어도 종료
+	
+		EventHandler::GetInstance()->AddEvent("ANIM_END", 1.87f, weeper);			//디버그 전용 애니메이션 종료 코드
+		EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 3.f, weeper);			//AI wait 해제 (던지는 애니메이션이 끝나고 몇초 후 이동 가능하도록)
+		//EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST2END", 6.f, weeper);		//클라에서 애니메이션 종료 못들어도 종료
 
 		skillObj->WeeperNuclearFire();
 		skillObj->SetAttribute(SkillObject::SKILLATTRIBUTE::NUCLEAR, true);
@@ -290,7 +301,10 @@ void Event::ExecuteMsg_Once()
 		if (weeper)
 		{
 			if (weeper->GetState() == Weeper::WEEPER_STATE::TAUNT)
+			{
 				weeper->SetState(Weeper::WEEPER_STATE::IDLE);
+				weeper->SetMonsterMobile();
+			}
 		}
 	}
 
@@ -581,6 +595,7 @@ void Event::ExecuteMsg_continuous()
 			weeperObj->GetAI()->SetAIWait(false);
 			weeperObj->SetState(Weeper::WEEPER_STATE::CAST4_END);
 			EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, target);
+			EventHandler::GetInstance()->AddEvent("MONSTER_MOBILE", 4.06f, target);
 			executed = true;	//이벤트 소멸
 		}
 	}

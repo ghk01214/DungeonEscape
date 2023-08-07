@@ -194,6 +194,7 @@ void Weeper::CheckState()
 
 	//for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
+		//cout << "호출되긴한거냐?" << endl;
 		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
 		ev.state = m_currState;
 		ev.objID = m_id;
@@ -201,6 +202,7 @@ void Weeper::CheckState()
 
 		game::MessageHandler::GetInstance()->PushSendMessage(ev);
 	}
+
 }
 
 void Weeper::UpdateFrameOnce()

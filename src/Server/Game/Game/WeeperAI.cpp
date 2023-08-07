@@ -67,8 +67,8 @@ void WeeperAI::FillSchedule()
 	//}
 
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
-	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
-	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 
 
@@ -102,8 +102,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			if (inSkillRange)
 			{
 				m_weeper->m_currState = Weeper::CAST1;
+				m_weeper->SetMonsterImmobile();
 				
-
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
@@ -132,8 +132,10 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
-				SkillObject* cast2Ball = m_weeper->Pattern_Cast2();									//스킬오브젝트(CAST2_BALL) 생성
 				m_weeper->m_currState = Weeper::CAST2_START;										//원기옥 자세
+				m_weeper->SetMonsterImmobile();
+
+				SkillObject* cast2Ball = m_weeper->Pattern_Cast2();									//스킬오브젝트(CAST2_BALL) 생성
 				Cast2Counter_ON();																	//원기옥 반격모드 ON
 				m_AIWait = true;																	//fill,execute schedule 방지
 				m_scheduler.erase(m_scheduler.begin());												//스케듈러 비우기
@@ -160,6 +162,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			if (inSkillRange)
 			{
 				m_weeper->m_currState = Weeper::CAST1;
+				m_weeper->SetMonsterImmobile();
 
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
@@ -171,8 +174,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST3_FUNCTIONCALL", 3.f, m_weeper);
 
 				SetAIWait(true);
-				EventHandler::GetInstance()->AddEvent("ANIM_END", 7.36f, m_weeper);
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 8.f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("ANIM_END", 6.36f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 7.f, m_weeper);
 
 				ServerMessage_SendMonsterPattern(schedule);
 			}
@@ -191,6 +194,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			{
 				m_AIWait = true;
 				m_weeper->SetState(Weeper::WEEPER_STATE::CAST4_START);
+				m_weeper->SetMonsterImmobile();
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 
@@ -265,6 +269,7 @@ void WeeperAI::DamageCheck()
 				m_weeper->SetState(Weeper::WEEPER_STATE::CAST4_END);
 				SetAIWait(false);
 				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, m_weeper);
+				EventHandler::GetInstance()->AddEvent("MONSTER_MOBILE", 4.06f, m_weeper);
 				EventHandler::GetInstance()->DeleteEvent("WEEPER_CAST4");
 			}
 		}

@@ -33,7 +33,7 @@ void GolemAI::Init()
 	//AddSkillSize("ATTACK4", GeometryType::Box, Vec3(1000, 1000, 500), false);			//돌진확인을 위한 디버그용값
 
 	AddSkillSize("ROAR", GeometryType::Sphere, Vec3(1000, 1000, 1000), false);			//포효
-	AddSkillSize("RUN", GeometryType::Box, Vec3(250, 250, 250), true);					//돌진
+	//AddSkillSize("RUN", GeometryType::Box, Vec3(250, 250, 250), true);				//돌진			RUN그냥 쓰지마. 이펙트없인 개구리다
 	AddSkillSize("JUMP", GeometryType::Box, Vec3(1000, 1000, 1000), false);				//돌진
 	AddSkillSize("SPELL", GeometryType::Sphere, Vec3(1500, 1500, 1500), true);			//차징 충격파 공격
 }
@@ -237,22 +237,19 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				SetAIWait(true);																			//패턴시작 : AI 대기
 
-				m_golem->m_currState = Golem::GOLEM_STATE::WALK;											//STATE : WALK으로 변경
-				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE", 0.1f, m_golem);							//이동명령 시작 (Event는 Continous 속성)
+				m_golem->m_currState = Golem::GOLEM_STATE::RUN;											//STATE : RUN으로 변경
+				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE", 0.1f, m_golem);						//이동명령 시작 (Event는 Continous 속성)
 
-				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_RUN_LOOP", 1.f, m_golem);				//STATE : RUN으로 변경
-				EventHandler::GetInstance()->AddEvent("GOLEM_SET_FASTSPEED", 1.f, m_golem);				//controller의 속도를 빠르게
-				EventHandler::GetInstance()->AddEvent("GOLEM_RUN_FUNCTIONCALL", 1.f, m_golem);				//overlapObj 활성화 시작
+				EventHandler::GetInstance()->AddEvent("GOLEM_SET_FASTSPEED", 0.1f, m_golem);				//controller의 속도를 빠르게
+				EventHandler::GetInstance()->AddEvent("GOLEM_RUN_FUNCTIONCALL", 0.1f, m_golem);				//overlapObj 활성화 시작
 
-				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_WALK", 4.f, m_golem);					//STATE : WALK으로 변경
-				EventHandler::GetInstance()->AddEvent("GOLEM_SET_ORIGINALSPEED", 4.f, m_golem);				//controller의 속도 정상으로
-				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 4.f, m_golem);			//overlapObj 비활성화 적용
-
-				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 4.5f, m_golem);					//STATE : IDLE로 변경
-				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE_STOP", 4.5f, m_golem);					//이동명령 정지.
+				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 3.f, m_golem);					//STATE : WALK으로 변경
+				EventHandler::GetInstance()->AddEvent("GOLEM_SET_ORIGINALSPEED", 3.f, m_golem);				//controller의 속도 정상으로
+				EventHandler::GetInstance()->AddEvent("OVERLAPOBJECT_DEACTIVATE", 3.f, m_golem);			//overlapObj 비활성화 적용
+				EventHandler::GetInstance()->AddEvent("GOLEM_MOVE_STOP", 3.f, m_golem);					//이동명령 정지.
 
 
-				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 5.5f, m_golem);						//패턴종료 : AI 재개
+				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 4.0f, m_golem);						//패턴종료 : AI 재개
 			}
 			else
 			{
