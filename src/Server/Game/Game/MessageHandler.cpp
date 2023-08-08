@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -153,6 +153,14 @@ namespace game
 					postOver.effectPosX = ev.effectPos.x;
 					postOver.effectPosY = ev.effectPos.y;
 					postOver.effectPosZ = ev.effectPos.z;
+
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+				}
+				break;
+				case ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK:
+				{
+					postOver.state = ev.state;
+					postOver.integer = ev.integer;
 
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
 				}
@@ -402,7 +410,7 @@ namespace game
 			Vec3 pos = portal1TestPos;
 
 			//pos.z = 40400.f;
-			pos.x += msg.playerID * 500.f;
+			pos.z -= msg.playerID * 500.f;
 
 			//pos = Vec3(1050.f, 100.f, 0.f);
 

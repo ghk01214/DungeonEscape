@@ -419,6 +419,7 @@ namespace network
 			case ProtocolID::WR_RENDER_EFFECT_ACK:
 			case ProtocolID::WR_CHANGE_SOUND_ACK:
 			case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
+			case ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK:
 			{
 				GET_SCENE->PushServerRequest(m_packet);
 			}

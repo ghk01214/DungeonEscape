@@ -1147,14 +1147,26 @@ namespace game
 			{
 				auto triggerType{ magic_enum::enum_value<server::TRIGGER_INTERACTION_TYPE>(postOver->state) };
 
-				std::cout << magic_enum::enum_name(triggerType) << "\n";
-
 				for (auto& client : m_sessions)
 				{
 					if (client->GetState() != STATE::INGAME)
 						continue;
 
 					client->SendTriggerInteractionPacket(id, triggerType);
+				}
+			}
+			break;
+			case ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK:
+			{
+				auto count{ postOver->integer };
+				auto type{ magic_enum::enum_value<server::TRIGGER_INTERACTION_TYPE>(postOver->state) };
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendTriggerInteractionCountPacket(id, type, count);
 				}
 			}
 			break;

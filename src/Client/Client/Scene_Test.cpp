@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #include <NetworkManager.h>
@@ -120,6 +120,11 @@ void Scene_Test::LateUpdate()
 			case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
 			{
 				TriggerBehaviour(packet);
+			}
+			break;
+			case ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK:
+			{
+				TriggerInteractionCount(packet);
 			}
 			break;
 			default:
@@ -531,7 +536,7 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\FirstBoss.fbx");
 	PushMapData(MAP_TYPE::FirstBoss, mapLoader.GetMapObjectInfo());
-	 
+
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\Cave.fbx");
 	PushMapData(MAP_TYPE::Cave, mapLoader.GetMapObjectInfo());
 
@@ -1626,7 +1631,6 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 			m_fadeScript->SetMapType(MAP_TYPE::FirstBoss);
 		}
 		break;
-		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN:
 		{
 			m_fadeScript->FadeIn();
@@ -1651,18 +1655,45 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 			m_fadeScript->SetMapType(MAP_TYPE::LastBoss_TreasureRoom);
 		}
 		break;
-		case server::TRIGGER_INTERACTION_TYPE::PORTAL6_IN:
-		{
-		}
-		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT:
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT:
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT:
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT:
-		case server::TRIGGER_INTERACTION_TYPE::PORTAL6_OUT:
 		{
 			m_fadeScript->FadeOut();
+		}
+		break;
+		default:
+		break;
+	}
+}
+
+void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
+{
+	auto type{ packet.Read<server::TRIGGER_INTERACTION_TYPE>() };
+	int32_t count{ packet.Read<int32_t>() };
+
+	switch (type)
+	{
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN:
+		{
 		}
 		break;
 		default:
@@ -1719,28 +1750,40 @@ void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameOb
 	switch (eType)
 	{
 		case MAP_TYPE::Cave:
-		for (auto& object : objects)
-			m_splitMap_3.push_back(object);
+		{
+			for (auto& object : objects)
+				m_splitMap_3.push_back(object);
+		}
 		break;
 		case MAP_TYPE::FirstBoss:
-		for (auto& object : objects)
-			m_splitMap_2.push_back(object);
+		{
+			for (auto& object : objects)
+				m_splitMap_2.push_back(object);
+		}
 		break;
 		case MAP_TYPE::LastBoss_TreasureRoom:
-		for (auto& object : objects)
-			m_splitMap_6.push_back(object);
+		{
+			for (auto& object : objects)
+				m_splitMap_6.push_back(object);
+		}
 		break;
 		case MAP_TYPE::SecondRoom_Bridge_SecondBoss:
-		for (auto& object : objects)
-			m_splitMap_4.push_back(object);
+		{
+			for (auto& object : objects)
+				m_splitMap_4.push_back(object);
+		}
 		break;
 		case MAP_TYPE::StartRoom:
-		for (auto& object : objects)
-			m_splitMap_1.push_back(object);
+		{
+			for (auto& object : objects)
+				m_splitMap_1.push_back(object);
+		}
 		break;
 		case MAP_TYPE::ThirdRoom_RockRolling:
-		for (auto& object : objects)
-			m_splitMap_5.push_back(object);
+		{
+			for (auto& object : objects)
+				m_splitMap_5.push_back(object);
+		}
 		break;
 		case MAP_TYPE::END:
 		break;

@@ -49,6 +49,7 @@ namespace game
 		void SendRenderEffectPacket(int32_t id, int32_t effectIndex, Vec3 effectPos);
 		void SendChangeSoundPacket(server::SOUND_TYPE soundType);
 		void SendTriggerInteractionPacket(int32_t id, server::TRIGGER_INTERACTION_TYPE type);
+		void SendTriggerInteractionCountPacket(int32_t id, server::TRIGGER_INTERACTION_TYPE type, int32_t size);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

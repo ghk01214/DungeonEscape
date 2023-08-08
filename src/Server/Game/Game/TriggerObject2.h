@@ -62,6 +62,7 @@ private:
 	void ServerSendInMessage();
 	void ServerSendPortalInMessage();
 	void ServerSendPortalOutMessage();
+	void ServerSendInteractionCountMessage();
 
 private:
 	physx::PxBoxGeometry* m_box = nullptr;

@@ -37,6 +37,7 @@ namespace network
 		ProtocolID msgProtocol;
 		int32_t roomID;
 		int32_t state;
+		int32_t integer;
 
 		float effectPosX;
 		float effectPosY;

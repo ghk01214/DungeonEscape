@@ -28,7 +28,7 @@ void TriggerObject2::Init()
 	SetObjectType(server::OBJECT_TYPE::TRIGGER_OBJECT2);
 	m_body->ExcludeFromSimulation(true);
 
-	GeometryInit(m_transform->GetScale());
+	GeometryInit(m_transform->GetScale() / 2.f);
 
 	ServerInit();
 	SetPortalDestination();
@@ -87,13 +87,13 @@ void TriggerObject2::Handle_Overlap()
 		}
 	}
 
-
 	// HERE : 인원수에 변화가 생길 경우 출력.
 	m_currentCnt = m_duplicates.size();
 	if (m_currentCnt != m_beforeCnt)
 	{
 		m_beforeCnt = m_currentCnt;
-		cout << m_currentCnt << endl;
+
+		ServerSendInteractionCountMessage();
 	}
 }
 
@@ -113,14 +113,18 @@ void TriggerObject2::SetPortalDestination()
 
 void TriggerObject2::AttributePortal(double timeDelta)
 {
+	int attribNum = static_cast<int>(m_attribute);
+	if (attribNum < static_cast<int>(TRIGGERATTRIBUTE::PORTAL1) || attribNum > static_cast<int>(TRIGGERATTRIBUTE::PORTAL8))
+		return;
+
 	string name = string(magic_enum::enum_name(m_attribute));
 
-	if (m_duplicates.empty())
+	if (m_duplicates.size() < 3)
 	{
 		EventHandler::GetInstance()->DeleteEvent(name);
 		return;
 	}
-	else
+	else if (m_duplicates.size() == 3)
 	{
 		EventHandler::GetInstance()->AddEventIfNone(name, m_requestedContactTime, this);
 		return;
@@ -136,10 +140,15 @@ void TriggerObject2::SendPlayers()
 	auto objmgr = ObjectManager::GetInstance();
 	auto players = objmgr->GetLayer(L"Layer_Player")->GetGameObjects();
 
+	float givenSpace = 500.f;         //플레이어들 사이 공간
+	int num = -1;
+
 	for (auto& p : players)
 	{
 		auto player = dynamic_cast<Player*>(p);
-		player->SetControllerPosition(m_portalDestination[static_cast<int>(m_attribute)]);
+		auto requestedPos = m_portalDestination[static_cast<int>(m_attribute)];
+		requestedPos.x += givenSpace * ++num;
+		player->SetControllerPosition(requestedPos);
 	}
 
 	// 서버가 클라이언트에게 너희들을 이동시켰다고 알려줘야한다.
@@ -207,7 +216,7 @@ void TriggerObject2::Handle_OverlapOut(const std::vector<Player*>& validptr)
 			if (!m_oneTimeOnly)
 			{
 				it = m_duplicates.erase(it);
-				cout << "loop out" << endl;
+				//cout << "loop out" << endl;
 			}
 		}
 	}
@@ -226,12 +235,12 @@ bool TriggerObject2::Apply(Player* player)
 {
 	if (m_oneTimeOnly)
 	{
-		cout << "attribute once" << endl;
+		//cout << "attribute once" << endl;
 		return true;
 	}
 	else
 	{
-		cout << "attribute loop" << endl;
+		//cout << "attribute loop" << endl;
 
 		ServerSendInMessage();
 
@@ -281,6 +290,7 @@ void TriggerObject2::ServerSendInMessage()
 void TriggerObject2::ServerSendPortalInMessage()
 {
 	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	ev.objID = m_id;
 
 	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN);
@@ -292,10 +302,6 @@ void TriggerObject2::ServerSendPortalInMessage()
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN);
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL6)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL6_IN);
-
-	ev.objID = m_id;
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
@@ -306,6 +312,7 @@ void TriggerObject2::ServerSendPortalOutMessage()
 	//Detect함수에서 조건 확인 후 호출
 
 	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	ev.objID = m_id;
 
 	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT);
@@ -317,10 +324,26 @@ void TriggerObject2::ServerSendPortalOutMessage()
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT);
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL6)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL6_OUT);
 
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+}
+
+void TriggerObject2::ServerSendInteractionCountMessage()
+{
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK };
 	ev.objID = m_id;
+	ev.integer = m_currentCnt;
+
+	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL2)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
