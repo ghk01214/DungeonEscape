@@ -404,6 +404,26 @@ void TestLevel::LoadTriggerObject()
 	auto Portal1Body{ Portal1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal1Body->AddCollider<BoxCollider>(Portal1Obj->GetTransform()->GetScale());
 	Portal1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL1);
+
+	auto Portal2Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0.f, -550.f, 13020.f), Quat(0, 0, 0, 1), Vec3(400.f, 400.f, 400.f), false) };
+	auto Portal2Body{ Portal2Obj->GetComponent<RigidBody>(L"RigidBody") };
+	Portal2Body->AddCollider<BoxCollider>(Portal2Obj->GetTransform()->GetScale());
+	Portal2Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL2);
+
+	auto Portal3Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0.f, -1590.f, 18920.f), Quat(0, 0, 0, 1), Vec3(400.f, 400.f, 400.f), false) };
+	auto Portal3Body{ Portal3Obj->GetComponent<RigidBody>(L"RigidBody") };
+	Portal3Body->AddCollider<BoxCollider>(Portal3Obj->GetTransform()->GetScale());
+	Portal3Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL3);
+
+	auto Portal4Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(15000.f, -1590.f, 24070.f), Quat(0, 0, 0, 1), Vec3(400.f, 400.f, 400.f), false) };
+	auto Portal4Body{ Portal4Obj->GetComponent<RigidBody>(L"RigidBody") };
+	Portal4Body->AddCollider<BoxCollider>(Portal4Obj->GetTransform()->GetScale());
+	Portal4Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL4);
+
+	auto Portal5Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(16216.f, -3690.f, 40493.f), Quat(0, 0, 0, 1), Vec3(900.f, 400.f, 400.f), false) };
+	auto Portal5Body{ Portal5Obj->GetComponent<RigidBody>(L"RigidBody") };
+	Portal5Body->AddCollider<BoxCollider>(Portal5Obj->GetTransform()->GetScale());
+	Portal5Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL5);
 }
 
 void TestLevel::LoadDebugMap_Bridge()

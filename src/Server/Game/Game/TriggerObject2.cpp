@@ -93,8 +93,11 @@ void TriggerObject2::SetPortalDestination()
 	//HERE
 	m_portalDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));
 
-	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = Vec3(0.f, -550.f, 8020.f);  //-400, 300, 500
-	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL2)] = Vec3(-600, 300, 800);
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = Vec3(0.f, -550.f, 8020.f);
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL2)] = Vec3(0.f, -550.f, 13520.f);
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL3)] = Vec3(0.f, -1590.f, 19420.f);
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL4)] = Vec3(15000.f, -1590.f, 24570.f);
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL5)] = Vec3(16216.f, -3690.f, 40993.f);
 
 	//여기서 포탈 1, 포탈2, 등의 이동 위치를 설정한다.
 }
