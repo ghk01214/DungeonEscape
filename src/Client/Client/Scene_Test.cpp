@@ -63,6 +63,7 @@ void Scene_Test::Update()
 	__super::Update();
 
 	SendKeyInput();
+	CheckMapMove();
 }
 
 void Scene_Test::LateUpdate()
@@ -501,8 +502,10 @@ void Scene_Test::CreateFade(shared_ptr<CScene> pScene)
 	vector<std::shared_ptr<Texture>> vTextures;
 	vTextures.push_back(texture);
 
-	fade_script->SetLogoInfo(1.f, 1.f, 1.f, vTextures);
+	fade_script->SetLogoInfo(1.f, 1.f, vTextures);
 	gameObject->AddComponent(fade_script);
+
+	m_fadeScript = fade_script;
 
 	pScene->AddGameObject(gameObject);
 }
@@ -523,33 +526,26 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 	//	pScene->AddMapObject(mapObject);
 	//}
 
-
-
-
-	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\Cave.fbx");
-	//PushMapData(MAP_TYPE::Cave, mapLoader.GetMapObjectInfo());
-
-	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\FirstBoss.fbx");
-	//PushMapData(MAP_TYPE::FirstBoss, mapLoader.GetMapObjectInfo());
-
-	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom.fbx");
-	//PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
-
-	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\SecondRoom_Bridge_SecondBoss.fbx");
-	//PushMapData(MAP_TYPE::SecondRoom_Bridge_SecondBoss, mapLoader.GetMapObjectInfo());
-
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\StartRoom.fbx");
 	PushMapData(MAP_TYPE::StartRoom, mapLoader.GetMapObjectInfo());
 
-	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\ThirdRoom_RockRolling.fbx");
-	//PushMapData(MAP_TYPE::ThirdRoom_RockRolling, mapLoader.GetMapObjectInfo());
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\FirstBoss.fbx");
+	PushMapData(MAP_TYPE::FirstBoss, mapLoader.GetMapObjectInfo());
+	 
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\Cave.fbx");
+	PushMapData(MAP_TYPE::Cave, mapLoader.GetMapObjectInfo());
 
-	for (auto& mapObject : m_splitMap_5)
-	{
-		mapObject->SetCheckFrustum(false);
-		mapObject->SetStatic(false);
-		pScene->AddMapObject(mapObject);
-	}
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\SecondRoom_Bridge_SecondBoss.fbx");
+	PushMapData(MAP_TYPE::SecondRoom_Bridge_SecondBoss, mapLoader.GetMapObjectInfo());
+
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\ThirdRoom_RockRolling.fbx");
+	PushMapData(MAP_TYPE::ThirdRoom_RockRolling, mapLoader.GetMapObjectInfo());
+
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom.fbx");
+	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
+
+	m_eNextMapType = MAP_TYPE::StartRoom;
+	MoveMap(MAP_TYPE::StartRoom);
 }
 
 void Scene_Test::CreateSkill(shared_ptr<CScene> pScene)
@@ -1626,51 +1622,47 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN:
 		{
 			// 포털 들어갔을 때 행동
+			m_fadeScript->FadeIn();
+			m_fadeScript->SetMapType(MAP_TYPE::FirstBoss);
 		}
 		break;
-		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:
-		{
-			// 포털 나왔을 때 행동
-		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN:
 		{
-		}
-		break;
-		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT:
-		{
+			m_fadeScript->FadeIn();
+			m_fadeScript->SetMapType(MAP_TYPE::Cave);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN:
 		{
-		}
-		break;
-		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT:
-		{
+			m_fadeScript->FadeIn();
+			m_fadeScript->SetMapType(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN:
 		{
-		}
-		break;
-		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT:
-		{
+			m_fadeScript->FadeIn();
+			m_fadeScript->SetMapType(MAP_TYPE::ThirdRoom_RockRolling);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN:
 		{
-		}
-		break;
-		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT:
-		{
+			m_fadeScript->FadeIn();
+			m_fadeScript->SetMapType(MAP_TYPE::LastBoss_TreasureRoom);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL6_IN:
 		{
 		}
 		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT:
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT:
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT:
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT:
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL6_OUT:
 		{
+			m_fadeScript->FadeOut();
 		}
 		break;
 		default:
@@ -1728,7 +1720,7 @@ void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameOb
 	{
 		case MAP_TYPE::Cave:
 		for (auto& object : objects)
-			m_splitMap_1.push_back(object);
+			m_splitMap_3.push_back(object);
 		break;
 		case MAP_TYPE::FirstBoss:
 		for (auto& object : objects)
@@ -1736,7 +1728,7 @@ void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameOb
 		break;
 		case MAP_TYPE::LastBoss_TreasureRoom:
 		for (auto& object : objects)
-			m_splitMap_3.push_back(object);
+			m_splitMap_6.push_back(object);
 		break;
 		case MAP_TYPE::SecondRoom_Bridge_SecondBoss:
 		for (auto& object : objects)
@@ -1744,11 +1736,11 @@ void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameOb
 		break;
 		case MAP_TYPE::StartRoom:
 		for (auto& object : objects)
-			m_splitMap_5.push_back(object);
+			m_splitMap_1.push_back(object);
 		break;
 		case MAP_TYPE::ThirdRoom_RockRolling:
 		for (auto& object : objects)
-			m_splitMap_6.push_back(object);
+			m_splitMap_5.push_back(object);
 		break;
 		case MAP_TYPE::END:
 		break;
@@ -1764,6 +1756,63 @@ shared_ptr<CScene> Scene_Test::Create(server::FBX_TYPE eType)
 	pInstance->Init(pInstance, eType);
 
 	return pInstance;
+}
+
+void Scene_Test::CheckMapMove(void)
+{
+	if (m_fadeScript->GetFading())
+	{
+		m_eNextMapType = m_fadeScript->GetMapType();
+		if (m_eNextMapType != m_eCurrentMapType)
+		{
+			MoveMap(m_eNextMapType);
+		}
+	}
+}
+
+void Scene_Test::MoveMap(MAP_TYPE eType)
+{
+	if (m_eNextMapType == m_eCurrentMapType)
+		return;
+
+	std::vector<std::shared_ptr<CGameObject>> mapObjects;
+
+	switch (eType)
+	{
+		case MAP_TYPE::StartRoom:
+		mapObjects = m_splitMap_1;
+		break;
+		case MAP_TYPE::FirstBoss:
+		mapObjects = m_splitMap_2;
+		break;
+		case MAP_TYPE::Cave:
+		mapObjects = m_splitMap_3;
+		break;
+		case MAP_TYPE::SecondRoom_Bridge_SecondBoss:
+		mapObjects = m_splitMap_4;
+		break;
+		case MAP_TYPE::ThirdRoom_RockRolling:
+		mapObjects = m_splitMap_5;
+		break;
+		case MAP_TYPE::LastBoss_TreasureRoom:
+		mapObjects = m_splitMap_6;
+		break;
+		case MAP_TYPE::END:
+		break;
+		default:
+		break;
+	}
+
+	ClearMapObject();
+
+	for (auto& mapObject : mapObjects)
+	{
+		mapObject->SetCheckFrustum(false);
+		mapObject->SetStatic(false);
+		AddMapObject(mapObject);
+	}
+
+	m_eCurrentMapType = eType;
 }
 
 void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)

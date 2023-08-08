@@ -34,13 +34,14 @@ void Fade_Script::Start()
 
 void Fade_Script::Update()
 {
-	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::Q))
+	if (m_bFadeIn)
 	{
 		m_bActivate = true;
 		m_eState = Fade_State::Fade_In;
 		m_accTime = 0.f;
 		m_curTextureCount = 0;
 		m_bLogoEnd = false;
+		m_bFadeIn = false;
 	}
 
 	if (m_bActivate)
@@ -71,17 +72,21 @@ void Fade_Script::Update()
 			break;
 
 			case Fade_Script::Fade_State::Contents:
-			if (m_contentsDuration < m_accTime)
+			//if (m_contentsDuration < m_accTime)
+			//{
+			//	m_eState = Fade_State::Fade_Out;
+			//	m_accTime = 0.f;
+			//}
+
+			if (m_bFadeOut)
 			{
 				m_eState = Fade_State::Fade_Out;
 				m_accTime = 0.f;
-
-
-				// 여기서 플레이어의 위치를 이동
-
-				// 관련 코드 추후 작성
-
+				m_bFading = false;
 			}
+			else
+				m_bFading = true;
+
 			break;
 
 			case Fade_Script::Fade_State::Fade_Out:
@@ -121,10 +126,10 @@ void Fade_Script::LateUpdate()
 {
 }
 
-void Fade_Script::SetLogoInfo(float fadeInDuration, float contentsDuration, float fadeOutDuration, vector<shared_ptr<Texture>> textures)
+void Fade_Script::SetLogoInfo(float fadeInDuration, float fadeOutDuration, vector<shared_ptr<Texture>> textures)
 {
 	m_fadeInDuration = fadeInDuration;	// Fade In에 걸리는 시간
 	m_fadeOutDuration = fadeOutDuration;	// Fade Out에 걸리는 시간
-	m_contentsDuration = contentsDuration;	// 내용을 보여주는데 걸리는 시간
+	//m_contentsDuration = contentsDuration;	// 내용을 보여주는데 걸리는 시간
 	m_textures = textures;
 }

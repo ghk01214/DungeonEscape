@@ -5,6 +5,7 @@
 #include <MonoBehaviour.h>
 
 class InfoUI_Script;
+class Fade_Script;
 
 #include <unordered_set>
 
@@ -19,12 +20,12 @@ struct EffectInfo
 
 enum class MAP_TYPE
 {
-	Cave,
-	FirstBoss,
-	LastBoss_TreasureRoom,
-	SecondRoom_Bridge_SecondBoss,
 	StartRoom,
+	FirstBoss,
+	Cave,
+	SecondRoom_Bridge_SecondBoss,
 	ThirdRoom_RockRolling,
+	LastBoss_TreasureRoom,
 	END
 };
 
@@ -111,6 +112,10 @@ private:
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript = make_shared<InfoUI_Script>();
 
+public:
+	void CheckMapMove(void);
+	void MoveMap(MAP_TYPE eType);
+
 private:
 	std::vector<std::shared_ptr<CGameObject>> m_splitMap_1;
 	std::vector<std::shared_ptr<CGameObject>> m_splitMap_2;
@@ -118,4 +123,10 @@ private:
 	std::vector<std::shared_ptr<CGameObject>> m_splitMap_4;
 	std::vector<std::shared_ptr<CGameObject>> m_splitMap_5;
 	std::vector<std::shared_ptr<CGameObject>> m_splitMap_6;
+
+	MAP_TYPE m_eCurrentMapType = MAP_TYPE::END;
+	MAP_TYPE m_eNextMapType = MAP_TYPE::END;
+
+private:
+	std::shared_ptr<Fade_Script> m_fadeScript = nullptr;
 };
