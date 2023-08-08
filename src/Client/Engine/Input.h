@@ -87,9 +87,6 @@ public:
 	void SetUp_InputDeviceState();
 	void Update();
 
-
-
-
 public:
 	// 누르고 있을 때
 	bool GetButton(KEY_TYPE key) { return GetState(key) == KEY_STATE::PRESS; }
@@ -106,11 +103,6 @@ private:
 	inline KEY_STATE GetState(KEY_TYPE key) { return m_states[static_cast<uint8>(key)]; }
 	void EncodeKeyInput(void);
 
-
-
-
-
-
 public:
 	Vec2 GetMouseMove(void);	// 이전 프레임과 현재 프레임의 마우스의 x,y 좌표의 움직이는 정도를 반환하는 함수
 
@@ -124,8 +116,12 @@ public:
 	bool      Button_Up(MOUSEBUTTONSTATE eDIMBState);
 	bool      Button_OneClick(MOUSEBUTTONSTATE eDIMBState);
 
+public:
+	void StartInput(void);
+	void EndInput(void);
+	wstring GetInputString(void) { return m_inputString; }
 
-
+	void Typing(void);
 
 private:
 	HWND m_hWnd;
@@ -144,5 +140,9 @@ private:
 private:
 	DIMOUSESTATE		m_MouseState;
 	bool				m_bButtonState[4];
+
+private:
+	bool m_bInputString;
+	wstring m_inputString;
 };
 

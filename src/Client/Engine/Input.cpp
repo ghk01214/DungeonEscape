@@ -113,6 +113,11 @@ void CInput::Update()
 	// 현재 프레임의 마우스 좌표 계산
 	::GetCursorPos(&m_curMousePos);
 	::ScreenToClient(GEngine->GetWindow().hWnd, &m_curMousePos);
+
+	// 문자열을 입력하는 기능이 켜져있을 경우
+	if (m_bInputString)
+		// 문자열을 입력받는다.
+		Typing();
 }
 
 void CInput::EncodeKeyInput(void)
@@ -221,4 +226,25 @@ bool CInput::Button_OneClick(MOUSEBUTTONSTATE eDIMBState)
 		m_bButtonState[eDIMBState] = !m_bButtonState[eDIMBState];
 
 	return false;
+}
+
+void CInput::StartInput(void)
+{
+	m_bInputString = true;
+	m_inputString.clear();
+}
+
+void CInput::EndInput(void)
+{
+	m_bInputString = false;
+}
+
+void CInput::Typing(void)
+{
+	/*for (uint32 key = 0; key < KEY_TYPE_COUNT; key++)
+	{
+		GetButtonDown(key);
+	}*/
+
+
 }

@@ -33,6 +33,18 @@ void FBXLoader::LoadFbx(const wstring& path)
 	// 우리 구조에 맞게 Texture / Material 생성
 	if (fs::path(path).filename() == L"Client.fbx")
 		return;
+	if (fs::path(path).filename() == L"Cave.fbx")
+		return;
+	if (fs::path(path).filename() == L"FirstBoss.fbx")
+		return;
+	if (fs::path(path).filename() == L"LastBoss_TreasureRoom.fbx")
+		return;
+	if (fs::path(path).filename() == L"SecondRoom_Bridge_SecondBoss.fbx")
+		return;
+	if (fs::path(path).filename() == L"StartRoom.fbx")
+		return;
+	if (fs::path(path).filename() == L"ThirdRoom_RockRolling.fbx")
+		return;
 
 	CreateTextures();
 	CreateMaterials();

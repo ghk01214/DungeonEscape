@@ -17,6 +17,11 @@ void CScene::Awake()
 	m_requestQueue.clear();
 	m_requestQueueSize = 0;
 
+	for (const shared_ptr<CGameObject>& gameObject : m_mapObjects)
+	{
+		gameObject->Awake();
+	}
+
 	for (const shared_ptr<CGameObject>& gameObject : m_gameObjects)
 	{
 		gameObject->Awake();
@@ -25,6 +30,11 @@ void CScene::Awake()
 
 void CScene::Start()
 {
+	for (const shared_ptr<CGameObject>& gameObject : m_mapObjects)
+	{
+		gameObject->Start();
+	}
+
 	for (const shared_ptr<CGameObject>& gameObject : m_gameObjects)
 	{
 		gameObject->Start();
@@ -33,6 +43,11 @@ void CScene::Start()
 
 void CScene::Update()
 {
+	for (const shared_ptr<CGameObject>& gameObject : m_mapObjects)
+	{
+		gameObject->Update();
+	}
+
 	for (const shared_ptr<CGameObject>& gameObject : m_gameObjects)
 	{
 		gameObject->Update();
@@ -41,6 +56,11 @@ void CScene::Update()
 
 void CScene::LateUpdate()
 {
+	for (const shared_ptr<CGameObject>& gameObject : m_mapObjects)
+	{
+		gameObject->LateUpdate();
+	}
+
 	for (const shared_ptr<CGameObject>& gameObject : m_gameObjects)
 	{
 		gameObject->LateUpdate();
@@ -49,6 +69,11 @@ void CScene::LateUpdate()
 
 void CScene::FinalUpdate()
 {
+	for (const shared_ptr<CGameObject>& gameObject : m_mapObjects)
+	{
+		gameObject->FinalUpdate();
+	}
+
 	for (const shared_ptr<CGameObject>& gameObject : m_gameObjects)
 	{
 		gameObject->FinalUpdate();
@@ -231,7 +256,7 @@ void CScene::AddDirectionalLight(LightDesc& lightDesc)
 
 	// 방향광은 위치 의미 없음. 0,0,0
 	light->AddComponent(make_shared<Transform>());
-	light->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
+	light->GetTransform()->SetLocalPosition(Vec3(0.f, -1000.f, 500.f));
 
 	// 방향 정보
 	light->GetLight()->SetLightDirection(lightDesc.vDirection);
@@ -243,6 +268,8 @@ void CScene::AddDirectionalLight(LightDesc& lightDesc)
 
 	// light
 	AddGameObject(light);
+
+	m_dirlight = light;
 }
 
 void CScene::AddPointLight(LightDesc& lightDesc)
@@ -374,6 +401,11 @@ void CScene::RemoveGameObject(std::vector<std::shared_ptr<CGameObject>> gameObje
 		if (findIt != m_gameObjects.end())
 			m_gameObjects.erase(findIt);
 	}
+}
+
+void CScene::AddMapObject(shared_ptr<CGameObject> gameObject)
+{
+	m_mapObjects.push_back(gameObject);
 }
 
 void CScene::AddPlayer(std::vector<std::shared_ptr<CGameObject>> gameObject)

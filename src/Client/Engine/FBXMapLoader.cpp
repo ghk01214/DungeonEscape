@@ -135,6 +135,8 @@ void FBXMapLoader::ExtractObjectInfoFromFBX(std::wstring path)
     FBXLoader loader;
     loader.LoadFbx(path);
 
+    m_mapDeployedObjectInfo.clear();
+
     for (uint32 i = 0; i < loader.GetMeshCount(); ++i)
     {
         const std::wstring& wstrName = loader.GetMesh(i).name;

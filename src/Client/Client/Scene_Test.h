@@ -17,6 +17,17 @@ struct EffectInfo
 	float alpha = 1.f;
 };
 
+enum class MAP_TYPE
+{
+	Cave,
+	FirstBoss,
+	LastBoss_TreasureRoom,
+	SecondRoom_Bridge_SecondBoss,
+	StartRoom,
+	ThirdRoom_RockRolling,
+	END
+};
+
 class Scene_Test final : public CScene
 {
 public:
@@ -38,6 +49,7 @@ private:
 	void CreateUICamera(shared_ptr<CScene> pScene);
 	void CreateSkyBox(shared_ptr<CScene> pScene);
 	void CreateUI(shared_ptr<CScene> pScene);
+	void CreateMRTUI(shared_ptr<CScene> pScene);
 	void CreateLights(shared_ptr<CScene> pScene);
 	void CreateMap(shared_ptr<CScene> pScene);
 	void CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player);
@@ -76,6 +88,9 @@ public:
 	std::vector<std::shared_ptr<CGameObject>> CreateAnimatedObject(ObjectDesc& objectDesc);
 	std::vector<std::shared_ptr<CGameObject>> AddNetworkToObject(std::vector<std::shared_ptr<CGameObject>> object, server::OBJECT_TYPE objectType, int32_t id = -1);
 
+public:
+	void PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects);
+
 private:
 	void Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType);
 
@@ -94,4 +109,12 @@ private:
 
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript = make_shared<InfoUI_Script>();
-};
+
+private:
+	std::vector<std::shared_ptr<CGameObject>> m_splitMap_1;
+	std::vector<std::shared_ptr<CGameObject>> m_splitMap_2;
+	std::vector<std::shared_ptr<CGameObject>> m_splitMap_3;
+	std::vector<std::shared_ptr<CGameObject>> m_splitMap_4;
+	std::vector<std::shared_ptr<CGameObject>> m_splitMap_5;
+	std::vector<std::shared_ptr<CGameObject>> m_splitMap_6;
+}; 

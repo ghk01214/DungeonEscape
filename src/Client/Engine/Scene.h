@@ -60,6 +60,10 @@ public:
 	void RemoveGameObject(std::vector<std::shared_ptr<CGameObject>> gameObjects);
 
 public:
+	void AddMapObject(shared_ptr<CGameObject> gameObject);
+	void ClearMapObject(void) { m_mapObjects.clear(); }
+
+public:
 	void AddPlayer(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void AddMonster(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void AddBoss(std::vector<std::shared_ptr<CGameObject>> gameObject);
@@ -75,6 +79,7 @@ public:
 
 public:
 	const vector<shared_ptr<CGameObject>>& GetGameObjects(void) { return m_gameObjects; }
+	const vector<shared_ptr<CGameObject>>& GetMapObjects(void) { return m_mapObjects; }
 	const vector<shared_ptr<CGameObject>>& GetPlayer(void) { return m_player; }
 	const vector<shared_ptr<CGameObject>>& GetMonster(void) { return m_monster; }
 	const vector<shared_ptr<CGameObject>>& GetBoss(void) { return m_boss; }
@@ -85,8 +90,12 @@ public:
 	const std::deque<network::CPacket>& GetServerRequest() { return m_requestQueue; }
 	const int32_t GetServerRequestQueueSize() const { return m_requestQueueSize; }
 
+public:
+	shared_ptr<CGameObject> GetDirectionalLight(void) { return m_dirlight; }
+
 private:
 	vector<shared_ptr<CGameObject>>		m_gameObjects;
+	vector<shared_ptr<CGameObject>>		m_mapObjects;
 	vector<shared_ptr<class Camera>>	m_cameras;
 	vector<shared_ptr<class Light>>		m_lights;
 
@@ -102,5 +111,8 @@ private:
 private:
 	std::deque<network::CPacket>		m_requestQueue;
 	std::atomic_int32_t					m_requestQueueSize;
+
+private:
+	shared_ptr<CGameObject> m_dirlight;	// 방향광 정보
 };
 

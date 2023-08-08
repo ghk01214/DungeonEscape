@@ -60,7 +60,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	g_windowInfo.windowed = true;
 #else
 	g_windowInfo.width = 800;
-	g_windowInfo.height = 6000;
+	g_windowInfo.height = 600;
 	g_windowInfo.windowed = true;
 #endif
 

@@ -40,6 +40,7 @@
 
 Scene_Test::Scene_Test()
 {
+
 }
 
 void Scene_Test::Awake()
@@ -232,7 +233,7 @@ void Scene_Test::CreateSkyBox(shared_ptr<CScene> pScene)
 void Scene_Test::CreateLights(shared_ptr<CScene> pScene)
 {
 	LightDesc lightDesc;
-	lightDesc.vDirection = Vec3(0.f, -1.f, 0.5f);
+	lightDesc.vDirection = Vec3(0.f, -1.f, 0.f);
 	lightDesc.vDiffuse = Vec3(1.f, 1.f, 1.f);
 	lightDesc.vAmbient = Vec3(0.9f, 0.9f, 0.9f);
 	lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
@@ -280,6 +281,13 @@ void Scene_Test::CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player
 
 	pScene->AddPlayer(gameObjects);
 	GET_NETWORK->AddNetworkComponent(gameObjects);
+
+	Matrix matWorld = Matrix::CreateTranslation(Vec3(0.f, -1500.f, 0.f));
+	for (auto& object : gameObjects)
+	{
+		object->GetTransform()->SetWorldMatrix(matWorld);
+	}
+
 }
 
 void Scene_Test::CreateSphere(shared_ptr<CScene> pScene)
@@ -321,6 +329,41 @@ void Scene_Test::SendKeyInput()
 void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
 {
 	CreateHPnSPBar();
+}
+
+void Scene_Test::CreateMRTUI(shared_ptr<CScene> pScene)
+{
+	for (int32 i = 0; i < 6; i++)
+	{
+		shared_ptr<CGameObject> obj = make_shared<CGameObject>();
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+		obj->AddComponent(make_shared<Transform>());
+		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(-350.f + (i * 120), 250.f, 500.f));
+		shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+		{
+			shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+			meshRenderer->SetMesh(mesh);
+		}
+		{
+			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Texture");
+
+			shared_ptr<Texture> texture;
+			if (i < 3)
+				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::G_BUFFER)->GetRTTexture(i);
+			else if (i < 5)
+				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::LIGHTING)->GetRTTexture(i - 3);
+			else
+				texture = GEngine->GetRTGroup(RENDER_TARGET_GROUP_TYPE::SHADOW)->GetRTTexture(0);
+
+			shared_ptr<Material> material = make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
+			meshRenderer->SetMaterial(material);
+		}
+		obj->AddComponent(meshRenderer);
+		pScene->AddGameObject(obj);
+	}
 }
 
 void Scene_Test::CreateHPnSPBar()
@@ -463,16 +506,42 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
 	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
-	//mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
+
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
+
+	//for (auto& mapObject : mapLoader.GetMapObjectInfo())
+	//{
+	//	mapObject->SetCheckFrustum(false);
+	//	mapObject->SetStatic(false);
+	//	pScene->AddMapObject(mapObject);
+	//}
+
+
+
+
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\Cave.fbx");
+	//PushMapData(MAP_TYPE::Cave, mapLoader.GetMapObjectInfo());
+
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\FirstBoss.fbx");
+	//PushMapData(MAP_TYPE::FirstBoss, mapLoader.GetMapObjectInfo());
+
 	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom.fbx");
+	//PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	vector<shared_ptr<CGameObject>> mapObjects = mapLoader.GetMapObjectInfo();
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\SecondRoom_Bridge_SecondBoss.fbx");
+	//PushMapData(MAP_TYPE::SecondRoom_Bridge_SecondBoss, mapLoader.GetMapObjectInfo());
 
-	for (auto& mapObject : mapObjects)
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\StartRoom.fbx");
+	PushMapData(MAP_TYPE::StartRoom, mapLoader.GetMapObjectInfo());
+
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\ThirdRoom_RockRolling.fbx");
+	//PushMapData(MAP_TYPE::ThirdRoom_RockRolling, mapLoader.GetMapObjectInfo());
+
+	for (auto& mapObject : m_splitMap_5)
 	{
 		mapObject->SetCheckFrustum(false);
-		pScene->AddGameObject(mapObject);
+		mapObject->SetStatic(false);
+		pScene->AddMapObject(mapObject);
 	}
 }
 
@@ -1584,6 +1653,41 @@ std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkToObject(std::ve
 	return objects;
 }
 
+void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects)
+{
+	switch (eType)
+	{
+		case MAP_TYPE::Cave:
+		for (auto& object : objects)
+			m_splitMap_1.push_back(object);
+		break;
+		case MAP_TYPE::FirstBoss:
+		for (auto& object : objects)
+			m_splitMap_2.push_back(object);
+		break;
+		case MAP_TYPE::LastBoss_TreasureRoom:
+		for (auto& object : objects)
+			m_splitMap_3.push_back(object);
+		break;
+		case MAP_TYPE::SecondRoom_Bridge_SecondBoss:
+		for (auto& object : objects)
+			m_splitMap_4.push_back(object);
+		break;
+		case MAP_TYPE::StartRoom:
+		for (auto& object : objects)
+			m_splitMap_5.push_back(object);
+		break;
+		case MAP_TYPE::ThirdRoom_RockRolling:
+		for (auto& object : objects)
+			m_splitMap_6.push_back(object);
+		break;
+		case MAP_TYPE::END:
+		break;
+		default:
+		break;
+	}
+}
+
 shared_ptr<CScene> Scene_Test::Create(server::FBX_TYPE eType)
 {
 	shared_ptr<Scene_Test> pInstance = std::make_shared<Scene_Test>();
@@ -1602,7 +1706,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateSkyBox(pScene);
 	//CreateUI(pScene);
 	CreateLights(pScene);
-	//CreateMap(pScene);
+	CreateMap(pScene);
 	//CreateBillBoard(pScene);
 	CreateSkill(pScene);
 
@@ -1612,5 +1716,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 
 	AddEffectTextures();
 
-	CreateFade(pScene);
+	CreateFade(pScene); 
+	
+	CreateMRTUI(pScene);
 }
