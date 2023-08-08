@@ -366,4 +366,15 @@ namespace game
 
 		Send(packet);
 	}
+
+	void CSession::SendTriggerInteractionPacket(int32_t id, server::TRIGGER_INTERACTION_TYPE type)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_TRIGGER_INTERACTION_ACK);
+		packet.Write<server::TRIGGER_INTERACTION_TYPE>(type);
+
+		Send(packet);
+	}
 }

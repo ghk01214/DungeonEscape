@@ -13,7 +13,7 @@ class TriggerObject2 : public MapObject
 public:
 	enum class TRIGGERATTRIBUTE
 	{
-		NONE, 
+		NONE,
 		PORTAL1,
 		PORTAL2,
 		PORTAL3,
@@ -31,7 +31,7 @@ public:
 		END
 	};
 public:
-	TriggerObject2(const Vec3& position, const Quat& rotation, const Vec3& scale , bool);
+	TriggerObject2(const Vec3& position, const Quat& rotation, const Vec3& scale , bool once);
 	~TriggerObject2() override;
 
 public:
@@ -46,7 +46,7 @@ public:			//초기화 관련 함수
 	void Handle_Overlap();
 	void SetPortalDestination();
 
-public:		
+public:
 	void AttributePortal(double timeDelta);
 
 	void SendPlayers();
@@ -59,7 +59,9 @@ private:
 private:
 	void ServerInit();
 	void ServerRelease();			//생성 삭제 명령만 존재.
-	void ServerSendMessage();
+	void ServerSendInMessage();
+	void ServerSendOutMessage();
+	void ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE type);
 
 private:
 	physx::PxBoxGeometry* m_box = nullptr;

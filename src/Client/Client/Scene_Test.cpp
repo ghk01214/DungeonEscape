@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #include <NetworkManager.h>
@@ -77,28 +77,28 @@ void Scene_Test::LateUpdate()
 		if (queue.empty() == true)
 			break;
 
-		auto request{ queue.front() };
+		auto packet{ queue.front() };
 
-		switch (request.ReadProtocol())
+		switch (packet.ReadProtocol())
 		{
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
-				CreateAnimatedRemoteObject(request);
+				CreateAnimatedRemoteObject(packet);
 			}
 			break;
 			case ProtocolID::MY_ADD_OBJ_ACK:
 			{
-				ChangeNetworkObjectID(request);
+				ChangeNetworkObjectID(packet);
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
 			{
-				CreateRemoteObject(request);
+				CreateRemoteObject(packet);
 			}
 			break;
 			case ProtocolID::WR_REMOVE_ACK:
 			{
-				RemoveObject(request);
+				RemoveObject(packet);
 			}
 			break;
 			case ProtocolID::WR_SKILL_HIT_ACK:
@@ -108,12 +108,17 @@ void Scene_Test::LateUpdate()
 			break;
 			case ProtocolID::WR_RENDER_EFFECT_ACK:
 			{
-				PlayEffect(request);
+				PlayEffect(packet);
 			}
 			break;
 			case ProtocolID::WR_CHANGE_SOUND_ACK:
 			{
-				ChangeSound(request);
+				ChangeSound(packet);
+			}
+			break;
+			case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
+			{
+				TriggerBehaviour(packet);
 			}
 			break;
 			default:
@@ -199,7 +204,7 @@ void Scene_Test::CreateUICamera(shared_ptr<CScene> pScene)
 	camera->GetCamera()->SetProjectionType(PROJECTION_TYPE::ORTHOGRAPHIC);
 	uint8 layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
 	camera->GetCamera()->SetCullingMaskAll(); // ???꾧퀬
-	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI留?李띿쓬 
+	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI留?李띿쓬
 
 	camera->AddComponent(m_InfoUIScript);
 
@@ -1603,9 +1608,29 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 		}
 		break;
 		case server::SOUND_TYPE::ROAR:
-
 		{
 			GET_SINGLE(CSoundMgr)->PlaySound(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
+		}
+		break;
+		default:
+		break;
+	}
+}
+
+void Scene_Test::TriggerBehaviour(network::CPacket& packet)
+{
+	auto triggerType{ packet.Read<server::TRIGGER_INTERACTION_TYPE>() };
+
+	switch (triggerType)
+	{
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL_IN:
+		{
+			// 포털 들어갔을 때 행동
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL_OUT:
+		{
+			// 포털 나왔을 때 행동
 		}
 		break;
 		default:
@@ -1720,7 +1745,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 
 	AddEffectTextures();
 
-	CreateFade(pScene); 
-	
+	CreateFade(pScene);
+
 	CreateMRTUI(pScene);
 }

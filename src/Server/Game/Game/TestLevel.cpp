@@ -41,10 +41,10 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	LoadBasicMap4();
+	//LoadBasicMap4();
 
 	//LoadUnit_DebugMode();
-	//LoadMap();
+	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -144,6 +144,7 @@ void TestLevel::LoadMap()
 		LoadMapObject();
 		//LoadPotObject();
 		LoadGimmikObject();
+		LoadTriggerObject();
 	}
 
 	std::system("cls");
@@ -259,16 +260,16 @@ void TestLevel::LoadBasicMap4()
 	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 	MapPlaneObject->ApplyRequestedLayers();
 
-	
+
 	//1회성 trigger2 샘플
 	auto Box1Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), true);
 	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
 	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
-	
+
 	//다회성 trigger2 샘플
 	auto Box2Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-200, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
 	auto Box2Body = Box2Obj->GetComponent<RigidBody>(L"RigidBody");
-	Box2Body->AddCollider<BoxCollider>(Box2Obj->GetTransform()->GetScale());	
+	Box2Body->AddCollider<BoxCollider>(Box2Obj->GetTransform()->GetScale());
 
 
 
@@ -393,6 +394,16 @@ void TestLevel::LoadGimmikObject()
 			pillarObject->Init_After_ColliderAttached();
 		}
 	}
+}
+
+void TestLevel::LoadTriggerObject()
+{
+	auto objMgr{ ObjectManager::GetInstance() };
+
+	auto Portal1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0.f, -550.f, 7510.f), Quat(0, 0, 0, 1), Vec3(400.f, 400.f, 400.f), false) };
+	auto Portal1Body{ Portal1Obj->GetComponent<RigidBody>(L"RigidBody") };
+	Portal1Body->AddCollider<BoxCollider>(Portal1Obj->GetTransform()->GetScale());
+	Portal1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL1);
 }
 
 void TestLevel::LoadDebugMap_Bridge()

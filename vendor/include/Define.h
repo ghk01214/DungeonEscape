@@ -292,4 +292,14 @@
 
 		MAX
 	};
+
+	enum class TRIGGER_INTERACTION_TYPE
+	{
+		NONE = 0,
+
+		PORTAL_IN,
+		PORTAL_OUT,
+
+		MAX
+	};
 }

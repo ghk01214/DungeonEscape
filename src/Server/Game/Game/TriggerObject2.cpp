@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Transform.h"
 #include "EventHandler.h"
+#include "MessageHandler.h"
 
 using namespace physx;
 using namespace std;
@@ -74,7 +75,7 @@ void TriggerObject2::Handle_Overlap()
 	{
 		bool duplicate = IsPlayerDuplicate(player);					//중복체크
 		if (duplicate)
-			continue;								
+			continue;
 		else
 		{
 			//bool applied = Apply(player);							//중복아니면 명령 후 중복벡터에 등록
@@ -88,11 +89,11 @@ void TriggerObject2::Handle_Overlap()
 }
 
 void TriggerObject2::SetPortalDestination()
-{	
+{
 	//HERE
-	m_portalDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));					
+	m_portalDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));
 
-	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = Vec3(-400, 300, 800);  //-400, 300, 500
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = Vec3(0.f, -550.f, 8020.f);  //-400, 300, 500
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL2)] = Vec3(-600, 300, 800);
 
 	//여기서 포탈 1, 포탈2, 등의 이동 위치를 설정한다.
@@ -117,7 +118,7 @@ void TriggerObject2::AttributePortal(double timeDelta)
 	//EventHandler::GetInstance()->AddEventIfNone("TRIGGERCLOCK")
 }
 
-void TriggerObject2::SendPlayers()											
+void TriggerObject2::SendPlayers()
 {
 	//HERE
 	auto objmgr = ObjectManager::GetInstance();
@@ -131,6 +132,7 @@ void TriggerObject2::SendPlayers()
 
 	// 서버가 클라이언트에게 너희들을 이동시켰다고 알려줘야한다.
 	// 이 코드가 플레이어를 이동시키므로 그동안 렌더링 로드/삭제 + 페이드 인, 아웃하면 된다.
+	ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE::PORTAL_OUT);
 }
 
 std::vector<Player*> TriggerObject2::OverlapCheck_Player()
@@ -218,6 +220,9 @@ bool TriggerObject2::Apply(Player* player)
 	else
 	{
 		cout << "attribute loop" << endl;
+
+		ServerSendInMessage();
+
 		return false;
 	}
 }
@@ -232,8 +237,72 @@ void TriggerObject2::ServerRelease()
 	//서버 삭제 명령		(포탈/UI알림이가 목적이므로 웬만하면 쓸일 없을것이다.)
 }
 
-void TriggerObject2::ServerSendMessage()
+void TriggerObject2::ServerSendInMessage()
+{
+	switch (m_attribute)
+	{
+		case TRIGGERATTRIBUTE::PORTAL1:
+		case TRIGGERATTRIBUTE::PORTAL2:
+		case TRIGGERATTRIBUTE::PORTAL3:
+		case TRIGGERATTRIBUTE::PORTAL4:
+		case TRIGGERATTRIBUTE::PORTAL5:
+		case TRIGGERATTRIBUTE::PORTAL6:
+		case TRIGGERATTRIBUTE::PORTAL7:
+		case TRIGGERATTRIBUTE::PORTAL8:
+		{
+			ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE::PORTAL_IN);
+		}
+		break;
+		case TRIGGERATTRIBUTE::GUIDELINE1:
+		case TRIGGERATTRIBUTE::GUIDELINE2:
+		case TRIGGERATTRIBUTE::GUIDELINE3:
+		case TRIGGERATTRIBUTE::GUIDELINE4:
+		case TRIGGERATTRIBUTE::GUIDELINE5:
+		{
+		}
+		break;
+		default:
+		break;
+	}
+}
+
+void TriggerObject2::ServerSendOutMessage()
+{
+	switch (m_attribute)
+	{
+		case TRIGGERATTRIBUTE::PORTAL1:
+		case TRIGGERATTRIBUTE::PORTAL2:
+		case TRIGGERATTRIBUTE::PORTAL3:
+		case TRIGGERATTRIBUTE::PORTAL4:
+		case TRIGGERATTRIBUTE::PORTAL5:
+		case TRIGGERATTRIBUTE::PORTAL6:
+		case TRIGGERATTRIBUTE::PORTAL7:
+		case TRIGGERATTRIBUTE::PORTAL8:
+		{
+			ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE::PORTAL_OUT);
+		}
+		break;
+		case TRIGGERATTRIBUTE::GUIDELINE1:
+		case TRIGGERATTRIBUTE::GUIDELINE2:
+		case TRIGGERATTRIBUTE::GUIDELINE3:
+		case TRIGGERATTRIBUTE::GUIDELINE4:
+		case TRIGGERATTRIBUTE::GUIDELINE5:
+		{
+		}
+		break;
+		default:
+		break;
+	}
+}
+
+void TriggerObject2::ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE type)
 {
 	//조건을 확인하고 이에 따라 서버 메시지를 전송한다.
 	//Detect함수에서 조건 확인 후 호출
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	ev.state = magic_enum::enum_integer(type);
+	ev.objID = m_id;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

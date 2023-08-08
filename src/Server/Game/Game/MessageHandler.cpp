@@ -140,6 +140,7 @@ namespace game
 				break;
 				case ProtocolID::WR_MONSTER_PATTERN_ACK:
 				case ProtocolID::WR_CHANGE_SOUND_ACK:
+				case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
 				{
 					postOver.state = ev.state;
 
@@ -393,12 +394,13 @@ namespace game
 			Vec3 gimmk1TestPos(3890, -1462, 21062);				//다리				3890, -1462, 21062
 			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457
 			Vec3 gameStartPos{ -250.f, -2600.f, -700.f };
-			Vec3 pos = golemTestPos;
+			Vec3 portal1TestPos{ 0.f, -700.f, 6500.f };
+			Vec3 pos = portal1TestPos;
 
-			pos.z = 40400.f;
+			//pos.z = 40400.f;
 			pos.x += msg.playerID * 500.f;
 
-			pos = Vec3(1050.f, 100.f, 0.f);
+			//pos = Vec3(1050.f, 100.f, 0.f);
 
 			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
 

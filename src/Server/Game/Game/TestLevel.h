@@ -22,6 +22,7 @@ public:
 	void LoadMapObject();
 	void LoadPotObject();
 	void LoadGimmikObject();
+	void LoadTriggerObject();
 
 	void LoadDebugMap_Bridge();
 	void LoadDebugMap_Boulder();
