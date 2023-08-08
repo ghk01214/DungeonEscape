@@ -4,8 +4,10 @@
 #include "physx_utils.h"
 #include "RigidBody.h"
 #include "Collider.h"
+#include "ObjectManager.h"
 #include "Player.h"
 #include "Transform.h"
+#include "EventHandler.h"
 
 using namespace physx;
 using namespace std;
@@ -28,6 +30,7 @@ void TriggerObject2::Init()
 	GeometryInit(m_transform->GetScale());
 
 	ServerInit();
+	SetPortalDestination();
 }
 
 void TriggerObject2::Update(double timeDelta)
@@ -35,6 +38,7 @@ void TriggerObject2::Update(double timeDelta)
 	MapObject::Update(timeDelta);				//removeReserved 체크
 
 	Handle_Overlap();
+	AttributePortal(timeDelta);
 }
 
 void TriggerObject2::LateUpdate(double timeDelta)
@@ -46,6 +50,11 @@ void TriggerObject2::Release()
 {
 	SafeDelete(m_box);
 	MapObject::Release();
+}
+
+void TriggerObject2::SetTriggerAttribute(TRIGGERATTRIBUTE attrib)
+{
+	m_attribute = attrib;
 }
 
 void TriggerObject2::GeometryInit(Vec3 Scale)
@@ -76,6 +85,52 @@ void TriggerObject2::Handle_Overlap()
 
 		}
 	}
+}
+
+void TriggerObject2::SetPortalDestination()
+{	
+	//HERE
+	m_portalDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));					
+
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = Vec3(-400, 300, 800);  //-400, 300, 500
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL2)] = Vec3(-600, 300, 800);
+
+	//여기서 포탈 1, 포탈2, 등의 이동 위치를 설정한다.
+}
+
+void TriggerObject2::AttributePortal(double timeDelta)
+{
+	string name = string(magic_enum::enum_name(m_attribute));
+
+	if (m_duplicates.empty())
+	{
+		EventHandler::GetInstance()->DeleteEvent(name);
+		return;
+	}
+	else
+	{
+		EventHandler::GetInstance()->AddEventIfNone(name, m_requestedContactTime, this);
+		return;
+	}
+
+
+	//EventHandler::GetInstance()->AddEventIfNone("TRIGGERCLOCK")
+}
+
+void TriggerObject2::SendPlayers()											
+{
+	//HERE
+	auto objmgr = ObjectManager::GetInstance();
+	auto players = objmgr->GetLayer(L"Layer_Player")->GetGameObjects();
+
+	for (auto& p : players)
+	{
+		auto player = dynamic_cast<Player*>(p);
+		player->SetControllerPosition(m_portalDestination[static_cast<int>(m_attribute)]);
+	}
+
+	// 서버가 클라이언트에게 너희들을 이동시켰다고 알려줘야한다.
+	// 이 코드가 플레이어를 이동시키므로 그동안 렌더링 로드/삭제 + 페이드 인, 아웃하면 된다.
 }
 
 std::vector<Player*> TriggerObject2::OverlapCheck_Player()

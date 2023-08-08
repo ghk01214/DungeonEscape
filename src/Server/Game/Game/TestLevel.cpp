@@ -41,10 +41,10 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	//LoadBasicMap4();
+	LoadBasicMap4();
 
 	//LoadUnit_DebugMode();
-	LoadMap();
+	//LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -252,24 +252,37 @@ void TestLevel::LoadBasicMap4()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(0, 200, -42), Quat(0, 0, 0, 1), Vec3(75,75,75));
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(0, 200, -42), Quat(0, 0, 0, 1), Vec3(75,75,75));
 
 	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, -42), Quat(0, 0, 0, 1), Vec3(9000, 2, 9000));
 	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
 	MapPlaneBody->AddCollider<BoxCollider>(MapPlaneObject->GetTransform()->GetScale());
 	MapPlaneObject->ApplyRequestedLayers();
 
-	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 3, Vec3(1050.f, 100.f, 0.f), Quat(0, 0, 0, 1), Vec3(100, 100, 100));
+	
+	//1회성 trigger2 샘플
+	auto Box1Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), true);
+	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
+	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+	
+	//다회성 trigger2 샘플
+	auto Box2Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-200, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
+	auto Box2Body = Box2Obj->GetComponent<RigidBody>(L"RigidBody");
+	Box2Body->AddCollider<BoxCollider>(Box2Obj->GetTransform()->GetScale());	
 
-	//auto Box1Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), true);
-	//auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-	//Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
-	//
-	//auto Box2Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-200, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
-	//auto Box2Body = Box2Obj->GetComponent<RigidBody>(L"RigidBody");
-	//Box2Body->AddCollider<BoxCollider>(Box2Obj->GetTransform()->GetScale());	
 
 
+	//포탈1
+	auto Box3Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-400, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
+	auto Box3Body = Box3Obj->GetComponent<RigidBody>(L"RigidBody");
+	Box3Body->AddCollider<BoxCollider>(Box3Obj->GetTransform()->GetScale());
+	Box3Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL1);
+
+	//포탈2
+	auto Box4Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-600, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
+	auto Box4Body = Box4Obj->GetComponent<RigidBody>(L"RigidBody");
+	Box4Body->AddCollider<BoxCollider>(Box4Obj->GetTransform()->GetScale());
+	Box4Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL2);
 }
 
 void TestLevel::LoadMapObject()

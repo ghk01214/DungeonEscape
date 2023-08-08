@@ -3,6 +3,9 @@
 #include "MapObject.h"
 
 //용도 : 다음 맵 이동 포탈 및 게임 가이드 진행 위치 표시용
+//1회성은 앞에 있는 기믹 소개용으로 1회만 발동 (카메라 이동시키며 기믹 소개)
+//다회성은 특정 위치에 가면 UI표시용으로 사용하던가 포탈용으로 사용한다.
+
 class Player;
 
 class TriggerObject2 : public MapObject
@@ -24,7 +27,8 @@ public:
 		GUIDELINE2,
 		GUIDELINE3,
 		GUIDELINE4,
-		GUIDELINE5
+		GUIDELINE5,
+		END
 	};
 public:
 	TriggerObject2(const Vec3& position, const Quat& rotation, const Vec3& scale , bool);
@@ -36,10 +40,16 @@ public:
 	virtual void LateUpdate(double timeDelta) override;
 	virtual void Release();
 
-public:
+public:			//초기화 관련 함수
+	void SetTriggerAttribute(TRIGGERATTRIBUTE attrib);
 	void GeometryInit(Vec3 Scale);
 	void Handle_Overlap();
+	void SetPortalDestination();
 
+public:		
+	void AttributePortal(double timeDelta);
+
+	void SendPlayers();
 private:
 	std::vector<Player*> OverlapCheck_Player();
 	void Handle_OverlapOut(const std::vector<Player*>& validptr);
@@ -56,5 +66,12 @@ private:
 	TRIGGERATTRIBUTE m_attribute = TRIGGERATTRIBUTE::NONE;
 	bool m_oneTimeOnly = false;
 	std::vector<Player*> m_duplicates;
+
+private:
+	float m_contactTime = 0.f;				//포탈용 변수. 플레이어와의 접촉 시간을 판단후 일정 시간 후 모든 플레이어를 이동시킨다.
+	float m_requestedContactTime = 3.f;		//위에서 설명한 '일정 시간'.
+
+private:
+	std::vector<Vec3> m_portalDestination;	//포탈이 이동시켜줄 위치
 };
 

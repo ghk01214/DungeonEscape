@@ -12,6 +12,7 @@
 #include "Collider.h"
 #include "CustomController.h"
 #include "EventHandler.h"
+#include "TriggerObject2.h"
 
 Event::Event(std::string context, double remainTime, GameObject* subject) :
 	msg(context), time(remainTime), target(subject)
@@ -573,6 +574,17 @@ void Event::ExecuteMsg_Once()
 			golemObj->GetAI()->Vulnuerable_Set(false);
 		}
 	}
+
+	// PORTAL
+	if (msg == "PORTAL1" || msg == "PORTAL2" || msg == "PORTAL3" || msg == "PORTAL4" || msg == "PORTAL5" || msg == "PORTAL6" || msg == "PORTAL7" || msg == "PORTAL8")
+	{
+		auto triggerObj = dynamic_cast<TriggerObject2*>(target);
+		if (triggerObj)
+		{
+			triggerObj->SendPlayers();
+		}
+	}
+
 
 	executed = true;
 }
