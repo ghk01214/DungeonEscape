@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #include <NetworkManager.h>
@@ -52,8 +52,10 @@ void Scene_Test::Start()
 {
 	__super::Start();
 
+#ifdef PLAY_BGM
 	GET_SINGLE(CSoundMgr)->StopAll();
 	GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+#endif
 }
 
 void Scene_Test::Update()
@@ -1583,9 +1585,11 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 	{
 		case server::SOUND_TYPE::BATTLE:
 		{
+#ifdef PLAY_SOUND
 			GET_SINGLE(CSoundMgr)->StopSound(CSoundMgr::BGM);
 			GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
 			GET_SINGLE(CSoundMgr)->BGMVolumeDown(0.2f);
+#endif
 		}
 		break;
 		case server::SOUND_TYPE::PUNCH:

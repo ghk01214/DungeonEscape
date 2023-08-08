@@ -4,6 +4,8 @@
 
 #include "EnginePch.h"
 
+//#define PLAY_BGM
+
 extern HINSTANCE g_hInst;
 extern std::wstring serverIP_Address;
 

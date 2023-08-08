@@ -28,7 +28,9 @@ void Scene_Start::Start()
 
 	m_ipAddress.clear();
 
+#ifdef PLAY_SOUND
 	GET_SINGLE(CSoundMgr)->PlayBGM(L"Opening.ogg");
+#endif
 }
 
 void Scene_Start::Update()
