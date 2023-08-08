@@ -104,8 +104,6 @@ void Player::LateUpdate(double timeDelta)
 
 void Player::Release()
 {
-	m_attackTrigger->SetRemoveReserved();
-	m_attackTrigger = nullptr;
 	m_banTriggerApproach = true;
 
 	m_controller = nullptr;
@@ -1118,14 +1116,6 @@ physx::PxVec3 Player::GetForwardVec()
 void Player::SetMeteorAttackAvailable(bool value)
 {
 	m_meteorAvailable = value;
-}
-
-void Player::TimeUpdate_Trigger(double deltaTime)
-{
-	if (m_attackTrigger == nullptr)
-		return;
-
-	m_attackTrigger->TimeUpdate(deltaTime);
 }
 
 void Player::Set_OverlapObject(bool activate)

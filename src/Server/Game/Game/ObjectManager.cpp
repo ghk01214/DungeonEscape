@@ -86,14 +86,14 @@ void ObjectManager::TimeUpdate_PlayerTrigger(double timeDelta)
     if (list.size() < 1)
         return;
 
-    for (auto& ptr : list)
+    /*for (auto& ptr : list)
     {
         auto player = dynamic_cast<Player*>(ptr);
         if (player)
             continue;
 
         player->TimeUpdate_Trigger(timeDelta);
-    }
+    }*/
 }
 
 void ObjectManager::RemoveGameObjectFromLayer(const std::wstring& layerTag, GameObject* gameObject)

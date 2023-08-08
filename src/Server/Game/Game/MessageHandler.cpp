@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -385,7 +385,7 @@ namespace game
 	void MessageHandler::Logout(int32_t playerID, int32_t roomID, Player* player)
 	{
 		//game::CRoomManager::GetInstance()->Exit(roomID, player);
-		m_objMgr->RemoveGameObjectFromLayer(L"Layer_Player", player);
+		player->SetRemoveReserved();
 
 		TIMER_EVENT ev{ ProtocolID::AU_LOGOUT_ACK, playerID };
 		ev.roomID = roomID;

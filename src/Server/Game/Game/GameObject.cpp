@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "RigidBody.h"
+#include "CustomController.h"
 
 GameObject::GameObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
 {
@@ -27,8 +28,9 @@ void GameObject::Update(double timeDelta)
         auto body = GetComponent<RigidBody>(L"RigidBody");
         if (body == nullptr)
         {
-            SetRemovalFlag(true);
-            return;
+            auto controller = GetComponent<CustomController>(L"CustomController");
+            if(controller)
+                controller->GetBody()->ExcludeFromSimulation(true);
         }
         else
         {
