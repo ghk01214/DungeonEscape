@@ -395,6 +395,10 @@ namespace game
 			Vec3 gimmk2TestPos(15609, -976, 26457);				//돌테스트			15609, -976, 26457
 			Vec3 gameStartPos{ -250.f, -2600.f, -700.f };
 			Vec3 portal1TestPos{ 0.f, -700.f, 6500.f };
+			Vec3 portal2TestPos{ 0.f, -550.f, 12520.f };
+			Vec3 portal3TestPos{ 0.f, -1590.f, 18420.f };
+			Vec3 portal4TestPos{ 15000.f, -1590.f, 23570.f };
+			Vec3 portal5TestPos{ 16216.f, -3690.f, 39993.f };
 			Vec3 pos = portal1TestPos;
 
 			//pos.z = 40400.f;
