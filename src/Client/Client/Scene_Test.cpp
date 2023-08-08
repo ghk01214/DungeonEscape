@@ -1623,14 +1623,54 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 
 	switch (triggerType)
 	{
-		case server::TRIGGER_INTERACTION_TYPE::PORTAL_IN:
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN:
 		{
 			// 포털 들어갔을 때 행동
 		}
 		break;
-		case server::TRIGGER_INTERACTION_TYPE::PORTAL_OUT:
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:
 		{
 			// 포털 나왔을 때 행동
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL6_IN:
+		{
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::PORTAL6_OUT:
+		{
 		}
 		break;
 		default:

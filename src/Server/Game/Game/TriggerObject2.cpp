@@ -132,7 +132,7 @@ void TriggerObject2::SendPlayers()
 
 	// 서버가 클라이언트에게 너희들을 이동시켰다고 알려줘야한다.
 	// 이 코드가 플레이어를 이동시키므로 그동안 렌더링 로드/삭제 + 페이드 인, 아웃하면 된다.
-	ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE::PORTAL_OUT);
+	ServerSendPortalOutMessage();
 }
 
 std::vector<Player*> TriggerObject2::OverlapCheck_Player()
@@ -250,7 +250,7 @@ void TriggerObject2::ServerSendInMessage()
 		case TRIGGERATTRIBUTE::PORTAL7:
 		case TRIGGERATTRIBUTE::PORTAL8:
 		{
-			ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE::PORTAL_IN);
+			ServerSendPortalInMessage();
 		}
 		break;
 		case TRIGGERATTRIBUTE::GUIDELINE1:
@@ -266,42 +266,48 @@ void TriggerObject2::ServerSendInMessage()
 	}
 }
 
-void TriggerObject2::ServerSendOutMessage()
+void TriggerObject2::ServerSendPortalInMessage()
 {
-	switch (m_attribute)
-	{
-		case TRIGGERATTRIBUTE::PORTAL1:
-		case TRIGGERATTRIBUTE::PORTAL2:
-		case TRIGGERATTRIBUTE::PORTAL3:
-		case TRIGGERATTRIBUTE::PORTAL4:
-		case TRIGGERATTRIBUTE::PORTAL5:
-		case TRIGGERATTRIBUTE::PORTAL6:
-		case TRIGGERATTRIBUTE::PORTAL7:
-		case TRIGGERATTRIBUTE::PORTAL8:
-		{
-			ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE::PORTAL_OUT);
-		}
-		break;
-		case TRIGGERATTRIBUTE::GUIDELINE1:
-		case TRIGGERATTRIBUTE::GUIDELINE2:
-		case TRIGGERATTRIBUTE::GUIDELINE3:
-		case TRIGGERATTRIBUTE::GUIDELINE4:
-		case TRIGGERATTRIBUTE::GUIDELINE5:
-		{
-		}
-		break;
-		default:
-		break;
-	}
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+
+	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL2)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL6)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL6_IN);
+
+	ev.objID = m_id;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
-void TriggerObject2::ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE type)
+void TriggerObject2::ServerSendPortalOutMessage()
 {
 	//조건을 확인하고 이에 따라 서버 메시지를 전송한다.
 	//Detect함수에서 조건 확인 후 호출
 
 	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
-	ev.state = magic_enum::enum_integer(type);
+
+	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL2)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT);
+	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL6)
+		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL6_OUT);
+
 	ev.objID = m_id;
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);

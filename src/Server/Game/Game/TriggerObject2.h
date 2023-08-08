@@ -60,8 +60,8 @@ private:
 	void ServerInit();
 	void ServerRelease();			//생성 삭제 명령만 존재.
 	void ServerSendInMessage();
-	void ServerSendOutMessage();
-	void ServerSendPortalMessage(server::TRIGGER_INTERACTION_TYPE type);
+	void ServerSendPortalInMessage();
+	void ServerSendPortalOutMessage();
 
 private:
 	physx::PxBoxGeometry* m_box = nullptr;
