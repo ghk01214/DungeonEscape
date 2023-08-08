@@ -86,6 +86,15 @@ void TriggerObject2::Handle_Overlap()
 
 		}
 	}
+
+
+	// HERE : 인원수에 변화가 생길 경우 출력.
+	m_currentCnt = m_duplicates.size();
+	if (m_currentCnt != m_beforeCnt)
+	{
+		m_beforeCnt = m_currentCnt;
+		cout << m_currentCnt << endl;
+	}
 }
 
 void TriggerObject2::SetPortalDestination()

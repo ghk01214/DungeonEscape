@@ -73,6 +73,9 @@ private:
 	float m_contactTime = 0.f;				//포탈용 변수. 플레이어와의 접촉 시간을 판단후 일정 시간 후 모든 플레이어를 이동시킨다.
 	float m_requestedContactTime = 3.f;		//위에서 설명한 '일정 시간'.
 
+	int m_currentCnt = 0;					//현재 겹친 인원수
+	int m_beforeCnt = 0;					//위를 찾기 위한 보조변수
+
 private:
 	std::vector<Vec3> m_portalDestination;	//포탈이 이동시켜줄 위치
 };
