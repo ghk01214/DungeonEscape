@@ -106,6 +106,73 @@ HRESULT CLoader::Loading_GamePlayLevel_Font()
 
 HRESULT CLoader::Loading_GamePlayLevel_Texture()
 {
+	Loading_GamePlayLevel_UI();
+	Loading_GamePlayLevel_Effect();
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_GamePlayLevel_Shader()
+{
+	// ComputeShader ?앹꽦
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
+
+	// UAV ??Texture ?앹꽦
+	shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
+		DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
+		CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
+		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
+
+	shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"ComputeShader");
+	material->SetShader(shader);
+	material->SetInt(0, 1);
+	GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
+
+	// ?곕젅??洹몃９ (1 * 1024 * 1)
+	material->Dispatch(1, 1024, 1);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_GamePlayLevel_Fbx()
+{
+	// fbx 紐⑤뜽
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx");
+
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Weeper\\Weeper.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Black Scorpion.fbx");
+
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx");
+
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models2.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Pillar Bridge.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Rolling Rock.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Bullet1.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Bullet2.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone.fbx");
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_GamePlayLevel_UI()
+{
+	GET_SINGLE(Resources)->Load<Texture>(L"Bar", L"..\\Resources\\Texture\\In Game\\bar.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"HP", L"..\\Resources\\Texture\\In Game\\hp.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"MP", L"..\\Resources\\Texture\\In Game\\mp.png");
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_GamePlayLevel_Effect()
+{
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_BrightFlare_DarkGray", L"..\\Resources\\Texture\\Effect\\Bright Flare\\dark gray\\tile.png", 32);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_BrightFlare_DarkGrayHued", L"..\\Resources\\Texture\\Effect\\Bright Flare\\dark gray hued\\tile.png", 32);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_BrightFlare_Gray", L"..\\Resources\\Texture\\Effect\\Bright Flare\\gray\\tile.png", 32);
@@ -222,60 +289,6 @@ HRESULT CLoader::Loading_GamePlayLevel_Texture()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Zap_Spiral_Gray", L"..\\Resources\\Texture\\Effect\\Zap Spiral\\gray\\tile.png", 48);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Zap_Spiral_Green", L"..\\Resources\\Texture\\Effect\\Zap Spiral\\green\\tile.png", 48);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Zap_Spiral_Yellow", L"..\\Resources\\Texture\\Effect\\Zap Spiral\\yellow\\tile.png", 48);
-
-	GET_SINGLE(Resources)->Load<Texture>(L"Bar", L"..\\Resources\\Texture\\In Game\\bar.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"HP", L"..\\Resources\\Texture\\In Game\\hp.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"MP", L"..\\Resources\\Texture\\In Game\\mp.png");
-
-	return S_OK;
-}
-
-HRESULT CLoader::Loading_GamePlayLevel_Shader()
-{
-	// ComputeShader ?앹꽦
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
-
-	// UAV ??Texture ?앹꽦
-	shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
-		DXGI_FORMAT_R8G8B8A8_UNORM, 1024, 1024,
-		CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT), D3D12_HEAP_FLAG_NONE,
-		D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS);
-
-	shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"ComputeShader");
-	material->SetShader(shader);
-	material->SetInt(0, 1);
-	GEngine->GetComputeDescHeap()->SetUAV(texture->GetUAVHandle(), UAV_REGISTER::u0);
-
-	// ?곕젅??洹몃９ (1 * 1024 * 1)
-	material->Dispatch(1, 1024, 1);
-
-	return S_OK;
-}
-
-HRESULT CLoader::Loading_GamePlayLevel_Fbx()
-{
-	// fbx 紐⑤뜽
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx");
-
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Weeper\\Weeper.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Black Scorpion.fbx");
-
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx");
-
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models2.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Pillar Bridge.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Rolling Rock.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Bullet1.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Bullet2.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone.fbx");
 
 	return S_OK;
 }

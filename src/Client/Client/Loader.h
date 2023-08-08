@@ -28,6 +28,9 @@ public:
 	HRESULT Loading_GamePlayLevel_Shader();
 	HRESULT Loading_GamePlayLevel_Fbx();
 
+	HRESULT Loading_GamePlayLevel_UI();
+	HRESULT Loading_GamePlayLevel_Effect();
+
 public:
 	HRESULT Loading_ForLobby();
 	HRESULT Loading_ForLobby_Font();
