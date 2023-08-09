@@ -29,7 +29,7 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_firstSingleStrike{ true },
 	m_prevOnGround{ false },
 	m_sendState{ false },
-	m_cameraDistance{ 10.f }
+	m_cameraDistance{ 381.448f }
 {
 	m_id = playerID;
 }
