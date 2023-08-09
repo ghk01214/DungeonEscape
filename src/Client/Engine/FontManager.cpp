@@ -24,6 +24,7 @@ void FontManager::Reset(void)
 
 	m_effectCount = 0;
 	m_fontRenderObjects.clear();
+	m_fontRender3dObjects.clear();
 }
 
 void FontManager::RenderFonts(const wstring& text, Vec2 vPos, Vec2 vSize, float gap)
@@ -31,6 +32,13 @@ void FontManager::RenderFonts(const wstring& text, Vec2 vPos, Vec2 vSize, float 
 	assert(m_effectCount < m_maxCount);
 
 	m_fontReserveObjects[m_effectCount]->SetLayerIndex(m_UIIndex);
+
+	// 셰이더 설정
+	int size = m_fontReserveObjects[m_effectCount]->GetMeshRenderer()->GetMaterialSize();
+	for (int i = 0; i < size; ++i)
+	{
+		m_fontReserveObjects[m_effectCount]->GetMeshRenderer()->GetMaterial(i)->SetShader(GET_SINGLE(Resources)->Get<Shader>(L"Font"));
+	}
 
 	// 폰트 크기 및 문장(텍스트) 설정
 	std::shared_ptr<Font> font = m_fontReserveObjects[m_effectCount]->GetFont();
@@ -50,6 +58,42 @@ void FontManager::RenderFonts(const wstring& text, Vec2 vPos, Vec2 vSize, float 
 
 	// 렌더링 오브젝트에 추가
 	m_fontRenderObjects.push_back(m_fontReserveObjects[m_effectCount]);
+
+	++m_effectCount;
+}
+
+void FontManager::Render3DFonts(const wstring& text, Vec3 vPos, Vec2 vSize, Vec3 vRotation, float gap)
+{
+	assert(m_effectCount < m_maxCount);
+
+	m_fontReserveObjects[m_effectCount]->SetLayerIndex(m_ObjectIndex);
+
+	// 셰이더 설정
+	int size = m_fontReserveObjects[m_effectCount]->GetMeshRenderer()->GetMaterialSize();
+	for (int i = 0; i < size; ++i)
+	{
+		m_fontReserveObjects[m_effectCount]->GetMeshRenderer()->GetMaterial(i)->SetShader(GET_SINGLE(Resources)->Get<Shader>(L"Font_Deffered"));
+	}
+
+	// 폰트 크기 및 문장(텍스트) 설정
+	std::shared_ptr<Font> font = m_fontReserveObjects[m_effectCount]->GetFont();
+	font->SetFontGap(gap);
+
+	std::string strText{ text.begin(), text.end() };
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadFontMesh(font->GetTextVB(strText));
+	m_fontReserveObjects[m_effectCount]->GetMeshRenderer()->SetMesh(mesh);
+
+	// 위치 설정
+	std::shared_ptr<Transform> transform = m_fontReserveObjects[m_effectCount]->GetTransform();
+
+	transform->SetLocalScale(Vec3(vSize.x, vSize.y, 1.f));
+	transform->SetLocalRotation(vRotation);
+
+	Matrix matWorld = Matrix::CreateTranslation(Vec3(vPos.x, vPos.y, 1.f));
+	transform->SetWorldMatrix(matWorld);
+
+	// 렌더링 오브젝트에 추가
+	m_fontRender3dObjects.push_back(m_fontReserveObjects[m_effectCount]);
 
 	++m_effectCount;
 }
@@ -90,4 +134,5 @@ void FontManager::ReserveFontObjects(uint32 num)
 	}
 
 	m_maxCount = num;
+	m_effectCount = 0;
 }

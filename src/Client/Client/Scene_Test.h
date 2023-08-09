@@ -6,6 +6,7 @@
 
 class InfoUI_Script;
 class Fade_Script;
+class PortalUI_Script;
 
 #include <unordered_set>
 
@@ -51,6 +52,7 @@ private:
 	void CreateSkyBox(shared_ptr<CScene> pScene);
 	void CreateUI(shared_ptr<CScene> pScene);
 	void CreateMRTUI(shared_ptr<CScene> pScene);
+	void CreatePortalUI(shared_ptr<CScene> pScene);
 	void CreateLights(shared_ptr<CScene> pScene);
 	void CreateMap(shared_ptr<CScene> pScene);
 	void CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player);
@@ -130,4 +132,5 @@ private:
 
 private:
 	std::shared_ptr<Fade_Script> m_fadeScript = nullptr;
+	std::shared_ptr<PortalUI_Script> m_portalUIScript = nullptr;
 };
