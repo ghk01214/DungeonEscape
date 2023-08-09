@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #include <NetworkManager.h>
@@ -1862,29 +1862,6 @@ void Scene_Test::MoveMap(MAP_TYPE eType)
 		case MAP_TYPE::StartRoom:
 		{
 			mapObjects = m_splitMap_1;
-
-			ObjectDesc objectDesc;
-			//objectDesc.strName = L"stone_array";
-			objectDesc.strName = L"crystal_tombstone";
-			objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
-			objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
-			//objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Portal\\" + objectDesc.strName + L".fbx";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Artifact\\crystal tombstone\\" + objectDesc.strName + L".fbx";
-			objectDesc.script = nullptr;
-
-			std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateMapObject(objectDesc);
-			//gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::PLAYER);
-
-			Matrix matWorld = Matrix::CreateScale(1.f);
-			//matWorld *= Matrix::CreateRotationX(XMConvertToRadians(90.f));
-			//matWorld *= Matrix::CreateRotationY(XMConvertToRadians(45.f));
-			matWorld *= Matrix::CreateTranslation(Vec3{ 0.f, -700.f, 7510.f });
-
-			for (auto& object : gameObjects)
-			{
-				object->GetTransform()->SetWorldMatrix(matWorld);
-				mapObjects.push_back(object);
-			}
 		}
 		break;
 		case MAP_TYPE::FirstBoss:

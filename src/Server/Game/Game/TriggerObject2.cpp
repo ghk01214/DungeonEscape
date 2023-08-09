@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TriggerObject2.h"
 #include "PhysDevice.h"
 #include "physx_utils.h"
@@ -102,11 +102,11 @@ void TriggerObject2::SetPortalDestination()
 	//HERE
 	m_portalDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));
 
-	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = Vec3(0.f, -550.f, 8520.f);
-	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL2)] = Vec3(0.f, -550.f, 13520.f);
-	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL3)] = Vec3(0.f, -1590.f, 19420.f);
-	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL4)] = Vec3(15000.f, -1590.f, 24570.f);
-	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL5)] = Vec3(16216.f, -3690.f, 40993.f);
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = PORTAL1_EXIT;
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL2)] = PORTAL2_EXIT;
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL3)] = PORTAL3_EXIT;
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL4)] = PORTAL4_EXIT;
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL5)] = PORTAL5_EXIT;
 
 	//여기서 포탈 1, 포탈2, 등의 이동 위치를 설정한다.
 }

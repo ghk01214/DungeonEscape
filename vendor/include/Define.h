@@ -6,6 +6,18 @@
 #define MAX_STR_SIZE 100
 #define MAX_USER 3000
 
+#define PORTAL1_POS Vec3{ 2000.f, -670.f + 300.f, 5415.f }		// Scale 600.f
+#define PORTAL2_POS Vec3{ 0.f, -750.f + 250.f, 13020.f }
+#define PORTAL3_POS Vec3{ 0.f, -1790.f + 250.f, 18920.f }
+#define PORTAL4_POS Vec3{ 14985.f, -1590.f + 833.3f, 21085.f }	// Scale 1666.6f
+#define PORTAL5_POS Vec3{ 16216.f, -3301.f + 300.f, 37770.f }	// Scale 600.f
+
+#define PORTAL1_EXIT Vec3{ 0.f, -750.f + 100.f, 8520.f }
+#define PORTAL2_EXIT Vec3{ 0.f, -750.f + 100.f, 13520.f }
+#define PORTAL3_EXIT Vec3{ 0.f, -1790.f + 100.f, 19420.f }
+#define PORTAL4_EXIT Vec3{ 18000.f, -1790.f + 100.f, 25070.f }
+#define PORTAL5_EXIT Vec3{ 16165.f, -3900.f + 100.f, 41780.f }
+
 	enum class KEY_STATE : uint8_t
 	{
 		NONE = 0,
@@ -311,5 +323,23 @@
 		PORTAL6_OUT,
 
 		MAX
+	};
+
+	enum class CUT_SCENE_TYPE
+	{
+		NONE = 0,
+
+		SCENE1,
+		SCENE2,
+		SCENE3,
+		SCENE4,
+		SCENE5,
+		SCENE6,
+		SCENE7,
+		SCENE8,
+		SCENE9,
+		SCENE10,
+
+		MAX,
 	};
 }

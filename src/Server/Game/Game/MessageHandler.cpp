@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -162,6 +162,9 @@ namespace game
 					postOver.state = ev.state;
 					postOver.integer = ev.integer;
 
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+				}
+				break;
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
 				}
 				break;

@@ -137,15 +137,15 @@ void Camera_Basic::LateUpdate()
 				m_distance = 0.7f;
 		}
 
-		// 카메라의 위치
-		Vec3 vCameraPos = transform->GetWorldPosition();
+		//// 카메라의 위치
+		//Vec3 vCameraPos = transform->GetWorldPosition();
 
-		// 플레이어의 위치
-		Vec3 vPlayerPos = playerTransform->GetWorldPosition();
+		//// 플레이어의 위치
+		//Vec3 vPlayerPos = playerTransform->GetWorldPosition();
 
-		m_distanceBetweenPlayerAndCamera = SimpleMath::Vector3::Distance(vCameraPos, vPlayerPos);
+		//m_distanceBetweenPlayerAndCamera = SimpleMath::Vector3::Distance(vCameraPos, vPlayerPos);
 
-		PrintVec3(vCameraPos);
+		//PrintVec3(vCameraPos);
 		//PrintVec3(vPlayerPos);
 		//Print(m_distanceBetweenPlayerAndCamera);
 	}
