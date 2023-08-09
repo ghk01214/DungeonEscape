@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "Monster.h"
 #include "PillarObject.h"
+#include "ArtifactObject.h"
 #include "RigidBody.h"
 #include "Collider.h"
 #include "CustomController.h"
@@ -106,6 +107,22 @@ void OverlapObject2::Active()
 		}
 	}
 #pragma endregion
+
+#pragma region 아티팩트 처리
+	std::vector<ArtifactObject*> validArtifact = OverlapCheck_Artifact();		//overlap진행
+
+	for (auto& artifact : validArtifact)
+	{
+		bool duplicate = IsObjectDuplicate(artifact);
+		if (duplicate)
+			continue;
+		else
+		{
+			artifact->ReceivedAttack_SingleAttack();
+			m_duplicates.emplace_back(artifact);
+		}
+	}
+#pragma endregion
 }
 
 std::vector<Monster*> OverlapObject2::OverlapCheck_Monster()
@@ -185,10 +202,54 @@ std::vector<PillarObject*> OverlapObject2::OverlapCheck_Pillar()
 		if (!obj)
 			continue;											// 1 : ownerobj 유효포인터 체크
 		std::wstring name = obj->GetName();
-		if (name == L"PILLAR BRIDGE")				// 2 : 이름체크
+		if (name == L"PILLAR BRIDGE")							// 2 : 이름체크
 		{
 			auto pillar = dynamic_cast<PillarObject*>(obj);			// 3 : 리턴 컨테이너에 등록
 			validPtrs.emplace_back(pillar);
+			int size = validPtrs.size();
+		}
+	}
+
+	return validPtrs;
+}
+
+std::vector<ArtifactObject*> OverlapObject2::OverlapCheck_Artifact()
+{
+	auto physDevice = PhysDevice::GetInstance();
+	auto query = physDevice->GetQuery();
+
+	std::vector<ArtifactObject*> validPtrs;
+
+	if (!m_box)
+		return validPtrs;									//여기 걸리면 SkillAdd()의 오류. 각 Monster의 Init수정 요구
+
+	physx::PxTransform trans;								//스킬 위치, 회전값 부여
+	trans.p = m_pos;
+	trans.q = m_rot;
+
+	PxQueryFilterData filterData(PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC);		//overlap진행
+	constexpr PxU32 bufferSize = 10;  // Set this to whatever size you need
+	PxOverlapHit hitBuffer[bufferSize];
+	PxOverlapBuffer overlapBuffer(hitBuffer, bufferSize);
+
+	query->Overlap(*m_box, trans, filterData, &overlapBuffer);
+
+	for (PxU32 i = 0; i < overlapBuffer.getNbTouches(); ++i)
+	{
+		const PxOverlapHit& hit = overlapBuffer.getTouch(i);
+		PxShape* shape = hit.shape;
+		PxRigidActor* actor = shape->getActor();
+
+		auto body = static_cast<RigidBody*>(actor->userData);
+
+		GameObject* obj = body->GetOwnerObject();
+		if (!obj)
+			continue;													// 1 : ownerobj 유효포인터 체크
+		std::wstring name = obj->GetName();
+		if (name == L"ARTIFACT")										// 2 : 이름체크
+		{
+			auto artifact = dynamic_cast<ArtifactObject*>(obj);			// 3 : 리턴 컨테이너에 등록
+			validPtrs.emplace_back(artifact);
 			int size = validPtrs.size();
 		}
 	}
@@ -224,7 +285,6 @@ bool OverlapObject2::ApplySkillToMonster(Monster* monster)
 	cout << "몬스터에게 데미지를 줬다." << endl;
 	return true;
 }
-
 
 void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 {
@@ -278,6 +338,8 @@ void OverlapObject2::ServerMessage_RenderEffect_SingleStrike()
 	{
 		type = server::EFFECT_TYPE::SLASH;
 	}
+	else
+		return;
 
 	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = m_player->GetID();

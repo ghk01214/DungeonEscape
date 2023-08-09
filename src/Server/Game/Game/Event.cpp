@@ -575,6 +575,7 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+
 	// PORTAL
 	if (msg == "PORTAL1" || msg == "PORTAL2" || msg == "PORTAL3" || msg == "PORTAL4" || msg == "PORTAL5" || msg == "PORTAL6" || msg == "PORTAL7" || msg == "PORTAL8")
 	{
@@ -585,6 +586,17 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+
+	// ARTIFACT			 
+	if (msg == "PILLAR_EFFECT_OFF")
+	{
+		//클라이언트로 PILLAR에 있는 마법 이펙트를 끄도록 명령
+	}
+
+	if (msg == "CAMERA_BACKTO_PLAYER")
+	{
+		//클라이언트로 카메라를 다시 플레이어를 비추도록 수정
+	}
 
 	executed = true;
 }

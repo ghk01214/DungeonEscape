@@ -68,20 +68,23 @@ void PillarObject::ApplyRequestedLayers()
 
 void PillarObject::ReceivedAttack_SingleAttack()
 {
-	static float currentDampValue = 0.8f;
+	//Artifact로 기능을 옮겼다. 더이상 사용하지 않음.
 
-	currentDampValue -= 0.1f;
-	if (currentDampValue < 0.4)
-	{
-		currentDampValue = 0.3;
-		cout << "돌기둥 약화 완료" << endl;
-		m_body->SetAngularDamping(0.3f);
-	}
-	else
-	{
-		cout << "돌기둥 약화 진행중" << endl;
-		cout << "현재 damping값 " << currentDampValue << endl;
-	}
+
+	//static float currentDampValue = 0.8f;
+	//
+	//currentDampValue -= 0.1f;
+	//if (currentDampValue < 0.4)
+	//{
+	//	currentDampValue = 0.3;
+	//	cout << "돌기둥 약화 완료" << endl;
+	//	m_body->SetAngularDamping(0.3f);
+	//}
+	//else
+	//{
+	//	cout << "돌기둥 약화 진행중" << endl;
+	//	cout << "현재 damping값 " << currentDampValue << endl;
+	//}
 }
 
 void PillarObject::ReceivedAttack_Meteor()

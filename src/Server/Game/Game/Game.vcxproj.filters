@@ -221,6 +221,9 @@
     <Filter Include="03. Game\01. GameObject\TriggerObject2">
       <UniqueIdentifier>{2ac2446a-6de6-466a-aa84-02c49c9f3267}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\GimmikObject\ArtifactObject">
+      <UniqueIdentifier>{2dc0684a-cd1e-4590-9bce-9c7420a89174}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -409,6 +412,9 @@
     </ClCompile>
     <ClCompile Include="TriggerObject2.cpp">
       <Filter>03. Game\01. GameObject\TriggerObject2</Filter>
+    </ClCompile>
+    <ClCompile Include="ArtifactObject.cpp">
+      <Filter>03. Game\01. GameObject\GimmikObject\ArtifactObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -624,6 +630,9 @@
     </ClInclude>
     <ClInclude Include="TriggerObject2.h">
       <Filter>03. Game\01. GameObject\TriggerObject2</Filter>
+    </ClInclude>
+    <ClInclude Include="ArtifactObject.h">
+      <Filter>03. Game\01. GameObject\GimmikObject\ArtifactObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,7 @@
 #include "Monsters.hpp"
 #include "MapObject.h"
 #include "PillarObject.h"
+#include "ArtifactObject.h"
 #include "TriggerObject.h"
 #include "RigidBody.h"
 #include "BoxCollider.h"
@@ -35,16 +36,17 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Gimmik_Boulder");
 	objmgr->AddLayer(L"Layer_Gimmik_Rock");
 	objmgr->AddLayer(L"Layer_Gimmik_Pillar");
+	objmgr->AddLayer(L"Layer_Gimmik_Artifact");
 	objmgr->AddLayer(L"Layer_Player");
 	objmgr->AddLayer(L"Layer_Monster");
 	objmgr->AddLayer(L"Layer_Map2");
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
 
-	//LoadBasicMap4();
+	LoadBasicMap4();
 
 	//LoadUnit_DebugMode();
-	LoadMap();
+	//LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -261,29 +263,17 @@ void TestLevel::LoadBasicMap4()
 	MapPlaneObject->ApplyRequestedLayers();
 
 
-	//1회성 trigger2 샘플
-	auto Box1Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(0, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), true);
-	auto Box1Body = Box1Obj->GetComponent<RigidBody>(L"RigidBody");
-	Box1Body->AddCollider<BoxCollider>(Box1Obj->GetTransform()->GetScale());
+	auto p = objmgr->AddGameObjectToLayer<PillarObject>(L"Layer_Gimmik_Pillar", Vec3(-400, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 300, 100));
+	auto pBody = p->GetComponent<RigidBody>(L"RigidBody");
+	pBody->AddCollider<BoxCollider>(p->GetTransform()->GetScale());
+	p->Init_After_ColliderAttached();
 
-	//다회성 trigger2 샘플
-	auto Box2Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-200, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
-	auto Box2Body = Box2Obj->GetComponent<RigidBody>(L"RigidBody");
-	Box2Body->AddCollider<BoxCollider>(Box2Obj->GetTransform()->GetScale());
-
-
-
-	//포탈1
-	auto Box3Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-400, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
-	auto Box3Body = Box3Obj->GetComponent<RigidBody>(L"RigidBody");
-	Box3Body->AddCollider<BoxCollider>(Box3Obj->GetTransform()->GetScale());
-	Box3Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL1);
-
-	//포탈2
-	auto Box4Obj = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", Vec3(-600, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 100, 100), false);
-	auto Box4Body = Box4Obj->GetComponent<RigidBody>(L"RigidBody");
-	Box4Body->AddCollider<BoxCollider>(Box4Obj->GetTransform()->GetScale());
-	Box4Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL2);
+	
+	auto a = objmgr->AddGameObjectToLayer<ArtifactObject>(L"Layer_Gimmik_Artifact", Vec3(-800, 200, 500), Quat(0, 0, 0, 1), Vec3(200, 200, 100));
+	auto aBody = a->GetComponent<RigidBody>(L"RigidBody");
+	aBody->AddCollider<BoxCollider>(a->GetTransform()->GetScale());
+	aBody->SetKinematic(true);
+	a->ApplyRequestedLayers();
 }
 
 void TestLevel::LoadMapObject()

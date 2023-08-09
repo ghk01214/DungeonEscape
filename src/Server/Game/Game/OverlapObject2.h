@@ -3,6 +3,7 @@
 class GameObject;
 class Monster;
 class PillarObject;
+class ArtifactObject;
 
 class OverlapObject2
 {
@@ -27,6 +28,7 @@ public:
 public:
 	std::vector<Monster*> OverlapCheck_Monster();
 	std::vector<PillarObject*> OverlapCheck_Pillar();
+	std::vector<ArtifactObject*> OverlapCheck_Artifact();
 	bool IsObjectDuplicate(GameObject* obj);
 	bool ApplySkillToMonster(Monster* monster);
 
