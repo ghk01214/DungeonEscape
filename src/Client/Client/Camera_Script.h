@@ -23,5 +23,7 @@ private:
 	float m_rotationAxisY;
 	float m_rotationAxisX;
 	float m_distance;
+
+	float m_distanceBetweenPlayerAndCamera;
 };
 
