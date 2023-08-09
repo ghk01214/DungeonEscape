@@ -102,7 +102,7 @@ void TriggerObject2::SetPortalDestination()
 	//HERE
 	m_portalDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));
 
-	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = Vec3(0.f, -550.f, 8020.f);
+	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = Vec3(0.f, -550.f, 8520.f);
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL2)] = Vec3(0.f, -550.f, 13520.f);
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL3)] = Vec3(0.f, -1590.f, 19420.f);
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL4)] = Vec3(15000.f, -1590.f, 24570.f);
@@ -120,6 +120,7 @@ void TriggerObject2::AttributePortal(double timeDelta)
 	string name = string(magic_enum::enum_name(m_attribute));
 
 	if (m_duplicates.size() < 3)
+	//if (m_duplicates.empty())
 	{
 		EventHandler::GetInstance()->DeleteEvent(name);
 		return;
@@ -147,7 +148,7 @@ void TriggerObject2::SendPlayers()
 	{
 		auto player = dynamic_cast<Player*>(p);
 		auto requestedPos = m_portalDestination[static_cast<int>(m_attribute)];
-		requestedPos.x += givenSpace * ++num;
+		requestedPos.x += givenSpace * num++;
 		player->SetControllerPosition(requestedPos);
 	}
 

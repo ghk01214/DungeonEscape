@@ -678,8 +678,6 @@ namespace game
 				Login(id, m_sessions[id], nullptr, 0);
 
 				std::cout << std::format("session[{}] login complete\n", id);
-
-				std::cout << playerObjects.size() << "\n";
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_ACK:
