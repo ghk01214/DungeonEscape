@@ -114,11 +114,15 @@ void ArtifactObject::ServerFunctionHere()
 	// 3. Pillar에서 마법 이펙트가 완전히 사라지면 잠시 있다 컷씬을 종료해 카메라를 원래대로 되돌린다.
 
 
-	//페이드인/아웃 + 카메라 전환 명령 코드 작성										(1)
+	// 페이드인/아웃 + 카메라 전환 명령 코드 작성										(1)
+	game::TIMER_EVENT ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
+	ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE1);
+	ev.objID = 0;
 
-	EventHandler::GetInstance()->AddEvent("PILLAR_EFFECT_OFF", 4.f, this);			//	(2)
-	EventHandler::GetInstance()->AddEvent("CAMERA_BACKTO_PLAYER", 8.f, this);	//	(3) 3이 따로 필요없다면 Event.h에서 CAMERA_BACKTO_PLAYER를 삭제.
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 
+	//EventHandler::GetInstance()->AddEvent("PILLAR_EFFECT_OFF", 4.f, this);			//	(2)
+	//EventHandler::GetInstance()->AddEvent("CAMERA_BACKTO_PLAYER", 8.f, this);	//	(3) 3이 따로 필요없다면 Event.h에서 CAMERA_BACKTO_PLAYER를 삭제.
 
 	// AddEvent함수는 원하는 타이밍에 어떤 행동을 할 수 있게 해준다.
 	// 클라이언트에서 스스로 컷씬 시간이나 이펙트 제거 시간등을 제어할 수 있다면 AddEvent()는 굳이 사용할 필요는 없다.

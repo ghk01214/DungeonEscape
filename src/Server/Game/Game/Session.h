@@ -50,6 +50,7 @@ namespace game
 		void SendChangeSoundPacket(server::SOUND_TYPE soundType);
 		void SendTriggerInteractionPacket(int32_t id, server::TRIGGER_INTERACTION_TYPE type);
 		void SendTriggerInteractionCountPacket(int32_t id, server::TRIGGER_INTERACTION_TYPE type, int32_t size);
+		void SendPlayCutScenePacket(server::CUT_SCENE_TYPE type);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

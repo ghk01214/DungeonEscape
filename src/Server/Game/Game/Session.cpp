@@ -392,4 +392,15 @@ namespace game
 
 		Send(packet);
 	}
+
+	void CSession::SendPlayCutScenePacket(server::CUT_SCENE_TYPE type)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(m_id);
+		packet.WriteProtocol(ProtocolID::WR_PLAY_CUT_SCENE_ACK);
+		packet.Write<server::CUT_SCENE_TYPE>(type);
+
+		Send(packet);
+	}
 }

@@ -131,6 +131,11 @@ void Scene_Test::LateUpdate()
 				TriggerInteractionCount(packet);
 			}
 			break;
+			case ProtocolID::WR_PLAY_CUT_SCENE_ACK:
+			{
+				PlayCutScene(packet);
+			}
+			break;
 			default:
 			break;
 		}
@@ -1728,6 +1733,67 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN:
 		{
+		}
+		break;
+		default:
+		break;
+	}
+}
+
+void Scene_Test::PlayCutScene(network::CPacket& packet)
+{
+	auto sceneType{ packet.Read<server::CUT_SCENE_TYPE>() };
+
+	switch (sceneType)
+	{
+		case server::CUT_SCENE_TYPE::SCENE1:
+		{
+
+		}
+		break;
+		case server::CUT_SCENE_TYPE::SCENE2:
+		{
+
+		}
+		break;
+		case server::CUT_SCENE_TYPE::SCENE3:
+		{
+
+		}
+		break;
+		case server::CUT_SCENE_TYPE::SCENE4:
+		{
+
+		}
+		break;
+		case server::CUT_SCENE_TYPE::SCENE5:
+		{
+
+		}
+		break;
+		case server::CUT_SCENE_TYPE::SCENE6:
+		{
+
+		}
+		break;
+		case server::CUT_SCENE_TYPE::SCENE7:
+		{
+
+		}
+		break;
+		case server::CUT_SCENE_TYPE::SCENE8:
+		{
+
+		}
+		break;
+		case server::CUT_SCENE_TYPE::SCENE9:
+		{
+
+		}
+		break;
+		case server::CUT_SCENE_TYPE::SCENE10:
+		{
+
 		}
 		break;
 		default:

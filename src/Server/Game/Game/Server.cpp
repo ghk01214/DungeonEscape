@@ -1170,6 +1170,19 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::WR_PLAY_CUT_SCENE_ACK:
+			{
+				auto sceneType{ magic_enum::enum_value<server::CUT_SCENE_TYPE>(postOver->integer) };
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendPlayCutScenePacket(sceneType);
+				}
+			}
+			break;
 #pragma endregion
 			default:
 			break;
