@@ -44,9 +44,11 @@ public:
 	void SetScale(float value) { m_scale = value; }
 	void SetWidth(float value) { m_width = value; }
 	void SetHeight(float value) { m_height = value; }
+	void SetRaycastDistance(float value) { m_raycastDistance = value; }
 
 	Matrix& GetViewMatrix() { return m_matView; }
 	Matrix& GetProjectionMatrix() { return m_matProjection; }
+	float GetRaycastDistance() { return m_raycastDistance; }
 
 private:
 	PROJECTION_TYPE _type = PROJECTION_TYPE::PERSPECTIVE;
@@ -57,6 +59,7 @@ private:
 	float m_scale = 1.f;
 	float m_width = 0.f;
 	float m_height = 0.f;
+	float m_raycastDistance = 0.f;
 
 	Matrix m_matView = {};
 	Matrix m_matProjection = {};

@@ -336,6 +336,8 @@ void Player_Script::Transform(network::CPacket& packet)
 	float y{ packet.Read<float>() };
 	float w{ packet.Read<float>() };
 
+	float raycastDistance{ packet.Read<float>() };
+
 	pos.y -= (m_radius + m_halfHeight);
 
 	Matrix matWorld{};
@@ -352,6 +354,9 @@ void Player_Script::Transform(network::CPacket& packet)
 	}
 
 	GetTransform()->SetWorldMatrix(matWorld);
+
+	if (GetNetwork()->IsMyPlayer() == true)
+		GET_SINGLE(SceneManager)->GetActiveScene()->GetMainCamera()->SetRaycastDistance(raycastDistance);
 
 #pragma region [FOR DEBUGGING]
 	//auto t{ GetTransform()->GetWorldPosition() };

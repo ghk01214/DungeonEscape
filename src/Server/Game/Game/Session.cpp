@@ -215,7 +215,8 @@ namespace game
 	void CSession::SendPlayerTransformPacket(GameObject* obj)
 	{
 		network::CPacket packet;
-		Transform* trans{ obj->GetTransform() };
+		auto player{ dynamic_cast<Player*>(obj) };
+		Transform* trans{ player->GetTransform() };
 		auto pos{ trans->GetPosition() };
 		auto quat{ trans->GetRotation() };
 
@@ -231,6 +232,8 @@ namespace game
 
 		packet.Write<float>(quat.y);
 		packet.Write<float>(quat.w);
+
+		packet.Write<float>(player->GetCameraDistance());
 
 		// 패킷 전송
 		Send(packet);

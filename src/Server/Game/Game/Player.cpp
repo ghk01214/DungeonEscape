@@ -28,7 +28,8 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_mp{ 100 },
 	m_firstSingleStrike{ true },
 	m_prevOnGround{ false },
-	m_sendState{ false }
+	m_sendState{ false },
+	m_cameraDistance{ 10.f }
 {
 	m_id = playerID;
 }
@@ -92,7 +93,7 @@ void Player::Update(double timeDelta)
 
 	GameObject::Update(timeDelta);
 
-	SendTransform();
+	ServerSendTransformMessage();
 }
 
 void Player::LateUpdate(double timeDelta)
@@ -770,6 +771,11 @@ float Player::GetControllerJumpSpeed()
 	return m_controller->GetJumpSpeed();
 }
 
+float Player::GetCameraDistance()
+{
+	return m_cameraDistance;
+}
+
 CustomController* Player::GetController()
 {
 	return m_controller;
@@ -1089,7 +1095,7 @@ int32_t Player::IsAttackKeyDown()
 	return -1;
 }
 
-void Player::SendTransform()
+void Player::ServerSendTransformMessage()
 {
 	if (m_startSendTransform == false)
 		return;
@@ -1116,6 +1122,11 @@ physx::PxVec3 Player::GetForwardVec()
 void Player::SetMeteorAttackAvailable(bool value)
 {
 	m_meteorAvailable = value;
+}
+
+void Player::SetCameraDistance(float value)
+{
+	m_cameraDistance = value;
 }
 
 void Player::Set_OverlapObject(bool activate)
