@@ -4,10 +4,10 @@
 
 #include "EnginePch.h"
 
-//#define PLAY_BGM
-
 extern HINSTANCE g_hInst;
 extern std::wstring serverIP_Address;
+extern bool playSound;
+extern bool playMusic;
 
 template<typename... Args>
 inline void Print(const Args&... args)

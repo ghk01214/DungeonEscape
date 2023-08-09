@@ -52,10 +52,11 @@ void Scene_Test::Start()
 {
 	__super::Start();
 
-#ifdef PLAY_BGM
-	GET_SINGLE(CSoundMgr)->StopAll();
-	GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
-#endif
+	if (playMusic == true)
+	{
+		GET_SINGLE(CSoundMgr)->StopAll();
+		GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+	}
 }
 
 void Scene_Test::Update()
@@ -1463,21 +1464,24 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		{
 			RemoveNonAnimatedObject(id);
 
-			GET_SINGLE(CSoundMgr)->PlaySound(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
+			if (playSound == true)
+				GET_SINGLE(CSoundMgr)->PlaySound(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
 		{
 			RemoveNonAnimatedObject(id);
 
-			GET_SINGLE(CSoundMgr)->PlaySound(L"Ice Hit.wav", CSoundMgr::EFFECT, 0.7f);
+			if (playSound == true)
+				GET_SINGLE(CSoundMgr)->PlaySound(L"Ice Hit.wav", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_POISONBALL:
 		{
 			RemoveNonAnimatedObject(id);
 
-			GET_SINGLE(CSoundMgr)->PlaySound(L"PoisonAcid Hit.wav", CSoundMgr::EFFECT, 0.7f);
+			if (playSound == true)
+				GET_SINGLE(CSoundMgr)->PlaySound(L"PoisonAcid Hit.wav", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_METEOR:
@@ -1498,7 +1502,8 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			RemoveNetworkObject(removeObjects);
 			GET_NETWORK->RemoveNetworkObject(id);
 
-			GET_SINGLE(CSoundMgr)->PlaySound(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
+			if (playSound == true)
+				GET_SINGLE(CSoundMgr)->PlaySound(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
@@ -1591,26 +1596,36 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 	{
 		case server::SOUND_TYPE::BATTLE:
 		{
-#ifdef PLAY_SOUND
-			GET_SINGLE(CSoundMgr)->StopSound(CSoundMgr::BGM);
-			GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
-			GET_SINGLE(CSoundMgr)->BGMVolumeDown(0.2f);
-#endif
+			if (playMusic == true)
+			{
+				GET_SINGLE(CSoundMgr)->StopSound(CSoundMgr::BGM);
+				GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+				GET_SINGLE(CSoundMgr)->BGMVolumeDown(0.2f);
+			}
 		}
 		break;
 		case server::SOUND_TYPE::PUNCH:
 		{
-			GET_SINGLE(CSoundMgr)->PlaySound(L"Punch.wav", CSoundMgr::EFFECT, 0.7f);
+			if (playSound == true)
+			{
+				GET_SINGLE(CSoundMgr)->PlaySound(L"Punch.wav", CSoundMgr::EFFECT, 0.7f);
+			}
 		}
 		break;
 		case server::SOUND_TYPE::SMASH:
 		{
-			GET_SINGLE(CSoundMgr)->PlaySound(L"Smash.ogg", CSoundMgr::EFFECT, 0.7f);
+			if (playSound == true)
+			{
+				GET_SINGLE(CSoundMgr)->PlaySound(L"Smash.ogg", CSoundMgr::EFFECT, 0.7f);
+			}
 		}
 		break;
 		case server::SOUND_TYPE::ROAR:
 		{
-			GET_SINGLE(CSoundMgr)->PlaySound(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
+			if (playSound == true)
+			{
+				GET_SINGLE(CSoundMgr)->PlaySound(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
+			}
 		}
 		break;
 		default:
@@ -1827,18 +1842,20 @@ void Scene_Test::MoveMap(MAP_TYPE eType)
 			mapObjects = m_splitMap_1;
 
 			ObjectDesc objectDesc;
-			objectDesc.strName = L"stone_array";
+			//objectDesc.strName = L"stone_array";
+			objectDesc.strName = L"crystal_tombstone";
 			objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
 			objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
-			objectDesc.strPath = L"..\\Resources\\FBX\\Portal\\" + objectDesc.strName + L".fbx";
+			//objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Portal\\" + objectDesc.strName + L".fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Artifact\\crystal tombstone\\" + objectDesc.strName + L".fbx";
 			objectDesc.script = nullptr;
 
 			std::vector<std::shared_ptr<CGameObject>> gameObjects = CreateMapObject(objectDesc);
 			//gameObjects = AddNetworkToObject(gameObjects, server::OBJECT_TYPE::PLAYER);
 
-			Matrix matWorld = Matrix::CreateScale(10.f);
-			matWorld *= Matrix::CreateRotationX(XMConvertToRadians(90.f));
-			matWorld *= Matrix::CreateRotationY(XMConvertToRadians(45.f));
+			Matrix matWorld = Matrix::CreateScale(1.f);
+			//matWorld *= Matrix::CreateRotationX(XMConvertToRadians(90.f));
+			//matWorld *= Matrix::CreateRotationY(XMConvertToRadians(45.f));
 			matWorld *= Matrix::CreateTranslation(Vec3{ 0.f, -700.f, 7510.f });
 
 			for (auto& object : gameObjects)
