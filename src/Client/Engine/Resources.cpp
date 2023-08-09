@@ -780,6 +780,30 @@ void Resources::CreateDefaultShader()
 		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\font.fx", info, arg);
 		Add<Shader>(L"Font", shader);
 	}
+
+	// Font
+	{
+		ShaderInfo info =
+		{
+			SHADER_TYPE::FORWARD,
+			RASTERIZER_TYPE::CULL_NONE,
+			DEPTH_STENCIL_TYPE::GREATER_EQUAL,
+			BLEND_TYPE::ALPHA_BLEND
+		};
+
+		ShaderArg arg =
+		{
+			"VS_Font",
+			"",
+			"",
+			"",
+			"PS_Font"
+		};
+
+		shared_ptr<Shader> shader = make_shared<Shader>();
+		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\font.fx", info, arg);
+		Add<Shader>(L"Font_Deffered", shader);
+	}
 }
 
 void Resources::CreateDefaultMaterial()

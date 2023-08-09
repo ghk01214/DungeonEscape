@@ -135,6 +135,12 @@
     <Filter Include="소스 파일\Objects\01. UI\In Game\Fade">
       <UniqueIdentifier>{09b16139-f0c5-498f-9cf9-2535a01d7371}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\TriggerUI">
+      <UniqueIdentifier>{cc54d834-e12c-4291-ab7f-8bd084267e60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\TriggerUI\PortalUI">
+      <UniqueIdentifier>{b8f71ea7-8a7d-4ece-8c3f-bc4d17933dbf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -281,6 +287,9 @@
     <ClInclude Include="Scene_Start.h">
       <Filter>소스 파일\Objects\00. Scene\Start</Filter>
     </ClInclude>
+    <ClInclude Include="PortalUI_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\PortalUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -421,6 +430,9 @@
     </ClCompile>
     <ClCompile Include="Scene_Start.cpp">
       <Filter>소스 파일\Objects\00. Scene\Start</Filter>
+    </ClCompile>
+    <ClCompile Include="PortalUI_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\PortalUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

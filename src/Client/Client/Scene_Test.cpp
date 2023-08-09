@@ -37,6 +37,9 @@
 #include "Fade_Script.h"
 
 #include "FontManager.h"
+#include "Font.h"
+
+#include "PortalUI_Script.h"
 
 Scene_Test::Scene_Test()
 {
@@ -157,6 +160,7 @@ void Scene_Test::CreateLayer()
 
 	GET_SINGLE(EffectManager)->SetSceneIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"Default"));
 	GET_SINGLE(FontManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+	GET_SINGLE(FontManager)->SetObjectIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"Default"));
 }
 
 void Scene_Test::CreateComputeShader(void)
@@ -378,6 +382,15 @@ void Scene_Test::CreateMRTUI(shared_ptr<CScene> pScene)
 		obj->AddComponent(meshRenderer);
 		pScene->AddGameObject(obj);
 	}
+}
+
+void Scene_Test::CreatePortalUI(shared_ptr<CScene> pScene)
+{
+	std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
+	m_portalUIScript = std::make_shared<PortalUI_Script>();
+	obj->AddComponent(m_portalUIScript);
+
+	pScene->AddGameObject(obj);
 }
 
 void Scene_Test::CreateHPnSPBar()
@@ -1637,6 +1650,9 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 {
 	auto triggerType{ packet.Read<server::TRIGGER_INTERACTION_TYPE>() };
 
+	if (nullptr == m_fadeScript)
+		return;
+
 	switch (triggerType)
 	{
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN:
@@ -1689,10 +1705,13 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 	auto type{ packet.Read<server::TRIGGER_INTERACTION_TYPE>() };
 	int32_t count{ packet.Read<int32_t>() };
 
+	m_portalUIScript->SetCount(count);
+
 	switch (type)
 	{
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN:
 		{
+			//m_portalUIScript->SetInfo(Vec2(0.f, 0.F), Vec2(1.f, 1.f));
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN:
@@ -1818,6 +1837,9 @@ shared_ptr<CScene> Scene_Test::Create(server::FBX_TYPE eType)
 
 void Scene_Test::CheckMapMove(void)
 {
+	if (nullptr == m_fadeScript)
+		return;
+
 	if (m_fadeScript->GetFading())
 	{
 		m_eNextMapType = m_fadeScript->GetMapType();
@@ -1919,15 +1941,16 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateLights(pScene);
 	CreateMap(pScene);
 	//CreateBillBoard(pScene);
-	CreateSkill(pScene);
+	//CreateSkill(pScene);
 
-	CreateEffect(pScene);
+	//CreateEffect(pScene);
 
 	CreatePlayer(pScene, eType);
 
 	AddEffectTextures();
 
-	CreateFade(pScene);
+	//CreateFade(pScene);
 
-	CreateMRTUI(pScene);
+	//CreateMRTUI(pScene);
+	CreatePortalUI(pScene);
 }

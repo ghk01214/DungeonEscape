@@ -103,6 +103,16 @@ void Camera::SortGameObject()
 			m_vecFont.push_back(font);
 		}
 	}
+	else if (_type == PROJECTION_TYPE::PERSPECTIVE)
+	{
+		// font 오브젝트 forward에 추가
+		const vector<shared_ptr<CGameObject>>& fonts = GET_SINGLE(FontManager)->GetFont3DObject();
+
+		for (auto& font : fonts)
+		{
+			m_vecFont.push_back(font);
+		}
+	}
 	 
 	// effect 오브젝트 forward에 추가
 	const vector<shared_ptr<CGameObject>>& effects = GET_SINGLE(EffectManager)->GetEffectObject();
@@ -152,6 +162,11 @@ void Camera::Render_Deferred()
 	S_MatProjection = m_matProjection;
 
 	GET_SINGLE(InstancingManager)->Render(m_vecDeferred);
+
+	if (_type == PROJECTION_TYPE::PERSPECTIVE)
+	{
+		GET_SINGLE(InstancingManager)->Render(m_vecFont);
+	}
 }
 
 void Camera::Render_Forward()
@@ -160,7 +175,11 @@ void Camera::Render_Forward()
 	S_MatProjection = m_matProjection;
 
 	GET_SINGLE(InstancingManager)->Render(m_vecForward);
-	GET_SINGLE(InstancingManager)->Render(m_vecFont);
+
+	if (_type == PROJECTION_TYPE::ORTHOGRAPHIC)
+	{
+		GET_SINGLE(InstancingManager)->Render(m_vecFont);
+	}
 
 	for (auto& gameObject : m_vecParticle)
 	{
