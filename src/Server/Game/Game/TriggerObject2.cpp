@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TriggerObject2.h"
 #include "PhysDevice.h"
 #include "physx_utils.h"
@@ -148,7 +148,12 @@ void TriggerObject2::SendPlayers()
 	{
 		auto player = dynamic_cast<Player*>(p);
 		auto requestedPos = m_portalDestination[static_cast<int>(m_attribute)];
-		requestedPos.x += givenSpace * num++;
+
+		if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
+			requestedPos.z += givenSpace * num++;
+		else
+			requestedPos.x += givenSpace * num++;
+
 		player->SetControllerPosition(requestedPos);
 	}
 
