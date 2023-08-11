@@ -40,7 +40,7 @@ void PortalUI_Script::Update()
 	}
 
 	if (m_count != 0)
-		GET_SINGLE(FontManager)->RenderFonts(m_content, m_pos, m_size);
+		;// GET_SINGLE(FontManager)->RenderFonts(m_content, m_pos, m_size);
 }
 
 void PortalUI_Script::LateUpdate()

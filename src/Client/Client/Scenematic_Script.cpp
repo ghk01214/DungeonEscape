@@ -5,6 +5,8 @@
 #include "Timer.h"
 #include "Camera_Script.h"
 
+#include "MeshData.h"
+
 Scenematic_Script::Scenematic_Script()
 {
 }
@@ -15,12 +17,38 @@ Scenematic_Script::~Scenematic_Script()
 
 void Scenematic_Script::Awake()
 {
-	SCENEMATIC_INFO info;
-	info.vCameraPos = Vec3(2012.3777f, -860.09766f, 6711.399f);
-	info.vDegree = Vec3(182.29234f, -11.782078f, 0.f);
-	info.m_time = 5.f;
+	// 파일 정보 로드
+	for (int i = 1; i < static_cast<int>(server::CUT_SCENE_TYPE::MAX); ++i)
+	{
+		wstring path = L"..\\Resources\\Senematic\\Info";
+		wstring str = to_wstring(i) + L".bin";
 
-	m_info[1].push_back(info);
+		HANDLE hFile = MeshData::CreateFileRead(path + str);
+		
+		if (INVALID_HANDLE_VALUE == hFile)
+		{
+			//wstring str{ L"Movement_Script::LateUpdate - Failed to CreateFile From : " };
+			//str += path;
+			//MSG_BOX(str.c_str());
+			return;
+		}
+
+		vector<Matrix> vecMat;
+
+		int iCount = loadInt(hFile);
+		vecMat.reserve(iCount);
+
+		vecMat = loadVecData<Matrix>(hFile);
+
+		for (int j = 0; j < iCount; ++j)
+		{
+			SCENEMATIC_INFO info;
+			info.m_time = 3.f;
+			info.matWorld = vecMat[j];
+
+			m_info[i].push_back(info);
+		}
+	}
 }
 
 void Scenematic_Script::Start()
@@ -32,6 +60,17 @@ void Scenematic_Script::Update()
 {
 	if (m_bPlay)
 	{
+		if (m_info[m_currentScene].empty())
+			return;
+
+		// 카메라를 현재 인덱스의 정보로 이동
+		auto transform = GetTransform();
+		auto& curInfo = m_info[m_currentScene][m_curIndex];
+
+		// 공전
+		Matrix matWorld = curInfo.matWorld;
+		transform->SetWorldMatrix(matWorld);
+
 		m_accTime += DELTA_TIME;
 
 		if (m_accTime > m_info[m_currentScene][m_curIndex].m_time)
@@ -39,29 +78,20 @@ void Scenematic_Script::Update()
 			++m_curIndex;
 			m_accTime = 0.f;
 		}
-
-		// 카메라를 현재 인덱스의 정보로 이동
-		auto transform = GetTransform();
-		auto& curInfo = m_info[m_currentScene][m_curIndex];
-		auto& curPos = curInfo.vCameraPos;
-		auto& curDegree = curInfo.vDegree;
-
-		Matrix matRotation = Matrix::CreateRotationX(XMConvertToRadians(curPos.x));
-		matRotation *= Matrix::CreateRotationY(XMConvertToRadians(curPos.y));
-		matRotation *= Matrix::CreateRotationZ(XMConvertToRadians(curPos.z));
-		Matrix matTranslation = Matrix::CreateTranslation(curPos);
-
-		// 공전
-		Matrix matWorld = matRotation * matTranslation;
-		transform->SetWorldMatrix(matWorld);
 	}
 }
 
 void Scenematic_Script::LateUpdate()
 {
-	if (m_info[m_currentScene].size() < m_curIndex)
+	if (m_bPlay)
 	{
-		StopSenematic();
+		if (m_info[m_currentScene].empty())
+			return;
+
+		if (m_info[m_currentScene].size() <= m_curIndex)
+		{
+			StopSenematic();
+		}
 	}
 }
 

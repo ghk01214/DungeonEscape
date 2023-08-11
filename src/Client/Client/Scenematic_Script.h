@@ -5,8 +5,11 @@
 class Camera_Basic;
 
 typedef struct _tagSCENEMATIC_INFO {
-	Vec3 vCameraPos;	// 카메라의 위치
-	Vec3 vDegree;		// 카메라의 각도
+	//Vec3 vCameraPos;	// 카메라의 위치
+	//Vec3 vDegree;		// 카메라의 각도
+
+	Matrix matWorld;	// 위치나 각도 없이 행렬만 넣을 경우
+
 	float m_time;		// 몇초간 있을건지
 }SCENEMATIC_INFO;
 

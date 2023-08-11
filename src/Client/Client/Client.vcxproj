@@ -169,6 +169,7 @@
     <ClInclude Include="HP_Script.h" />
     <ClInclude Include="InfoUI_Script.h" />
     <ClInclude Include="Loading_Script.h" />
+    <ClInclude Include="Movement_Script.h" />
     <ClInclude Include="PortalUI_Script.h" />
     <ClInclude Include="Start_Script.h" />
     <ClInclude Include="Start_StartButton.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="HP_Script.cpp" />
     <ClCompile Include="InfoUI_Script.cpp" />
     <ClCompile Include="Loading_Script.cpp" />
+    <ClCompile Include="Movement_Script.cpp" />
     <ClCompile Include="PortalUI_Script.cpp" />
     <ClCompile Include="Start_Script.cpp" />
     <ClCompile Include="Start_StartButton.cpp" />

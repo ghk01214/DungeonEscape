@@ -41,6 +41,7 @@
 
 #include "PortalUI_Script.h"
 #include "Scenematic_Script.h"
+#include "Movement_Script.h"
 
 Scene_Test::Scene_Test()
 {
@@ -200,15 +201,23 @@ void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
 
 
+//#define MOVEMENT
+
+#ifdef MOVEMENT
+	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>();
+	camera->AddComponent(pMovementScript);
+#else
 	shared_ptr<Camera_Basic> pCameraScript = make_shared<Camera_Basic>();
 	m_InfoUIScript->SetCameraScript(pCameraScript);
 	camera->AddComponent(pCameraScript);
-
 
 	shared_ptr<Scenematic_Script> pSenematicScript = make_shared<Scenematic_Script>();
 	m_scenematicScript = pSenematicScript;
 	pSenematicScript->SetScript(pCameraScript);
 	camera->AddComponent(pSenematicScript);
+#endif
+
+
 
 
 	camera->GetCamera()->SetFar(30000.f);

@@ -141,6 +141,9 @@
     <Filter Include="소스 파일\Objects\01. UI\In Game\TriggerUI\PortalUI">
       <UniqueIdentifier>{b8f71ea7-8a7d-4ece-8c3f-bc4d17933dbf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\02. Camera\Movement">
+      <UniqueIdentifier>{48cbf827-d8aa-4db6-8ff9-11844c06af63}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -290,6 +293,9 @@
     <ClInclude Include="PortalUI_Script.h">
       <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\PortalUI</Filter>
     </ClInclude>
+    <ClInclude Include="Movement_Script.h">
+      <Filter>소스 파일\Objects\02. Camera\Movement</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -433,6 +439,9 @@
     </ClCompile>
     <ClCompile Include="PortalUI_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\PortalUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Movement_Script.cpp">
+      <Filter>소스 파일\Objects\02. Camera\Movement</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
