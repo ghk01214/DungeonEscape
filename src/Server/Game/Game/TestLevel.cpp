@@ -398,6 +398,14 @@ void TestLevel::LoadTriggerObject()
 {
 	auto objMgr{ ObjectManager::GetInstance() };
 
+	auto pos{ PORTAL1_POS };
+	pos.z += 500.f;
+
+	auto CutScene1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", pos, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true) };
+	auto CutScene1Body{ CutScene1Obj->GetComponent<RigidBody>(L"RigidBody") };
+	CutScene1Body->AddCollider<BoxCollider>(CutScene1Obj->GetTransform()->GetScale());
+	CutScene1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::GUIDELINE1);
+
 	auto Portal1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", PORTAL1_POS, Quat(0, 0, 0, 1), Vec3(600.f, 600.f, 600.f), false) };
 	auto Portal1Body{ Portal1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal1Body->AddCollider<BoxCollider>(Portal1Obj->GetTransform()->GetScale());

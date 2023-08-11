@@ -1752,7 +1752,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 {
 	auto sceneType{ packet.Read<server::CUT_SCENE_TYPE>() };
 
-	m_scenematicScript->PlaySenematic(static_cast<int>(sceneType));
+	m_scenematicScript->PlaySenematic(magic_enum::enum_integer(sceneType));
 
 	switch (sceneType)
 	{

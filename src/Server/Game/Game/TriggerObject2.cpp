@@ -286,6 +286,7 @@ void TriggerObject2::ServerSendInMessage()
 		case TRIGGERATTRIBUTE::GUIDELINE4:
 		case TRIGGERATTRIBUTE::GUIDELINE5:
 		{
+			ServerSendCutSceneMessage();
 		}
 		break;
 		default:
@@ -350,6 +351,25 @@ void TriggerObject2::ServerSendInteractionCountMessage()
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN);
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+}
+
+void TriggerObject2::ServerSendCutSceneMessage()
+{
+	game::TIMER_EVENT ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
+	ev.objID = m_id;
+	
+	if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE1)
+		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE1);
+	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE2)
+		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE2);
+	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE3)
+		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE3);
+	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE4)
+		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE4);
+	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE5)
+		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE5);
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
