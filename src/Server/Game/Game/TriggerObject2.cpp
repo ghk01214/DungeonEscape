@@ -242,6 +242,9 @@ bool TriggerObject2::Apply(Player* player)
 	if (m_oneTimeOnly)
 	{
 		//cout << "attribute once" << endl;
+
+		// 임시로 여기에 작성
+		ServerSendCutSceneMessage();
 		return true;
 	}
 	else
