@@ -17,4 +17,5 @@ inline void Print(const Args&... args)
 }
 
 void PrintVec3(const Vec3& v);
+void PrintVec2(const Vec2& v);
 void PrintQuat(const Quat& q);

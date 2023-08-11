@@ -29,6 +29,10 @@ void Camera_Basic::Update(void)
 
 void Camera_Basic::LateUpdate()
 {
+	// 시네마틱 카메라가 작동할 경우 멈춘다.
+	if (m_bPlaySenematic)
+		return;
+
 	std::shared_ptr<CScene> activeScene = GET_SINGLE(SceneManager)->GetActiveScene();
 	auto& player = activeScene->GetPlayer();
 
@@ -137,15 +141,16 @@ void Camera_Basic::LateUpdate()
 				m_distance = 0.7f;
 		}
 
-		//// 카메라의 위치
-		//Vec3 vCameraPos = transform->GetWorldPosition();
+		// 카메라의 위치
+		Vec3 vCameraPos = transform->GetWorldPosition();
 
 		//// 플레이어의 위치
 		//Vec3 vPlayerPos = playerTransform->GetWorldPosition();
 
 		//m_distanceBetweenPlayerAndCamera = SimpleMath::Vector3::Distance(vCameraPos, vPlayerPos);
 
-		//PrintVec3(vCameraPos);
+		PrintVec3(vCameraPos);
+		PrintVec2(GetRotationAxisXY());
 		//PrintVec3(vPlayerPos);
 		//Print(m_distanceBetweenPlayerAndCamera);
 	}

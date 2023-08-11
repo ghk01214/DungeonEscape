@@ -208,7 +208,7 @@ namespace network
 		int32_t packetSize{};
 
 		// CPacket 클래스에 받은 데이터 저장
-		m_packet.SetData(pOverEx->data);
+		m_packet.PushData(pOverEx->data);
 		m_pRecvPacket = pOverEx->data;
 
 		while (remainSize > 0)
@@ -223,7 +223,7 @@ namespace network
 
 			// 패킷의 잘린 부분으로 포인터 이동
 			m_pRecvPacket += packetSize;
-			m_packet.SetData(m_pRecvPacket);
+			m_packet.PushData(m_pRecvPacket);
 			// 처리한 패킷 사이즈만큼 빼기
 			remainSize -= packetSize;
 		}

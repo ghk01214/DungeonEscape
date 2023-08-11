@@ -89,7 +89,7 @@ namespace network
 	}
 
 	// 아직 사용X
-	void CPacket::SetData(int32_t id)
+	void CPacket::PushData(int32_t id)
 	{
 		m_type = TYPE::WRITE;
 		m_size = 0;
@@ -102,7 +102,7 @@ namespace network
 	}
 
 	// 전송받은 데이터를 CPacket 클래스에 저장
-	void CPacket::SetData(char* data)
+	void CPacket::PushData(char* data)
 	{
 		std::memcpy(m_data.data(), data, BUFF_SIZE);
 
@@ -114,7 +114,7 @@ namespace network
 	}
 
 	// Deprecated
-	void CPacket::SetData(std::array<char, BUFF_SIZE>::iterator recvIter, int32_t recvDataSize, int32_t prevSize)
+	void CPacket::PushData(std::array<char, BUFF_SIZE>::iterator recvIter, int32_t recvDataSize, int32_t prevSize)
 	{
 		std::ranges::copy(recvIter, recvIter + recvDataSize, m_data.begin() + prevSize);
 

@@ -319,7 +319,7 @@ namespace game
 
 		char* pPacket{ pOverEx->data };
 		network::CPacket packet{};
-		packet.SetData(pPacket);
+		packet.PushData(pPacket);
 
 		while (remainSize > 0)
 		{
@@ -331,7 +331,7 @@ namespace game
 			ProcessPacket(id, packet);
 
 			pPacket += packetSize;
-			packet.SetData(pPacket);
+			packet.PushData(pPacket);
 			remainSize -= packetSize;
 		}
 

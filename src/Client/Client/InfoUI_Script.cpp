@@ -25,6 +25,8 @@ void InfoUI_Script::Start()
 
 void InfoUI_Script::Update()
 {
+	return;
+
 	// 카메라 기준 위치
 	m_cameraPos = m_cameraInfoScript->GetTransform()->GetLocalToWorldMatrix().Translation();
 	m_distanceAxis = m_cameraInfoScript->GetDistanceAxisXY();

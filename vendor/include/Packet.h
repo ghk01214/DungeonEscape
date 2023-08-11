@@ -73,9 +73,9 @@ namespace network
 		constexpr std::array<char, BUFF_SIZE>& GetPacketData() { return m_data; }
 		char* GetPacketAddr() { return m_data.data(); }
 
-		void SetData(int32_t id);
-		void SetData(char* data);
-		void SetData(std::array<char, BUFF_SIZE>::iterator recvIter, int32_t recvDataSize, int32_t prevSize);
+		void PushData(int32_t id);
+		void PushData(char* data);
+		void PushData(std::array<char, BUFF_SIZE>::iterator recvIter, int32_t recvDataSize, int32_t prevSize);
 
 	private:
 		uint16_t m_size;		// Header를 제외한 데이터만의 크기
