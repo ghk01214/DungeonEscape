@@ -65,6 +65,7 @@ public:
 	static bool CloseEnough(const float& a, const float& b, const float& epsilon = std::numeric_limits<float>::epsilon());
 	static Vec3 DecomposeRotationMatrix(const Matrix& rotation);
 
+	Vec2 GetRatio(int width, int height);	// -100 ~ 100 사이의 값을 입력하면 현재 윈도우 비율을 고려한 특정 위치값을 반환하는 함수
 
 public:
 	void SetParent(shared_ptr<Transform> parent) { _parent = parent; }
