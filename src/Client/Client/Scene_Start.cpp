@@ -122,12 +122,10 @@ void Scene_Start::CreateUICamera(void)
 
 void Scene_Start::CreateUI(void)
 {
-	float width = static_cast<float>(GEngine->GetWindow().width);
-	float height = static_cast<float>(GEngine->GetWindow().height);
-
-	CreateBackground(width, height);
-	CreateTitle(width, height);
-	CreateLogInButton(width, height);
+	CreateBackground();
+	CreateTitle();
+	CreateLogInButton();
+	CreateSettingButton();
 }
 
 void Scene_Start::LoadTextures(void)
@@ -136,6 +134,7 @@ void Scene_Start::LoadTextures(void)
 	GET_SINGLE(Resources)->Load<Texture>(L"Title", L"..\\Resources\\Texture\\UI\\Start\\Title.png");
 	GET_SINGLE(Resources)->Load<Texture>(L"Log In", L"..\\Resources\\Texture\\UI\\Start\\Log In.png");
 	GET_SINGLE(Resources)->Load<Texture>(L"Log In_selected", L"..\\Resources\\Texture\\UI\\Start\\Log In_selected.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Setting", L"..\\Resources\\Texture\\UI\\Start\\Setting.png");
 }
 
 void Scene_Start::CreateLights(void)
@@ -149,11 +148,14 @@ void Scene_Start::CreateLights(void)
 	AddDirectionalLight(lightDesc);
 }
 
-void Scene_Start::CreateBackground(float width, float height)
+void Scene_Start::CreateBackground()
 {
 	std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
 	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 	obj->AddComponent(std::make_shared<Transform>());
+
+	float width = static_cast<float>(GEngine->GetWindow().width);
+	float height = static_cast<float>(GEngine->GetWindow().height);
 
 	obj->GetTransform()->SetLocalScale(Vec3(width, height, 1.f));
 	obj->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 500.f));
@@ -185,16 +187,19 @@ void Scene_Start::CreateBackground(float width, float height)
 	AddGameObject(obj);
 }
 
-void Scene_Start::CreateTitle(float width, float height)
+void Scene_Start::CreateTitle()
 {
 	std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
 	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 	obj->AddComponent(std::make_shared<Transform>());
 
+#ifdef RELEASE
+	float titleWidth{ 800.f };
+#elif
 	float titleWidth{ 400.f };
-	auto pos{ GetRatio(0.f, 0.f) };
-	Print(pos.x);
-	Print(pos.y);
+#endif
+
+	auto pos{ GetRatio(0.f, 45.f) };
 
 	obj->GetTransform()->SetLocalScale(Vec3(titleWidth, titleWidth / 6.55f, 1.f));
 	obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 400.f));
@@ -226,16 +231,22 @@ void Scene_Start::CreateTitle(float width, float height)
 	AddGameObject(obj);
 }
 
-void Scene_Start::CreateLogInButton(float width, float height)
+void Scene_Start::CreateLogInButton()
 {
 	std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
 	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 	obj->AddComponent(std::make_shared<Transform>());
 
-	float yPos{ -(height / 4) };
+#ifdef RELEASE
+	float ratio{ 1.5f };
+#elif
+	float ratio{ 1.f };
+#endif
 
-	obj->GetTransform()->SetLocalScale(Vec3(281.f, 110.f, 1.f));
-	obj->GetTransform()->SetLocalPosition(Vec3(0.f, yPos, 100.f));
+	auto pos{ GetRatio(0.f, -50.f) };
+
+	obj->GetTransform()->SetLocalScale(Vec3(281.f * ratio, 110.f * ratio, 1.f));
+	obj->GetTransform()->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
 	std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
 	{
@@ -261,6 +272,44 @@ void Scene_Start::CreateLogInButton(float width, float height)
 	behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Log In_selected"));
 
 	obj->AddComponent(behaviour);
+
+	AddGameObject(obj);
+}
+
+void Scene_Start::CreateSettingButton()
+{
+	std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+	obj->AddComponent(std::make_shared<Transform>());
+
+	auto pos{ GetRatio(-93.f, 86.f) };
+
+	obj->GetTransform()->SetLocalScale(Vec3(121.f, 121.f, 1.f));
+	obj->GetTransform()->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+	std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+	{
+		std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+		meshRenderer->SetMesh(mesh);
+	}
+
+	{
+		std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+		std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Setting");
+
+		std::shared_ptr<Material> material = std::make_shared<Material>();
+		material->SetShader(shader);
+		material->SetTexture(0, texture);
+		material->SetFloat(2, 1.f);
+		meshRenderer->SetMaterial(material);
+	}
+
+	obj->AddComponent(meshRenderer);
+
+	//std::shared_ptr<Start_StartButton> behaviour = std::make_shared<Start_StartButton>();
+	//behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Setting"));
+
+	//obj->AddComponent(behaviour);
 
 	AddGameObject(obj);
 }

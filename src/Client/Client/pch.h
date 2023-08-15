@@ -4,6 +4,8 @@
 
 #include "EnginePch.h"
 
+#define RELEASE
+
 extern HINSTANCE g_hInst;
 extern std::wstring serverIP_Address;
 extern bool playSound;

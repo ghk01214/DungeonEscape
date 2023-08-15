@@ -8,8 +8,6 @@
 #include <NetworkManager.h>
 #include <Engine.h>
 
-//#define RELEASE
-
 #ifndef RELEASE
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 #endif

@@ -325,6 +325,7 @@ HRESULT CLoader::Loading_ForStart_Texture()
 	GET_SINGLE(Resources)->Load<Texture>(L"Title", L"..\\Resources\\Texture\\UI\\Start\\Title.png");
 	GET_SINGLE(Resources)->Load<Texture>(L"NewStart", L"..\\Resources\\Texture\\UI\\Start\\Log In.png");
 	GET_SINGLE(Resources)->Load<Texture>(L"NewStart_Pressed", L"..\\Resources\\Texture\\UI\\Start\\Log In_selected.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Setting", L"..\\Resources\\Texture\\UI\\Start\\Setting.png");
 
 	return S_OK;
 }

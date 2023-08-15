@@ -26,9 +26,10 @@ private:
 	void CreateLights(void);
 
 private:
-	void CreateBackground(float width, float height);
-	void CreateTitle(float width, float height);
-	void CreateLogInButton(float width, float height);
+	void CreateBackground();
+	void CreateTitle();
+	void CreateLogInButton();
+	void CreateSettingButton();
 
 public:
 	static std::shared_ptr<CScene> Create();
