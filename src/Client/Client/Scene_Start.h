@@ -25,6 +25,11 @@ private:
 	void LoadTextures(void);
 	void CreateLights(void);
 
+private:
+	void CreateBackground(float width, float height);
+	void CreateTitle(float width, float height);
+	void CreateLogInButton(float width, float height);
+
 public:
 	static std::shared_ptr<CScene> Create();
 

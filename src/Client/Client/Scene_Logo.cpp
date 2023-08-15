@@ -132,7 +132,7 @@ void Scene_Logo::CreateUI(void)
 
 void Scene_Logo::LoadTextures(void)
 {
-	GET_SINGLE(Resources)->Load<Texture>(L"Logo_School", L"..\\Resources\\Texture\\Logo\\Logo_School.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Logo_School", L"..\\Resources\\Texture\\UI\\Logo\\Logo_School.png");
 }
 
 void Scene_Logo::CreateLights(void)

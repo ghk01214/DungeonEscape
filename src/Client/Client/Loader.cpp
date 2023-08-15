@@ -31,8 +31,8 @@ unsigned int APIENTRY ThreadEntryFunc(CLoader* pArg)
 		case SCENE_GAMEPLAY:
 		pLoader->Loading_ForGamePlayLevel();
 		break;
-		case SCENE_LOBBY:
-		pLoader->Loading_ForLobby();
+		case SCENE_START:
+		pLoader->Loading_ForStart();
 		break;
 		case SCENE_CHARACTER_SELECT:
 		pLoader->Loading_ForCharacterSelection();
@@ -164,9 +164,9 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 
 HRESULT CLoader::Loading_GamePlayLevel_UI()
 {
-	GET_SINGLE(Resources)->Load<Texture>(L"Bar", L"..\\Resources\\Texture\\In Game\\bar.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"HP", L"..\\Resources\\Texture\\In Game\\hp.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"MP", L"..\\Resources\\Texture\\In Game\\mp.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Bar", L"..\\Resources\\Texture\\UI\\In Game\\bar.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"HP", L"..\\Resources\\Texture\\UI\\In Game\\hp.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"MP", L"..\\Resources\\Texture\\UI\\In Game\\mp.png");
 
 	return S_OK;
 }
@@ -295,18 +295,18 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 #pragma endregion
 
 #pragma region [LOBBY]
-HRESULT CLoader::Loading_ForLobby()
+HRESULT CLoader::Loading_ForStart()
 {
 	// ?ш린??由ъ냼??異붽?
 
 	m_isFinished = false;
 	m_progress = 0;
 
-	Loading_ForLobby_Font();
+	Loading_ForStart_Font();
 
 	m_progress = 50;
 
-	Loading_ForLobby_Texture();
+	Loading_ForStart_Texture();
 
 	m_progress = 100;
 	m_isFinished = true;
@@ -314,16 +314,17 @@ HRESULT CLoader::Loading_ForLobby()
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_ForLobby_Font()
+HRESULT CLoader::Loading_ForStart_Font()
 {
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_ForLobby_Texture()
+HRESULT CLoader::Loading_ForStart_Texture()
 {
-	GET_SINGLE(Resources)->Load<Texture>(L"Lobby_InGame", L"..\\Resources\\Texture\\Lobby\\Lobby_InGame.PNG");
-	GET_SINGLE(Resources)->Load<Texture>(L"NewStart", L"..\\Resources\\Texture\\Lobby\\NewStart.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"NewStart_Pressed", L"..\\Resources\\Texture\\Lobby\\NewStart_Pressed.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Lobby_InGame", L"..\\Resources\\Texture\\UI\\Start\\Lobby_InGame.PNG");
+	GET_SINGLE(Resources)->Load<Texture>(L"Title", L"..\\Resources\\Texture\\UI\\Start\\Title.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"NewStart", L"..\\Resources\\Texture\\UI\\Start\\Log In.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"NewStart_Pressed", L"..\\Resources\\Texture\\UI\\Start\\Log In_selected.png");
 
 	return S_OK;
 }
@@ -353,13 +354,13 @@ HRESULT CLoader::Loading_ForCharacterSelection_Font()
 
 HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 {
-	GET_SINGLE(Resources)->Load<Texture>(L"Nana", L"..\\Resources\\Texture\\Character Select\\Nana.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Mistic", L"..\\Resources\\Texture\\Character Select\\Mistic.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Carmel", L"..\\Resources\\Texture\\Character Select\\Carmel.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Mistic", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Carmel", L"..\\Resources\\Texture\\UI\\Character Select\\Carmel.png");
 
-	GET_SINGLE(Resources)->Load<Texture>(L"Nana_Selected", L"..\\Resources\\Texture\\Character Select\\Nana_Selected.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Mistic_Selected", L"..\\Resources\\Texture\\Character Select\\Mistic_Selected.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Carmel_Selected", L"..\\Resources\\Texture\\Character Select\\Carmel_Selected.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Nana_Selected", L"..\\Resources\\Texture\\UI\\Character Select\\Nana_Selected.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Mistic_Selected", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic_Selected.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Carmel_Selected", L"..\\Resources\\Texture\\UI\\Character Select\\Carmel_Selected.png");
 
 	return S_OK;
 }

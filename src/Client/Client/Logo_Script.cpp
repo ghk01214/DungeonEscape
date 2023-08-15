@@ -31,7 +31,7 @@ void Logo_Script::Update()
 {
 	if (m_bLogoEnd == true)
 	{
-		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_LOBBY));
+		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_START));
 	}
 
 	m_accTime += DELTA_TIME;

@@ -32,9 +32,9 @@ public:
 	HRESULT Loading_GamePlayLevel_Effect();
 
 public:
-	HRESULT Loading_ForLobby();
-	HRESULT Loading_ForLobby_Font();
-	HRESULT Loading_ForLobby_Texture();
+	HRESULT Loading_ForStart();
+	HRESULT Loading_ForStart_Font();
+	HRESULT Loading_ForStart_Texture();
 
 public:
 	HRESULT Loading_ForCharacterSelection();

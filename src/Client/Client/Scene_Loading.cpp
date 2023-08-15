@@ -83,7 +83,7 @@ void Scene_Loading::Update()
 				pScene = Scene_Test::Create(m_character);
 			}
 			break;
-			case SCENE_LOBBY:
+			case SCENE_START:
 			{
 				pScene = Scene_Start::Create();
 			}

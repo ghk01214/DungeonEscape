@@ -19,7 +19,7 @@ void CGame::Init(const WindowInfo& Info)
 
 	//shared_ptr<CScene> pScene = Scene_Test::Create(magic_enum::enum_value<server::FBX_TYPE>(classNum));
 
-	Open_Scene(SCENE_LOGO);
+	Open_Scene(SCENE_START);
 
 	//GET_SINGLE(SceneManager)->LoadScene(pScene);
 
