@@ -130,32 +130,6 @@ Vec3 Transform::DecomposeRotationMatrix(const Matrix& rotation)
 	return ret;
 }
 
-Vec2 Transform::GetRatio(int width, int height)
-{
-	// width, height 최대/최소값은 100/-100
-
-	if (width > 100)
-		width = 100;
-	if (width < -100)
-		width = -100;
-	if (height > 100)
-		height = 100;
-	if (height < -100)
-		height = -100;
-
-	WindowInfo info = GEngine->GetWindow();
-
-	// width, height -> -100 ~ 100 사이.
-	// 윈도우 크기가 800 x 600이라 할때
-	// 0,0은 400, 300 반환
-	// -100,-100은 0, 0
-	// 100, 100은 800, 600 반환
-
-	Vec2 v{ info.width * ((width + 100) / 200.f), info.height * ((height + 100) / 200.f) };
-
-	return v;
-}
-
 void Transform::TurnAxisY(bool clockWise)
 {
 	XMVECTOR vRight = GetRight();
