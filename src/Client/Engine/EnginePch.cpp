@@ -29,6 +29,32 @@ string ws2s(const wstring& s)
 	return r;
 }
 
+const Vec2 GetRatio(float width, float height)
+{
+	// width, height 최대/최소값은 100/-100
+
+	if (width > 100.f)
+		width = 100.f;
+	if (width < -100.f)
+		width = -100.f;
+	if (height > 100.f)
+		height = 100.f;
+	if (height < -100.f)
+		height = -100.f;
+
+	WindowInfo info = GEngine->GetWindow();
+
+	// width, height -> -100 ~ 100 사이.
+	// 윈도우 크기가 800 x 600이라 할때
+	// 0,0은 400, 300 반환
+	// -100,-100은 0, 0
+	// 100, 100은 800, 600 반환
+
+	Vec2 v{ info.width * ((width + 100.f) / 200.f), info.height * ((height + 100.f) / 200.f) };
+
+	return v;
+}
+
 static float Get_RandomFloat(float fStart, float fEnd)
 {
 	std::uniform_real_distribution<float> dist(fStart, fEnd);

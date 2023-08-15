@@ -195,6 +195,7 @@ extern std::default_random_engine dre;
 // Utils
 wstring s2ws(const string& s);
 string ws2s(const wstring& s);
+const Vec2 GetRatio(float width, float height);
 
 static float Get_RandomFloat(float fStart, float fEnd);
 static int Get_RandomInt(int iStart, int iEnd);
