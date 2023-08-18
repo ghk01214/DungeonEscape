@@ -42,6 +42,7 @@
 #include "PortalUI_Script.h"
 #include "Scenematic_Script.h"
 #include "Movement_Script.h"
+#include "Magic_Artifact_Script.h"
 
 Scene_Test::Scene_Test()
 {
@@ -201,7 +202,7 @@ void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
 
 
-//#define MOVEMENT
+#define MOVEMENT
 
 #ifdef MOVEMENT
 	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>();
@@ -634,6 +635,35 @@ void Scene_Test::CreateEffect(shared_ptr<CScene> pScene)
 	pScene->AddGameObject(gameObjects);
 }
 
+void Scene_Test::CreateMagicArtifactEffect(shared_ptr<CScene> pScene)
+{
+	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Teleport_Circle");
+
+	float magicCount = 4;
+	for (int i = 0; i < magicCount; ++i)
+	{
+		shared_ptr<CGameObject> gameObject = CreateArtifactBase(textures);
+		std::shared_ptr<Magic_Artifact_Script> behaviour = std::make_shared<Magic_Artifact_Script>();
+
+		behaviour->SetStartRotation(360.f / magicCount * i);	// 최초 회전 각도
+		behaviour->SetRotationSpeed(30.f);	// 초당 몇도 회전하는지
+
+		behaviour->SetTexture(textures);	// 텍스쳐 정보
+		behaviour->SetSize(Vec2(300.f, 300.f));	// 텍스쳐의 크기
+
+		behaviour->SetDistanceFromPoint(200.f);	// 중점으로부터 거리
+		behaviour->SetTargetPoint(Vec3(0.f, 0.f, 0.f));	// 중점 위치
+
+		behaviour->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간 
+		
+		gameObject->AddComponent(behaviour);
+
+		pScene->AddGameObject(gameObject);
+
+		m_artifactMagicScript.push_back(behaviour);
+	}
+}
+
 std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(vector<shared_ptr<Texture>> textures, float fPassingTime)
 {
 	// ??삵닏??븍뱜 ??밴쉐
@@ -718,6 +748,30 @@ std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateSkillBase(const std:
 			gameObject->GetMeshRenderer()->GetMaterial(i)->SetShader(shader);
 		}
 	}
+
+	return gameObjects;
+}
+
+std::shared_ptr<CGameObject> Scene_Test::CreateArtifactBase(vector<shared_ptr<class Texture>> textures)
+{
+	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
+
+	gameObjects->AddComponent(make_shared<Transform>());
+
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+
+	meshRenderer->SetMesh(mesh);
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+
+	shared_ptr<Texture> texture = textures[0];
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	material->SetTexture(0, texture);
+	material->SetFloat(2, 1.f);
+	meshRenderer->SetMaterial(material);
+
+	gameObjects->AddComponent(meshRenderer);
 
 	return gameObjects;
 }
@@ -2000,7 +2054,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateSkyBox(pScene);
 	//CreateUI(pScene);
 	CreateLights(pScene);
-	CreateMap(pScene);
+	//CreateMap(pScene);
 	//CreateBillBoard(pScene);
 	//CreateSkill(pScene);
 
@@ -2013,5 +2067,6 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	//CreateFade(pScene);
 
 	//CreateMRTUI(pScene);
-	CreatePortalUI(pScene);
+	CreatePortalUI(pScene); 
+	CreateMagicArtifactEffect(pScene);
 }

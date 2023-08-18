@@ -8,6 +8,7 @@ class InfoUI_Script;
 class Fade_Script;
 class PortalUI_Script;
 class Scenematic_Script;
+class Magic_Artifact_Script;
 
 #include <unordered_set>
 
@@ -61,11 +62,13 @@ private:
 	void CreateSkill(shared_ptr<CScene> pScene);
 	void CreateBillBoard(shared_ptr<CScene> pScene);
 	void CreateEffect(shared_ptr<CScene> pScene);
+	void CreateMagicArtifactEffect(shared_ptr<CScene> pScene);
 
 private:
 	std::shared_ptr<CGameObject> CreateBillBoardBase(vector<shared_ptr<class Texture>> textures, float fPassingTime);
 	std::shared_ptr<CGameObject> CreateEffectBase(vector<shared_ptr<class Texture>> textures, float fPassingTime);
 	std::vector<std::shared_ptr<CGameObject>> CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath);
+	std::shared_ptr<CGameObject> CreateArtifactBase(vector<shared_ptr<class Texture>> textures);
 
 private:
 	void CreateHPnSPBar();
@@ -136,4 +139,7 @@ private:
 	std::shared_ptr<Fade_Script> m_fadeScript = nullptr;
 	std::shared_ptr<PortalUI_Script> m_portalUIScript = nullptr;
 	std::shared_ptr<Scenematic_Script> m_scenematicScript = nullptr;
+
+private:
+	std::vector<std::shared_ptr<Magic_Artifact_Script>> m_artifactMagicScript;
 };
