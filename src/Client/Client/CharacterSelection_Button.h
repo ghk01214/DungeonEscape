@@ -2,10 +2,21 @@
 
 #include "Button_Script.h"
 
+enum class BUTTON_TYPE
+{
+	NONE = 0,
+
+	CHARACTER_SELECT,
+	CHARACTER_NAME,
+	GAME_READY,
+
+	MAX
+};
+
 class CharacterSelection_Button : public Button_Script
 {
 public:
-	CharacterSelection_Button();
+	CharacterSelection_Button(BUTTON_TYPE type);
 	virtual ~CharacterSelection_Button();
 
 public:
@@ -24,6 +35,7 @@ public:
 	void SetBlinkCount(int32_t count);
 
 private:
+	BUTTON_TYPE m_type;
 	float m_accTime;
 	int32_t m_blinkCount;
 };

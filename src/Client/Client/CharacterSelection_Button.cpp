@@ -10,7 +10,8 @@
 
 #include "Scene_Loading.h"
 
-CharacterSelection_Button::CharacterSelection_Button() :
+CharacterSelection_Button::CharacterSelection_Button(BUTTON_TYPE type) :
+	m_type{ type },
 	m_accTime{ 0.f },
 	m_blinkCount{ 0 }
 {
@@ -43,7 +44,7 @@ void CharacterSelection_Button::Update()
 
 	if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))
 	{
-		//if (m_pos.y - (m_scale.y / 2) <= m_mousePos.y and m_mousePos.y <= m_pos.y + (m_scale.y / 2))
+		if (m_pos.y - (m_scale.y / 2) <= m_mousePos.y and m_mousePos.y <= m_pos.y + (m_scale.y / 2))
 		{
 			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true and m_click == false)
 				m_click = true;

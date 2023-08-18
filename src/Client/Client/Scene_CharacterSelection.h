@@ -27,6 +27,11 @@ private:
 	void LoadTextures();
 	void CreateLights();
 
+private:
+	void CreateCharacterImage();
+	void CreateCharacterNameButton();
+	void CreateReadyButton();
+
 public:
 	static std::shared_ptr<CScene> Create();
 

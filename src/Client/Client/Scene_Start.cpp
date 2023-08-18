@@ -131,10 +131,13 @@ void Scene_Start::CreateUI(void)
 void Scene_Start::LoadTextures(void)
 {
 	GET_SINGLE(Resources)->Load<Texture>(L"Lobby_InGame", L"..\\Resources\\Texture\\UI\\Start\\Lobby_InGame.PNG");
-	GET_SINGLE(Resources)->Load<Texture>(L"Title", L"..\\Resources\\Texture\\UI\\Start\\Title.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Log In", L"..\\Resources\\Texture\\UI\\Start\\Log In.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Log In_selected", L"..\\Resources\\Texture\\UI\\Start\\Log In_selected.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Setting", L"..\\Resources\\Texture\\UI\\Start\\Setting.png");
+
+	GET_SINGLE(Resources)->Load<Texture>(L"Title", L"..\\Resources\\Texture\\UI\\Font\\Title.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Log In", L"..\\Resources\\Texture\\UI\\Font\\Log In.png");
+
+	GET_SINGLE(Resources)->Load<Texture>(L"Button", L"..\\Resources\\Texture\\UI\\Button\\Button.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Button_selected", L"..\\Resources\\Texture\\UI\\Button\\Button_selected.png");
+	GET_SINGLE(Resources)->Load<Texture>(L"Setting", L"..\\Resources\\Texture\\UI\\Button\\Setting.png");
 }
 
 void Scene_Start::CreateLights(void)
@@ -179,10 +182,10 @@ void Scene_Start::CreateBackground()
 
 	obj->AddComponent(meshRenderer);
 
-	std::shared_ptr<Start_Script> behaviour = std::make_shared<Start_Script>();
-	behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Lobby_InGame"));
+	//std::shared_ptr<Start_Script> behaviour = std::make_shared<Start_Script>();
+	//behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Lobby_InGame"));
 
-	obj->AddComponent(behaviour);
+	//obj->AddComponent(behaviour);
 
 	AddGameObject(obj);
 }
@@ -223,57 +226,94 @@ void Scene_Start::CreateTitle()
 
 	obj->AddComponent(meshRenderer);
 
-	std::shared_ptr<Start_Script> behaviour = std::make_shared<Start_Script>();
-	behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Title"));
-
-	obj->AddComponent(behaviour);
-
 	AddGameObject(obj);
 }
 
 void Scene_Start::CreateLogInButton()
 {
-	std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-	obj->AddComponent(std::make_shared<Transform>());
+	// BUTTON
+	{
+		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+		obj->AddComponent(std::make_shared<Transform>());
 
 #ifdef RELEASE
-	float ratio{ 1.5f };
+		float ratio{ 1.5f };
 #elif
-	float ratio{ 1.f };
+		float ratio{ 1.f };
 #endif
 
-	auto pos{ GetRatio(0.f, -50.f) };
+		auto pos{ GetRatio(0.f, -50.f) };
 
-	obj->GetTransform()->SetLocalScale(Vec3(281.f * ratio, 110.f * ratio, 1.f));
-	obj->GetTransform()->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+		obj->GetTransform()->SetLocalScale(Vec3(281.f * ratio, 110.f * ratio, 1.f));
+		obj->GetTransform()->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
-	std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
-	{
-		std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-		meshRenderer->SetMesh(mesh);
+		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+		{
+			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+			meshRenderer->SetMesh(mesh);
+		}
+
+		{
+			std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+			std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Button");
+
+			std::shared_ptr<Material> material = std::make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
+			meshRenderer->SetMaterial(material);
+		}
+
+		obj->AddComponent(meshRenderer);
+
+		std::shared_ptr<Start_StartButton> behaviour = std::make_shared<Start_StartButton>();
+		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Button"));
+		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Button_selected"));
+
+		obj->AddComponent(behaviour);
+
+		AddGameObject(obj);
 	}
 
+	// LOG IN TEXT
 	{
-		std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
-		std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Log In");
+		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+		obj->AddComponent(std::make_shared<Transform>());
 
-		std::shared_ptr<Material> material = std::make_shared<Material>();
-		material->SetShader(shader);
-		material->SetTexture(0, texture);
-		material->SetFloat(2, 1.f);
-		meshRenderer->SetMaterial(material);
+#ifdef RELEASE
+		float ratio{ 1.f };
+#elif
+		float ratio{ 1.f };
+#endif
+
+		auto pos{ GetRatio(0.f, -49.f) };
+
+		obj->GetTransform()->SetLocalScale(Vec3(268.f * ratio, 58.f * ratio, 1.f));
+		obj->GetTransform()->SetLocalPosition(Vec3{ pos.x, pos.y, 99.f });
+
+		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+		{
+			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+			meshRenderer->SetMesh(mesh);
+		}
+
+		{
+			std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+			std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Log In");
+
+			std::shared_ptr<Material> material = std::make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
+			meshRenderer->SetMaterial(material);
+		}
+
+		obj->AddComponent(meshRenderer);
+
+		AddGameObject(obj);
 	}
-
-	obj->AddComponent(meshRenderer);
-
-	std::shared_ptr<Start_StartButton> behaviour = std::make_shared<Start_StartButton>();
-	behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Log In"));
-	behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Log In_selected"));
-
-	obj->AddComponent(behaviour);
-
-	AddGameObject(obj);
 }
 
 void Scene_Start::CreateSettingButton()

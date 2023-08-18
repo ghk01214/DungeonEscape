@@ -87,9 +87,6 @@
     <Filter Include="소스 파일\Objects\06. PhysxObject">
       <UniqueIdentifier>{97ae9657-f1ac-4ed5-85e0-a38f4ce4a87f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\01. UI\Lobby">
-      <UniqueIdentifier>{1150c4ec-3cd6-4fe1-a21a-ee139df8ca0e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Objects\01. UI\Interface">
       <UniqueIdentifier>{3c41b792-484a-41b4-92fc-83b35010d9f3}</UniqueIdentifier>
     </Filter>
@@ -143,6 +140,12 @@
     </Filter>
     <Filter Include="소스 파일\Objects\02. Camera\Movement">
       <UniqueIdentifier>{48cbf827-d8aa-4db6-8ff9-11844c06af63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\CharacterSelection">
+      <UniqueIdentifier>{7ed2a574-c040-4e63-b63f-8d3a76d2abc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\Start">
+      <UniqueIdentifier>{1150c4ec-3cd6-4fe1-a21a-ee139df8ca0e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -225,10 +228,10 @@
       <Filter>소스 파일\Objects\06. PhysxObject</Filter>
     </ClInclude>
     <ClInclude Include="Start_Script.h">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+      <Filter>소스 파일\Objects\01. UI\Start</Filter>
     </ClInclude>
     <ClInclude Include="Start_StartButton.h">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+      <Filter>소스 파일\Objects\01. UI\Start</Filter>
     </ClInclude>
     <ClInclude Include="Logo_Script.h">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
@@ -244,9 +247,6 @@
     </ClInclude>
     <ClInclude Include="Scenes.hpp">
       <Filter>소스 파일\Objects\00. Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterSelection_Button.h">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClInclude>
     <ClInclude Include="Loading_Script.h">
       <Filter>소스 파일\Objects\01. UI\Loading</Filter>
@@ -295,6 +295,9 @@
     </ClInclude>
     <ClInclude Include="Movement_Script.h">
       <Filter>소스 파일\Objects\02. Camera\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterSelection_Button.h">
+      <Filter>소스 파일\Objects\01. UI\CharacterSelection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -375,10 +378,10 @@
       <Filter>소스 파일\Objects\06. PhysxObject</Filter>
     </ClCompile>
     <ClCompile Include="Start_Script.cpp">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+      <Filter>소스 파일\Objects\01. UI\Start</Filter>
     </ClCompile>
     <ClCompile Include="Start_StartButton.cpp">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
+      <Filter>소스 파일\Objects\01. UI\Start</Filter>
     </ClCompile>
     <ClCompile Include="Logo_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Interface</Filter>
@@ -391,9 +394,6 @@
     </ClCompile>
     <ClCompile Include="Scene_CharacterSelection.cpp">
       <Filter>소스 파일\Objects\00. Scene\Character Selection</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterSelection_Button.cpp">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClCompile>
     <ClCompile Include="Loading_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Loading</Filter>
@@ -442,6 +442,9 @@
     </ClCompile>
     <ClCompile Include="Movement_Script.cpp">
       <Filter>소스 파일\Objects\02. Camera\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterSelection_Button.cpp">
+      <Filter>소스 파일\Objects\01. UI\CharacterSelection</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
