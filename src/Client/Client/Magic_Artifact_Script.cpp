@@ -32,7 +32,8 @@ void Magic_Artifact_Script::Update()
 	transform->SetLocalScale(Vec3(m_size.x, m_size.y, 1.f));
 	Matrix matWorld =
 		Matrix::CreateTranslation(Vec3(0.f, 0.f, -m_distanceFromPoint)) *
-		Matrix::CreateRotationY(XMConvertToRadians(m_rotation));
+		Matrix::CreateRotationY(XMConvertToRadians(m_rotation)) *
+		Matrix::CreateTranslation(m_targetPos);
 
 	// 월드 Matrix 세팅
 	transform->SetWorldMatrix(matWorld);
