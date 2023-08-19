@@ -198,7 +198,7 @@ void Scene_Start::CreateTitle()
 
 #ifdef RELEASE
 	float titleWidth{ 800.f };
-#elif
+#else
 	float titleWidth{ 400.f };
 #endif
 
@@ -239,7 +239,7 @@ void Scene_Start::CreateLogInButton()
 
 #ifdef RELEASE
 		float ratio{ 1.5f };
-#elif
+#else
 		float ratio{ 1.f };
 #endif
 
@@ -284,7 +284,7 @@ void Scene_Start::CreateLogInButton()
 
 #ifdef RELEASE
 		float ratio{ 1.f };
-#elif
+#else
 		float ratio{ 1.f };
 #endif
 

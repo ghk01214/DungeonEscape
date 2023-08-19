@@ -70,6 +70,7 @@ void ArtifactObject::ReceivedAttack_SingleAttack()
 			SetPillarWeak();
 			ServerFunctionHere();
 			once = false;
+			SetRemoveReserved();
 		}
 	}
 }

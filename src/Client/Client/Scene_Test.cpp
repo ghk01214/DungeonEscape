@@ -1829,7 +1829,12 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 			for (auto& script : m_artifactMagicScript)
 			{
-				script->Fade(5.f);
+				script->Fade(3.f);
+			}
+
+			for (int32_t i = 0; i < 2; ++i)
+			{
+				const_cast<std::vector<std::shared_ptr<CGameObject>>&>(GetMapObjects()).pop_back();
 			}
 		}
 		break;
