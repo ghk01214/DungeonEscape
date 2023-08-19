@@ -25,7 +25,6 @@ void UI_Script::Start()
 
 void UI_Script::Update()
 {
-
 }
 
 void UI_Script::LateUpdate()

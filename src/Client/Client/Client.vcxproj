@@ -171,6 +171,7 @@
     <ClInclude Include="Loading_Script.h" />
     <ClInclude Include="Magic_Artifact_Script.h" />
     <ClInclude Include="Movement_Script.h" />
+    <ClInclude Include="OneTimeDialogue_Script.h" />
     <ClInclude Include="PortalUI_Script.h" />
     <ClInclude Include="Start_Script.h" />
     <ClInclude Include="Start_StartButton.h" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Loading_Script.cpp" />
     <ClCompile Include="Magic_Artifact_Script.cpp" />
     <ClCompile Include="Movement_Script.cpp" />
+    <ClCompile Include="OneTimeDialogue_Script.cpp" />
     <ClCompile Include="PortalUI_Script.cpp" />
     <ClCompile Include="Start_Script.cpp" />
     <ClCompile Include="Start_StartButton.cpp" />

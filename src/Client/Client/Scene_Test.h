@@ -9,6 +9,7 @@ class Fade_Script;
 class PortalUI_Script;
 class Cinematic_Script;
 class Magic_Artifact_Script;
+class OneTimeDialogue_Script;
 
 #include <unordered_set>
 
@@ -72,6 +73,7 @@ private:
 
 private:
 	void CreateHPnSPBar();
+	void CreateOneTimeDialogue();
 	void CreateFade(shared_ptr<CScene> pScene);
 
 private:
@@ -142,4 +144,5 @@ private:
 
 private:
 	std::vector<std::shared_ptr<Magic_Artifact_Script>> m_artifactMagicScript;
+	std::unordered_map<std::string, std::shared_ptr<OneTimeDialogue_Script>> m_oneTimeDialogueScript;
 };

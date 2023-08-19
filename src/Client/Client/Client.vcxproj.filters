@@ -147,6 +147,9 @@
     <Filter Include="소스 파일\Objects\02. Camera\Cinematic">
       <UniqueIdentifier>{c6ad6890-ac4c-4291-8802-ec51a2edada0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\TriggerUI\OneTimeDialogue">
+      <UniqueIdentifier>{5a7d84fd-d439-4625-8d4b-28bb2c73d81e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -302,6 +305,9 @@
     <ClInclude Include="Magic_Artifact_Script.h">
       <Filter>소스 파일\Objects\09. Magic Effect</Filter>
     </ClInclude>
+    <ClInclude Include="OneTimeDialogue_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\OneTimeDialogue</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -451,6 +457,9 @@
     </ClCompile>
     <ClCompile Include="Magic_Artifact_Script.cpp">
       <Filter>소스 파일\Objects\09. Magic Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="OneTimeDialogue_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\OneTimeDialogue</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

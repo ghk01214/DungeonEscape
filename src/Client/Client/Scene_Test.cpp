@@ -43,6 +43,7 @@
 #include "Cinematic_Script.h"
 #include "Movement_Script.h"
 #include "Magic_Artifact_Script.h"
+#include "OneTimeDialogue_Script.h"
 
 Scene_Test::Scene_Test()
 {
@@ -369,7 +370,8 @@ void Scene_Test::SendKeyInput()
 
 void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
 {
-	CreateHPnSPBar();
+	//CreateHPnSPBar();
+	CreateOneTimeDialogue();
 }
 
 void Scene_Test::CreateMRTUI(shared_ptr<CScene> pScene)
@@ -510,6 +512,45 @@ void Scene_Test::CreateHPnSPBar()
 
 		AddGameObject(obj);
 	}
+}
+
+void Scene_Test::CreateOneTimeDialogue()
+{
+	std::shared_ptr<CGameObject> obj{ std::make_shared<CGameObject>() };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+	obj->AddComponent(std::make_shared<Transform>());
+
+	auto pos{ GetRatio(0.f, 50.f) };
+
+	obj->GetTransform()->SetLocalScale(Vec3(250.f, 20.f, 1.f));
+	obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.1f));
+
+	std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+	{
+		std::shared_ptr<Mesh> mesh{ GET_SINGLE(Resources)->LoadRectangleMesh() };
+		meshRenderer->SetMesh(mesh);
+	}
+
+	{
+		std::shared_ptr<Shader> shader{ GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture") };
+		std::shared_ptr<Texture> texture{ GET_SINGLE(Resources)->Get<Texture>(L"Bar") };
+
+		std::shared_ptr<Material> material{ std::make_shared<Material>() };
+		material->SetShader(shader);
+		material->SetTexture(0, texture);
+		material->SetFloat(2, 0.f);
+		meshRenderer->SetMaterial(material);
+	}
+
+	obj->AddComponent(meshRenderer);
+
+	std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("PILLAR_HINT")};
+	behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Bar"));
+	m_oneTimeDialogueScript["PILLAR_HINT"] = behaviour;
+
+	obj->AddComponent(behaviour);
+
+	AddGameObject(obj);
 }
 
 void Scene_Test::CreateFade(shared_ptr<CScene> pScene)
@@ -1843,6 +1884,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		case server::CUT_SCENE_TYPE::SCENE2:
 		{
 			m_scenematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+			m_oneTimeDialogueScript["PILLAR_HINT"]->StartRender(3.f, 5.f);
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE3:
@@ -2087,7 +2129,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateMainCamera(pScene);
 	CreateUICamera(pScene);
 	CreateSkyBox(pScene);
-	//CreateUI(pScene);
+	CreateUI(pScene);
 	CreateLights(pScene);
 	CreateMap(pScene);
 	//CreateBillBoard(pScene);
