@@ -51,6 +51,8 @@ void Cinematic_Script::Awake()
 
 		CloseHandle(hFile);
 	}
+
+	// 초는 여기서 하나하나 설정
 }
 
 void Cinematic_Script::Start()
@@ -65,12 +67,32 @@ void Cinematic_Script::Update()
 		if (m_info[m_currentScene].empty())
 			return;
 
-		// 카메라를 현재 인덱스의 정보로 이동
 		auto transform = GetTransform();
-		auto& curInfo = m_info[m_currentScene][m_curIndex];
+		Matrix matWorld;
+
+		// 정보가 1개 밖에 없을 경우
+		if (m_info[m_currentScene].size() == 1)
+		{
+			auto& curInfo = m_info[m_currentScene][m_curIndex];
+			auto& nextInfo = m_info[m_currentScene][m_curIndex];
+
+			matWorld = Matrix::Lerp(curInfo.matWorld, nextInfo.matWorld, m_accTime / curInfo.m_time);
+		}
+		else
+		{
+			// 카메라를 현재 인덱스의 정보로 이동
+			auto& curInfo = m_info[m_currentScene][m_curIndex];
+
+			CINEMATIC_INFO* nextInfo = nullptr;
+			if (m_curIndex >= (m_info[m_currentScene].size() - 1))
+				nextInfo = &m_info[m_currentScene][m_curIndex];
+			else
+				nextInfo = &m_info[m_currentScene][m_curIndex + 1];
+
+			matWorld = Matrix::Lerp(curInfo.matWorld, nextInfo->matWorld, m_accTime / curInfo.m_time);
+		}
 
 		// 공전
-		Matrix matWorld = curInfo.matWorld;
 		transform->SetWorldMatrix(matWorld);
 
 		m_accTime += DELTA_TIME;
@@ -81,6 +103,7 @@ void Cinematic_Script::Update()
 			m_accTime = 0.f;
 		}
 	}
+
 }
 
 void Cinematic_Script::LateUpdate()
