@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #include <NetworkManager.h>
@@ -1561,7 +1561,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			RemoveNonAnimatedObject(id);
 
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav");
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
@@ -1569,7 +1569,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			RemoveNonAnimatedObject(id);
 
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Ice Hit.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Ice Hit.wav");
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_POISONBALL:
@@ -1577,7 +1577,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			RemoveNonAnimatedObject(id);
 
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"PoisonAcid Hit.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"PoisonAcid Hit.wav");
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_METEOR:
@@ -1599,7 +1599,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			GET_NETWORK->RemoveNetworkObject(id);
 
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav");
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
@@ -1694,9 +1694,8 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 		{
 			if (playMusic == true)
 			{
-				GET_SINGLE(CSoundMgr)->StopSound(CSoundMgr::BGM);
+				GET_SINGLE(CSoundMgr)->StopBGMSound();
 				GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
-				GET_SINGLE(CSoundMgr)->BGMVolumeDown(0.2f);
 			}
 		}
 		break;
@@ -1704,7 +1703,7 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 		{
 			if (playSound == true)
 			{
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Punch.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Punch.wav");
 			}
 		}
 		break;
@@ -1712,7 +1711,7 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 		{
 			if (playSound == true)
 			{
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Smash.ogg", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Smash.ogg");
 			}
 		}
 		break;
@@ -1720,7 +1719,7 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 		{
 			if (playSound == true)
 			{
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Roar.mp3");
 			}
 		}
 		break;
