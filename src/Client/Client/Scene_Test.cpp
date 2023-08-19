@@ -40,7 +40,7 @@
 #include "Font.h"
 
 #include "PortalUI_Script.h"
-#include "Scenematic_Script.h"
+#include "Cinematic_Script.h"
 #include "Movement_Script.h"
 #include "Magic_Artifact_Script.h"
 
@@ -212,7 +212,7 @@ void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 	m_InfoUIScript->SetCameraScript(pCameraScript);
 	camera->AddComponent(pCameraScript);
 
-	shared_ptr<Scenematic_Script> pSenematicScript = make_shared<Scenematic_Script>();
+	shared_ptr<Cinematic_Script> pSenematicScript = make_shared<Cinematic_Script>();
 	m_scenematicScript = pSenematicScript;
 	pSenematicScript->SetScript(pCameraScript);
 	camera->AddComponent(pSenematicScript);
@@ -1825,7 +1825,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 	{
 		case server::CUT_SCENE_TYPE::SCENE1:
 		{
-			m_scenematicScript->PlaySenematic(magic_enum::enum_integer(sceneType));
+			m_scenematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE2:

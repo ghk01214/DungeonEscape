@@ -4,20 +4,20 @@
 
 class Camera_Basic;
 
-typedef struct _tagSCENEMATIC_INFO {
+typedef struct _tagCINEMATIC_INFO {
 	//Vec3 vCameraPos;	// 카메라의 위치
 	//Vec3 vDegree;		// 카메라의 각도
 
 	Matrix matWorld;	// 위치나 각도 없이 행렬만 넣을 경우
 
 	float m_time;		// 몇초간 있을건지
-}SCENEMATIC_INFO;
+}CINEMATIC_INFO;
 
-class Scenematic_Script : public MonoBehaviour
+class Cinematic_Script : public MonoBehaviour
 {
 public:
-	Scenematic_Script();
-	~Scenematic_Script();
+	Cinematic_Script();
+	~Cinematic_Script();
 
 public:
 	virtual void Awake() override;
@@ -26,15 +26,15 @@ public:
 	virtual void LateUpdate() override;
 
 public:
-	void PlaySenematic(int iCount);
-	void StopSenematic(void);
-	void SetData(server::CUT_SCENE_TYPE eType, const vector<SCENEMATIC_INFO>& info);
+	void PlayCinematic(int iCount);
+	void StopCinematic(void);
+	void SetData(server::CUT_SCENE_TYPE eType, const vector<CINEMATIC_INFO>& info);
 	void SetScript(shared_ptr<Camera_Basic> cameraBasicScript) { m_cameraBasicScript = cameraBasicScript; }
 
 private:
 	int m_currentScene = 0;
 	bool m_bPlay = false;
-	array<vector<SCENEMATIC_INFO>, static_cast<int>(server::CUT_SCENE_TYPE::MAX)> m_info;
+	array<vector<CINEMATIC_INFO>, static_cast<int>(server::CUT_SCENE_TYPE::MAX)> m_info;
 
 private:
 	float m_accTime = 0.f;

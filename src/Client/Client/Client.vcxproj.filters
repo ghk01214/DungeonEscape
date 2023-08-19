@@ -123,9 +123,6 @@
     <Filter Include="소스 파일\Objects\02. Camera\Basic">
       <UniqueIdentifier>{1332d2c3-8ee0-409c-8ff2-b60f2d246352}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\02. Camera\Senematic">
-      <UniqueIdentifier>{c6ad6890-ac4c-4291-8802-ec51a2edada0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Objects\02. Camera\InfoUI">
       <UniqueIdentifier>{7c7c982a-c6a0-42b9-8675-33e380f70241}</UniqueIdentifier>
     </Filter>
@@ -146,6 +143,9 @@
     </Filter>
     <Filter Include="소스 파일\Objects\09. Magic Effect">
       <UniqueIdentifier>{777d1787-a5ef-4fcf-b735-0a480ffd3595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\02. Camera\Cinematic">
+      <UniqueIdentifier>{c6ad6890-ac4c-4291-8802-ec51a2edada0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -278,8 +278,8 @@
     <ClInclude Include="Camera_Script.h">
       <Filter>소스 파일\Objects\02. Camera\Basic</Filter>
     </ClInclude>
-    <ClInclude Include="Scenematic_Script.h">
-      <Filter>소스 파일\Objects\02. Camera\Senematic</Filter>
+    <ClInclude Include="Cinematic_Script.h">
+      <Filter>소스 파일\Objects\02. Camera\Cinematic</Filter>
     </ClInclude>
     <ClInclude Include="InfoUI_Script.h">
       <Filter>소스 파일\Objects\02. Camera\InfoUI</Filter>
@@ -428,8 +428,8 @@
     <ClCompile Include="Camera_Script.cpp">
       <Filter>소스 파일\Objects\02. Camera\Basic</Filter>
     </ClCompile>
-    <ClCompile Include="Scenematic_Script.cpp">
-      <Filter>소스 파일\Objects\02. Camera\Senematic</Filter>
+    <ClCompile Include="Cinematic_Script.cpp">
+      <Filter>소스 파일\Objects\02. Camera\Cinematic</Filter>
     </ClCompile>
     <ClCompile Include="InfoUI_Script.cpp">
       <Filter>소스 파일\Objects\02. Camera\InfoUI</Filter>

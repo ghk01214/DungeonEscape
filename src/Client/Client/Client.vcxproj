@@ -177,7 +177,7 @@
     <ClInclude Include="Logo_Script.h" />
     <ClInclude Include="Logo_Start.h" />
     <ClInclude Include="PhysxObject_Script.h" />
-    <ClInclude Include="Scenematic_Script.h" />
+    <ClInclude Include="Cinematic_Script.h" />
     <ClInclude Include="Scenes.hpp" />
     <ClInclude Include="Scene_Start.h" />
     <ClInclude Include="Scene_CharacterSelection.h" />
@@ -231,7 +231,7 @@
     <ClCompile Include="Logo_Start.cpp" />
     <ClCompile Include="PhysxObject_Script.cpp" />
     <ClCompile Include="Scene_Start.cpp" />
-    <ClCompile Include="Scenematic_Script.cpp" />
+    <ClCompile Include="Cinematic_Script.cpp" />
     <ClCompile Include="Scene_CharacterSelection.cpp" />
     <ClCompile Include="Scene_Test.cpp" />
     <ClCompile Include="Skill_Bomb_Script.cpp" />

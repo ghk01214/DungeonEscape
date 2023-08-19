@@ -7,7 +7,7 @@
 class InfoUI_Script;
 class Fade_Script;
 class PortalUI_Script;
-class Scenematic_Script;
+class Cinematic_Script;
 class Magic_Artifact_Script;
 
 #include <unordered_set>
@@ -138,7 +138,7 @@ private:
 private:
 	std::shared_ptr<Fade_Script> m_fadeScript = nullptr;
 	std::shared_ptr<PortalUI_Script> m_portalUIScript = nullptr;
-	std::shared_ptr<Scenematic_Script> m_scenematicScript = nullptr;
+	std::shared_ptr<Cinematic_Script> m_scenematicScript = nullptr;
 
 private:
 	std::vector<std::shared_ptr<Magic_Artifact_Script>> m_artifactMagicScript;
