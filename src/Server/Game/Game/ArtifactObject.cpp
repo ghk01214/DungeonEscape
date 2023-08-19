@@ -122,9 +122,6 @@ void ArtifactObject::ServerFunctionHere()
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 
-	//EventHandler::GetInstance()->AddEvent("PILLAR_EFFECT_OFF", 4.f, this);			//	(2)
-	//EventHandler::GetInstance()->AddEvent("CAMERA_BACKTO_PLAYER", 8.f, this);	//	(3) 3이 따로 필요없다면 Event.h에서 CAMERA_BACKTO_PLAYER를 삭제.
-
 	// AddEvent함수는 원하는 타이밍에 어떤 행동을 할 수 있게 해준다.
 	// 클라이언트에서 스스로 컷씬 시간이나 이펙트 제거 시간등을 제어할 수 있다면 AddEvent()는 굳이 사용할 필요는 없다.
 	// 필요없다면 Event.cpp에서 PILLAR_EFFECT_OFF, CAMERA_BACKTO_PLAYER가 적힌 if문을 삭제

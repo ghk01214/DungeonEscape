@@ -399,36 +399,40 @@ void TestLevel::LoadTriggerObject()
 {
 	auto objMgr{ ObjectManager::GetInstance() };
 
-	//Vec3 pos{ 6480.f, -1790.f, 21170.f };
-	Vec3 pos{ -1750.f, -1690.f, 20465.f };
+	// 5500 -1790 21170
 
-	auto artifactObj{ objMgr->AddGameObjectToLayer<ArtifactObject>(L"Layer_Gimmik_Artifact", pos, Quat(0, 0, 0, 1), Vec3(100.f, 200.f, 100.f)) };
+	auto artifactObj{ objMgr->AddGameObjectToLayer<ArtifactObject>(L"Layer_Gimmik_Artifact", Vec3{ -1750.f, -1690.f, 20465.f }, Quat(0, 0, 0, 1), Vec3(100.f, 200.f, 100.f))};
 	auto artifactBody{ artifactObj->GetComponent<RigidBody>(L"RigidBody") };
 	artifactBody->AddCollider<BoxCollider>(artifactObj->GetTransform()->GetScale());
 	artifactBody->SetKinematic(true);
 	artifactObj->ApplyRequestedLayers();
 
-	auto Portal1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", PORTAL1_POS, Quat(0, 0, 0, 1), Vec3(600.f, 600.f, 600.f), false) };
+	auto CutScene1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 5500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true)};
+	auto CutScene1Body{ CutScene1Obj->GetComponent<RigidBody>(L"RigidBody") };
+	CutScene1Body->AddCollider<BoxCollider>(CutScene1Obj->GetTransform()->GetScale());
+	CutScene1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::GUIDELINE1);
+
+	auto Portal1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL1_POS, Quat(0, 0, 0, 1), Vec3(600.f, 600.f, 600.f), false) };
 	auto Portal1Body{ Portal1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal1Body->AddCollider<BoxCollider>(Portal1Obj->GetTransform()->GetScale());
 	Portal1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL1);
 
-	auto Portal2Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", PORTAL2_POS, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false) };
+	auto Portal2Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL2_POS, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false) };
 	auto Portal2Body{ Portal2Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal2Body->AddCollider<BoxCollider>(Portal2Obj->GetTransform()->GetScale());
 	Portal2Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL2);
 
-	auto Portal3Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", PORTAL3_POS, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false) };
+	auto Portal3Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL3_POS, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false) };
 	auto Portal3Body{ Portal3Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal3Body->AddCollider<BoxCollider>(Portal3Obj->GetTransform()->GetScale());
 	Portal3Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL3);
 
-	auto Portal4Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", PORTAL4_POS, Quat(0, 0, 0, 1), Vec3(1666.6f, 1666.6f, 1666.6f), false) };
+	auto Portal4Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL4_POS, Quat(0, 0, 0, 1), Vec3(1666.6f, 1666.6f, 1666.6f), false) };
 	auto Portal4Body{ Portal4Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal4Body->AddCollider<BoxCollider>(Portal4Obj->GetTransform()->GetScale());
 	Portal4Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL4);
 
-	auto Portal5Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", PORTAL5_POS, Quat(0, 0, 0, 1), Vec3(600.f, 600.f, 600.f), false) };
+	auto Portal5Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL5_POS, Quat(0, 0, 0, 1), Vec3(600.f, 600.f, 600.f), false) };
 	auto Portal5Body{ Portal5Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal5Body->AddCollider<BoxCollider>(Portal5Obj->GetTransform()->GetScale());
 	Portal5Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL5);

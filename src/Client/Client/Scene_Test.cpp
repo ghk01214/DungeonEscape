@@ -655,7 +655,7 @@ void Scene_Test::CreateMagicArtifactEffect(shared_ptr<CScene> pScene)
 		behaviour->SetTexture(textures);	// 텍스쳐 정보
 		behaviour->SetSize(Vec2(300.f, 300.f));	// 텍스쳐의 크기
 
-		behaviour->SetDistanceFromPoint(150.f);	// 중점으로부터 거리
+		behaviour->SetDistanceFromPoint(180.f);	// 중점으로부터 거리
 		behaviour->SetTargetPoint(Vec3(6980.f, -1640.f + height, 21180.f));	// 중점 위치
 
 		behaviour->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
@@ -1823,6 +1823,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 	switch (sceneType)
 	{
+		// 아티팩트 파괴 후 보호막 사라지는 신
 		case server::CUT_SCENE_TYPE::SCENE1:
 		{
 			m_scenematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
@@ -1838,9 +1839,10 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 			}
 		}
 		break;
+		// 기둥을 처음 발견해서 기둥의 보호막을 보여주는 신
 		case server::CUT_SCENE_TYPE::SCENE2:
 		{
-
+			m_scenematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE3:

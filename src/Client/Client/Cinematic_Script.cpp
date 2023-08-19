@@ -43,7 +43,7 @@ void Cinematic_Script::Awake()
 		for (int j = 0; j < iCount; ++j)
 		{
 			CINEMATIC_INFO info;
-			info.m_time = 5.f;
+			info.m_time = 3.f;
 			info.matWorld = vecMat[j];
 
 			m_info[i].push_back(info);

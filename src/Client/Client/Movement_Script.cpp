@@ -6,7 +6,8 @@
 #include "Timer.h"
 #include "MeshData.h"
 
-Movement_Script::Movement_Script()
+Movement_Script::Movement_Script() :
+	m_curSenematic{ 2 }
 {
 }
 
@@ -38,7 +39,7 @@ void Movement_Script::Update()
 	// X축 회전
 	{
 		long MouseMoveY = GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_Y);
-		m_vRotation.x += MouseMoveY * DELTA_TIME * 5.f;	
+		m_vRotation.x += MouseMoveY * DELTA_TIME * 5.f;
 	}
 	// Y축 회전
 	{
@@ -82,7 +83,7 @@ void Movement_Script::LateUpdate()
 	// 저장된 행렬 정보 파일 쓰기
 	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::KEY_2))
 	{
-		wstring path = L"..\\Resources\\Senematic\\Info";
+		wstring path = L"..\\Resources\\Cinematic\\Info";
 		wstring str = to_wstring(m_curSenematic) + L".bin";
 
 		HANDLE hFile = MeshData::CreateFileWrite(path + str);

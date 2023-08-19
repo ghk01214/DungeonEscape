@@ -229,7 +229,6 @@ void TriggerObject2::Handle_OverlapOut(const std::vector<Player*>& validptr)
 	}
 }
 
-
 bool TriggerObject2::IsPlayerDuplicate(GameObject* obj)
 {
 	if (std::find(m_duplicates.begin(), m_duplicates.end(), obj) == m_duplicates.end())
@@ -365,15 +364,15 @@ void TriggerObject2::ServerSendCutSceneMessage()
 	ev.objID = m_id;
 
 	if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE1)
-		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE1);
-	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE2)
 		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE2);
-	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE3)
+	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE2)
 		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE3);
-	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE4)
+	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE3)
 		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE4);
-	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE5)
+	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE4)
 		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE5);
+	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE5)
+		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE6);
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

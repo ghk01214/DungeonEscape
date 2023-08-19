@@ -254,7 +254,7 @@ void Event::ExecuteMsg_Once()
 		if (skillObj)
 		{
 			owner->SetState(Weeper::WEEPER_STATE::CAST2_END);						//CAST2 END로 애니메이션 진입
-			
+
 			EventHandler::GetInstance()->AddEvent("ANIM_END", 1.87f, owner);		//디버그 전용 애니메이션 종료 코드
 
 
@@ -286,7 +286,7 @@ void Event::ExecuteMsg_Once()
 		WeeperAI* weeperAI = weeper->GetAI();
 
 		EventHandler::GetInstance()->DeleteEvent("CAST2_SCATTER_AIRFIRE");		// Cast2 노말 진행 이벤트 삭제
-	
+
 		EventHandler::GetInstance()->AddEvent("ANIM_END", 1.87f, weeper);			//디버그 전용 애니메이션 종료 코드
 		EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 3.f, weeper);			//AI wait 해제 (던지는 애니메이션이 끝나고 몇초 후 이동 가능하도록)
 		//EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST2END", 6.f, weeper);		//클라에서 애니메이션 종료 못들어도 종료
@@ -584,18 +584,6 @@ void Event::ExecuteMsg_Once()
 		{
 			triggerObj->SendPlayers();
 		}
-	}
-
-
-	// ARTIFACT			 
-	if (msg == "PILLAR_EFFECT_OFF")
-	{
-		//클라이언트로 PILLAR에 있는 마법 이펙트를 끄도록 명령
-	}
-
-	if (msg == "CAMERA_BACKTO_PLAYER")
-	{
-		//클라이언트로 카메라를 다시 플레이어를 비추도록 수정
 	}
 
 	executed = true;

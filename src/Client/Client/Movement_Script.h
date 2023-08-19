@@ -23,5 +23,5 @@ private:
 	vector<Matrix> m_vecMat;
 
 private:
-	int m_curSenematic = 1;
+	int m_curSenematic;
 };
