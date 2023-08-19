@@ -101,7 +101,7 @@ void Cinematic_Script::PlayCinematic(int iCount)
 	m_bPlay = true;
 	m_curIndex = 0;
 
-	m_cameraBasicScript->PlaySenematic();
+	m_cameraBasicScript->PlayCinematic();
 }
 
 void Cinematic_Script::StopCinematic(void)
@@ -110,7 +110,7 @@ void Cinematic_Script::StopCinematic(void)
 	m_curIndex = 0;
 	m_accTime = 0.f;
 
-	m_cameraBasicScript->StopSenematic();
+	m_cameraBasicScript->StopCinematic();
 }
 
 void Cinematic_Script::SetData(server::CUT_SCENE_TYPE eType, const vector<CINEMATIC_INFO>& info)

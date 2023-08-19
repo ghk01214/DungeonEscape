@@ -30,7 +30,7 @@ void Camera_Basic::Update(void)
 void Camera_Basic::LateUpdate()
 {
 	// 시네마틱 카메라가 작동할 경우 멈춘다.
-	if (m_bPlaySenematic)
+	if (m_bPlayCinematic)
 		return;
 
 	std::shared_ptr<CScene> activeScene = GET_SINGLE(SceneManager)->GetActiveScene();

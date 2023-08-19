@@ -16,8 +16,8 @@ public:
 	Vec2 GetDistanceAxisXY(void) { return Vec2{ m_lengthX * m_distance, m_lengthY * m_distance }; }
 	Vec2 GetRotationAxisXY(void) { return Vec2{ m_rotationAxisY, m_rotationAxisX }; }
 
-	void PlaySenematic(void) { m_bPlaySenematic = true; }
-	void StopSenematic(void) { m_bPlaySenematic = false; }
+	void PlayCinematic(void) { m_bPlayCinematic = true; }
+	void StopCinematic(void) { m_bPlayCinematic = false; }
 
 private:
 	float m_speed;
@@ -30,6 +30,6 @@ private:
 	float m_distanceBetweenPlayerAndCamera;
 
 private:
-	bool m_bPlaySenematic = false;
+	bool m_bPlayCinematic = false;
 };
 
