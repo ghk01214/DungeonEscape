@@ -4,7 +4,7 @@
 #include "MeshRenderer.h"
 #include "Timer.h"
 #include "Material.h"
-#include <Input.h>
+#include "Input.h"
 
 Magic_Artifact_Script::Magic_Artifact_Script()
 {
@@ -29,7 +29,7 @@ void Magic_Artifact_Script::Update()
 
 	shared_ptr<Transform> transform = GetTransform();
 
-	// 크기 (x 회전) x 이동 x 회전
+	// 크기 x 회전 x 이동 x 회전
 	transform->SetLocalScale(Vec3(m_size.x, m_size.y, 1.f));
 	Matrix matWorld =
 		Matrix::CreateTranslation(Vec3(0.f, 0.f, -m_distanceFromPoint)) *
@@ -79,4 +79,47 @@ void Magic_Artifact_Script::Update()
 
 void Magic_Artifact_Script::LateUpdate()
 {
+	static int curAxis = 0;
+
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_6))
+		curAxis = 1;
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_7))
+		curAxis = 2;
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_8))
+		curAxis = 3;
+
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_9))
+	{
+		switch (curAxis)
+		{
+			case 1:
+			m_targetPos.x -= DELTA_TIME * 1000.f;
+			break;
+			case 2:
+			m_targetPos.y -= DELTA_TIME * 1000.f;
+			break;
+			case 3:
+			m_targetPos.z -= DELTA_TIME * 1000.f;
+			break;
+			default:
+			break;
+		}
+	}
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_0))
+	{
+		switch (curAxis)
+		{
+			case 1:
+			m_targetPos.x += DELTA_TIME * 1000.f;
+			break;
+			case 2:
+			m_targetPos.y += DELTA_TIME * 1000.f;
+			break;
+			case 3:
+			m_targetPos.z += DELTA_TIME * 1000.f;
+			break;
+			default:
+			break;
+		}
+	}
 }

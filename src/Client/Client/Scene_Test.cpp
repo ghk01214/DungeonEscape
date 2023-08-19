@@ -653,7 +653,7 @@ void Scene_Test::CreateMagicArtifactEffect(shared_ptr<CScene> pScene)
 		behaviour->SetRotationSpeed(30.f);	// 초당 몇도 회전하는지
 
 		behaviour->SetTexture(textures);	// 텍스쳐 정보
-		behaviour->SetSize(Vec2(300.f, 300.f));	// 텍스쳐의 크기
+		behaviour->SetSize(Vec2(800.f, 800.f));	// 텍스쳐의 크기
 
 		behaviour->SetDistanceFromPoint(150.f);	// 중점으로부터 거리
 		behaviour->SetTargetPoint(Vec3(6980.f, -1640.f + height, 21180.f));	// 중점 위치
@@ -776,6 +776,8 @@ std::shared_ptr<CGameObject> Scene_Test::CreateArtifactBase(vector<shared_ptr<cl
 	meshRenderer->SetMaterial(material);
 
 	gameObjects->AddComponent(meshRenderer);
+	gameObjects->SetCheckFrustum(false);
+
 	gameObjects->SetCheckFrustum(false);
 
 	return gameObjects;
@@ -1559,7 +1561,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			RemoveNonAnimatedObject(id);
 
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlaySound(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
@@ -1567,7 +1569,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			RemoveNonAnimatedObject(id);
 
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlaySound(L"Ice Hit.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Ice Hit.wav", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_POISONBALL:
@@ -1575,7 +1577,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			RemoveNonAnimatedObject(id);
 
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlaySound(L"PoisonAcid Hit.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"PoisonAcid Hit.wav", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_METEOR:
@@ -1597,7 +1599,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			GET_NETWORK->RemoveNetworkObject(id);
 
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlaySound(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
@@ -1702,7 +1704,7 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 		{
 			if (playSound == true)
 			{
-				GET_SINGLE(CSoundMgr)->PlaySound(L"Punch.wav", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Punch.wav", CSoundMgr::EFFECT, 0.7f);
 			}
 		}
 		break;
@@ -1710,7 +1712,7 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 		{
 			if (playSound == true)
 			{
-				GET_SINGLE(CSoundMgr)->PlaySound(L"Smash.ogg", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Smash.ogg", CSoundMgr::EFFECT, 0.7f);
 			}
 		}
 		break;
@@ -1718,7 +1720,7 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 		{
 			if (playSound == true)
 			{
-				GET_SINGLE(CSoundMgr)->PlaySound(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
 			}
 		}
 		break;

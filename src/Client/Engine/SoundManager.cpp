@@ -21,28 +21,43 @@ void CSoundMgr::Release()
 	}
 	m_mapSound.clear();
 
-	FMOD_System_Release(m_pSystem);
 	FMOD_System_Close(m_pSystem);
+	FMOD_System_Release(m_pSystem);
 }
 
-int CSoundMgr::VolumeUp(CHANNELID eID, float _vol)
+int CSoundMgr::EffectVolumeUp(float _vol)
 {
-	if (m_volume < SOUND_MAX) {
-		m_volume += _vol;
+	if (m_Effectvolume < SOUND_MAX) {
+		m_Effectvolume += _vol;
 	}
 
-	FMOD_Channel_SetVolume(m_pChannelArr[eID], m_volume);
+	for (auto& sound : m_pChannelEffect)
+		FMOD_Channel_SetVolume(sound, m_Effectvolume);
 
 	return 0;
 }
 
-int CSoundMgr::VolumeDown(CHANNELID eID, float _vol)
+int CSoundMgr::EffectVolumeDown(float _vol)
 {
-	if (m_volume > SOUND_MIN) {
-		m_volume -= _vol;
+	if (m_Effectvolume > SOUND_MIN) {
+		m_Effectvolume -= _vol;
 	}
 
-	FMOD_Channel_SetVolume(m_pChannelArr[eID], m_volume);
+	for (auto& sound : m_pChannelEffect)
+		FMOD_Channel_SetVolume(sound, m_Effectvolume);
+
+	return 0;
+}
+
+int CSoundMgr::SetEffectVolume(float _vol)
+{
+	m_Effectvolume = _vol;
+
+	if (m_Effectvolume < SOUND_MIN)
+		m_Effectvolume = SOUND_MIN;
+	
+	if (m_Effectvolume > SOUND_MAX)
+		m_Effectvolume = SOUND_MAX;
 
 	return 0;
 }
@@ -53,7 +68,7 @@ int CSoundMgr::BGMVolumeUp(float _vol)
 		m_BGMvolume += _vol;
 	}
 
-	FMOD_Channel_SetVolume(m_pChannelArr[BGM], m_BGMvolume);
+	FMOD_Channel_SetVolume(m_pChannelBGM, m_BGMvolume);
 
 	return 0;
 }
@@ -64,20 +79,52 @@ int CSoundMgr::BGMVolumeDown(float _vol)
 		m_BGMvolume -= _vol;
 	}
 
-	FMOD_Channel_SetVolume(m_pChannelArr[BGM], m_BGMvolume);
+	FMOD_Channel_SetVolume(m_pChannelBGM, m_BGMvolume);
 
 	return 0;
 }
 
-int CSoundMgr::Pause(CHANNELID eID)
+int CSoundMgr::SetBGMVolume(float _vol)
 {
-	m_bPause = !m_bPause;
-	FMOD_Channel_SetPaused(m_pChannelArr[eID], m_bPause);
+	m_BGMvolume = _vol;
+
+	if (m_BGMvolume < SOUND_MIN)
+		m_BGMvolume = SOUND_MIN;
+
+	if (m_BGMvolume > SOUND_MAX)
+		m_BGMvolume = SOUND_MAX;
 
 	return 0;
 }
 
-void CSoundMgr::PlaySound(const std::wstring& pSoundKey, CHANNELID eID, float _vol)
+int CSoundMgr::PauseEffect(void)
+{
+	m_bPauseEffect = !m_bPauseEffect;
+
+	for (auto& sound : m_pChannelEffect)
+		FMOD_Channel_SetPaused(sound, m_bPauseEffect);
+
+	return 0;
+}
+
+int CSoundMgr::PauseBGM(void)
+{
+	m_bPauseBGM = !m_bPauseBGM;
+
+	FMOD_Channel_SetPaused(m_pChannelBGM, m_bPauseBGM);
+
+	return 0;
+}
+
+int CSoundMgr::PauseAll(void)
+{
+	PauseEffect();
+	PauseBGM();
+
+	return 0;
+}
+
+void CSoundMgr::PlayEffect(const std::wstring& pSoundKey)
 {
 	map<const std::wstring, FMOD_SOUND*>::iterator iter;
 
@@ -89,16 +136,24 @@ void CSoundMgr::PlaySound(const std::wstring& pSoundKey, CHANNELID eID, float _v
 	if (iter == m_mapSound.end())
 		return;
 
-	FMOD_BOOL bPlay = FALSE;
-	if (FMOD_Channel_IsPlaying(m_pChannelArr[eID], &bPlay))
+	for (auto& sound : m_pChannelEffect)
 	{
-		FMOD_System_PlaySound(m_pSystem, iter->second, nullptr,FALSE, &m_pChannelArr[eID]);
-		if (_vol >= SOUND_MAX)
-			_vol = 1.f;
-		else if (_vol <= SOUND_MIN)
-			_vol = 0.f;
-		FMOD_Channel_SetVolume(m_pChannelArr[eID], _vol);
+		FMOD_BOOL bPlay = FALSE;
+		if (FMOD_Channel_IsPlaying(sound, &bPlay))
+		{
+			FMOD_System_PlaySound(m_pSystem, iter->second, nullptr, FALSE, &sound);
+
+			if (m_Effectvolume >= SOUND_MAX)
+				m_Effectvolume = 1.f;
+			else if (m_Effectvolume <= SOUND_MIN)
+				m_Effectvolume = 0.f;
+			FMOD_Channel_SetVolume(sound, m_Effectvolume);
+			break;
+		}
+		else
+			continue;
 	}
+
 	FMOD_System_Update(m_pSystem);
 }
 
@@ -114,20 +169,26 @@ void CSoundMgr::PlayBGM(const std::wstring& pSoundKey)
 	if (iter == m_mapSound.end())
 		return;
 
-	FMOD_System_PlaySound(m_pSystem,iter->second,nullptr, FALSE, &m_pChannelArr[BGM]);
-	FMOD_Channel_SetMode(m_pChannelArr[BGM], FMOD_LOOP_NORMAL);
+	FMOD_System_PlaySound(m_pSystem,iter->second, nullptr, FALSE, &m_pChannelBGM);
+	FMOD_Channel_SetMode(m_pChannelBGM, FMOD_LOOP_NORMAL);
 	FMOD_System_Update(m_pSystem);
 }
 
-void CSoundMgr::StopSound(CHANNELID eID)
+void CSoundMgr::StopEffectSound(void)
 {
-	FMOD_Channel_Stop(m_pChannelArr[eID]);
+	for (auto& sound : m_pChannelEffect)
+		FMOD_Channel_Stop(sound);
+}
+
+void CSoundMgr::StopBGMSound(void)
+{
+	FMOD_Channel_Stop(m_pChannelBGM);
 }
 
 void CSoundMgr::StopAll()
 {
-	for (int i = 0; i < MAXCHANNEL; ++i)
-		FMOD_Channel_Stop(m_pChannelArr[i]);
+	StopEffectSound();
+	StopBGMSound();
 }
 
 void CSoundMgr::LoadSoundFile()

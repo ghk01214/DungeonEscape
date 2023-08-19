@@ -83,7 +83,7 @@ void Monster_Golem::CheckState()
 		case ROAR:
 		{
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlaySound(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Roar.mp3", CSoundMgr::EFFECT, 0.7f);
 		}
 		break;
 		default:
