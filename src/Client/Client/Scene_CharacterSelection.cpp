@@ -177,6 +177,14 @@ void Scene_CharacterSelection::CreateCharacterImage()
 			std::shared_ptr<CharacterSelection_Button> behaviour = std::make_shared<CharacterSelection_Button>(BUTTON_TYPE::CHARACTER_SELECT);
 			behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name));
 			behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name + L"_selected"));
+
+			if (i == 0)
+				name = L"Nana";
+			else if (i == 1)
+				name = L"Mistic";
+			else
+				name = L"Carmel";
+
 			behaviour->SetName(name);
 			m_buttons.push_back(behaviour);
 

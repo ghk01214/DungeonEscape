@@ -202,7 +202,7 @@ void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
 
 
-#define MOVEMENT
+//#define MOVEMENT
 
 #ifdef MOVEMENT
 	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>();
@@ -586,8 +586,10 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom.fbx");
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	m_eNextMapType = MAP_TYPE::StartRoom;
-	MoveMap(MAP_TYPE::StartRoom);
+	//m_eNextMapType = MAP_TYPE::StartRoom;
+	//MoveMap(MAP_TYPE::StartRoom);
+	m_eNextMapType = MAP_TYPE::SecondRoom_Bridge_SecondBoss;
+	MoveMap(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
 }
 
 void Scene_Test::CreateSkill(shared_ptr<CScene> pScene)
@@ -637,25 +639,27 @@ void Scene_Test::CreateEffect(shared_ptr<CScene> pScene)
 
 void Scene_Test::CreateMagicArtifactEffect(shared_ptr<CScene> pScene)
 {
-	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Teleport_Circle");
+	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Artifact_Protection");
 
-	float magicCount = 4;
+	float magicCount{ 4 * 6 };
+
 	for (int i = 0; i < magicCount; ++i)
 	{
+		float height{ 300.f * (i / 4) };
 		shared_ptr<CGameObject> gameObject = CreateArtifactBase(textures);
 		std::shared_ptr<Magic_Artifact_Script> behaviour = std::make_shared<Magic_Artifact_Script>();
 
-		behaviour->SetStartRotation(360.f / magicCount * i);	// 최초 회전 각도
+		behaviour->SetStartRotation(360.f / 4 * i);	// 최초 회전 각도
 		behaviour->SetRotationSpeed(30.f);	// 초당 몇도 회전하는지
 
 		behaviour->SetTexture(textures);	// 텍스쳐 정보
 		behaviour->SetSize(Vec2(300.f, 300.f));	// 텍스쳐의 크기
 
-		behaviour->SetDistanceFromPoint(200.f);	// 중점으로부터 거리
-		behaviour->SetTargetPoint(Vec3(0.f, 0.f, 0.f));	// 중점 위치
+		behaviour->SetDistanceFromPoint(150.f);	// 중점으로부터 거리
+		behaviour->SetTargetPoint(Vec3(6980.f, -1640.f + height, 21180.f));	// 중점 위치
 
-		behaviour->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간 
-		
+		behaviour->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
+
 		gameObject->AddComponent(behaviour);
 
 		pScene->AddGameObject(gameObject);
@@ -772,6 +776,7 @@ std::shared_ptr<CGameObject> Scene_Test::CreateArtifactBase(vector<shared_ptr<cl
 	meshRenderer->SetMaterial(material);
 
 	gameObjects->AddComponent(meshRenderer);
+	gameObjects->SetCheckFrustum(false);
 
 	return gameObjects;
 }
@@ -1815,12 +1820,11 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 {
 	auto sceneType{ packet.Read<server::CUT_SCENE_TYPE>() };
 
-	m_scenematicScript->PlaySenematic(magic_enum::enum_integer(sceneType));
-
 	switch (sceneType)
 	{
 		case server::CUT_SCENE_TYPE::SCENE1:
 		{
+			m_scenematicScript->PlaySenematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE2:
@@ -2015,6 +2019,24 @@ void Scene_Test::MoveMap(MAP_TYPE eType)
 		case MAP_TYPE::SecondRoom_Bridge_SecondBoss:
 		{
 			mapObjects = m_splitMap_4;
+
+			ObjectDesc objectDesc;
+			objectDesc.strName = L"Magic Crystal";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Artifact\\Magic Crystal\\Magic Crystal.fbx";
+			objectDesc.vPostion = Vec3{ 0.f, 0.f, 0.f };
+			objectDesc.vScale = Vec3{ 1.f, 1.f, 1.f };
+
+			network::NetworkGameObject gameObjects{ CreateMapObject(objectDesc) };
+
+			for (auto& gameObject : gameObjects)
+			{
+				Matrix matWorld{ Matrix::CreateScale(100.f) };
+				matWorld *= Matrix::CreateTranslation(-1750.f, -1690.f, 20465.f);
+				gameObject->GetTransform()->SetWorldMatrix(matWorld);
+
+				gameObject->SetObjectType(server::OBJECT_TYPE::TRIGGER_OBJECT2);
+				mapObjects.push_back(gameObject);
+			}
 		}
 		break;
 		case MAP_TYPE::ThirdRoom_RockRolling:
@@ -2054,7 +2076,7 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	CreateSkyBox(pScene);
 	//CreateUI(pScene);
 	CreateLights(pScene);
-	//CreateMap(pScene);
+	CreateMap(pScene);
 	//CreateBillBoard(pScene);
 	//CreateSkill(pScene);
 
@@ -2067,6 +2089,6 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	//CreateFade(pScene);
 
 	//CreateMRTUI(pScene);
-	CreatePortalUI(pScene); 
+	CreatePortalUI(pScene);
 	CreateMagicArtifactEffect(pScene);
 }

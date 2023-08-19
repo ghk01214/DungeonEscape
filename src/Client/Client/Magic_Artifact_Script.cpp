@@ -4,6 +4,7 @@
 #include "MeshRenderer.h"
 #include "Timer.h"
 #include "Material.h"
+#include <Input.h>
 
 Magic_Artifact_Script::Magic_Artifact_Script()
 {

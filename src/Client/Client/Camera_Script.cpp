@@ -148,10 +148,5 @@ void Camera_Basic::LateUpdate()
 		//Vec3 vPlayerPos = playerTransform->GetWorldPosition();
 
 		//m_distanceBetweenPlayerAndCamera = SimpleMath::Vector3::Distance(vCameraPos, vPlayerPos);
-
-		PrintVec3(vCameraPos);
-		PrintVec2(GetRotationAxisXY());
-		//PrintVec3(vPlayerPos);
-		//Print(m_distanceBetweenPlayerAndCamera);
 	}
 }

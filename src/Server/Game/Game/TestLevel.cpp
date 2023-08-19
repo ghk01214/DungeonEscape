@@ -17,10 +17,11 @@
 #include "CustomController.h"
 #include "Component.h"
 #include "MessageHandler.h"
-#include "TriggerObject2.h"
 #include "FBXMapLoader.h"
+#include "TriggerObject2.h"
+#include "ArtifactObject.h"
 
-#define DEBUG_MAP
+//#define DEBUG_MAP
 
 TestLevel::TestLevel()
 {
@@ -291,7 +292,7 @@ void TestLevel::LoadMapObject()
 	mapLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
 #ifdef DEBUG_MAP
 	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\ServerDebug.fbx");			// Map 로드
-#elif // DEBUG_MAP
+#else // DEBUG_MAP
 	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
 #endif
 
@@ -398,13 +399,14 @@ void TestLevel::LoadTriggerObject()
 {
 	auto objMgr{ ObjectManager::GetInstance() };
 
-	auto pos{ PORTAL1_POS };
-	pos.z += 500.f;
+	//Vec3 pos{ 6480.f, -1790.f, 21170.f };
+	Vec3 pos{ -1750.f, -1690.f, 20465.f };
 
-	auto CutScene1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", pos, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true) };
-	auto CutScene1Body{ CutScene1Obj->GetComponent<RigidBody>(L"RigidBody") };
-	CutScene1Body->AddCollider<BoxCollider>(CutScene1Obj->GetTransform()->GetScale());
-	CutScene1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::GUIDELINE1);
+	auto artifactObj{ objMgr->AddGameObjectToLayer<ArtifactObject>(L"Layer_Gimmik_Artifact", pos, Quat(0, 0, 0, 1), Vec3(100.f, 200.f, 100.f)) };
+	auto artifactBody{ artifactObj->GetComponent<RigidBody>(L"RigidBody") };
+	artifactBody->AddCollider<BoxCollider>(artifactObj->GetTransform()->GetScale());
+	artifactBody->SetKinematic(true);
+	artifactObj->ApplyRequestedLayers();
 
 	auto Portal1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_Map2", PORTAL1_POS, Quat(0, 0, 0, 1), Vec3(600.f, 600.f, 600.f), false) };
 	auto Portal1Body{ Portal1Obj->GetComponent<RigidBody>(L"RigidBody") };

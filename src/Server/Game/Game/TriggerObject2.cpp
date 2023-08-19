@@ -93,7 +93,8 @@ void TriggerObject2::Handle_Overlap()
 	{
 		m_beforeCnt = m_currentCnt;
 
-		ServerSendInteractionCountMessage();
+		if (m_attribute < TRIGGERATTRIBUTE::GUIDELINE1)
+			ServerSendInteractionCountMessage();
 	}
 }
 
@@ -362,7 +363,7 @@ void TriggerObject2::ServerSendCutSceneMessage()
 {
 	game::TIMER_EVENT ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
 	ev.objID = m_id;
-	
+
 	if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE1)
 		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE1);
 	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE2)

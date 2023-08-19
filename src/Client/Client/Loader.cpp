@@ -173,6 +173,8 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 
 HRESULT CLoader::Loading_GamePlayLevel_Effect()
 {
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Artifact_Protection", L"..\\Resources\\Texture\\Effect\\Artifact Protection\\tile.png", 16);
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_BrightFlare_DarkGray", L"..\\Resources\\Texture\\Effect\\Bright Flare\\dark gray\\tile.png", 32);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_BrightFlare_DarkGrayHued", L"..\\Resources\\Texture\\Effect\\Bright Flare\\dark gray hued\\tile.png", 32);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_BrightFlare_Gray", L"..\\Resources\\Texture\\Effect\\Bright Flare\\gray\\tile.png", 32);
