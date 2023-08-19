@@ -20,9 +20,13 @@ void Magic_Artifact_Script::Start()
 
 void Magic_Artifact_Script::Update()
 {
-	if (m_bFade) {
-		if (m_fAlpha = 0.f)
+	if (m_bFade)
+	{
+		if (m_fAlpha <= 0.f)
+		{
+			m_fAlpha = 0.f;
 			return;
+		}
 
 		m_fAlpha -= DELTA_TIME * (1.f / m_fFadeSpeed);
 	}
@@ -68,12 +72,17 @@ void Magic_Artifact_Script::Update()
 			for (uint32 i = 0; i < size; ++i)
 			{
 				meshRenderer->GetMaterial(i)->SetTexture(0, m_textures[m_curTextureNumber]);
-				meshRenderer->GetMaterial(i)->SetFloat(2, m_fAlpha);
 			}
 
 			// 누적 시간 초기화
 			m_fAccumulateTime = 0.f;
 		}
+	}
+
+	uint32 size = meshRenderer->GetMaterialSize();
+	for (uint32 i = 0; i < size; ++i)
+	{
+		meshRenderer->GetMaterial(i)->SetFloat(2, m_fAlpha);
 	}
 }
 

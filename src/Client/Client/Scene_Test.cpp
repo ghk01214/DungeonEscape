@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #include <NetworkManager.h>
@@ -653,7 +653,7 @@ void Scene_Test::CreateMagicArtifactEffect(shared_ptr<CScene> pScene)
 		behaviour->SetRotationSpeed(30.f);	// 초당 몇도 회전하는지
 
 		behaviour->SetTexture(textures);	// 텍스쳐 정보
-		behaviour->SetSize(Vec2(800.f, 800.f));	// 텍스쳐의 크기
+		behaviour->SetSize(Vec2(300.f, 300.f));	// 텍스쳐의 크기
 
 		behaviour->SetDistanceFromPoint(150.f);	// 중점으로부터 거리
 		behaviour->SetTargetPoint(Vec3(6980.f, -1640.f + height, 21180.f));	// 중점 위치
@@ -1826,6 +1826,11 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		case server::CUT_SCENE_TYPE::SCENE1:
 		{
 			m_scenematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+
+			for (auto& script : m_artifactMagicScript)
+			{
+				script->Fade(5.f);
+			}
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE2:
