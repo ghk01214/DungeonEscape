@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #include <NetworkManager.h>
@@ -1876,10 +1876,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 				script->Fade(3.f);
 			}
 
-			for (int32_t i = 0; i < 2; ++i)
-			{
-				const_cast<std::vector<std::shared_ptr<CGameObject>>&>(GetMapObjects()).pop_back();
-			}
+			const_cast<std::vector<std::shared_ptr<CGameObject>>&>(GetMapObjects()).pop_back();
 		}
 		break;
 		// 기둥을 처음 발견해서 기둥의 보호막을 보여주는 신

@@ -99,8 +99,6 @@ void TriggerObject2::Handle_Overlap()
 		if (m_attribute < TRIGGERATTRIBUTE::GUIDELINE1)
 		{
 			ServerSendInteractionCountMessage();
-			m_deactivate = true;
-			SetRemoveReserved();
 		}
 	}
 }
@@ -127,13 +125,13 @@ void TriggerObject2::AttributePortal(double timeDelta)
 
 	string name = string(magic_enum::enum_name(m_attribute));
 
-	//if (m_duplicates.size() < 3)
-	if (m_duplicates.empty())
+	if (m_duplicates.size() < 3)
+	//if (m_duplicates.empty())
 	{
 		EventHandler::GetInstance()->DeleteEvent(name);
 		return;
 	}
-	else// if (m_duplicates.size() == 3)
+	else if (m_duplicates.size() == 3)
 	{
 		EventHandler::GetInstance()->AddEventIfNone(name, m_requestedContactTime, this);
 		return;
@@ -251,7 +249,25 @@ bool TriggerObject2::Apply(Player* player)
 		//cout << "attribute once" << endl;
 
 		// 임시로 여기에 작성
-		ServerSendCutSceneMessage();
+		switch (m_attribute)
+		{
+			case TRIGGERATTRIBUTE::GUIDELINE1:
+			{
+				m_deactivate = true;
+				SetRemoveReserved();
+				ServerSendCutSceneMessage();
+			}
+			break;
+			case TRIGGERATTRIBUTE::GUIDELINE2:
+			case TRIGGERATTRIBUTE::GUIDELINE3:
+			case TRIGGERATTRIBUTE::GUIDELINE4:
+			case TRIGGERATTRIBUTE::GUIDELINE5:
+			{
+				ServerSendCutSceneMessage();
+			}
+			break;
+		}
+
 		return true;
 	}
 	else
