@@ -168,6 +168,8 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	GET_SINGLE(Resources)->Load<Texture>(L"HP", L"..\\Resources\\Texture\\UI\\In Game\\hp.png");
 	GET_SINGLE(Resources)->Load<Texture>(L"MP", L"..\\Resources\\Texture\\UI\\In Game\\mp.png");
 
+	GET_SINGLE(Resources)->Load<Texture>(L"Pillar Hint", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint.png");
+
 	return S_OK;
 }
 
