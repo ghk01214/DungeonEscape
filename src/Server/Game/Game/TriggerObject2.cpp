@@ -38,6 +38,9 @@ void TriggerObject2::Update(double timeDelta)
 {
 	MapObject::Update(timeDelta);				//removeReserved 체크
 
+	if (m_deactivate)
+		return;
+
 	Handle_Overlap();
 	AttributePortal(timeDelta);
 }
@@ -94,7 +97,11 @@ void TriggerObject2::Handle_Overlap()
 		m_beforeCnt = m_currentCnt;
 
 		if (m_attribute < TRIGGERATTRIBUTE::GUIDELINE1)
+		{
 			ServerSendInteractionCountMessage();
+			m_deactivate = true;
+			SetRemoveReserved();
+		}
 	}
 }
 

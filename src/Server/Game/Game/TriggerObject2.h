@@ -68,7 +68,9 @@ private:
 private:
 	physx::PxBoxGeometry* m_box = nullptr;
 	TRIGGERATTRIBUTE m_attribute = TRIGGERATTRIBUTE::NONE;
-	bool m_oneTimeOnly = false;
+	bool m_oneTimeOnly = false;				//1회만 실행되는가?
+	bool m_deactivate = false;				//update진입 방지 코드
+
 	std::vector<Player*> m_duplicates;
 
 private:
