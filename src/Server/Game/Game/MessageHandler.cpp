@@ -415,7 +415,7 @@ namespace game
 			Vec3 portal4TestPos{ 15000.f, -1590.f, 23570.f };
 			Vec3 portal5TestPos{ 16216.f, -3690.f, 39993.f };
 			Vec3 artifactTest{ -1750.f, -1690.f, 19965.f };
-			Vec3 pos = gimmk1TestPos;
+			Vec3 pos = portal1TestPos;
 
 			//pos.z = 40400.f;
 			pos.z -= msg.playerID * 500.f;

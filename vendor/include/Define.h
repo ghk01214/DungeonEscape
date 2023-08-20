@@ -8,7 +8,7 @@
 
 #define PORTAL1_POS Vec3{ 2000.f, -670.f + 300.f, 5415.f }		// Scale 600.f
 #define PORTAL2_POS Vec3{ 0.f, -750.f + 250.f, 13020.f }
-#define PORTAL3_POS Vec3{ 0.f, -1790.f + 250.f, 18920.f }
+#define PORTAL3_POS Vec3{ 0.f, -1790.f + 250.f, 18920.f - 250.f }
 #define PORTAL4_POS Vec3{ 14985.f, -1590.f + 833.3f, 21085.f }	// Scale 1666.6f
 #define PORTAL5_POS Vec3{ 16216.f, -3301.f + 300.f, 37770.f }	// Scale 600.f
 

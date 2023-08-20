@@ -17,6 +17,8 @@ public:
 	virtual void LateUpdate() override;
 
 public:
+	uint32_t GetCount() { return m_count; }
+
 	void SetInfo(Vec2 pos, Vec2 size);
 	void SetCount(uint32 count) { m_count = count; }
 

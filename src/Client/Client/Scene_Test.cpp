@@ -629,10 +629,10 @@ void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom.fbx");
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	//m_eNextMapType = MAP_TYPE::StartRoom;
-	//MoveMap(MAP_TYPE::StartRoom);
-	m_eNextMapType = MAP_TYPE::SecondRoom_Bridge_SecondBoss;
-	MoveMap(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
+	m_eNextMapType = MAP_TYPE::StartRoom;
+	MoveMap(MAP_TYPE::StartRoom);
+	//m_eNextMapType = MAP_TYPE::SecondRoom_Bridge_SecondBoss;
+	//MoveMap(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
 }
 
 void Scene_Test::CreateSkill(shared_ptr<CScene> pScene)
@@ -1783,32 +1783,32 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN:
 		{
 			// ?ы꽭 ?ㅼ뼱媛붿쓣 ???됰룞
-			m_fadeScript->FadeIn();
-			m_fadeScript->SetMapType(MAP_TYPE::FirstBoss);
+			//m_fadeScript->FadeIn();
+			//m_fadeScript->SetMapType(MAP_TYPE::FirstBoss);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN:
 		{
-			m_fadeScript->FadeIn();
-			m_fadeScript->SetMapType(MAP_TYPE::Cave);
+			//m_fadeScript->FadeIn();
+			//m_fadeScript->SetMapType(MAP_TYPE::Cave);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN:
 		{
-			m_fadeScript->FadeIn();
-			m_fadeScript->SetMapType(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
+			//m_fadeScript->FadeIn();
+			//m_fadeScript->SetMapType(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN:
 		{
-			m_fadeScript->FadeIn();
-			m_fadeScript->SetMapType(MAP_TYPE::ThirdRoom_RockRolling);
+			//m_fadeScript->FadeIn();
+			//m_fadeScript->SetMapType(MAP_TYPE::ThirdRoom_RockRolling);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN:
 		{
-			m_fadeScript->FadeIn();
-			m_fadeScript->SetMapType(MAP_TYPE::LastBoss_TreasureRoom);
+			//m_fadeScript->FadeIn();
+			//m_fadeScript->SetMapType(MAP_TYPE::LastBoss_TreasureRoom);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:
@@ -1836,23 +1836,47 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 	{
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN:
 		{
-			//m_portalUIScript->SetInfo(Vec2(0.f, 0.F), Vec2(1.f, 1.f));
+			if (m_portalUIScript->GetCount() == 3)
+			{
+				m_fadeScript->FadeIn();
+				m_fadeScript->SetMapType(MAP_TYPE::FirstBoss);
+			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN:
 		{
+			if (m_portalUIScript->GetCount() == 3)
+			{
+				m_fadeScript->FadeIn();
+				m_fadeScript->SetMapType(MAP_TYPE::Cave);
+			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN:
 		{
+			if (m_portalUIScript->GetCount() == 3)
+			{
+				m_fadeScript->FadeIn();
+				m_fadeScript->SetMapType(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
+			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN:
 		{
+			if (m_portalUIScript->GetCount() == 3)
+			{
+				m_fadeScript->FadeIn();
+				m_fadeScript->SetMapType(MAP_TYPE::ThirdRoom_RockRolling);
+			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN:
 		{
+			if (m_portalUIScript->GetCount() == 3)
+			{
+				m_fadeScript->FadeIn();
+				m_fadeScript->SetMapType(MAP_TYPE::LastBoss_TreasureRoom);
+			}
 		}
 		break;
 		default:
