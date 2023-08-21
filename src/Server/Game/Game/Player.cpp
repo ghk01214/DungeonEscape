@@ -93,7 +93,7 @@ void Player::Update(double timeDelta)
 	if (m_overlapObj)
 		m_overlapObj->Update();
 
-	
+
 
 	GameObject::Update(timeDelta);
 
@@ -235,7 +235,12 @@ void Player::GetDamaged(int32_t damage)
 
 void Player::CalculateCameraDistance()
 {
-	m_cameraDistance = m_controller->CalculateCameraDistance();
+	auto distance{ m_controller->CalculateCameraDistance() };
+
+	if (distance == -1)
+		m_cameraDistance = 381.448f;
+	else
+		m_cameraDistance = distance;
 }
 
 void Player::SendChangedStateAgain()
@@ -1146,7 +1151,7 @@ void Player::Set_OverlapObject(bool activate)
 	if (activate)
 	{
 		m_overlapObj->Activate();
-		m_overlapObj->ServerMessage_RenderEffect_SingleStrike();		
+		m_overlapObj->ServerMessage_RenderEffect_SingleStrike();
 
 	}
 	else
