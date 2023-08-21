@@ -8,9 +8,9 @@
 #include <NetworkManager.h>
 #include <Engine.h>
 
-#ifndef RELEASE
+//#ifndef RELEASE
 #pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
-#endif
+//#endif
 
 #define MAX_LOADSTRING 100
 
