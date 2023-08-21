@@ -235,12 +235,7 @@ void Player::GetDamaged(int32_t damage)
 
 void Player::CalculateCameraDistance()
 {
-	auto distance{ m_controller->CalculateCameraDistance() };
-
-	if (distance < 0)
-		m_cameraDistance = 381.448f;
-	else
-		m_cameraDistance = distance;
+	m_cameraDistance = m_controller->CalculateCameraDistance();
 }
 
 void Player::SendChangedStateAgain()
