@@ -4,6 +4,7 @@
 #include "MeshRenderer.h"
 #include "Animator.h"
 #include "Network.h"
+#include "Camera.h"
 
 Component::Component(COMPONENT_TYPE type) : Object(OBJECT_TYPE::COMPONENT), m_type(type)
 {
@@ -32,6 +33,11 @@ shared_ptr<MeshRenderer> Component::GetMeshRenderer()
 shared_ptr<Animator> Component::GetAnimator()
 {
 	return m_gameObject.lock()->GetAnimator();
+}
+
+shared_ptr<Camera> Component::GetCamera()
+{
+	return m_gameObject.lock()->GetCamera();
 }
 
 shared_ptr<network::CNetwork> Component::GetNetwork()
