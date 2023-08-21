@@ -48,13 +48,13 @@ public:			//초기화 관련 함수
 
 public:
 	void AttributePortal(double timeDelta);
-
 	void SendPlayers();
 private:
 	std::vector<Player*> OverlapCheck_Player();
 	void Handle_OverlapOut(const std::vector<Player*>& validptr);
 	bool IsPlayerDuplicate(GameObject* obj);
 	bool Apply(Player* player);
+	void ApplyOut(Player* player);				//apply, applyout : 진입, 진출 시 attribute에 따른 행동 서술 (기능과 서버메시지는 여기서)
 
 private:
 	void ServerInit();
@@ -64,6 +64,8 @@ private:
 	void ServerSendPortalOutMessage();
 	void ServerSendInteractionCountMessage();
 	void ServerSendCutSceneMessage();
+
+	bool CheckArtifactDestoryed();
 
 private:
 	physx::PxBoxGeometry* m_box = nullptr;

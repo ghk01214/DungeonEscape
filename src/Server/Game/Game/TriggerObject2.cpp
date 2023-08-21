@@ -41,6 +41,9 @@ void TriggerObject2::Update(double timeDelta)
 	if (m_deactivate)
 		return;
 
+	//if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)		//건호 : 포탈3은 나중에 맞는 값으로 변경
+	//CheckArtifactDestoryed();
+
 	Handle_Overlap();
 	AttributePortal(timeDelta);
 }
@@ -81,10 +84,7 @@ void TriggerObject2::Handle_Overlap()
 			continue;
 		else
 		{
-			//bool applied = Apply(player);							//중복아니면 명령 후 중복벡터에 등록
-			//if (applied)
-			//	m_duplicates.emplace_back(player);
-			Apply(player);
+			Apply(player);				//진입
 			m_duplicates.emplace_back(player);
 
 		}
@@ -227,8 +227,8 @@ void TriggerObject2::Handle_OverlapOut(const std::vector<Player*>& validptr)
 		{
 			if (!m_oneTimeOnly)
 			{
+				ApplyOut(*it);
 				it = m_duplicates.erase(it);
-				//cout << "loop out" << endl;
 			}
 		}
 	}
@@ -277,6 +277,18 @@ bool TriggerObject2::Apply(Player* player)
 		ServerSendInMessage();
 
 		return false;
+	}
+}
+
+void TriggerObject2::ApplyOut(Player* player)
+{
+	switch (m_attribute)
+	{
+		case TRIGGERATTRIBUTE::GUIDELINE1:
+		{
+			//loop out건호
+		}
+		break;
 	}
 }
 
@@ -398,4 +410,17 @@ void TriggerObject2::ServerSendCutSceneMessage()
 		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE6);
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+}
+
+bool TriggerObject2::CheckArtifactDestoryed()
+{
+	//건호
+	Layer* artiLayer = ObjectManager::GetInstance()->GetLayer(L"Layer_Gimmik_Artifact");		
+	if (!artiLayer)
+		return false;											// 레이어 유무 확인
+
+	if (artiLayer->GetGameObjects().size() == 0)				// 리스트 크기 확인. 0일 경우 true
+		return true;
+
+	return false;												// 리스트 크기가 0이 아니면 false
 }
