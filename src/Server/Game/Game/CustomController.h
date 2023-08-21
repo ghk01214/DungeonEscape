@@ -82,6 +82,8 @@ public:
 	float GetDistanceFromGround();
 	bool Falling();
 
+	float CalculateCameraDistance();
+
 
 public:
 	void BounceFromAttack();	//호출시키지 않으면 공격넉백 적용이 불가능하다

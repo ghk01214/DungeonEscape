@@ -57,6 +57,30 @@ bool PhysQuery::Raycast(RaycastHit& hit, const PhysicsRay& ray, PxU32 layerMask,
 	return result;
 }
 
+bool PhysQuery::Raycast_MaskApplied(RaycastHit& hit, const PhysicsRay& ray, physx::PxU32 layerMask, PhysicsQueryType queryType, RigidBody* ignoreBody)
+{
+	auto device = PhysDevice::GetInstance();
+	auto scene = device->GetScene();
+
+	CustomQueryFilterCallback filterCallback(layerMask, queryType, true, ignoreBody);
+	PxRaycastBuffer hitBuffer;
+
+	bool result = scene->raycast(ray.point, ray.direction, ray.distance,
+		hitBuffer, PxHitFlag::eDEFAULT, defaultFilterData, &filterCallback);
+
+	if (result)
+	{
+		const PxRaycastHit& pxHit = hitBuffer.getAnyHit(0);
+		hit.point = pxHit.position;
+		hit.normal = pxHit.normal;
+		hit.distance = pxHit.distance;
+		void* data = pxHit.shape->userData;
+		hit.collider = static_cast<Collider*>(data);
+	}
+
+	return result;
+}
+
 bool PhysQuery::RaycastOnce(RaycastHit& hit, const PhysicsRay& ray, physx::PxU32 layerMask, PhysicsQueryType queryType, RigidBody* ignoreBody)
 {
 	auto device = PhysDevice::GetInstance();

@@ -268,17 +268,22 @@ void TestLevel::LoadBasicMap4()
 	MapPlaneObject->ApplyRequestedLayers();
 
 
-	auto p = objmgr->AddGameObjectToLayer<PillarObject>(L"Layer_Gimmik_Pillar", Vec3(-400, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 300, 100));
-	auto pBody = p->GetComponent<RigidBody>(L"RigidBody");
-	pBody->AddCollider<BoxCollider>(p->GetTransform()->GetScale());
-	p->Init_After_ColliderAttached();
+	//auto p = objmgr->AddGameObjectToLayer<PillarObject>(L"Layer_Gimmik_Pillar", Vec3(-400, 300, 500), Quat(0, 0, 0, 1), Vec3(100, 300, 100));
+	//auto pBody = p->GetComponent<RigidBody>(L"RigidBody");
+	//pBody->AddCollider<BoxCollider>(p->GetTransform()->GetScale());
+	//p->Init_After_ColliderAttached();
+	//
+	//
+	//auto a = objmgr->AddGameObjectToLayer<ArtifactObject>(L"Layer_Gimmik_Artifact", Vec3(-800, 200, 500), Quat(0, 0, 0, 1), Vec3(200, 200, 100));
+	//auto aBody = a->GetComponent<RigidBody>(L"RigidBody");
+	//aBody->AddCollider<BoxCollider>(a->GetTransform()->GetScale());
+	//aBody->SetKinematic(true);
+	//a->ApplyRequestedLayers();
 
-
-	auto a = objmgr->AddGameObjectToLayer<ArtifactObject>(L"Layer_Gimmik_Artifact", Vec3(-800, 200, 500), Quat(0, 0, 0, 1), Vec3(200, 200, 100));
-	auto aBody = a->GetComponent<RigidBody>(L"RigidBody");
-	aBody->AddCollider<BoxCollider>(a->GetTransform()->GetScale());
-	aBody->SetKinematic(true);
-	a->ApplyRequestedLayers();
+	auto box2 = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 200), Quat(0, 0, 0, 1), Vec3(500, 500, 500));
+	auto box2body = box2->GetComponent<RigidBody>(L"RigidBody");
+	box2body->AddCollider<BoxCollider>(box2->GetTransform()->GetScale());
+	box2->ApplyRequestedLayers();
 }
 
 void TestLevel::LoadMapObject()

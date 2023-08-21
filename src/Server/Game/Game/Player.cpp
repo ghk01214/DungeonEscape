@@ -67,6 +67,8 @@ void Player::Update(double timeDelta)
 {
 	//SendChangedStateAgain();
 
+	CalculateCameraDistance();
+
 	KeyboardLimit();					//FSM 0단계 : 금지상태에서는 키보드 클리어
 
 	ChangeStateByKeyInput();			//FSM 1단계	: 키보드 입력에 의한 STATE변경 (이동, 점프, 공격) STATE가 자유롭지 못할 시 진입X
@@ -90,6 +92,8 @@ void Player::Update(double timeDelta)
 
 	if (m_overlapObj)
 		m_overlapObj->Update();
+
+	
 
 	GameObject::Update(timeDelta);
 
@@ -227,6 +231,11 @@ void Player::SetPlayerQuat(Quat& quat)
 void Player::GetDamaged(int32_t damage)
 {
 	m_hp -= damage;
+}
+
+void Player::CalculateCameraDistance()
+{
+	m_cameraDistance = m_controller->CalculateCameraDistance();
 }
 
 void Player::SendChangedStateAgain()
@@ -1137,7 +1146,7 @@ void Player::Set_OverlapObject(bool activate)
 	if (activate)
 	{
 		m_overlapObj->Activate();
-		m_overlapObj->ServerMessage_RenderEffect_SingleStrike();		//용섭
+		m_overlapObj->ServerMessage_RenderEffect_SingleStrike();		
 
 	}
 	else

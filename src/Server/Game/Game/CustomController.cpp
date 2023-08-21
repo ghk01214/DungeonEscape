@@ -521,6 +521,33 @@ bool CustomController::Falling()
 	return false;
 }
 
+float CustomController::CalculateCameraDistance()
+{
+	auto device = PhysDevice::GetInstance();
+	auto query = device->GetQuery();
+
+	RaycastHit hit;
+	PhysicsRay ray;
+	ray.direction = m_cameraLook * -1.f;
+	ray.distance = 2000.f;						//수정필요 : 카메라 원래 거리
+	ray.point = m_body->GetPosition();
+	
+
+	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::MAP), PhysicsQueryType::All, m_body))
+	{
+		//std::cout << hit.distance << std::endl;
+		return hit.distance;
+	}
+
+	return -1.f;
+
+	// raycast 실패시 -1값을 전달 (원래 카메라 거리 적용)
+	// raycast 성공시 해당 거리를 전달 (카메라에 계산된 값을 적용)
+
+	// client에서 사용중인 카메라 거리를 ray.distance에 입력(532)
+	// Player::Update()에서 m_cameraDistance에 값을 적용중이다.
+}
+
 KeyInput& CustomController::GetKeyStatus(KEY_ORDER key)
 {
 	return m_keyboardInput[key];

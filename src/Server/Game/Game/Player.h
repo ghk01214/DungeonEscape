@@ -89,6 +89,7 @@ public:
 	void SetPlayerQuat(Quat& quat);
 
 	void GetDamaged(int32_t damage);
+	void CalculateCameraDistance();
 
 public:
 	void SendChangedStateAgain();
