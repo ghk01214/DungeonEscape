@@ -237,7 +237,7 @@ void Player::CalculateCameraDistance()
 {
 	auto distance{ m_controller->CalculateCameraDistance() };
 
-	if (distance == -1)
+	if (distance < 0)
 		m_cameraDistance = 381.448f;
 	else
 		m_cameraDistance = distance;
