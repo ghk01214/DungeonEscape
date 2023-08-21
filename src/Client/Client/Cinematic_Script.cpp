@@ -30,7 +30,7 @@ void Cinematic_Script::Awake()
 			//wstring str{ L"Movement_Script::LateUpdate - Failed to CreateFile From : " };
 			//str += path;
 			//MSG_BOX(str.c_str());
-			return;
+			break;
 		}
 
 		vector<Matrix> vecMat;
@@ -53,6 +53,17 @@ void Cinematic_Script::Awake()
 	}
 
 	// 초는 여기서 하나하나 설정
+	m_info[PILLAR_FOUND].back().m_time = 4.f;
+
+	for (auto& info : m_info[ARTIFACT_DESTROYED])
+	{
+		info.m_time = 5.f;
+	}
+
+	for (auto& info : m_info[PILLAR_HIT])
+	{
+		info.m_time = 5.f;
+	}
 }
 
 void Cinematic_Script::Start()

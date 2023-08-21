@@ -15,6 +15,17 @@ typedef struct _tagCINEMATIC_INFO {
 
 class Cinematic_Script : public MonoBehaviour
 {
+private:
+	enum CUT_SCENE_TYPE
+	{
+		NONE = 0,
+
+		ARTIFACT_DESTROYED,
+		PILLAR_FOUND,
+		PILLAR_HIT,
+
+		MAX
+	};
 public:
 	Cinematic_Script();
 	~Cinematic_Script();

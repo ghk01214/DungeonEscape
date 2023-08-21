@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #include <NetworkManager.h>
@@ -1910,9 +1910,10 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 			m_oneTimeDialogueScript["PILLAR_HINT"]->StartRender(3.f, 5.f);
 		}
 		break;
+		// 메테오에 기둥이 넘어지는 신
 		case server::CUT_SCENE_TYPE::SCENE3:
 		{
-
+			m_scenematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE4:

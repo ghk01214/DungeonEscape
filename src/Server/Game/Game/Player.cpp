@@ -93,7 +93,7 @@ void Player::Update(double timeDelta)
 	if (m_overlapObj)
 		m_overlapObj->Update();
 
-	
+
 
 	GameObject::Update(timeDelta);
 
@@ -893,6 +893,12 @@ void Player::PlayerPattern_ShootMeteor()
 	meteorCollider->SetRestitution(0.3f);
 	meteorCollider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
 
+	game::TIMER_EVENT ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
+	ev.objID = m_id;
+	ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE3);
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+
 
 	// KeyUp 상태가 전달되기까지의 딜레이가 있어서 로직 종료 시 key 상태 변경
 	m_controller->Keyboard_ATK_Clear();
@@ -1146,7 +1152,7 @@ void Player::Set_OverlapObject(bool activate)
 	if (activate)
 	{
 		m_overlapObj->Activate();
-		m_overlapObj->ServerMessage_RenderEffect_SingleStrike();		
+		m_overlapObj->ServerMessage_RenderEffect_SingleStrike();
 
 	}
 	else
