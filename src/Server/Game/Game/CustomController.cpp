@@ -269,9 +269,10 @@ void CustomController::DirectionInput_Player()
 		m_moveDirection = PxVec3(0.f, 0.f, 0.f);
 
 		PxVec3 up = PxVec3(0.f, 1.f, 0.f);
-		m_cameraLook.y = 0.f;		//카메라의 y성분 제거
-		m_cameraLook.normalize();
-		PxVec3 right = up.cross(m_cameraLook);
+		PxVec3 camera = m_cameraLook;
+		camera.y = 0.f;		//카메라의 y성분 제거
+		camera.normalize();
+		PxVec3 right = up.cross(camera);
 
 		if (m_keyboardInput[A].press)
 			m_moveDirection -= right;
@@ -279,9 +280,9 @@ void CustomController::DirectionInput_Player()
 			m_moveDirection += right;
 
 		if (m_keyboardInput[W].press)
-			m_moveDirection += m_cameraLook;
+			m_moveDirection += camera;
 		else if (m_keyboardInput[S].press)
-			m_moveDirection -= m_cameraLook;
+			m_moveDirection -= camera;
 
 		m_moveDirection.normalize();
 	}
@@ -536,7 +537,7 @@ float CustomController::CalculateCameraDistance()
 
 	if (query->Raycast(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::MAP), PhysicsQueryType::All, m_body))
 	{
-		//std::cout << hit.distance << std::endl;
+		//std::cout << hit.distance << "\n";
 		return hit.distance;
 	}
 
