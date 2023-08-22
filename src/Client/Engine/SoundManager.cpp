@@ -55,9 +55,14 @@ int CSoundMgr::SetEffectVolume(float _vol)
 
 	if (m_Effectvolume < SOUND_MIN)
 		m_Effectvolume = SOUND_MIN;
-	
+
 	if (m_Effectvolume > SOUND_MAX)
 		m_Effectvolume = SOUND_MAX;
+
+	for (auto& sound : m_pChannelEffect)
+	{
+		FMOD_Channel_SetVolume(sound, m_Effectvolume);
+	}
 
 	return 0;
 }
@@ -93,6 +98,8 @@ int CSoundMgr::SetBGMVolume(float _vol)
 
 	if (m_BGMvolume > SOUND_MAX)
 		m_BGMvolume = SOUND_MAX;
+
+	FMOD_Channel_SetVolume(m_pChannelBGM, m_BGMvolume);
 
 	return 0;
 }
@@ -189,6 +196,32 @@ void CSoundMgr::StopAll()
 {
 	StopEffectSound();
 	StopBGMSound();
+}
+
+void CSoundMgr::MuteBGM(bool flag)
+{
+	if (flag == true)
+	{
+		m_prevBGMvolume = m_BGMvolume;
+		SetBGMVolume(SOUND_MIN);
+	}
+	else
+	{
+		SetBGMVolume(m_prevBGMvolume);
+	}
+}
+
+void CSoundMgr::MuteSE(bool flag)
+{
+	if (flag == true)
+	{
+		m_prevEffectvolume = m_Effectvolume;
+		SetEffectVolume(SOUND_MIN);
+	}
+	else
+	{
+		SetEffectVolume(m_prevEffectvolume);
+	}
 }
 
 void CSoundMgr::LoadSoundFile()
