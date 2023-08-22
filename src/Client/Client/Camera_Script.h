@@ -13,7 +13,7 @@ public:
 	virtual void LateUpdate() override;
 
 public:
-	Vec2 GetDistanceAxisXY(void) { return Vec2{ m_lengthX * m_distance, m_lengthY * m_distance }; }
+	Vec2 GetDistanceAxisXY(void) { return Vec2{ m_lengthX * m_distanceRatio, m_lengthY * m_distanceRatio }; }
 	Vec2 GetRotationAxisXY(void) { return Vec2{ m_rotationAxisY, m_rotationAxisX }; }
 
 	void PlayCinematic(void) { m_bPlayCinematic = true; }
@@ -25,9 +25,9 @@ private:
 	float m_lengthY;
 	float m_rotationAxisY = 0.f;
 	float m_rotationAxisX = 0.f;
-	float m_distance;
 
-	float m_distanceBetweenPlayerAndCamera;
+	float m_distanceRatio;	// 0.f ~ 1.f 사이의 값
+	float m_cameraDistance = 2000.f;	// 카메라와 플레이어 사이의 거리 값
 
 private:
 	bool m_bPlayCinematic = false;

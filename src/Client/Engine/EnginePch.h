@@ -302,6 +302,13 @@ inline T loadStructData(const HANDLE& hFile)
 #define GET_OBJECT		GET_SCENE->GetSceneObject()
 #define GET_NETWORK		GET_SINGLE(network::NetworkManager)
 
+#define LOAD_RESOURCES(type, name, path)	GET_SINGLE(Resources)->Load<type>(name, path)
+#define GET_RESOURCES(type, name)			GET_SINGLE(Resources)->Get<type>(name)
+
+#define LOAD_TEXTURE(name, path)		LOAD_RESOURCES(Texture, name, path)
+#define GET_TEXTURE(name)				GET_RESOURCES(Texture, name)
+
+#define GET_SHADER(name)				GET_RESOURCES(Shader, name)
 
 #define CONST_BUFFER(type)	GEngine->GetConstantBuffer(type)
 

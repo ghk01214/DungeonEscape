@@ -47,5 +47,13 @@ private:
 	map<wstring, uint8> m_layerIndex;
 
 	std::shared_ptr<CScene> m_nextScene = nullptr;
+
+public:
+	void SetUIIndex(int num);
+	shared_ptr<CGameObject> GetBlurUI(void) { return m_blurUI; }
+	void SetBlurUI(shared_ptr<CGameObject> blurUI) { m_blurUI = blurUI; }
+
+private:
+	shared_ptr<CGameObject> m_blurUI;
 };
 

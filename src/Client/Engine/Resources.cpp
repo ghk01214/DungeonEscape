@@ -8,6 +8,7 @@ void Resources::Init()
 {
 	CreateDefaultShader();
 	CreateDefaultMaterial();
+	LoadBlurTexture();
 }
 
 shared_ptr<Mesh> Resources::LoadPointMesh()
@@ -69,7 +70,7 @@ shared_ptr<Mesh> Resources::LoadFontMesh(vector<Vertex> vec)
 
 	if (findMesh)
 		return findMesh;
-	
+
 	vector<uint32> idx(vec.size() / 4 * 6);
 
 	// 앞면
@@ -547,7 +548,7 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg); 
+		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg);
 		Add<Shader>(L"BillBoard_Texture", shader);
 	}
 
@@ -932,4 +933,11 @@ void Resources::CreateDefaultMaterial()
 		material->SetTexture(0, texture);
 		Add<Material>(L"Font", material);
 	}
+}
+
+void Resources::LoadBlurTexture()
+{
+	shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"BlurPng", L"..\\Resources\\Texture\\UI\\Blur\\blur_Png_Img_Free.png");
+
+	m_blurTexture = texture;
 }

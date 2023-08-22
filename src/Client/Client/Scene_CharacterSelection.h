@@ -32,6 +32,9 @@ private:
 	void CreateCharacterNameButton();
 	void CreateReadyButton();
 
+private:
+	void CreateSampleUI();
+
 public:
 	static std::shared_ptr<CScene> Create();
 

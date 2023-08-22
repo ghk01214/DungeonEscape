@@ -171,3 +171,9 @@ shared_ptr<CGameObject> SceneManager::Pick(int32 screenX, int32 screenY)
 
 	return picked;
 }
+
+void SceneManager::SetUIIndex(int num)
+{
+	if (nullptr != m_blurUI)
+		m_blurUI->SetLayerIndex(num);
+}

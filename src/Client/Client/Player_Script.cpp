@@ -356,8 +356,10 @@ void Player_Script::Transform(network::CPacket& packet)
 	GetTransform()->SetWorldMatrix(matWorld);
 
 	if (GetNetwork()->IsMyPlayer() == true)
+	{
 		GET_SINGLE(SceneManager)->GetActiveScene()->GetMainCamera()->SetRaycastDistance(raycastDistance);
-
+		//Print(raycastDistance);
+	}
 #pragma region [FOR DEBUGGING]
 	//auto t{ GetTransform()->GetWorldPosition() };
 	//std::cout << std::format("player id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;

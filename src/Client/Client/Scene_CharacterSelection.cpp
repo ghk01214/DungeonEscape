@@ -7,8 +7,11 @@
 #include <MeshRenderer.h>
 #include <Resources.h>
 #include <Engine.h>
+#include <UI.h>
 
 #include "Scene_Loading.h"
+
+#include "Creator.h"
 
 Scene_CharacterSelection::Scene_CharacterSelection() :
 	m_selected{ false }
@@ -103,6 +106,7 @@ void Scene_CharacterSelection::CreateUI()
 	CreateCharacterImage();
 	CreateCharacterNameButton();
 	CreateReadyButton();
+	//CreateSampleUI();
 }
 
 void Scene_CharacterSelection::LoadTextures()
@@ -354,6 +358,141 @@ void Scene_CharacterSelection::CreateCharacterNameButton()
 
 void Scene_CharacterSelection::CreateReadyButton()
 {
+}
+
+void Scene_CharacterSelection::CreateSampleUI()
+{
+	std::wstring name{ L"Button2" };
+	std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+	std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(name);
+
+	{
+		Vec2 pos{ GetRatio(-10.f, 0.f) };
+
+		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+		obj->AddComponent(std::make_shared<Transform>());
+
+		obj->GetTransform()->SetLocalScale(Vec3(200.f, 200.f, 1.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.f));
+
+		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+		{
+			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+			meshRenderer->SetMesh(mesh);
+		}
+		{
+			std::shared_ptr<Material> material = std::make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
+			meshRenderer->SetMaterial(material);
+		}
+		obj->AddComponent(meshRenderer);
+
+		std::shared_ptr<UI> ui = std::make_shared<UI>();
+		{
+			ui->SetVisible(true);
+			ui->OnTop();
+		}
+		obj->AddComponent(ui);
+
+		AddGameObject(obj);
+	}
+
+
+	texture = GET_SINGLE(Resources)->Get<Texture>(L"Title");
+	{
+		Vec2 pos{ GetRatio(0.f, 0.f) };
+
+		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+		obj->AddComponent(std::make_shared<Transform>());
+
+		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.f));
+
+		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+		{
+			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+			meshRenderer->SetMesh(mesh);
+		}
+		{
+			std::shared_ptr<Material> material = std::make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
+			material->SetFloat(2, 0.5f);
+			meshRenderer->SetMaterial(material);
+		}
+		obj->AddComponent(meshRenderer);
+
+		std::shared_ptr<UI> ui = std::make_shared<UI>();
+		{
+			ui->SetVisible(true);
+			//ui->OnTop();
+			ui->SetPopUp(false);
+		}
+		obj->AddComponent(ui);
+
+		AddGameObject(obj);
+	}
+
+
+	{
+		// 사용할 텍스쳐와 셰이더만 인자로 넘겨 UI 객체 생성
+		shared_ptr<CGameObject> obj = Creator::CreateUIObject(texture, shader);
+
+		// 레이어 설정
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+
+		// 위치 및 카메라 인덱스 설정
+		Vec2 pos{ GetRatio(30.f, 30.f) };
+		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.f));
+
+		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 1.f);
+
+		AddGameObject(obj);
+	}
+
+	{
+		texture = GET_SINGLE(Resources)->GetBlurTexture();
+
+		Vec2 pos{ GetRatio(0.f, 0.f) };
+
+		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+		obj->AddComponent(std::make_shared<Transform>());
+
+		const auto& windowInfo = GEngine->GetWindow();
+		obj->GetTransform()->SetLocalScale(Vec3(windowInfo.width, windowInfo.height, 1.f));
+		obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.f));
+
+		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+		{
+			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+			meshRenderer->SetMesh(mesh);
+		}
+		{
+			std::shared_ptr<Material> material = std::make_shared<Material>();
+			material->SetShader(shader);
+			material->SetTexture(0, texture);
+			material->SetFloat(2, 1.f);
+			meshRenderer->SetMaterial(material);
+		}
+		obj->AddComponent(meshRenderer);
+
+		std::shared_ptr<UI> ui = std::make_shared<UI>();
+		{
+			ui->SetPopUpUI(true);
+		}
+		obj->AddComponent(ui);
+
+		AddGameObject(obj);
+
+		GET_SINGLE(SceneManager)->SetBlurUI(obj);
+		GET_SINGLE(SceneManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+	}
 }
 
 shared_ptr<CScene> Scene_CharacterSelection::Create()

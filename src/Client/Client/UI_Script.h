@@ -24,4 +24,5 @@ protected:
 	std::vector<shared_ptr<Texture>> m_textures;
 
 	float m_alpha;
+	bool m_active;
 };

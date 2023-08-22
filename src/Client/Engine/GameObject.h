@@ -14,6 +14,7 @@ class Animator;
 class BillBoard;
 class Effect;
 class Font;
+class UI;
 
 namespace network
 {
@@ -46,6 +47,7 @@ public:
 	shared_ptr<BillBoard> GetBillBoard();
 	shared_ptr<Effect> GetEffect();
 	shared_ptr<Font> GetFont();
+	shared_ptr<UI> GetUI();
 
 	void AddComponent(shared_ptr<Component> component);
 

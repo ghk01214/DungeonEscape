@@ -15,6 +15,7 @@ enum class COMPONENT_TYPE : uint8
 	BILL_BOARD,
 	Effect,
 	FONT,
+	UI,
 	// ...
 	MONO_BEHAVIOUR,
 	END,
@@ -29,6 +30,7 @@ class CGameObject;
 class Transform;
 class MeshRenderer;
 class Animator;
+class Camera;
 
 namespace network
 {
@@ -56,6 +58,7 @@ public:
 	shared_ptr<Transform> GetTransform();
 	shared_ptr<MeshRenderer> GetMeshRenderer();
 	shared_ptr<Animator> GetAnimator();
+	shared_ptr<Camera> GetCamera();
 	shared_ptr<network::CNetwork> GetNetwork();
 
 private:

@@ -73,6 +73,8 @@ private:
 	vector<shared_ptr<CGameObject>>	m_vecParticle;
 	vector<shared_ptr<CGameObject>>	m_vecShadow;
 	vector<shared_ptr<CGameObject>>	m_vecFont;
+	vector<shared_ptr<CGameObject>>	m_vecUI;
+	vector<shared_ptr<CGameObject>>	m_vecPopUpUI;
 
 public:
 	// TEMP

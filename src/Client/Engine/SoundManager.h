@@ -42,10 +42,18 @@ public:
 	void StopBGMSound(void);
 	void StopAll();
 
+public:
+	void MuteBGM(bool flag);
+	void MuteSE(bool flag);
+
 private:
 	float m_Effectvolume = SOUND_DEFAULT;
 	float m_BGMvolume = SOUND_DEFAULT;
 	FMOD_BOOL m_bool;
+
+private:
+	float m_prevEffectvolume = SOUND_DEFAULT;
+	float m_prevBGMvolume = SOUND_DEFAULT;
 
 private:
 	void LoadSoundFile();
@@ -53,11 +61,11 @@ private:
 private:
 	map<std::wstring, FMOD_SOUND*> m_mapSound;
 
-	// FMOD_CHANNEL : 재생하고 있는 사운드를 관리할 객체 
+	// FMOD_CHANNEL : 재생하고 있는 사운드를 관리할 객체
 	FMOD_CHANNEL* m_pChannelBGM;
 	FMOD_CHANNEL* m_pChannelEffect[MAX_EFFECT_CHANNEL];
 
-	// 사운드 ,채널 객체 및 장치를 관리하는 객체 
+	// 사운드 ,채널 객체 및 장치를 관리하는 객체
 	FMOD_SYSTEM* m_pSystem = nullptr;
 
 	bool		m_bPauseBGM = false;

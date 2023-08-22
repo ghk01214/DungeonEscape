@@ -12,6 +12,8 @@
 #include "InstancingManager.h"
 #include "FontManager.h"
 #include "EffectManager.h"
+#include "UI.h"
+#include "Resources.h"
 
 Matrix Camera::S_MatView;
 Matrix Camera::S_MatProjection;
@@ -54,9 +56,32 @@ void Camera::SortGameObject()
 	m_vecDeferred.clear();
 	m_vecParticle.clear();
 	m_vecFont.clear();
+	m_vecUI.clear();
+	m_vecPopUpUI.clear();
 
 	for (auto& gameObject : gameObjects)
 	{
+		// UI 컴포넌트가 존재할 경우
+		if (gameObject->GetUI() != nullptr)
+		{
+			// Visible이 아니라면 넘어간다 
+			if (!gameObject->GetUI()->GetVisible())
+				continue;
+
+			// popUpUI일 경우 넘어간다.
+			if (gameObject->GetUI()->isPopUpUI())
+				continue;
+
+			// Visible 일 경우
+			// 팝업 객체와 아닌 것을 나눈다.
+			if (gameObject->GetUI()->GetPopUp())
+				m_vecPopUpUI.push_back(gameObject);
+			else
+				m_vecUI.push_back(gameObject);
+
+			continue;
+		}
+
 		if (gameObject->GetMeshRenderer() == nullptr && gameObject->GetParticleSystem() == nullptr)
 			continue;
 
@@ -121,6 +146,16 @@ void Camera::SortGameObject()
 	{
 		m_vecForward.push_back(effect);
 	}
+
+	// UI 오브젝트 정렬
+	sort(m_vecUI.begin(), m_vecUI.end(), [](shared_ptr<CGameObject> a1, shared_ptr<CGameObject> a2) {
+		return a1->GetUI()->GetRank() < a2->GetUI()->GetRank();
+		});
+
+	// PopUpUI 오브젝트 정렬
+	sort(m_vecPopUpUI.begin(), m_vecPopUpUI.end(), [](shared_ptr<CGameObject> a1, shared_ptr<CGameObject> a2) {
+		return a1->GetUI()->GetRank() < a2->GetUI()->GetRank();
+		});
 }
 
 void Camera::SortShadowObject()
@@ -184,6 +219,27 @@ void Camera::Render_Forward()
 	for (auto& gameObject : m_vecParticle)
 	{
 		gameObject->GetParticleSystem()->Render();
+	}
+
+	// UI Render
+	if (_type == PROJECTION_TYPE::ORTHOGRAPHIC)
+	{
+		for (auto& obj : m_vecUI)
+			obj->GetMeshRenderer()->Render();
+
+		// PopUpUI가 존재할 경우
+		if (!m_vecPopUpUI.empty())
+		{
+			// 블러 처리된 이미지를 띄우고
+			shared_ptr<CGameObject> blurUI = GET_SINGLE(SceneManager)->GetBlurUI();
+			
+			if (nullptr != blurUI)
+				blurUI->GetMeshRenderer()->Render();
+
+			// 팝업 UI를 띄운다.
+			for (auto& obj : m_vecPopUpUI)
+				obj->GetMeshRenderer()->Render();
+		}
 	}
 }
 

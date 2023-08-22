@@ -7,7 +7,8 @@
 
 UI_Script::UI_Script() :
 	m_curTextureCount{ 0 },
-	m_alpha{ 1.f }
+	m_alpha{ 1.f },
+	m_active{ true }
 {
 }
 

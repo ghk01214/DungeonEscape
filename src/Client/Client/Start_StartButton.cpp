@@ -45,7 +45,7 @@ void Start_StartButton::Update()
 			{
 				for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
 				{
-					GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[START_BUTTON_PRESSED]);
+					GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[BUTTON_PRESSED]);
 				}
 
 				m_click = true;
@@ -54,7 +54,7 @@ void Start_StartButton::Update()
 			{
 				for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
 				{
-					GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[START_BUTTON]);
+					GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[BUTTON]);
 				}
 
 				if (m_click == true)

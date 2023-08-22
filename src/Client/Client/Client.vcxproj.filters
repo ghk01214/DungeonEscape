@@ -150,6 +150,24 @@
     <Filter Include="소스 파일\Objects\01. UI\In Game\TriggerUI\OneTimeDialogue">
       <UniqueIdentifier>{5a7d84fd-d439-4625-8d4b-28bb2c73d81e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\10. Creator">
+      <UniqueIdentifier>{0c7b09a9-7cf4-493f-a818-58577fadbdf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\PopUp">
+      <UniqueIdentifier>{f394eda1-1002-490a-92e8-e73e28f53b48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\PopUp\Setting">
+      <UniqueIdentifier>{28cab0e4-e020-4494-b4aa-3e86089f9807}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\PopUp\Close">
+      <UniqueIdentifier>{c4292df8-f973-4f37-a51f-7eb87b40a56e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\PopUp\Setting\Mute">
+      <UniqueIdentifier>{400d9a56-8079-4525-a0a3-19f5594b51fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\PopUp\Setting\Setting">
+      <UniqueIdentifier>{2f5bd197-9400-4e34-9dc8-2d305ffbff53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -308,6 +326,18 @@
     <ClInclude Include="OneTimeDialogue_Script.h">
       <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\OneTimeDialogue</Filter>
     </ClInclude>
+    <ClInclude Include="Creator.h">
+      <Filter>소스 파일\Objects\10. Creator</Filter>
+    </ClInclude>
+    <ClInclude Include="Close_Script.h">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Close</Filter>
+    </ClInclude>
+    <ClInclude Include="Setting_Script.h">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Setting</Filter>
+    </ClInclude>
+    <ClInclude Include="Mute_Script.h">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Mute</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -460,6 +490,18 @@
     </ClCompile>
     <ClCompile Include="OneTimeDialogue_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\OneTimeDialogue</Filter>
+    </ClCompile>
+    <ClCompile Include="Creator.cpp">
+      <Filter>소스 파일\Objects\10. Creator</Filter>
+    </ClCompile>
+    <ClCompile Include="Close_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Close</Filter>
+    </ClCompile>
+    <ClCompile Include="Setting_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="Mute_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Mute</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
