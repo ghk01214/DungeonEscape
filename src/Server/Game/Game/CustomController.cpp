@@ -530,7 +530,7 @@ float CustomController::CalculateCameraDistance()
 	RaycastHit hit;
 	PhysicsRay ray;
 	ray.direction = m_cameraLook * -1.f;
-	ray.distance = 10000.f;						//수정필요 : 카메라 원래 거리
+	ray.distance = 2000.f;						//수정필요 : 카메라 원래 거리
 	//ray.distance = 381.448f;						//수정필요 : 카메라 원래 거리
 	ray.point = m_body->GetPosition();
 

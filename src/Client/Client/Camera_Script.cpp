@@ -177,24 +177,30 @@ void Camera_Basic::LateUpdate()
 		// 플레이어와 물체가 충돌되는 거리인 raycastDistance가 카메라의 최대 거리인 cameraDistance보다 클 경우, cameraDistance 적용.
 		// 반대일 경우 raycastDistance 적용
 
-		// client용 카메라 거리 같은 경우 distanceRatio에 영향을 받아 마우스로 조정이 가능함. 
+		// client용 카메라 거리 같은 경우 distanceRatio에 영향을 받아 마우스로 조정이 가능함.
 		float cameraDistance = m_cameraDistance * m_distanceRatio;
 
 		float raycastDistance = GetCamera()->GetRaycastDistance();
 
-		if (GET_SINGLE(CInput)->Button_Pressing(CInput::DIMB_LBUTTON))
-			Print(raycastDistance);
+		//if (GET_SINGLE(CInput)->Button_Pressing(CInput::DIMB_LBUTTON))
+			//Print(raycastDistance);
 
 		raycastDistance *= 0.95f;
 		Vec3 vCrashPoint{};
+		float distance{};
 
-		if (cameraDistance < raycastDistance)
+		if (raycastDistance < 0)
+		{
 			// 서버에서 충돌 되는 지점을 카메라 위치로 구함
-			vCrashPoint = vPlayerPos + cameraLook * raycastDistance;
+			distance = cameraDistance;
+		}
 		else
+		{
 			// client에서 적용하는 거리로 카메라 위치를 구함
-			vCrashPoint = vPlayerPos + cameraLook * cameraDistance;
+			distance = raycastDistance;
+		}
 
+		vCrashPoint = vPlayerPos + cameraLook * distance;
 
 		// 여기서 충돌되는 지점이 eye 임. 이제 up을 구함
 

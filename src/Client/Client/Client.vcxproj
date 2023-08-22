@@ -164,6 +164,7 @@
     <ClInclude Include="Bar_Script.h" />
     <ClInclude Include="Button_Script.h" />
     <ClInclude Include="CharacterSelection_Button.h" />
+    <ClInclude Include="Close_Script.h" />
     <ClInclude Include="Creator.h" />
     <ClInclude Include="Effect_Script.h" />
     <ClInclude Include="Fade_Script.h" />
@@ -172,8 +173,10 @@
     <ClInclude Include="Loading_Script.h" />
     <ClInclude Include="Magic_Artifact_Script.h" />
     <ClInclude Include="Movement_Script.h" />
+    <ClInclude Include="Mute_Script.h" />
     <ClInclude Include="OneTimeDialogue_Script.h" />
     <ClInclude Include="PortalUI_Script.h" />
+    <ClInclude Include="Setting_Script.h" />
     <ClInclude Include="Start_Script.h" />
     <ClInclude Include="Start_StartButton.h" />
     <ClInclude Include="Logo_Script.h" />
@@ -219,6 +222,7 @@
     <ClCompile Include="Bar_Script.cpp" />
     <ClCompile Include="Button_Script.cpp" />
     <ClCompile Include="CharacterSelection_Button.cpp" />
+    <ClCompile Include="Close_Script.cpp" />
     <ClCompile Include="Creator.cpp" />
     <ClCompile Include="Effect_Script.cpp" />
     <ClCompile Include="Fade_Script.cpp" />
@@ -227,8 +231,10 @@
     <ClCompile Include="Loading_Script.cpp" />
     <ClCompile Include="Magic_Artifact_Script.cpp" />
     <ClCompile Include="Movement_Script.cpp" />
+    <ClCompile Include="Mute_Script.cpp" />
     <ClCompile Include="OneTimeDialogue_Script.cpp" />
     <ClCompile Include="PortalUI_Script.cpp" />
+    <ClCompile Include="Setting_Script.cpp" />
     <ClCompile Include="Start_Script.cpp" />
     <ClCompile Include="Start_StartButton.cpp" />
     <ClCompile Include="Logo_Script.cpp" />

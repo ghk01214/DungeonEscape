@@ -106,7 +106,7 @@ void Scene_CharacterSelection::CreateUI()
 	CreateCharacterImage();
 	CreateCharacterNameButton();
 	CreateReadyButton();
-	CreateSampleUI();
+	//CreateSampleUI();
 }
 
 void Scene_CharacterSelection::LoadTextures()
@@ -430,7 +430,7 @@ void Scene_CharacterSelection::CreateSampleUI()
 		{
 			ui->SetVisible(true);
 			//ui->OnTop();
-			ui->SetPopUp(true);
+			ui->SetPopUp(false);
 		}
 		obj->AddComponent(ui);
 

@@ -4,7 +4,9 @@
 
 #include "EnginePch.h"
 
+#ifndef RELEASE
 #define RELEASE
+#endif
 
 extern HINSTANCE g_hInst;
 extern std::wstring serverIP_Address;

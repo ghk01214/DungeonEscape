@@ -31,9 +31,19 @@ private:
 	void CreateLogInButton();
 	void CreateSettingButton();
 
+	void CreatePopUp();
+	void CreateBlur();
+	void CreateCloseButton();
+	void CreateSettingFrame();
+	void CreateBGM();
+	void CreateSE();
+
 public:
 	static std::shared_ptr<CScene> Create();
 
 private:
-	std::wstring m_ipAddress;
+	std::shared_ptr<class Setting_Script> m_settingButton;
+	std::shared_ptr<class Close_Script> m_closeButton;
+
+	std::vector<std::shared_ptr<CGameObject>> m_popUp;
 };
