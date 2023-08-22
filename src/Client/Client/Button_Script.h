@@ -24,6 +24,7 @@ public:
 
 public:
 	constexpr bool GetClick() const { return m_click; }
+	POINT GetMousePos() const { return m_mousePos; }
 
 protected:
 	class CInput* m_input;

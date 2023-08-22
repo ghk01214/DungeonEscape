@@ -17,7 +17,7 @@ public:
 public:
 	constexpr bool ShowPopUp() const { return m_showPopUp; }
 
-	void SetShowPopUpFlat(bool flag);
+	void SetShowPopUpFlag(bool flag);
 
 private:
 	bool m_showPopUp;

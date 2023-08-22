@@ -30,6 +30,7 @@ private:
 private:
 	SOUND_TYPE m_soundType;
 
-	bool m_prevClick;
+	bool m_mute;
+	bool m_prevMute;
 };
 

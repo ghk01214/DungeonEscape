@@ -15,6 +15,11 @@ public:
 	virtual void LateUpdate() override;
 
 public:
+	constexpr bool ClosePopUp() const { return m_closePopUp; }
 
+	void SetClosePopUpFlag(bool flag);
+
+private:
+	bool m_closePopUp;
 };
 

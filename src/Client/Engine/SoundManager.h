@@ -43,6 +43,9 @@ public:
 	void StopAll();
 
 public:
+	constexpr float GetPrevBGMVolume() const { return m_prevBGMvolume; }
+	constexpr float GetPrevEffectVolume() const { return m_prevEffectvolume; }
+
 	void MuteBGM(bool flag);
 	void MuteSE(bool flag);
 

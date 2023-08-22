@@ -27,7 +27,7 @@
 
 #include "Scripts.hpp"
 #include "Skill_Bomb_Script.h"
-#include "HP_Script.h"
+#include "VolumeSlider_Script.h"
 
 #include "EffectManager.h"
 #include "SoundManager.h"
@@ -506,7 +506,7 @@ void Scene_Test::CreateHPnSPBar()
 
 		obj->AddComponent(meshRenderer);
 
-		std::shared_ptr<HP_Script> behaviour = std::make_shared<HP_Script>();
+		std::shared_ptr<VolumeSlider_Script> behaviour = std::make_shared<VolumeSlider_Script>();
 		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name));
 
 		obj->AddComponent(behaviour);

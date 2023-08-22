@@ -168,7 +168,8 @@
     <ClInclude Include="Creator.h" />
     <ClInclude Include="Effect_Script.h" />
     <ClInclude Include="Fade_Script.h" />
-    <ClInclude Include="HP_Script.h" />
+    <ClInclude Include="SliderTip_Script.h" />
+    <ClInclude Include="VolumeSlider_Script.h" />
     <ClInclude Include="InfoUI_Script.h" />
     <ClInclude Include="Loading_Script.h" />
     <ClInclude Include="Magic_Artifact_Script.h" />
@@ -226,7 +227,8 @@
     <ClCompile Include="Creator.cpp" />
     <ClCompile Include="Effect_Script.cpp" />
     <ClCompile Include="Fade_Script.cpp" />
-    <ClCompile Include="HP_Script.cpp" />
+    <ClCompile Include="SliderTip_Script.cpp" />
+    <ClCompile Include="VolumeSlider_Script.cpp" />
     <ClCompile Include="InfoUI_Script.cpp" />
     <ClCompile Include="Loading_Script.cpp" />
     <ClCompile Include="Magic_Artifact_Script.cpp" />

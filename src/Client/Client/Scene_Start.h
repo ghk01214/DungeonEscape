@@ -5,6 +5,14 @@
 
 class Scene_Start final : public CScene
 {
+private:
+	enum SLIDER_TYPE
+	{
+		BGM,
+		SE,
+
+		MAX
+	};
 public:
 	explicit Scene_Start();
 	virtual ~Scene_Start() = default;
@@ -35,8 +43,13 @@ private:
 	void CreateBlur();
 	void CreateCloseButton();
 	void CreateSettingFrame();
-	void CreateBGM();
-	void CreateSE();
+	void CreateBGMButton();
+	void CreateBGMSlider();
+	void CreateSEButton();
+	void CreateSESlider();
+
+private:
+	void ChangePopUpVisibility();
 
 public:
 	static std::shared_ptr<CScene> Create();
@@ -44,6 +57,8 @@ public:
 private:
 	std::shared_ptr<class Setting_Script> m_settingButton;
 	std::shared_ptr<class Close_Script> m_closeButton;
+	std::vector<std::shared_ptr<class SliderTip_Script>> m_sliderTip;
+	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
 
 	std::vector<std::shared_ptr<CGameObject>> m_popUp;
 };

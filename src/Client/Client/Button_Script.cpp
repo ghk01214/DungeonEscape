@@ -25,7 +25,7 @@ void Button_Script::Start()
 {
 	__super::Start();
 
-	m_input = GET_SINGLE(CInput)->GetInstance();
+	m_input = GET_SINGLE(CInput);
 	m_pos = GetTransform()->GetLocalPosition();
 	m_scale = GetTransform()->GetLocalScale();
 
@@ -47,6 +47,8 @@ void Button_Script::Update()
 	m_mousePos.x -= width / 2;
 	m_mousePos.y -= height / 2;
 	m_mousePos.y = -m_mousePos.y;
+
+	m_pos = GetTransform()->GetLocalPosition();
 
 	m_scale.x = m_scaleRatio.x * width;
 	m_scale.y = m_scaleRatio.y * height;

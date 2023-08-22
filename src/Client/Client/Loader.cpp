@@ -344,6 +344,27 @@ HRESULT CLoader::Loading_ForStart_Texture()
 	LOAD_TEXTURE(L"Close", L"..\\Resources\\Texture\\UI\\Button\\Close.png");
 	LOAD_TEXTURE(L"Close Selected", L"..\\Resources\\Texture\\UI\\Button\\Close_selected.png");
 
+	LOAD_TEXTURE(L"Slider Frame(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Frame(L).png");
+	LOAD_TEXTURE(L"Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Frame(C).png");
+	LOAD_TEXTURE(L"Slider Frame(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Frame(R).png");
+
+	LOAD_TEXTURE(L"Slider Inner Frame(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_InnerFrame(L).png");
+	LOAD_TEXTURE(L"Slider Inner Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_InnerFrame(C).png");
+	LOAD_TEXTURE(L"Slider Inner Frame(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_InnerFrame(R).png");
+
+	LOAD_TEXTURE(L"Slider Fill Area(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_FillArea(L).png");
+	LOAD_TEXTURE(L"Slider Fill Area(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_FillArea(C).png");
+	LOAD_TEXTURE(L"Slider Fill Area(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_FillArea(R).png");
+
+	LOAD_TEXTURE(L"Slider Fill(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(L).png");
+	LOAD_TEXTURE(L"Slider Fill(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(C).png");
+	LOAD_TEXTURE(L"Slider Fill(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(R).png");
+	LOAD_TEXTURE(L"Slider Fill(L) Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(L)_mute.png");
+	LOAD_TEXTURE(L"Slider Fill(C) Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(C)_mute.png");
+	LOAD_TEXTURE(L"Slider Fill(R) Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(R)_mute.png");
+
+	LOAD_TEXTURE(L"Slider Tip", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip.png");
+	LOAD_TEXTURE(L"Slider Tip Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip_mute.png");
 
 	return S_OK;
 }

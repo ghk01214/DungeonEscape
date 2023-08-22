@@ -10,9 +10,9 @@
 
 Mute_Script::Mute_Script(SOUND_TYPE type) :
 	m_soundType{ type },
-	m_prevClick{ false }
+	m_mute{ false },
+	m_prevMute{ false }
 {
-	//m_active = false;
 }
 
 Mute_Script::~Mute_Script()
@@ -31,21 +31,31 @@ void Mute_Script::Start()
 
 void Mute_Script::Update()
 {
-	if (m_active == false)
+	if (GetGameObject()->GetUI()->GetVisible() == false)
 		return;
 
 	__super::Update();
 
-	if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))
+	if (m_click == true)
+	{
+		if (m_input->Button_Up(CInput::DIMB_LBUTTON) == true)
+		{
+			m_mute = !m_mute;
+			m_click = false;
+		}
+	}
+	else if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))
 	{
 		if (m_pos.y - (m_scale.y / 2) <= m_mousePos.y and m_mousePos.y <= m_pos.y + (m_scale.y / 2))
 		{
-			if (m_input->Button_OneClick(CInput::DIMB_LBUTTON) == true)
-				m_click = !m_click;
+			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true)
+			{
+				m_click = true;
+			}
 		}
 	}
 
-	if (m_prevClick == m_click)
+	if (m_prevMute == m_mute)
 		return;
 
 	TEXTURE_TYPE type{ Mute() };
@@ -65,15 +75,12 @@ Mute_Script::TEXTURE_TYPE Mute_Script::Mute()
 {
 	TEXTURE_TYPE type{};
 
-	if (m_click == true)
+	if (m_mute == true)
 	{
 		type = BUTTON_PRESSED;
 
 		if (m_soundType == Mute_Script::SOUND_TYPE::BGM)
-		{
 			GET_SINGLE(CSoundMgr)->MuteBGM(true);
-			Print("Mute");
-		}
 		else if (m_soundType == Mute_Script::SOUND_TYPE::SE)
 			GET_SINGLE(CSoundMgr)->MuteSE(true);
 	}
@@ -87,7 +94,7 @@ Mute_Script::TEXTURE_TYPE Mute_Script::Mute()
 			GET_SINGLE(CSoundMgr)->MuteSE(false);
 	}
 
-	m_prevClick = m_click;
+	m_prevMute = m_mute;
 
 	return type;
 }

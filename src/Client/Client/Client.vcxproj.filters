@@ -126,9 +126,6 @@
     <Filter Include="소스 파일\Objects\02. Camera\InfoUI">
       <UniqueIdentifier>{7c7c982a-c6a0-42b9-8675-33e380f70241}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\01. UI\In Game\HP">
-      <UniqueIdentifier>{56d095b7-ec87-4086-b99e-6d8d74ecc4b0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Objects\01. UI\In Game\Fade">
       <UniqueIdentifier>{09b16139-f0c5-498f-9cf9-2535a01d7371}</UniqueIdentifier>
     </Filter>
@@ -162,11 +159,14 @@
     <Filter Include="소스 파일\Objects\01. UI\PopUp\Close">
       <UniqueIdentifier>{c4292df8-f973-4f37-a51f-7eb87b40a56e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\01. UI\PopUp\Setting\Mute">
-      <UniqueIdentifier>{400d9a56-8079-4525-a0a3-19f5594b51fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Objects\01. UI\PopUp\Setting\Setting">
       <UniqueIdentifier>{2f5bd197-9400-4e34-9dc8-2d305ffbff53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\PopUp\Setting\Sound">
+      <UniqueIdentifier>{3b5e492d-9dea-4ac0-86a8-2b952f8e4b8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\PopUp\Setting\Sound\Mute">
+      <UniqueIdentifier>{400d9a56-8079-4525-a0a3-19f5594b51fe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -305,9 +305,6 @@
     <ClInclude Include="InfoUI_Script.h">
       <Filter>소스 파일\Objects\02. Camera\InfoUI</Filter>
     </ClInclude>
-    <ClInclude Include="HP_Script.h">
-      <Filter>소스 파일\Objects\01. UI\In Game\HP</Filter>
-    </ClInclude>
     <ClInclude Include="Fade_Script.h">
       <Filter>소스 파일\Objects\01. UI\In Game\Fade</Filter>
     </ClInclude>
@@ -336,7 +333,13 @@
       <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Setting</Filter>
     </ClInclude>
     <ClInclude Include="Mute_Script.h">
-      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Mute</Filter>
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Sound\Mute</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeSlider_Script.h">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="SliderTip_Script.h">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Setting</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -470,9 +473,6 @@
     <ClCompile Include="InfoUI_Script.cpp">
       <Filter>소스 파일\Objects\02. Camera\InfoUI</Filter>
     </ClCompile>
-    <ClCompile Include="HP_Script.cpp">
-      <Filter>소스 파일\Objects\01. UI\In Game\HP</Filter>
-    </ClCompile>
     <ClCompile Include="Fade_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\In Game\Fade</Filter>
     </ClCompile>
@@ -501,7 +501,13 @@
       <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Setting</Filter>
     </ClCompile>
     <ClCompile Include="Mute_Script.cpp">
-      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Mute</Filter>
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Sound\Mute</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeSlider_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="SliderTip_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Setting</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

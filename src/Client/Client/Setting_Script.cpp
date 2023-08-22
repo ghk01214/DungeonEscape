@@ -27,7 +27,7 @@ void Setting_Script::Start()
 
 void Setting_Script::Update()
 {
-	if (m_showPopUp == true)
+	if (GetGameObject()->GetUI()->GetVisible() == false)
 		return;
 
 	__super::Update();
@@ -39,13 +39,13 @@ void Setting_Script::Update()
 			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true and m_click == false)
 			{
 				m_click = true;
-				m_showPopUp = true;
-
-				GetGameObject()->GetUI()->SetVisible(false);
 			}
 			else if (m_input->Button_Up(CInput::DIMB_LBUTTON) == true and m_click == true)
 			{
 				m_click = false;
+				m_showPopUp = true;
+
+				GetGameObject()->GetUI()->SetVisible(false);
 			}
 		}
 	}
@@ -53,10 +53,13 @@ void Setting_Script::Update()
 
 void Setting_Script::LateUpdate()
 {
+	if (GetGameObject()->GetUI()->GetVisible() == false)
+		return;
+
 	__super::LateUpdate();
 }
 
-void Setting_Script::SetShowPopUpFlat(bool flag)
+void Setting_Script::SetShowPopUpFlag(bool flag)
 {
 	m_showPopUp = flag;
 }
