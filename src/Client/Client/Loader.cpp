@@ -164,11 +164,11 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 
 HRESULT CLoader::Loading_GamePlayLevel_UI()
 {
-	GET_SINGLE(Resources)->Load<Texture>(L"Bar", L"..\\Resources\\Texture\\UI\\In Game\\bar.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"HP", L"..\\Resources\\Texture\\UI\\In Game\\hp.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"MP", L"..\\Resources\\Texture\\UI\\In Game\\mp.png");
+	LOAD_TEXTURE(L"Bar", L"..\\Resources\\Texture\\UI\\In Game\\bar.png");
+	LOAD_TEXTURE(L"HP", L"..\\Resources\\Texture\\UI\\In Game\\hp.png");
+	LOAD_TEXTURE(L"MP", L"..\\Resources\\Texture\\UI\\In Game\\mp.png");
 
-	GET_SINGLE(Resources)->Load<Texture>(L"Pillar Hint", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint.png");
+	LOAD_TEXTURE(L"Pillar Hint", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint.png");
 
 	return S_OK;
 }
@@ -325,14 +325,25 @@ HRESULT CLoader::Loading_ForStart_Font()
 
 HRESULT CLoader::Loading_ForStart_Texture()
 {
-	GET_SINGLE(Resources)->Load<Texture>(L"Lobby_InGame", L"..\\Resources\\Texture\\UI\\Start\\Lobby_InGame.PNG");
+	LOAD_TEXTURE(L"Lobby_InGame", L"..\\Resources\\Texture\\UI\\Start\\Lobby_InGame.PNG");
 
-	GET_SINGLE(Resources)->Load<Texture>(L"Title", L"..\\Resources\\Texture\\UI\\Font\\Title.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Log In", L"..\\Resources\\Texture\\UI\\Font\\Log In.png");
+	LOAD_TEXTURE(L"Title", L"..\\Resources\\Texture\\UI\\Font\\Title.png");
+	LOAD_TEXTURE(L"Log In", L"..\\Resources\\Texture\\UI\\Font\\Log In.png");
 
-	GET_SINGLE(Resources)->Load<Texture>(L"Button", L"..\\Resources\\Texture\\UI\\Button\\Button.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Button_selected", L"..\\Resources\\Texture\\UI\\Button\\Button_selected.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Setting", L"..\\Resources\\Texture\\UI\\Button\\Setting.png");
+	LOAD_TEXTURE(L"Button", L"..\\Resources\\Texture\\UI\\Button\\Button.png");
+	LOAD_TEXTURE(L"Button Selected", L"..\\Resources\\Texture\\UI\\Button\\Button_selected.png");
+	LOAD_TEXTURE(L"Setting", L"..\\Resources\\Texture\\UI\\Button\\Setting.png");
+
+	LOAD_TEXTURE(L"White Blur", L"..\\Resources\\Texture\\UI\\Blur\\White.png");
+	LOAD_TEXTURE(L"Setting Frame", L"..\\Resources\\Texture\\UI\\Frame\\Setting Frame.png");
+
+	LOAD_TEXTURE(L"BGM", L"..\\Resources\\Texture\\UI\\Icon\\BGM.png");
+	LOAD_TEXTURE(L"BGM Mute", L"..\\Resources\\Texture\\UI\\Icon\\BGM_mute.png");
+	LOAD_TEXTURE(L"SE", L"..\\Resources\\Texture\\UI\\Icon\\SE.png");
+	LOAD_TEXTURE(L"SE Mute", L"..\\Resources\\Texture\\UI\\Icon\\SE_mute.png");
+	LOAD_TEXTURE(L"Close", L"..\\Resources\\Texture\\UI\\Button\\Close.png");
+	LOAD_TEXTURE(L"Close Selected", L"..\\Resources\\Texture\\UI\\Button\\Close_selected.png");
+
 
 	return S_OK;
 }
@@ -362,19 +373,19 @@ HRESULT CLoader::Loading_ForCharacterSelection_Font()
 
 HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 {
-	GET_SINGLE(Resources)->Load<Texture>(L"Frame1", L"..\\Resources\\Texture\\UI\\Frame\\Frame1.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Frame1_selected", L"..\\Resources\\Texture\\UI\\Frame\\Frame1_selected.png");
+	LOAD_TEXTURE(L"Frame1", L"..\\Resources\\Texture\\UI\\Frame\\Frame1.png");
+	LOAD_TEXTURE(L"Frame1_selected", L"..\\Resources\\Texture\\UI\\Frame\\Frame1_selected.png");
 
-	GET_SINGLE(Resources)->Load<Texture>(L"Button2", L"..\\Resources\\Texture\\UI\\Button\\Button2.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Button2_selected", L"..\\Resources\\Texture\\UI\\Button\\Button2_selected.png");
+	LOAD_TEXTURE(L"Button2", L"..\\Resources\\Texture\\UI\\Button\\Button2.png");
+	LOAD_TEXTURE(L"Button2_selected", L"..\\Resources\\Texture\\UI\\Button\\Button2_selected.png");
 
-	GET_SINGLE(Resources)->Load<Texture>(L"Knight", L"..\\Resources\\Texture\\UI\\Font\\Knight.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Mage", L"..\\Resources\\Texture\\UI\\Font\\Mage.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Priest", L"..\\Resources\\Texture\\UI\\Font\\Priest.png");
+	LOAD_TEXTURE(L"Knight", L"..\\Resources\\Texture\\UI\\Font\\Knight.png");
+	LOAD_TEXTURE(L"Mage", L"..\\Resources\\Texture\\UI\\Font\\Mage.png");
+	LOAD_TEXTURE(L"Priest", L"..\\Resources\\Texture\\UI\\Font\\Priest.png");
 
-	GET_SINGLE(Resources)->Load<Texture>(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Mistic", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Carmel", L"..\\Resources\\Texture\\UI\\Character Select\\Carmel.png");
+	LOAD_TEXTURE(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
+	LOAD_TEXTURE(L"Mistic", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic.png");
+	LOAD_TEXTURE(L"Carmel", L"..\\Resources\\Texture\\UI\\Character Select\\Carmel.png");
 
 	return S_OK;
 }

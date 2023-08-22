@@ -70,7 +70,7 @@ shared_ptr<Mesh> Resources::LoadFontMesh(vector<Vertex> vec)
 
 	if (findMesh)
 		return findMesh;
-	
+
 	vector<uint32> idx(vec.size() / 4 * 6);
 
 	// 앞면
@@ -548,7 +548,7 @@ void Resources::CreateDefaultShader()
 		};
 
 		shared_ptr<Shader> shader = make_shared<Shader>();
-		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg); 
+		shader->CreateGraphicsShader(L"..\\Resources\\Shader\\forward.fx", info, arg);
 		Add<Shader>(L"BillBoard_Texture", shader);
 	}
 
