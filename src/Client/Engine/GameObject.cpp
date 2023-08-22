@@ -13,6 +13,7 @@
 #include "BillBoard.h"
 #include "Effect.h"
 #include "Font.h"
+#include "UI.h"
 
 CGameObject::CGameObject() : Object(OBJECT_TYPE::GAMEOBJECT)
 {
@@ -180,6 +181,12 @@ shared_ptr<Font> CGameObject::GetFont()
 {
 	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::FONT);
 	return static_pointer_cast<Font>(component);
+}
+
+shared_ptr<UI> CGameObject::GetUI()
+{
+	shared_ptr<Component> component = GetFixedComponent(COMPONENT_TYPE::UI);
+	return static_pointer_cast<UI>(component);
 }
 
 void CGameObject::AddComponent(shared_ptr<Component> component)

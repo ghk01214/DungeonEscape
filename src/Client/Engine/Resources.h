@@ -60,6 +60,13 @@ private:
 
 private:
 	map<std::wstring, vector<shared_ptr<Texture>>> m_effects;
+
+public:
+	void LoadBlurTexture();
+	shared_ptr<Texture> GetBlurTexture(void) { return m_blurTexture; }
+
+private:
+	shared_ptr<Texture> m_blurTexture;
 };
 
 template<typename T>

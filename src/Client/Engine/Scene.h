@@ -114,5 +114,8 @@ private:
 
 private:
 	shared_ptr<CGameObject> m_dirlight;	// 방향광 정보
+
+private:
+	shared_ptr<CGameObject> m_blurUI;	// 블러 처리된 UI 객체
 };
 

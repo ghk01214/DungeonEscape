@@ -8,6 +8,7 @@ void Resources::Init()
 {
 	CreateDefaultShader();
 	CreateDefaultMaterial();
+	LoadBlurTexture();
 }
 
 shared_ptr<Mesh> Resources::LoadPointMesh()
@@ -932,4 +933,11 @@ void Resources::CreateDefaultMaterial()
 		material->SetTexture(0, texture);
 		Add<Material>(L"Font", material);
 	}
+}
+
+void Resources::LoadBlurTexture()
+{
+	shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"BlurPng", L"..\\Resources\\Texture\\UI\\Blur\\blur_Png_Img_Free.png");
+
+	m_blurTexture = texture;
 }

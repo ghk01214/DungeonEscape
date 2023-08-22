@@ -170,6 +170,7 @@ void Scene_Test::CreateLayer()
 	GET_SINGLE(EffectManager)->SetSceneIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"Default"));
 	GET_SINGLE(FontManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 	GET_SINGLE(FontManager)->SetObjectIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"Default"));
+	GET_SINGLE(SceneManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 }
 
 void Scene_Test::CreateComputeShader(void)

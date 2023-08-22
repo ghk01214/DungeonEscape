@@ -15,6 +15,7 @@ enum class COMPONENT_TYPE : uint8
 	BILL_BOARD,
 	Effect,
 	FONT,
+	UI,
 	// ...
 	MONO_BEHAVIOUR,
 	END,

@@ -181,6 +181,9 @@
     <Filter Include="Manager\Effect">
       <UniqueIdentifier>{b45d9475-cac0-40ac-8913-6a73e8dbac5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Component\UI">
+      <UniqueIdentifier>{322a16ae-6572-45a3-88bd-9d3f0f985019}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -344,6 +347,9 @@
     </ClCompile>
     <ClCompile Include="EffectManager.cpp">
       <Filter>Manager\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>GameObject\Component\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -520,6 +526,9 @@
     </ClInclude>
     <ClInclude Include="EffectManager.h">
       <Filter>Manager\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>GameObject\Component\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

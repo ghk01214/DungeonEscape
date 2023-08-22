@@ -150,6 +150,9 @@
     <Filter Include="소스 파일\Objects\01. UI\In Game\TriggerUI\OneTimeDialogue">
       <UniqueIdentifier>{5a7d84fd-d439-4625-8d4b-28bb2c73d81e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\10. Creator">
+      <UniqueIdentifier>{0c7b09a9-7cf4-493f-a818-58577fadbdf5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -308,6 +311,9 @@
     <ClInclude Include="OneTimeDialogue_Script.h">
       <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\OneTimeDialogue</Filter>
     </ClInclude>
+    <ClInclude Include="Creator.h">
+      <Filter>소스 파일\Objects\10. Creator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -460,6 +466,9 @@
     </ClCompile>
     <ClCompile Include="OneTimeDialogue_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\In Game\TriggerUI\OneTimeDialogue</Filter>
+    </ClCompile>
+    <ClCompile Include="Creator.cpp">
+      <Filter>소스 파일\Objects\10. Creator</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

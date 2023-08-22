@@ -164,6 +164,7 @@
     <ClInclude Include="Bar_Script.h" />
     <ClInclude Include="Button_Script.h" />
     <ClInclude Include="CharacterSelection_Button.h" />
+    <ClInclude Include="Creator.h" />
     <ClInclude Include="Effect_Script.h" />
     <ClInclude Include="Fade_Script.h" />
     <ClInclude Include="HP_Script.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="Bar_Script.cpp" />
     <ClCompile Include="Button_Script.cpp" />
     <ClCompile Include="CharacterSelection_Button.cpp" />
+    <ClCompile Include="Creator.cpp" />
     <ClCompile Include="Effect_Script.cpp" />
     <ClCompile Include="Fade_Script.cpp" />
     <ClCompile Include="HP_Script.cpp" />
