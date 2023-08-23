@@ -5,7 +5,7 @@
 class LoginButton_Script : public Button_Script
 {
 public:
-	LoginButton_Script();
+	LoginButton_Script(bool active = true);
 	virtual ~LoginButton_Script();
 
 public:
@@ -14,6 +14,4 @@ public:
 	virtual void Update() override;
 	virtual void LateUpdate() override;
 
-public:
-	bool m_lobbyEnd;
 };

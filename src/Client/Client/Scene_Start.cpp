@@ -697,6 +697,8 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		std::shared_ptr<SliderTip_Script> behaviour{ std::make_shared<SliderTip_Script>(SliderTip_Script::SLIDER_TYPE::BGM) };
+		behaviour->InsertTextures(texture);
+		behaviour->InsertTextures(GET_TEXTURE(L"Slider Tip Mute"));
 		obj->AddComponent(behaviour);
 		m_sliderTip.push_back(behaviour);
 
@@ -1023,6 +1025,8 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		std::shared_ptr<SliderTip_Script> behaviour{ std::make_shared<SliderTip_Script>(SliderTip_Script::SLIDER_TYPE::SE) };
+		behaviour->InsertTextures(texture);
+		behaviour->InsertTextures(GET_TEXTURE(L"Slider Tip Mute"));
 		obj->AddComponent(behaviour);
 		m_sliderTip.push_back(behaviour);
 
@@ -1101,22 +1105,26 @@ void Scene_Start::ChangeMuteTexture()
 {
 	if (m_muteButton[BGM]->IsMute() == true)
 	{
+		m_sliderTip[BGM]->ChangeTexture(1);
 		m_volumeSlider[BGM]->ChangeMuteTexture(true);
 		m_volumeSliderLeftTip[BGM]->ChangeMuteTexture(true);
 	}
 	else
 	{
+		m_sliderTip[BGM]->ChangeTexture(0);
 		m_volumeSlider[BGM]->ChangeMuteTexture(false);
 		m_volumeSliderLeftTip[BGM]->ChangeMuteTexture(false);
 	}
 
 	if (m_muteButton[SE]->IsMute() == true)
 	{
+		m_sliderTip[SE]->ChangeTexture(1);
 		m_volumeSlider[SE]->ChangeMuteTexture(true);
 		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(true);
 	}
 	else
 	{
+		m_sliderTip[SE]->ChangeTexture(0);
 		m_volumeSlider[SE]->ChangeMuteTexture(false);
 		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(false);
 	}

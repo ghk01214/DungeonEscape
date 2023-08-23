@@ -40,10 +40,7 @@ void Close_Script::Update()
 			m_click = false;
 			m_closePopUp = true;
 
-			for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
-			{
-				GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[BUTTON]);
-			}
+			ChangeTexture(BUTTON);
 		}
 	}
 	else if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))
@@ -51,15 +48,18 @@ void Close_Script::Update()
 		if (m_pos.y - (m_scale.y / 2) <= m_mousePos.y and m_mousePos.y <= m_pos.y + (m_scale.y / 2))
 		{
 			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true and m_click == false)
-			{
 				m_click = true;
 
-				for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
-				{
-					GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[BUTTON_PRESSED]);
-				}
-			}
+			ChangeTexture(BUTTON_PRESSED);
 		}
+		else
+		{
+			ChangeTexture(BUTTON);
+		}
+	}
+	else
+	{
+		ChangeTexture(BUTTON);
 	}
 }
 

@@ -4,15 +4,13 @@
 #include <MeshRenderer.h>
 #include <Material.h>
 #include <Input.h>
-#include <Engine.h>
 #include <SceneManager.h>
 
 #include "Scene_Loading.h"
 
-LoginButton_Script::LoginButton_Script() :
-	m_lobbyEnd{ false }
+LoginButton_Script::LoginButton_Script(bool active)
 {
-	m_active = true;
+	m_active = active;
 }
 
 LoginButton_Script::~LoginButton_Script()
@@ -34,37 +32,35 @@ void LoginButton_Script::Update()
 	if (m_active == false)
 		return;
 
-	if (m_lobbyEnd == true)
-		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_CHARACTER_SELECT));
-
 	__super::Update();
 
-	m_pos.y = -(static_cast<float>(GEngine->GetWindow().height) / 4);
+	if (m_click == true)
+	{
+		if (m_input->Button_Up(CInput::DIMB_LBUTTON) == true)
+		{
+			m_click = false;
 
-	if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))
+			ChangeTexture(BUTTON);
+			GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_CHARACTER_SELECT));
+		}
+	}
+	else if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))
 	{
 		if (m_pos.y - (m_scale.y / 2) <= m_mousePos.y and m_mousePos.y <= m_pos.y + (m_scale.y / 2))
 		{
 			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true)
-			{
-				for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
-				{
-					GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[BUTTON_PRESSED]);
-				}
-
 				m_click = true;
-			}
-			else if (m_input->Button_Up(CInput::DIMB_LBUTTON) == true)
-			{
-				for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
-				{
-					GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[BUTTON]);
-				}
 
-				if (m_click == true)
-					m_lobbyEnd = true;
-			}
+			ChangeTexture(BUTTON_PRESSED);
 		}
+		else
+		{
+			ChangeTexture(BUTTON);
+		}
+	}
+	else
+	{
+		ChangeTexture(BUTTON);
 	}
 }
 

@@ -2,12 +2,15 @@
 #include "UI_Script.h"
 #include "Button_Script.h"
 
+#include <MeshRenderer.h>
+#include <Material.h>
 #include <Transform.h>
 #include <Input.h>
 #include <Engine.h>
 
 Button_Script::Button_Script() :
 	m_click{ false },
+	m_inRange{ false },
 	m_input{ nullptr }
 {
 }
@@ -57,4 +60,17 @@ void Button_Script::Update()
 void Button_Script::LateUpdate()
 {
 	__super::LateUpdate();
+}
+
+void Button_Script::ChangeTexture(TEXTURE_TYPE type)
+{
+	for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
+	{
+		GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[type]);
+	}
+}
+
+void Button_Script::ChangeTexture(int32_t type)
+{
+	ChangeTexture(magic_enum::enum_value<TEXTURE_TYPE>(type));
 }

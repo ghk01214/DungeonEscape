@@ -42,6 +42,8 @@ void Mute_Script::Update()
 		{
 			m_mute = !m_mute;
 			m_click = false;
+
+			ChangeTexture(BUTTON);
 		}
 	}
 	else if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))
@@ -49,9 +51,13 @@ void Mute_Script::Update()
 		if (m_pos.y - (m_scale.y / 2) <= m_mousePos.y and m_mousePos.y <= m_pos.y + (m_scale.y / 2))
 		{
 			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true)
-			{
 				m_click = true;
-			}
+
+			ChangeTexture(BUTTON_PRESSED);
+		}
+		else if (m_mute == false)
+		{
+			ChangeTexture(BUTTON);
 		}
 	}
 
@@ -60,10 +66,7 @@ void Mute_Script::Update()
 
 	TEXTURE_TYPE type{ Mute() };
 
-	for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
-	{
-		GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[type]);
-	}
+	ChangeTexture(type);
 }
 
 void Mute_Script::LateUpdate()

@@ -23,6 +23,10 @@ public:
 	virtual void LateUpdate() override;
 
 public:
+	void ChangeTexture(TEXTURE_TYPE type);
+	void ChangeTexture(int32_t type);
+
+public:
 	constexpr bool GetClick() const { return m_click; }
 	POINT GetMousePos() const { return m_mousePos; }
 
@@ -35,4 +39,5 @@ protected:
 	POINT m_mousePos;
 
 	bool m_click;
+	bool m_inRange;
 };
