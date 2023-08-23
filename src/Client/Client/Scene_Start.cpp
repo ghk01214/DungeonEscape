@@ -17,7 +17,6 @@
 
 #include "Creator.h"
 #include "Scene_Loading.h"
-#include "Start_Script.h"
 #include "Mute_Script.h"
 
 Scene_Start::Scene_Start()

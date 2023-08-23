@@ -32,6 +32,9 @@ private:
 	void CreateCharacterNameButton();
 	void CreateReadyButton();
 
+	void CreatePopUp();
+	void CreateCharacterDescription();
+
 private:
 	void CreateSampleUI();
 

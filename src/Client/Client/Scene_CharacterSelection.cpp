@@ -360,6 +360,14 @@ void Scene_CharacterSelection::CreateReadyButton()
 {
 }
 
+void Scene_CharacterSelection::CreatePopUp()
+{
+}
+
+void Scene_CharacterSelection::CreateCharacterDescription()
+{
+}
+
 void Scene_CharacterSelection::CreateSampleUI()
 {
 	std::wstring name{ L"Button2" };

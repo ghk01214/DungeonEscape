@@ -178,7 +178,6 @@
     <ClInclude Include="OneTimeDialogue_Script.h" />
     <ClInclude Include="PortalUI_Script.h" />
     <ClInclude Include="Setting_Script.h" />
-    <ClInclude Include="Start_Script.h" />
     <ClInclude Include="LoginButton_Script.h" />
     <ClInclude Include="Logo_Script.h" />
     <ClInclude Include="Logo_Start.h" />
@@ -237,7 +236,6 @@
     <ClCompile Include="OneTimeDialogue_Script.cpp" />
     <ClCompile Include="PortalUI_Script.cpp" />
     <ClCompile Include="Setting_Script.cpp" />
-    <ClCompile Include="Start_Script.cpp" />
     <ClCompile Include="LoginButton_Script.cpp" />
     <ClCompile Include="Logo_Script.cpp" />
     <ClCompile Include="Logo_Start.cpp" />

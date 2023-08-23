@@ -248,9 +248,6 @@
     <ClInclude Include="PhysxObject_Script.h">
       <Filter>소스 파일\Objects\06. PhysxObject</Filter>
     </ClInclude>
-    <ClInclude Include="Start_Script.h">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
-    </ClInclude>
     <ClInclude Include="LoginButton_Script.h">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClInclude>
@@ -418,9 +415,6 @@
     </ClCompile>
     <ClCompile Include="PhysxObject_Script.cpp">
       <Filter>소스 파일\Objects\06. PhysxObject</Filter>
-    </ClCompile>
-    <ClCompile Include="Start_Script.cpp">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClCompile>
     <ClCompile Include="LoginButton_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
