@@ -251,7 +251,7 @@
     <ClInclude Include="Start_Script.h">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClInclude>
-    <ClInclude Include="Start_StartButton.h">
+    <ClInclude Include="LoginButton_Script.h">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClInclude>
     <ClInclude Include="Logo_Script.h">
@@ -422,7 +422,7 @@
     <ClCompile Include="Start_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClCompile>
-    <ClCompile Include="Start_StartButton.cpp">
+    <ClCompile Include="LoginButton_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
     </ClCompile>
     <ClCompile Include="Logo_Script.cpp">

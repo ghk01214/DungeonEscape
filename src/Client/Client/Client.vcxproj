@@ -179,7 +179,7 @@
     <ClInclude Include="PortalUI_Script.h" />
     <ClInclude Include="Setting_Script.h" />
     <ClInclude Include="Start_Script.h" />
-    <ClInclude Include="Start_StartButton.h" />
+    <ClInclude Include="LoginButton_Script.h" />
     <ClInclude Include="Logo_Script.h" />
     <ClInclude Include="Logo_Start.h" />
     <ClInclude Include="PhysxObject_Script.h" />
@@ -238,7 +238,7 @@
     <ClCompile Include="PortalUI_Script.cpp" />
     <ClCompile Include="Setting_Script.cpp" />
     <ClCompile Include="Start_Script.cpp" />
-    <ClCompile Include="Start_StartButton.cpp" />
+    <ClCompile Include="LoginButton_Script.cpp" />
     <ClCompile Include="Logo_Script.cpp" />
     <ClCompile Include="Logo_Start.cpp" />
     <ClCompile Include="PhysxObject_Script.cpp" />

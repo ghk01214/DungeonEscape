@@ -56,10 +56,13 @@ public:
 	static std::shared_ptr<CScene> Create();
 
 private:
+	std::shared_ptr<class LoginButton_Script> m_logInButton;
 	std::shared_ptr<class Setting_Script> m_settingButton;
 	std::shared_ptr<class Close_Script> m_closeButton;
 	std::vector<std::shared_ptr<class SliderTip_Script>> m_sliderTip;
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
 
 	std::vector<std::shared_ptr<CGameObject>> m_popUp;
+
+	bool m_openSetting;
 };

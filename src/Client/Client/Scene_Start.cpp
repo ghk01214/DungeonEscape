@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "LoginButton_Script.h"
 #include "Setting_Script.h"
 #include "Close_Script.h"
 #include "SliderTip_Script.h"
@@ -16,7 +17,6 @@
 
 #include "Creator.h"
 #include "Scene_Loading.h"
-#include "Start_StartButton.h"
 #include "Start_Script.h"
 #include "Mute_Script.h"
 
@@ -35,6 +35,8 @@ void Scene_Start::Start()
 
 	if (playMusic == true)
 		GET_SINGLE(CSoundMgr)->PlayBGM(L"Opening.ogg");
+
+	m_openSetting = false;
 }
 
 void Scene_Start::Update()
@@ -233,10 +235,11 @@ void Scene_Start::CreateLogInButton()
 		transform->SetLocalScale(Vec3{ 281.f * ratio, 110.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
-		std::shared_ptr<Start_StartButton> behaviour{ std::make_shared<Start_StartButton>() };
+		std::shared_ptr<LoginButton_Script> behaviour{ std::make_shared<LoginButton_Script>() };
 		behaviour->InsertTextures(texture);
 		behaviour->InsertTextures(GET_TEXTURE(L"Button Selected"));
 		obj->AddComponent(behaviour);
+		m_logInButton = behaviour;
 
 		AddGameObject(obj);
 	}
@@ -1017,6 +1020,32 @@ void Scene_Start::CreateSESlider()
 
 void Scene_Start::ChangePopUpVisibility()
 {
+	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::ESC) == true)
+	{
+		m_openSetting = !m_openSetting;
+
+		if (m_openSetting == true)
+		{
+			for (auto& obj : m_popUp)
+			{
+				obj->GetUI()->SetVisible(true);
+			}
+
+			m_settingButton->GetGameObject()->GetUI()->SetVisible(false);
+			m_logInButton->SetActive(false);
+		}
+		else
+		{
+			for (auto& obj : m_popUp)
+			{
+				obj->GetUI()->SetVisible(false);
+			}
+
+			m_settingButton->GetGameObject()->GetUI()->SetVisible(true);
+			m_logInButton->SetActive(true);
+		}
+	}
+
 	if (m_settingButton->ShowPopUp() == true)
 	{
 		for (auto& obj : m_popUp)
@@ -1025,6 +1054,8 @@ void Scene_Start::ChangePopUpVisibility()
 		}
 
 		m_settingButton->SetShowPopUpFlag(false);
+		m_logInButton->SetActive(false);
+		m_openSetting = true;
 	}
 	else if (m_closeButton->ClosePopUp() == true)
 	{
@@ -1035,20 +1066,22 @@ void Scene_Start::ChangePopUpVisibility()
 
 		m_closeButton->SetClosePopUpFlag(false);
 		m_settingButton->GetGameObject()->GetUI()->SetVisible(true);
+		m_logInButton->SetActive(true);
+		m_openSetting = false;
 	}
 }
 
 void Scene_Start::ChangeVolume()
 {
 	if (m_sliderTip[BGM]->GetClick() == true)
-		m_volumeSlider[BGM]->SetSliderActive(true);
+		m_volumeSlider[BGM]->SetActive(true);
 	else
-		m_volumeSlider[BGM]->SetSliderActive(false);
+		m_volumeSlider[BGM]->SetActive(false);
 
 	if (m_sliderTip[SE]->GetClick() == true)
-		m_volumeSlider[SE]->SetSliderActive(true);
+		m_volumeSlider[SE]->SetActive(true);
 	else
-		m_volumeSlider[SE]->SetSliderActive(false);
+		m_volumeSlider[SE]->SetActive(false);
 }
 
 shared_ptr<CScene> Scene_Start::Create()

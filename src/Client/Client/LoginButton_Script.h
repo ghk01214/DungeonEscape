@@ -2,11 +2,11 @@
 
 #include "Button_Script.h"
 
-class Start_StartButton : public Button_Script
+class LoginButton_Script : public Button_Script
 {
 public:
-	Start_StartButton();
-	virtual ~Start_StartButton();
+	LoginButton_Script();
+	virtual ~LoginButton_Script();
 
 public:
 	virtual void Awake() override;

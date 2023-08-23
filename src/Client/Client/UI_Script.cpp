@@ -8,7 +8,7 @@
 UI_Script::UI_Script() :
 	m_curTextureCount{ 0 },
 	m_alpha{ 1.f },
-	m_active{ true }
+	m_active{ false }
 {
 }
 
@@ -35,4 +35,9 @@ void UI_Script::LateUpdate()
 void UI_Script::InsertTextures(std::shared_ptr<Texture> texture)
 {
 	m_textures.push_back(texture);
+}
+
+void UI_Script::SetActive(bool flag)
+{
+	m_active = flag;
 }

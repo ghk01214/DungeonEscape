@@ -16,6 +16,7 @@ enum class KEY_TYPE
 
 	ENTER = DIK_RETURN,
 	NUMPAD_ENTER = DIK_NUMPADENTER,
+	ESC = DIK_ESCAPE,
 
 	W = DIK_W,
 	A = DIK_A,
@@ -54,7 +55,7 @@ enum class KEY_TYPE
 	NUMPAD_9 = DIK_NUMPAD9,
 	NUMPAD_0 = DIK_NUMPAD0,
 
-	MAX = 40
+	MAX = 41
 };
 
 enum class KEY_STATE

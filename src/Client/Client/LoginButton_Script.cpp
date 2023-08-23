@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Start_StartButton.h"
+#include "LoginButton_Script.h"
 
 #include <MeshRenderer.h>
 #include <Material.h>
@@ -9,27 +9,31 @@
 
 #include "Scene_Loading.h"
 
-Start_StartButton::Start_StartButton() :
+LoginButton_Script::LoginButton_Script() :
 	m_lobbyEnd{ false }
 {
+	m_active = true;
 }
 
-Start_StartButton::~Start_StartButton()
+LoginButton_Script::~LoginButton_Script()
 {
 }
 
-void Start_StartButton::Awake()
+void LoginButton_Script::Awake()
 {
 	__super::Awake();
 }
 
-void Start_StartButton::Start()
+void LoginButton_Script::Start()
 {
 	__super::Start();
 }
 
-void Start_StartButton::Update()
+void LoginButton_Script::Update()
 {
+	if (m_active == false)
+		return;
+
 	if (m_lobbyEnd == true)
 		GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_CHARACTER_SELECT));
 
@@ -64,7 +68,7 @@ void Start_StartButton::Update()
 	}
 }
 
-void Start_StartButton::LateUpdate()
+void LoginButton_Script::LateUpdate()
 {
 	__super::LateUpdate();
 }

@@ -17,10 +17,5 @@ public:
 public:
 	void ChangeSliderTransform();
 
-public:
-	void SetSliderActive(bool flag);
-
-private:
-	bool m_sliderActive;
 };
 

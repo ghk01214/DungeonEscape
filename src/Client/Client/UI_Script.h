@@ -19,6 +19,9 @@ public:
 public:
 	void InsertTextures(std::shared_ptr<Texture> texture);
 
+public:
+	void SetActive(bool flag);
+
 protected:
 	uint32_t m_curTextureCount = 0;
 	std::vector<shared_ptr<Texture>> m_textures;

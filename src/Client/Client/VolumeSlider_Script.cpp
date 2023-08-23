@@ -10,8 +10,7 @@
 #include <Timer.h>
 #include <Engine.h>
 
-VolumeSlider_Script::VolumeSlider_Script() :
-	m_sliderActive{ false }
+VolumeSlider_Script::VolumeSlider_Script()
 {
 }
 
@@ -34,7 +33,7 @@ void VolumeSlider_Script::Update()
 	if (GetGameObject()->GetUI()->GetVisible() == false)
 		return;
 
-	if (m_sliderActive == false)
+	if (m_active == false)
 		return;
 
 	int32_t mouseXPos{ GET_SINGLE(CInput)->GetMousePos().x };
@@ -75,9 +74,4 @@ void VolumeSlider_Script::ChangeSliderTransform()
 		m_scale.x = 500.f;
 
 	GetTransform()->SetLocalScale(m_scale);
-}
-
-void VolumeSlider_Script::SetSliderActive(bool flag)
-{
-	m_sliderActive = flag;
 }
