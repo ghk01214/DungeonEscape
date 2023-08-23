@@ -7,10 +7,11 @@
 #include <Transform.h>
 #include <Input.h>
 #include <UI.h>
+#include <Timer.h>
+#include <Engine.h>
 
 VolumeSlider_Script::VolumeSlider_Script() :
-	m_sliderActive{ false },
-	m_sliderTipXPos{ 0 }
+	m_sliderActive{ false }
 {
 }
 
@@ -36,30 +37,16 @@ void VolumeSlider_Script::Update()
 	if (m_sliderActive == false)
 		return;
 
-	if (m_sliderTipXPos < -183 or m_sliderTipXPos > 297)
+	int32_t mouseXPos{ GET_SINGLE(CInput)->GetMousePos().x };
+	float width{ static_cast<float>(GEngine->GetWindow().width) };
+	mouseXPos -= width / 2;
+
+	if (mouseXPos < -183 or mouseXPos > 297)
 		return;
 
 	__super::Update();
 
-	float deltaMouseMove{ GET_SINGLE(CInput)->GetMouseMove().x };
-
-	m_pos.x += deltaMouseMove;
-	GetTransform()->SetLocalPosition(m_pos);
-	//GetTransform()->SetLocalScale(Vec3{ m_scale.x * 1.2f, m_scale.y, m_scale.z });
-
-	// 한 쪽 방향으로 수축하는 바 작성 법
-	// 델타 타임 대신 줄이고 싶은 비율대로 줄이기
-	/*Vec3 pos{ GetTransform()->GetLocalPosition() };
-	Vec3 scale{ GetTransform()->GetLocalScale() };
-
-	pos.x -= DELTA_TIME / 2.f;
-	scale.x -= DELTA_TIME;
-
-	for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
-	{
-		GetTransform()->SetLocalPosition(pos);
-		GetTransform()->SetLocalScale(scale);
-	}*/
+	ChangeSliderTransform();
 }
 
 void VolumeSlider_Script::LateUpdate()
@@ -67,12 +54,30 @@ void VolumeSlider_Script::LateUpdate()
 	__super::LateUpdate();
 }
 
+void VolumeSlider_Script::ChangeSliderTransform()
+{
+	auto deltaMouseMove{ GET_SINGLE(CInput)->GetMouseMove().x };
+
+	m_pos.x += deltaMouseMove / 2.f;
+
+	if (m_pos.x <= -187.f)
+		m_pos.x = -187.f;
+	else if (m_pos.x >= 53.f)
+		m_pos.x = 53.f;
+
+	GetTransform()->SetLocalPosition(m_pos);
+
+	m_scale.x += deltaMouseMove;
+
+	if (m_scale.x <= 0.f)
+		m_scale.x = 0.f;
+	else if (m_scale.x >= 500.f)
+		m_scale.x = 500.f;
+
+	GetTransform()->SetLocalScale(m_scale);
+}
+
 void VolumeSlider_Script::SetSliderActive(bool flag)
 {
 	m_sliderActive = flag;
-}
-
-void VolumeSlider_Script::SetSliderTipPos(int32_t x)
-{
-	m_sliderTipXPos = x;
 }

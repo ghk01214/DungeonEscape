@@ -50,6 +50,7 @@ private:
 
 private:
 	void ChangePopUpVisibility();
+	void ChangeVolume();
 
 public:
 	static std::shared_ptr<CScene> Create();

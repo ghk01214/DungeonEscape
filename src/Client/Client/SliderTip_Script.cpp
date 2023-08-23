@@ -5,8 +5,10 @@
 #include <Transform.h>
 #include <GameObject.h>
 #include <UI.h>
+#include <SoundManager.h>
 
-SliderTip_Script::SliderTip_Script()
+SliderTip_Script::SliderTip_Script(SLIDER_TYPE type) :
+	m_sliderType{ type }
 {
 }
 
@@ -53,16 +55,32 @@ void SliderTip_Script::Update()
 	if (m_click == false)
 		return;
 
-	if (m_mousePos.x < -183 or m_mousePos.x > 297)
-		return;
+	if (m_mousePos.x < -183)
+		m_mousePos.x = -183;
+	else if (m_mousePos.x > 297)
+		m_mousePos.x = 297.f;
 
 	m_pos.x = static_cast<float>(m_mousePos.x);
 	GetTransform()->SetLocalPosition(m_pos);
-
-	Print(m_pos.x);
 }
 
 void SliderTip_Script::LateUpdate()
 {
+	if (m_click == false)
+		return;
+
 	__super::LateUpdate();
+
+	if (m_sliderType <= SLIDER_TYPE::SE)
+		ChangeVolume();
+}
+
+void SliderTip_Script::ChangeVolume()
+{
+	float volume{ (m_mousePos.x + 183) / 480.f };
+
+	if (m_sliderType == SLIDER_TYPE::BGM)
+		GET_SINGLE(CSoundMgr)->SetBGMVolume(volume);
+	else
+		GET_SINGLE(CSoundMgr)->SetEffectVolume(volume);
 }

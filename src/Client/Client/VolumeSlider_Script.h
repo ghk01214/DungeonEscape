@@ -15,11 +15,12 @@ public:
 	virtual void LateUpdate() override;
 
 public:
+	void ChangeSliderTransform();
+
+public:
 	void SetSliderActive(bool flag);
-	void SetSliderTipPos(int32_t x);
 
 private:
 	bool m_sliderActive;
-	int32_t m_sliderTipXPos;
 };
 

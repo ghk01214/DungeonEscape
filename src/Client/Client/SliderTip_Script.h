@@ -5,7 +5,17 @@
 class SliderTip_Script : public Button_Script
 {
 public:
-	SliderTip_Script();
+	enum class SLIDER_TYPE
+	{
+		NONE = 0,
+
+		BGM,
+		SE,
+
+		MAX
+	};
+public:
+	SliderTip_Script(SLIDER_TYPE type);
 	virtual ~SliderTip_Script();
 
 public:
@@ -14,6 +24,10 @@ public:
 	virtual void Update() override;
 	virtual void LateUpdate() override;
 
+public:
+	void ChangeVolume();
 
+private:
+	SLIDER_TYPE m_sliderType;
 };
 

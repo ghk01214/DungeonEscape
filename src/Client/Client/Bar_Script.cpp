@@ -39,8 +39,8 @@ void Bar_Script::Update()
 
 	m_pos = GetTransform()->GetLocalPosition();
 
-	m_scale.x = m_scaleRatio.x * width;
-	m_scale.y = m_scaleRatio.y * height;
+	//m_scale.x = m_scaleRatio.x * width;
+	//m_scale.y = m_scaleRatio.y * height;
 }
 
 void Bar_Script::LateUpdate()
