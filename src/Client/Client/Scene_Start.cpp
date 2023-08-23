@@ -298,11 +298,6 @@ void Scene_Start::CreatePopUp()
 	CreateBGMSlider();
 	CreateSEButton();
 	CreateSESlider();
-
-	for (auto& obj : m_popUp)
-	{
-		obj->GetUI()->SetVisible(true);
-	}
 }
 
 void Scene_Start::CreateBlur()
