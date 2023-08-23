@@ -168,6 +168,18 @@
     <Filter Include="소스 파일\Objects\01. UI\PopUp\Setting\Sound\Mute">
       <UniqueIdentifier>{400d9a56-8079-4525-a0a3-19f5594b51fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\Character Select">
+      <UniqueIdentifier>{658f0cdb-da50-4601-8584-5d4b8ee41692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\Character Select\Character">
+      <UniqueIdentifier>{583b70eb-e993-428f-8a1d-7c3fd94b644d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\Character Select\Description">
+      <UniqueIdentifier>{a553e013-1d10-4528-8ad1-19b4d418ce3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\Character Select\Ready">
+      <UniqueIdentifier>{7807bcbb-94b9-485d-b136-df3f363c3308}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -266,9 +278,6 @@
     <ClInclude Include="Scenes.hpp">
       <Filter>소스 파일\Objects\00. Scene</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterSelection_Button.h">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
-    </ClInclude>
     <ClInclude Include="Loading_Script.h">
       <Filter>소스 파일\Objects\01. UI\Loading</Filter>
     </ClInclude>
@@ -323,7 +332,7 @@
     <ClInclude Include="Creator.h">
       <Filter>소스 파일\Objects\10. Creator</Filter>
     </ClInclude>
-    <ClInclude Include="Close_Script.h">
+    <ClInclude Include="CloseButton_Script.h">
       <Filter>소스 파일\Objects\01. UI\PopUp\Close</Filter>
     </ClInclude>
     <ClInclude Include="Setting_Script.h">
@@ -337,6 +346,15 @@
     </ClInclude>
     <ClInclude Include="SliderTip_Script.h">
       <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Setting</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterSelectButton_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Character Select\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="DescriptionButton_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Character Select\Description</Filter>
+    </ClInclude>
+    <ClInclude Include="ReadyButton_Script.h">
+      <Filter>소스 파일\Objects\01. UI\Character Select\Ready</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -431,9 +449,6 @@
     <ClCompile Include="Scene_CharacterSelection.cpp">
       <Filter>소스 파일\Objects\00. Scene\Character Selection</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterSelection_Button.cpp">
-      <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
-    </ClCompile>
     <ClCompile Include="Loading_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Loading</Filter>
     </ClCompile>
@@ -488,7 +503,7 @@
     <ClCompile Include="Creator.cpp">
       <Filter>소스 파일\Objects\10. Creator</Filter>
     </ClCompile>
-    <ClCompile Include="Close_Script.cpp">
+    <ClCompile Include="CloseButton_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\PopUp\Close</Filter>
     </ClCompile>
     <ClCompile Include="Setting_Script.cpp">
@@ -502,6 +517,15 @@
     </ClCompile>
     <ClCompile Include="SliderTip_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\PopUp\Setting\Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterSelectButton_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Character Select\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="DescriptionButton_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Character Select\Description</Filter>
+    </ClCompile>
+    <ClCompile Include="ReadyButton_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\Character Select\Ready</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

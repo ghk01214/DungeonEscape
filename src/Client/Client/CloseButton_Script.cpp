@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Close_Script.h"
+#include "CloseButton_Script.h"
 
 #include <Material.h>
 #include <MeshRenderer.h>
@@ -7,26 +7,26 @@
 #include <UI.h>
 #include <Input.h>
 
-Close_Script::Close_Script() :
+CloseButton_Script::CloseButton_Script() :
 	m_closePopUp{ false }
 {
 }
 
-Close_Script::~Close_Script()
+CloseButton_Script::~CloseButton_Script()
 {
 }
 
-void Close_Script::Awake()
+void CloseButton_Script::Awake()
 {
 	__super::Awake();
 }
 
-void Close_Script::Start()
+void CloseButton_Script::Start()
 {
 	__super::Start();
 }
 
-void Close_Script::Update()
+void CloseButton_Script::Update()
 {
 	if (GetGameObject()->GetUI()->GetVisible() == false)
 		return;
@@ -63,7 +63,7 @@ void Close_Script::Update()
 	}
 }
 
-void Close_Script::LateUpdate()
+void CloseButton_Script::LateUpdate()
 {
 	if (GetGameObject()->GetUI()->GetVisible() == false)
 		return;
@@ -71,7 +71,7 @@ void Close_Script::LateUpdate()
 	__super::LateUpdate();
 }
 
-void Close_Script::SetClosePopUpFlag(bool flag)
+void CloseButton_Script::SetClosePopUpFlag(bool flag)
 {
 	m_closePopUp = flag;
 }

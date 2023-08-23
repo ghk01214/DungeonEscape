@@ -1,8 +1,8 @@
 ﻿#include "pch.h"
 
 std::wstring serverIP_Address{ L"127.0.0.1" };
-bool playMusic{ true };
-bool playSound{ true };
+bool playMusic{ false };
+bool playSound{ false };
 
 void PrintVec3(const Vec3& v)
 {

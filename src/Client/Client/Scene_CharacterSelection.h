@@ -3,10 +3,17 @@
 #include "Client_Defines.h"
 #include <Scene.h>
 
-class CharacterSelection_Button;
-
 class Scene_CharacterSelection final : public CScene
 {
+private:
+	enum CHARACTER_TYPE
+	{
+		NANA,
+		MISTIC,
+		CARMEL,
+
+		MAX
+	};
 public:
 	explicit Scene_CharacterSelection();
 	virtual ~Scene_CharacterSelection() = default;
@@ -24,7 +31,6 @@ private:
 	void CreateLayer();
 	void CreateUICamera();
 	void CreateUI();
-	void LoadTextures();
 	void CreateLights();
 
 private:
@@ -34,18 +40,25 @@ private:
 
 	void CreatePopUp();
 	void CreateBlur();
+	void CreateCloseButton();
 	void CreateCharacterDescription();
 
 private:
-	void CreateSampleUI();
+	server::FBX_TYPE DetectCharacterSelection();
+	void StartGame(server::FBX_TYPE character);
 
 public:
 	static std::shared_ptr<CScene> Create();
 
 private:
+	std::vector<std::shared_ptr<class CharacterSelectButton_Script>> m_characterButton;
+	std::vector<std::shared_ptr<class DescriptionButton_Script>> m_descriptionButton;
+	std::shared_ptr<class ReadyButton_Script> m_readyButton;
+
 	std::vector<std::shared_ptr<CGameObject>> m_popUp;
+	std::shared_ptr<class CloseButton_Script> m_closeButton;
 
-	std::vector<std::shared_ptr<CharacterSelection_Button>> m_buttons;
-
+private:
 	bool m_selected;
+	float m_accTime;
 };

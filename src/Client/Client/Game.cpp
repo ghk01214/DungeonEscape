@@ -17,22 +17,13 @@ void CGame::Init(const WindowInfo& Info)
 {
 	GGameInstance->Initialize_Engine(Info);
 
-	//shared_ptr<CScene> pScene = Scene_Test::Create(magic_enum::enum_value<server::FBX_TYPE>(classNum));
-
-	//Open_Scene(SCENE_CHARACTER_SELECT);
-	Open_Scene(SCENE_START);
-
-	//GET_SINGLE(SceneManager)->LoadScene(pScene);
-
-	//GET_NETWORK->SendLoginPacket(ID, PWD);
+	Open_Scene(SCENE_CHARACTER_SELECT);
+	//Open_Scene(SCENE_START);
 }
 
 void CGame::Start()
 {
-	//GET_NETWORK->SendIDIssueRequest();
-	//GET_SINGLE(SceneManager)->Start();
 
-	//GET_SINGLE(CSoundMgr)->PlayBGM(L"Blue Archive Main Title Constant Moderato Piano Vocal.mp3");
 }
 
 void CGame::Update()

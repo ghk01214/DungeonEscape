@@ -11,7 +11,7 @@
 Mute_Script::Mute_Script(SOUND_TYPE type) :
 	m_soundType{ type },
 	m_mute{ false },
-	m_prevMute{ false }
+	m_prevMute{ m_mute }
 {
 }
 
@@ -60,6 +60,10 @@ void Mute_Script::Update()
 			ChangeTexture(BUTTON);
 		}
 	}
+	else if (m_mute == false)
+	{
+		ChangeTexture(BUTTON);
+	}
 
 	if (m_prevMute == m_mute)
 		return;
@@ -74,7 +78,7 @@ void Mute_Script::LateUpdate()
 	__super::LateUpdate();
 }
 
-Mute_Script::TEXTURE_TYPE Mute_Script::Mute()
+Button_Script::TEXTURE_TYPE Mute_Script::Mute()
 {
 	TEXTURE_TYPE type{};
 

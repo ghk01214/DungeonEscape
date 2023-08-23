@@ -10,7 +10,6 @@
 
 Button_Script::Button_Script() :
 	m_click{ false },
-	m_inRange{ false },
 	m_input{ nullptr }
 {
 }

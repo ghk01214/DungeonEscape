@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "LoginButton_Script.h"
 #include "Setting_Script.h"
-#include "Close_Script.h"
+#include "CloseButton_Script.h"
 #include "SliderTip_Script.h"
 #include "VolumeSlider_Script.h"
 #include "Scene_Start.h"
@@ -98,8 +98,6 @@ void Scene_Start::Render()
 
 void Scene_Start::Init(void)
 {
-	LoadTextures();
-
 	CreateLayer();
 	CreateUICamera();
 	CreateUI();
@@ -140,18 +138,6 @@ void Scene_Start::CreateUI(void)
 	CreateSettingButton();
 
 	CreatePopUp();
-}
-
-void Scene_Start::LoadTextures(void)
-{
-	GET_SINGLE(Resources)->Load<Texture>(L"Lobby_InGame", L"..\\Resources\\Texture\\UI\\Start\\Lobby_InGame.PNG");
-
-	GET_SINGLE(Resources)->Load<Texture>(L"Title", L"..\\Resources\\Texture\\UI\\Font\\Title.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Log In", L"..\\Resources\\Texture\\UI\\Font\\Log In.png");
-
-	GET_SINGLE(Resources)->Load<Texture>(L"Button", L"..\\Resources\\Texture\\UI\\Button\\Button.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Button_selected", L"..\\Resources\\Texture\\UI\\Button\\Button_selected.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Setting", L"..\\Resources\\Texture\\UI\\Button\\Setting.png");
 }
 
 void Scene_Start::CreateLights(void)
@@ -235,11 +221,11 @@ void Scene_Start::CreateLogInButton()
 		transform->SetLocalScale(Vec3{ 281.f * ratio, 110.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
-		std::shared_ptr<LoginButton_Script> behaviour{ std::make_shared<LoginButton_Script>() };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"Button Selected"));
-		obj->AddComponent(behaviour);
-		m_logInButton = behaviour;
+		std::shared_ptr<LoginButton_Script> script{ std::make_shared<LoginButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Button Selected"));
+		obj->AddComponent(script);
+		m_logInButton = script;
 
 		AddGameObject(obj);
 	}
@@ -282,9 +268,9 @@ void Scene_Start::CreateSettingButton()
 	transform->SetLocalScale(Vec3{ 121.f, 121.f, 1.f });
 	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
-	std::shared_ptr<Setting_Script> behaviour{ std::make_shared<Setting_Script>() };
-	obj->AddComponent(behaviour);
-	m_settingButton = behaviour;
+	std::shared_ptr<Setting_Script> script{ std::make_shared<Setting_Script>() };
+	obj->AddComponent(script);
+	m_settingButton = script;
 
 	AddGameObject(obj);
 }
@@ -344,11 +330,11 @@ void Scene_Start::CreateCloseButton()
 		transform->SetLocalScale(Vec3{ 118.f * ratio, 118.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
 
-		std::shared_ptr<Close_Script> behaviour{ std::make_shared<Close_Script>() };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"Close Selected"));
-		obj->AddComponent(behaviour);
-		m_closeButton = behaviour;
+		std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Close Selected"));
+		obj->AddComponent(script);
+		m_closeButton = script;
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -401,11 +387,11 @@ void Scene_Start::CreateBGMButton()
 		transform->SetLocalScale(Vec3{ 45.f * ratio, 60.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<Mute_Script> behaviour{ std::make_shared<Mute_Script>(Mute_Script::SOUND_TYPE::BGM) };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"BGM Mute"));
-		obj->AddComponent(behaviour);
-		m_muteButton.push_back(behaviour);
+		std::shared_ptr<Mute_Script> script{ std::make_shared<Mute_Script>(Mute_Script::SOUND_TYPE::BGM) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"BGM Mute"));
+		obj->AddComponent(script);
+		m_muteButton.push_back(script);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -639,11 +625,11 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<VolumeSlider_Script> behaviour{ std::make_shared<VolumeSlider_Script>(false) };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"Slider Fill(L) Mute"));
-		obj->AddComponent(behaviour);
-		m_volumeSliderLeftTip.push_back(behaviour);
+		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>(false) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Fill(L) Mute"));
+		obj->AddComponent(script);
+		m_volumeSliderLeftTip.push_back(script);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -667,11 +653,11 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalScale(Vec3{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<VolumeSlider_Script> behaviour{ std::make_shared<VolumeSlider_Script>() };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"Slider Fill(C) Mute"));
-		obj->AddComponent(behaviour);
-		m_volumeSlider.push_back(behaviour);
+		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Fill(C) Mute"));
+		obj->AddComponent(script);
+		m_volumeSlider.push_back(script);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -696,11 +682,11 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalScale(Vec3{ 96.f * ratio, 96.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<SliderTip_Script> behaviour{ std::make_shared<SliderTip_Script>(SliderTip_Script::SLIDER_TYPE::BGM) };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"Slider Tip Mute"));
-		obj->AddComponent(behaviour);
-		m_sliderTip.push_back(behaviour);
+		std::shared_ptr<SliderTip_Script> script{ std::make_shared<SliderTip_Script>(SliderTip_Script::SLIDER_TYPE::BGM) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Tip Mute"));
+		obj->AddComponent(script);
+		m_sliderTip.push_back(script);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -729,11 +715,11 @@ void Scene_Start::CreateSEButton()
 		transform->SetLocalScale(Vec3{ 45.f * ratio, 60.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<Mute_Script> behaviour{ std::make_shared<Mute_Script>(Mute_Script::SOUND_TYPE::SE) };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"SE Mute"));
-		obj->AddComponent(behaviour);
-		m_muteButton.push_back(behaviour);
+		std::shared_ptr<Mute_Script> script{ std::make_shared<Mute_Script>(Mute_Script::SOUND_TYPE::SE) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"SE Mute"));
+		obj->AddComponent(script);
+		m_muteButton.push_back(script);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -967,11 +953,11 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<VolumeSlider_Script> behaviour{ std::make_shared<VolumeSlider_Script>(false) };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"Slider Fill(L) Mute"));
-		obj->AddComponent(behaviour);
-		m_volumeSliderLeftTip.push_back(behaviour);
+		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>(false) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Fill(L) Mute"));
+		obj->AddComponent(script);
+		m_volumeSliderLeftTip.push_back(script);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -995,11 +981,11 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalScale(Vec3{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<VolumeSlider_Script> behaviour{ std::make_shared<VolumeSlider_Script>() };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"Slider Fill(C) Mute"));
-		obj->AddComponent(behaviour);
-		m_volumeSlider.push_back(behaviour);
+		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Fill(C) Mute"));
+		obj->AddComponent(script);
+		m_volumeSlider.push_back(script);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -1024,11 +1010,11 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalScale(Vec3{ 96.f * ratio, 96.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<SliderTip_Script> behaviour{ std::make_shared<SliderTip_Script>(SliderTip_Script::SLIDER_TYPE::SE) };
-		behaviour->InsertTextures(texture);
-		behaviour->InsertTextures(GET_TEXTURE(L"Slider Tip Mute"));
-		obj->AddComponent(behaviour);
-		m_sliderTip.push_back(behaviour);
+		std::shared_ptr<SliderTip_Script> script{ std::make_shared<SliderTip_Script>(SliderTip_Script::SLIDER_TYPE::SE) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Tip Mute"));
+		obj->AddComponent(script);
+		m_sliderTip.push_back(script);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);

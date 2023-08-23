@@ -39,5 +39,4 @@ protected:
 	POINT m_mousePos;
 
 	bool m_click;
-	bool m_inRange;
 };

@@ -30,7 +30,6 @@ private:
 	void CreateLayer(void);
 	void CreateUICamera(void);
 	void CreateUI(void);
-	void LoadTextures(void);
 	void CreateLights(void);
 
 private:
@@ -59,7 +58,7 @@ public:
 private:
 	std::shared_ptr<class LoginButton_Script> m_logInButton;
 	std::shared_ptr<class Setting_Script> m_settingButton;
-	std::shared_ptr<class Close_Script> m_closeButton;
+	std::shared_ptr<class CloseButton_Script> m_closeButton;
 	std::vector<std::shared_ptr<class SliderTip_Script>> m_sliderTip;
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSliderLeftTip;

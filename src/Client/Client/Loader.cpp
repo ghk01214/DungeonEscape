@@ -401,6 +401,7 @@ HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 	LOAD_TEXTURE(L"Knight", L"..\\Resources\\Texture\\UI\\Font\\Knight.png");
 	LOAD_TEXTURE(L"Mage", L"..\\Resources\\Texture\\UI\\Font\\Mage.png");
 	LOAD_TEXTURE(L"Priest", L"..\\Resources\\Texture\\UI\\Font\\Priest.png");
+	LOAD_TEXTURE(L"Ready", L"..\\Resources\\Texture\\UI\\Font\\Ready.png");
 
 	LOAD_TEXTURE(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
 	LOAD_TEXTURE(L"Mistic", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic.png");

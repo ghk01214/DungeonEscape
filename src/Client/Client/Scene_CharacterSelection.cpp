@@ -1,5 +1,8 @@
 ﻿#include "pch.h"
-#include "CharacterSelection_Button.h"
+#include "CloseButton_Script.h"
+#include "CharacterSelectButton_Script.h"
+#include "DescriptionButton_Script.h"
+#include "ReadyButton_Script.h"
 #include "Scene_CharacterSelection.h"
 
 #include <Camera.h>
@@ -8,13 +11,14 @@
 #include <Resources.h>
 #include <Engine.h>
 #include <UI.h>
+#include <Timer.h>
 
 #include "Scene_Loading.h"
-
 #include "Creator.h"
 
 Scene_CharacterSelection::Scene_CharacterSelection() :
-	m_selected{ false }
+	m_selected{ false },
+	m_accTime{ 0.f }
 {
 }
 
@@ -32,24 +36,8 @@ void Scene_CharacterSelection::Update()
 {
 	__super::Update();
 
-	if (m_selected == false)
-	{
-		for (auto& button : m_buttons)
-		{
-			if (button->GetBlinkCount() > 6)
-			{
-				m_selected = true;
-				break;
-			}
-		}
-	}
-	else
-	{
-		for (auto& button : m_buttons)
-		{
-			button->SetBlinkCount(7);
-		}
-	}
+	auto character{ DetectCharacterSelection() };
+	StartGame(character);
 }
 
 void Scene_CharacterSelection::LateUpdate()
@@ -69,8 +57,6 @@ void Scene_CharacterSelection::Render()
 
 void Scene_CharacterSelection::Init()
 {
-	LoadTextures();
-
 	CreateLayer();
 	CreateUICamera();
 	CreateUI();
@@ -111,23 +97,6 @@ void Scene_CharacterSelection::CreateUI()
 	//CreateSampleUI();
 }
 
-void Scene_CharacterSelection::LoadTextures()
-{
-	GET_SINGLE(Resources)->Load<Texture>(L"Frame1", L"..\\Resources\\Texture\\UI\\Frame\\Frame1.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Frame1_selected", L"..\\Resources\\Texture\\UI\\Frame\\Frame1_selected.png");
-
-	GET_SINGLE(Resources)->Load<Texture>(L"Button2", L"..\\Resources\\Texture\\UI\\Button\\Button2.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Button2_selected", L"..\\Resources\\Texture\\UI\\Button\\Button2_selected.png");
-
-	GET_SINGLE(Resources)->Load<Texture>(L"Knight", L"..\\Resources\\Texture\\UI\\Font\\Knight.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Mage", L"..\\Resources\\Texture\\UI\\Font\\Mage.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Priest", L"..\\Resources\\Texture\\UI\\Font\\Priest.png");
-
-	GET_SINGLE(Resources)->Load<Texture>(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Mistic", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic.png");
-	GET_SINGLE(Resources)->Load<Texture>(L"Carmel", L"..\\Resources\\Texture\\UI\\Character Select\\Carmel.png");
-}
-
 void Scene_CharacterSelection::CreateLights()
 {
 	LightDesc lightDesc;
@@ -141,392 +110,251 @@ void Scene_CharacterSelection::CreateLights()
 
 void Scene_CharacterSelection::CreateCharacterImage()
 {
-	float width = static_cast<float>(GEngine->GetWindow().width);
-	float height = static_cast<float>(GEngine->GetWindow().height);
-	float xOrigin{ -(width / 2.f) };
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Frame1") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
-	// FRAME
+	float width{ static_cast<float>(GEngine->GetWindow().width) };
+	float height{ static_cast<float>(GEngine->GetWindow().height) };
+	Vec2 pos{ GetRatio(0.f, 15.f) };
+
+	//FRAME
+	for (int32_t i = 0; i < 3; ++i)
 	{
-		for (int32_t i = 0; i < 3; ++i)
-		{
-			std::wstring name{ L"Frame1" };
-			Vec2 pos{};
-			pos.x = xOrigin + (width / 3.f) * i + (width / 6.f);
-			pos.y = GetRatio(0.f, 15.f).y;
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-			std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-			obj->AddComponent(std::make_shared<Transform>());
+		auto transform{ obj->GetTransform() };
+		pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
 
-			obj->GetTransform()->SetLocalScale(Vec3(width / 4.f, height / 1.5f, 1.f));
-			obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 100.f));
+		transform->SetLocalScale(Vec3{ width / 4.f, height / 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 450.f });
 
-			std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
-			{
-				std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-				meshRenderer->SetMesh(mesh);
-			}
+		std::shared_ptr<CharacterSelectButton_Script> script{ std::make_shared<CharacterSelectButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Frame1_selected"));
+		script->SetCharacterType(i + 1);
 
-			{
-				std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
-				std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(name);
+		obj->AddComponent(script);
+		m_characterButton.push_back(script);
 
-				std::shared_ptr<Material> material = std::make_shared<Material>();
-				material->SetShader(shader);
-				material->SetTexture(0, texture);
-				material->SetFloat(2, 1.f);
-				meshRenderer->SetMaterial(material);
-			}
-
-			obj->AddComponent(meshRenderer);
-
-			std::shared_ptr<CharacterSelection_Button> behaviour = std::make_shared<CharacterSelection_Button>(BUTTON_TYPE::CHARACTER_SELECT);
-			behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name));
-			behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name + L"_selected"));
-
-			if (i == 0)
-				name = L"Nana";
-			else if (i == 1)
-				name = L"Mistic";
-			else
-				name = L"Carmel";
-
-			behaviour->SetName(name);
-			m_buttons.push_back(behaviour);
-
-			obj->AddComponent(behaviour);
-
-			AddGameObject(obj);
-		}
+		AddGameObject(obj);
 	}
 
 	// IMAGE
+	for (int32_t i = 0; i < 3; ++i)
 	{
-		float xOrigin{ -(width / 2.f) };
+		if (i == 0)
+			texture = GET_TEXTURE(L"Nana");
+		else if (i == 1)
+			texture = GET_TEXTURE(L"Mistic");
+		else
+			texture = GET_TEXTURE(L"Carmel");
 
-		for (int32_t i = 0; i < 3; ++i)
-		{
-			std::wstring name{};
-			float xPos{ 0.f };
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-			if (i == 0)
-				name = L"Nana";
-			else if (i == 1)
-				name = L"Mistic";
-			else
-				name = L"Carmel";
+		auto transform{ obj->GetTransform() };
+		pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
 
-			Vec2 pos{};
-			pos.x = xOrigin + (width / 3.f) * i + (width / 6.f);
-			pos.y = GetRatio(0.f, 15.f).y;
+		transform->SetLocalScale(Vec3{ width / 4.5f, height / 1.7f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
 
-			std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-			obj->AddComponent(std::make_shared<Transform>());
-
-			obj->GetTransform()->SetLocalScale(Vec3(width / 4.5f, height / 1.7f, 1.f));
-			obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 90.f));
-
-			std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
-			{
-				std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-				meshRenderer->SetMesh(mesh);
-			}
-
-			{
-				std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
-				std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(name);
-
-				std::shared_ptr<Material> material = std::make_shared<Material>();
-				material->SetShader(shader);
-				material->SetTexture(0, texture);
-				material->SetFloat(2, 1.f);
-				meshRenderer->SetMaterial(material);
-			}
-
-			obj->AddComponent(meshRenderer);
-
-			//std::shared_ptr<CharacterSelection_Button> behaviour = std::make_shared<CharacterSelection_Button>(BUTTON_TYPE::CHARACTER_SELECT);
-			//behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name));
-			////behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name + L"_Selected"));
-			//behaviour->SetName(name);
-			//m_buttons.push_back(behaviour);
-			//
-			//obj->AddComponent(behaviour);
-
-			AddGameObject(obj);
-		}
+		AddGameObject(obj);
 	}
 }
 
 void Scene_CharacterSelection::CreateCharacterNameButton()
 {
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Button2") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
 	float width = static_cast<float>(GEngine->GetWindow().width);
-	float height = static_cast<float>(GEngine->GetWindow().height);
-	float xOrigin{ -(width / 2.f) };
+	Vec2 pos{ GetRatio(0.f, -65.f) };
 
-	// FRAME
+	// BUTTON
+	for (int32_t i = 0; i < 3; ++i)
 	{
-		for (int32_t i = 0; i < 3; ++i)
-		{
-			std::wstring name{ L"Button2" };
-			Vec2 pos{ GetRatio(0.f, -65.f) };
-			pos.x = xOrigin + (width / 3.f) * i + (width / 6.f);
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-			std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-			obj->AddComponent(std::make_shared<Transform>());
+		auto transform{ obj->GetTransform() };
+		pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
 
-			obj->GetTransform()->SetLocalScale(Vec3(257.f * 1.2f, 95.f, 1.f));
-			obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 100.f));
+		transform->SetLocalScale(Vec3{ 257.f * 1.2f, 95.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 450.f });
 
-			std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
-			{
-				std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-				meshRenderer->SetMesh(mesh);
-			}
+		std::shared_ptr<DescriptionButton_Script> script{ std::make_shared<DescriptionButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Button2_selected"));
+		script->SetCharacterType(i + 1);
 
-			{
-				std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
-				std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(name);
+		obj->AddComponent(script);
+		m_descriptionButton.push_back(script);
 
-				std::shared_ptr<Material> material = std::make_shared<Material>();
-				material->SetShader(shader);
-				material->SetTexture(0, texture);
-				material->SetFloat(2, 1.f);
-				meshRenderer->SetMaterial(material);
-			}
-
-			obj->AddComponent(meshRenderer);
-
-			std::shared_ptr<CharacterSelection_Button> behaviour = std::make_shared<CharacterSelection_Button>(BUTTON_TYPE::CHARACTER_SELECT);
-			behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name));
-			behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name + L"_selected"));
-			behaviour->SetName(name);
-			m_buttons.push_back(behaviour);
-
-			obj->AddComponent(behaviour);
-
-			AddGameObject(obj);
-		}
+		AddGameObject(obj);
 	}
 
 	// FONT
+	for (int32_t i = 0; i < 3; ++i)
 	{
-		for (int32_t i = 0; i < 3; ++i)
-		{
-			std::wstring name{};
+		if (i == 0)
+			texture = GET_TEXTURE(L"Knight");
+		else if (i == 1)
+			texture = GET_TEXTURE(L"Mage");
+		else
+			texture = GET_TEXTURE(L"Priest");
 
-			if (i == 0)
-				name = L"Knight";
-			else if (i == 1)
-				name = L"Mage";
-			else
-				name = L"Priest";
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-			Vec2 pos{ GetRatio(0.f, -65.f) };
-			pos.x = xOrigin + (width / 3.f) * i + (width / 6.f) + 5.f;
+		auto transform{ obj->GetTransform() };
+		pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
 
-			std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-			obj->AddComponent(std::make_shared<Transform>());
+		transform->SetLocalScale(Vec3{ 250.f, 58.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
 
-			obj->GetTransform()->SetLocalScale(Vec3(250.f, 58.f, 1.f));
-			obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 90.f));
-
-			std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
-			{
-				std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-				meshRenderer->SetMesh(mesh);
-			}
-
-			{
-				std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
-				std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(name);
-
-				std::shared_ptr<Material> material = std::make_shared<Material>();
-				material->SetShader(shader);
-				material->SetTexture(0, texture);
-				material->SetFloat(2, 1.f);
-				meshRenderer->SetMaterial(material);
-			}
-
-			obj->AddComponent(meshRenderer);
-
-			AddGameObject(obj);
-		}
+		AddGameObject(obj);
 	}
 }
 
 void Scene_CharacterSelection::CreateReadyButton()
 {
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Button2") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	auto pos{ GetRatio(86.f, -88.f) };
+
+	// BUTTON
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 257.f, 95.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 450.f });
+
+		std::shared_ptr<ReadyButton_Script> script{ std::make_shared<ReadyButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Button2_selected"));
+
+		obj->AddComponent(script);
+		m_readyButton = script;
+
+		AddGameObject(obj);
+	}
+
+	// FONT
+	texture = GET_TEXTURE(L"Ready");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 202.f, 42.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+		AddGameObject(obj);
+	}
 }
 
 void Scene_CharacterSelection::CreatePopUp()
 {
+	CreateBlur();
+	CreateCloseButton();
 }
 
 void Scene_CharacterSelection::CreateBlur()
 {
-	std::shared_ptr<Texture> texture = GET_TEXTURE(L"White Blur");
-	std::shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
-	{
-		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"White Blur") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
-		auto transform{ obj->GetTransform() };
-		float width{ static_cast<float>(GEngine->GetWindow().width) };
-		float height{ static_cast<float>(GEngine->GetWindow().height) };
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		transform->SetLocalScale(Vec3{ width, height, 1.f });
-		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
+	float width{ static_cast<float>(GEngine->GetWindow().width) };
+	float height{ static_cast<float>(GEngine->GetWindow().height) };
 
-		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 0.5f);
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ width, height, 1.f });
+	transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
 
-		AddGameObject(obj);
-		GET_SINGLE(SceneManager)->SetBlurUI(obj);
+	obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 0.5f);
 
-		m_popUp.push_back(obj);
-	}
+	AddGameObject(obj);
+	GET_SINGLE(SceneManager)->SetBlurUI(obj);
+
+	m_popUp.push_back(obj);
+}
+
+void Scene_CharacterSelection::CreateCloseButton()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Close") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+
+	auto transform{ obj->GetTransform() };
+	Vec2 pos{ GetRatio(-93.f, 86.f) };
+
+#ifdef RELEASE
+	float ratio{ 1.f };
+#else
+	float ratio{ 0.5f };
+#endif
+
+	transform->SetLocalScale(Vec3{ 118.f * ratio, 118.f * ratio, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+	std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Close Selected"));
+	obj->AddComponent(script);
+	m_closeButton = script;
+
+	AddGameObject(obj);
+	m_popUp.push_back(obj);
 }
 
 void Scene_CharacterSelection::CreateCharacterDescription()
 {
 }
 
-void Scene_CharacterSelection::CreateSampleUI()
+server::FBX_TYPE Scene_CharacterSelection::DetectCharacterSelection()
 {
-	std::wstring name{ L"Button2" };
-	std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
-	std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(name);
-
+	for (auto& script : m_characterButton)
 	{
-		Vec2 pos{ GetRatio(-10.f, 0.f) };
-
-		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-		obj->AddComponent(std::make_shared<Transform>());
-
-		obj->GetTransform()->SetLocalScale(Vec3(200.f, 200.f, 1.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.f));
-
-		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+		if (script->IsSelect() == true)
 		{
-			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-			meshRenderer->SetMesh(mesh);
-		}
-		{
-			std::shared_ptr<Material> material = std::make_shared<Material>();
-			material->SetShader(shader);
-			material->SetTexture(0, texture);
-			material->SetFloat(2, 1.f);
-			meshRenderer->SetMaterial(material);
-		}
-		obj->AddComponent(meshRenderer);
+			m_selected = true;
+			m_readyButton->SetCharacterSelectFlag(true);
 
-		std::shared_ptr<UI> ui = std::make_shared<UI>();
-		{
-			ui->SetVisible(true);
-			ui->OnTop();
+			return script->GetCharacterType();
 		}
-		obj->AddComponent(ui);
 
-		AddGameObject(obj);
+		m_selected = false;
+		m_readyButton->SetCharacterSelectFlag(false);
 	}
 
+	return server::FBX_TYPE::NONE;
+}
 
-	texture = GET_SINGLE(Resources)->Get<Texture>(L"Title");
-	{
-		Vec2 pos{ GetRatio(0.f, 0.f) };
+void Scene_CharacterSelection::StartGame(server::FBX_TYPE character)
+{
+	if (m_selected == false)
+		return;
 
-		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-		obj->AddComponent(std::make_shared<Transform>());
+	if (m_readyButton->IsReady() == false)
+		return;
 
-		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.f));
+	m_accTime += DELTA_TIME;
 
-		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
-		{
-			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-			meshRenderer->SetMesh(mesh);
-		}
-		{
-			std::shared_ptr<Material> material = std::make_shared<Material>();
-			material->SetShader(shader);
-			material->SetTexture(0, texture);
-			material->SetFloat(2, 0.5f);
-			meshRenderer->SetMaterial(material);
-		}
-		obj->AddComponent(meshRenderer);
+	if (m_accTime < 3.f)
+		return;
 
-		std::shared_ptr<UI> ui = std::make_shared<UI>();
-		{
-			ui->SetVisible(true);
-			//ui->OnTop();
-			ui->SetPopUp(false);
-		}
-		obj->AddComponent(ui);
+	auto nextScene{ std::dynamic_pointer_cast<Scene_Loading>(Scene_Loading::Create(SCENE_GAMEPLAY)) };
+	nextScene->SetSelectedCharacter(character);
 
-		AddGameObject(obj);
-	}
-
-
-	{
-		// 사용할 텍스쳐와 셰이더만 인자로 넘겨 UI 객체 생성
-		shared_ptr<CGameObject> obj = Creator::CreateUIObject(texture, shader);
-
-		// 레이어 설정
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-
-		// 위치 및 카메라 인덱스 설정
-		Vec2 pos{ GetRatio(30.f, 30.f) };
-		obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.f));
-
-		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 1.f);
-
-		AddGameObject(obj);
-	}
-
-	{
-		texture = GET_SINGLE(Resources)->GetBlurTexture();
-
-		Vec2 pos{ GetRatio(0.f, 0.f) };
-
-		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-		obj->AddComponent(std::make_shared<Transform>());
-
-		const auto& windowInfo = GEngine->GetWindow();
-		obj->GetTransform()->SetLocalScale(Vec3(windowInfo.width, windowInfo.height, 1.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.f));
-
-		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
-		{
-			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-			meshRenderer->SetMesh(mesh);
-		}
-		{
-			std::shared_ptr<Material> material = std::make_shared<Material>();
-			material->SetShader(shader);
-			material->SetTexture(0, texture);
-			material->SetFloat(2, 1.f);
-			meshRenderer->SetMaterial(material);
-		}
-		obj->AddComponent(meshRenderer);
-
-		std::shared_ptr<UI> ui = std::make_shared<UI>();
-		{
-			ui->SetPopUpUI(true);
-		}
-		obj->AddComponent(ui);
-
-		AddGameObject(obj);
-
-		GET_SINGLE(SceneManager)->SetBlurUI(obj);
-
-	}
+	GET_SINGLE(SceneManager)->LoadScene(nextScene);
 }
 
 shared_ptr<CScene> Scene_CharacterSelection::Create()

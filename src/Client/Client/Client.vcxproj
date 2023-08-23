@@ -163,11 +163,13 @@
   <ItemGroup>
     <ClInclude Include="Bar_Script.h" />
     <ClInclude Include="Button_Script.h" />
-    <ClInclude Include="CharacterSelection_Button.h" />
-    <ClInclude Include="Close_Script.h" />
+    <ClInclude Include="DescriptionButton_Script.h" />
+    <ClInclude Include="CharacterSelectButton_Script.h" />
+    <ClInclude Include="CloseButton_Script.h" />
     <ClInclude Include="Creator.h" />
     <ClInclude Include="Effect_Script.h" />
     <ClInclude Include="Fade_Script.h" />
+    <ClInclude Include="ReadyButton_Script.h" />
     <ClInclude Include="SliderTip_Script.h" />
     <ClInclude Include="VolumeSlider_Script.h" />
     <ClInclude Include="InfoUI_Script.h" />
@@ -221,11 +223,13 @@
   <ItemGroup>
     <ClCompile Include="Bar_Script.cpp" />
     <ClCompile Include="Button_Script.cpp" />
-    <ClCompile Include="CharacterSelection_Button.cpp" />
-    <ClCompile Include="Close_Script.cpp" />
+    <ClCompile Include="DescriptionButton_Script.cpp" />
+    <ClCompile Include="CharacterSelectButton_Script.cpp" />
+    <ClCompile Include="CloseButton_Script.cpp" />
     <ClCompile Include="Creator.cpp" />
     <ClCompile Include="Effect_Script.cpp" />
     <ClCompile Include="Fade_Script.cpp" />
+    <ClCompile Include="ReadyButton_Script.cpp" />
     <ClCompile Include="SliderTip_Script.cpp" />
     <ClCompile Include="VolumeSlider_Script.cpp" />
     <ClCompile Include="InfoUI_Script.cpp" />
