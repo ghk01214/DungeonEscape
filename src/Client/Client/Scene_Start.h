@@ -51,6 +51,7 @@ private:
 private:
 	void ChangePopUpVisibility();
 	void ChangeVolume();
+	void ChangeMuteTexture();
 
 public:
 	static std::shared_ptr<CScene> Create();
@@ -61,6 +62,8 @@ private:
 	std::shared_ptr<class Close_Script> m_closeButton;
 	std::vector<std::shared_ptr<class SliderTip_Script>> m_sliderTip;
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
+	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSliderLeftTip;
+	std::vector<std::shared_ptr<class Mute_Script>> m_muteButton;
 
 	std::vector<std::shared_ptr<CGameObject>> m_popUp;
 

@@ -27,6 +27,9 @@ public:
 private:
 	TEXTURE_TYPE Mute();
 
+public:
+	constexpr bool IsMute() const { return m_mute; }
+
 private:
 	SOUND_TYPE m_soundType;
 

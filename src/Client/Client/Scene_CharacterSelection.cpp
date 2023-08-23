@@ -80,6 +80,8 @@ void Scene_CharacterSelection::Init()
 void Scene_CharacterSelection::CreateLayer()
 {
 	GGameInstance->SetLayerName(0, L"UI");
+
+	GET_SINGLE(SceneManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 }
 
 void Scene_CharacterSelection::CreateUICamera()
@@ -364,6 +366,30 @@ void Scene_CharacterSelection::CreatePopUp()
 {
 }
 
+void Scene_CharacterSelection::CreateBlur()
+{
+	std::shared_ptr<Texture> texture = GET_TEXTURE(L"White Blur");
+	std::shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		float width{ static_cast<float>(GEngine->GetWindow().width) };
+		float height{ static_cast<float>(GEngine->GetWindow().height) };
+
+		transform->SetLocalScale(Vec3{ width, height, 1.f });
+		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
+
+		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 0.5f);
+
+		AddGameObject(obj);
+		GET_SINGLE(SceneManager)->SetBlurUI(obj);
+
+		m_popUp.push_back(obj);
+	}
+}
+
 void Scene_CharacterSelection::CreateCharacterDescription()
 {
 }
@@ -499,7 +525,7 @@ void Scene_CharacterSelection::CreateSampleUI()
 		AddGameObject(obj);
 
 		GET_SINGLE(SceneManager)->SetBlurUI(obj);
-		GET_SINGLE(SceneManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
 	}
 }
 

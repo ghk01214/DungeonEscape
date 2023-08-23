@@ -24,7 +24,7 @@ public:
 	virtual void Update() override;
 	virtual void LateUpdate() override;
 
-public:
+private:
 	void ChangeVolume();
 
 private:

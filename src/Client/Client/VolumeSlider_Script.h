@@ -5,7 +5,7 @@
 class VolumeSlider_Script : public Bar_Script
 {
 public:
-	VolumeSlider_Script();
+	VolumeSlider_Script(bool active = true);
 	virtual ~VolumeSlider_Script();
 
 public:
@@ -15,7 +15,9 @@ public:
 	virtual void LateUpdate() override;
 
 public:
-	void ChangeSliderTransform();
+	void ChangeMuteTexture(bool mute);
 
+private:
+	void ChangeSliderTransform();
 };
 

@@ -33,6 +33,7 @@ private:
 	void CreateReadyButton();
 
 	void CreatePopUp();
+	void CreateBlur();
 	void CreateCharacterDescription();
 
 private:
@@ -42,6 +43,8 @@ public:
 	static std::shared_ptr<CScene> Create();
 
 private:
+	std::vector<std::shared_ptr<CGameObject>> m_popUp;
+
 	std::vector<std::shared_ptr<CharacterSelection_Button>> m_buttons;
 
 	bool m_selected;

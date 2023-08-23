@@ -10,8 +10,9 @@
 #include <Timer.h>
 #include <Engine.h>
 
-VolumeSlider_Script::VolumeSlider_Script()
+VolumeSlider_Script::VolumeSlider_Script(bool active)
 {
+	m_active = active;
 }
 
 VolumeSlider_Script::~VolumeSlider_Script()
@@ -51,6 +52,17 @@ void VolumeSlider_Script::Update()
 void VolumeSlider_Script::LateUpdate()
 {
 	__super::LateUpdate();
+}
+
+void VolumeSlider_Script::ChangeMuteTexture(bool mute)
+{
+	for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
+	{
+		if (mute == true)
+			GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[1]);
+		else
+			GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[0]);
+	}
 }
 
 void VolumeSlider_Script::ChangeSliderTransform()

@@ -44,6 +44,7 @@ void Scene_Start::Update()
 
 	ChangePopUpVisibility();
 	ChangeVolume();
+	ChangeMuteTexture();
 
 #pragma region [INPUT]
 	//auto input{ GET_SINGLE(CInput) };
@@ -409,6 +410,7 @@ void Scene_Start::CreateBGMButton()
 		behaviour->InsertTextures(texture);
 		behaviour->InsertTextures(GET_TEXTURE(L"BGM Mute"));
 		obj->AddComponent(behaviour);
+		m_muteButton.push_back(behaviour);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -642,6 +644,12 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
+		std::shared_ptr<VolumeSlider_Script> behaviour{ std::make_shared<VolumeSlider_Script>(false) };
+		behaviour->InsertTextures(texture);
+		behaviour->InsertTextures(GET_TEXTURE(L"Slider Fill(L) Mute"));
+		obj->AddComponent(behaviour);
+		m_volumeSliderLeftTip.push_back(behaviour);
+
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
 	}
@@ -665,6 +673,8 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> behaviour{ std::make_shared<VolumeSlider_Script>() };
+		behaviour->InsertTextures(texture);
+		behaviour->InsertTextures(GET_TEXTURE(L"Slider Fill(C) Mute"));
 		obj->AddComponent(behaviour);
 		m_volumeSlider.push_back(behaviour);
 
@@ -726,6 +736,7 @@ void Scene_Start::CreateSEButton()
 		behaviour->InsertTextures(texture);
 		behaviour->InsertTextures(GET_TEXTURE(L"SE Mute"));
 		obj->AddComponent(behaviour);
+		m_muteButton.push_back(behaviour);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -959,6 +970,12 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
+		std::shared_ptr<VolumeSlider_Script> behaviour{ std::make_shared<VolumeSlider_Script>(false) };
+		behaviour->InsertTextures(texture);
+		behaviour->InsertTextures(GET_TEXTURE(L"Slider Fill(L) Mute"));
+		obj->AddComponent(behaviour);
+		m_volumeSliderLeftTip.push_back(behaviour);
+
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
 	}
@@ -982,6 +999,8 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> behaviour{ std::make_shared<VolumeSlider_Script>() };
+		behaviour->InsertTextures(texture);
+		behaviour->InsertTextures(GET_TEXTURE(L"Slider Fill(C) Mute"));
 		obj->AddComponent(behaviour);
 		m_volumeSlider.push_back(behaviour);
 
@@ -1081,6 +1100,31 @@ void Scene_Start::ChangeVolume()
 		m_volumeSlider[SE]->SetActive(true);
 	else
 		m_volumeSlider[SE]->SetActive(false);
+}
+
+void Scene_Start::ChangeMuteTexture()
+{
+	if (m_muteButton[BGM]->IsMute() == true)
+	{
+		m_volumeSlider[BGM]->ChangeMuteTexture(true);
+		m_volumeSliderLeftTip[BGM]->ChangeMuteTexture(true);
+	}
+	else
+	{
+		m_volumeSlider[BGM]->ChangeMuteTexture(false);
+		m_volumeSliderLeftTip[BGM]->ChangeMuteTexture(false);
+	}
+
+	if (m_muteButton[SE]->IsMute() == true)
+	{
+		m_volumeSlider[SE]->ChangeMuteTexture(true);
+		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(true);
+	}
+	else
+	{
+		m_volumeSlider[SE]->ChangeMuteTexture(false);
+		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(false);
+	}
 }
 
 shared_ptr<CScene> Scene_Start::Create()
