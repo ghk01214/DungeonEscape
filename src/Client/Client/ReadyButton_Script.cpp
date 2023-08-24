@@ -1,14 +1,7 @@
 ﻿#include "pch.h"
 #include "ReadyButton_Script.h"
 
-#include <MeshRenderer.h>
-#include <Material.h>
-#include <GameObject.h>
-#include <UI.h>
 #include <Input.h>
-#include <Timer.h>
-#include <Transform.h>
-#include <SceneManager.h>
 
 #include "Scene_Loading.h"
 
@@ -34,9 +27,6 @@ void ReadyButton_Script::Start()
 
 void ReadyButton_Script::Update()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
-		return;
-
 	if (m_characterSelect == false)
 		return;
 

@@ -1,8 +1,6 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "LoginButton_Script.h"
 
-#include <MeshRenderer.h>
-#include <Material.h>
 #include <Input.h>
 #include <SceneManager.h>
 

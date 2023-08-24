@@ -3,7 +3,6 @@
 
 #include <Input.h>
 #include <Transform.h>
-#include <GameObject.h>
 #include <UI.h>
 #include <SoundManager.h>
 
@@ -31,7 +30,7 @@ void SliderTip_Script::Start()
 
 void SliderTip_Script::Update()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
+	if (GetUI()->GetVisible() == false)
 		return;
 
 	__super::Update();

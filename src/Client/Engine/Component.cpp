@@ -40,6 +40,11 @@ shared_ptr<Camera> Component::GetCamera()
 	return m_gameObject.lock()->GetCamera();
 }
 
+shared_ptr<UI> Component::GetUI()
+{
+	return m_gameObject.lock()->GetUI();
+}
+
 shared_ptr<network::CNetwork> Component::GetNetwork()
 {
 	return m_gameObject.lock()->GetNetwork();

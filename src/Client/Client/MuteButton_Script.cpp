@@ -1,9 +1,6 @@
 ﻿#include "pch.h"
 #include "MuteButton_Script.h"
 
-#include <Material.h>
-#include <MeshRenderer.h>
-#include <GameObject.h>
 #include <UI.h>
 #include <Input.h>
 #include <SoundManager.h>
@@ -31,7 +28,7 @@ void MuteButton_Script::Start()
 
 void MuteButton_Script::Update()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
+	if (GetUI()->GetVisible() == false)
 		return;
 
 	__super::Update();

@@ -1,13 +1,10 @@
 ﻿#include "pch.h"
 #include "VolumeSlider_Script.h"
 
-#include <GameObject.h>
 #include <MeshRenderer.h>
 #include <Material.h>
 #include <Transform.h>
-#include <Input.h>
 #include <UI.h>
-#include <Timer.h>
 #include <Engine.h>
 
 VolumeSlider_Script::VolumeSlider_Script(bool active)
@@ -31,7 +28,7 @@ void VolumeSlider_Script::Start()
 
 void VolumeSlider_Script::Update()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
+	if (GetUI()->GetVisible() == false)
 		return;
 
 	if (m_active == false)

@@ -31,6 +31,7 @@ class Transform;
 class MeshRenderer;
 class Animator;
 class Camera;
+class UI;
 
 namespace network
 {
@@ -59,6 +60,7 @@ public:
 	shared_ptr<MeshRenderer> GetMeshRenderer();
 	shared_ptr<Animator> GetAnimator();
 	shared_ptr<Camera> GetCamera();
+	shared_ptr<UI> GetUI();
 	shared_ptr<network::CNetwork> GetNetwork();
 
 private:

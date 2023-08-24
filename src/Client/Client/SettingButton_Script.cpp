@@ -1,9 +1,6 @@
 ﻿#include "pch.h"
 #include "SettingButton_Script.h"
 
-#include <Material.h>
-#include <MeshRenderer.h>
-#include <GameObject.h>
 #include <UI.h>
 #include <Input.h>
 
@@ -27,7 +24,7 @@ void SettingButton_Script::Start()
 
 void SettingButton_Script::Update()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
+	if (GetUI()->GetVisible() == false)
 		return;
 
 	__super::Update();
@@ -45,7 +42,7 @@ void SettingButton_Script::Update()
 				m_click = false;
 				m_showPopUp = true;
 
-				GetGameObject()->GetUI()->SetVisible(false);
+				GetUI()->SetVisible(false);
 			}
 		}
 	}
@@ -53,7 +50,7 @@ void SettingButton_Script::Update()
 
 void SettingButton_Script::LateUpdate()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
+	if (GetUI()->GetVisible() == false)
 		return;
 
 	__super::LateUpdate();

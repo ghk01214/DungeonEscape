@@ -1,9 +1,6 @@
 ﻿#include "pch.h"
 #include "CloseButton_Script.h"
 
-#include <Material.h>
-#include <MeshRenderer.h>
-#include <GameObject.h>
 #include <UI.h>
 #include <Input.h>
 
@@ -28,7 +25,7 @@ void CloseButton_Script::Start()
 
 void CloseButton_Script::Update()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
+	if (GetUI()->GetVisible() == false)
 		return;
 
 	__super::Update();
@@ -65,7 +62,7 @@ void CloseButton_Script::Update()
 
 void CloseButton_Script::LateUpdate()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
+	if (GetUI()->GetVisible() == false)
 		return;
 
 	__super::LateUpdate();
