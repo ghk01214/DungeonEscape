@@ -19,6 +19,7 @@
 Scene_CharacterSelection::Scene_CharacterSelection() :
 	m_selected{ false },
 	m_accTime{ 0.f },
+	m_characterIndex{ -1 },
 	m_descriptionIndex{ -1 },
 	m_popUpActive{ false }
 {
@@ -41,6 +42,7 @@ void Scene_CharacterSelection::Update()
 	ChangePopUpVisibility();
 
 	auto character{ DetectCharacterSelection() };
+	DeactivateCharacterUI();
 	StartGame(character);
 }
 
@@ -364,7 +366,7 @@ void Scene_CharacterSelection::CreateCharacterDescription()
 		auto pos{ GetRatio(20.f, 84.f) };
 		float ratio{ 1.5f };
 
-		transform->SetLocalScale(Vec3{ 139.f * ratio, 27.f * ratio, 1.f});
+		transform->SetLocalScale(Vec3{ 139.f * ratio, 27.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
 
 		AddGameObject(obj);
@@ -402,18 +404,28 @@ void Scene_CharacterSelection::CreateCharacterDescription()
 
 server::FBX_TYPE Scene_CharacterSelection::DetectCharacterSelection()
 {
-	for (auto& script : m_characterButton)
+	for (int32_t i = 0; i < m_characterButton.size(); ++i)
 	{
-		if (script->IsSelect() == true)
+		if (m_characterButton[i]->IsSelect() == false)
+			continue;
+
+		m_selected = true;
+		m_readyButton->SetCharacterSelectFlag(true);
+		m_characterIndex = i;
+
+		return m_characterButton[i]->GetCharacterType();
+	}
+
+	m_selected = false;
+	m_characterIndex = -1;
+	m_readyButton->SetCharacterSelectFlag(false);
+
+	if (m_popUpActive == false)
+	{
+		for (auto& obj : m_characterButton)
 		{
-			m_selected = true;
-			m_readyButton->SetCharacterSelectFlag(true);
-
-			return script->GetCharacterType();
+			obj->SetActive(true);
 		}
-
-		m_selected = false;
-		m_readyButton->SetCharacterSelectFlag(false);
 	}
 
 	return server::FBX_TYPE::NONE;
@@ -438,6 +450,20 @@ void Scene_CharacterSelection::StartGame(server::FBX_TYPE character)
 	GET_SINGLE(SceneManager)->LoadScene(nextScene);
 }
 
+void Scene_CharacterSelection::DeactivateCharacterUI()
+{
+	if (m_selected == false)
+		return;
+
+	for (int32_t i = 0; i < m_characterButton.size(); ++i)
+	{
+		if (i == m_characterIndex)
+			continue;
+
+		m_characterButton[i]->SetActive(false);
+	}
+}
+
 void Scene_CharacterSelection::ChangePopUpVisibility()
 {
 	if (m_closeButton->ClosePopUp() == true or GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::ESC))
@@ -454,6 +480,7 @@ void Scene_CharacterSelection::ChangePopUpVisibility()
 		//m_characterDescription[m_descriptionIndex + 6]->GetUI()->SetVisible(false);
 		m_closeButton->SetClosePopUpFlag(false);
 		m_descriptionIndex = -1;
+		m_popUpActive = false;
 
 		return;
 	}
@@ -464,11 +491,11 @@ void Scene_CharacterSelection::ChangePopUpVisibility()
 
 		accTime += DELTA_TIME;
 
-		if (accTime > 0.1f)
+		if (accTime > 0.2f)
 		{
 			SetUIActive(false);
 
-			m_popUpActive = false;
+			//m_popUpActive = false;
 			accTime = 0.f;
 		}
 	}

@@ -53,7 +53,7 @@ void DescriptionButton_Script::Update()
 	{
 		if (m_pos.y - (m_scale.y / 2) <= m_mousePos.y and m_mousePos.y <= m_pos.y + (m_scale.y / 2))
 		{
-			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true)
+			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true and m_click == false)
 			{
 				m_click = true;
 				m_select = true;

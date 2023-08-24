@@ -45,6 +45,7 @@ private:
 
 private:
 	server::FBX_TYPE DetectCharacterSelection();
+	void DeactivateCharacterUI();
 	void StartGame(server::FBX_TYPE character);
 	void ChangePopUpVisibility();
 	void SetUIActive(bool flag);
@@ -65,5 +66,6 @@ private:
 	bool m_selected;
 	float m_accTime;
 	bool m_popUpActive;
+	int32_t m_characterIndex;
 	int32_t m_descriptionIndex;
 };
