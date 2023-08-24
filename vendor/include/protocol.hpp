@@ -128,6 +128,9 @@ enum class ProtocolID : unsigned short
 	WR_PLAY_CUT_SCENE_REQ,
 	WR_PLAY_CUT_SCENE_ACK,
 
+	WR_SHOW_GUIDE_UI_REQ,
+	WR_SHOW_GUIDE_UI_ACK,
+
 	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion
 

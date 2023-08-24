@@ -415,7 +415,19 @@ void TestLevel::LoadTriggerObject()
 	auto CutScene1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 5500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true)};
 	auto CutScene1Body{ CutScene1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene1Body->AddCollider<BoxCollider>(CutScene1Obj->GetTransform()->GetScale());
-	CutScene1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::GUIDELINE1);
+	CutScene1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE2);
+
+	auto GuideUI1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 6500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false)};
+	auto GuideUI1Body{ GuideUI1Obj->GetComponent<RigidBody>(L"RigidBody") };
+	GuideUI1Body->AddCollider<BoxCollider>(GuideUI1Obj->GetTransform()->GetScale());
+	GuideUI1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::GUIDELINE1);
+
+	LoadPortalObject();
+}
+
+void TestLevel::LoadPortalObject()
+{
+	auto objMgr{ ObjectManager::GetInstance() };
 
 	auto Portal1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL1_POS, Quat(0, 0, 0, 1), Vec3(600.f, 600.f, 600.f), false) };
 	auto Portal1Body{ Portal1Obj->GetComponent<RigidBody>(L"RigidBody") };

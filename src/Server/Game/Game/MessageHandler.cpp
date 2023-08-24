@@ -140,7 +140,6 @@ namespace game
 				break;
 				case ProtocolID::WR_MONSTER_PATTERN_ACK:
 				case ProtocolID::WR_CHANGE_SOUND_ACK:
-				case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
 				{
 					postOver.state = ev.state;
 
@@ -165,6 +164,7 @@ namespace game
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
 				}
 				break;
+				case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
 				case ProtocolID::WR_PLAY_CUT_SCENE_ACK:
 				{
 					postOver.integer = ev.integer;
@@ -415,7 +415,7 @@ namespace game
 			Vec3 portal4TestPos{ 15000.f, -1590.f, 23570.f };
 			Vec3 portal5TestPos{ 16216.f, -3690.f, 39993.f };
 			Vec3 artifactTest{ -1750.f, -1690.f, 19965.f };
-			Vec3 pos = portal1TestPos;
+			Vec3 pos = gimmk1TestPos;
 
 			//pos.z = 40400.f;
 			pos.z -= msg.playerID * 500.f;

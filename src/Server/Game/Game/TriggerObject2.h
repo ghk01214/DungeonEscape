@@ -13,7 +13,8 @@ class TriggerObject2 : public MapObject
 public:
 	enum class TRIGGERATTRIBUTE
 	{
-		NONE,
+		NONE = 0,
+
 		PORTAL1,
 		PORTAL2,
 		PORTAL3,
@@ -23,11 +24,18 @@ public:
 		PORTAL7,
 		PORTAL8,
 
-		GUIDELINE1,
+		GUIDELINE1,			// 아티팩트가 부서지지 않은 상태에서 돌기둥에 다가갔을 때의 UI
 		GUIDELINE2,
 		GUIDELINE3,
 		GUIDELINE4,
 		GUIDELINE5,
+
+		CUTSCENE1,
+		CUTSCENE2,			// 돌기둥을 처음 봤을 때의 컷신
+		CUTSCENE3,
+		CUTSCENE4,
+		CUTSCENE5,
+
 		END
 	};
 public:
@@ -59,11 +67,11 @@ private:
 private:
 	void ServerInit();
 	void ServerRelease();			//생성 삭제 명령만 존재.
-	void ServerSendInMessage();
-	void ServerSendPortalInMessage();
+	void ServerSendInMessage(Player* player);
+	void ServerSendTriggerInMessage(Player* player, server::TRIGGER_INTERACTION_TYPE triggerType);
 	void ServerSendPortalOutMessage();
 	void ServerSendInteractionCountMessage();
-	void ServerSendCutSceneMessage();
+	void ServerSendCutSceneMessage(server::CUT_SCENE_TYPE cutSceneType);
 
 	bool CheckArtifactDestoryed();
 

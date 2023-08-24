@@ -41,8 +41,8 @@ void TriggerObject2::Update(double timeDelta)
 	if (m_deactivate)
 		return;
 
-	//if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)		//건호 : 포탈3은 나중에 맞는 값으로 변경
-	//CheckArtifactDestoryed();
+	if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE1)
+		CheckArtifactDestoryed();
 
 	Handle_Overlap();
 	AttributePortal(timeDelta);
@@ -86,7 +86,6 @@ void TriggerObject2::Handle_Overlap()
 		{
 			Apply(player);				//진입
 			m_duplicates.emplace_back(player);
-
 		}
 	}
 
@@ -97,9 +96,7 @@ void TriggerObject2::Handle_Overlap()
 		m_beforeCnt = m_currentCnt;
 
 		if (m_attribute < TRIGGERATTRIBUTE::GUIDELINE1)
-		{
 			ServerSendInteractionCountMessage();
-		}
 	}
 }
 
@@ -248,34 +245,14 @@ bool TriggerObject2::Apply(Player* player)
 	{
 		//cout << "attribute once" << endl;
 
-		// 임시로 여기에 작성
-		switch (m_attribute)
-		{
-			case TRIGGERATTRIBUTE::GUIDELINE1:
-			{
-				m_deactivate = true;
-				SetRemoveReserved();
-				ServerSendCutSceneMessage();
-			}
-			break;
-			case TRIGGERATTRIBUTE::GUIDELINE2:
-			case TRIGGERATTRIBUTE::GUIDELINE3:
-			case TRIGGERATTRIBUTE::GUIDELINE4:
-			case TRIGGERATTRIBUTE::GUIDELINE5:
-			{
-				ServerSendCutSceneMessage();
-			}
-			break;
-		}
-
+		ServerSendInMessage(player);
 		return true;
 	}
 	else
 	{
 		//cout << "attribute loop" << endl;
 
-		ServerSendInMessage();
-
+		ServerSendInMessage(player);
 		return false;
 	}
 }
@@ -302,29 +279,65 @@ void TriggerObject2::ServerRelease()
 	//서버 삭제 명령		(포탈/UI알림이가 목적이므로 웬만하면 쓸일 없을것이다.)
 }
 
-void TriggerObject2::ServerSendInMessage()
+void TriggerObject2::ServerSendInMessage(Player* player)
 {
 	switch (m_attribute)
 	{
-		case TRIGGERATTRIBUTE::PORTAL1:
-		case TRIGGERATTRIBUTE::PORTAL2:
-		case TRIGGERATTRIBUTE::PORTAL3:
-		case TRIGGERATTRIBUTE::PORTAL4:
-		case TRIGGERATTRIBUTE::PORTAL5:
-		case TRIGGERATTRIBUTE::PORTAL6:
-		case TRIGGERATTRIBUTE::PORTAL7:
-		case TRIGGERATTRIBUTE::PORTAL8:
+		case TRIGGERATTRIBUTE::GUIDELINE1:
 		{
-			ServerSendPortalInMessage();
+			ServerSendTriggerInMessage(player, server::TRIGGER_INTERACTION_TYPE::GUIDE_UI1);
 		}
 		break;
-		case TRIGGERATTRIBUTE::GUIDELINE1:
-		case TRIGGERATTRIBUTE::GUIDELINE2:
-		case TRIGGERATTRIBUTE::GUIDELINE3:
-		case TRIGGERATTRIBUTE::GUIDELINE4:
-		case TRIGGERATTRIBUTE::GUIDELINE5:
+		case TRIGGERATTRIBUTE::CUTSCENE1:
 		{
-			ServerSendCutSceneMessage();
+			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE1);
+		}
+		break;
+		case TRIGGERATTRIBUTE::CUTSCENE2:
+		{
+			m_deactivate = true;
+			SetRemoveReserved();
+			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE2);
+		}
+		break;
+		case TRIGGERATTRIBUTE::CUTSCENE3:
+		{
+			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE3);
+		}
+		break;
+		case TRIGGERATTRIBUTE::CUTSCENE4:
+		{
+			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE4);
+		}
+		break;
+		case TRIGGERATTRIBUTE::CUTSCENE5:
+		{
+			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE5);
+		}
+		break;
+		case TRIGGERATTRIBUTE::PORTAL1:
+		{
+			ServerSendTriggerInMessage(player, server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN);
+		}
+		break;
+		case TRIGGERATTRIBUTE::PORTAL2:
+		{
+			ServerSendTriggerInMessage(player, server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN);
+		}
+		break;
+		case TRIGGERATTRIBUTE::PORTAL3:
+		{
+			ServerSendTriggerInMessage(player, server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN);
+		}
+		break;
+		case TRIGGERATTRIBUTE::PORTAL4:
+		{
+			ServerSendTriggerInMessage(player, server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN);
+		}
+		break;
+		case TRIGGERATTRIBUTE::PORTAL5:
+		{
+			ServerSendTriggerInMessage(player, server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
 		}
 		break;
 		default:
@@ -332,21 +345,11 @@ void TriggerObject2::ServerSendInMessage()
 	}
 }
 
-void TriggerObject2::ServerSendPortalInMessage()
+void TriggerObject2::ServerSendTriggerInMessage(Player* player, server::TRIGGER_INTERACTION_TYPE triggerType)
 {
 	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
-	ev.objID = m_id;
-
-	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL2)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
+	ev.objID = player->GetID();
+	ev.integer = magic_enum::enum_integer(triggerType);
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
@@ -393,34 +396,29 @@ void TriggerObject2::ServerSendInteractionCountMessage()
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
-void TriggerObject2::ServerSendCutSceneMessage()
+void TriggerObject2::ServerSendCutSceneMessage(server::CUT_SCENE_TYPE cutSceneType)
 {
 	game::TIMER_EVENT ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
 	ev.objID = m_id;
-
-	if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE1)
-		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE2);
-	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE2)
-		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE3);
-	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE3)
-		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE4);
-	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE4)
-		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE5);
-	else if (m_attribute == TRIGGERATTRIBUTE::GUIDELINE5)
-		ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE6);
+	ev.integer = magic_enum::enum_integer(cutSceneType);
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 bool TriggerObject2::CheckArtifactDestoryed()
 {
-	//건호
-	Layer* artiLayer = ObjectManager::GetInstance()->GetLayer(L"Layer_Gimmik_Artifact");		
-	if (!artiLayer)
+	Layer* artiLayer = ObjectManager::GetInstance()->GetLayer(L"Layer_Gimmik_Artifact");
+
+	if (artiLayer == nullptr)
 		return false;											// 레이어 유무 확인
 
 	if (artiLayer->GetGameObjects().size() == 0)				// 리스트 크기 확인. 0일 경우 true
+	{
+		m_deactivate = true;
+		SetRemoveReserved();
+
 		return true;
+	}
 
 	return false;												// 리스트 크기가 0이 아니면 false
 }

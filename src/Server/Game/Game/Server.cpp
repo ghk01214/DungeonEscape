@@ -1145,14 +1145,22 @@ namespace game
 			break;
 			case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
 			{
-				auto triggerType{ magic_enum::enum_value<server::TRIGGER_INTERACTION_TYPE>(postOver->state) };
+				auto triggerType{ magic_enum::enum_value<server::TRIGGER_INTERACTION_TYPE>(postOver->integer) };
 
-				for (auto& client : m_sessions)
+				if (triggerType == server::TRIGGER_INTERACTION_TYPE::GUIDE_UI1)
 				{
-					if (client->GetState() != STATE::INGAME)
-						continue;
+					if (m_sessions[id]->GetState() == STATE::INGAME)
+						m_sessions[id]->SendTriggerInteractionPacket(id, triggerType);
+				}
+				else
+				{
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
 
-					client->SendTriggerInteractionPacket(id, triggerType);
+						client->SendTriggerInteractionPacket(id, triggerType);
+					}
 				}
 			}
 			break;

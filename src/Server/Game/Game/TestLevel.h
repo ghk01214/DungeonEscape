@@ -24,6 +24,8 @@ public:
 	void LoadGimmikObject();
 	void LoadTriggerObject();
 
+	void LoadPortalObject();
+
 	void LoadDebugMap_Bridge();
 	void LoadDebugMap_Boulder();
 
