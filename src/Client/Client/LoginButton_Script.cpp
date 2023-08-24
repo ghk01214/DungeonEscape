@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "LoginButton_Script.h"
 
 #include <Input.h>
@@ -6,7 +6,8 @@
 
 #include "Scene_Loading.h"
 
-LoginButton_Script::LoginButton_Script(bool active)
+LoginButton_Script::LoginButton_Script(bool active) :
+	m_logIn{ false }
 {
 	m_active = active;
 }
@@ -37,9 +38,9 @@ void LoginButton_Script::Update()
 		if (m_input->Button_Up(CInput::DIMB_LBUTTON) == true)
 		{
 			m_click = false;
+			m_logIn = true;
 
 			ChangeTexture(BUTTON);
-			GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_CHARACTER_SELECT));
 		}
 	}
 	else if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))

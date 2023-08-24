@@ -15,8 +15,12 @@ public:
 	void LateUpdate() override;
 
 public:
+	constexpr bool IsSelect() const { return m_select; }
+
+public:
 	void SetCharacterType(server::FBX_TYPE type);
 	void SetCharacterType(int32_t index);
+	void SetSelect(bool flag);
 
 private:
 	server::FBX_TYPE m_character;

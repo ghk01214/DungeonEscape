@@ -8,7 +8,7 @@ class Scene_CharacterSelection final : public CScene
 private:
 	enum CHARACTER_TYPE
 	{
-		NANA,
+		NANA = 2,
 		MISTIC,
 		CARMEL,
 
@@ -46,6 +46,8 @@ private:
 private:
 	server::FBX_TYPE DetectCharacterSelection();
 	void StartGame(server::FBX_TYPE character);
+	void ChangePopUpVisibility();
+	void SetUIActive(bool flag);
 
 public:
 	static std::shared_ptr<CScene> Create();
@@ -56,9 +58,12 @@ private:
 	std::shared_ptr<class ReadyButton_Script> m_readyButton;
 
 	std::vector<std::shared_ptr<CGameObject>> m_popUp;
+	std::vector<std::shared_ptr<CGameObject>> m_characterDescription;
 	std::shared_ptr<class CloseButton_Script> m_closeButton;
 
 private:
 	bool m_selected;
 	float m_accTime;
+	bool m_popUpActive;
+	int32_t m_descriptionIndex;
 };

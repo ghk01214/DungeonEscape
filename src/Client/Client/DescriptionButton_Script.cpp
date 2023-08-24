@@ -15,6 +15,7 @@
 DescriptionButton_Script::DescriptionButton_Script() :
 	m_select{ false }
 {
+	m_active = true;
 }
 
 DescriptionButton_Script::~DescriptionButton_Script()
@@ -33,7 +34,7 @@ void DescriptionButton_Script::Start()
 
 void DescriptionButton_Script::Update()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
+	if (m_active == false)
 		return;
 
 	__super::Update();
@@ -42,8 +43,8 @@ void DescriptionButton_Script::Update()
 	{
 		if (m_input->Button_Up(CInput::DIMB_LBUTTON) == true)
 		{
-			m_select = !m_select;
 			m_click = false;
+			m_select = false;
 
 			ChangeTexture(BUTTON);
 		}
@@ -53,7 +54,10 @@ void DescriptionButton_Script::Update()
 		if (m_pos.y - (m_scale.y / 2) <= m_mousePos.y and m_mousePos.y <= m_pos.y + (m_scale.y / 2))
 		{
 			if (m_input->Button_Down(CInput::DIMB_LBUTTON) == true)
+			{
 				m_click = true;
+				m_select = true;
+			}
 
 			ChangeTexture(BUTTON_PRESSED);
 		}
@@ -81,4 +85,9 @@ void DescriptionButton_Script::SetCharacterType(server::FBX_TYPE type)
 void DescriptionButton_Script::SetCharacterType(int32_t index)
 {
 	m_character = magic_enum::enum_value<server::FBX_TYPE>(index);
+}
+
+void DescriptionButton_Script::SetSelect(bool flag)
+{
+	m_select = flag;
 }

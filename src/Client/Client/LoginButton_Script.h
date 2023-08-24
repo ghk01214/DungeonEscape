@@ -14,4 +14,9 @@ public:
 	void Update() override;
 	void LateUpdate() override;
 
+public:
+	constexpr bool IsLogIn() const { return m_logIn; }
+
+private:
+	bool m_logIn;
 };

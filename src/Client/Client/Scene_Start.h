@@ -48,6 +48,7 @@ private:
 	void CreateSESlider();
 
 private:
+	void ChangeScene();
 	void ChangePopUpVisibility();
 	void ChangeVolume();
 	void ChangeMuteTexture();
@@ -57,12 +58,12 @@ public:
 
 private:
 	std::shared_ptr<class LoginButton_Script> m_logInButton;
-	std::shared_ptr<class Setting_Script> m_settingButton;
+	std::shared_ptr<class SettingButton_Script> m_settingButton;
 	std::shared_ptr<class CloseButton_Script> m_closeButton;
 	std::vector<std::shared_ptr<class SliderTip_Script>> m_sliderTip;
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSliderLeftTip;
-	std::vector<std::shared_ptr<class Mute_Script>> m_muteButton;
+	std::vector<std::shared_ptr<class MuteButton_Script>> m_muteButton;
 
 	std::vector<std::shared_ptr<CGameObject>> m_popUp;
 

@@ -18,7 +18,9 @@
 
 Scene_CharacterSelection::Scene_CharacterSelection() :
 	m_selected{ false },
-	m_accTime{ 0.f }
+	m_accTime{ 0.f },
+	m_descriptionIndex{ -1 },
+	m_popUpActive{ false }
 {
 }
 
@@ -35,6 +37,8 @@ void Scene_CharacterSelection::Start()
 void Scene_CharacterSelection::Update()
 {
 	__super::Update();
+
+	ChangePopUpVisibility();
 
 	auto character{ DetectCharacterSelection() };
 	StartGame(character);
@@ -94,7 +98,8 @@ void Scene_CharacterSelection::CreateUI()
 	CreateCharacterImage();
 	CreateCharacterNameButton();
 	CreateReadyButton();
-	//CreateSampleUI();
+
+	CreatePopUp();
 }
 
 void Scene_CharacterSelection::CreateLights()
@@ -168,7 +173,7 @@ void Scene_CharacterSelection::CreateCharacterNameButton()
 	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Button2") };
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
-	float width = static_cast<float>(GEngine->GetWindow().width);
+	float width{ static_cast<float>(GEngine->GetWindow().width) };
 	Vec2 pos{ GetRatio(0.f, -65.f) };
 
 	// BUTTON
@@ -260,6 +265,12 @@ void Scene_CharacterSelection::CreatePopUp()
 {
 	CreateBlur();
 	CreateCloseButton();
+	CreateCharacterDescription();
+
+	//for (auto& obj : m_popUp)
+	//{
+	//	obj->GetUI()->SetVisible(true);
+	//}
 }
 
 void Scene_CharacterSelection::CreateBlur()
@@ -281,8 +292,6 @@ void Scene_CharacterSelection::CreateBlur()
 
 	AddGameObject(obj);
 	GET_SINGLE(SceneManager)->SetBlurUI(obj);
-
-	m_popUp.push_back(obj);
 }
 
 void Scene_CharacterSelection::CreateCloseButton()
@@ -291,7 +300,7 @@ void Scene_CharacterSelection::CreateCloseButton()
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
 	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
-	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 	auto transform{ obj->GetTransform() };
 	Vec2 pos{ GetRatio(-93.f, 86.f) };
@@ -317,6 +326,78 @@ void Scene_CharacterSelection::CreateCloseButton()
 
 void Scene_CharacterSelection::CreateCharacterDescription()
 {
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Pop Up Frame") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	float width{ static_cast<float>(GEngine->GetWindow().width) };
+	float height{ static_cast<float>(GEngine->GetWindow().height) };
+
+	// FRAME
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		auto pos{ GetRatio(20.f, 0.f) };
+
+		transform->SetLocalScale(Vec3{ 1498.f, 1020.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, 0.f, 400.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// FONT
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		if (i == 0)
+			texture = GET_TEXTURE(L"Knight2");
+		else if (i == 1)
+			texture = GET_TEXTURE(L"Mage2");
+		else
+			texture = GET_TEXTURE(L"Priest2");
+
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		auto pos{ GetRatio(20.f, 84.f) };
+		float ratio{ 1.5f };
+
+		transform->SetLocalScale(Vec3{ 139.f * ratio, 27.f * ratio, 1.f});
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+		AddGameObject(obj);
+		m_characterDescription.push_back(obj);
+	}
+
+	// IMAGE
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		if (i == 0)
+			texture = GET_TEXTURE(L"Nana");
+		else if (i == 1)
+			texture = GET_TEXTURE(L"Mistic");
+		else
+			texture = GET_TEXTURE(L"Carmel");
+
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		auto pos{ GetRatio(-77.f, 0.f) };
+
+		transform->SetLocalScale(Vec3{ width / 5.f, height / 2.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, 0.f, 400.f });
+
+		AddGameObject(obj);
+		m_characterDescription.push_back(obj);
+	}
+
+	// DESCRIPTION
+	{
+
+	}
 }
 
 server::FBX_TYPE Scene_CharacterSelection::DetectCharacterSelection()
@@ -355,6 +436,81 @@ void Scene_CharacterSelection::StartGame(server::FBX_TYPE character)
 	nextScene->SetSelectedCharacter(character);
 
 	GET_SINGLE(SceneManager)->LoadScene(nextScene);
+}
+
+void Scene_CharacterSelection::ChangePopUpVisibility()
+{
+	if (m_closeButton->ClosePopUp() == true or GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::ESC))
+	{
+		for (auto& obj : m_popUp)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+
+		SetUIActive(true);
+
+		m_characterDescription[m_descriptionIndex]->GetUI()->SetVisible(false);
+		m_characterDescription[m_descriptionIndex + 3]->GetUI()->SetVisible(false);
+		//m_characterDescription[m_descriptionIndex + 6]->GetUI()->SetVisible(false);
+		m_closeButton->SetClosePopUpFlag(false);
+		m_descriptionIndex = -1;
+
+		return;
+	}
+
+	if (m_popUpActive == true)
+	{
+		static float accTime{ 0.f };
+
+		accTime += DELTA_TIME;
+
+		if (accTime > 0.1f)
+		{
+			SetUIActive(false);
+
+			m_popUpActive = false;
+			accTime = 0.f;
+		}
+	}
+
+	int32_t index{ -1 };
+
+	for (int32_t i = 0; i < m_descriptionButton.size(); ++i)
+	{
+		if (m_descriptionButton[i]->IsSelect() == false)
+			continue;
+
+		index = i;
+		m_popUpActive = true;
+		break;
+	}
+
+	if (index == -1)
+		return;
+
+	for (auto& obj : m_popUp)
+	{
+		obj->GetUI()->SetVisible(true);
+	}
+
+	m_characterDescription[index]->GetUI()->SetVisible(true);
+	m_characterDescription[index + 3]->GetUI()->SetVisible(true);
+	//m_characterDescription[index + 6]->GetUI()->SetVisible(true);
+
+	m_descriptionIndex = index;
+}
+
+void Scene_CharacterSelection::SetUIActive(bool flag)
+{
+	for (auto& obj : m_characterButton)
+	{
+		obj->SetActive(flag);
+	}
+
+	for (auto& obj : m_descriptionButton)
+	{
+		obj->SetActive(flag);
+	}
 }
 
 shared_ptr<CScene> Scene_CharacterSelection::Create()

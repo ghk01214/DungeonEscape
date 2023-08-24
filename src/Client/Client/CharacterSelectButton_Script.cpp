@@ -4,8 +4,6 @@
 #include <Input.h>
 #include <Timer.h>
 #include <Transform.h>
-#include <GameObject.h>
-#include <UI.h>
 
 #include "Scene_Loading.h"
 
@@ -14,6 +12,7 @@ CharacterSelectButton_Script::CharacterSelectButton_Script(server::FBX_TYPE char
 	m_select{ false },
 	m_prevSelect{ m_select }
 {
+	m_active = true;
 }
 
 CharacterSelectButton_Script::~CharacterSelectButton_Script()
@@ -32,7 +31,7 @@ void CharacterSelectButton_Script::Start()
 
 void CharacterSelectButton_Script::Update()
 {
-	if (GetGameObject()->GetUI()->GetVisible() == false)
+	if (m_active == false)
 		return;
 
 	__super::Update();

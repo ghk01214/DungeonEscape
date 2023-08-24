@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "LoginButton_Script.h"
-#include "Setting_Script.h"
+#include "SettingButton_Script.h"
 #include "CloseButton_Script.h"
 #include "SliderTip_Script.h"
 #include "VolumeSlider_Script.h"
@@ -17,7 +17,7 @@
 
 #include "Creator.h"
 #include "Scene_Loading.h"
-#include "Mute_Script.h"
+#include "MuteButton_Script.h"
 
 Scene_Start::Scene_Start()
 {
@@ -40,6 +40,8 @@ void Scene_Start::Start()
 
 void Scene_Start::Update()
 {
+	ChangeScene();
+
 	__super::Update();
 
 	ChangePopUpVisibility();
@@ -268,7 +270,7 @@ void Scene_Start::CreateSettingButton()
 	transform->SetLocalScale(Vec3{ 121.f, 121.f, 1.f });
 	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
-	std::shared_ptr<Setting_Script> script{ std::make_shared<Setting_Script>() };
+	std::shared_ptr<SettingButton_Script> script{ std::make_shared<SettingButton_Script>() };
 	obj->AddComponent(script);
 	m_settingButton = script;
 
@@ -305,8 +307,6 @@ void Scene_Start::CreateBlur()
 
 		AddGameObject(obj);
 		GET_SINGLE(SceneManager)->SetBlurUI(obj);
-
-		m_popUp.push_back(obj);
 	}
 }
 
@@ -387,7 +387,7 @@ void Scene_Start::CreateBGMButton()
 		transform->SetLocalScale(Vec3{ 45.f * ratio, 60.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<Mute_Script> script{ std::make_shared<Mute_Script>(Mute_Script::SOUND_TYPE::BGM) };
+		std::shared_ptr<MuteButton_Script> script{ std::make_shared<MuteButton_Script>(MuteButton_Script::SOUND_TYPE::BGM) };
 		script->InsertTextures(texture);
 		script->InsertTextures(GET_TEXTURE(L"BGM Mute"));
 		obj->AddComponent(script);
@@ -715,7 +715,7 @@ void Scene_Start::CreateSEButton()
 		transform->SetLocalScale(Vec3{ 45.f * ratio, 60.f * ratio, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-		std::shared_ptr<Mute_Script> script{ std::make_shared<Mute_Script>(Mute_Script::SOUND_TYPE::SE) };
+		std::shared_ptr<MuteButton_Script> script{ std::make_shared<MuteButton_Script>(MuteButton_Script::SOUND_TYPE::SE) };
 		script->InsertTextures(texture);
 		script->InsertTextures(GET_TEXTURE(L"SE Mute"));
 		obj->AddComponent(script);
@@ -1019,6 +1019,14 @@ void Scene_Start::CreateSESlider()
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
 	}
+}
+
+void Scene_Start::ChangeScene()
+{
+	if (m_logInButton->IsLogIn() == false)
+		return;
+
+	GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_CHARACTER_SELECT));
 }
 
 void Scene_Start::ChangePopUpVisibility()

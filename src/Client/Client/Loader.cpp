@@ -394,13 +394,20 @@ HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 {
 	LOAD_TEXTURE(L"Frame1", L"..\\Resources\\Texture\\UI\\Frame\\Frame1.png");
 	LOAD_TEXTURE(L"Frame1_selected", L"..\\Resources\\Texture\\UI\\Frame\\Frame1_selected.png");
+	LOAD_TEXTURE(L"Pop Up Frame", L"..\\Resources\\Texture\\UI\\Frame\\Pop Up Frame.png");
 
 	LOAD_TEXTURE(L"Button2", L"..\\Resources\\Texture\\UI\\Button\\Button2.png");
 	LOAD_TEXTURE(L"Button2_selected", L"..\\Resources\\Texture\\UI\\Button\\Button2_selected.png");
 
+	LOAD_TEXTURE(L"Close", L"..\\Resources\\Texture\\UI\\Button\\Close.png");
+	LOAD_TEXTURE(L"Close Selected", L"..\\Resources\\Texture\\UI\\Button\\Close_selected.png");
+
 	LOAD_TEXTURE(L"Knight", L"..\\Resources\\Texture\\UI\\Font\\Knight.png");
 	LOAD_TEXTURE(L"Mage", L"..\\Resources\\Texture\\UI\\Font\\Mage.png");
 	LOAD_TEXTURE(L"Priest", L"..\\Resources\\Texture\\UI\\Font\\Priest.png");
+	LOAD_TEXTURE(L"Knight2", L"..\\Resources\\Texture\\UI\\Font\\Knight2.png");
+	LOAD_TEXTURE(L"Mage2", L"..\\Resources\\Texture\\UI\\Font\\Mage2.png");
+	LOAD_TEXTURE(L"Priest2", L"..\\Resources\\Texture\\UI\\Font\\Priest2.png");
 	LOAD_TEXTURE(L"Ready", L"..\\Resources\\Texture\\UI\\Font\\Ready.png");
 
 	LOAD_TEXTURE(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
