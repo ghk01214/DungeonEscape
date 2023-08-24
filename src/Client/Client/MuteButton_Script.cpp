@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Mute_Script.h"
+#include "MuteButton_Script.h"
 
 #include <Material.h>
 #include <MeshRenderer.h>
@@ -8,28 +8,28 @@
 #include <Input.h>
 #include <SoundManager.h>
 
-Mute_Script::Mute_Script(SOUND_TYPE type) :
+MuteButton_Script::MuteButton_Script(SOUND_TYPE type) :
 	m_soundType{ type },
 	m_mute{ false },
 	m_prevMute{ m_mute }
 {
 }
 
-Mute_Script::~Mute_Script()
+MuteButton_Script::~MuteButton_Script()
 {
 }
 
-void Mute_Script::Awake()
+void MuteButton_Script::Awake()
 {
 	__super::Awake();
 }
 
-void Mute_Script::Start()
+void MuteButton_Script::Start()
 {
 	__super::Start();
 }
 
-void Mute_Script::Update()
+void MuteButton_Script::Update()
 {
 	if (GetGameObject()->GetUI()->GetVisible() == false)
 		return;
@@ -73,12 +73,12 @@ void Mute_Script::Update()
 	ChangeTexture(type);
 }
 
-void Mute_Script::LateUpdate()
+void MuteButton_Script::LateUpdate()
 {
 	__super::LateUpdate();
 }
 
-Button_Script::TEXTURE_TYPE Mute_Script::Mute()
+Button_Script::TEXTURE_TYPE MuteButton_Script::Mute()
 {
 	TEXTURE_TYPE type{};
 
@@ -86,18 +86,18 @@ Button_Script::TEXTURE_TYPE Mute_Script::Mute()
 	{
 		type = BUTTON_PRESSED;
 
-		if (m_soundType == Mute_Script::SOUND_TYPE::BGM)
+		if (m_soundType == MuteButton_Script::SOUND_TYPE::BGM)
 			GET_SINGLE(CSoundMgr)->MuteBGM(true);
-		else if (m_soundType == Mute_Script::SOUND_TYPE::SE)
+		else if (m_soundType == MuteButton_Script::SOUND_TYPE::SE)
 			GET_SINGLE(CSoundMgr)->MuteSE(true);
 	}
 	else
 	{
 		type = BUTTON;
 
-		if (m_soundType == Mute_Script::SOUND_TYPE::BGM)
+		if (m_soundType == MuteButton_Script::SOUND_TYPE::BGM)
 			GET_SINGLE(CSoundMgr)->MuteBGM(false);
-		else if (m_soundType == Mute_Script::SOUND_TYPE::SE)
+		else if (m_soundType == MuteButton_Script::SOUND_TYPE::SE)
 			GET_SINGLE(CSoundMgr)->MuteSE(false);
 	}
 

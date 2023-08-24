@@ -1,5 +1,5 @@
 ﻿#include "pch.h"
-#include "Setting_Script.h"
+#include "SettingButton_Script.h"
 
 #include <Material.h>
 #include <MeshRenderer.h>
@@ -7,25 +7,25 @@
 #include <UI.h>
 #include <Input.h>
 
-Setting_Script::Setting_Script()
+SettingButton_Script::SettingButton_Script()
 {
 }
 
-Setting_Script::~Setting_Script()
+SettingButton_Script::~SettingButton_Script()
 {
 }
 
-void Setting_Script::Awake()
+void SettingButton_Script::Awake()
 {
 	__super::Awake();
 }
 
-void Setting_Script::Start()
+void SettingButton_Script::Start()
 {
 	__super::Start();
 }
 
-void Setting_Script::Update()
+void SettingButton_Script::Update()
 {
 	if (GetGameObject()->GetUI()->GetVisible() == false)
 		return;
@@ -51,7 +51,7 @@ void Setting_Script::Update()
 	}
 }
 
-void Setting_Script::LateUpdate()
+void SettingButton_Script::LateUpdate()
 {
 	if (GetGameObject()->GetUI()->GetVisible() == false)
 		return;
@@ -59,7 +59,7 @@ void Setting_Script::LateUpdate()
 	__super::LateUpdate();
 }
 
-void Setting_Script::SetShowPopUpFlag(bool flag)
+void SettingButton_Script::SetShowPopUpFlag(bool flag)
 {
 	m_showPopUp = flag;
 }

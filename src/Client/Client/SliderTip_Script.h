@@ -2,7 +2,7 @@
 
 #include "Button_Script.h"
 
-class SliderTip_Script : public Button_Script
+class SliderTip_Script final : public Button_Script
 {
 public:
 	enum class SLIDER_TYPE
@@ -19,10 +19,10 @@ public:
 	virtual ~SliderTip_Script();
 
 public:
-	virtual void Awake() override;
-	virtual void Start() override;
-	virtual void Update() override;
-	virtual void LateUpdate() override;
+	void Awake() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
 
 private:
 	void ChangeVolume();

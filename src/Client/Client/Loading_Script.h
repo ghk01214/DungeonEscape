@@ -4,7 +4,7 @@
 
 class CLoader;
 
-class Loading_Script : public UI_Script
+class Loading_Script final : public UI_Script
 {
 private:
 	enum TEXTURE_TYPE
@@ -27,9 +27,9 @@ public:
 	virtual ~Loading_Script();
 
 public:
-	virtual void Awake() override;
-	virtual void Start() override;
-	virtual void Update() override;
-	virtual void LateUpdate() override;
+	void Awake() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
 };
 

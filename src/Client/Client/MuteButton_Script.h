@@ -2,7 +2,7 @@
 
 #include "Button_Script.h"
 
-class Mute_Script : public Button_Script
+class MuteButton_Script final : public Button_Script
 {
 public:
 	enum class SOUND_TYPE
@@ -15,14 +15,14 @@ public:
 		MAX
 	};
 public:
-	Mute_Script(SOUND_TYPE type);
-	virtual ~Mute_Script();
+	MuteButton_Script(SOUND_TYPE type);
+	virtual ~MuteButton_Script();
 
 public:
-	virtual void Awake() override;
-	virtual void Start() override;
-	virtual void Update() override;
-	virtual void LateUpdate() override;
+	void Awake() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
 
 private:
 	TEXTURE_TYPE Mute();
