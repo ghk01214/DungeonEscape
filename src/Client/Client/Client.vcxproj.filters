@@ -108,9 +108,6 @@
     <Filter Include="소스 파일\Objects\00. Scene\Start">
       <UniqueIdentifier>{f362c834-16bf-44f0-9884-fde20fca0adb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Objects\00. Scene\Room Selection">
-      <UniqueIdentifier>{ed3cf61c-e447-48ef-a0ee-92c8afdff96b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="소스 파일\Objects\00. Scene\Character Selection">
       <UniqueIdentifier>{7e0adb38-9509-43c8-8aa0-17255d380cab}</UniqueIdentifier>
     </Filter>

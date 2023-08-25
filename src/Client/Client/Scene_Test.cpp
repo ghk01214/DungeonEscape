@@ -27,6 +27,7 @@
 #include <Timer.h>
 #include <FontManager.h>
 #include <Font.h>
+#include <UI.h>
 #pragma endregion
 
 #include "Scripts.hpp"
@@ -39,7 +40,8 @@ Scene_Test::Scene_Test() :
 	m_fadeScript{ nullptr },
 	m_portalUIScript{ nullptr },
 	m_cinematicScript{ nullptr },
-	m_closeButton{ nullptr }
+	m_closeButton{ nullptr },
+	m_openSetting{ false }
 {
 
 }
@@ -371,6 +373,8 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
 {
 	//CreateHPnSPBar();
 	CreateOneTimeDialogue();
+
+	CreatePopUp();
 }
 
 #pragma region
@@ -520,7 +524,7 @@ void Scene_Test::CreateMagicArtifactEffect(std::shared_ptr<CScene> pScene)
 		behaviour->SetTexture(textures);	// 텍스쳐 정보
 		behaviour->SetSize(Vec2(300.f, 300.f));	// 텍스쳐의 크기
 
-		behaviour->SetDistanceFromPoint(180.f);	// 중점으로부터 거리
+		behaviour->SetDistanceFromPoint(160.f);	// 중점으로부터 거리
 		behaviour->SetTargetPoint(Vec3(6980.f, -1640.f + height, 21180.f));	// 중점 위치
 
 		behaviour->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
@@ -911,6 +915,7 @@ void Scene_Test::CreatePopUp()
 {
 	CreateBlur();
 	CreateCloseButton();
+	CreateSettingFrame();
 	CreateBGMButton();
 	CreateBGMSlider();
 	CreateSEButton();
@@ -965,6 +970,30 @@ void Scene_Test::CreateCloseButton()
 		script->InsertTextures(GET_TEXTURE(L"Close Selected"));
 		obj->AddComponent(script);
 		m_closeButton = script;
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+}
+
+void Scene_Test::CreateSettingFrame()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Setting Frame") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+
+		auto transform{ obj->GetTransform() };
+
+#ifdef RELEASE
+		float ratio{ 1.f };
+#else
+		float ratio{ 0.5f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 898.f * ratio, 1029.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 400.f });
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
@@ -1215,31 +1244,33 @@ void Scene_Test::CreateBGMSlider()
 #pragma region [FILL]
 	// SLIDER FILL(L)
 	texture = GET_TEXTURE(L"Slider Fill(L)");
+
+#ifdef RELEASE
+	float ratio{ 1.5f };
+#else
+	float ratio{ 1.f };
+#endif
+
+	Vec3 leftScale{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f };
+	Vec2 leftPos{ GetRatio(-20.8f, 21.3f) };
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(-20.8f, 21.3f) };
 
-#ifdef RELEASE
-		float ratio{ 1.5f };
-#else
-		float ratio{ 1.f };
-#endif
-
-		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+		transform->SetLocalScale(leftScale);
+		transform->SetLocalPosition(Vec3{ leftPos.x, leftPos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>(false) };
 		script->InsertTextures(texture);
 		script->InsertTextures(GET_TEXTURE(L"Slider Fill(L) Mute"));
 		obj->AddComponent(script);
-		std::vector<std::shared_ptr<CGameObject>> m_popUp; m_volumeSliderLeftTip.push_back(script);
+		m_volumeSliderLeftTip.push_back(script);
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-	}
+}
 
 	// SLIDER FILL(C)
 	texture = GET_TEXTURE(L"Slider Fill(C)");
@@ -1248,15 +1279,10 @@ void Scene_Test::CreateBGMSlider()
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(-7.2f, 21.3f) };
+		Vec3 scale{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f };
+		Vec2 pos{ leftPos.x + leftScale.x * 0.5f + scale.x * 0.5f, leftPos.y };
 
-#ifdef RELEASE
-		float ratio{ 1.5f };
-#else
-		float ratio{ 1.f };
-#endif
-
-		transform->SetLocalScale(Vec3{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalScale(scale);
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>() };
@@ -1543,21 +1569,23 @@ void Scene_Test::CreateSESlider()
 #pragma region [FILL]
 	// SLIDER FILL(L)
 	texture = GET_TEXTURE(L"Slider Fill(L)");
+
+#ifdef RELEASE
+	float ratio{ 1.5f };
+#else
+	float ratio{ 1.f };
+#endif
+
+	Vec3 leftScale{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f };
+	Vec2 leftPos{ GetRatio(-20.8f, -18.7f) };
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(-20.8f, -18.7f) };
 
-#ifdef RELEASE
-		float ratio{ 1.5f };
-#else
-		float ratio{ 1.f };
-#endif
-
-		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+		transform->SetLocalScale(leftScale);
+		transform->SetLocalPosition(Vec3{ leftPos.x, leftPos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>(false) };
 		script->InsertTextures(texture);
@@ -1567,7 +1595,7 @@ void Scene_Test::CreateSESlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-	}
+}
 
 	// SLIDER FILL(C)
 	texture = GET_TEXTURE(L"Slider Fill(C)");
@@ -1576,15 +1604,11 @@ void Scene_Test::CreateSESlider()
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(-7.2f, -18.7f) };
 
-#ifdef RELEASE
-		float ratio{ 1.5f };
-#else
-		float ratio{ 1.f };
-#endif
+		Vec3 scale{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f };
+		Vec2 pos{ leftPos.x + leftScale.x * 0.5f + scale.x * 0.5f, leftPos.y };
 
-		transform->SetLocalScale(Vec3{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalScale(scale);
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>() };
@@ -1629,14 +1653,78 @@ void Scene_Test::CreateSESlider()
 
 void Scene_Test::ChangePopUpVisibility()
 {
+	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::ESC) == true)
+	{
+		m_openSetting = !m_openSetting;
+
+		if (m_openSetting == true)
+		{
+			for (auto& obj : m_popUp)
+			{
+				obj->GetUI()->SetVisible(true);
+			}
+		}
+		else
+		{
+			for (auto& obj : m_popUp)
+			{
+				obj->GetUI()->SetVisible(false);
+			}
+		}
+	}
+
+	if (m_closeButton->ClosePopUp() == true)
+	{
+		for (auto& obj : m_popUp)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+
+		m_closeButton->SetClosePopUpFlag(false);
+		m_openSetting = false;
+	}
 }
 
 void Scene_Test::ChangeVolume()
 {
+	if (m_sliderTip[BGM]->GetClick() == true)
+		m_volumeSlider[BGM]->SetActive(true);
+	else
+		m_volumeSlider[BGM]->SetActive(false);
+
+	if (m_sliderTip[SE]->GetClick() == true)
+		m_volumeSlider[SE]->SetActive(true);
+	else
+		m_volumeSlider[SE]->SetActive(false);
 }
 
 void Scene_Test::ChangeMuteTexture()
 {
+	if (m_muteButton[BGM]->IsMute() == true)
+	{
+		m_sliderTip[BGM]->ChangeTexture(1);
+		m_volumeSlider[BGM]->ChangeMuteTexture(true);
+		m_volumeSliderLeftTip[BGM]->ChangeMuteTexture(true);
+	}
+	else
+	{
+		m_sliderTip[BGM]->ChangeTexture(0);
+		m_volumeSlider[BGM]->ChangeMuteTexture(false);
+		m_volumeSliderLeftTip[BGM]->ChangeMuteTexture(false);
+	}
+
+	if (m_muteButton[SE]->IsMute() == true)
+	{
+		m_sliderTip[SE]->ChangeTexture(1);
+		m_volumeSlider[SE]->ChangeMuteTexture(true);
+		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(true);
+	}
+	else
+	{
+		m_sliderTip[SE]->ChangeTexture(0);
+		m_volumeSlider[SE]->ChangeMuteTexture(false);
+		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(false);
+	}
 }
 #pragma endregion
 

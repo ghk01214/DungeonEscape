@@ -19,7 +19,11 @@
 #include "Scene_Loading.h"
 #include "MuteButton_Script.h"
 
-Scene_Start::Scene_Start()
+Scene_Start::Scene_Start() :
+	m_logInButton{ nullptr },
+	m_settingButton{ nullptr },
+	m_closeButton{ nullptr },
+	m_openSetting{ false }
 {
 }
 
@@ -609,21 +613,23 @@ void Scene_Start::CreateBGMSlider()
 #pragma region [FILL]
 	// SLIDER FILL(L)
 	texture = GET_TEXTURE(L"Slider Fill(L)");
+
+#ifdef RELEASE
+	float ratio{ 1.5f };
+#else
+	float ratio{ 1.f };
+#endif
+
+	Vec3 leftScale{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f };
+	Vec2 leftPos{ GetRatio(-20.8f, 21.3f) };
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(-20.8f, 21.3f) };
 
-#ifdef RELEASE
-		float ratio{ 1.5f };
-#else
-		float ratio{ 1.f };
-#endif
-
-		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+		transform->SetLocalScale(leftScale);
+		transform->SetLocalPosition(Vec3{ leftPos.x, leftPos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>(false) };
 		script->InsertTextures(texture);
@@ -642,15 +648,10 @@ void Scene_Start::CreateBGMSlider()
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(-7.2f, 21.3f) };
+		Vec3 scale{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f };
+		Vec2 pos{ leftPos.x + leftScale.x * 0.5f + scale.x * 0.5f, leftPos.y };
 
-#ifdef RELEASE
-		float ratio{ 1.5f };
-#else
-		float ratio{ 1.f };
-#endif
-
-		transform->SetLocalScale(Vec3{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalScale(scale);
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>() };
@@ -937,21 +938,23 @@ void Scene_Start::CreateSESlider()
 #pragma region [FILL]
 	// SLIDER FILL(L)
 	texture = GET_TEXTURE(L"Slider Fill(L)");
+
+#ifdef RELEASE
+	float ratio{ 1.5f };
+#else
+	float ratio{ 1.f };
+#endif
+
+	Vec3 leftScale{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f };
+	Vec2 leftPos{ GetRatio(-20.8f, -18.7f) };
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(-20.8f, -18.7f) };
 
-#ifdef RELEASE
-		float ratio{ 1.5f };
-#else
-		float ratio{ 1.f };
-#endif
-
-		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+		transform->SetLocalScale(leftScale);
+		transform->SetLocalPosition(Vec3{ leftPos.x, leftPos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>(false) };
 		script->InsertTextures(texture);
@@ -970,15 +973,11 @@ void Scene_Start::CreateSESlider()
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(-7.2f, -18.7f) };
 
-#ifdef RELEASE
-		float ratio{ 1.5f };
-#else
-		float ratio{ 1.f };
-#endif
+		Vec3 scale{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f };
+		Vec2 pos{ leftPos.x + leftScale.x * 0.5f + scale.x * 0.5f, leftPos.y };
 
-		transform->SetLocalScale(Vec3{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalScale(scale);
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>() };

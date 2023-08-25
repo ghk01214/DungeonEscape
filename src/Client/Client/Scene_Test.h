@@ -34,6 +34,15 @@ enum class MAP_TYPE
 
 class Scene_Test final : public CScene
 {
+private:
+	enum SLIDER_TYPE
+	{
+		BGM,
+		SE,
+
+		MAX
+	};
+
 public:
 	explicit Scene_Test();
 	virtual ~Scene_Test() = default;
@@ -83,6 +92,7 @@ private:
 	void CreatePopUp();
 	void CreateBlur();
 	void CreateCloseButton();
+	void CreateSettingFrame();
 	void CreateBGMButton();
 	void CreateBGMSlider();
 	void CreateSEButton();
@@ -159,4 +169,6 @@ private:
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSliderLeftTip;
 	std::vector<std::shared_ptr<class MuteButton_Script>> m_muteButton;
+
+	bool m_openSetting;
 };
