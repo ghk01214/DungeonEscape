@@ -4,7 +4,7 @@
 #include "MeshData.h"
 #include "Engine.h"
 
-shared_ptr<CLoader> CLoader::Create(SCENE eScene)
+std::shared_ptr<CLoader> CLoader::Create(SCENE eScene)
 {
 	shared_ptr<CLoader> pInstance = make_shared<CLoader>();
 
@@ -16,13 +16,12 @@ shared_ptr<CLoader> CLoader::Create(SCENE eScene)
 	return pInstance;
 }
 
-unsigned int APIENTRY ThreadEntryFunc(CLoader* pArg)
+uint32_t APIENTRY ThreadEntryFunc(CLoader* pArg)
 {
-	//shared_ptr<CLoader> pLoader = static_cast<shared_ptr<CLoader>>(pArg);
+	//std::shared_ptr<CLoader> pLoader = static_cast<std::shared_ptr<CLoader>>(pArg);
+	//std::shared_ptr<CLoader> pLoader = pArg;
 
-	//shared_ptr<CLoader> pLoader = pArg;
-
-	CLoader* pLoader = (CLoader*)pArg;
+	CLoader* pLoader = reinterpret_cast<CLoader*>(pArg);
 
 	EnterCriticalSection(pLoader->Get_CriticalSection());
 
@@ -44,7 +43,10 @@ unsigned int APIENTRY ThreadEntryFunc(CLoader* pArg)
 	return 0;
 }
 
-CLoader::CLoader(void)
+CLoader::CLoader() :
+	m_eScene{ SCENE_END },
+	m_isFinished{ false },
+	m_hThread{ 0 }
 {
 }
 
@@ -56,7 +58,7 @@ HRESULT CLoader::Loading(SCENE eScene)
 
 	InitializeCriticalSection(&m_CriticalSection);
 
-	thread loaderThread = std::thread{ ThreadEntryFunc, this };
+	std::thread loaderThread = std::thread{ ThreadEntryFunc, this };
 
 	loaderThread.join();
 
@@ -169,6 +171,38 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	LOAD_TEXTURE(L"MP", L"..\\Resources\\Texture\\UI\\In Game\\mp.png");
 
 	LOAD_TEXTURE(L"Pillar Hint", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint.png");
+
+#pragma region [POP UP]
+	LOAD_TEXTURE(L"White Blur", L"..\\Resources\\Texture\\UI\\Blur\\White.png");
+	LOAD_TEXTURE(L"Setting Frame", L"..\\Resources\\Texture\\UI\\Frame\\Setting Frame.png");
+
+	LOAD_TEXTURE(L"BGM", L"..\\Resources\\Texture\\UI\\Icon\\BGM.png");
+	LOAD_TEXTURE(L"BGM Mute", L"..\\Resources\\Texture\\UI\\Icon\\BGM_mute.png");
+	LOAD_TEXTURE(L"SE", L"..\\Resources\\Texture\\UI\\Icon\\SE.png");
+	LOAD_TEXTURE(L"SE Mute", L"..\\Resources\\Texture\\UI\\Icon\\SE_mute.png");
+	LOAD_TEXTURE(L"Close", L"..\\Resources\\Texture\\UI\\Button\\Close.png");
+	LOAD_TEXTURE(L"Close Selected", L"..\\Resources\\Texture\\UI\\Button\\Close_selected.png");
+
+	LOAD_TEXTURE(L"Slider Frame(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Frame(L).png");
+	LOAD_TEXTURE(L"Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Frame(C).png");
+	LOAD_TEXTURE(L"Slider Frame(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Frame(R).png");
+
+	LOAD_TEXTURE(L"Slider Inner Frame(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_InnerFrame(L).png");
+	LOAD_TEXTURE(L"Slider Inner Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_InnerFrame(C).png");
+	LOAD_TEXTURE(L"Slider Inner Frame(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_InnerFrame(R).png");
+
+	LOAD_TEXTURE(L"Slider Fill Area(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_FillArea(L).png");
+	LOAD_TEXTURE(L"Slider Fill Area(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_FillArea(C).png");
+	LOAD_TEXTURE(L"Slider Fill Area(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_FillArea(R).png");
+
+	LOAD_TEXTURE(L"Slider Fill(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(L).png");
+	LOAD_TEXTURE(L"Slider Fill(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(C).png");
+	LOAD_TEXTURE(L"Slider Fill(L) Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(L)_mute.png");
+	LOAD_TEXTURE(L"Slider Fill(C) Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider01_Fill(C)_mute.png");
+
+	LOAD_TEXTURE(L"Slider Tip", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip.png");
+	LOAD_TEXTURE(L"Slider Tip Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip_mute.png");
+#pragma endregion
 
 	return S_OK;
 }
@@ -334,6 +368,7 @@ HRESULT CLoader::Loading_ForStart_Texture()
 	LOAD_TEXTURE(L"Button Selected", L"..\\Resources\\Texture\\UI\\Button\\Button_selected.png");
 	LOAD_TEXTURE(L"Setting", L"..\\Resources\\Texture\\UI\\Button\\Setting.png");
 
+#pragma region [POP UP]
 	LOAD_TEXTURE(L"White Blur", L"..\\Resources\\Texture\\UI\\Blur\\White.png");
 	LOAD_TEXTURE(L"Setting Frame", L"..\\Resources\\Texture\\UI\\Frame\\Setting Frame.png");
 
@@ -363,6 +398,7 @@ HRESULT CLoader::Loading_ForStart_Texture()
 
 	LOAD_TEXTURE(L"Slider Tip", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip.png");
 	LOAD_TEXTURE(L"Slider Tip Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip_mute.png");
+#pragma endregion
 
 	return S_OK;
 }
@@ -394,25 +430,29 @@ HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 {
 	LOAD_TEXTURE(L"Frame1", L"..\\Resources\\Texture\\UI\\Frame\\Frame1.png");
 	LOAD_TEXTURE(L"Frame1_selected", L"..\\Resources\\Texture\\UI\\Frame\\Frame1_selected.png");
-	LOAD_TEXTURE(L"Pop Up Frame", L"..\\Resources\\Texture\\UI\\Frame\\Pop Up Frame.png");
 
 	LOAD_TEXTURE(L"Button2", L"..\\Resources\\Texture\\UI\\Button\\Button2.png");
 	LOAD_TEXTURE(L"Button2_selected", L"..\\Resources\\Texture\\UI\\Button\\Button2_selected.png");
 
-	LOAD_TEXTURE(L"Close", L"..\\Resources\\Texture\\UI\\Button\\Close.png");
-	LOAD_TEXTURE(L"Close Selected", L"..\\Resources\\Texture\\UI\\Button\\Close_selected.png");
-
 	LOAD_TEXTURE(L"Knight", L"..\\Resources\\Texture\\UI\\Font\\Knight.png");
 	LOAD_TEXTURE(L"Mage", L"..\\Resources\\Texture\\UI\\Font\\Mage.png");
 	LOAD_TEXTURE(L"Priest", L"..\\Resources\\Texture\\UI\\Font\\Priest.png");
-	LOAD_TEXTURE(L"Knight2", L"..\\Resources\\Texture\\UI\\Font\\Knight2.png");
-	LOAD_TEXTURE(L"Mage2", L"..\\Resources\\Texture\\UI\\Font\\Mage2.png");
-	LOAD_TEXTURE(L"Priest2", L"..\\Resources\\Texture\\UI\\Font\\Priest2.png");
 	LOAD_TEXTURE(L"Ready", L"..\\Resources\\Texture\\UI\\Font\\Ready.png");
 
 	LOAD_TEXTURE(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
 	LOAD_TEXTURE(L"Mistic", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic.png");
 	LOAD_TEXTURE(L"Carmel", L"..\\Resources\\Texture\\UI\\Character Select\\Carmel.png");
+
+#pragma region [POP UP]
+	LOAD_TEXTURE(L"Pop Up Frame", L"..\\Resources\\Texture\\UI\\Frame\\Pop Up Frame.png");
+
+	LOAD_TEXTURE(L"Close", L"..\\Resources\\Texture\\UI\\Button\\Close.png");
+	LOAD_TEXTURE(L"Close Selected", L"..\\Resources\\Texture\\UI\\Button\\Close_selected.png");
+
+	LOAD_TEXTURE(L"Knight2", L"..\\Resources\\Texture\\UI\\Font\\Knight2.png");
+	LOAD_TEXTURE(L"Mage2", L"..\\Resources\\Texture\\UI\\Font\\Mage2.png");
+	LOAD_TEXTURE(L"Priest2", L"..\\Resources\\Texture\\UI\\Font\\Priest2.png");
+#pragma endregion
 
 	return S_OK;
 }

@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "Scene_Test.h"
 
+#pragma region [ENGINE]
 #include <NetworkManager.h>
 #include <SceneManager.h>
 #include <GameObject.h>
@@ -24,28 +25,21 @@
 #include <EffectManager.h>
 #include <SoundManager.h>
 #include <Timer.h>
+#include <FontManager.h>
+#include <Font.h>
+#pragma endregion
 
 #include "Scripts.hpp"
-#include "Skill_Bomb_Script.h"
-#include "VolumeSlider_Script.h"
+#include "Creator.h"
 
-#include "EffectManager.h"
-#include "SoundManager.h"
-#include "Timer.h"
-
-#include "InfoUI_Script.h"
-#include "Fade_Script.h"
-
-#include "FontManager.h"
-#include "Font.h"
-
-#include "PortalUI_Script.h"
-#include "Cinematic_Script.h"
-#include "Movement_Script.h"
-#include "Magic_Artifact_Script.h"
-#include "OneTimeDialogue_Script.h"
-
-Scene_Test::Scene_Test()
+Scene_Test::Scene_Test() :
+	m_eCurrentMapType{ MAP_TYPE::END },
+	m_eNextMapType{ MAP_TYPE::END },
+	m_InfoUIScript{ std::make_shared<InfoUI_Script>() },
+	m_fadeScript{ nullptr },
+	m_portalUIScript{ nullptr },
+	m_cinematicScript{ nullptr },
+	m_closeButton{ nullptr }
 {
 
 }
@@ -72,6 +66,10 @@ void Scene_Test::Update()
 
 	SendKeyInput();
 	CheckMapMove();
+
+	ChangePopUpVisibility();
+	ChangeVolume();
+	ChangeMuteTexture();
 }
 
 void Scene_Test::LateUpdate()
@@ -196,7 +194,7 @@ void Scene_Test::CreateComputeShader(void)
 #pragma endregion
 }
 
-void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
+void Scene_Test::CreateMainCamera(std::shared_ptr<CScene> pScene)
 {
 	shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
 	camera->SetName(L"Main_Camera");
@@ -215,7 +213,7 @@ void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 	camera->AddComponent(pCameraScript);
 
 	shared_ptr<Cinematic_Script> pSenematicScript = make_shared<Cinematic_Script>();
-	m_scenematicScript = pSenematicScript;
+	m_cinematicScript = pSenematicScript;
 	pSenematicScript->SetScript(pCameraScript);
 	camera->AddComponent(pSenematicScript);
 #endif
@@ -230,7 +228,7 @@ void Scene_Test::CreateMainCamera(shared_ptr<CScene> pScene)
 	pScene->AddGameObject(camera);
 }
 
-void Scene_Test::CreateUICamera(shared_ptr<CScene> pScene)
+void Scene_Test::CreateUICamera(std::shared_ptr<CScene> pScene)
 {
 	shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
 	camera->SetName(L"Orthographic_Camera");
@@ -247,7 +245,7 @@ void Scene_Test::CreateUICamera(shared_ptr<CScene> pScene)
 	pScene->AddGameObject(camera);
 }
 
-void Scene_Test::CreateSkyBox(shared_ptr<CScene> pScene)
+void Scene_Test::CreateSkyBox(std::shared_ptr<CScene> pScene)
 {
 #pragma region SkyBox
 	{
@@ -273,7 +271,7 @@ void Scene_Test::CreateSkyBox(shared_ptr<CScene> pScene)
 #pragma endregion
 }
 
-void Scene_Test::CreateLights(shared_ptr<CScene> pScene)
+void Scene_Test::CreateLights(std::shared_ptr<CScene> pScene)
 {
 	LightDesc lightDesc;
 	lightDesc.vDirection = Vec3(0.f, -1.f, 0.f);
@@ -284,7 +282,7 @@ void Scene_Test::CreateLights(shared_ptr<CScene> pScene)
 	pScene->AddDirectionalLight(lightDesc);
 }
 
-void Scene_Test::CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player)
+void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE player)
 {
 	ObjectDesc objectDesc;
 	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
@@ -333,7 +331,7 @@ void Scene_Test::CreatePlayer(shared_ptr<CScene> pScene, server::FBX_TYPE player
 
 }
 
-void Scene_Test::CreateSphere(shared_ptr<CScene> pScene)
+void Scene_Test::CreateSphere(std::shared_ptr<CScene> pScene)
 {
 	ObjectDesc objectDesc;
 	objectDesc.strName = L"Mistic";
@@ -375,7 +373,8 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
 	CreateOneTimeDialogue();
 }
 
-void Scene_Test::CreateMRTUI(shared_ptr<CScene> pScene)
+#pragma region
+void Scene_Test::CreateMRTUI(std::shared_ptr<CScene> pScene)
 {
 	for (int32 i = 0; i < 6; i++)
 	{
@@ -410,7 +409,7 @@ void Scene_Test::CreateMRTUI(shared_ptr<CScene> pScene)
 	}
 }
 
-void Scene_Test::CreatePortalUI(shared_ptr<CScene> pScene)
+void Scene_Test::CreatePortalUI(std::shared_ptr<CScene> pScene)
 {
 	std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
 	m_portalUIScript = std::make_shared<PortalUI_Script>();
@@ -419,6 +418,357 @@ void Scene_Test::CreatePortalUI(shared_ptr<CScene> pScene)
 	pScene->AddGameObject(obj);
 }
 
+void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
+{
+	FBXMapLoader mapLoader;
+
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
+	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
+
+	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
+
+	//for (auto& mapObject : mapLoader.GetMapObjectInfo())
+	//{
+	//	mapObject->SetCheckFrustum(false);
+	//	mapObject->SetStatic(false);
+	//	pScene->AddMapObject(mapObject);
+	//}
+
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\StartRoom.fbx");
+	PushMapData(MAP_TYPE::StartRoom, mapLoader.GetMapObjectInfo());
+
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\FirstBoss.fbx");
+	PushMapData(MAP_TYPE::FirstBoss, mapLoader.GetMapObjectInfo());
+
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\Cave.fbx");
+	PushMapData(MAP_TYPE::Cave, mapLoader.GetMapObjectInfo());
+
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\SecondRoom_Bridge_SecondBoss.fbx");
+	PushMapData(MAP_TYPE::SecondRoom_Bridge_SecondBoss, mapLoader.GetMapObjectInfo());
+
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\ThirdRoom_RockRolling.fbx");
+	PushMapData(MAP_TYPE::ThirdRoom_RockRolling, mapLoader.GetMapObjectInfo());
+
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom.fbx");
+	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
+
+	//m_eNextMapType = MAP_TYPE::StartRoom;
+	m_eNextMapType = MAP_TYPE::SecondRoom_Bridge_SecondBoss;
+	MoveMap(m_eNextMapType);
+}
+
+void Scene_Test::CreateSkill(std::shared_ptr<CScene> pScene)
+{
+	// ??삵닏??븍뱜 ??밴쉐
+	vector<shared_ptr<CGameObject>> gameObjects = CreateSkillBase(L"BombBase", L"..\\Resources\\FBX\\Skill\\Sphere\\Sphere_Yellow.fbx");
+
+	for (auto& object : gameObjects)
+	{
+		object->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+		object->AddComponent(std::make_shared<Bomb_Script>());
+	}
+
+	// ??삵닏??븍뱜 ?곕떽?
+	pScene->AddGameObject(gameObjects);
+}
+
+void Scene_Test::CreateBillBoard(std::shared_ptr<CScene> pScene)
+{
+	// ??용뮞????밴쉐
+	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->LoadTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Sprite\\Fire.png", 64);
+
+	// ??삵닏??븍뱜 ??밴쉐
+	shared_ptr<CGameObject> gameObjects = CreateBillBoardBase(textures, 0.0001f);
+
+	gameObjects->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
+
+	// ??삵닏??븍뱜 ?곕떽?
+	pScene->AddGameObject(gameObjects);
+}
+
+void Scene_Test::CreateEffect(std::shared_ptr<CScene> pScene)
+{
+	// ??용뮞????밴쉐
+	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->GetEffectTextures(L"Effect_CircleFrame_DarkBlue");
+
+	// ??삵닏??븍뱜 ??밴쉐
+	shared_ptr<CGameObject> gameObjects = CreateEffectBase(textures, 0.0001f);
+
+	gameObjects->GetTransform()->SetLocalScale(Vec3(200.f, 200.f, 1.f));
+	Matrix matWorld = Matrix::CreateTranslation(0.f, 0.f, 0.f);
+	gameObjects->GetTransform()->SetWorldMatrix(matWorld);
+
+	// ??삵닏??븍뱜 ?곕떽?
+	pScene->AddGameObject(gameObjects);
+}
+
+void Scene_Test::CreateMagicArtifactEffect(std::shared_ptr<CScene> pScene)
+{
+	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Artifact_Protection");
+
+	float magicCount{ 4 * 6 };
+
+	for (int i = 0; i < magicCount; ++i)
+	{
+		float height{ 300.f * (i / 4) };
+		shared_ptr<CGameObject> gameObject = CreateArtifactBase(textures);
+		std::shared_ptr<Magic_Artifact_Script> behaviour = std::make_shared<Magic_Artifact_Script>();
+
+		behaviour->SetStartRotation(360.f / 4 * i);	// 최초 회전 각도
+		behaviour->SetRotationSpeed(30.f);	// 초당 몇도 회전하는지
+
+		behaviour->SetTexture(textures);	// 텍스쳐 정보
+		behaviour->SetSize(Vec2(300.f, 300.f));	// 텍스쳐의 크기
+
+		behaviour->SetDistanceFromPoint(180.f);	// 중점으로부터 거리
+		behaviour->SetTargetPoint(Vec3(6980.f, -1640.f + height, 21180.f));	// 중점 위치
+
+		behaviour->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
+
+		gameObject->AddComponent(behaviour);
+
+		pScene->AddGameObject(gameObject);
+
+		m_artifactMagicScript.push_back(behaviour);
+	}
+}
+
+std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(std::vector<shared_ptr<Texture>> textures, float fPassingTime)
+{
+	// ??삵닏??븍뱜 ??밴쉐
+	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
+
+	// ?袁⑺뒄 ??쇱젟
+	gameObjects->AddComponent(make_shared<Transform>());
+
+	// ??슢???筌ｌ꼶??
+	gameObjects->AddComponent(make_shared<BillBoard>());
+
+	// ??슢?????용뮞????쇱젟
+	gameObjects->GetBillBoard()->SetBBInfo(BB_TYPE::ATLAS, textures, fPassingTime);
+
+	// MeshRenderer - ??而??筌롫뗄?? ??용뮞????쇱젟
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+
+	meshRenderer->SetMesh(mesh);
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+
+	shared_ptr<Texture> texture = gameObjects->GetBillBoard()->GetTexture();
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	material->SetTexture(0, texture);
+	meshRenderer->SetMaterial(material);
+
+	gameObjects->AddComponent(meshRenderer);
+
+	return gameObjects;
+}
+
+std::shared_ptr<CGameObject> Scene_Test::CreateEffectBase(std::vector<shared_ptr<Texture>> textures, float fPassingTime)
+{
+	// ??삵닏??븍뱜 ??밴쉐
+	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
+
+	// ?袁⑺뒄 ??쇱젟
+	gameObjects->AddComponent(make_shared<Transform>());
+
+	// ??꾨읃????쇱젟
+	shared_ptr<Effect> effect = make_shared<Effect>();
+	effect->SetEffectInfo(textures, fPassingTime);
+	gameObjects->AddComponent(effect);
+
+	// MeshRenderer - ??而??筌롫뗄?? ??용뮞????쇱젟
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+
+	meshRenderer->SetMesh(mesh);
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+
+	shared_ptr<Texture> texture = gameObjects->GetEffect()->GetTexture();
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	material->SetTexture(0, texture);
+	meshRenderer->SetMaterial(material);
+
+	gameObjects->AddComponent(meshRenderer);
+
+	return gameObjects;
+}
+
+std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath)
+{
+	// ??쎄텢???????fbx ??삵닏??븍뱜 嚥≪뮆諭?
+	shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(fbxPath);
+
+	vector<shared_ptr<CGameObject>> gameObjects = meshData->Instantiate();
+
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->SetName(skillName);
+		gameObject->SetCheckFrustum(false);
+
+		uint32 materialSize = gameObject->GetMeshRenderer()->GetMaterialSize();
+
+		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Alpha_Blend_Object");
+
+		for (uint32 i = 0; i < materialSize; ++i)
+		{
+			gameObject->GetMeshRenderer()->GetMaterial(i)->SetShader(shader);
+		}
+	}
+
+	return gameObjects;
+}
+
+std::shared_ptr<CGameObject> Scene_Test::CreateArtifactBase(std::vector<shared_ptr<Texture>> textures)
+{
+	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
+
+	gameObjects->AddComponent(make_shared<Transform>());
+
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+
+	meshRenderer->SetMesh(mesh);
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+
+	shared_ptr<Texture> texture = textures[0];
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	material->SetTexture(0, texture);
+	material->SetFloat(2, 1.f);
+	meshRenderer->SetMaterial(material);
+
+	gameObjects->AddComponent(meshRenderer);
+	gameObjects->SetCheckFrustum(false);
+
+	gameObjects->SetCheckFrustum(false);
+
+	return gameObjects;
+}
+
+std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateMapObject(ObjectDesc& objectDesc)
+{
+	shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath);
+
+	vector<shared_ptr<CGameObject>> gameObjects = meshData->Instantiate();
+
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->SetName(objectDesc.strName);
+		gameObject->SetCheckFrustum(false);
+		gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
+		gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
+		gameObject->AddComponent(objectDesc.script);
+		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
+	}
+
+	return gameObjects;
+}
+
+std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateAnimatedObject(ObjectDesc& objectDesc)
+{
+	vector<shared_ptr<CGameObject>> gameObjects = CreateMapObject(objectDesc);
+
+	for (auto& gameObject : gameObjects)
+	{
+		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
+		gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
+	}
+
+	return gameObjects;
+}
+
+void Scene_Test::CreateFade(std::shared_ptr<CScene> pScene)
+{
+	shared_ptr<CGameObject> gameObject = make_shared<CGameObject>();
+	gameObject->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+
+	gameObject->AddComponent(make_shared<Transform>());
+
+	float width = static_cast<float>(GEngine->GetWindow().width);
+	float height = static_cast<float>(GEngine->GetWindow().height);
+
+	gameObject->GetTransform()->SetLocalScale(Vec3(width, height, 1.f));
+	gameObject->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 1.f));
+
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+
+	meshRenderer->SetMesh(mesh);
+	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+
+	shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Lobby_InGame");
+	shared_ptr<Material> material = make_shared<Material>();
+	material->SetShader(shader);
+	material->SetTexture(0, texture);
+	meshRenderer->SetMaterial(material);
+
+	gameObject->AddComponent(meshRenderer);
+
+
+	shared_ptr<Fade_Script> fade_script = make_shared<Fade_Script>();
+	vector<std::shared_ptr<Texture>> vTextures;
+	vTextures.push_back(texture);
+
+	fade_script->SetLogoInfo(1.f, 1.f, vTextures);
+	gameObject->AddComponent(fade_script);
+
+	m_fadeScript = fade_script;
+
+	pScene->AddGameObject(gameObject);
+}
+
+void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects)
+{
+	switch (eType)
+	{
+		case MAP_TYPE::Cave:
+		{
+			for (auto& object : objects)
+				m_splitMap_3.push_back(object);
+		}
+		break;
+		case MAP_TYPE::FirstBoss:
+		{
+			for (auto& object : objects)
+				m_splitMap_2.push_back(object);
+		}
+		break;
+		case MAP_TYPE::LastBoss_TreasureRoom:
+		{
+			for (auto& object : objects)
+				m_splitMap_6.push_back(object);
+		}
+		break;
+		case MAP_TYPE::SecondRoom_Bridge_SecondBoss:
+		{
+			for (auto& object : objects)
+				m_splitMap_4.push_back(object);
+		}
+		break;
+		case MAP_TYPE::StartRoom:
+		{
+			for (auto& object : objects)
+				m_splitMap_1.push_back(object);
+		}
+		break;
+		case MAP_TYPE::ThirdRoom_RockRolling:
+		{
+			for (auto& object : objects)
+				m_splitMap_5.push_back(object);
+		}
+		break;
+		case MAP_TYPE::END:
+		break;
+		default:
+		break;
+	}
+}
+#pragma endregion
+
+#pragma region [UI]
 void Scene_Test::CreateHPnSPBar()
 {
 	float width{ static_cast<float>(GEngine->GetWindow().width) };
@@ -555,278 +905,742 @@ void Scene_Test::CreateOneTimeDialogue()
 		AddGameObject(obj);
 	}
 }
+#pragma endregion
 
-void Scene_Test::CreateFade(shared_ptr<CScene> pScene)
+void Scene_Test::CreatePopUp()
 {
-	shared_ptr<CGameObject> gameObject = make_shared<CGameObject>();
-	gameObject->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
-
-	gameObject->AddComponent(make_shared<Transform>());
-
-	float width = static_cast<float>(GEngine->GetWindow().width);
-	float height = static_cast<float>(GEngine->GetWindow().height);
-
-	gameObject->GetTransform()->SetLocalScale(Vec3(width, height, 1.f));
-	gameObject->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 1.f));
-
-	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-
-	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
-
-	shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Lobby_InGame");
-	shared_ptr<Material> material = make_shared<Material>();
-	material->SetShader(shader);
-	material->SetTexture(0, texture);
-	meshRenderer->SetMaterial(material);
-
-	gameObject->AddComponent(meshRenderer);
-
-
-	shared_ptr<Fade_Script> fade_script = make_shared<Fade_Script>();
-	vector<std::shared_ptr<Texture>> vTextures;
-	vTextures.push_back(texture);
-
-	fade_script->SetLogoInfo(1.f, 1.f, vTextures);
-	gameObject->AddComponent(fade_script);
-
-	m_fadeScript = fade_script;
-
-	pScene->AddGameObject(gameObject);
+	CreateBlur();
+	CreateCloseButton();
+	CreateBGMButton();
+	CreateBGMSlider();
+	CreateSEButton();
+	CreateSESlider();
 }
 
-void Scene_Test::CreateMap(shared_ptr<CScene> pScene)
+#pragma region [POP UP]
+void Scene_Test::CreateBlur()
 {
-	FBXMapLoader mapLoader;
-
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models.fbx");
-	mapLoader.AddBasicObject(L"..\\Resources\\FBX\\Models\\Models2.fbx");
-
-	//mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\Client.fbx");
-
-	//for (auto& mapObject : mapLoader.GetMapObjectInfo())
-	//{
-	//	mapObject->SetCheckFrustum(false);
-	//	mapObject->SetStatic(false);
-	//	pScene->AddMapObject(mapObject);
-	//}
-
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\StartRoom.fbx");
-	PushMapData(MAP_TYPE::StartRoom, mapLoader.GetMapObjectInfo());
-
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\FirstBoss.fbx");
-	PushMapData(MAP_TYPE::FirstBoss, mapLoader.GetMapObjectInfo());
-
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\Cave.fbx");
-	PushMapData(MAP_TYPE::Cave, mapLoader.GetMapObjectInfo());
-
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\SecondRoom_Bridge_SecondBoss.fbx");
-	PushMapData(MAP_TYPE::SecondRoom_Bridge_SecondBoss, mapLoader.GetMapObjectInfo());
-
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\ThirdRoom_RockRolling.fbx");
-	PushMapData(MAP_TYPE::ThirdRoom_RockRolling, mapLoader.GetMapObjectInfo());
-
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom.fbx");
-	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
-
-	//m_eNextMapType = MAP_TYPE::StartRoom;
-	//MoveMap(MAP_TYPE::StartRoom);
-	m_eNextMapType = MAP_TYPE::SecondRoom_Bridge_SecondBoss;
-	MoveMap(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
-}
-
-void Scene_Test::CreateSkill(shared_ptr<CScene> pScene)
-{
-	// ??삵닏??븍뱜 ??밴쉐
-	vector<shared_ptr<CGameObject>> gameObjects = CreateSkillBase(L"BombBase", L"..\\Resources\\FBX\\Skill\\Sphere\\Sphere_Yellow.fbx");
-
-	for (auto& object : gameObjects)
+	std::shared_ptr<Texture> texture = GET_TEXTURE(L"White Blur");
+	std::shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
 	{
-		object->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-		object->AddComponent(std::make_shared<Bomb_Script>());
-	}
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 
-	// ??삵닏??븍뱜 ?곕떽?
-	pScene->AddGameObject(gameObjects);
-}
+		auto transform{ obj->GetTransform() };
+		float width{ static_cast<float>(GEngine->GetWindow().width) };
+		float height{ static_cast<float>(GEngine->GetWindow().height) };
 
-void Scene_Test::CreateBillBoard(shared_ptr<CScene> pScene)
-{
-	// ??용뮞????밴쉐
-	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->LoadTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Sprite\\Fire.png", 64);
+		transform->SetLocalScale(Vec3{ width, height, 1.f });
+		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
 
-	// ??삵닏??븍뱜 ??밴쉐
-	shared_ptr<CGameObject> gameObjects = CreateBillBoardBase(textures, 0.0001f);
+		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 0.5f);
 
-	gameObjects->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 1.f));
-
-	// ??삵닏??븍뱜 ?곕떽?
-	pScene->AddGameObject(gameObjects);
-}
-
-void Scene_Test::CreateEffect(shared_ptr<CScene> pScene)
-{
-	// ??용뮞????밴쉐
-	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->GetEffectTextures(L"Effect_CircleFrame_DarkBlue");
-
-	// ??삵닏??븍뱜 ??밴쉐
-	shared_ptr<CGameObject> gameObjects = CreateEffectBase(textures, 0.0001f);
-
-	gameObjects->GetTransform()->SetLocalScale(Vec3(200.f, 200.f, 1.f));
-	Matrix matWorld = Matrix::CreateTranslation(0.f, 0.f, 0.f);
-	gameObjects->GetTransform()->SetWorldMatrix(matWorld);
-
-	// ??삵닏??븍뱜 ?곕떽?
-	pScene->AddGameObject(gameObjects);
-}
-
-void Scene_Test::CreateMagicArtifactEffect(shared_ptr<CScene> pScene)
-{
-	vector<shared_ptr<Texture>> textures = GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Artifact_Protection");
-
-	float magicCount{ 4 * 6 };
-
-	for (int i = 0; i < magicCount; ++i)
-	{
-		float height{ 300.f * (i / 4) };
-		shared_ptr<CGameObject> gameObject = CreateArtifactBase(textures);
-		std::shared_ptr<Magic_Artifact_Script> behaviour = std::make_shared<Magic_Artifact_Script>();
-
-		behaviour->SetStartRotation(360.f / 4 * i);	// 최초 회전 각도
-		behaviour->SetRotationSpeed(30.f);	// 초당 몇도 회전하는지
-
-		behaviour->SetTexture(textures);	// 텍스쳐 정보
-		behaviour->SetSize(Vec2(300.f, 300.f));	// 텍스쳐의 크기
-
-		behaviour->SetDistanceFromPoint(180.f);	// 중점으로부터 거리
-		behaviour->SetTargetPoint(Vec3(6980.f, -1640.f + height, 21180.f));	// 중점 위치
-
-		behaviour->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
-
-		gameObject->AddComponent(behaviour);
-
-		pScene->AddGameObject(gameObject);
-
-		m_artifactMagicScript.push_back(behaviour);
+		AddGameObject(obj);
+		GET_SINGLE(SceneManager)->SetBlurUI(obj);
 	}
 }
 
-std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(vector<shared_ptr<Texture>> textures, float fPassingTime)
+void Scene_Test::CreateCloseButton()
 {
-	// ??삵닏??븍뱜 ??밴쉐
-	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
-
-	// ?袁⑺뒄 ??쇱젟
-	gameObjects->AddComponent(make_shared<Transform>());
-
-	// ??슢???筌ｌ꼶??
-	gameObjects->AddComponent(make_shared<BillBoard>());
-
-	// ??슢?????용뮞????쇱젟
-	gameObjects->GetBillBoard()->SetBBInfo(BB_TYPE::ATLAS, textures, fPassingTime);
-
-	// MeshRenderer - ??而??筌롫뗄?? ??용뮞????쇱젟
-	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-
-	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
-
-	shared_ptr<Texture> texture = gameObjects->GetBillBoard()->GetTexture();
-	shared_ptr<Material> material = make_shared<Material>();
-	material->SetShader(shader);
-	material->SetTexture(0, texture);
-	meshRenderer->SetMaterial(material);
-
-	gameObjects->AddComponent(meshRenderer);
-
-	return gameObjects;
-}
-
-std::shared_ptr<CGameObject> Scene_Test::CreateEffectBase(vector<shared_ptr<class Texture>> textures, float fPassingTime)
-{
-	// ??삵닏??븍뱜 ??밴쉐
-	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
-
-	// ?袁⑺뒄 ??쇱젟
-	gameObjects->AddComponent(make_shared<Transform>());
-
-	// ??꾨읃????쇱젟
-	shared_ptr<Effect> effect = make_shared<Effect>();
-	effect->SetEffectInfo(textures, fPassingTime);
-	gameObjects->AddComponent(effect);
-
-	// MeshRenderer - ??而??筌롫뗄?? ??용뮞????쇱젟
-	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-
-	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
-
-	shared_ptr<Texture> texture = gameObjects->GetEffect()->GetTexture();
-	shared_ptr<Material> material = make_shared<Material>();
-	material->SetShader(shader);
-	material->SetTexture(0, texture);
-	meshRenderer->SetMaterial(material);
-
-	gameObjects->AddComponent(meshRenderer);
-
-	return gameObjects;
-}
-
-std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath)
-{
-	// ??쎄텢???????fbx ??삵닏??븍뱜 嚥≪뮆諭?
-	shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(fbxPath);
-
-	vector<shared_ptr<CGameObject>> gameObjects = meshData->Instantiate();
-
-	for (auto& gameObject : gameObjects)
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Close") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 	{
-		gameObject->SetName(skillName);
-		gameObject->SetCheckFrustum(false);
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 
-		uint32 materialSize = gameObject->GetMeshRenderer()->GetMaterialSize();
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-93.f, 86.f) };
 
-		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Alpha_Blend_Object");
+#ifdef RELEASE
+		float ratio{ 1.f };
+#else
+		float ratio{ 0.5f };
+#endif
 
-		for (uint32 i = 0; i < materialSize; ++i)
-		{
-			gameObject->GetMeshRenderer()->GetMaterial(i)->SetShader(shader);
-		}
+		transform->SetLocalScale(Vec3{ 118.f * ratio, 118.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+		std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Close Selected"));
+		obj->AddComponent(script);
+		m_closeButton = script;
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+}
+
+void Scene_Test::CreateBGMButton()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"BGM") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	// BGM BUTTON
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-33.f, 20.f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 45.f * ratio, 60.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		std::shared_ptr<MuteButton_Script> script{ std::make_shared<MuteButton_Script>(MuteButton_Script::SOUND_TYPE::BGM) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"BGM Mute"));
+		obj->AddComponent(script);
+		m_muteButton.push_back(script);
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+}
+
+void Scene_Test::CreateBGMSlider()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Slider Frame(L)") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+#pragma region [FRAME]
+	// SLIDER FRAME(L)
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-22.9f, 20.f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 37.f * ratio, 76.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
 	}
 
-	return gameObjects;
+	// SLIDER FRAME(R)
+	texture = GET_TEXTURE(L"Slider Frame(R)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(34.85f, 20.f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 37.f * ratio, 76.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER FRAME(C)
+	texture = GET_TEXTURE(L"Slider Frame(C)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(5.98f, 20.f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 23.f * ratio * 14.37f, 76.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+#pragma endregion
+
+#pragma region [INNER FRAME]
+	// SLIDER INNER FRAME(L)
+	texture = GET_TEXTURE(L"Slider Inner Frame(L)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-21.5f, 21.3f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 16.f * ratio, 32.f * ratio * 1.2f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER INNER FRAME(R)
+	texture = GET_TEXTURE(L"Slider Inner Frame(R)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(33.35f, 21.3f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 16.f * ratio, 32.f * ratio * 1.2f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER INNER FRAME(C)
+	texture = GET_TEXTURE(L"Slider Inner Frame(C)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(5.98f, 21.3f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 8.f * ratio * 41.5f, 32.f * ratio * 1.2f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+#pragma endregion
+
+#pragma region [FILL AREA]
+	// SLIDER FILL AREA(L)
+	texture = GET_TEXTURE(L"Slider Fill Area(L)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-21.f, 21.3f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER FILL AREA(R)
+	texture = GET_TEXTURE(L"Slider Fill Area(R)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(33.f, 21.3f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER FILL AREA(C)
+	texture = GET_TEXTURE(L"Slider Fill Area(C)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(5.98f, 21.3f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 6.f * ratio * 55.7f, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+#pragma endregion
+
+#pragma region [FILL]
+	// SLIDER FILL(L)
+	texture = GET_TEXTURE(L"Slider Fill(L)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-20.8f, 21.3f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>(false) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Fill(L) Mute"));
+		obj->AddComponent(script);
+		std::vector<std::shared_ptr<CGameObject>> m_popUp; m_volumeSliderLeftTip.push_back(script);
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER FILL(C)
+	texture = GET_TEXTURE(L"Slider Fill(C)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-7.2f, 21.3f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Fill(C) Mute"));
+		obj->AddComponent(script);
+		m_volumeSlider.push_back(script);
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+#pragma endregion
+
+	// SLIDER TIP
+	texture = GET_TEXTURE(L"Slider Tip");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(6.f, 20.7f) };
+
+#ifdef RELEASE
+		float ratio{ 1.f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 96.f * ratio, 96.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		std::shared_ptr<SliderTip_Script> script{ std::make_shared<SliderTip_Script>(SliderTip_Script::SLIDER_TYPE::BGM) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Tip Mute"));
+		obj->AddComponent(script);
+		m_sliderTip.push_back(script);
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
 }
 
-std::shared_ptr<CGameObject> Scene_Test::CreateArtifactBase(vector<shared_ptr<class Texture>> textures)
+void Scene_Test::CreateSEButton()
 {
-	shared_ptr<CGameObject> gameObjects = std::make_shared<CGameObject>();
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"SE") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
-	gameObjects->AddComponent(make_shared<Transform>());
+	// BGM BUTTON
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 
-	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-33.f, -20.f) };
 
-	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
 
-	shared_ptr<Texture> texture = textures[0];
-	shared_ptr<Material> material = make_shared<Material>();
-	material->SetShader(shader);
-	material->SetTexture(0, texture);
-	material->SetFloat(2, 1.f);
-	meshRenderer->SetMaterial(material);
+		transform->SetLocalScale(Vec3{ 45.f * ratio, 60.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
-	gameObjects->AddComponent(meshRenderer);
-	gameObjects->SetCheckFrustum(false);
+		std::shared_ptr<MuteButton_Script> script{ std::make_shared<MuteButton_Script>(MuteButton_Script::SOUND_TYPE::SE) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"SE Mute"));
+		obj->AddComponent(script);
+		m_muteButton.push_back(script);
 
-	gameObjects->SetCheckFrustum(false);
-
-	return gameObjects;
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
 }
 
+void Scene_Test::CreateSESlider()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Slider Frame(L)") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+#pragma region [FRAME]
+	// SLIDER FRAME(L)
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-22.9f, -20.f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 37.f * ratio, 76.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER FRAME(R)
+	texture = GET_TEXTURE(L"Slider Frame(R)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(34.85f, -20.f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 37.f * ratio, 76.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER FRAME(C)
+	texture = GET_TEXTURE(L"Slider Frame(C)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(5.98f, -20.f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 23.f * ratio * 14.37f, 76.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+#pragma endregion
+
+#pragma region [INNER FRAME]
+	// SLIDER INNER FRAME(L)
+	texture = GET_TEXTURE(L"Slider Inner Frame(L)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-21.5f, -18.7f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 16.f * ratio, 32.f * ratio * 1.2f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER INNER FRAME(R)
+	texture = GET_TEXTURE(L"Slider Inner Frame(R)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(33.35f, -18.7f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 16.f * ratio, 32.f * ratio * 1.2f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER INNER FRAME(C)
+	texture = GET_TEXTURE(L"Slider Inner Frame(C)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(5.98f, -18.7f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 8.f * ratio * 41.5f, 32.f * ratio * 1.2f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+#pragma endregion
+
+#pragma region [FILL AREA]
+	// SLIDER FILL AREA(L)
+	texture = GET_TEXTURE(L"Slider Fill Area(L)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-21.f, -18.7f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER FILL AREA(R)
+	texture = GET_TEXTURE(L"Slider Fill Area(R)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(33.f, -18.7f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER FILL AREA(C)
+	texture = GET_TEXTURE(L"Slider Fill Area(C)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(5.98f, -18.7f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 6.f * ratio * 55.7f, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+#pragma endregion
+
+#pragma region [FILL]
+	// SLIDER FILL(L)
+	texture = GET_TEXTURE(L"Slider Fill(L)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-20.8f, -18.7f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 9.f * ratio, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>(false) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Fill(L) Mute"));
+		obj->AddComponent(script);
+		m_volumeSliderLeftTip.push_back(script);
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+
+	// SLIDER FILL(C)
+	texture = GET_TEXTURE(L"Slider Fill(C)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(-7.2f, -18.7f) };
+
+#ifdef RELEASE
+		float ratio{ 1.5f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 6.f * ratio * 27.5f, 18.f * ratio * 1.5f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		std::shared_ptr<VolumeSlider_Script> script{ std::make_shared<VolumeSlider_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Fill(C) Mute"));
+		obj->AddComponent(script);
+		m_volumeSlider.push_back(script);
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+#pragma endregion
+
+	// SLIDER TIP
+	texture = GET_TEXTURE(L"Slider Tip");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec2 pos{ GetRatio(6.f, -19.3f) };
+
+#ifdef RELEASE
+		float ratio{ 1.f };
+#else
+		float ratio{ 1.f };
+#endif
+
+		transform->SetLocalScale(Vec3{ 96.f * ratio, 96.f * ratio, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		std::shared_ptr<SliderTip_Script> script{ std::make_shared<SliderTip_Script>(SliderTip_Script::SLIDER_TYPE::SE) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Slider Tip Mute"));
+		obj->AddComponent(script);
+		m_sliderTip.push_back(script);
+
+		AddGameObject(obj);
+		m_popUp.push_back(obj);
+	}
+}
+
+void Scene_Test::ChangePopUpVisibility()
+{
+}
+
+void Scene_Test::ChangeVolume()
+{
+}
+
+void Scene_Test::ChangeMuteTexture()
+{
+}
+#pragma endregion
+
+#pragma region
 void Scene_Test::ChangeNetworkObjectID(network::CPacket& packet)
 {
 	int32_t newID{ packet.ReadID() };
@@ -835,6 +1649,18 @@ void Scene_Test::ChangeNetworkObjectID(network::CPacket& packet)
 	m_objectIDMap[oldID] = newID;
 
 	GET_NETWORK->ExchangeObjectID(oldID, newID);
+}
+
+std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkToObject(std::vector<std::shared_ptr<CGameObject>> objects, server::OBJECT_TYPE objectType, int32_t id)
+{
+	std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>(objectType, id) };
+
+	for (auto& gameObject : objects)
+	{
+		gameObject->AddComponent(networkComponent);
+	}
+
+	return objects;
 }
 
 void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
@@ -1868,7 +2694,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		// 아티팩트 파괴 후 보호막 사라지는 신
 		case server::CUT_SCENE_TYPE::SCENE1:
 		{
-			m_scenematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 
 			for (auto& script : m_artifactMagicScript)
 			{
@@ -1881,14 +2707,14 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		// 기둥을 처음 발견해서 기둥의 보호막을 보여주는 신
 		case server::CUT_SCENE_TYPE::SCENE2:
 		{
-			m_scenematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 			m_oneTimeDialogueScript["PILLAR_HINT"]->StartRender(3.f, 5.f);
 		}
 		break;
 		// 메테오에 기둥이 넘어지는 신
 		case server::CUT_SCENE_TYPE::SCENE3:
 		{
-			m_scenematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE4:
@@ -1930,106 +2756,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		break;
 	}
 }
-
-std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateMapObject(ObjectDesc& objectDesc)
-{
-	shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(objectDesc.strPath);
-
-	vector<shared_ptr<CGameObject>> gameObjects = meshData->Instantiate();
-
-	for (auto& gameObject : gameObjects)
-	{
-		gameObject->SetName(objectDesc.strName);
-		gameObject->SetCheckFrustum(false);
-		gameObject->GetTransform()->SetLocalPosition(objectDesc.vPostion);
-		gameObject->GetTransform()->SetLocalScale(objectDesc.vScale);
-		gameObject->AddComponent(objectDesc.script);
-		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
-	}
-
-	return gameObjects;
-}
-
-std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateAnimatedObject(ObjectDesc& objectDesc)
-{
-	vector<shared_ptr<CGameObject>> gameObjects = CreateMapObject(objectDesc);
-
-	for (auto& gameObject : gameObjects)
-	{
-		gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 0);
-		gameObject->GetTransform()->SetLocalRotation(Vec3(0.f, 0.f, 0.f));
-	}
-
-	return gameObjects;
-}
-
-std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkToObject(std::vector<std::shared_ptr<CGameObject>> objects, server::OBJECT_TYPE objectType, int32_t id)
-{
-	std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>(objectType, id) };
-
-	for (auto& gameObject : objects)
-	{
-		gameObject->AddComponent(networkComponent);
-	}
-
-	return objects;
-}
-
-void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects)
-{
-	switch (eType)
-	{
-		case MAP_TYPE::Cave:
-		{
-			for (auto& object : objects)
-				m_splitMap_3.push_back(object);
-		}
-		break;
-		case MAP_TYPE::FirstBoss:
-		{
-			for (auto& object : objects)
-				m_splitMap_2.push_back(object);
-		}
-		break;
-		case MAP_TYPE::LastBoss_TreasureRoom:
-		{
-			for (auto& object : objects)
-				m_splitMap_6.push_back(object);
-		}
-		break;
-		case MAP_TYPE::SecondRoom_Bridge_SecondBoss:
-		{
-			for (auto& object : objects)
-				m_splitMap_4.push_back(object);
-		}
-		break;
-		case MAP_TYPE::StartRoom:
-		{
-			for (auto& object : objects)
-				m_splitMap_1.push_back(object);
-		}
-		break;
-		case MAP_TYPE::ThirdRoom_RockRolling:
-		{
-			for (auto& object : objects)
-				m_splitMap_5.push_back(object);
-		}
-		break;
-		case MAP_TYPE::END:
-		break;
-		default:
-		break;
-	}
-}
-
-shared_ptr<CScene> Scene_Test::Create(server::FBX_TYPE eType)
-{
-	shared_ptr<Scene_Test> pInstance = std::make_shared<Scene_Test>();
-
-	pInstance->Init(pInstance, eType);
-
-	return pInstance;
-}
+#pragma endregion
 
 void Scene_Test::CheckMapMove(void)
 {
@@ -2121,7 +2848,7 @@ void Scene_Test::MoveMap(MAP_TYPE eType)
 	m_eCurrentMapType = eType;
 }
 
-void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
+void Scene_Test::Init(std::shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 {
 	CreateLayer();
 	CreateComputeShader();
@@ -2145,4 +2872,13 @@ void Scene_Test::Init(shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType)
 	//CreateMRTUI(pScene);
 	CreatePortalUI(pScene);
 	CreateMagicArtifactEffect(pScene);
+}
+
+std::shared_ptr<CScene> Scene_Test::Create(server::FBX_TYPE eType)
+{
+	shared_ptr<Scene_Test> pInstance = std::make_shared<Scene_Test>();
+
+	pInstance->Init(pInstance, eType);
+
+	return pInstance;
 }

@@ -18,12 +18,12 @@ public:
 	void SetSelectedCharacter(server::FBX_TYPE character);
 
 public:
-	virtual void Awake();
-	virtual void Start();
-	virtual void Update();
-	virtual void LateUpdate();
-	virtual void FinalUpdate();
-	virtual void Render();
+	void Awake() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
+	void FinalUpdate() override;
+	void Render() override;
 
 public:
 	void Init();
@@ -33,13 +33,13 @@ public:
 	void LoadTextures();
 	void CreateLights();
 
+public:
+	static std::shared_ptr<CScene> Create(SCENE eNextScene);
+
 private:
-	SCENE			m_eNextScene = SCENE_END;
-	std::shared_ptr<class CLoader> m_pLoader = nullptr;
+	SCENE m_eNextScene;
+	std::shared_ptr<class CLoader> m_pLoader;
 
 	server::FBX_TYPE m_character;
 	//std::vector<std::shared_ptr<Texture>> m_textures;
-
-public:
-	static shared_ptr<CScene> Create(SCENE eNextScene);
 };

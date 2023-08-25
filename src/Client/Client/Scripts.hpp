@@ -17,12 +17,33 @@
 #include "WeeperSkill2_Script.h"
 #include "WeeperSkill3_Script.h"
 #include "WeeperSkill2Scatter_Script.h"
+
+#include "Magic_Artifact_Script.h"
 #pragma endregion
 
 #pragma region [OBJECTS]
 #include "PhysxObject_Script.h"
 #pragma endregion
 
+#pragma region [UI]
+#include "OneTimeDialogue_Script.h"
+#include "CloseButton_Script.h"
+#include "MuteButton_Script.h"
+#include "CloseButton_Script.h"
+#include "SliderTip_Script.h"
+#include "VolumeSlider_Script.h"
+
+#include "InfoUI_Script.h"
+#include "PortalUI_Script.h"
+#pragma endregion
+
 #pragma region [ETC]
 #include "Camera_Script.h"
+#include "Cinematic_Script.h"
+#include "Movement_Script.h"
+
+#include "Skill_Bomb_Script.h"
+#include "VolumeSlider_Script.h"
+
+#include "Fade_Script.h"
 #pragma endregion

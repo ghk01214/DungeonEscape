@@ -13,7 +13,10 @@
 #include "Loader.h"
 #include "Loading_Script.h"
 
-Scene_Loading::Scene_Loading()
+Scene_Loading::Scene_Loading() :
+	m_eNextScene{ SCENE_END },
+	m_pLoader{ nullptr },
+	m_character{ server::FBX_TYPE::NONE }
 {
 }
 

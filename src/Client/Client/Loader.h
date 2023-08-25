@@ -1,13 +1,12 @@
 ﻿#pragma once
 
-
 /* 씬별로 로딩해야할 리소스 생성한다.(스레드로)  */
 #include "Client_Defines.h"
 
 class CLoader : public std::enable_shared_from_this<CLoader>
 {
 public:
-	explicit CLoader(void);
+	explicit CLoader();
 	virtual ~CLoader() = default;
 
 public:
@@ -42,15 +41,15 @@ public:
 	HRESULT Loading_ForCharacterSelection_Texture();
 
 private:
-	SCENE			m_eScene = SCENE_END;
-	bool			m_isFinished = false;
-	wstring			m_szLoading;
+	SCENE			m_eScene;
+	bool			m_isFinished;
+	std::wstring	m_szLoading;
 	int32_t			m_progress;
 
 private:
-	HANDLE				m_hThread = 0;
+	HANDLE				m_hThread;
 	CRITICAL_SECTION	m_CriticalSection;
 
 public:
-	static shared_ptr<CLoader> Create(SCENE eScene);
+	static std::shared_ptr<CLoader> Create(SCENE eScene);
 };

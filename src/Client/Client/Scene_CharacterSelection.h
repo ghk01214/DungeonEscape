@@ -19,12 +19,12 @@ public:
 	virtual ~Scene_CharacterSelection() = default;
 
 public:
-	virtual void Awake();
-	virtual void Start();
-	virtual void Update();
-	virtual void LateUpdate();
-	virtual void FinalUpdate();
-	virtual void Render();
+	void Awake() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
+	void FinalUpdate() override;
+	void Render() override;
 
 private:
 	void Init();

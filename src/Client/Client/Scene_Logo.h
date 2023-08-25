@@ -26,5 +26,5 @@ private:
 	void CreateLights(void);
 
 public:
-	static shared_ptr<CScene> Create();
+	static std::shared_ptr<CScene> Create();
 };
