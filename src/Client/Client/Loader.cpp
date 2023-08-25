@@ -173,7 +173,7 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	LOAD_TEXTURE(L"Pillar Hint", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint.png");
 
 #pragma region [POP UP]
-	LOAD_TEXTURE(L"White Blur", L"..\\Resources\\Texture\\UI\\Blur\\White.png");
+	LOAD_TEXTURE(L"Blur", L"..\\Resources\\Texture\\UI\\Blur\\Dimed.png");
 	LOAD_TEXTURE(L"Setting Frame", L"..\\Resources\\Texture\\UI\\Frame\\Setting Frame.png");
 
 	LOAD_TEXTURE(L"BGM", L"..\\Resources\\Texture\\UI\\Icon\\BGM.png");
@@ -369,7 +369,7 @@ HRESULT CLoader::Loading_ForStart_Texture()
 	LOAD_TEXTURE(L"Setting", L"..\\Resources\\Texture\\UI\\Button\\Setting.png");
 
 #pragma region [POP UP]
-	LOAD_TEXTURE(L"White Blur", L"..\\Resources\\Texture\\UI\\Blur\\White.png");
+	LOAD_TEXTURE(L"Blur", L"..\\Resources\\Texture\\UI\\Blur\\Dimed.png");
 	LOAD_TEXTURE(L"Setting Frame", L"..\\Resources\\Texture\\UI\\Frame\\Setting Frame.png");
 
 	LOAD_TEXTURE(L"BGM", L"..\\Resources\\Texture\\UI\\Icon\\BGM.png");

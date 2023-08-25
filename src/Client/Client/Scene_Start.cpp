@@ -294,7 +294,7 @@ void Scene_Start::CreatePopUp()
 
 void Scene_Start::CreateBlur()
 {
-	std::shared_ptr<Texture> texture = GET_TEXTURE(L"White Blur");
+	std::shared_ptr<Texture> texture = GET_TEXTURE(L"Blur");
 	std::shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
@@ -307,7 +307,7 @@ void Scene_Start::CreateBlur()
 		transform->SetLocalScale(Vec3{ width, height, 1.f });
 		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
 
-		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 0.5f);
+		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 1.f);
 
 		AddGameObject(obj);
 		GET_SINGLE(SceneManager)->SetBlurUI(obj);

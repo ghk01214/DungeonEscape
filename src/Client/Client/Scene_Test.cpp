@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -925,7 +925,7 @@ void Scene_Test::CreatePopUp()
 #pragma region [POP UP]
 void Scene_Test::CreateBlur()
 {
-	std::shared_ptr<Texture> texture = GET_TEXTURE(L"White Blur");
+	std::shared_ptr<Texture> texture = GET_TEXTURE(L"Blur");
 	std::shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
@@ -938,7 +938,7 @@ void Scene_Test::CreateBlur()
 		transform->SetLocalScale(Vec3{ width, height, 1.f });
 		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
 
-		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 0.5f);
+		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 1.f);
 
 		AddGameObject(obj);
 		GET_SINGLE(SceneManager)->SetBlurUI(obj);
