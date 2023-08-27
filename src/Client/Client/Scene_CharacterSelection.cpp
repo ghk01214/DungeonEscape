@@ -272,7 +272,7 @@ void Scene_CharacterSelection::CreatePopUp()
 
 void Scene_CharacterSelection::CreateBlur()
 {
-	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Blur") };
+	std::shared_ptr<Texture> texture{ GET_RESOURCE->GetBlurTexture() };
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
 	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };

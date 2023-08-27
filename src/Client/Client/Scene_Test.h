@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -43,6 +43,12 @@ private:
 		MAX
 	};
 
+	struct UITransform
+	{
+		Vec2 pos;
+		Vec2 scale;
+	};
+
 public:
 	explicit Scene_Test();
 	virtual ~Scene_Test() = default;
@@ -61,7 +67,7 @@ private:
 	void CreateMainCamera(std::shared_ptr<CScene> pScene);
 	void CreateUICamera(std::shared_ptr<CScene> pScene);
 	void CreateSkyBox(std::shared_ptr<CScene> pScene);
-	void CreateUI(std::shared_ptr<CScene> pScene);
+	void CreateUI(std::shared_ptr<CScene> pScene, server::FBX_TYPE player);
 	void CreateMRTUI(std::shared_ptr<CScene> pScene);
 	void CreatePortalUI(std::shared_ptr<CScene> pScene);
 	void CreateLights(std::shared_ptr<CScene> pScene);
@@ -86,7 +92,16 @@ private:
 	void PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects);
 
 private:
-	void CreateHPnSPBar();
+	void CreatePlayerUI(server::FBX_TYPE character);
+	void CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTransform);
+	void CreatePlayerHPBar(float yPos, UITransform& hpTransform);
+	float CreatePlayerMPBar();
+
+	void CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character);
+	void CreatePartyPlayerImage(server::FBX_TYPE character, UITransform trans);
+	void CreatePartyPlayerHPBar(float yPos, UITransform trans);
+	float CreatePartyPlayerMPBar(UITransform trans);
+
 	void CreateOneTimeDialogue();
 
 	void CreatePopUp();
@@ -134,7 +149,6 @@ public:
 	static std::shared_ptr<CScene> Create(server::FBX_TYPE eType);
 
 private:
-	std::unordered_map<int32_t, int32_t> m_objectIDMap;		// temp obj id, new obj id
 	std::unordered_set<int32_t> m_overlappedObjects;
 
 private:
@@ -163,6 +177,7 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<class OneTimeDialogue_Script>> m_oneTimeDialogueScript;
 
 	std::vector<std::shared_ptr<CGameObject>> m_popUp;
+	std::unordered_map<int32_t, UITransform> m_partyUITransform;
 
 	std::shared_ptr<class CloseButton_Script> m_closeButton;
 	std::vector<std::shared_ptr<class SliderTip_Script>> m_sliderTip;

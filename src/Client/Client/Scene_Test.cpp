@@ -43,7 +43,15 @@ Scene_Test::Scene_Test() :
 	m_closeButton{ nullptr },
 	m_openSetting{ false }
 {
+	auto pos{ GetRatio(-100.f, 75.f) };
+	Vec2 scale{ 100.f };
+	pos.x += scale.x / 2.f;
 
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		m_partyUITransform[i] = { pos, scale };
+		pos.y -= 100.f;
+	}
 }
 
 void Scene_Test::Awake()
@@ -150,7 +158,7 @@ void Scene_Test::LateUpdate()
 	PopRequestQueue(size);
 }
 
-#pragma region
+#pragma region [CLIENT]
 void Scene_Test::FinalUpdate()
 {
 	__super::FinalUpdate();
@@ -204,7 +212,7 @@ void Scene_Test::CreateMainCamera(std::shared_ptr<CScene> pScene)
 	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
 
 
-//#define MOVEMENT
+	//#define MOVEMENT
 
 #ifdef MOVEMENT
 	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>();
@@ -322,7 +330,7 @@ void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE p
 		gameObject->SetObjectType(server::OBJECT_TYPE::PLAYER);
 	}
 
-	pScene->AddPlayer(gameObjects);
+	AddPlayer(gameObjects);
 	GET_NETWORK->AddNetworkComponent(gameObjects);
 
 	Matrix matWorld = Matrix::CreateTranslation(Vec3(0.f, -1500.f, 0.f));
@@ -369,15 +377,16 @@ void Scene_Test::SendKeyInput()
 }
 #pragma endregion
 
-void Scene_Test::CreateUI(shared_ptr<CScene> pScene)
+void Scene_Test::CreateUI(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 {
-	//CreateHPnSPBar();
 	CreateOneTimeDialogue();
+	CreatePlayerUI(player);
+	CreatePartyPlayerUI(GET_NETWORK->GetID(), player);
 
 	CreatePopUp();
 }
 
-#pragma region
+#pragma region [CLIENT]
 void Scene_Test::CreateMRTUI(std::shared_ptr<CScene> pScene)
 {
 	for (int32 i = 0; i < 6; i++)
@@ -773,100 +782,615 @@ void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameOb
 #pragma endregion
 
 #pragma region [UI]
-void Scene_Test::CreateHPnSPBar()
+void Scene_Test::CreatePlayerUI(server::FBX_TYPE character)
 {
-	float width{ static_cast<float>(GEngine->GetWindow().width) };
-	float height{ static_cast<float>(GEngine->GetWindow().height) };
+	UITransform hpTransform{};
+	float mpYPos{ CreatePlayerMPBar() };
+	CreatePlayerHPBar(mpYPos, hpTransform);
+	CreatePlayerImage(character, hpTransform);
+}
 
-	// 獄쏄퀗瑗?獄?
-	for (int32_t i = 0; i < 2; ++i)
+void Scene_Test::CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTransform)
+{
+	std::shared_ptr<Texture> texture{ nullptr };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	if (character == server::FBX_TYPE::NANA)
+		texture = GET_TEXTURE(L"Nana");
+	else if (character == server::FBX_TYPE::MISTIC)
+		texture = GET_TEXTURE(L"Mistic");
+	else
+		texture = GET_TEXTURE(L"Carmel");
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	// 위치 및 카메라 인덱스 설정
+	Vec2 pos{};
+	pos.x = hpTransform.pos.x + (hpTransform.scale.x + 150.f) / 2.f;
+	pos.y = hpTransform.pos.y + (hpTransform.scale.y + 150.f) / 2.f;
+	auto transform{ obj->GetTransform() };
+
+	transform->SetLocalScale(Vec3{ 150.f, 150.f, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+	AddGameObject(obj);
+}
+
+void Scene_Test::CreatePlayerHPBar(float yPos, UITransform& hpTransform)
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(L)") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
 	{
-		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
-		obj->AddComponent(std::make_shared<Transform>());
+		std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(L)") };
 
-		float yPos{ -(height / 2.f) + 10.f * (i * 2 + 1) };
-
-		obj->GetTransform()->SetLocalScale(Vec3(250.f, 20.f, 1.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(0.f, yPos, 1.1f));
-
-		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
+		// FRAME
 		{
-			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-			meshRenderer->SetMesh(mesh);
+			// FRAME(L)
+			//float centerLengthScale{ 38.f * 15.f };
+			float centerLengthScale{ 38.f * 12.f };
+			Vec3 leftScale{ 31.f, 62.f * 0.5f, 1.f };
+			Vec2 pos{ GetRatio(-50.f, -91.01f) };
+			pos.y = yPos + leftScale.y;
+			hpTransform = { pos, Vec2{ leftScale.x, leftScale.y } };
+
+			{
+				std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+				obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+				auto transform{ obj->GetTransform() };
+				transform->SetLocalScale(leftScale);
+				transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+				//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+				//script->InsertTextures(texture);
+				//obj->AddComponent(script);
+
+				AddGameObject(obj);
+			}
+
+			// FRAME(C)
+			texture = GET_TEXTURE(L"Player Slider Frame(C)");
+			{
+				std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+				obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+				auto transform{ obj->GetTransform() };
+				pos.x += (leftScale.x + centerLengthScale) / 2.f - 0.1f;
+
+				transform->SetLocalScale(Vec3{ centerLengthScale, leftScale.y, 1.f });
+				transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+				//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+				//script->InsertTextures(texture);
+				//obj->AddComponent(script);
+
+				AddGameObject(obj);
+			}
+
+			// FRAME(R)
+			texture = GET_TEXTURE(L"Player Slider Frame(R)");
+			{
+				std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+				obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+				auto transform{ obj->GetTransform() };
+				pos.x += (leftScale.x + centerLengthScale) / 2.f - 0.2f;
+
+				transform->SetLocalScale(leftScale);
+				transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+				//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+				//script->InsertTextures(texture);
+				//obj->AddComponent(script);
+
+				AddGameObject(obj);
+			}
 		}
 
+		// FILL
 		{
-			std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
-			std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Bar");
+			// FILL(L)
+			//float centerLengthScale{ 10.f * 56.8f };
+			float centerLengthScale{ 10.f * 45.5f };
+			Vec3 leftScale{ 26.f, 52.f * 0.5f, 1.f };
+			Vec2 pos{ GetRatio(-49.7f, -91.01f) };
 
-			std::shared_ptr<Material> material = std::make_shared<Material>();
-			material->SetShader(shader);
-			material->SetTexture(0, texture);
-			material->SetFloat(2, 1.f);
-			meshRenderer->SetMaterial(material);
+			texture = GET_TEXTURE(L"HP(L)");
+			{
+				std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+				obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+				auto transform{ obj->GetTransform() };
+				transform->SetLocalScale(leftScale);
+				transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+				//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+				//script->InsertTextures(texture);
+				//obj->AddComponent(script);
+
+				AddGameObject(obj);
+			}
+
+			// FILL(C)
+			texture = GET_TEXTURE(L"HP(C)");
+			{
+				std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+				obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+				auto transform{ obj->GetTransform() };
+				pos.x += (leftScale.x + centerLengthScale) / 2.f - 0.1f;
+
+				transform->SetLocalScale(Vec3{ centerLengthScale, leftScale.y, 1.f });
+				transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+				//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+				//script->InsertTextures(texture);
+				//obj->AddComponent(script);
+
+				AddGameObject(obj);
+			}
+
+			// FILL(R)
+			texture = GET_TEXTURE(L"HP(R)");
+			{
+				std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+				obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+				auto transform{ obj->GetTransform() };
+				pos.x += (leftScale.x + centerLengthScale) / 2.f - 0.2f;
+
+				transform->SetLocalScale(leftScale);
+				transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+				//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+				//script->InsertTextures(texture);
+				//obj->AddComponent(script);
+
+				AddGameObject(obj);
+			}
+		}
+	}
+}
+
+float Scene_Test::CreatePlayerMPBar()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(L)") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	float yPos{};
+
+	// FRAME
+	{
+		// FRAME(L)
+		//float centerLengthScale{ 38.f * 15.f };
+		float centerLengthScale{ 38.f * 12.f };
+		Vec3 leftScale{ 31.f, 62.f * 0.5f, 1.f };
+		Vec2 pos{ GetRatio(-50.f, -97.1f) };
+		yPos = pos.y;
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			transform->SetLocalScale(leftScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
 		}
 
-		obj->AddComponent(meshRenderer);
+		// FRAME(C)
+		texture = GET_TEXTURE(L"Player Slider Frame(C)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		std::shared_ptr<Bar_Script> behaviour = std::make_shared<Bar_Script>();
-		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Bar"));
+			auto transform{ obj->GetTransform() };
+			pos.x += (leftScale.x + centerLengthScale) / 2.f - 0.1f;
 
-		obj->AddComponent(behaviour);
+			transform->SetLocalScale(Vec3{ centerLengthScale, leftScale.y, 1.f });
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
 
-		AddGameObject(obj);
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+
+		// FRAME(R)
+		texture = GET_TEXTURE(L"Player Slider Frame(R)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			pos.x += (leftScale.x + centerLengthScale) / 2.f - 0.2f;
+
+			transform->SetLocalScale(leftScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
 	}
 
-	// HP & SP
-	for (int32_t i = 0; i < 2; ++i)
+	// FILL
 	{
-		std::shared_ptr<CGameObject> obj = std::make_shared<CGameObject>();
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
-		obj->AddComponent(std::make_shared<Transform>());
+		// FILL(L)
+		//float centerLengthScale{ 10.f * 56.8f };
+		float centerLengthScale{ 10.f * 45.5f };
+		Vec3 leftScale{ 26.f, 52.f * 0.5f, 1.f };
+		Vec2 pos{ GetRatio(-49.7f, -97.1f) };
 
-		float yPos{ 0.f };
-		std::wstring name{};
-
-		if (i == 0)
+		texture = GET_TEXTURE(L"MP(L)");
 		{
-			yPos = -(height / 2.f) + 31.f;
-			name = L"HP";
-		}
-		else
-		{
-			yPos = -(height / 2.f) + 11.f;
-			name = L"MP";
-		}
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		obj->GetTransform()->SetLocalScale(Vec3(240.f, 9.f, 1.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(0.f, yPos, 1.f));
+			auto transform{ obj->GetTransform() };
+			transform->SetLocalScale(leftScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
 
-		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
-		{
-			std::shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
-			meshRenderer->SetMesh(mesh);
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
 		}
 
+		// FILL(C)
+		texture = GET_TEXTURE(L"MP(C)");
 		{
-			std::shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
-			std::shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(name);
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-			std::shared_ptr<Material> material = std::make_shared<Material>();
-			material->SetShader(shader);
-			material->SetTexture(0, texture);
-			material->SetFloat(2, 1.f);
-			meshRenderer->SetMaterial(material);
+			auto transform{ obj->GetTransform() };
+			pos.x += (leftScale.x + centerLengthScale) / 2.f;
+
+			transform->SetLocalScale(Vec3{ centerLengthScale, leftScale.y, 1.f });
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
 		}
 
-		obj->AddComponent(meshRenderer);
+		// FILL(R)
+		texture = GET_TEXTURE(L"MP(R)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		std::shared_ptr<VolumeSlider_Script> behaviour = std::make_shared<VolumeSlider_Script>();
-		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(name));
+			auto transform{ obj->GetTransform() };
+			pos.x += (leftScale.x + centerLengthScale) / 2.f;
 
-		obj->AddComponent(behaviour);
+			transform->SetLocalScale(leftScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
 
-		AddGameObject(obj);
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+
+			return pos.y;
+		}
 	}
+
+	return yPos;
+}
+
+void Scene_Test::CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character)
+{
+	CreatePartyPlayerImage(character, m_partyUITransform[id]);
+	auto mpPos{ CreatePartyPlayerMPBar(m_partyUITransform[id]) };
+	CreatePartyPlayerHPBar(mpPos, m_partyUITransform[id]);
+}
+
+void Scene_Test::CreatePartyPlayerImage(server::FBX_TYPE character, UITransform trans)
+{
+	std::shared_ptr<Texture> texture{ nullptr };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	if (character == server::FBX_TYPE::NANA)
+		texture = GET_TEXTURE(L"Nana");
+	else if (character == server::FBX_TYPE::MISTIC)
+		texture = GET_TEXTURE(L"Mistic");
+	else
+		texture = GET_TEXTURE(L"Carmel");
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	// 위치 및 카메라 인덱스 설정
+	auto transform{ obj->GetTransform() };
+
+	transform->SetLocalScale(Vec3{ trans.scale.x, trans.scale.y, 1.f });
+	transform->SetLocalPosition(Vec3{ trans.pos.x, trans.pos.y, 100.f });
+
+	AddGameObject(obj);
+}
+
+void Scene_Test::CreatePartyPlayerHPBar(float yPos, UITransform trans)
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(L)") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	Vec3 frameScale{ 31.f, 62.f / 2.f, 1.f };
+
+	// FRAME
+	{
+		// FRAME(L)
+		float centerLengthScale{ 38.f * 5.f };
+		Vec2 pos{};
+		pos.x = trans.pos.x + (frameScale.x + trans.scale.x) / 2.f;
+		pos.y = yPos + frameScale.y;
+
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			transform->SetLocalScale(frameScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+
+		// FRAME(C)
+		texture = GET_TEXTURE(L"Player Slider Frame(C)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			pos.x += (frameScale.x + centerLengthScale) / 2.f - 0.1f;
+
+			transform->SetLocalScale(Vec3{ centerLengthScale, frameScale.y, 1.f });
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+
+		// FRAME(R)
+		texture = GET_TEXTURE(L"Player Slider Frame(R)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			pos.x += (frameScale.x + centerLengthScale) / 2.f - 0.2f;
+
+			transform->SetLocalScale(frameScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+	}
+
+	// FILL
+	{
+		// FILL(L)
+		float centerLengthScale{ 10.f * 19.2f };
+		Vec3 fillScale{ 26.f, 52.f * 0.5f, 1.f };
+		Vec2 pos{};
+		pos.x = trans.pos.x + (frameScale.x + trans.scale.x) / 2.f + 1.f;
+		pos.y = yPos + frameScale.y;
+
+		texture = GET_TEXTURE(L"HP(L)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			transform->SetLocalScale(fillScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+
+		// FILL(C)
+		texture = GET_TEXTURE(L"HP(C)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			pos.x += (fillScale.x + centerLengthScale) / 2.f;
+
+			transform->SetLocalScale(Vec3{ centerLengthScale, fillScale.y, 1.f });
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+
+		// FILL(R)
+		texture = GET_TEXTURE(L"HP(R)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			pos.x += (fillScale.x + centerLengthScale) / 2.f;
+
+			transform->SetLocalScale(fillScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+	}
+}
+
+float Scene_Test::CreatePartyPlayerMPBar(UITransform trans)
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(L)") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	float yPos{};
+	Vec3 frameScale{ 31.f, 62.f / 2.f, 1.f };
+
+	// FRAME
+	{
+		// FRAME(L)
+		float centerLengthScale{ 38.f * 5.f };
+		Vec2 pos{};
+		pos.x = trans.pos.x + (frameScale.x + trans.scale.x) / 2.f;
+		pos.y = trans.pos.y - (trans.scale.y - frameScale.y) / 2.f;
+		yPos = pos.y;
+
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			transform->SetLocalScale(frameScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+
+		// FRAME(C)
+		texture = GET_TEXTURE(L"Player Slider Frame(C)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			pos.x += (frameScale.x + centerLengthScale) / 2.f - 0.1f;
+
+			transform->SetLocalScale(Vec3{ centerLengthScale, frameScale.y, 1.f });
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+
+		// FRAME(R)
+		texture = GET_TEXTURE(L"Player Slider Frame(R)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			pos.x += (frameScale.x + centerLengthScale) / 2.f - 0.2f;
+
+			transform->SetLocalScale(frameScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+	}
+
+	// FILL
+	{
+		// FILL(L)
+		float centerLengthScale{ 10.f * 19.2f };
+		Vec3 fillScale{ 26.f, 52.f * 0.5f, 1.f };
+		Vec2 pos{};
+		pos.x = trans.pos.x + (frameScale.x + trans.scale.x) / 2.f + 1.f;
+		pos.y = trans.pos.y - (trans.scale.y - frameScale.y) / 2.f;
+
+		texture = GET_TEXTURE(L"MP(L)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			transform->SetLocalScale(fillScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+
+		// FILL(C)
+		texture = GET_TEXTURE(L"MP(C)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			pos.x += (fillScale.x + centerLengthScale) / 2.f;
+
+			transform->SetLocalScale(Vec3{ centerLengthScale, fillScale.y, 1.f });
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+
+		// FILL(R)
+		texture = GET_TEXTURE(L"MP(R)");
+		{
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			pos.x += (fillScale.x + centerLengthScale) / 2.f;
+
+			transform->SetLocalScale(fillScale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
+		}
+	}
+
+	return yPos;
 }
 
 void Scene_Test::CreateOneTimeDialogue()
@@ -909,7 +1433,6 @@ void Scene_Test::CreateOneTimeDialogue()
 		AddGameObject(obj);
 	}
 }
-#pragma endregion
 
 void Scene_Test::CreatePopUp()
 {
@@ -921,28 +1444,28 @@ void Scene_Test::CreatePopUp()
 	CreateSEButton();
 	CreateSESlider();
 }
+#pragma endregion
 
 #pragma region [POP UP]
 void Scene_Test::CreateBlur()
 {
-	std::shared_ptr<Texture> texture = GET_TEXTURE(L"Blur");
-	std::shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
-	{
-		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+	std::shared_ptr<Texture> texture{ GET_RESOURCE->GetBlurTexture() };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
-		auto transform{ obj->GetTransform() };
-		float width{ static_cast<float>(GEngine->GetWindow().width) };
-		float height{ static_cast<float>(GEngine->GetWindow().height) };
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 
-		transform->SetLocalScale(Vec3{ width, height, 1.f });
-		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
+	auto transform{ obj->GetTransform() };
+	float width{ static_cast<float>(GEngine->GetWindow().width) };
+	float height{ static_cast<float>(GEngine->GetWindow().height) };
 
-		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 1.f);
+	transform->SetLocalScale(Vec3{ width, height, 1.f });
+	transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
 
-		AddGameObject(obj);
-		GET_SINGLE(SceneManager)->SetBlurUI(obj);
-	}
+	obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 1.f);
+
+	AddGameObject(obj);
+	GET_SINGLE(SceneManager)->SetBlurUI(obj);
 }
 
 void Scene_Test::CreateCloseButton()
@@ -951,7 +1474,7 @@ void Scene_Test::CreateCloseButton()
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
 		Vec2 pos{ GetRatio(-93.f, 86.f) };
@@ -1270,7 +1793,7 @@ void Scene_Test::CreateBGMSlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 
 	// SLIDER FILL(C)
 	texture = GET_TEXTURE(L"Slider Fill(C)");
@@ -1595,7 +2118,7 @@ void Scene_Test::CreateSESlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 
 	// SLIDER FILL(C)
 	texture = GET_TEXTURE(L"Slider Fill(C)");
@@ -1807,6 +2330,11 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 	switch (objType)
 	{
 		case server::OBJECT_TYPE::REMOTE_PLAYER:
+		{
+			CreatePartyPlayerUI(id, fbxType);
+			objectDesc.script->Start();
+		}
+		break;
 		case server::OBJECT_TYPE::MONSTER:
 		case server::OBJECT_TYPE::BOSS:
 		{
@@ -2943,7 +3471,7 @@ void Scene_Test::Init(std::shared_ptr<Scene_Test> pScene, server::FBX_TYPE eType
 	CreateMainCamera(pScene);
 	CreateUICamera(pScene);
 	CreateSkyBox(pScene);
-	CreateUI(pScene);
+	CreateUI(pScene, eType);
 	CreateLights(pScene);
 	CreateMap(pScene);
 	//CreateBillBoard(pScene);

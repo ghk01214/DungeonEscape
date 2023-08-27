@@ -937,7 +937,7 @@ void Resources::CreateDefaultMaterial()
 
 void Resources::LoadBlurTexture()
 {
-	shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"BlurPng", L"..\\Resources\\Texture\\UI\\Blur\\blur_Png_Img_Free.png");
+	shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Blur", L"..\\Resources\\Texture\\UI\\Blur\\Dimed.png");
 
 	m_blurTexture = texture;
 }

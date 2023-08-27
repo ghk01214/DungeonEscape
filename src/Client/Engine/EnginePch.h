@@ -301,6 +301,7 @@ inline T loadStructData(const HANDLE& hFile)
 #define GET_BOSS		GET_SCENE->GetBoss()
 #define GET_OBJECT		GET_SCENE->GetSceneObject()
 #define GET_NETWORK		GET_SINGLE(network::NetworkManager)
+#define GET_RESOURCE	GET_SINGLE(Resources)
 
 #define LOAD_RESOURCES(type, name, path)	GET_SINGLE(Resources)->Load<type>(name, path)
 #define GET_RESOURCES(type, name)			GET_SINGLE(Resources)->Get<type>(name)

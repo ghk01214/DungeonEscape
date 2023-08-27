@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
@@ -166,9 +166,21 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 
 HRESULT CLoader::Loading_GamePlayLevel_UI()
 {
-	LOAD_TEXTURE(L"Bar", L"..\\Resources\\Texture\\UI\\In Game\\bar.png");
-	LOAD_TEXTURE(L"HP", L"..\\Resources\\Texture\\UI\\In Game\\hp.png");
-	LOAD_TEXTURE(L"MP", L"..\\Resources\\Texture\\UI\\In Game\\mp.png");
+	LOAD_TEXTURE(L"Player Slider Frame(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(L).png");
+	LOAD_TEXTURE(L"Player Slider Frame(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(R).png");
+	LOAD_TEXTURE(L"Player Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(C).png");
+
+	LOAD_TEXTURE(L"HP(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(L).png");
+	LOAD_TEXTURE(L"HP(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(R).png");
+	LOAD_TEXTURE(L"HP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(C).png");
+
+	LOAD_TEXTURE(L"MP(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Blue(L).png");
+	LOAD_TEXTURE(L"MP(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Blue(R).png");
+	LOAD_TEXTURE(L"MP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Blue(C).png");
+
+	LOAD_TEXTURE(L"Nana_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Nana.png");
+	LOAD_TEXTURE(L"Mistic_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Mistic.png");
+	LOAD_TEXTURE(L"Carmel_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Carmel.png");
 
 	LOAD_TEXTURE(L"Pillar Hint", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint.png");
 
@@ -369,7 +381,6 @@ HRESULT CLoader::Loading_ForStart_Texture()
 	LOAD_TEXTURE(L"Setting", L"..\\Resources\\Texture\\UI\\Button\\Setting.png");
 
 #pragma region [POP UP]
-	LOAD_TEXTURE(L"Blur", L"..\\Resources\\Texture\\UI\\Blur\\Dimed.png");
 	LOAD_TEXTURE(L"Setting Frame", L"..\\Resources\\Texture\\UI\\Frame\\Setting Frame.png");
 
 	LOAD_TEXTURE(L"BGM", L"..\\Resources\\Texture\\UI\\Icon\\BGM.png");
