@@ -586,6 +586,16 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	//THROWGIMMIK2BALL
+	if (msg == "THROWGIMMIK2BALL")
+	{
+		auto triggerObj = dynamic_cast<TriggerObject2*>(target);
+		if (triggerObj)
+		{
+			triggerObj->ThrowGimmik2Ball();
+		}
+	}
+
 	executed = true;
 }
 

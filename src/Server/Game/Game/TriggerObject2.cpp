@@ -9,6 +9,7 @@
 #include "Transform.h"
 #include "EventHandler.h"
 #include "MessageHandler.h"
+#include "SphereCollider.h"
 
 using namespace physx;
 using namespace std;
@@ -97,6 +98,9 @@ void TriggerObject2::Handle_Overlap()
 
 		if (m_attribute < TRIGGERATTRIBUTE::GUIDELINE1)
 			ServerSendInteractionCountMessage();
+
+		if (m_attribute < TRIGGERATTRIBUTE::GIMMIK2)
+			AttributeGimmik2();
 	}
 }
 
@@ -421,4 +425,49 @@ bool TriggerObject2::CheckArtifactDestoryed()
 	}
 
 	return false;												// 리스트 크기가 0이 아니면 false
+}
+
+void TriggerObject2::AttributeGimmik2()
+{
+	//GIMMIK2 값을 가진 TriggerObject2의 위치 16028, -1140, 29001. 해당 객체의(박스)의 halfExtent는 1500정도면 적당하다. 직접 실험해보고 박스 크기를 변경
+	// 1. GIMMIK2값을 가진 박스를 설치
+	// 2. 설치된 박스로 ThrowGimmik이 문제없이 실행되는지 확인 (공이 제대로 1개만 던져지는가, 기존과 같이 공이 적절하게 벽을 파괴하는가, 부서진 벽에서 엉뚱한 물리현상이 일어나 벽돌이 부자연스럽게 튀어오르지는 않는가 등)
+	//																																이건 pvd에서 실행해보고 여러번 돌려보며 확인
+	//																																정확히 같은 위치에서 같은 힘으로 던지기 때문에 아마 같은 결과가 나오겠지만 꼭 재확인해야한다.
+	// 3. 컷씬 설치
+	
+	//서버 클라간 필요한 코드 작성.
+
+	//컷씬 실행에 시간이 필요하다면 돌을 던지는 시간을 조정할 수 있다. 중간값이 5.f면 5초후 돌을 던진다.
+	EventHandler::GetInstance()->AddEvent("THROWGIMMIK2BALL", 0.1f, this);
+	
+	m_deactivate = true;
+}
+
+void TriggerObject2::ThrowGimmik2Ball()
+{
+	auto objmgr = ObjectManager::GetInstance();
+
+	float boulderPower = 100000.f;
+	auto boulderObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Boulder", Vec3(16276.514, -140, 26758.246), Quat(0, 0, 0, 1), Vec3(300, 300, 300));
+	auto boulderBody = boulderObj->GetComponent<RigidBody>(L"RigidBody");
+
+	boulderBody->AddCollider<SphereCollider>(boulderObj->GetTransform()->GetScale());
+	boulderObj->ApplyRequestedLayers();
+	boulderBody->SetKinematic(false);
+	boulderBody->SetRigidBodySleep(false);
+	boulderBody->SetMass(500.f);
+
+	auto boulderCollider = boulderBody->GetCollider(0);
+	boulderCollider->SetRestitution(0.8f);
+	boulderCollider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
+	boulderCollider->SetFriction(0.4f);
+	boulderCollider->SetFrictionCombineMode(PhysicsCombineMode::Average);
+
+	physx::PxVec3 dir = physx::PxVec3(16215, -2558, 35219) - boulderBody->GetPosition();
+	dir.normalize();
+
+	boulderBody->AddForce(ForceMode::Impulse, dir * boulderPower);
+
+	boulderObj->ServerMessage_Init(false, true);      //0723
 }

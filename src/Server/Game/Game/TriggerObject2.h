@@ -30,6 +30,9 @@ public:
 		GUIDELINE4,
 		GUIDELINE5,
 
+		GIMMIK2,			// 기믹2번
+
+
 		CUTSCENE1,
 		CUTSCENE2,			// 돌기둥을 처음 봤을 때의 컷신
 		CUTSCENE3,
@@ -57,6 +60,7 @@ public:			//초기화 관련 함수
 public:
 	void AttributePortal(double timeDelta);
 	void SendPlayers();
+	void ThrowGimmik2Ball();
 private:
 	std::vector<Player*> OverlapCheck_Player();
 	void Handle_OverlapOut(const std::vector<Player*>& validptr);
@@ -74,6 +78,9 @@ private:
 	void ServerSendCutSceneMessage(server::CUT_SCENE_TYPE cutSceneType);
 
 	bool CheckArtifactDestoryed();
+
+	void AttributeGimmik2();
+	
 
 private:
 	physx::PxBoxGeometry* m_box = nullptr;

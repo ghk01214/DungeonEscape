@@ -56,18 +56,6 @@ void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
 
-	static bool boulderSummoned = false;
-	if (!boulderSummoned)
-	{
-		bool inRange = ThrowGimmik2Ball_RangeCheck();
-
-		if (inRange)
-		{
-			ThrowGimmik2Ball();
-			boulderSummoned = true;
-		}
-	}
-
 	static bool meetMonster = false;
 	if (meetMonster == false)
 	{
@@ -505,51 +493,6 @@ void TestLevel::LoadDebugMap_Boulder()
 		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
 		MeshObject->ApplyRequestedLayers();
 	}
-}
-
-void TestLevel::ThrowGimmik2Ball()
-{
-	auto objmgr = ObjectManager::GetInstance();
-
-	float boulderPower = 100000.f;
-	auto boulderObj = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Gimmik_Boulder", Vec3(16276.514, -140, 26758.246), Quat(0, 0, 0, 1), Vec3(300,300,300));
-	auto boulderBody = boulderObj->GetComponent<RigidBody>(L"RigidBody");
-
-	boulderBody->AddCollider<SphereCollider>(boulderObj->GetTransform()->GetScale());
-	boulderObj->ApplyRequestedLayers();
-	boulderBody->SetKinematic(false);
-	boulderBody->SetRigidBodySleep(false);
-	boulderBody->SetMass(500.f);
-
-	auto boulderCollider = boulderBody->GetCollider(0);
-	boulderCollider->SetRestitution(0.8f);
-	boulderCollider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
-	boulderCollider->SetFriction(0.4f);
-	boulderCollider->SetFrictionCombineMode(PhysicsCombineMode::Average);
-
-	physx::PxVec3 dir = physx::PxVec3(16215, -2558, 35219) - boulderBody->GetPosition();
-	dir.normalize();
-
-	boulderBody->AddForce(ForceMode::Impulse, dir * boulderPower);
-
-	boulderObj->ServerMessage_Init(false, true);      //0723
-}
-
-bool TestLevel::ThrowGimmik2Ball_RangeCheck()
-{
-	auto playerLists = ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects();
-	for (auto& obj : playerLists)
-	{
-		Player* player = dynamic_cast<Player*>(obj);
-		if (!player)
-			continue;
-
-		Vec3 pos = player->GetControllerPosition();
-		if(TO_PX3(pos - Vec3(16028, -1140, 29001)).magnitude() < 1500)
-			return true;
-	}
-
-	return false;
 }
 
 void TestLevel::TestFunction()
