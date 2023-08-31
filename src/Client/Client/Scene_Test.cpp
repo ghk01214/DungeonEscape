@@ -466,7 +466,8 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
 	//m_eNextMapType = MAP_TYPE::StartRoom;
-	m_eNextMapType = MAP_TYPE::SecondRoom_Bridge_SecondBoss;
+	//m_eNextMapType = MAP_TYPE::SecondRoom_Bridge_SecondBoss;
+	m_eNextMapType = MAP_TYPE::ThirdRoom_RockRolling;
 	MoveMap(m_eNextMapType);
 }
 
@@ -2976,9 +2977,10 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
+		// 돌덩이가 굴러가서 벽돌 벽을 부수는 신
 		case server::CUT_SCENE_TYPE::SCENE4:
 		{
-
+			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE5:

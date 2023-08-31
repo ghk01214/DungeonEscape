@@ -64,6 +64,11 @@ void Cinematic_Script::Awake()
 	{
 		info.m_time = 5.f;
 	}
+
+	for (auto& info : m_info[BOULDER_ROLL])
+	{
+		info.m_time = 1.5f;
+	}
 }
 
 void Cinematic_Script::Start()

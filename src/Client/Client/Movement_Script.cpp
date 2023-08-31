@@ -7,7 +7,7 @@
 #include "MeshData.h"
 
 Movement_Script::Movement_Script() :
-	m_curSenematic{ 2 }
+	m_curSenematic{ 4 }
 {
 }
 
@@ -21,7 +21,7 @@ void Movement_Script::Awake()
 
 void Movement_Script::Start()
 {
-	m_vPosition = Vec3(0.f, 1000.f, 0.f);
+	m_vPosition = Vec3(6000.f, 1000.f, 20000.f);
 }
 
 void Movement_Script::Update()
