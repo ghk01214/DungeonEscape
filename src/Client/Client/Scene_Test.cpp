@@ -781,10 +781,37 @@ void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameOb
 #pragma region [UI]
 void Scene_Test::CreatePlayerUI(server::FBX_TYPE character)
 {
-	UITransform hpTransform{};
-	float mpYPos{ CreatePlayerMPBar() };
-	CreatePlayerHPBar(mpYPos, hpTransform);
-	CreatePlayerImage(character, hpTransform);
+	CreatePlayerImage(character);
+	//UITransform hpTransform{};
+	//float mpYPos{ CreatePlayerMPBar() };
+	//CreatePlayerHPBar(mpYPos, hpTransform);
+	//CreatePlayerImage(character, hpTransform);
+}
+
+void Scene_Test::CreatePlayerImage(server::FBX_TYPE character)
+{
+	std::shared_ptr<Texture> texture{ nullptr };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	if (character == server::FBX_TYPE::NANA)
+		texture = GET_TEXTURE(L"Nana_In Game");
+	else if (character == server::FBX_TYPE::MISTIC)
+		texture = GET_TEXTURE(L"Mistic_In Game");
+	else
+		texture = GET_TEXTURE(L"Carmel_In Game");
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	// 위치 및 카메라 인덱스 설정
+	Vec2 pos{ GetRatio(-20.f, -100.f) };
+	pos.y += 150.f / 2.f;
+
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 150.f, 150.f, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+	AddGameObject(obj);
 }
 
 void Scene_Test::CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTransform)
@@ -910,8 +937,8 @@ float Scene_Test::CreatePlayerMPBar()
 void Scene_Test::CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character)
 {
 	CreatePartyPlayerImage(character, m_partyUITransform[id]);
-	auto mpPos{ CreatePartyPlayerMPBar(m_partyUITransform[id]) };
-	CreatePartyPlayerHPBar(mpPos, m_partyUITransform[id]);
+	//auto mpPos{ CreatePartyPlayerMPBar(m_partyUITransform[id]) };
+	//CreatePartyPlayerHPBar(mpPos, m_partyUITransform[id]);
 }
 
 void Scene_Test::CreatePartyPlayerImage(server::FBX_TYPE character, UITransform trans)
