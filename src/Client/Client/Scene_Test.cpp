@@ -2869,7 +2869,7 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 	{
 		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI1:
 		{
-			Print("show guide");
+			m_oneTimeDialogueScript["PILLAR_HINT2"]->StartRender(1.f, 2.f);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:

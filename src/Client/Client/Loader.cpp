@@ -183,6 +183,7 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	LOAD_TEXTURE(L"Carmel_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Carmel.png");
 
 	LOAD_TEXTURE(L"Pillar Hint", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint.png");
+	LOAD_TEXTURE(L"Pillar Hint2", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint2.png");
 
 #pragma region [POP UP]
 	LOAD_TEXTURE(L"Blur", L"..\\Resources\\Texture\\UI\\Blur\\Dimed.png");

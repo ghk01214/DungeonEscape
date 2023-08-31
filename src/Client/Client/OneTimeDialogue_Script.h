@@ -10,6 +10,7 @@ public:
 		NONE = 0,
 
 		PILLAR_HINT,
+		PILLAR_HINT2,
 		ARTIFACT_DESTROYED,
 
 		MAX

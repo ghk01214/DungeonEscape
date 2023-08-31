@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "OneTimeDialogue_Script.h"
 
 #include <MeshRenderer.h>
@@ -13,6 +13,7 @@ OneTimeDialogue_Script::OneTimeDialogue_Script(const std::string& type) :
 	m_fadeType{ FADE_TYPE::NONE },
 	m_dialogueType{ magic_enum::enum_cast<DIALOGUE_TYPE>(type).value() }
 {
+	m_alpha = 0.f;
 }
 
 OneTimeDialogue_Script::~OneTimeDialogue_Script()
@@ -31,10 +32,10 @@ void OneTimeDialogue_Script::Start()
 
 void OneTimeDialogue_Script::Update()
 {
-	__super::Update();
-
 	if (m_render == false)
 		return;
+
+	__super::Update();
 
 	m_accTime += DELTA_TIME;
 
