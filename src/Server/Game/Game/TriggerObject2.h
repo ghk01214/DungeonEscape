@@ -30,13 +30,10 @@ public:
 		GUIDELINE4,
 		GUIDELINE5,
 
-		GIMMIK2,			// 기믹2번
-
-
-		CUTSCENE1,
+		CUTSCENE1,			// 아티팩트 파괴 후 보호막 사라질 때의 컷신
 		CUTSCENE2,			// 돌기둥을 처음 봤을 때의 컷신
-		CUTSCENE3,
-		CUTSCENE4,
+		CUTSCENE3,			// 기둥이 메테오에 의해 넘어지는 컷신
+		CUTSCENE4,			// 돌 굴러가는 장면을 보여주는 컷신
 		CUTSCENE5,
 
 		END
@@ -80,7 +77,7 @@ private:
 	bool CheckArtifactDestoryed();
 
 	void AttributeGimmik2();
-	
+
 
 private:
 	physx::PxBoxGeometry* m_box = nullptr;

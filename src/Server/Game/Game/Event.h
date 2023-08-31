@@ -14,8 +14,8 @@ public:
 
 	void Tick(double timeDelta);			//시간만 소모한다
 	void Tick_TimeInterval();			//실제로 명령을 수행한다.
-	void ExecuteMsg_Once();			
-	void ExecuteMsg_continuous();		
+	void ExecuteMsg_Once();
+	void ExecuteMsg_continuous();
 
 public:
 	std::string			msg;

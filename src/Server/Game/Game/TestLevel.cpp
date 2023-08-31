@@ -393,6 +393,7 @@ void TestLevel::LoadTriggerObject()
 	auto objMgr{ ObjectManager::GetInstance() };
 
 	// 5500 -1790 21170
+	// 16217, -1040, 28064
 
 	auto artifactObj{ objMgr->AddGameObjectToLayer<ArtifactObject>(L"Layer_Gimmik_Artifact", Vec3{ -1750.f, -1690.f, 20465.f }, Quat(0, 0, 0, 1), Vec3(100.f, 200.f, 100.f))};
 	auto artifactBody{ artifactObj->GetComponent<RigidBody>(L"RigidBody") };
@@ -404,6 +405,11 @@ void TestLevel::LoadTriggerObject()
 	auto CutScene1Body{ CutScene1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene1Body->AddCollider<BoxCollider>(CutScene1Obj->GetTransform()->GetScale());
 	CutScene1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE2);
+
+	auto CutScene2Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 16217.f, -1040.f, 28064.f }, Quat(0, 0, 0, 1), Vec3(1000.f, 500.f, 500.f), true)};
+	auto CutScene2Body{ CutScene2Obj->GetComponent<RigidBody>(L"RigidBody") };
+	CutScene2Body->AddCollider<BoxCollider>(CutScene2Obj->GetTransform()->GetScale());
+	CutScene2Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE4);
 
 	auto GuideUI1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 6500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false)};
 	auto GuideUI1Body{ GuideUI1Obj->GetComponent<RigidBody>(L"RigidBody") };
