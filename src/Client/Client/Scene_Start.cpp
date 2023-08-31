@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "LoginButton_Script.h"
 #include "SettingButton_Script.h"
 #include "CloseButton_Script.h"
@@ -114,6 +114,7 @@ void Scene_Start::CreateLayer(void)
 {
 	GGameInstance->SetLayerName(0, L"UI");
 
+	GET_SINGLE(SceneManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 	GET_SINGLE(FontManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 }
 
@@ -294,24 +295,23 @@ void Scene_Start::CreatePopUp()
 
 void Scene_Start::CreateBlur()
 {
-	std::shared_ptr<Texture> texture = GET_TEXTURE(L"Blur");
-	std::shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
-	{
-		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+	std::shared_ptr<Texture> texture{ GET_RESOURCE->GetBlurTexture() };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
-		auto transform{ obj->GetTransform() };
-		float width{ static_cast<float>(GEngine->GetWindow().width) };
-		float height{ static_cast<float>(GEngine->GetWindow().height) };
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false, true) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 
-		transform->SetLocalScale(Vec3{ width, height, 1.f });
-		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
+	auto transform{ obj->GetTransform() };
+	float width{ static_cast<float>(GEngine->GetWindow().width) };
+	float height{ static_cast<float>(GEngine->GetWindow().height) };
 
-		obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 1.f);
+	transform->SetLocalScale(Vec3{ width, height, 1.f });
+	transform->SetLocalPosition(Vec3{ 0.f, 0.f, 450.f });
 
-		AddGameObject(obj);
-		GET_SINGLE(SceneManager)->SetBlurUI(obj);
-	}
+	obj->GetMeshRenderer()->GetMaterial()->SetFloat(2, 1.f);
+
+	AddGameObject(obj);
+	GET_SINGLE(SceneManager)->SetBlurUI(obj);
 }
 
 void Scene_Start::CreateCloseButton()

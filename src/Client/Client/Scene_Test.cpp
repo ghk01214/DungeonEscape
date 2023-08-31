@@ -105,11 +105,6 @@ void Scene_Test::LateUpdate()
 				CreateAnimatedRemoteObject(packet);
 			}
 			break;
-			case ProtocolID::MY_ADD_OBJ_ACK:
-			{
-				ChangeNetworkObjectID(packet);
-			}
-			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
 			{
 				CreateRemoteObject(packet);
@@ -334,7 +329,6 @@ void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE p
 	{
 		object->GetTransform()->SetWorldMatrix(matWorld);
 	}
-
 }
 
 void Scene_Test::CreateSphere(std::shared_ptr<CScene> pScene)
@@ -1912,7 +1906,7 @@ void Scene_Test::ChangeMuteTexture()
 		m_sliderTip[SE]->ChangeTexture(1);
 		m_volumeSlider[SE]->ChangeMuteTexture(true);
 		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(true);
-}
+	}
 	else
 	{
 		m_sliderTip[SE]->ChangeTexture(0);
@@ -1920,19 +1914,10 @@ void Scene_Test::ChangeMuteTexture()
 		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(false);
 	}
 }
+
 #pragma endregion
 
-#pragma region
-void Scene_Test::ChangeNetworkObjectID(network::CPacket& packet)
-{
-	int32_t newID{ packet.ReadID() };
-	int32_t oldID{ packet.Read<int32_t>() };
-
-	m_objectIDMap[oldID] = newID;
-
-	GET_NETWORK->ExchangeObjectID(oldID, newID);
-}
-
+#pragma region [NETWORKD]
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkToObject(std::vector<std::shared_ptr<CGameObject>> objects, server::OBJECT_TYPE objectType, int32_t id)
 {
 	std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>(objectType, id) };

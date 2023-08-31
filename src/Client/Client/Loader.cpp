@@ -166,18 +166,6 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 
 HRESULT CLoader::Loading_GamePlayLevel_UI()
 {
-	LOAD_TEXTURE(L"Player Slider Frame(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(L).png");
-	LOAD_TEXTURE(L"Player Slider Frame(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(R).png");
-	LOAD_TEXTURE(L"Player Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(C).png");
-
-	LOAD_TEXTURE(L"HP(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(L).png");
-	LOAD_TEXTURE(L"HP(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(R).png");
-	LOAD_TEXTURE(L"HP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(C).png");
-
-	LOAD_TEXTURE(L"MP(L)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Blue(L).png");
-	LOAD_TEXTURE(L"MP(R)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Blue(R).png");
-	LOAD_TEXTURE(L"MP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Blue(C).png");
-
 	LOAD_TEXTURE(L"Nana_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Nana.png");
 	LOAD_TEXTURE(L"Mistic_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Mistic.png");
 	LOAD_TEXTURE(L"Carmel_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Carmel.png");

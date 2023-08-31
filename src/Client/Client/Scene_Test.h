@@ -122,7 +122,6 @@ private:
 private:
 	void SendKeyInput();
 
-	void ChangeNetworkObjectID(network::CPacket& packet);
 	std::vector<std::shared_ptr<CGameObject>> AddNetworkToObject(std::vector<std::shared_ptr<CGameObject>> object, server::OBJECT_TYPE objectType, int32_t id = -1);
 	void CreateAnimatedRemoteObject(network::CPacket& packet);
 	void CreateRemoteObject(network::CPacket& packet);
