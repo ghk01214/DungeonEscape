@@ -18,6 +18,7 @@ public:
 
 public:
 	void InsertTextures(std::shared_ptr<Texture> texture);
+	void ChangeObjectAlpha();
 
 public:
 	void SetActive(bool flag);

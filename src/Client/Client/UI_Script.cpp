@@ -37,6 +37,14 @@ void UI_Script::InsertTextures(std::shared_ptr<Texture> texture)
 	m_textures.push_back(texture);
 }
 
+void UI_Script::ChangeObjectAlpha()
+{
+	for (int32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
+	{
+		GetMeshRenderer()->GetMaterial(i)->SetFloat(2, m_alpha);
+	}
+}
+
 void UI_Script::SetActive(bool flag)
 {
 	m_active = flag;

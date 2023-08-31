@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "OneTimeDialogue_Script.h"
 
 #include <MeshRenderer.h>
@@ -23,6 +23,8 @@ OneTimeDialogue_Script::~OneTimeDialogue_Script()
 void OneTimeDialogue_Script::Awake()
 {
 	__super::Awake();
+
+	ChangeObjectAlpha();
 }
 
 void OneTimeDialogue_Script::Start()
