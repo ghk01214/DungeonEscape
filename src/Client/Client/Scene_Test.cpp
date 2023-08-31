@@ -33,6 +33,8 @@
 #include "Scripts.hpp"
 #include "Creator.h"
 
+//#define MOVEMENT
+
 Scene_Test::Scene_Test() :
 	m_eCurrentMapType{ MAP_TYPE::END },
 	m_eNextMapType{ MAP_TYPE::END },
@@ -211,9 +213,6 @@ void Scene_Test::CreateMainCamera(std::shared_ptr<CScene> pScene)
 	camera->AddComponent(make_shared<Transform>());
 	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
 
-
-	//#define MOVEMENT
-
 #ifdef MOVEMENT
 	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>();
 	camera->AddComponent(pMovementScript);
@@ -227,9 +226,6 @@ void Scene_Test::CreateMainCamera(std::shared_ptr<CScene> pScene)
 	pSenematicScript->SetScript(pCameraScript);
 	camera->AddComponent(pSenematicScript);
 #endif
-
-
-
 
 	camera->GetCamera()->SetFar(30000.f);
 	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 500.f, -500.f));
