@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "NetworkManager.h"
 
 #include "SceneManager.h"
@@ -146,19 +146,6 @@ namespace network
 	void NetworkManager::RemoveNetworkObject(int32_t id)
 	{
 		m_objects.erase(id);
-	}
-
-	void NetworkManager::ExchangeObjectID(int32_t oldID, int32_t newID)
-	{
-		auto obj{ m_objects.extract(oldID) };
-		obj.key() = newID;
-
-		m_objects.insert(std::move(obj));
-
-		for (auto& object : m_objects[newID])
-		{
-			object->GetNetwork()->SetID(newID);
-		}
 	}
 #pragma endregion
 
@@ -314,22 +301,8 @@ namespace network
 		{
 			case ProtocolID::AU_LOGIN_ACK:
 			{
-				/*m_id = m_packet.ReadID();
-
-				m_objects.insert(std::make_pair(m_id, GET_PLAYER));
-
-				for (auto& object : m_objects[m_id])
-				{
-					object->GetNetwork()->SetID(m_id);
-				}
-
-				AddPlayer(m_id);
-
-				std::cout << "ADD ME[" << m_id << "]" << std::endl << std::endl;*/
 				m_login = true;
 				m_id = m_packet.ReadID();
-
-				//std::cout << std::format("Login Success!") << std::endl;
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_ACK:
@@ -346,32 +319,6 @@ namespace network
 	{
 		switch (type)
 		{
-			/*case ProtocolID::MY_ISSUE_PLAYER_ID_ACK:
-			{
-				m_id = m_packet.ReadID();
-
-				std::list<NetworkComponent>::iterator iter;
-				for (iter = m_unregisterdObjects.begin(); iter != m_unregisterdObjects.end(); ++iter)
-				{
-					if (iter->type == server::OBJECT_TYPE::PLAYER)
-						break;
-				}
-
-				if (iter != m_unregisterdObjects.end())
-				{
-					m_objects[m_id] = iter->object;
-
-					for (auto& obj : m_objects[m_id])
-					{
-						obj->GetNetwork()->SetID(m_id);
-					}
-
-					m_unregisterdObjects.erase(iter);
-
-					std::cout << std::format("My id is {}\n", m_id);
-				}
-			}
-			break;*/
 			case ProtocolID::MY_ADD_OBJ_ACK:
 			case ProtocolID::MY_ADD_OBJ_COLLIDER_ACK:
 			{

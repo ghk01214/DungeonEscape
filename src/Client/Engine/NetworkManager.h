@@ -39,7 +39,6 @@ namespace network
 		void AddNetworkComponent(NetworkGameObject& object);
 		void AddNetworkObject(int32_t id, NetworkGameObject& object);
 		void RemoveNetworkObject(int32_t id);
-		void ExchangeObjectID(int32_t oldID, int32_t newID);
 
 		constexpr int32_t GetID() const { return m_id; }
 		NetworkGameObject GetNetworkObject(int32_t id) const { return m_objects.at(id); }
