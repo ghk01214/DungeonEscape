@@ -93,6 +93,7 @@ private:
 
 private:
 	void CreatePlayerUI(server::FBX_TYPE character);
+	void CreatePlayerImage(server::FBX_TYPE character);
 	void CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTransform);
 	void CreatePlayerHPBar(float yPos, UITransform& hpTransform);
 	float CreatePlayerMPBar();

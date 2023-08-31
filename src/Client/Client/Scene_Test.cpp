@@ -1062,38 +1062,42 @@ float Scene_Test::CreatePartyPlayerMPBar(UITransform trans)
 
 void Scene_Test::CreateOneTimeDialogue()
 {
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Pillar Hint") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
 	{
-		std::shared_ptr<CGameObject> obj{ std::make_shared<CGameObject>() };
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
-		obj->AddComponent(std::make_shared<Transform>());
 
 		auto pos{ GetRatio(0.f, 50.f) };
+		auto transform{ obj->GetTransform() };
 
-		obj->GetTransform()->SetLocalScale(Vec3(916.f, 106.f, 1.f));
-		obj->GetTransform()->SetLocalPosition(Vec3(pos.x, pos.y, 1.1f));
-
-		std::shared_ptr<MeshRenderer> meshRenderer = std::make_shared<MeshRenderer>();
-		{
-			std::shared_ptr<Mesh> mesh{ GET_SINGLE(Resources)->LoadRectangleMesh() };
-			meshRenderer->SetMesh(mesh);
-		}
-
-		{
-			std::shared_ptr<Shader> shader{ GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture") };
-			std::shared_ptr<Texture> texture{ GET_SINGLE(Resources)->Get<Texture>(L"Pillar Hint") };
-
-			std::shared_ptr<Material> material{ std::make_shared<Material>() };
-			material->SetShader(shader);
-			material->SetTexture(0, texture);
-			material->SetFloat(2, 0.f);
-			meshRenderer->SetMaterial(material);
-		}
-
-		obj->AddComponent(meshRenderer);
+		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
 		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("PILLAR_HINT") };
-		behaviour->InsertTextures(GET_SINGLE(Resources)->Get<Texture>(L"Bar"));
+		behaviour->InsertTextures(texture);
 		m_oneTimeDialogueScript["PILLAR_HINT"] = behaviour;
+
+		obj->AddComponent(behaviour);
+
+		AddGameObject(obj);
+	}
+
+	texture = GET_TEXTURE(L"Pillar Hint2");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto pos{ GetRatio(0.f, 50.f) };
+		auto transform{ obj->GetTransform() };
+
+		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("PILLAR_HINT2") };
+		behaviour->InsertTextures(texture);
+		m_oneTimeDialogueScript["PILLAR_HINT2"] = behaviour;
 
 		obj->AddComponent(behaviour);
 
@@ -1163,7 +1167,7 @@ void Scene_Test::CreateCloseButton()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-	}
+}
 }
 
 void Scene_Test::CreateSettingFrame()
@@ -1220,7 +1224,7 @@ void Scene_Test::CreateBGMButton()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-	}
+}
 }
 
 void Scene_Test::CreateBGMSlider()
@@ -1248,7 +1252,7 @@ void Scene_Test::CreateBGMSlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-	}
+}
 
 	// SLIDER FRAME(R)
 	texture = GET_TEXTURE(L"Slider Frame(R)");
@@ -1545,7 +1549,7 @@ void Scene_Test::CreateSEButton()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-	}
+}
 }
 
 void Scene_Test::CreateSESlider()
@@ -1573,7 +1577,7 @@ void Scene_Test::CreateSESlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-	}
+}
 
 	// SLIDER FRAME(R)
 	texture = GET_TEXTURE(L"Slider Frame(R)");
