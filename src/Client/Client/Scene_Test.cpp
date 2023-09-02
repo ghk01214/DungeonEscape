@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -1069,7 +1069,7 @@ void Scene_Test::CreateBossUI(server::FBX_TYPE boss, int32_t hp)
 {
 	UITransform transform{ GetRatio(0.f, 100.f), Vec2{} };
 	CreateBossHPBar(transform, hp);
-	CreateBossClassIcon(transform);
+	CreateBossClassIcon(transform, boss);
 }
 
 void Scene_Test::CreateBossHPBar(UITransform& trans, int32_t hp)
@@ -2785,6 +2785,8 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			m_overlappedObjects.erase(id);
 
 			m_bossHPScript.reset();
+
+			RemoveGameObject(m_bossUIObjets);
 			m_bossUIObjets.clear();
 		}
 		break;
