@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 
 std::wstring serverIP_Address{ L"127.0.0.1" };
+std::wstring userName{};
 bool playMusic{ false };
 bool playSound{ false };
 

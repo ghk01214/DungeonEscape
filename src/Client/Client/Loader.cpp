@@ -376,6 +376,7 @@ HRESULT CLoader::Loading_ForStart_Texture()
 	LOAD_TEXTURE(L"Setting", L"..\\Resources\\Texture\\UI\\Button\\Setting.png");
 
 #pragma region [POP UP]
+#pragma region [SETTING]
 	LOAD_TEXTURE(L"Setting Frame", L"..\\Resources\\Texture\\UI\\Frame\\Setting Frame.png");
 
 	LOAD_TEXTURE(L"BGM", L"..\\Resources\\Texture\\UI\\Icon\\BGM.png");
@@ -404,6 +405,13 @@ HRESULT CLoader::Loading_ForStart_Texture()
 
 	LOAD_TEXTURE(L"Slider Tip", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip.png");
 	LOAD_TEXTURE(L"Slider Tip Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip_mute.png");
+#pragma endregion
+#pragma region [LOG_IN]
+	LOAD_TEXTURE(L"Log In Frame", L"..\\Resources\\Texture\\UI\\Frame\\Log In Frame.png");
+
+	LOAD_TEXTURE(L"Input Field", L"..\\Resources\\Texture\\UI\\Frame\\InputFrame.png");
+	LOAD_TEXTURE(L"Input Field_selected", L"..\\Resources\\Texture\\UI\\Frame\\InputFrame_selected.png");
+#pragma endregion
 #pragma endregion
 
 	return S_OK;

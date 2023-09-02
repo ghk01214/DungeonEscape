@@ -10,6 +10,7 @@
 
 extern HINSTANCE g_hInst;
 extern std::wstring serverIP_Address;
+extern std::wstring userName;
 extern bool playSound;
 extern bool playMusic;
 

@@ -17,8 +17,8 @@ void CGame::Init(const WindowInfo& Info)
 {
 	GGameInstance->Initialize_Engine(Info);
 
-	Open_Scene(SCENE_CHARACTER_SELECT);
-	//Open_Scene(SCENE_START);
+	//Open_Scene(SCENE_CHARACTER_SELECT);
+	Open_Scene(SCENE_START);
 }
 
 void CGame::Start()

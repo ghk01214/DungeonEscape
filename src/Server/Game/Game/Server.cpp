@@ -517,6 +517,11 @@ namespace game
 				msg.objType = packet.Read<server::OBJECT_TYPE>();
 				msg.fbxType = packet.Read<server::FBX_TYPE>();
 
+				std::wstring name{};
+				packet.ReadWString(name);
+
+				msg.name = name;
+
 				InputCommandMessage(msg);
 			}
 			break;

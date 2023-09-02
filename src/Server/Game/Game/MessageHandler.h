@@ -19,6 +19,7 @@ namespace game
 		Quat					playerLook;
 		Vec3					cameraLook;
 		int32_t					state;
+		std::wstring			name;
 
 		Message(int32_t playerID = -1, ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE);
 	};

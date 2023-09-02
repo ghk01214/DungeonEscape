@@ -423,30 +423,7 @@ namespace game
 			//pos = Vec3(0.f, -1750.f, 0.f);
 
 			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
-
-			std::wstring name{};
-
-			switch (msg.fbxType)
-			{
-				case server::FBX_TYPE::NANA:
-				{
-					player->SetName(L"Nana");
-				}
-				break;
-				case server::FBX_TYPE::MISTIC:
-				{
-					player->SetName(L"Mistic");
-				}
-				break;
-				case server::FBX_TYPE::CARMEL:
-				{
-					player->SetName(L"Carmel");
-				}
-				break;
-				default:
-				break;
-			}
-
+			player->SetName(msg.name);
 			player->SetObjectType(msg.objType);
 			player->SetFBXType(msg.fbxType);
 		}

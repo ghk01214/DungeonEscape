@@ -319,6 +319,7 @@ void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE p
 	for (auto& gameObject : gameObjects)
 	{
 		gameObject->SetObjectType(server::OBJECT_TYPE::PLAYER);
+		gameObject->SetName(userName);
 	}
 
 	AddPlayer(gameObjects);

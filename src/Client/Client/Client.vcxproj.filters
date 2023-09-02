@@ -186,6 +186,9 @@
     <Filter Include="소스 파일\Objects\01. UI\In Game\BossUI\HP">
       <UniqueIdentifier>{b65b598a-204f-43b5-8468-e4e8c7ac3eed}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\PopUp\Input">
+      <UniqueIdentifier>{10409053-67c1-4df9-b7d6-3c908abf358d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -365,6 +368,9 @@
     <ClInclude Include="BossHP_Script.h">
       <Filter>소스 파일\Objects\01. UI\In Game\BossUI\HP</Filter>
     </ClInclude>
+    <ClInclude Include="InputString_Script.h">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -538,6 +544,9 @@
     </ClCompile>
     <ClCompile Include="BossHP_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\In Game\BossUI\HP</Filter>
+    </ClCompile>
+    <ClCompile Include="InputString_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\PopUp\Input</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

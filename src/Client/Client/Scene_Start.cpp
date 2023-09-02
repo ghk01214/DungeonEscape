@@ -18,14 +18,16 @@
 #include "Creator.h"
 #include "Scene_Loading.h"
 #include "MuteButton_Script.h"
+#include "InputString_Script.h"
 
 Scene_Start::Scene_Start() :
-	m_logInButton{ nullptr },
+	m_logInPopUpButton{ nullptr },
 	m_settingButton{ nullptr },
 	m_closeButton{ nullptr },
 	m_openSetting{ false },
-	m_inputIndex{ 0 }
+	m_openLogIn{ false }
 {
+	m_centerPos = 75.f;
 }
 
 void Scene_Start::Awake()
@@ -52,7 +54,6 @@ void Scene_Start::Update()
 	ChangePopUpVisibility();
 	ChangeVolume();
 	ChangeMuteTexture();
-	//InputUserName();
 }
 
 void Scene_Start::LateUpdate()
@@ -70,7 +71,7 @@ void Scene_Start::Render()
 	__super::Render();
 }
 
-void Scene_Start::Init(void)
+void Scene_Start::Init()
 {
 	CreateLayer();
 	CreateUICamera();
@@ -78,7 +79,7 @@ void Scene_Start::Init(void)
 	CreateLights();
 }
 
-void Scene_Start::CreateLayer(void)
+void Scene_Start::CreateLayer()
 {
 	GGameInstance->SetLayerName(0, L"UI");
 
@@ -86,7 +87,7 @@ void Scene_Start::CreateLayer(void)
 	GET_SINGLE(FontManager)->SetUIIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 }
 
-void Scene_Start::CreateUICamera(void)
+void Scene_Start::CreateUICamera()
 {
 	std::shared_ptr<CGameObject> camera = std::make_shared<CGameObject>();
 	camera->SetName(L"Orthographic_Camera");
@@ -105,7 +106,7 @@ void Scene_Start::CreateUICamera(void)
 	AddGameObject(camera);
 }
 
-void Scene_Start::CreateUI(void)
+void Scene_Start::CreateUI()
 {
 	CreateBackground();
 	CreateTitle();
@@ -113,9 +114,20 @@ void Scene_Start::CreateUI(void)
 	CreateSettingButton();
 
 	CreatePopUp();
+
+
+
+
+
+	//auto pos{ GetRatio(0.f, 75.f) };
+	//CreateSample();
+	//CreateSample2(pos.y);
+	//CreateSample2(pos.y - 100.f);
+	//CreateSample2(pos.y - 200.f);
+	//CreateBossSample();
 }
 
-void Scene_Start::CreateLights(void)
+void Scene_Start::CreateLights()
 {
 	LightDesc lightDesc;
 	lightDesc.vDirection = Vec3(0.f, -1.f, 0.5f);
@@ -200,7 +212,7 @@ void Scene_Start::CreateLogInButton()
 		script->InsertTextures(texture);
 		script->InsertTextures(GET_TEXTURE(L"Button Selected"));
 		obj->AddComponent(script);
-		m_logInButton = script;
+		m_logInPopUpButton = script;
 
 		AddGameObject(obj);
 	}
@@ -254,11 +266,14 @@ void Scene_Start::CreatePopUp()
 {
 	CreateBlur();
 	CreateCloseButton();
-	CreateSettingFrame();
+	CreatePopUpFrame();
 	CreateBGMButton();
 	CreateBGMSlider();
 	CreateSEButton();
 	CreateSESlider();
+
+	CreateLogInInputField();
+	CreatePopUpLogInButton();
 }
 
 void Scene_Start::CreateBlur()
@@ -286,54 +301,59 @@ void Scene_Start::CreateCloseButton()
 {
 	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Close") };
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
-	{
-		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
-		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 
-		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(-93.f, 86.f) };
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+
+	auto transform{ obj->GetTransform() };
+	Vec2 pos{ GetRatio(-93.f, 86.f) };
 
 #ifdef RELEASE
-		float ratio{ 1.f };
+	float ratio{ 1.f };
 #else
-		float ratio{ 0.5f };
+	float ratio{ 0.5f };
 #endif
 
-		transform->SetLocalScale(Vec3{ 118.f * ratio, 118.f * ratio, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+	transform->SetLocalScale(Vec3{ 118.f * ratio, 118.f * ratio, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
 
-		std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
-		script->InsertTextures(texture);
-		script->InsertTextures(GET_TEXTURE(L"Close Selected"));
-		obj->AddComponent(script);
-		m_closeButton = script;
+	std::shared_ptr<CloseButton_Script> script{ std::make_shared<CloseButton_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Close Selected"));
+	obj->AddComponent(script);
+	m_closeButton = script;
 
-		AddGameObject(obj);
-		m_popUp.push_back(obj);
-	}
+	AddGameObject(obj);
 }
 
-void Scene_Start::CreateSettingFrame()
+void Scene_Start::CreatePopUpFrame()
 {
 	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Setting Frame") };
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 
 		auto transform{ obj->GetTransform() };
-
-#ifdef RELEASE
-		float ratio{ 1.f };
-#else
-		float ratio{ 0.5f };
-#endif
-
-		transform->SetLocalScale(Vec3{ 898.f * ratio, 1029.f * ratio, 1.f });
+		transform->SetLocalScale(Vec3{ 898.f, 1029.f, 1.f });
 		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 400.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
+	}
+
+	texture = GET_TEXTURE(L"Log In Frame");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 758.f, 729.f, 1.f });
+		transform->SetLocalPosition(Vec3{ 0.f, 0.f, 400.f });
+
+		AddGameObject(obj);
+		m_logInPopUp.push_back(obj);
 	}
 }
 
@@ -366,7 +386,7 @@ void Scene_Start::CreateBGMButton()
 		m_muteButton.push_back(script);
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 }
 
@@ -394,7 +414,7 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FRAME(R)
@@ -416,7 +436,7 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FRAME(C)
@@ -438,7 +458,7 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 #pragma endregion
 
@@ -462,7 +482,7 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER INNER FRAME(R)
@@ -484,7 +504,7 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER INNER FRAME(C)
@@ -506,7 +526,7 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 #pragma endregion
 
@@ -530,7 +550,7 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FILL AREA(R)
@@ -552,7 +572,7 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FILL AREA(C)
@@ -574,7 +594,7 @@ void Scene_Start::CreateBGMSlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 #pragma endregion
 
@@ -606,7 +626,7 @@ void Scene_Start::CreateBGMSlider()
 		m_volumeSliderLeftTip.push_back(script);
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FILL(C)
@@ -629,7 +649,7 @@ void Scene_Start::CreateBGMSlider()
 		m_volumeSlider.push_back(script);
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 #pragma endregion
 
@@ -658,7 +678,7 @@ void Scene_Start::CreateBGMSlider()
 		m_sliderTip.push_back(script);
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 }
 
@@ -691,7 +711,7 @@ void Scene_Start::CreateSEButton()
 		m_muteButton.push_back(script);
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 }
 
@@ -719,7 +739,7 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FRAME(R)
@@ -741,7 +761,7 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FRAME(C)
@@ -763,7 +783,7 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 #pragma endregion
 
@@ -787,7 +807,7 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER INNER FRAME(R)
@@ -809,7 +829,7 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER INNER FRAME(C)
@@ -831,7 +851,7 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 #pragma endregion
 
@@ -855,7 +875,7 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FILL AREA(R)
@@ -877,7 +897,7 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FILL AREA(C)
@@ -899,7 +919,7 @@ void Scene_Start::CreateSESlider()
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 #pragma endregion
 
@@ -931,7 +951,7 @@ void Scene_Start::CreateSESlider()
 		m_volumeSliderLeftTip.push_back(script);
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 
 	// SLIDER FILL(C)
@@ -955,7 +975,7 @@ void Scene_Start::CreateSESlider()
 		m_volumeSlider.push_back(script);
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
 	}
 #pragma endregion
 
@@ -984,7 +1004,73 @@ void Scene_Start::CreateSESlider()
 		m_sliderTip.push_back(script);
 
 		AddGameObject(obj);
-		m_popUp.push_back(obj);
+		m_settingPopUp.push_back(obj);
+	}
+}
+
+void Scene_Start::CreateLogInInputField()
+{
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Input Field") };
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto transform{ obj->GetTransform() };
+	Vec2 pos{ GetRatio(0.f, 0.f) };
+
+	transform->SetLocalScale(Vec3{ 640.f * 0.8f, 96.f * 0.8f, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+	std::shared_ptr<InputString_Script> script{ std::make_shared<InputString_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Input Field_selected"));
+	obj->AddComponent(script);
+	m_inputField = script;
+
+	AddGameObject(obj);
+	m_logInPopUp.push_back(obj);
+}
+
+void Scene_Start::CreatePopUpLogInButton()
+{
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Button") };
+
+	// Button
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		Vec2 pos{ GetRatio(0.f, -42.f) };
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 281.f, 110.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		std::shared_ptr<LoginButton_Script> script{ std::make_shared<LoginButton_Script>(false) };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Button Selected"));
+		script->SetTemp(1);
+		obj->AddComponent(script);
+		m_logInButton = script;
+
+		AddGameObject(obj);
+		m_logInPopUp.push_back(obj);
+	}
+
+	// Log In Text
+	texture = GET_TEXTURE(L"Log In");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		Vec2 pos{ GetRatio(0.f, -41.f) };
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 268.f * 0.65f, 58.f * 0.65f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 350.f });
+
+		AddGameObject(obj);
+		m_logInPopUp.push_back(obj);
 	}
 }
 
@@ -993,6 +1079,10 @@ void Scene_Start::ChangeScene()
 	if (m_logInButton->IsLogIn() == false)
 		return;
 
+	if (m_inputField->GetStrSize() == 0)
+		return;
+
+	userName = m_inputField->GetStr();
 	GET_SINGLE(SceneManager)->LoadScene(Scene_Loading::Create(SCENE_CHARACTER_SELECT));
 }
 
@@ -1000,52 +1090,103 @@ void Scene_Start::ChangePopUpVisibility()
 {
 	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::ESC) == true)
 	{
-		m_openSetting = !m_openSetting;
-
-		if (m_openSetting == true)
+		if (m_openLogIn == true)
 		{
-			for (auto& obj : m_popUp)
-			{
-				obj->GetUI()->SetVisible(true);
-			}
-
-			m_settingButton->GetGameObject()->GetUI()->SetVisible(false);
-			m_logInButton->SetActive(false);
-		}
-		else
-		{
-			for (auto& obj : m_popUp)
+			for (auto& obj : m_logInPopUp)
 			{
 				obj->GetUI()->SetVisible(false);
 			}
 
-			m_settingButton->GetGameObject()->GetUI()->SetVisible(true);
-			m_logInButton->SetActive(true);
+			m_openLogIn = false;
+			m_settingButton->GetUI()->SetVisible(true);
+			m_closeButton->GetUI()->SetVisible(false);
+			m_logInPopUpButton->SetShowPopUpFlag(false);
+			m_logInPopUpButton->GetUI()->SetVisible(true);
+			m_logInPopUpButton->SetActive(true);
+			m_logInButton->GetUI()->SetVisible(false);
+			m_logInButton->SetActive(false);
 		}
+		else
+		{
+			m_openSetting = !m_openSetting;
+
+			if (m_openSetting == true)
+			{
+				for (auto& obj : m_settingPopUp)
+				{
+					obj->GetUI()->SetVisible(true);
+				}
+
+				m_settingButton->GetUI()->SetVisible(false);
+				m_closeButton->GetUI()->SetVisible(true);
+				m_logInPopUpButton->GetUI()->SetVisible(false);
+				m_logInPopUpButton->SetActive(false);
+			}
+			else
+			{
+				for (auto& obj : m_settingPopUp)
+				{
+					obj->GetUI()->SetVisible(false);
+				}
+
+				m_settingButton->GetUI()->SetVisible(true);
+				m_closeButton->GetUI()->SetVisible(false);
+				m_logInPopUpButton->GetUI()->SetVisible(true);
+				m_logInPopUpButton->SetActive(true);
+			}
+		}
+
 	}
 
 	if (m_settingButton->ShowPopUp() == true)
 	{
-		for (auto& obj : m_popUp)
+		for (auto& obj : m_settingPopUp)
 		{
 			obj->GetUI()->SetVisible(true);
 		}
 
 		m_settingButton->SetShowPopUpFlag(false);
-		m_logInButton->SetActive(false);
+		m_closeButton->GetUI()->SetVisible(true);
+		m_logInPopUpButton->GetUI()->SetVisible(false);
+		m_logInPopUpButton->SetActive(false);
 		m_openSetting = true;
 	}
 	else if (m_closeButton->ClosePopUp() == true)
 	{
-		for (auto& obj : m_popUp)
+		for (auto& obj : m_settingPopUp)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+
+		for (auto& obj : m_logInPopUp)
 		{
 			obj->GetUI()->SetVisible(false);
 		}
 
 		m_closeButton->SetClosePopUpFlag(false);
-		m_settingButton->GetGameObject()->GetUI()->SetVisible(true);
-		m_logInButton->SetActive(true);
+		m_settingButton->GetUI()->SetVisible(true);
+		m_logInPopUpButton->SetShowPopUpFlag(false);
+		m_logInPopUpButton->GetUI()->SetVisible(true);
+		m_logInPopUpButton->SetActive(true);
+		m_logInButton->GetUI()->SetVisible(false);
+		m_logInButton->SetActive(false);
 		m_openSetting = false;
+		m_openLogIn = false;
+	}
+	else if (m_logInPopUpButton->ShowPopUp() == true)
+	{
+		for (auto& obj : m_logInPopUp)
+		{
+			obj->GetUI()->SetVisible(true);
+		}
+
+		m_closeButton->GetUI()->SetVisible(true);
+		m_settingButton->GetUI()->SetVisible(false);
+		m_logInPopUpButton->GetUI()->SetVisible(false);
+		m_logInPopUpButton->SetActive(false);
+		m_logInButton->GetUI()->SetVisible(true);
+		m_logInButton->SetActive(true);
+		m_openLogIn = true;
 	}
 }
 
@@ -1091,218 +1232,125 @@ void Scene_Start::ChangeMuteTexture()
 	}
 }
 
-void Scene_Start::InputUserName()
+void Scene_Start::CreateSample()
 {
-	if (m_userName.length() > 15)
-		return;
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+#pragma region [IMAGE]
+	{
+		std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Nana_In Game") };
 
-	InputAlphabet();
-	InputNumber();
-	InputNumPad();
-	InputSpecialChar();
-	InputFuncKey();
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		// 위치 및 카메라 인덱스 설정
+		Vec2 pos{ GetRatio(-20.f, -100.f) };
+		pos.y += 150.f / 2.f;
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 150.f, 150.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+		AddGameObject(obj);
+	}
+#pragma endregion
+
+#pragma region [NAME]
+	GET_SINGLE(FontManager)->RenderFonts(L"Name", GetRatio(0.f, 0.f), Vec2{ 10.f, 10.f });
+#pragma endregion
 }
 
-void Scene_Start::InputAlphabet()
+void Scene_Start::CreateSample2(float yPos)
 {
-	auto i{ GET_SINGLE(CInput) };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
-	if ((GetKeyState(VK_CAPITAL) & 0x0001) == true
-		or i->GetButton(KEY_TYPE::LSHIFT) == true
-		or i->GetButton(KEY_TYPE::RSHIFT) == true)
+#pragma region [IMAGE]
 	{
-		if (i->GetButtonDown(KEY_TYPE::A) == true) m_userName.insert(m_inputIndex++, L"A");
-		else if (i->GetButtonDown(KEY_TYPE::B) == true) m_userName.insert(m_inputIndex++, L"B");
-		else if (i->GetButtonDown(KEY_TYPE::C) == true) m_userName.insert(m_inputIndex++, L"C");
-		else if (i->GetButtonDown(KEY_TYPE::D) == true) m_userName.insert(m_inputIndex++, L"D");
-		else if (i->GetButtonDown(KEY_TYPE::E) == true) m_userName.insert(m_inputIndex++, L"E");
-		else if (i->GetButtonDown(KEY_TYPE::F) == true) m_userName.insert(m_inputIndex++, L"F");
-		else if (i->GetButtonDown(KEY_TYPE::G) == true) m_userName.insert(m_inputIndex++, L"G");
-		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_userName.insert(m_inputIndex++, L"H");
-		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_userName.insert(m_inputIndex++, L"I");
-		else if (i->GetButtonDown(KEY_TYPE::J) == true) m_userName.insert(m_inputIndex++, L"J");
-		else if (i->GetButtonDown(KEY_TYPE::K) == true) m_userName.insert(m_inputIndex++, L"K");
-		else if (i->GetButtonDown(KEY_TYPE::L) == true) m_userName.insert(m_inputIndex++, L"L");
-		else if (i->GetButtonDown(KEY_TYPE::M) == true) m_userName.insert(m_inputIndex++, L"M");
-		else if (i->GetButtonDown(KEY_TYPE::N) == true) m_userName.insert(m_inputIndex++, L"N");
-		else if (i->GetButtonDown(KEY_TYPE::O) == true) m_userName.insert(m_inputIndex++, L"O");
-		else if (i->GetButtonDown(KEY_TYPE::P) == true) m_userName.insert(m_inputIndex++, L"P");
-		else if (i->GetButtonDown(KEY_TYPE::Q) == true) m_userName.insert(m_inputIndex++, L"Q");
-		else if (i->GetButtonDown(KEY_TYPE::R) == true) m_userName.insert(m_inputIndex++, L"R");
-		else if (i->GetButtonDown(KEY_TYPE::S) == true) m_userName.insert(m_inputIndex++, L"S");
-		else if (i->GetButtonDown(KEY_TYPE::T) == true) m_userName.insert(m_inputIndex++, L"T");
-		else if (i->GetButtonDown(KEY_TYPE::U) == true) m_userName.insert(m_inputIndex++, L"U");
-		else if (i->GetButtonDown(KEY_TYPE::V) == true) m_userName.insert(m_inputIndex++, L"V");
-		else if (i->GetButtonDown(KEY_TYPE::W) == true) m_userName.insert(m_inputIndex++, L"W");
-		else if (i->GetButtonDown(KEY_TYPE::X) == true) m_userName.insert(m_inputIndex++, L"X");
-		else if (i->GetButtonDown(KEY_TYPE::Y) == true) m_userName.insert(m_inputIndex++, L"Y");
-		else if (i->GetButtonDown(KEY_TYPE::Z) == true) m_userName.insert(m_inputIndex++, L"Z");
+		std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Nana_In Game") };
+
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		// 위치 및 카메라 인덱스 설정
+		Vec2 pos{ GetRatio(-100.f, m_centerPos) };
+		pos.x += 100.f / 2.f;
+		pos.y = yPos;
+		auto transform{ obj->GetTransform() };
+
+		transform->SetLocalScale(Vec3{ 100.f, 100.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+		AddGameObject(obj);
+		m_ui.push_back(obj);
 	}
-	else
-	{
-		if (i->GetButtonDown(KEY_TYPE::A) == true) m_userName.insert(m_inputIndex++, L"a");
-		else if (i->GetButtonDown(KEY_TYPE::B) == true) m_userName.insert(m_inputIndex++, L"b");
-		else if (i->GetButtonDown(KEY_TYPE::C) == true) m_userName.insert(m_inputIndex++, L"c");
-		else if (i->GetButtonDown(KEY_TYPE::D) == true) m_userName.insert(m_inputIndex++, L"d");
-		else if (i->GetButtonDown(KEY_TYPE::E) == true) m_userName.insert(m_inputIndex++, L"e");
-		else if (i->GetButtonDown(KEY_TYPE::F) == true) m_userName.insert(m_inputIndex++, L"f");
-		else if (i->GetButtonDown(KEY_TYPE::G) == true) m_userName.insert(m_inputIndex++, L"g");
-		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_userName.insert(m_inputIndex++, L"h");
-		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_userName.insert(m_inputIndex++, L"i");
-		else if (i->GetButtonDown(KEY_TYPE::J) == true) m_userName.insert(m_inputIndex++, L"j");
-		else if (i->GetButtonDown(KEY_TYPE::K) == true) m_userName.insert(m_inputIndex++, L"k");
-		else if (i->GetButtonDown(KEY_TYPE::L) == true) m_userName.insert(m_inputIndex++, L"l");
-		else if (i->GetButtonDown(KEY_TYPE::M) == true) m_userName.insert(m_inputIndex++, L"m");
-		else if (i->GetButtonDown(KEY_TYPE::N) == true) m_userName.insert(m_inputIndex++, L"n");
-		else if (i->GetButtonDown(KEY_TYPE::O) == true) m_userName.insert(m_inputIndex++, L"o");
-		else if (i->GetButtonDown(KEY_TYPE::P) == true) m_userName.insert(m_inputIndex++, L"p");
-		else if (i->GetButtonDown(KEY_TYPE::Q) == true) m_userName.insert(m_inputIndex++, L"q");
-		else if (i->GetButtonDown(KEY_TYPE::R) == true) m_userName.insert(m_inputIndex++, L"r");
-		else if (i->GetButtonDown(KEY_TYPE::S) == true) m_userName.insert(m_inputIndex++, L"s");
-		else if (i->GetButtonDown(KEY_TYPE::T) == true) m_userName.insert(m_inputIndex++, L"t");
-		else if (i->GetButtonDown(KEY_TYPE::U) == true) m_userName.insert(m_inputIndex++, L"u");
-		else if (i->GetButtonDown(KEY_TYPE::V) == true) m_userName.insert(m_inputIndex++, L"v");
-		else if (i->GetButtonDown(KEY_TYPE::W) == true) m_userName.insert(m_inputIndex++, L"w");
-		else if (i->GetButtonDown(KEY_TYPE::X) == true) m_userName.insert(m_inputIndex++, L"x");
-		else if (i->GetButtonDown(KEY_TYPE::Y) == true) m_userName.insert(m_inputIndex++, L"y");
-		else if (i->GetButtonDown(KEY_TYPE::Z) == true) m_userName.insert(m_inputIndex++, L"z");
-	}
+#pragma endregion
+
+#pragma region [NAME]
+	GET_SINGLE(FontManager)->RenderFonts(L"Name", GetRatio(0.f, 0.f), Vec2{ 10.f, 10.f });
+#pragma endregion
 }
 
-void Scene_Start::InputNumber()
+void Scene_Start::CreateBossSample()
 {
-	auto i{ GET_SINGLE(CInput) };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(L)") };
+	auto pos{ GetRatio(0.f, 100.f) };
+	float hpScale{};
 
-	if (i->GetButton(KEY_TYPE::LSHIFT) == false and i->GetButton(KEY_TYPE::RSHIFT) == false)
+#pragma region [HP]
 	{
-		if (i->GetButtonDown(KEY_TYPE::NUM_1) == true) m_userName.insert(m_inputIndex++, L"1");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_2) == true) m_userName.insert(m_inputIndex++, L"2");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_3) == true) m_userName.insert(m_inputIndex++, L"3");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_4) == true) m_userName.insert(m_inputIndex++, L"4");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_5) == true) m_userName.insert(m_inputIndex++, L"5");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_6) == true) m_userName.insert(m_inputIndex++, L"6");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_7) == true) m_userName.insert(m_inputIndex++, L"7");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_8) == true) m_userName.insert(m_inputIndex++, L"8");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_9) == true) m_userName.insert(m_inputIndex++, L"9");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_0) == true) m_userName.insert(m_inputIndex++, L"0");
-	}
-}
+		Vec3 scale{ 38.f * 18.f, 62.f * 0.8f, 1.f };
+		pos.y -= 62.f;
+		hpScale = scale.x;
 
-void Scene_Start::InputNumPad()
-{
-	auto i{ GET_SINGLE(CInput) };
-
-	if (GetKeyState(VK_NUMLOCK) & 0x0001)
-	{
-		if (i->GetButtonDown(KEY_TYPE::NUMPAD_1) == true) m_userName.insert(m_inputIndex++, L"1");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_2) == true) m_userName.insert(m_inputIndex++, L"2");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_3) == true) m_userName.insert(m_inputIndex++, L"3");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_4) == true) m_userName.insert(m_inputIndex++, L"4");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_5) == true) m_userName.insert(m_inputIndex++, L"5");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_6) == true) m_userName.insert(m_inputIndex++, L"6");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_7) == true) m_userName.insert(m_inputIndex++, L"7");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_8) == true) m_userName.insert(m_inputIndex++, L"8");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_9) == true) m_userName.insert(m_inputIndex++, L"9");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_0) == true) m_userName.insert(m_inputIndex++, L"0");
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_DECIMAL) == true) m_userName.insert(m_inputIndex++, L".");
-	}
-	else
-	{
-		if (i->GetButtonDown(KEY_TYPE::NUMPAD_1) == true) m_inputIndex = m_userName.length();
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_4) == true)
+		// FRAME
+		texture = GET_TEXTURE(L"Player Slider Frame(C)");
 		{
-			if (m_inputIndex > 0)
-				--m_inputIndex;
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			transform->SetLocalScale(scale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			AddGameObject(obj);
 		}
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_6) == true)
+
+		// FILL
+		texture = GET_TEXTURE(L"HP(C)");
+		scale = { 10.f * 67.7f, 52.f * 0.8f, 1.f };
 		{
-			if (m_inputIndex < m_userName.length())
-				++m_inputIndex;
-		}
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_7) == true) m_inputIndex = 0;
-		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_DECIMAL) == true)
-		{
-			if (m_inputIndex < m_userName.length())
-				m_userName.erase(m_inputIndex, 1);
+			std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+			obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+			auto transform{ obj->GetTransform() };
+			transform->SetLocalScale(scale);
+			transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+			//std::shared_ptr<BossHP_Script> script{ std::make_shared<BossHP_Script>() };
+			//script->InsertTextures(texture);
+			//obj->AddComponent(script);
+
+			AddGameObject(obj);
 		}
 	}
-}
+#pragma endregion
 
-void Scene_Start::InputSpecialChar()
-{
-	auto i{ GET_SINGLE(CInput) };
+#pragma region [IMAGE]
+	texture = GET_TEXTURE(L"Golem Class");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-	if (i->GetButton(KEY_TYPE::LSHIFT) == true or i->GetButton(KEY_TYPE::RSHIFT) == true)
-	{
-		if (i->GetButtonDown(KEY_TYPE::NUM_1) == true) m_userName.insert(m_inputIndex++, L"!");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_2) == true) m_userName.insert(m_inputIndex++, L"@");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_3) == true) m_userName.insert(m_inputIndex++, L"#");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_4) == true) m_userName.insert(m_inputIndex++, L"$");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_5) == true) m_userName.insert(m_inputIndex++, L"%");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_6) == true) m_userName.insert(m_inputIndex++, L"^");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_7) == true) m_userName.insert(m_inputIndex++, L"&");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_8) == true) m_userName.insert(m_inputIndex++, L"*");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_9) == true) m_userName.insert(m_inputIndex++, L"(");
-		else if (i->GetButtonDown(KEY_TYPE::NUM_0) == true) m_userName.insert(m_inputIndex++, L")");
-		else if (i->GetButtonDown(KEY_TYPE::MINUS) == true) m_userName.insert(m_inputIndex++, L"_");
-		else if (i->GetButtonDown(KEY_TYPE::EQUALS) == true) m_userName.insert(m_inputIndex++, L"+");
-		else if (i->GetButtonDown(KEY_TYPE::LBRACKET) == true) m_userName.insert(m_inputIndex++, L"{");
-		else if (i->GetButtonDown(KEY_TYPE::RBRACKET) == true) m_userName.insert(m_inputIndex++, L"}");
-		else if (i->GetButtonDown(KEY_TYPE::BACKSLASH) == true) m_userName.insert(m_inputIndex++, L"|");
-		else if (i->GetButtonDown(KEY_TYPE::SEMICOLON) == true) m_userName.insert(m_inputIndex++, L":");
-		else if (i->GetButtonDown(KEY_TYPE::APOSTROPHE) == true) m_userName.insert(m_inputIndex++, L"\"");
-		else if (i->GetButtonDown(KEY_TYPE::COMMA) == true) m_userName.insert(m_inputIndex++, L"<");
-		else if (i->GetButtonDown(KEY_TYPE::PERIOD) == true) m_userName.insert(m_inputIndex++, L">");
-		else if (i->GetButtonDown(KEY_TYPE::SLASH) == true) m_userName.insert(m_inputIndex++, L"?");
-	}
-	else
-	{
-		if (i->GetButtonDown(KEY_TYPE::MINUS) == true) m_userName.insert(m_inputIndex++, L"-");
-		else if (i->GetButtonDown(KEY_TYPE::EQUALS) == true) m_userName.insert(m_inputIndex++, L"=");
-		else if (i->GetButtonDown(KEY_TYPE::LBRACKET) == true) m_userName.insert(m_inputIndex++, L"[");
-		else if (i->GetButtonDown(KEY_TYPE::RBRACKET) == true) m_userName.insert(m_inputIndex++, L"]");
-		else if (i->GetButtonDown(KEY_TYPE::BACKSLASH) == true) m_userName.insert(m_inputIndex++, L"\\");
-		else if (i->GetButtonDown(KEY_TYPE::SEMICOLON) == true) m_userName.insert(m_inputIndex++, L";");
-		else if (i->GetButtonDown(KEY_TYPE::APOSTROPHE) == true) m_userName.insert(m_inputIndex++, L"\'");
-		else if (i->GetButtonDown(KEY_TYPE::COMMA) == true) m_userName.insert(m_inputIndex++, L",");
-		else if (i->GetButtonDown(KEY_TYPE::PERIOD) == true) m_userName.insert(m_inputIndex++, L".");
-		else if (i->GetButtonDown(KEY_TYPE::SLASH) == true) m_userName.insert(m_inputIndex++, L"/");
-	}
+		Vec3 scale{ 256.f * 0.5f };
+		pos.x += (hpScale + scale.x) / 2.f;
 
-	if (i->GetButtonDown(KEY_TYPE::NUMPAD_ADD) == true) m_userName.insert(m_inputIndex++, L"+");
-	else if (i->GetButtonDown(KEY_TYPE::NUMPAD_MINUS) == true) m_userName.insert(m_inputIndex++, L"-");
-	else if (i->GetButtonDown(KEY_TYPE::NUMPAD_MULTIPLY) == true) m_userName.insert(m_inputIndex++, L"*");
-	else if (i->GetButtonDown(KEY_TYPE::NUMPAD_DIVIDE) == true) m_userName.insert(m_inputIndex++, L"/");
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
-	if (i->GetButtonDown(KEY_TYPE::SPACE) == true) m_userName.insert(m_inputIndex++, L" ");
-}
-
-void Scene_Start::InputFuncKey()
-{
-	auto i{ GET_SINGLE(CInput) };
-
-	if (i->GetButtonDown(KEY_TYPE::BACKSPACE) == true)
-	{
-		if (m_inputIndex > 0)
-			m_userName.erase(--m_inputIndex, 1);
+		AddGameObject(obj);
 	}
-	else if (i->GetButtonDown(KEY_TYPE::DEL) == true)
-	{
-		if (m_inputIndex < m_userName.length())
-			m_userName.erase(m_inputIndex, 1);
-	}
-	else if (i->GetButtonDown(KEY_TYPE::HOME) == true) m_inputIndex = 0;
-	else if (i->GetButtonDown(KEY_TYPE::END) == true) m_inputIndex = m_userName.length();
-	else if (i->GetButtonDown(KEY_TYPE::LEFT) == true)
-	{
-		if (m_inputIndex > 0)
-			--m_inputIndex;
-	}
-	else if (i->GetButtonDown(KEY_TYPE::RIGHT) == true)
-	{
-		if (m_inputIndex < m_userName.length())
-			++m_inputIndex;
-	}
+#pragma endregion
 }
 
 shared_ptr<CScene> Scene_Start::Create()

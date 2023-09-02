@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -18,19 +18,19 @@ public:
 	virtual ~Scene_Start() = default;
 
 public:
-	virtual void Awake();
-	virtual void Start();
-	virtual void Update();
-	virtual void LateUpdate();
-	virtual void FinalUpdate();
-	virtual void Render();
+	void Awake() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
+	void FinalUpdate() override;
+	void Render() override;
 
 private:
-	void Init(void);
-	void CreateLayer(void);
-	void CreateUICamera(void);
-	void CreateUI(void);
-	void CreateLights(void);
+	void Init();
+	void CreateLayer();
+	void CreateUICamera();
+	void CreateUI();
+	void CreateLights();
 
 private:
 	void CreateBackground();
@@ -41,11 +41,13 @@ private:
 	void CreatePopUp();
 	void CreateBlur();
 	void CreateCloseButton();
-	void CreateSettingFrame();
+	void CreatePopUpFrame();
 	void CreateBGMButton();
 	void CreateBGMSlider();
 	void CreateSEButton();
 	void CreateSESlider();
+	void CreateLogInInputField();
+	void CreatePopUpLogInButton();
 
 private:
 	void ChangeScene();
@@ -53,17 +55,19 @@ private:
 	void ChangeVolume();
 	void ChangeMuteTexture();
 
-	void InputUserName();
-	void InputAlphabet();
-	void InputNumber();
-	void InputNumPad();
-	void InputSpecialChar();
-	void InputFuncKey();
+private:
+	void CreateSample();
+	void CreateSample2(float yPos);
+	void CreateBossSample();
+
+	std::vector<std::shared_ptr<CGameObject>> m_ui;
+	float m_centerPos;
 
 public:
 	static std::shared_ptr<CScene> Create();
 
 private:
+	std::shared_ptr<class LoginButton_Script> m_logInPopUpButton;
 	std::shared_ptr<class LoginButton_Script> m_logInButton;
 	std::shared_ptr<class SettingButton_Script> m_settingButton;
 	std::shared_ptr<class CloseButton_Script> m_closeButton;
@@ -71,9 +75,11 @@ private:
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSliderLeftTip;
 	std::vector<std::shared_ptr<class MuteButton_Script>> m_muteButton;
+	std::shared_ptr<class InputString_Script> m_inputField;
 
-	std::vector<std::shared_ptr<CGameObject>> m_popUp;
+	std::vector<std::shared_ptr<CGameObject>> m_settingPopUp;
+	std::vector<std::shared_ptr<CGameObject>> m_logInPopUp;
 
 	bool m_openSetting;
-	int32_t m_inputIndex;
+	bool m_openLogIn;
 };

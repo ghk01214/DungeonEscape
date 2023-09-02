@@ -38,6 +38,7 @@ void CloseButton_Script::Update()
 			m_closePopUp = true;
 
 			ChangeTexture(BUTTON);
+			GetUI()->SetVisible(false);
 		}
 	}
 	else if (m_pos.x - (m_scale.x / 2) <= m_mousePos.x and m_mousePos.x <= m_pos.x + (m_scale.x / 2))

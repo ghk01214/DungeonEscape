@@ -170,6 +170,7 @@
     <ClInclude Include="Creator.h" />
     <ClInclude Include="Effect_Script.h" />
     <ClInclude Include="Fade_Script.h" />
+    <ClInclude Include="InputString_Script.h" />
     <ClInclude Include="ReadyButton_Script.h" />
     <ClInclude Include="SliderTip_Script.h" />
     <ClInclude Include="VolumeSlider_Script.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="Creator.cpp" />
     <ClCompile Include="Effect_Script.cpp" />
     <ClCompile Include="Fade_Script.cpp" />
+    <ClCompile Include="InputString_Script.cpp" />
     <ClCompile Include="ReadyButton_Script.cpp" />
     <ClCompile Include="SliderTip_Script.cpp" />
     <ClCompile Include="VolumeSlider_Script.cpp" />
