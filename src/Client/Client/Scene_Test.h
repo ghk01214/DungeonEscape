@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -95,13 +95,19 @@ private:
 	void CreatePlayerUI(server::FBX_TYPE character);
 	void CreatePlayerImage(server::FBX_TYPE character);
 	void CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTransform);
+	void CreatePlayerName(const std::wstring& name);
 	void CreatePlayerHPBar(float yPos, UITransform& hpTransform);
 	float CreatePlayerMPBar();
 
-	void CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character);
+	void CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character, const std::wstring& name);
 	void CreatePartyPlayerImage(server::FBX_TYPE character, UITransform trans);
+	void CreatePartyPlayerName(const std::wstring& name);
 	void CreatePartyPlayerHPBar(float yPos, UITransform trans);
 	float CreatePartyPlayerMPBar(UITransform trans);
+
+	void CreateBossUI(server::FBX_TYPE boss, int32_t hp);
+	void CreateBossHPBar(UITransform& trans, int32_t hp);
+	void CreateBossClassIcon(UITransform& trans, server::FBX_TYPE boss);
 
 	void CreateOneTimeDialogue();
 
@@ -184,6 +190,9 @@ private:
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSliderLeftTip;
 	std::vector<std::shared_ptr<class MuteButton_Script>> m_muteButton;
+
+	std::vector<std::shared_ptr<CGameObject>> m_bossUIObjets;
+	std::shared_ptr<class BossHP_Script> m_bossHPScript;
 
 	bool m_openSetting;
 };

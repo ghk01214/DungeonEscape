@@ -180,6 +180,12 @@
     <Filter Include="소스 파일\Objects\01. UI\Character Select\Character\Button">
       <UniqueIdentifier>{c5214d3c-78ff-45f6-905c-f85f2b355bf1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\BossUI">
+      <UniqueIdentifier>{61ed2ea5-f629-4988-a76d-62827f86b45d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\BossUI\HP">
+      <UniqueIdentifier>{b65b598a-204f-43b5-8468-e4e8c7ac3eed}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -356,6 +362,9 @@
     <ClInclude Include="CharacterSelectButton_Script.h">
       <Filter>소스 파일\Objects\01. UI\Character Select\Character\Button</Filter>
     </ClInclude>
+    <ClInclude Include="BossHP_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\HP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -526,6 +535,9 @@
     </ClCompile>
     <ClCompile Include="CharacterSelectButton_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Character Select\Character\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="BossHP_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\HP</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

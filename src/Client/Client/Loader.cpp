@@ -170,8 +170,14 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	LOAD_TEXTURE(L"Mistic_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Mistic.png");
 	LOAD_TEXTURE(L"Carmel_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Carmel.png");
 
+	LOAD_TEXTURE(L"Weeper Class", L"..\\Resources\\Texture\\UI\\Icon\\Weeper Class.png");
+	LOAD_TEXTURE(L"Golem Class", L"..\\Resources\\Texture\\UI\\Icon\\Golem Class.png");
+
 	LOAD_TEXTURE(L"Pillar Hint", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint.png");
 	LOAD_TEXTURE(L"Pillar Hint2", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint2.png");
+
+	LOAD_TEXTURE(L"Player Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(C).png");
+	LOAD_TEXTURE(L"HP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(C).png");
 
 #pragma region [POP UP]
 	LOAD_TEXTURE(L"Blur", L"..\\Resources\\Texture\\UI\\Blur\\Dimed.png");

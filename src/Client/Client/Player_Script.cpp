@@ -299,6 +299,9 @@ void Player_Script::StartRender(network::CPacket& packet)
 
 	float scaleRatio{ packet.Read<float>() };
 
+	std::wstring name{};
+	packet.ReadWString(name);
+
 	int32_t currState{ packet.Read<int32_t>() };
 	//float updateTime{ packet.Read<float>() };
 

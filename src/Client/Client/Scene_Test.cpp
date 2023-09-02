@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -371,7 +371,7 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 {
 	CreateOneTimeDialogue();
 	CreatePlayerUI(player);
-	CreatePartyPlayerUI(GET_NETWORK->GetID(), player);
+	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, GET_PLAYER.front()->GetName());
 
 	CreatePopUp();
 }
@@ -835,6 +835,11 @@ void Scene_Test::CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTr
 	AddGameObject(obj);
 }
 
+void Scene_Test::CreatePlayerName(const std::wstring& name)
+{
+	GET_SINGLE(FontManager)->RenderFonts(name, GetRatio(0.f, 0.f), Vec2{ 10.f, 10.f });
+}
+
 void Scene_Test::CreatePlayerHPBar(float yPos, UITransform& hpTransform)
 {
 	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(C)") };
@@ -928,7 +933,7 @@ float Scene_Test::CreatePlayerMPBar()
 	return pos.y;
 }
 
-void Scene_Test::CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character)
+void Scene_Test::CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character, const std::wstring& name)
 {
 	CreatePartyPlayerImage(character, m_partyUITransform[id]);
 	//auto mpPos{ CreatePartyPlayerMPBar(m_partyUITransform[id]) };
@@ -957,6 +962,11 @@ void Scene_Test::CreatePartyPlayerImage(server::FBX_TYPE character, UITransform 
 	transform->SetLocalPosition(Vec3{ trans.pos.x, trans.pos.y, 100.f });
 
 	AddGameObject(obj);
+}
+
+void Scene_Test::CreatePartyPlayerName(const std::wstring& name)
+{
+	GET_SINGLE(FontManager)->RenderFonts(name, GetRatio(0.f, 0.f), Vec2{ 10.f, 10.f });
 }
 
 void Scene_Test::CreatePartyPlayerHPBar(float yPos, UITransform trans)
@@ -1052,6 +1062,99 @@ float Scene_Test::CreatePartyPlayerMPBar(UITransform trans)
 	}
 
 	return yPos;
+}
+
+void Scene_Test::CreateBossUI(server::FBX_TYPE boss, int32_t hp)
+{
+	UITransform transform{ GetRatio(0.f, 100.f), Vec2{} };
+	CreateBossHPBar(transform, hp);
+	CreateBossClassIcon(transform);
+}
+
+void Scene_Test::CreateBossHPBar(UITransform& trans, int32_t hp)
+{
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(C)") };
+
+	trans.scale = { 38.f * 18.f, 62.f * 0.8f };
+	trans.pos.y -= 62.f;
+
+	// FRAME
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ trans.scale.x, trans.scale.y, 1.f });
+		transform->SetLocalPosition(Vec3{ trans.pos.x, trans.pos.y, 400.f });
+
+		AddGameObject(obj);
+		m_bossUIObjets.push_back(obj);
+	}
+
+	// FILL
+	texture = GET_TEXTURE(L"HP(C)");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		Vec3 scale{ 10.f * 67.7f, 52.f * 0.8f, 1.f };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(Vec3{ trans.pos.x, trans.pos.y, 400.f });
+
+		std::shared_ptr<BossHP_Script> script{ std::make_shared<BossHP_Script>(hp) };
+		script->InsertTextures(texture);
+		obj->AddComponent(script);
+		m_bossHPScript = script;
+
+		AddGameObject(obj);
+		m_bossUIObjets.push_back(obj);
+	}
+}
+
+void Scene_Test::CreateBossClassIcon(UITransform& trans, server::FBX_TYPE boss)
+{
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ nullptr };
+
+	switch (boss)
+	{
+		case server::FBX_TYPE::WEEPER1:
+		case server::FBX_TYPE::WEEPER2:
+		case server::FBX_TYPE::WEEPER3:
+		case server::FBX_TYPE::WEEPER4:
+		case server::FBX_TYPE::WEEPER5:
+		case server::FBX_TYPE::WEEPER6:
+		case server::FBX_TYPE::WEEPER7:
+		case server::FBX_TYPE::WEEPER_EMISSIVE:
+		{
+			texture = GET_TEXTURE(L"Weeper Class");
+		}
+		break;
+		case server::FBX_TYPE::BLUE_GOLEM:
+		case server::FBX_TYPE::RED_GOLEM:
+		case server::FBX_TYPE::GREEN_GOLEM:
+		{
+			texture = GET_TEXTURE(L"Golem Class");
+		}
+		break;
+		default:
+		break;
+	}
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	Vec3 scale{ 256.f * 0.5f };
+	trans.pos.x += (trans.scale.x + scale.x) / 2.f;
+
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(scale);
+	transform->SetLocalPosition(Vec3{ trans.pos.x, trans.pos.y, 100.f });
+
+	AddGameObject(obj);
+	m_bossUIObjets.push_back(obj);
 }
 
 void Scene_Test::CreateOneTimeDialogue()
@@ -1161,7 +1264,7 @@ void Scene_Test::CreateCloseButton()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 }
 
 void Scene_Test::CreateSettingFrame()
@@ -1218,7 +1321,7 @@ void Scene_Test::CreateBGMButton()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 }
 
 void Scene_Test::CreateBGMSlider()
@@ -1246,7 +1349,7 @@ void Scene_Test::CreateBGMSlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 
 	// SLIDER FRAME(R)
 	texture = GET_TEXTURE(L"Slider Frame(R)");
@@ -1336,7 +1439,7 @@ void Scene_Test::CreateBGMSlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 
 	// SLIDER INNER FRAME(C)
 	texture = GET_TEXTURE(L"Slider Inner Frame(C)");
@@ -1511,7 +1614,7 @@ void Scene_Test::CreateBGMSlider()
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
 	}
-	}
+}
 
 void Scene_Test::CreateSEButton()
 {
@@ -1543,7 +1646,7 @@ void Scene_Test::CreateSEButton()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 }
 
 void Scene_Test::CreateSESlider()
@@ -1571,7 +1674,7 @@ void Scene_Test::CreateSESlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 
 	// SLIDER FRAME(R)
 	texture = GET_TEXTURE(L"Slider Frame(R)");
@@ -1593,7 +1696,7 @@ void Scene_Test::CreateSESlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 
 	// SLIDER FRAME(C)
 	texture = GET_TEXTURE(L"Slider Frame(C)");
@@ -1837,7 +1940,7 @@ void Scene_Test::CreateSESlider()
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
 	}
-	}
+}
 
 void Scene_Test::ChangePopUpVisibility()
 {
@@ -1949,17 +2052,26 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 
 	float scaleRatio{ packet.Read<float>() };
 
+	std::wstring name{};
+	packet.ReadWString(name);
+
 	int32_t state{ packet.Read<int32_t>() };
 	float updateTime{ packet.Read<float>() };
 
 	server::OBJECT_TYPE objType{ packet.Read<server::OBJECT_TYPE>() };
 	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 
+	int32_t hp{};
+	if (objType == server::OBJECT_TYPE::BOSS or objType == server::OBJECT_TYPE::MONSTER)
+		hp = packet.Read<int32_t>();
+
 	ObjectDesc objectDesc;
 	ClassifyObject(fbxType, objectDesc, state);
 
 	if (objType == server::OBJECT_TYPE::PLAYER)
 		objType = server::OBJECT_TYPE::REMOTE_PLAYER;
+
+	objectDesc.strName = name;
 
 	std::vector<std::shared_ptr<CGameObject>> gameObjects{ CreateAnimatedObject(objectDesc) };
 	gameObjects = AddNetworkToObject(gameObjects, objType, id);
@@ -1987,13 +2099,14 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 	{
 		case server::OBJECT_TYPE::REMOTE_PLAYER:
 		{
-			CreatePartyPlayerUI(id, fbxType);
+			CreatePartyPlayerUI(id, fbxType, name);
 			objectDesc.script->Start();
 		}
 		break;
 		case server::OBJECT_TYPE::MONSTER:
 		case server::OBJECT_TYPE::BOSS:
 		{
+			CreateBossUI(fbxType, hp);
 			objectDesc.script->Start();
 		}
 		break;
@@ -2073,7 +2186,6 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Nana";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx";
 			objectDesc.script = std::make_shared<Player_Script>(type, stateIndex);
-			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
 		case server::FBX_TYPE::MISTIC:
@@ -2081,7 +2193,6 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Mistic";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx";
 			objectDesc.script = std::make_shared<Player_Script>(type, stateIndex);
-			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
 		case server::FBX_TYPE::CARMEL:
@@ -2089,7 +2200,6 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Carmel";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx";
 			objectDesc.script = std::make_shared<Player_Script>(type, stateIndex);
-			std::wcout << objectDesc.strName << std::endl;
 		}
 		break;
 #pragma endregion
@@ -2672,6 +2782,9 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 
 			GET_NETWORK->RemoveNetworkObject(id);
 			m_overlappedObjects.erase(id);
+
+			m_bossHPScript.reset();
+			m_bossUIObjets.clear();
 		}
 		break;
 		case server::OBJECT_TYPE::MONSTER:

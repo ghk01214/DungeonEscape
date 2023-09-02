@@ -162,6 +162,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bar_Script.h" />
+    <ClInclude Include="BossHP_Script.h" />
     <ClInclude Include="Button_Script.h" />
     <ClInclude Include="DescriptionButton_Script.h" />
     <ClInclude Include="CharacterSelectButton_Script.h" />
@@ -222,6 +223,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bar_Script.cpp" />
+    <ClCompile Include="BossHP_Script.cpp" />
     <ClCompile Include="Button_Script.cpp" />
     <ClCompile Include="DescriptionButton_Script.cpp" />
     <ClCompile Include="CharacterSelectButton_Script.cpp" />

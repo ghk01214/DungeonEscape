@@ -102,6 +102,7 @@ namespace game
 		packet.Write<float>(scale.z);
 
 		packet.Write<float>(scaleRatio);
+		packet.WriteWString(obj->GetName());
 
 		switch (fbxType)
 		{
@@ -154,6 +155,12 @@ namespace game
 
 		packet.Write<server::OBJECT_TYPE>(objType);
 		packet.Write<server::FBX_TYPE>(fbxType);
+
+		if (objType == server::OBJECT_TYPE::BOSS or objType == server::OBJECT_TYPE::MONSTER)
+		{
+			auto monster{ dynamic_cast<Monster*>(obj) };
+			packet.Write<int32_t>(monster->GetHP());
+		}
 
 		Send(packet);
 	}
