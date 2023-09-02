@@ -42,6 +42,9 @@ namespace network
 
 		constexpr int32_t GetID() const { return m_id; }
 		NetworkGameObject GetNetworkObject(int32_t id) const { return m_objects.at(id); }
+		const std::wstring& GetName() const { return m_name; }
+
+		void SetName(const std::wstring& name);
 
 		constexpr bool IsSuccessfullyLoggedIn() const { return m_login; }
 	private:
@@ -82,6 +85,7 @@ namespace network
 		int32_t m_remainSize;
 
 		int32_t m_id;
+		std::wstring m_name;
 
 		bool m_login;
 		bool m_alreadyAdded;

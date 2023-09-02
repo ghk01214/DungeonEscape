@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "NetworkManager.h"
 
 #include "SceneManager.h"
@@ -146,6 +146,11 @@ namespace network
 	void NetworkManager::RemoveNetworkObject(int32_t id)
 	{
 		m_objects.erase(id);
+	}
+
+	void NetworkManager::SetName(const std::wstring& name)
+	{
+		m_name = name;
 	}
 #pragma endregion
 

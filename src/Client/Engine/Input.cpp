@@ -20,10 +20,10 @@ HRESULT CInput::Init(HINSTANCE hInst, HWND hWnd)
 	m_useKeyType.push_back(KEY_TYPE::D);
 	m_useKeyType.push_back(KEY_TYPE::R);
 	m_useKeyType.push_back(KEY_TYPE::SPACE);
-	m_useKeyType.push_back(KEY_TYPE::KEY_1);
-	m_useKeyType.push_back(KEY_TYPE::KEY_2);
-	m_useKeyType.push_back(KEY_TYPE::KEY_3);
-	m_useKeyType.push_back(KEY_TYPE::KEY_4);
+	m_useKeyType.push_back(KEY_TYPE::NUM_1);
+	m_useKeyType.push_back(KEY_TYPE::NUM_2);
+	m_useKeyType.push_back(KEY_TYPE::NUM_3);
+	m_useKeyType.push_back(KEY_TYPE::NUM_4);
 
 
 	// 디바이스 생성

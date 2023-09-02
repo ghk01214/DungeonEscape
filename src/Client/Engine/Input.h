@@ -5,45 +5,74 @@
 
 enum class KEY_TYPE
 {
-	UP = DIK_UP,
-	DOWN = DIK_DOWN,
-	LEFT = DIK_LEFT,
-	RIGHT = DIK_RIGHT,
-	SPACE = DIK_SPACE,
-
-	BACKSAPCE = DIK_BACKSPACE,
-	DEL = DIK_DELETE,
-
-	ENTER = DIK_RETURN,
-	NUMPAD_ENTER = DIK_NUMPADENTER,
 	ESC = DIK_ESCAPE,
 
+	NUM_1 = DIK_1,
+	NUM_2 = DIK_2,
+	NUM_3 = DIK_3,
+	NUM_4 = DIK_4,
+	NUM_5 = DIK_5,
+	NUM_6 = DIK_6,
+	NUM_7 = DIK_7,
+	NUM_8 = DIK_8,
+	NUM_9 = DIK_9,
+	NUM_0 = DIK_0,
+	MINUS = DIK_MINUS,
+	EQUALS = DIK_EQUALS,
+	BACKSPACE = DIK_BACK,
+
+	TAB = DIK_TAB,
+	Q = DIK_Q,
 	W = DIK_W,
+	E = DIK_E,
+	R = DIK_R,
+	T = DIK_T,
+	Y = DIK_Y,
+	U = DIK_U,
+	I = DIK_I,
+	O = DIK_O,
+	P = DIK_P,
+	LBRACKET = DIK_LBRACKET,
+	RBRACKET = DIK_RBRACKET,
+	BACKSLASH = DIK_BACKSLASH,
+
+	CAPSLOCK = DIK_CAPITAL,
 	A = DIK_A,
 	S = DIK_S,
 	D = DIK_D,
+	F = DIK_F,
+	G = DIK_G,
+	H = DIK_H,
+	J = DIK_J,
+	K = DIK_K,
+	L = DIK_L,
+	SEMICOLON = DIK_SEMICOLON,
+	APOSTROPHE = DIK_APOSTROPHE,
+	ENTER = DIK_RETURN,
 
-	Q = DIK_Q,
-	E = DIK_E,
+	LSHIFT = DIK_LSHIFT,
 	Z = DIK_Z,
+	X = DIK_X,
 	C = DIK_C,
-	R = DIK_R,
+	V = DIK_V,
+	B = DIK_B,
+	N = DIK_N,
+	M = DIK_M,
+	COMMA = DIK_COMMA,
+	PERIOD = DIK_PERIOD,
+	SLASH = DIK_SLASH,
+	RSHIFT = DIK_RSHIFT,
 
-	DOT = DIK_PERIOD,
-	NUMPAD_DOT = DIK_NUMPADPERIOD,
+	LCONTROL = DIK_LCONTROL,
+	LALT = DIK_LMENU,		// LEFT ALT
+	SPACE = DIK_SPACE,
+	RALT = DIK_RMENU,
 
-	// 여기 있는 번호 키는 키보드 영/한 자판 위에 있는 번호 1 ~ 0 사이의 버튼, 오른쪽에 있는 것은 NUMPAD 숫자.
-	KEY_1 = DIK_1,
-	KEY_2 = DIK_2,
-	KEY_3 = DIK_3,
-	KEY_4 = DIK_4,
-	KEY_5 = DIK_5,
-	KEY_6 = DIK_6,
-	KEY_7 = DIK_7,
-	KEY_8 = DIK_8,
-	KEY_9 = DIK_9,
-	KEY_0 = DIK_0,
-
+	NUMLOCK = DIK_NUMLOCK,
+	NUMPAD_DIVIDE = DIK_DIVIDE,
+	NUMPAD_MULTIPLY = DIK_MULTIPLY,
+	NUMPAD_MINUS = DIK_SUBTRACT,
+	NUMPAD_ADD = DIK_ADD,
 	NUMPAD_1 = DIK_NUMPAD1,
 	NUMPAD_2 = DIK_NUMPAD2,
 	NUMPAD_3 = DIK_NUMPAD3,
@@ -54,8 +83,20 @@ enum class KEY_TYPE
 	NUMPAD_8 = DIK_NUMPAD8,
 	NUMPAD_9 = DIK_NUMPAD9,
 	NUMPAD_0 = DIK_NUMPAD0,
+	NUMPAD_DECIMAL = DIK_DECIMAL,
+	NUMPAD_ENTER = DIK_NUMPADENTER,
 
-	MAX = 41
+	INSERT = DIK_INSERT,
+	DEL = DIK_DELETE,
+	HOME = DIK_HOME,
+	END = DIK_END,
+
+	UP = DIK_UP,
+	DOWN = DIK_DOWN,
+	LEFT = DIK_LEFT,
+	RIGHT = DIK_RIGHT,
+
+	MAX = 81
 };
 
 enum class KEY_STATE
@@ -108,7 +149,7 @@ public:
 	Vec2 GetMouseMove(void);	// 이전 프레임과 현재 프레임의 마우스의 x,y 좌표의 움직이는 정도를 반환하는 함수
 
 public:
-	signed char Get_DIMButtonState(MOUSEBUTTONSTATE eDIMBState) { return m_MouseState.rgbButtons[eDIMBState];}
+	signed char Get_DIMButtonState(MOUSEBUTTONSTATE eDIMBState) { return m_MouseState.rgbButtons[eDIMBState]; }
 	signed long Get_DIMMoveState(MOUSEMOVESTATE eDIMMState) { return ((signed long*)&m_MouseState)[eDIMMState]; }
 
 public:

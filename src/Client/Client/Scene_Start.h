@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -53,6 +53,13 @@ private:
 	void ChangeVolume();
 	void ChangeMuteTexture();
 
+	void InputUserName();
+	void InputAlphabet();
+	void InputNumber();
+	void InputNumPad();
+	void InputSpecialChar();
+	void InputFuncKey();
+
 public:
 	static std::shared_ptr<CScene> Create();
 
@@ -68,4 +75,5 @@ private:
 	std::vector<std::shared_ptr<CGameObject>> m_popUp;
 
 	bool m_openSetting;
+	int32_t m_inputIndex;
 };

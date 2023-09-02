@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -371,7 +371,7 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 {
 	CreateOneTimeDialogue();
 	CreatePlayerUI(player);
-	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, GET_PLAYER.front()->GetName());
+	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, GET_NETWORK->GetName());
 
 	CreatePopUp();
 }

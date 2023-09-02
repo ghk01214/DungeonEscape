@@ -23,7 +23,8 @@ Scene_Start::Scene_Start() :
 	m_logInButton{ nullptr },
 	m_settingButton{ nullptr },
 	m_closeButton{ nullptr },
-	m_openSetting{ false }
+	m_openSetting{ false },
+	m_inputIndex{ 0 }
 {
 }
 
@@ -51,40 +52,7 @@ void Scene_Start::Update()
 	ChangePopUpVisibility();
 	ChangeVolume();
 	ChangeMuteTexture();
-
-#pragma region [INPUT]
-	//auto input{ GET_SINGLE(CInput) };
-
-	//if (input->GetButtonDown(KEY_TYPE::KEY_1) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_1))
-	//	m_ipAddress += L'1';
-	//else if (input->GetButtonDown(KEY_TYPE::KEY_2) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_2))
-	//	m_ipAddress += L'2';
-	//else if (input->GetButtonDown(KEY_TYPE::KEY_3) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_3))
-	//	m_ipAddress += L'3';
-	//else if (input->GetButtonDown(KEY_TYPE::KEY_4) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_4))
-	//	m_ipAddress += L'4';
-	//else if (input->GetButtonDown(KEY_TYPE::KEY_5) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_5))
-	//	m_ipAddress += L'5';
-	//else if (input->GetButtonDown(KEY_TYPE::KEY_6) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_6))
-	//	m_ipAddress += L'6';
-	//else if (input->GetButtonDown(KEY_TYPE::KEY_7) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_7))
-	//	m_ipAddress += L'7';
-	//else if (input->GetButtonDown(KEY_TYPE::KEY_8) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_8))
-	//	m_ipAddress += L'8';
-	//else if (input->GetButtonDown(KEY_TYPE::KEY_9) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_9))
-	//	m_ipAddress += L'9';
-	//else if (input->GetButtonDown(KEY_TYPE::KEY_0) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_0))
-	//	m_ipAddress += L'0';
-	//else if (input->GetButtonDown(KEY_TYPE::DOT) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_DOT))
-	//	m_ipAddress += L'.';
-	//else if (input->GetButtonDown(KEY_TYPE::BACKSAPCE) == true and m_ipAddress.empty() == false)
-	//	m_ipAddress.pop_back();
-	//else if (input->GetButtonDown(KEY_TYPE::ENTER) == true or input->GetButtonDown(KEY_TYPE::NUMPAD_ENTER) == true)
-	//	serverIP_Address = m_ipAddress;
-
-	//if (m_ipAddress.empty() == false)
-	//	GET_SINGLE(FontManager)->RenderFonts(m_ipAddress, Vec2(-300.f, 200.f), Vec2(10.f, 10.f), 10.f);
-#pragma endregion
+	//InputUserName();
 }
 
 void Scene_Start::LateUpdate()
@@ -1120,6 +1088,220 @@ void Scene_Start::ChangeMuteTexture()
 		m_sliderTip[SE]->ChangeTexture(0);
 		m_volumeSlider[SE]->ChangeMuteTexture(false);
 		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(false);
+	}
+}
+
+void Scene_Start::InputUserName()
+{
+	if (m_userName.length() > 15)
+		return;
+
+	InputAlphabet();
+	InputNumber();
+	InputNumPad();
+	InputSpecialChar();
+	InputFuncKey();
+}
+
+void Scene_Start::InputAlphabet()
+{
+	auto i{ GET_SINGLE(CInput) };
+
+	if ((GetKeyState(VK_CAPITAL) & 0x0001) == true
+		or i->GetButton(KEY_TYPE::LSHIFT) == true
+		or i->GetButton(KEY_TYPE::RSHIFT) == true)
+	{
+		if (i->GetButtonDown(KEY_TYPE::A) == true) m_userName.insert(m_inputIndex++, L"A");
+		else if (i->GetButtonDown(KEY_TYPE::B) == true) m_userName.insert(m_inputIndex++, L"B");
+		else if (i->GetButtonDown(KEY_TYPE::C) == true) m_userName.insert(m_inputIndex++, L"C");
+		else if (i->GetButtonDown(KEY_TYPE::D) == true) m_userName.insert(m_inputIndex++, L"D");
+		else if (i->GetButtonDown(KEY_TYPE::E) == true) m_userName.insert(m_inputIndex++, L"E");
+		else if (i->GetButtonDown(KEY_TYPE::F) == true) m_userName.insert(m_inputIndex++, L"F");
+		else if (i->GetButtonDown(KEY_TYPE::G) == true) m_userName.insert(m_inputIndex++, L"G");
+		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_userName.insert(m_inputIndex++, L"H");
+		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_userName.insert(m_inputIndex++, L"I");
+		else if (i->GetButtonDown(KEY_TYPE::J) == true) m_userName.insert(m_inputIndex++, L"J");
+		else if (i->GetButtonDown(KEY_TYPE::K) == true) m_userName.insert(m_inputIndex++, L"K");
+		else if (i->GetButtonDown(KEY_TYPE::L) == true) m_userName.insert(m_inputIndex++, L"L");
+		else if (i->GetButtonDown(KEY_TYPE::M) == true) m_userName.insert(m_inputIndex++, L"M");
+		else if (i->GetButtonDown(KEY_TYPE::N) == true) m_userName.insert(m_inputIndex++, L"N");
+		else if (i->GetButtonDown(KEY_TYPE::O) == true) m_userName.insert(m_inputIndex++, L"O");
+		else if (i->GetButtonDown(KEY_TYPE::P) == true) m_userName.insert(m_inputIndex++, L"P");
+		else if (i->GetButtonDown(KEY_TYPE::Q) == true) m_userName.insert(m_inputIndex++, L"Q");
+		else if (i->GetButtonDown(KEY_TYPE::R) == true) m_userName.insert(m_inputIndex++, L"R");
+		else if (i->GetButtonDown(KEY_TYPE::S) == true) m_userName.insert(m_inputIndex++, L"S");
+		else if (i->GetButtonDown(KEY_TYPE::T) == true) m_userName.insert(m_inputIndex++, L"T");
+		else if (i->GetButtonDown(KEY_TYPE::U) == true) m_userName.insert(m_inputIndex++, L"U");
+		else if (i->GetButtonDown(KEY_TYPE::V) == true) m_userName.insert(m_inputIndex++, L"V");
+		else if (i->GetButtonDown(KEY_TYPE::W) == true) m_userName.insert(m_inputIndex++, L"W");
+		else if (i->GetButtonDown(KEY_TYPE::X) == true) m_userName.insert(m_inputIndex++, L"X");
+		else if (i->GetButtonDown(KEY_TYPE::Y) == true) m_userName.insert(m_inputIndex++, L"Y");
+		else if (i->GetButtonDown(KEY_TYPE::Z) == true) m_userName.insert(m_inputIndex++, L"Z");
+	}
+	else
+	{
+		if (i->GetButtonDown(KEY_TYPE::A) == true) m_userName.insert(m_inputIndex++, L"a");
+		else if (i->GetButtonDown(KEY_TYPE::B) == true) m_userName.insert(m_inputIndex++, L"b");
+		else if (i->GetButtonDown(KEY_TYPE::C) == true) m_userName.insert(m_inputIndex++, L"c");
+		else if (i->GetButtonDown(KEY_TYPE::D) == true) m_userName.insert(m_inputIndex++, L"d");
+		else if (i->GetButtonDown(KEY_TYPE::E) == true) m_userName.insert(m_inputIndex++, L"e");
+		else if (i->GetButtonDown(KEY_TYPE::F) == true) m_userName.insert(m_inputIndex++, L"f");
+		else if (i->GetButtonDown(KEY_TYPE::G) == true) m_userName.insert(m_inputIndex++, L"g");
+		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_userName.insert(m_inputIndex++, L"h");
+		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_userName.insert(m_inputIndex++, L"i");
+		else if (i->GetButtonDown(KEY_TYPE::J) == true) m_userName.insert(m_inputIndex++, L"j");
+		else if (i->GetButtonDown(KEY_TYPE::K) == true) m_userName.insert(m_inputIndex++, L"k");
+		else if (i->GetButtonDown(KEY_TYPE::L) == true) m_userName.insert(m_inputIndex++, L"l");
+		else if (i->GetButtonDown(KEY_TYPE::M) == true) m_userName.insert(m_inputIndex++, L"m");
+		else if (i->GetButtonDown(KEY_TYPE::N) == true) m_userName.insert(m_inputIndex++, L"n");
+		else if (i->GetButtonDown(KEY_TYPE::O) == true) m_userName.insert(m_inputIndex++, L"o");
+		else if (i->GetButtonDown(KEY_TYPE::P) == true) m_userName.insert(m_inputIndex++, L"p");
+		else if (i->GetButtonDown(KEY_TYPE::Q) == true) m_userName.insert(m_inputIndex++, L"q");
+		else if (i->GetButtonDown(KEY_TYPE::R) == true) m_userName.insert(m_inputIndex++, L"r");
+		else if (i->GetButtonDown(KEY_TYPE::S) == true) m_userName.insert(m_inputIndex++, L"s");
+		else if (i->GetButtonDown(KEY_TYPE::T) == true) m_userName.insert(m_inputIndex++, L"t");
+		else if (i->GetButtonDown(KEY_TYPE::U) == true) m_userName.insert(m_inputIndex++, L"u");
+		else if (i->GetButtonDown(KEY_TYPE::V) == true) m_userName.insert(m_inputIndex++, L"v");
+		else if (i->GetButtonDown(KEY_TYPE::W) == true) m_userName.insert(m_inputIndex++, L"w");
+		else if (i->GetButtonDown(KEY_TYPE::X) == true) m_userName.insert(m_inputIndex++, L"x");
+		else if (i->GetButtonDown(KEY_TYPE::Y) == true) m_userName.insert(m_inputIndex++, L"y");
+		else if (i->GetButtonDown(KEY_TYPE::Z) == true) m_userName.insert(m_inputIndex++, L"z");
+	}
+}
+
+void Scene_Start::InputNumber()
+{
+	auto i{ GET_SINGLE(CInput) };
+
+	if (i->GetButton(KEY_TYPE::LSHIFT) == false and i->GetButton(KEY_TYPE::RSHIFT) == false)
+	{
+		if (i->GetButtonDown(KEY_TYPE::NUM_1) == true) m_userName.insert(m_inputIndex++, L"1");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_2) == true) m_userName.insert(m_inputIndex++, L"2");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_3) == true) m_userName.insert(m_inputIndex++, L"3");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_4) == true) m_userName.insert(m_inputIndex++, L"4");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_5) == true) m_userName.insert(m_inputIndex++, L"5");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_6) == true) m_userName.insert(m_inputIndex++, L"6");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_7) == true) m_userName.insert(m_inputIndex++, L"7");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_8) == true) m_userName.insert(m_inputIndex++, L"8");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_9) == true) m_userName.insert(m_inputIndex++, L"9");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_0) == true) m_userName.insert(m_inputIndex++, L"0");
+	}
+}
+
+void Scene_Start::InputNumPad()
+{
+	auto i{ GET_SINGLE(CInput) };
+
+	if (GetKeyState(VK_NUMLOCK) & 0x0001)
+	{
+		if (i->GetButtonDown(KEY_TYPE::NUMPAD_1) == true) m_userName.insert(m_inputIndex++, L"1");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_2) == true) m_userName.insert(m_inputIndex++, L"2");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_3) == true) m_userName.insert(m_inputIndex++, L"3");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_4) == true) m_userName.insert(m_inputIndex++, L"4");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_5) == true) m_userName.insert(m_inputIndex++, L"5");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_6) == true) m_userName.insert(m_inputIndex++, L"6");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_7) == true) m_userName.insert(m_inputIndex++, L"7");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_8) == true) m_userName.insert(m_inputIndex++, L"8");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_9) == true) m_userName.insert(m_inputIndex++, L"9");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_0) == true) m_userName.insert(m_inputIndex++, L"0");
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_DECIMAL) == true) m_userName.insert(m_inputIndex++, L".");
+	}
+	else
+	{
+		if (i->GetButtonDown(KEY_TYPE::NUMPAD_1) == true) m_inputIndex = m_userName.length();
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_4) == true)
+		{
+			if (m_inputIndex > 0)
+				--m_inputIndex;
+		}
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_6) == true)
+		{
+			if (m_inputIndex < m_userName.length())
+				++m_inputIndex;
+		}
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_7) == true) m_inputIndex = 0;
+		else if (i->GetButtonDown(KEY_TYPE::NUMPAD_DECIMAL) == true)
+		{
+			if (m_inputIndex < m_userName.length())
+				m_userName.erase(m_inputIndex, 1);
+		}
+	}
+}
+
+void Scene_Start::InputSpecialChar()
+{
+	auto i{ GET_SINGLE(CInput) };
+
+	if (i->GetButton(KEY_TYPE::LSHIFT) == true or i->GetButton(KEY_TYPE::RSHIFT) == true)
+	{
+		if (i->GetButtonDown(KEY_TYPE::NUM_1) == true) m_userName.insert(m_inputIndex++, L"!");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_2) == true) m_userName.insert(m_inputIndex++, L"@");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_3) == true) m_userName.insert(m_inputIndex++, L"#");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_4) == true) m_userName.insert(m_inputIndex++, L"$");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_5) == true) m_userName.insert(m_inputIndex++, L"%");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_6) == true) m_userName.insert(m_inputIndex++, L"^");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_7) == true) m_userName.insert(m_inputIndex++, L"&");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_8) == true) m_userName.insert(m_inputIndex++, L"*");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_9) == true) m_userName.insert(m_inputIndex++, L"(");
+		else if (i->GetButtonDown(KEY_TYPE::NUM_0) == true) m_userName.insert(m_inputIndex++, L")");
+		else if (i->GetButtonDown(KEY_TYPE::MINUS) == true) m_userName.insert(m_inputIndex++, L"_");
+		else if (i->GetButtonDown(KEY_TYPE::EQUALS) == true) m_userName.insert(m_inputIndex++, L"+");
+		else if (i->GetButtonDown(KEY_TYPE::LBRACKET) == true) m_userName.insert(m_inputIndex++, L"{");
+		else if (i->GetButtonDown(KEY_TYPE::RBRACKET) == true) m_userName.insert(m_inputIndex++, L"}");
+		else if (i->GetButtonDown(KEY_TYPE::BACKSLASH) == true) m_userName.insert(m_inputIndex++, L"|");
+		else if (i->GetButtonDown(KEY_TYPE::SEMICOLON) == true) m_userName.insert(m_inputIndex++, L":");
+		else if (i->GetButtonDown(KEY_TYPE::APOSTROPHE) == true) m_userName.insert(m_inputIndex++, L"\"");
+		else if (i->GetButtonDown(KEY_TYPE::COMMA) == true) m_userName.insert(m_inputIndex++, L"<");
+		else if (i->GetButtonDown(KEY_TYPE::PERIOD) == true) m_userName.insert(m_inputIndex++, L">");
+		else if (i->GetButtonDown(KEY_TYPE::SLASH) == true) m_userName.insert(m_inputIndex++, L"?");
+	}
+	else
+	{
+		if (i->GetButtonDown(KEY_TYPE::MINUS) == true) m_userName.insert(m_inputIndex++, L"-");
+		else if (i->GetButtonDown(KEY_TYPE::EQUALS) == true) m_userName.insert(m_inputIndex++, L"=");
+		else if (i->GetButtonDown(KEY_TYPE::LBRACKET) == true) m_userName.insert(m_inputIndex++, L"[");
+		else if (i->GetButtonDown(KEY_TYPE::RBRACKET) == true) m_userName.insert(m_inputIndex++, L"]");
+		else if (i->GetButtonDown(KEY_TYPE::BACKSLASH) == true) m_userName.insert(m_inputIndex++, L"\\");
+		else if (i->GetButtonDown(KEY_TYPE::SEMICOLON) == true) m_userName.insert(m_inputIndex++, L";");
+		else if (i->GetButtonDown(KEY_TYPE::APOSTROPHE) == true) m_userName.insert(m_inputIndex++, L"\'");
+		else if (i->GetButtonDown(KEY_TYPE::COMMA) == true) m_userName.insert(m_inputIndex++, L",");
+		else if (i->GetButtonDown(KEY_TYPE::PERIOD) == true) m_userName.insert(m_inputIndex++, L".");
+		else if (i->GetButtonDown(KEY_TYPE::SLASH) == true) m_userName.insert(m_inputIndex++, L"/");
+	}
+
+	if (i->GetButtonDown(KEY_TYPE::NUMPAD_ADD) == true) m_userName.insert(m_inputIndex++, L"+");
+	else if (i->GetButtonDown(KEY_TYPE::NUMPAD_MINUS) == true) m_userName.insert(m_inputIndex++, L"-");
+	else if (i->GetButtonDown(KEY_TYPE::NUMPAD_MULTIPLY) == true) m_userName.insert(m_inputIndex++, L"*");
+	else if (i->GetButtonDown(KEY_TYPE::NUMPAD_DIVIDE) == true) m_userName.insert(m_inputIndex++, L"/");
+
+	if (i->GetButtonDown(KEY_TYPE::SPACE) == true) m_userName.insert(m_inputIndex++, L" ");
+}
+
+void Scene_Start::InputFuncKey()
+{
+	auto i{ GET_SINGLE(CInput) };
+
+	if (i->GetButtonDown(KEY_TYPE::BACKSPACE) == true)
+	{
+		if (m_inputIndex > 0)
+			m_userName.erase(--m_inputIndex, 1);
+	}
+	else if (i->GetButtonDown(KEY_TYPE::DEL) == true)
+	{
+		if (m_inputIndex < m_userName.length())
+			m_userName.erase(m_inputIndex, 1);
+	}
+	else if (i->GetButtonDown(KEY_TYPE::HOME) == true) m_inputIndex = 0;
+	else if (i->GetButtonDown(KEY_TYPE::END) == true) m_inputIndex = m_userName.length();
+	else if (i->GetButtonDown(KEY_TYPE::LEFT) == true)
+	{
+		if (m_inputIndex > 0)
+			--m_inputIndex;
+	}
+	else if (i->GetButtonDown(KEY_TYPE::RIGHT) == true)
+	{
+		if (m_inputIndex < m_userName.length())
+			++m_inputIndex;
 	}
 }
 

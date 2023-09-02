@@ -36,7 +36,7 @@ void Monster_Script::Update()
 #pragma region [FOR DEBUGGING]
 	/*if (GET_NETWORK->GetID() == GetNetwork()->GetID())
 	{
-		if (INPUT->GetButtonDown(KEY_TYPE::KEY_1))
+		if (INPUT->GetButtonDown(KEY_TYPE::NUM_1))
 		{
 			int32 count = GetAnimator()->GetAnimCount();
 			int32 currentIndex = GetAnimator()->GetCurrentClipIndex();
@@ -46,7 +46,7 @@ void Monster_Script::Update()
 			GetAnimator()->Play(index);
 		}
 
-		if (INPUT->GetButtonDown(KEY_TYPE::KEY_2))
+		if (INPUT->GetButtonDown(KEY_TYPE::NUM_2))
 		{
 			int32 count = GetAnimator()->GetAnimCount();
 			int32 currentIndex = GetAnimator()->GetCurrentClipIndex();

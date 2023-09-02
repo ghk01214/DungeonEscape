@@ -75,13 +75,13 @@ void Movement_Script::Update()
 void Movement_Script::LateUpdate()
 {
 	// 현재 행렬 푸쉬
-	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::KEY_1))
+	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::NUM_1))
 	{
 		m_vecMat.push_back(GetTransform()->GetWorldMatrix());
 	}
 
 	// 저장된 행렬 정보 파일 쓰기
-	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::KEY_2))
+	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::NUM_2))
 	{
 		wstring path = L"..\\Resources\\Cinematic\\Info";
 		wstring str = to_wstring(m_curSenematic) + L".bin";
@@ -104,7 +104,7 @@ void Movement_Script::LateUpdate()
 	}
 
 	// 파일에 작성된 행렬 정보 로드
-	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::KEY_3))
+	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::NUM_3))
 	{
 		wstring path = L"..\\Resources\\Senematic\\Info";
 		wstring str = to_wstring(m_curSenematic) + L".bin";

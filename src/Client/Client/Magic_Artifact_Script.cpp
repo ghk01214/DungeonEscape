@@ -90,14 +90,14 @@ void Magic_Artifact_Script::LateUpdate()
 {
 	static int curAxis = 0;
 
-	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_6))
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUM_6))
 		curAxis = 1;
-	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_7))
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUM_7))
 		curAxis = 2;
-	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_8))
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUM_8))
 		curAxis = 3;
 
-	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_9))
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUM_9))
 	{
 		switch (curAxis)
 		{
@@ -114,7 +114,7 @@ void Magic_Artifact_Script::LateUpdate()
 			break;
 		}
 	}
-	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::KEY_0))
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUM_0))
 	{
 		switch (curAxis)
 		{
