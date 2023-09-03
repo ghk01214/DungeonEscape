@@ -71,7 +71,7 @@ bool MapObject::SinkBelow()
 		return true;		//지정위치까지 이동했다면 true를 리턴
 	}
 
-	curPos.y -= 10.f;
+	curPos.y -= BOSSROCKSPEED;
 	m_body->SetPosition(FROM_PX3(curPos), true);
 	return false;
 }
@@ -86,7 +86,7 @@ bool MapObject::RiseUp()
 		return true;		//지정위치까지 이동했다면 true를 리턴
 	}
 
-	curPos.y += 10.f;
+	curPos.y += BOSSROCKSPEED;
 	m_body->SetPosition(FROM_PX3(curPos), true);
 	return false;
 }
