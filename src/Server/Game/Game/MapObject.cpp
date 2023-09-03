@@ -66,7 +66,10 @@ bool MapObject::SinkBelow()
 	physx::PxVec3 curPos = m_body->GetPosition();
 
 	if (abs(abs(curPos.y) - abs(m_riseupPosition.y)) < 30.f)
+	{
+		std::cout << "BossRock sinked to original Position" << std::endl;
 		return true;		//지정위치까지 이동했다면 true를 리턴
+	}
 
 	curPos.y -= 10.f;
 	m_body->SetPosition(FROM_PX3(curPos), true);
@@ -79,7 +82,7 @@ bool MapObject::RiseUp()
 
 	if (abs(abs(curPos.y) - abs(m_riseupPosition.y)) < 30.f)
 	{
-		std::cout << "BossRock returned to original Position" << std::endl;
+		std::cout << "BossRock rised to original Position" << std::endl;
 		return true;		//지정위치까지 이동했다면 true를 리턴
 	}
 
