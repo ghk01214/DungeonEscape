@@ -40,6 +40,10 @@ void OverlapObject::Activate(std::string scheduleName)
 {
 	m_currentScheduleName = scheduleName;
 	m_active  = true;
+
+	// 기능 : 골렘의 Spell 폭발기능 호출.
+	// 여기에 폭발이펙트를 추가한다는 내용을 클라이언트로 보내면 된다.
+	//m_currentOverlapPos
 }
 
 void OverlapObject::Deactivate()

@@ -844,4 +844,8 @@ void SkillObject::Nuclear_Attribute_Explosion()
 		playerController->BounceFromAttack();					//플레이어 input 무효화 (땅 착지전까지)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(knockbackDir.x * horizontalStrength, verticalStrength, knockbackDir.z * horizontalStrength));
 	}
+
+	//weeper의 nuclear가 터졌다. 아래의 NuclearPosition 위치를 사용해 nuclear폭탄이 터진 이펙트를 대입하면 된다.
+	physx::PxVec3 pos = m_body->GetPosition();
+	Vec3 NuclearPosition = FROM_PX3(pos);
 }
