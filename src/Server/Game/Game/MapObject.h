@@ -20,6 +20,9 @@ public:	//LastBossRock전용함수
 	void RecordInitialPosition(Vec3 Position);
 	bool SinkBelow();
 	bool RiseUp();
+	void CheckSkip();
+	
+	void SkipClear();
 
 public:
 	void ServerMessage_Init(bool scatterRock, bool boulder);
@@ -34,4 +37,5 @@ protected:
 private:
 	Vec3 m_initialPosition;
 	Vec3 m_riseupPosition;
+	bool m_skip = false;
 };

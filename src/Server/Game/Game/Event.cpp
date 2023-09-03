@@ -620,6 +620,20 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "LastBossRock_SkipClear")
+	{
+		auto objlist = ObjectManager::GetInstance()->GetLayer(L"Layer_LastBossRock")->GetGameObjects();
+
+		for (auto& rock : objlist)								//레이어 호출
+		{
+			auto ptr = dynamic_cast<MapObject*>(rock);
+			if (ptr)											//캐스팅 성공여부 판단
+			{
+				ptr->SkipClear();								//skip 해제
+			}
+		}
+	}
+
 
 	// PORTAL
 	if (msg == "PORTAL1" || msg == "PORTAL2" || msg == "PORTAL3" || msg == "PORTAL4" || msg == "PORTAL5" || msg == "PORTAL6" || msg == "PORTAL7" || msg == "PORTAL8")
@@ -789,6 +803,7 @@ void Event::ExecuteMsg_continuous()
 				if (result)										//하강함수가 지정 위치에 도착했는지 판단
 				{
 					executed = true;							//도착했다면 메세지를 삭제한다.
+					EventHandler::GetInstance()->AddEvent("LastBossRock_SkipClear", 0.1f, target);
 					return;
 				}
 				else
