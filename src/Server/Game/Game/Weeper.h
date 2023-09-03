@@ -69,7 +69,8 @@ public:
 	SkillObject* Pattern_Cast3();
 	bool Pattern_Cast4();							//패턴이 끝나면 true 반환
 	void Pattern_Cast4_Effect(Player* player);		//패턴이 끝나고 플레이어에게 적용할 효과.
-
+	
+	void Sink();									//죽으면 바닥속을 뚫게해주는 함수
 public:
 	int Randnum_Cast1_XInterval();
 	float Randnum_Cast1_YInterval();
