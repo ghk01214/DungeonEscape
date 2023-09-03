@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -2021,7 +2021,7 @@ void Scene_Test::ChangeMuteTexture()
 
 #pragma endregion
 
-#pragma region [NETWORKD]
+#pragma region [NETWORK]
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::AddNetworkToObject(std::vector<std::shared_ptr<CGameObject>> objects, server::OBJECT_TYPE objectType, int32_t id)
 {
 	std::shared_ptr<network::CNetwork> networkComponent{ std::make_shared<network::CNetwork>(objectType, id) };
@@ -2278,10 +2278,10 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 #pragma region [SKILL]
 		case server::FBX_TYPE::PLAYER_FIREBALL:
 		{
-			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
+			objectDesc.strName = L"Fireball";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
 			objectDesc.script = std::make_shared<PlayerRangeAttack>();
-			objectDesc.vScale = { 2.5f, 2.5f, 2.5f };
+			objectDesc.vScale = { 100.f, 100.f, 100.f };
 		}
 		break;
 		case server::FBX_TYPE::PLAYER_ICEBALL:
@@ -2511,7 +2511,7 @@ void Scene_Test::AddEffectTextures()
 
 	EffectInfo effect;
 	effect.index = index++;
-	effect.speed = 0.006f;
+	effect.speed = 0.003f;
 	effect.scale = { 500.f, 500.f, 1.f };
 	m_billboards.push_back(GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Explode", effect.speed));
 	m_billboardInfo[server::EFFECT_TYPE::EXPLODE] = effect;

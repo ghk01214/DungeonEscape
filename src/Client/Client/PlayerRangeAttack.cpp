@@ -23,7 +23,7 @@ void PlayerRangeAttack::Update()
 
 		pos.y += 50.f;
 
-		GET_SINGLE(EffectManager)->SetBillBoardInfo(1, pos, Vec3(300.f, 300.f, 1.f), 0.004f);
+		GET_SINGLE(EffectManager)->SetBillBoardInfo(1, pos, Vec3(300.f, 300.f, 1.f), 0.002f);
 		GET_SINGLE(EffectManager)->PlayBillBoard(1);
 	}
 }
