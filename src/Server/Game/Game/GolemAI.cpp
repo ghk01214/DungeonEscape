@@ -346,6 +346,9 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				m_golem->m_currState = Golem::GOLEM_STATE::ROAR;
 
+				EventHandler::GetInstance()->AddEvent("LAST_BOSS_ROCK_RISE", 0.1f, m_golem);				//보스맵 엄폐물 등장
+				EventHandler::GetInstance()->AddEvent("LAST_BOSS_ROCK_SINK", 11.f, m_golem);				//보스맵 엄폐물 아래로
+
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_SPELL_START", 2.33f, m_golem);			//ROAR > SPELL_START 진입
 
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_SPELL_LOOP", 3.83f, m_golem);			//SPELL START > SPELL_LOOP 진입

@@ -16,6 +16,11 @@ public:
 	virtual void LateUpdate(double timeDelta) override;
 	virtual void Release();
 
+public:	//LastBossRock전용함수
+	void RecordInitialPosition(Vec3 Position);
+	bool SinkBelow();
+	bool RiseUp();
+
 public:
 	void ServerMessage_Init(bool scatterRock, bool boulder);
 	void ServerMessage_Release();							//SetRemoveReserved()이후 바로 호출해야하는 함수
@@ -25,4 +30,8 @@ public:
 
 protected:
 	RigidBody* m_body = nullptr;
+
+private:
+	Vec3 m_initialPosition;
+	Vec3 m_riseupPosition;
 };

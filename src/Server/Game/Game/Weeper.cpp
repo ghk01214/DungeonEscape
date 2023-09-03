@@ -429,6 +429,7 @@ void Weeper::Pattern_Cast4_Effect(Player* player)
 
 void Weeper::Sink()
 {
+	m_controller->GetBody()->SetRigidBodySleep(false);
 	m_controller->GetBody()->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::MONSTER, PhysicsLayers::MAP);
 }
 
