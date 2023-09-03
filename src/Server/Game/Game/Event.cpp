@@ -347,6 +347,14 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "SINK_WEEPER")
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			weeperObj->Sink();
+		}
+	}
 
 
 	//golem

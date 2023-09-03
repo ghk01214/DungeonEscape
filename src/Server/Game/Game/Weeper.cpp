@@ -427,6 +427,11 @@ void Weeper::Pattern_Cast4_Effect(Player* player)
 	player->SetState(Player::PLAYER_STATE::DAMAGE);
 }
 
+void Weeper::Sink()
+{
+	m_controller->GetBody()->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::MONSTER, PhysicsLayers::MAP);
+}
+
 int Weeper::Randnum_Cast1_XInterval()
 {
 	static unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
