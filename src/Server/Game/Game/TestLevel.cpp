@@ -290,11 +290,16 @@ void TestLevel::LoadMapObject()
 	{
 		const objectLocationInfo& locationInfo = info.second;
 
+		Vec3 adjustedRockPosition = Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR);
+		adjustedRockPosition.y -= BOSSROCKINTERVAL;
+
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_LastBossRock",
-		   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+			adjustedRockPosition,
 		   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
 		   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
 		);
+
+		MeshObject->RecordInitialPosition(adjustedRockPosition);
 
 		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
 		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);

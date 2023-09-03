@@ -13,6 +13,7 @@
 #include "CustomController.h"
 #include "EventHandler.h"
 #include "TriggerObject2.h"
+#include "ObjectManager.h"
 
 Event::Event(std::string context, double remainTime, GameObject* subject) :
 	msg(context), time(remainTime), target(subject)
@@ -743,6 +744,61 @@ void Event::ExecuteMsg_continuous()
 			executed = true;
 		}
 	}
+
+
+
+	if (msg == "LAST_BOSS_ROCK_RISE")		//Jump에서 착지까지 반복호출
+	{
+		executed = false;
+		bool result = false;
+
+		auto objlist = ObjectManager::GetInstance()->GetLayer(L"Layer_LastBossRock")->GetGameObjects();
+
+		for (auto& rock : objlist)								//레이어 호출
+		{
+			auto ptr = dynamic_cast<MapObject*>(rock);			
+			if (ptr)											//캐스팅 성공여부 판단
+			{
+				result = ptr->RiseUp();
+				if (result)										//상승함수가 지정 위치에 도착했는지 판단
+				{
+					executed = true;							//도착했다면 메세지를 삭제한다.
+					return;
+				}
+				else
+				{
+					executed = false;
+				}
+			}
+		}
+	}
+
+	if (msg == "LAST_BOSS_ROCK_SINK")		//Jump에서 착지까지 반복호출
+	{
+		executed = false;
+		bool result = false;
+
+		auto objlist = ObjectManager::GetInstance()->GetLayer(L"Layer_LastBossRock")->GetGameObjects();
+
+		for (auto& rock : objlist)								//레이어 호출
+		{
+			auto ptr = dynamic_cast<MapObject*>(rock);
+			if (ptr)											//캐스팅 성공여부 판단
+			{
+				result = ptr->SinkBelow();
+				if (result)										//하강함수가 지정 위치에 도착했는지 판단
+				{
+					executed = true;							//도착했다면 메세지를 삭제한다.
+					return;
+				}
+				else
+				{
+					executed = false;
+				}
+			}
+		}
+	}
+
 }
 
 

@@ -18,6 +18,8 @@
 #define PORTAL4_EXIT Vec3{ 18000.f, -1790.f + 100.f, 25070.f }
 #define PORTAL5_EXIT Vec3{ 16165.f, -3900.f + 100.f, 41780.f }
 
+#define BOSSROCKINTERVAL 2000.f
+
 	enum class KEY_STATE : uint8_t
 	{
 		NONE = 0,
