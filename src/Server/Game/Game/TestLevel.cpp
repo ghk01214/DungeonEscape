@@ -45,6 +45,7 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_Map2");
 	objmgr->AddLayer(L"Layer_SkillObject");
 	objmgr->AddLayer(L"Layer_TriggerObject");
+	objmgr->AddLayer(L"Layer_LastBossRock");
 
 	//LoadBasicMap4();
 
@@ -260,7 +261,7 @@ void TestLevel::LoadMapObject()
 #ifdef DEBUG_MAP
 	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\ServerDebug.fbx");			// Map 로드
 #else // DEBUG_MAP
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server2.fbx");			// Map 로드
 #endif
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
@@ -269,6 +270,27 @@ void TestLevel::LoadMapObject()
 		const objectLocationInfo& locationInfo = info.second;
 
 		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map",
+		   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
+		   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
+		   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
+		);
+
+		auto MeshBody = MeshObject->GetComponent<RigidBody>(L"RigidBody");
+		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
+		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
+		MeshObject->ApplyRequestedLayers();
+	}
+
+	FBXMapLoader rockLoader;
+	rockLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
+	rockLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\LastBossRock.fbx");
+
+	auto& rockInfo = rockLoader.GetMapObjectInfo();
+	for (auto& info : rockInfo)
+	{
+		const objectLocationInfo& locationInfo = info.second;
+
+		auto MeshObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_LastBossRock",
 		   Vec3(locationInfo.Position.x * PX_SCALE_FACTOR, locationInfo.Position.y * PX_SCALE_FACTOR, locationInfo.Position.z * PX_SCALE_FACTOR),
 		   Quat::FromEuler(locationInfo.Rotation.x, locationInfo.Rotation.y, locationInfo.Rotation.z),
 		   Vec3(locationInfo.Scale.x, locationInfo.Scale.y, locationInfo.Scale.z)
