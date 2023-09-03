@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "WeeperAI.h"
 #include "Weeper.h"
 #include "Monster.h"
@@ -108,7 +108,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			{
 				m_weeper->m_currState = Weeper::CAST1;
 				m_weeper->SetMonsterImmobile();
-				
+
 				m_scheduler.erase(m_scheduler.begin());
 				ReportSchedule();
 

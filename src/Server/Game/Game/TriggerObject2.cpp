@@ -367,15 +367,15 @@ void TriggerObject2::ServerSendPortalOutMessage()
 	ev.objID = m_id;
 
 	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT);
+		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT);
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL2)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT);
+		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT);
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT);
+		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT);
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT);
+		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT);
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT);
+		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT);
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

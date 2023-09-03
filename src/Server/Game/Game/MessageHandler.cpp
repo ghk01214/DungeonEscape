@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -418,7 +418,7 @@ namespace game
 			Vec3 pos = gimmk2TestPos;
 
 			//pos.z = 40400.f;
-			pos.z -= msg.playerID * 500.f;
+			pos.x += msg.playerID * 500.f;
 
 			//pos = Vec3(0.f, -1750.f, 0.f);
 

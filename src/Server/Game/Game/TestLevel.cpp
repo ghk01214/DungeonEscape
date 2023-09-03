@@ -48,39 +48,13 @@ void TestLevel::Init()
 
 	//LoadBasicMap4();
 
-	//LoadUnit_DebugMode();
+	LoadUnit_DebugMode();
 	LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
-
-	static bool meetMonster = false;
-	if (meetMonster == false)
-	{
-		auto players{ ObjectManager::GetInstance()->GetLayer(L"Layer_Player")->GetGameObjects() };
-
-		for (auto& player : players)
-		{
-			auto pl{ dynamic_cast<Player*>(player) };
-
-			if (pl == nullptr)
-				continue;
-
-			if (pl->GetTransform()->GetPosition().z > 40490.f)
-			{
-				game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
-				ev.objID = pl->GetID();
-				ev.state = magic_enum::enum_integer(server::SOUND_TYPE::BATTLE);
-
-				game::MessageHandler::GetInstance()->PushSendMessage(ev);
-
-				meetMonster = true;
-				break;
-			}
-		}
-	}
 }
 
 void TestLevel::LateUpdate(double timeDelta)
@@ -102,9 +76,9 @@ void TestLevel::LoadUnit_DebugMode()
 																																							//다리				3890, -1462, 21062
 																																							//돌테스트			15609, -976, 26457
 	//15609, -976, 26457
-	//auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 4, Vec3(16200, -3000, 45000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	auto GolemObject = objmgr->AddGameObjectToLayer<Golem>(L"Layer_Monster", 5, Vec3(16200, -3000, 45000), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
-	//auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
+	auto WeeperObject = objmgr->AddGameObjectToLayer<Weeper>(L"Layer_Monster", 4, Vec3(0, -720, 11060), Quat(0, 0, 0, 1), Vec3(150, 150, 150));
 
 	//몬스터
 	//위퍼 위치15037.582, -1550.337, 21630.693; 0.000, 0.000, 0.707, 0.707;
