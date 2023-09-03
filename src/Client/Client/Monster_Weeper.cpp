@@ -18,7 +18,7 @@ Monster_Weeper::Monster_Weeper() :
 	m_currState{ m_prevState }
 {
 	m_radius = 100.f;
-	m_halfHeight = 50.f;		// 몬스터 발 높이 위치 변경
+	m_halfHeight = 200.f;		// 몬스터 발 높이 위치 변경
 }
 
 Monster_Weeper::Monster_Weeper(int32_t stateIndex) :
@@ -26,7 +26,7 @@ Monster_Weeper::Monster_Weeper(int32_t stateIndex) :
 	m_currState{ m_prevState }
 {
 	m_radius = 100.f;
-	m_halfHeight = 50.f;		// 몬스터 발 높이 위치 변경
+	m_halfHeight = 200.f;		// 몬스터 발 높이 위치 변경
 }
 
 Monster_Weeper::~Monster_Weeper()
@@ -41,14 +41,6 @@ void Monster_Weeper::Start()
 void Monster_Weeper::Update()
 {
 	ParsePackets();
-
-	// 패턴이 변경됐을 때만 변경된 패턴 번호 출력
-	static server::PATTERN_TYPE prevPattern{ server::PATTERN_TYPE::NONE };
-	if (prevPattern != m_pattern)
-	{
-		Print(magic_enum::enum_name(m_pattern));
-		prevPattern = m_pattern;
-	}
 
 	Monster_Script::Update();
 }
