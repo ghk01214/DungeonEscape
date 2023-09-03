@@ -63,13 +63,49 @@ void GolemAI::FillSchedule()
 	if (DeathHandle())
 		return;		//죽었으면 AI 정지후 state를 death로 설정
 
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
-	m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
+	static std::uniform_real_distribution<float> rndSchedule(0.0f, 1.0f);
+	static std::uniform_real_distribution<float> rndSchedule2(0.0f, 1.0f);
+
+	float value = rndSchedule(dre);
+	float value2 = rndSchedule2(dre);
+
+	//45퍼로 연계공격
+	if (value < 0.45f)
+	{
+		if (value2 < 0.5f)
+		{
+			m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
+			m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
+		}
+		else
+		{
+			m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
+			m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
+		}
+	}
+
+	//15퍼로 단일공격 (어퍼컷은 제외)
+	else if (value < 0.60f)
+	{
+		if (value2 < 0.2f)
+			m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
+		else if (value2 < 0.6f)
+			m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
+		else
+			m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
+	}
+
+	//10퍼로 달리기
+	else if (value < 0.70f)
+		m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
+
+	//15퍼로 점프 공격
+	else if (value < 0.85f)
+		m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
+
+	//15퍼로 spell 공격
+	else
+		m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
 
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
