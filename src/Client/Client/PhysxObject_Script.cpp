@@ -10,17 +10,25 @@
 #include <NetworkManager.h>
 #include <Network.h>
 
+void PhysxObject_Script::Awake()
+{
+	__super::Awake();
+}
+
 void PhysxObject_Script::Start()
 {
-
+	__super::Start();
 }
 
 void PhysxObject_Script::Update()
 {
+	__super::Update();
 }
 
 void PhysxObject_Script::LateUpdate()
 {
+	__super::LateUpdate();
+
 	ParsePackets();
 }
 

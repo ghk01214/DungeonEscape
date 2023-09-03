@@ -770,7 +770,7 @@ void Event::ExecuteMsg_continuous()
 
 		for (auto& rock : objlist)								//레이어 호출
 		{
-			auto ptr = dynamic_cast<MapObject*>(rock);			
+			auto ptr = dynamic_cast<MapObject*>(rock);
 			if (ptr)											//캐스팅 성공여부 판단
 			{
 				result = ptr->RiseUp();

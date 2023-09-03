@@ -949,6 +949,22 @@ namespace game
 							client->SendTransformPacket(pillar);
 						}
 					}
+
+					for (auto& obj : lastBossRockObjects)
+					{
+						auto rock{ dynamic_cast<MapObject*>(obj) };
+
+						if (rock == nullptr)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendTransformPacket(rock);
+						}
+					}
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::BOSS)
 				{

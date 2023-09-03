@@ -78,13 +78,15 @@ bool MapObject::SinkBelow()
 
 	curPos.y -= BOSSROCKSPEED;
 	m_body->SetPosition(FROM_PX3(curPos), true);
+	GetTransform()->SetPosition(FROM_PX3(curPos));
+
 	return false;
 }
 
 bool MapObject::RiseUp()
 {
 	CheckSkip();					//골렘이 위에 있다면
-	if (m_skip)						
+	if (m_skip)
 		return false;				//올라오지 마라
 
 	physx::PxVec3 curPos = m_body->GetPosition();
@@ -97,6 +99,8 @@ bool MapObject::RiseUp()
 
 	curPos.y += BOSSROCKSPEED;
 	m_body->SetPosition(FROM_PX3(curPos), true);
+	GetTransform()->SetPosition(FROM_PX3(curPos));
+
 	return false;
 }
 
@@ -115,7 +119,9 @@ void MapObject::CheckSkip()
 	pxGolemPos.y = 0;
 
 	physx::PxVec3 diff = curPos - pxGolemPos;
-	if (diff.magnitude() < 700)
+
+	// 돌과 골렘의 xz 평면 상 거리
+	if (diff.magnitude() < 500.f)
 	{
 		m_skip = true;
 		return;

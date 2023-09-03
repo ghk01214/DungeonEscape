@@ -5,9 +5,10 @@
 class PhysxObject_Script : public MonoBehaviour
 {
 public:
-	virtual void Start() override;
-	virtual void Update() override;
-	virtual void LateUpdate() override;
+	void Awake() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
 
 private:
 	void ParsePackets();

@@ -21,7 +21,7 @@ public:	//LastBossRock전용함수
 	bool SinkBelow();
 	bool RiseUp();
 	void CheckSkip();
-	
+
 	void SkipClear();
 
 public:
