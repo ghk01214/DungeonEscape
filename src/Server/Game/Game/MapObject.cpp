@@ -8,6 +8,8 @@
 #include "TimeManager.h"
 #include "Collider.h"
 #include "MessageHandler.h"
+#include "ObjectManager.h"
+#include "Golem.h"
 
 MapObject::MapObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
 	: GameObject(position, rotation, scale), m_body(nullptr)
@@ -63,6 +65,9 @@ void MapObject::RecordInitialPosition(Vec3 position)
 
 bool MapObject::SinkBelow()
 {
+	if (m_skip)						//골렘이 위에 있어서 riseup이 호출되지 않았던놈이면 (아예 올라오질 않았다면)
+		return false;				//올라오지 마라
+
 	physx::PxVec3 curPos = m_body->GetPosition();
 
 	if (abs(abs(curPos.y) - abs(m_riseupPosition.y)) > BOSSROCKINTERVAL)
@@ -78,6 +83,10 @@ bool MapObject::SinkBelow()
 
 bool MapObject::RiseUp()
 {
+	CheckSkip();					//골렘이 위에 있다면
+	if (m_skip)						
+		return false;				//올라오지 마라
+
 	physx::PxVec3 curPos = m_body->GetPosition();
 
 	if (abs(abs(curPos.y) - abs(m_riseupPosition.y)) < 30.f)
@@ -89,6 +98,33 @@ bool MapObject::RiseUp()
 	curPos.y += BOSSROCKSPEED;
 	m_body->SetPosition(FROM_PX3(curPos), true);
 	return false;
+}
+
+void MapObject::CheckSkip()
+{
+	auto golem = ObjectManager::GetInstance()->GetLayer(L"Layer_Monster")->GetGameObjectByName<Golem>(L"Golem");
+	if (!golem)
+		return;
+
+
+	physx::PxVec3 curPos = m_body->GetPosition();
+	curPos.y = 0;
+
+	Vec3 golemPos = golem->GetControllerPosition();
+	physx::PxVec3 pxGolemPos = TO_PX3(golemPos);
+	pxGolemPos.y = 0;
+
+	physx::PxVec3 diff = curPos - pxGolemPos;
+	if (diff.magnitude() < 700)
+	{
+		m_skip = true;
+		return;
+	}
+}
+
+void MapObject::SkipClear()
+{
+	m_skip = false;
 }
 
 void MapObject::ServerMessage_Init(bool scatterRock, bool boulder)
