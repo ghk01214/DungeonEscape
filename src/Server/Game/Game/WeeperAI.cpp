@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "WeeperAI.h"
 #include "Weeper.h"
 #include "Monster.h"
@@ -251,6 +251,9 @@ void WeeperAI::DamageCheck()
 		if (m_cast2Counter)
 		{
 			m_weeper->Pattern_Cast2_CounterNuclear();
+			BossPatternUIStart();
+			EventHandler::GetInstance()->AddEvent("BOSSPATTERNUIEND_WEEPER", 3.f, m_weeper);
+
 		}
 		else if (m_vulnerable)
 		{
@@ -325,6 +328,18 @@ bool WeeperAI::DeathHandle()
 	}
 
 	return false;
+}
+
+void WeeperAI::BossPatternUIStart()
+{
+	// UI : 사신이 강력한 공격을 준비한다. 물러날지, 반격의 기회를 노릴지 선택해야한다.
+	cout << "BossPatternUIStart_WEEPER" << endl;
+}
+
+void WeeperAI::BossPatternUIEnd()
+{
+	// 띄웠던 UI 제거 (권장 : 만약 패킷이 자주 씹힌다면 클라에서 자체적으로 n초후 없애는 로직을 제작하는게 좋다.)
+	cout << "BossPatternUIEnd_WEEPER" << endl;
 }
 
 void WeeperAI::ReportSchedule()

@@ -50,6 +50,8 @@ public:
 
 public:
 	bool DeathHandle();
+	void BossPatternUIStart();
+	void BossPatternUIEnd();
 
 private:
 	void ReportSchedule();		//콘솔출력 목적의 디버그 전용 함수

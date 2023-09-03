@@ -105,7 +105,11 @@ void GolemAI::FillSchedule()
 
 	//15퍼로 spell 공격
 	else
+	{
 		m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
+		BossPatternUIStart();										//n초후 ui 삭제 패킷 전송
+		EventHandler::GetInstance()->AddEvent("BOSSPATTERNUIEND_GOLEM", 3.f, m_golem);
+	}
 
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
@@ -445,4 +449,16 @@ void GolemAI::ReportSchedule()
 		cout << i << " : " << magic_enum::enum_name(m_scheduler[i]) << endl;
 	}
 	std::cout << std::endl << std::endl;
+}
+
+void GolemAI::BossPatternUIStart()
+{
+	// UI : 골렘이 강력한 공격을 준비한다. 엄폐물을 찾아 피할지 반격의 기회를 노릴지 선택해야한다.
+	cout << "BossPatternUIStart_Golem" << endl;
+}
+
+void GolemAI::BossPatternUIEnd()
+{
+	// 띄웠던 UI 삭제
+	cout << "BossPatternUIEnd_Golem" << endl;
 }

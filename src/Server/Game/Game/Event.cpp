@@ -356,6 +356,15 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "BOSSPATTERNUIEND_WEEPER")
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			weeperObj->GetAI()->BossPatternUIEnd();
+		}
+	}
+
 
 	//golem
 	if (msg == "GOLEM_ATTACK1_FUNCTIONCALL")
@@ -544,6 +553,15 @@ void Event::ExecuteMsg_Once()
 		if (golemObj)
 		{
 			golemObj->SetState(Golem::GOLEM_STATE::DEAD);
+		}
+	}
+
+	if (msg == "BOSSPATTERNUIEND_GOLEM")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->GetAI()->BossPatternUIEnd();
 		}
 	}
 
