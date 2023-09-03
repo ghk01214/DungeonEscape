@@ -662,6 +662,7 @@ namespace game
 		auto pillarObjects{ objMgr->GetLayer(L"Layer_Gimmik_Pillar")->GetGameObjects() };
 		auto rockObjects{ objMgr->GetLayer(L"Layer_Gimmik_Rock")->GetGameObjects() };
 		auto boulderObjects{ objMgr->GetLayer(L"Layer_Gimmik_Boulder")->GetGameObjects() };
+		auto lastBossRockObjects{ objMgr->GetLayer(L"Layer_LastBossRock")->GetGameObjects() };
 
 		switch (postOver->msgProtocol)
 		{
@@ -763,6 +764,16 @@ namespace game
 
 					m_sessions[id]->SendAddObjPacket(pillar);
 				}
+
+				for (auto& object : lastBossRockObjects)
+				{
+					auto rock{ dynamic_cast<MapObject*>(object) };
+
+					if (rock == nullptr)
+						continue;
+
+					m_sessions[id]->SendAddObjPacket(rock);
+				}
 			}
 			break;
 			case ProtocolID::WR_ADD_OBJ_ACK:
@@ -811,6 +822,25 @@ namespace game
 					}
 
 					for (auto& object : boulderObjects)
+					{
+						auto rock{ dynamic_cast<MapObject*>(object) };
+
+						if (rock == nullptr)
+							continue;
+
+						if (rock->GetID() != id)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendAddObjPacket(rock, 30.f);
+						}
+					}
+
+					for (auto& object : lastBossRockObjects)
 					{
 						auto rock{ dynamic_cast<MapObject*>(object) };
 

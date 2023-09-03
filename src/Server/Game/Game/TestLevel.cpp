@@ -283,7 +283,7 @@ void TestLevel::LoadMapObject()
 
 	FBXMapLoader rockLoader;
 	rockLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	rockLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\LastBossRock.fbx");
+	rockLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\LastBossRock.fbx");
 
 	auto& rockInfo = rockLoader.GetMapObjectInfo();
 	for (auto& info : rockInfo)
@@ -300,6 +300,8 @@ void TestLevel::LoadMapObject()
 		auto& vertexindexInfo = mapLoader.FindVertexIndicesInfo(info.first);
 		MeshBody->AddCollider<MeshCollider>(MeshObject->GetTransform()->GetScale(), info.first, vertexindexInfo);
 		MeshObject->ApplyRequestedLayers();
+
+		MeshObject->ServerMessage_Init(false, false);
 	}
 }
 

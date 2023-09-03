@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -319,7 +319,7 @@ void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE p
 	for (auto& gameObject : gameObjects)
 	{
 		gameObject->SetObjectType(server::OBJECT_TYPE::PLAYER);
-		gameObject->SetName(userName);
+		//gameObject->SetName(userName);
 	}
 
 	AddPlayer(gameObjects);
@@ -453,12 +453,10 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\ThirdRoom_RockRolling.fbx");
 	PushMapData(MAP_TYPE::ThirdRoom_RockRolling, mapLoader.GetMapObjectInfo());
 
-	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom.fbx");
+	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom2.fbx");
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	//m_eNextMapType = MAP_TYPE::StartRoom;
-	//m_eNextMapType = MAP_TYPE::SecondRoom_Bridge_SecondBoss;
-	m_eNextMapType = MAP_TYPE::ThirdRoom_RockRolling;
+	m_eNextMapType = MAP_TYPE::LastBoss_TreasureRoom;
 	MoveMap(m_eNextMapType);
 }
 
@@ -2393,6 +2391,13 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Pillar Bridge";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Pillar Bridge.fbx";
 			objectDesc.script = std::make_shared<PhysxObject_Script>();
+		}
+		break;
+		case server::FBX_TYPE::LAST_BOSS_ROCK:
+		{
+			objectDesc.strName = L"Last Boss Rock";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx";
+			objectDesc.script = nullptr;
 		}
 		break;
 #pragma endregion

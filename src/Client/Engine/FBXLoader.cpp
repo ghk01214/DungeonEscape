@@ -37,7 +37,7 @@ void FBXLoader::LoadFbx(const wstring& path)
 		return;
 	else if (fs::path(path).filename() == L"FirstBoss.fbx")
 		return;
-	else if (fs::path(path).filename() == L"LastBoss_TreasureRoom.fbx")
+	else if (fs::path(path).filename() == L"LastBoss_TreasureRoom2.fbx")
 		return;
 	else if (fs::path(path).filename() == L"SecondRoom_Bridge_SecondBoss.fbx")
 		return;

@@ -84,6 +84,20 @@ void MapObject::ServerMessage_Init(bool scatterRock, bool boulder)
 
 		game::MessageHandler::GetInstance()->PushSendMessage(ev);
 	}
+	else
+	{			// 골렘 방 4개 돌
+		m_id = game::MessageHandler::GetInstance()->NewObjectID();
+
+		m_name = L"LAST BOSS ROCK";
+		m_fbxType = server::FBX_TYPE::LAST_BOSS_ROCK;
+		m_objType = server::OBJECT_TYPE::MAP_OBJECT;
+
+		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
+		ev.objType = m_objType;
+		ev.objID = m_id;
+
+		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	}
 }
 
 void MapObject::ServerMessage_Release()

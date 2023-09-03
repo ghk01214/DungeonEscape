@@ -160,6 +160,7 @@
 		SCATTER_ROCK,		// 돌 굴리기 기믹의 벽 FBX
 		ROLLING_ROCK,		// 돌 굴리기 기믹의 돌 FBX
 		PILLAR_BRIDGE,		// 돌 다리 기믹의 다리 FBX
+		LAST_BOSS_ROCK,		// 골렘 방의 4개 돌 FBX
 
 		MAX,
 	};
