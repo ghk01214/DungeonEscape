@@ -213,6 +213,15 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "ANIM_TO_WEEPER_DEAD")
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			weeperObj->SetState(Weeper::WEEPER_STATE::DEAD);
+		}
+	}
+
 	if (msg == "WEEPER_CAST1_FUNCTIONCALL")
 	{
 		auto weeperObj = dynamic_cast<Weeper*>(target);
@@ -518,6 +527,15 @@ void Event::ExecuteMsg_Once()
 		if (golemObj)
 		{
 			golemObj->SetState(Golem::GOLEM_STATE::STUN);
+		}
+	}
+
+	if (msg == "ANIM_TO_GOLEM_DEAD")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			golemObj->SetState(Golem::GOLEM_STATE::DEAD);
 		}
 	}
 

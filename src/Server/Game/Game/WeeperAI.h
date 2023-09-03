@@ -48,6 +48,9 @@ public:
 	void Cast2Vulnerable_OFF();
 	void Cast4Cancel_RequiredHit_To_Default();
 
+public:
+	bool DeathHandle();
+
 private:
 	void ReportSchedule();		//콘솔출력 목적의 디버그 전용 함수
 

@@ -60,11 +60,13 @@ void GolemAI::FillSchedule()
 	if (!m_target)
 		return;		// 초기 SetRandomTarget이 실패할 경우 탈출
 
+	if (DeathHandle())
+		return;		//죽었으면 AI 정지후 state를 death로 설정
+
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK1);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK3);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
-	//m_scheduler.emplace_back(GOLEM_SCHEDULE::ROAR);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::JUMP);
 	m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
@@ -75,6 +77,9 @@ void GolemAI::FillSchedule()
 
 void GolemAI::ExecuteSchedule(float deltaTime)
 {
+	if (IsEmptySchedule())
+		return;
+
 	if (m_golem->m_currState != Golem::GOLEM_STATE::IDLE1 && m_golem->m_currState != Golem::GOLEM_STATE::WALK)
 		return;			// 기본스탠딩, 이동도중에만 패턴수행이 가능하다.
 
@@ -382,6 +387,19 @@ void GolemAI::GolemMove()
 {
 	Monstermove();
 	m_golem->SetState(Golem::GOLEM_STATE::WALK);
+}
+
+bool GolemAI::DeathHandle()
+{
+	if (m_golem->m_hp <= 0)
+	{
+		m_AIWait = true;
+		m_golem->m_currState = Golem::GOLEM_STATE::DEATH;
+		EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_DEAD", 3.2f, m_golem);
+		return true;
+	}
+
+	return false;
 }
 
 void GolemAI::ReportSchedule()

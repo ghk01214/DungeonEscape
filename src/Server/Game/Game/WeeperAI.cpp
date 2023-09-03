@@ -61,10 +61,8 @@ void WeeperAI::FillSchedule()
 	static std::uniform_int_distribution<int> count(1,3);
 	static std::uniform_int_distribution<int> schedule(static_cast<int>(WEEPER_SCHEDULE::CAST1), static_cast<int>(WEEPER_SCHEDULE::CAST4));
 
-	//for (int i = 0; i < count(dre); ++i)
-	//{
-	//	m_scheduler.emplace_back(static_cast<WEEPER_SCHEDULE>(schedule(dre)));
-	//}
+	if (DeathHandle())
+		return;
 
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
 	m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
@@ -79,6 +77,9 @@ void WeeperAI::FillSchedule()
 
 void WeeperAI::ExecuteSchedule(float deltaTime)
 {
+	if (IsEmptySchedule())
+		return;
+
 	if (m_weeper->m_currState != Weeper::IDLE && m_weeper->m_currState != Weeper::IDLE_BREAK)
 		return;			// 기본스탠딩, 이동도중에만 패턴수행이 가능하다.
 
@@ -306,6 +307,19 @@ void WeeperAI::Cast4Cancel_RequiredHit_To_Default()
 {
 	m_cast4Cancel_requiredHit = 3;
 	m_weeper->m_cast4_vertVel = physx::PxVec3(0, 800, 0);
+}
+
+bool WeeperAI::DeathHandle()
+{
+	if (m_weeper->m_hp <= 0)
+	{
+		m_AIWait = true;
+		m_weeper->m_currState = Weeper::WEEPER_STATE::DEATH;
+		EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_DEAD", 4.15f, m_weeper);
+		return true;
+	}
+
+	return false;
 }
 
 void WeeperAI::ReportSchedule()
