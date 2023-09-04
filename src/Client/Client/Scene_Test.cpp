@@ -2250,7 +2250,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 			gameObject->AddComponent(objectDesc.script);
 		}
 
-		AddObjectEffectScript(gameObject, fbxType);
+		//AddObjectEffectScript(gameObject, fbxType);
 		gameObject->SetObjectType(objType);
 	}
 
@@ -2366,15 +2366,18 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Fireball";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
-			objectDesc.script = std::make_shared<PlayerRangeAttack>();
-			objectDesc.vScale = { 100.f, 100.f, 100.f };
+			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_fireballEffectCurrentIndex++);
+			objectDesc.vScale = Vec3{ 100.f };
+
+			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 5)
+				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::PLAYER_ICEBALL:
 		{
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+			objectDesc.script = std::make_shared<PlayerRangeAttack>(type);
 			objectDesc.vScale = { 2.5f, 2.5f, 2.5f };
 		}
 		break;
@@ -2382,29 +2385,32 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
-			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+			objectDesc.script = std::make_shared<PlayerRangeAttack>(type);
 		}
 		break;
 		case server::FBX_TYPE::PLAYER_POISONBALL:
 		{
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx";
-			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+			objectDesc.script = std::make_shared<PlayerRangeAttack>(type);
 		}
 		break;
 		case server::FBX_TYPE::PLAYER_METEOR:
 		{
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Rolling Rock.fbx";
-			objectDesc.script = std::make_shared<PlayerRangeAttack>();
+			objectDesc.script = std::make_shared<PlayerRangeAttack>(type);
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast1";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-			//objectDesc.vScale = Vec3{ 70.f };
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_fireballEffectCurrentIndex++);
+			objectDesc.vScale = Vec3{ 70.f };
+
+			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 5)
+				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
@@ -2528,84 +2534,28 @@ void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::sha
 	}
 }
 
-void Scene_Test::AddObjectEffectScript(std::shared_ptr<CGameObject>& gameObject, server::FBX_TYPE type)
-{
-	switch (type)
-	{
-		case server::FBX_TYPE::PLAYER_FIREBALL:
-		{
-
-		}
-		break;
-		case server::FBX_TYPE::PLAYER_ICEBALL:
-		{
-
-		}
-		break;
-		case server::FBX_TYPE::PLAYER_POISONBALL:
-		{
-
-		}
-		break;
-		case server::FBX_TYPE::PLAYER_THUNDERBALL:
-		{
-
-		}
-		break;
-		case server::FBX_TYPE::PLAYER_METEOR:
-		{
-
-		}
-		break;
-		case server::FBX_TYPE::WEEPER_CAST1_BALL:
-		{
-		}
-		break;
-		case server::FBX_TYPE::WEEPER_CAST2_BALL:
-		{
-		}
-		break;
-		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
-		{
-		}
-		break;
-		case server::FBX_TYPE::WEEPER_CAST3_BALL:
-		{
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_ICEBALL:
-		{
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_THUNDERBALL:
-		{
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_POISONBALL:
-		{
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_DARKBALL:
-		{
-		}
-		break;
-		default:
-		break;
-	}
-}
-
 void Scene_Test::AddEffectTextures()
 {
 	EffectInfo effect;
 	effect.speed = 0.003f;
-	effect.scale = { 500.f, 500.f, 1.f };
+	effect.scale = Vec3{ 500.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Explode", effect.speed);
 	m_billboardInfo[server::EFFECT_TYPE::EXPLODE] = effect;
 
-	effect.speed = 0.006f;
-	effect.scale = { 500.f, 500.f, 1.f };
-	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Fire", effect.speed);
-	m_billboardInfo[server::EFFECT_TYPE::FIRE] = effect;
+	effect.speed = 0.003f;
+	effect.scale = Vec3{ 300.f };
+
+	for (int32_t i = 0; i < 5; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Fire", effect.speed);
+
+		if (i == 0)
+		{
+			m_fireballEffectStartIndex = effect.index;
+			m_fireballEffectCurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::FIRE] = effect;
+		}
+	}
 
 #pragma region [HIT]
 	effect.speed = 0.003f;
@@ -2623,7 +2573,7 @@ void Scene_Test::AddEffectTextures()
 #pragma endregion
 
 	effect.speed = 0.004f;
-	effect.scale = { 500.f, 500.f, 1.f };
+	effect.scale = Vec3{ 500.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Paralys", effect.speed);
 	m_billboardInfo[server::EFFECT_TYPE::PARALYS] = effect;
 
@@ -2665,7 +2615,7 @@ void Scene_Test::AddEffectTextures()
 #pragma endregion
 
 	effect.speed = 0.003f;
-	effect.scale = { 500.f, 500.f, 1.f };
+	effect.scale = Vec3{ 500.f };
 
 	for (int32_t i = 0; i < 51; ++i)
 	{

@@ -142,7 +142,6 @@ private:
 
 	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
-	void AddObjectEffectScript(std::shared_ptr<CGameObject>& gameObject, server::FBX_TYPE type);
 	void AddEffectTextures();
 
 private:
@@ -176,6 +175,9 @@ private:
 private:
 	uint32_t m_weeperSkill2EffectStartIndex;
 	uint32_t m_weeperSkill2EffectCurrentIndex;
+
+	uint32_t m_fireballEffectStartIndex;
+	uint32_t m_fireballEffectCurrentIndex;
 
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;

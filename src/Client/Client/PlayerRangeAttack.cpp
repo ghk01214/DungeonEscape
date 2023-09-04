@@ -11,6 +11,21 @@
 #include <Network.h>
 #include <EffectManager.h>
 
+PlayerRangeAttack::PlayerRangeAttack(server::FBX_TYPE attackType, uint32_t index) :
+	m_attackType{ attackType },
+	m_effectIndex{ index }
+{
+}
+
+PlayerRangeAttack::~PlayerRangeAttack()
+{
+}
+
+void PlayerRangeAttack::Awake()
+{
+	__super::Awake();
+}
+
 void PlayerRangeAttack::Start()
 {
 	__super::Start();
@@ -20,15 +35,7 @@ void PlayerRangeAttack::Update()
 {
 	__super::Update();
 
-	if (GetGameObject()->GetObjectType() == server::OBJECT_TYPE::PLAYER_FIREBALL)
-	{
-		auto pos{ GetTransform()->GetWorldPosition() };
-
-		pos.y += 50.f;
-
-		GET_SINGLE(EffectManager)->SetBillBoardInfo(1, pos, Vec3(300.f, 300.f, 1.f), 0.002f);
-		GET_SINGLE(EffectManager)->PlayBillBoard(1);
-	}
+	RenderEffect();
 }
 
 void PlayerRangeAttack::LateUpdate()
@@ -105,4 +112,20 @@ void PlayerRangeAttack::Transform(network::CPacket& packet)
 
 	//auto t{ GetTransform()->GetWorldPosition() };
 	//std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
+}
+
+void PlayerRangeAttack::RenderEffect()
+{
+	switch (m_attackType)
+	{
+		case server::FBX_TYPE::PLAYER_FIREBALL:
+		{
+			auto pos{ GetTransform()->GetWorldPosition() };
+			pos.y += 50.f;
+
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(1, pos, Vec3{ 300.f }, 0.003f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(1);
+		}
+		break;
+	}
 }
