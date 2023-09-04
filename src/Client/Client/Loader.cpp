@@ -240,7 +240,6 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Star_Sword", L"..\\Resources\\Texture\\Effect\\Star Sword\\tile.png", 24);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Lune_Sword", L"..\\Resources\\Texture\\Effect\\Lune Sword\\tile.png", 28);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Cross_Sword", L"..\\Resources\\Texture\\Effect\\Cross Sword\\tile.png", 19);
-	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Light_Wave_Sword", L"..\\Resources\\Texture\\Effect\\Cross Sword\\tile.png", 19);
 
 	return S_OK;
 }

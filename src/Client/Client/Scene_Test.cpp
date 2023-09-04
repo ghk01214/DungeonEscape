@@ -2629,44 +2629,39 @@ void Scene_Test::AddEffectTextures()
 
 #pragma region [SWORD]
 	effect.speed = 0.00625f;
-	effect.scale = { 400.f, 400.f, 1.f };
+	effect.scale = Vec3{ 300.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Slash_Special", effect.speed);
 	m_billboardInfo[server::EFFECT_TYPE::SLASH_SPECIAL] = effect;
 
 	effect.speed = 0.006f;
-	effect.scale = { 500.f, 500.f, 1.f };
+	effect.scale = Vec3{ 300.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Fire_Sword", effect.speed);
 	m_billboardInfo[server::EFFECT_TYPE::FIRE_SWORD] = effect;
 
-	effect.speed = 0.006f;
-	effect.scale = { 500.f, 500.f, 1.f };
+	effect.speed = 0.0035f;
+	effect.scale = Vec3{ 300.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Ice_Sword", effect.speed);
 	m_billboardInfo[server::EFFECT_TYPE::ICE_SWORD] = effect;
 
-	effect.speed = 0.006f;
-	effect.scale = { 500.f, 500.f, 1.f };
+	effect.speed = 0.0035f;
+	effect.scale = Vec3{ 300.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Lightning_Sword", effect.speed);
 	m_billboardInfo[server::EFFECT_TYPE::LIGHTNING_SWORD] = effect;
 
 	effect.speed = 0.006f;
-	effect.scale = { 500.f, 500.f, 1.f };
+	effect.scale = Vec3{ 300.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Star_Sword", effect.speed);
 	m_billboardInfo[server::EFFECT_TYPE::STAR_SWORD] = effect;
 
-	effect.speed = 0.006f;
-	effect.scale = { 500.f, 500.f, 1.f };
+	effect.speed = 0.0035f;
+	effect.scale = Vec3{ 300.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Lune_Sword", effect.speed);
 	m_billboardInfo[server::EFFECT_TYPE::LUNE_SWORD] = effect;
 
-	effect.speed = 0.006f;
-	effect.scale = { 500.f, 500.f, 1.f };
+	effect.speed = 0.0035f;
+	effect.scale = Vec3{ 300.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Cross_Sword", effect.speed);
 	m_billboardInfo[server::EFFECT_TYPE::CROSS_SWORD] = effect;
-
-	effect.speed = 0.006f;
-	effect.scale = { 500.f, 500.f, 1.f };
-	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Light_Wave_Sword", effect.speed);
-	m_billboardInfo[server::EFFECT_TYPE::LIGHT_WAVE_SWORD] = effect;
 #pragma endregion
 
 	effect.speed = 0.003f;
@@ -2888,6 +2883,11 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 	server::EFFECT_TYPE effectType{ magic_enum::enum_value<server::EFFECT_TYPE>(effectIndex) };
 
 	auto info{ m_billboardInfo[effectType] };
+
+	if (server::EFFECT_TYPE::SWORD1 <= effectType and effectType <= server::EFFECT_TYPE::SPELL_SWORD)
+	{
+		effectPos.y -= 50.f;
+	}
 
 	GET_SINGLE(EffectManager)->SetBillBoardInfo(info.index, effectPos, info.scale, info.speed, info.alpha);
 	GET_SINGLE(EffectManager)->PlayBillBoard(info.index);
