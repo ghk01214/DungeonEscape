@@ -176,6 +176,9 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	LOAD_TEXTURE(L"Pillar Hint", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint.png");
 	LOAD_TEXTURE(L"Pillar Hint2", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint2.png");
 
+	LOAD_TEXTURE(L"Weeper Hint", L"..\\Resources\\Texture\\UI\\Font\\Weeper Hint.png");
+	LOAD_TEXTURE(L"Golem Hint", L"..\\Resources\\Texture\\UI\\Font\\Golem Hint.png");
+
 	LOAD_TEXTURE(L"Player Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(C).png");
 	LOAD_TEXTURE(L"HP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(C).png");
 

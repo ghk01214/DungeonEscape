@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "GolemAI.h"
 #include "Golem.h"
 #include "Monster.h"
@@ -107,7 +107,6 @@ void GolemAI::FillSchedule()
 	else
 	{
 		m_scheduler.emplace_back(GOLEM_SCHEDULE::SPELL);
-		BossPatternUIStart();										//n초후 ui 삭제 패킷 전송
 		EventHandler::GetInstance()->AddEvent("BOSSPATTERNUIEND_GOLEM", 3.f, m_golem);
 	}
 
@@ -344,6 +343,8 @@ void GolemAI::ExecuteSchedule(float deltaTime)
 
 				SetAIWait(true);
 
+				BossPatternUIStart();
+
 				m_golem->m_currState = Golem::GOLEM_STATE::ROAR;
 
 				EventHandler::GetInstance()->AddEvent("LAST_BOSS_ROCK_RISE", 0.1f, m_golem);				//보스맵 엄폐물 등장
@@ -458,6 +459,12 @@ void GolemAI::BossPatternUIStart()
 {
 	// UI : 골렘이 강력한 공격을 준비한다. 엄폐물을 찾아 피할지 반격의 기회를 노릴지 선택해야한다.
 	cout << "BossPatternUIStart_Golem" << endl;
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	ev.objID = m_monster->GetID();
+	ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::GUIDE_UI3);
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void GolemAI::BossPatternUIEnd()

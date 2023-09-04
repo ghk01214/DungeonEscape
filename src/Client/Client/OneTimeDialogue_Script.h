@@ -12,6 +12,8 @@ public:
 		PILLAR_HINT,
 		PILLAR_HINT2,
 		ARTIFACT_DESTROYED,
+		WEEPER_HINT,
+		GOLEM_HINT,
 
 		MAX
 	};
@@ -30,10 +32,10 @@ public:
 	virtual ~OneTimeDialogue_Script();
 
 public:
-	virtual void Awake() override;
-	virtual void Start() override;
-	virtual void Update() override;
-	virtual void LateUpdate() override;
+	void Awake() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
 
 public:
 	void StartRender(float fadeDuration, float renderDuration);

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "WeeperAI.h"
 #include "Weeper.h"
 #include "Monster.h"
@@ -65,9 +65,9 @@ void WeeperAI::FillSchedule()
 	static std::uniform_real_distribution<float> rndSchedule(0.0f, 1.0f);
 
 	float value = rndSchedule(dre);
-	if(value <0.15f)
+	if (value < 0.15f)
 		m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
-	else if (value <0.65f)
+	else if (value < 0.65f)
 		m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
 	else if (value < 0.85f)
 		m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
@@ -137,6 +137,8 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 			inSkillRange = SkillRangeCheck();
 			if (inSkillRange)
 			{
+				BossPatternUIStart();
+
 				m_weeper->m_currState = Weeper::CAST2_START;										//원기옥 자세
 				m_weeper->SetMonsterImmobile();
 
@@ -334,6 +336,12 @@ void WeeperAI::BossPatternUIStart()
 {
 	// UI : 사신이 강력한 공격을 준비한다. 물러날지, 반격의 기회를 노릴지 선택해야한다.
 	cout << "BossPatternUIStart_WEEPER" << endl;
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	ev.objID = m_monster->GetID();
+	ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::GUIDE_UI2);
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void WeeperAI::BossPatternUIEnd()
@@ -344,7 +352,7 @@ void WeeperAI::BossPatternUIEnd()
 
 void WeeperAI::ReportSchedule()
 {
-	for (int i = 0; i< m_scheduler.size(); ++i)
+	for (int i = 0; i < m_scheduler.size(); ++i)
 	{
 		std::cout << i << " : " << magic_enum::enum_name(m_scheduler[i]) << std::endl;
 	}

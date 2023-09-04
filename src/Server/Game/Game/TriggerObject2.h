@@ -25,8 +25,8 @@ public:
 		PORTAL8,
 
 		GUIDELINE1,			// 아티팩트가 부서지지 않은 상태에서 돌기둥에 다가갔을 때의 UI
-		GUIDELINE2,
-		GUIDELINE3,
+		GUIDELINE2,			// Weeper의 광역기 공격의 UI 알림
+		GUIDELINE3,			// Golem의 SPELL 공격의 UI 알림
 		GUIDELINE4,
 		GUIDELINE5,
 

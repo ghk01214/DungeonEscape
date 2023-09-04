@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -1194,6 +1194,46 @@ void Scene_Test::CreateOneTimeDialogue()
 		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("PILLAR_HINT2") };
 		behaviour->InsertTextures(texture);
 		m_oneTimeDialogueScript["PILLAR_HINT2"] = behaviour;
+
+		obj->AddComponent(behaviour);
+
+		AddGameObject(obj);
+	}
+
+	texture = GET_TEXTURE(L"Weeper Hint");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto pos{ GetRatio(0.f, 50.f) };
+		auto transform{ obj->GetTransform() };
+
+		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("WEEPER_HINT") };
+		behaviour->InsertTextures(texture);
+		m_oneTimeDialogueScript["WEEPER_HINT"] = behaviour;
+
+		obj->AddComponent(behaviour);
+
+		AddGameObject(obj);
+	}
+
+	texture = GET_TEXTURE(L"Golem Hint");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto pos{ GetRatio(0.f, 50.f) };
+		auto transform{ obj->GetTransform() };
+
+		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("GOLEM_HINT") };
+		behaviour->InsertTextures(texture);
+		m_oneTimeDialogueScript["GOLEM_HINT"] = behaviour;
 
 		obj->AddComponent(behaviour);
 
@@ -3003,6 +3043,16 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI1:
 		{
 			m_oneTimeDialogueScript["PILLAR_HINT2"]->StartRender(1.f, 2.f);
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI2:
+		{
+			m_oneTimeDialogueScript["WEEPER_HINT"]->StartRender(1.f, 2.f);
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI3:
+		{
+			m_oneTimeDialogueScript["GOLEM_HINT"]->StartRender(1.f, 2.f);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:
