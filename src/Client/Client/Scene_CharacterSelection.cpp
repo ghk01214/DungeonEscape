@@ -122,16 +122,17 @@ void Scene_CharacterSelection::CreateCharacterImage()
 
 	float width{ static_cast<float>(GEngine->GetWindow().width) };
 	float height{ static_cast<float>(GEngine->GetWindow().height) };
-	Vec2 pos{ GetRatio(0.f, 15.f) };
+
 
 	//FRAME
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < 2; ++i)
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
+		Vec2 pos{ GetRatio(45.f * (2 * i - 1), 15.f) };
+		//pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
 
 		transform->SetLocalScale(Vec3{ width / 4.f, height / 1.5f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 450.f });
@@ -148,20 +149,19 @@ void Scene_CharacterSelection::CreateCharacterImage()
 	}
 
 	// IMAGE
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < 2; ++i)
 	{
 		if (i == 0)
 			texture = GET_TEXTURE(L"Nana");
 		else if (i == 1)
 			texture = GET_TEXTURE(L"Mistic");
-		else
-			texture = GET_TEXTURE(L"Carmel");
 
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
+		Vec2 pos{ GetRatio(45.f * (2 * i - 1), 15.f) };
+		//pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
 
 		transform->SetLocalScale(Vec3{ width / 4.5f, height / 1.7f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
@@ -176,16 +176,16 @@ void Scene_CharacterSelection::CreateCharacterNameButton()
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 
 	float width{ static_cast<float>(GEngine->GetWindow().width) };
-	Vec2 pos{ GetRatio(0.f, -65.f) };
 
 	// BUTTON
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < 2; ++i)
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
+		Vec2 pos{ GetRatio(45.f * (2 * i - 1), -65.f)};
+		//pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
 
 		transform->SetLocalScale(Vec3{ 257.f * 1.2f, 95.f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 450.f });
@@ -202,20 +202,18 @@ void Scene_CharacterSelection::CreateCharacterNameButton()
 	}
 
 	// FONT
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < 2; ++i)
 	{
 		if (i == 0)
 			texture = GET_TEXTURE(L"Knight");
 		else if (i == 1)
 			texture = GET_TEXTURE(L"Mage");
-		else
-			texture = GET_TEXTURE(L"Priest");
 
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
+		Vec2 pos{ GetRatio(45.f * (2 * i - 1), -65.f) };
 
 		transform->SetLocalScale(Vec3{ 250.f, 58.f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
@@ -345,14 +343,12 @@ void Scene_CharacterSelection::CreateCharacterDescription()
 	}
 
 	// FONT
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < 2; ++i)
 	{
 		if (i == 0)
 			texture = GET_TEXTURE(L"Knight2");
 		else if (i == 1)
 			texture = GET_TEXTURE(L"Mage2");
-		else
-			texture = GET_TEXTURE(L"Priest2");
 
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
@@ -369,14 +365,12 @@ void Scene_CharacterSelection::CreateCharacterDescription()
 	}
 
 	// IMAGE
-	for (int32_t i = 0; i < 3; ++i)
+	for (int32_t i = 0; i < 2; ++i)
 	{
 		if (i == 0)
 			texture = GET_TEXTURE(L"Nana");
 		else if (i == 1)
 			texture = GET_TEXTURE(L"Mistic");
-		else
-			texture = GET_TEXTURE(L"Carmel");
 
 		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
