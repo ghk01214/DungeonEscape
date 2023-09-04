@@ -123,8 +123,16 @@ void PlayerRangeAttack::RenderEffect()
 			auto pos{ GetTransform()->GetWorldPosition() };
 			pos.y += 50.f;
 
-			GET_SINGLE(EffectManager)->SetBillBoardInfo(1, pos, Vec3{ 300.f }, 0.003f);
-			GET_SINGLE(EffectManager)->PlayBillBoard(1);
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 300.f }, 0.003f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
+		}
+		break;
+		case server::FBX_TYPE::PLAYER_ICEBALL:
+		{
+			auto pos{ GetTransform()->GetWorldPosition() };
+
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 300.f }, 0.003f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
 		}
 		break;
 	}

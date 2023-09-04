@@ -150,7 +150,10 @@ void MonsterRangeAttack::RenderEffect()
 		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
 		{
+			auto pos{ GetTransform()->GetWorldPosition() };
 
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 400.f }, 0.003f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
 		}
 		break;
 		default:

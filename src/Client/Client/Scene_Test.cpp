@@ -2377,8 +2377,11 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<PlayerRangeAttack>(type);
+			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_spiralEffectCurrentIndex++);
 			objectDesc.vScale = { 2.5f, 2.5f, 2.5f };
+
+			if (m_spiralEffectCurrentIndex == m_spiralEffectStartIndex + 5)
+				m_spiralEffectCurrentIndex = m_spiralEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::PLAYER_THUNDERBALL:
@@ -2429,8 +2432,11 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Weeper Cast3";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
+			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_spiralEffectCurrentIndex++);
 			objectDesc.vScale = { 2.f, 2.f, 2.f };
+
+			if (m_spiralEffectCurrentIndex == m_spiralEffectStartIndex + 5)
+				m_spiralEffectCurrentIndex = m_spiralEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST4_BALL:
@@ -2615,6 +2621,21 @@ void Scene_Test::AddEffectTextures()
 #pragma endregion
 
 	effect.speed = 0.003f;
+	effect.scale = Vec3{ 300.f };
+
+	for (int32_t i = 0; i < 5; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Spiral", effect.speed);
+
+		if (i == 0)
+		{
+			m_spiralEffectStartIndex = effect.index;
+			m_spiralEffectCurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::SPIRAL] = effect;
+		}
+	}
+
+	effect.speed = 0.003f;
 	effect.scale = Vec3{ 500.f };
 
 	for (int32_t i = 0; i < 51; ++i)
@@ -2712,7 +2733,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 #pragma region [SKILL]
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
 		{
-			RemoveNonAnimatedObject(id);
+			RemoveNonAnimatedObject(type, id);
 
 			if (playSound == true)
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav");
@@ -2720,7 +2741,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		break;
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
 		{
-			RemoveNonAnimatedObject(id);
+			RemoveNonAnimatedObject(type, id);
 
 			if (playSound == true)
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Ice Hit.wav");
@@ -2728,7 +2749,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 		break;
 		case server::OBJECT_TYPE::PLAYER_POISONBALL:
 		{
-			RemoveNonAnimatedObject(id);
+			RemoveNonAnimatedObject(type, id);
 
 			if (playSound == true)
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"PoisonAcid Hit.wav");
@@ -2795,7 +2816,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 	}
 }
 
-void Scene_Test::RemoveNonAnimatedObject(int32_t id)
+void Scene_Test::RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id)
 {
 	if (m_overlappedObjects.contains(id) == false)
 		return;
@@ -2803,7 +2824,18 @@ void Scene_Test::RemoveNonAnimatedObject(int32_t id)
 	auto objects{ GetNetworkObject() };
 	network::NetworkGameObject removeObjects;
 
-	auto effect{ m_billboardInfo[server::EFFECT_TYPE::EXPLODE] };
+	EffectInfo effect{};
+
+	switch (type)
+	{
+		case server::OBJECT_TYPE::PLAYER_FIREBALL:
+		{
+			effect = m_billboardInfo[server::EFFECT_TYPE::EXPLODE];
+		}
+		break;
+		default:
+		break;
+	}
 
 	for (auto& object : objects)
 	{
@@ -2818,8 +2850,17 @@ void Scene_Test::RemoveNonAnimatedObject(int32_t id)
 	RemoveNetworkObject(removeObjects);
 	GET_NETWORK->RemoveNetworkObject(id);
 
-	GET_SINGLE(EffectManager)->SetBillBoardInfo(effect.index, effect.pos, effect.scale, effect.speed);
-	GET_SINGLE(EffectManager)->PlayBillBoard(effect.index);
+	switch (type)
+	{
+		case server::OBJECT_TYPE::PLAYER_FIREBALL:
+		{
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(effect.index, effect.pos, effect.scale, effect.speed);
+			GET_SINGLE(EffectManager)->PlayBillBoard(effect.index);
+		}
+		break;
+		default:
+		break;
+	}
 }
 
 void Scene_Test::PlayEffect(network::CPacket& packet)

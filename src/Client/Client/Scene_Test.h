@@ -133,7 +133,7 @@ private:
 	void CreateAnimatedRemoteObject(network::CPacket& packet);
 	void CreateRemoteObject(network::CPacket& packet);
 	void RemoveObject(network::CPacket& packet);
-	void RemoveNonAnimatedObject(int32_t id);
+	void RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id);
 	void PlayEffect(network::CPacket& packet);
 	void ChangeSound(network::CPacket& packet);
 	void TriggerBehaviour(network::CPacket& packet);
@@ -178,6 +178,9 @@ private:
 
 	uint32_t m_fireballEffectStartIndex;
 	uint32_t m_fireballEffectCurrentIndex;
+
+	uint32_t m_spiralEffectStartIndex;
+	uint32_t m_spiralEffectCurrentIndex;
 
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;
