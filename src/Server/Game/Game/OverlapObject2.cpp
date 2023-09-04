@@ -292,15 +292,15 @@ void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 
 	if (m_attackType == "ATTACK0")
 	{
-		type = server::EFFECT_TYPE::CROSS_SWORD;
+		type = server::EFFECT_TYPE::ICE_SWORD;
 	}
 	else if (m_attackType == "ATTACK1")
 	{
-		type = server::EFFECT_TYPE::SLASH_SPECIAL;
+		type = server::EFFECT_TYPE::LIGHT_WAVE_SWORD;
 	}
 	else if (m_attackType == "ATTACK2")
 	{
-		type = server::EFFECT_TYPE::STAR_SWORD;
+		type = server::EFFECT_TYPE::CROSS_SWORD;
 	}
 	else if (m_attackType == "ATTACK3")
 	{
@@ -324,19 +324,19 @@ void OverlapObject2::ServerMessage_RenderEffect_SingleStrike()
 
 	if (m_attackType == "ATTACK0")
 	{
-		type = server::EFFECT_TYPE::SWORD1;
+		type = server::EFFECT_TYPE::ICE_SWORD;
 	}
 	else if (m_attackType == "ATTACK1")
 	{
-		type = server::EFFECT_TYPE::SLASH;
+		type = server::EFFECT_TYPE::LIGHT_WAVE_SWORD;
 	}
 	else if (m_attackType == "ATTACK2")
 	{
-		type = server::EFFECT_TYPE::SWORD1;
+		type = server::EFFECT_TYPE::CROSS_SWORD;
 	}
 	else if (m_attackType == "ATTACK3")
 	{
-		type = server::EFFECT_TYPE::SLASH;
+		type = server::EFFECT_TYPE::LUNE_SWORD;
 	}
 	else
 		return;

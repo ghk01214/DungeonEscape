@@ -13,11 +13,6 @@
 #pragma endregion
 
 #pragma region [EFFECT]
-#include "WeeperSkill1_Script.h"
-#include "WeeperSkill2_Script.h"
-#include "WeeperSkill3_Script.h"
-#include "WeeperSkill2Scatter_Script.h"
-
 #include "Magic_Artifact_Script.h"
 #pragma endregion
 

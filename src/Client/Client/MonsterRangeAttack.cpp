@@ -7,6 +7,31 @@
 #include <Transform.h>
 #include <NetworkManager.h>
 #include <Network.h>
+#include <EffectManager.h>
+
+MonsterRangeAttack::MonsterRangeAttack(server::FBX_TYPE attackType, uint32_t index) :
+	m_attackType{ attackType },
+	m_effectIndex{ index }
+{
+	/*switch (m_attackType)
+	{
+		case server::FBX_TYPE::WEEPER_CAST2_BALL:
+		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			m_effectIndex = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Shield_Electric_DarkGray", 0.003f);
+		}
+		break;
+	}*/
+}
+
+MonsterRangeAttack::~MonsterRangeAttack()
+{
+}
+
+void MonsterRangeAttack::Awake()
+{
+	__super::Awake();
+}
 
 void MonsterRangeAttack::Start()
 {
@@ -16,6 +41,8 @@ void MonsterRangeAttack::Start()
 void MonsterRangeAttack::Update()
 {
 	__super::Update();
+
+	RenderEffect();
 }
 
 void MonsterRangeAttack::LateUpdate()
@@ -90,4 +117,43 @@ void MonsterRangeAttack::Transform(network::CPacket& packet)
 
 	//auto t{ GetTransform()->GetWorldPosition() };
 	//std::cout << std::format("id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;
+}
+
+void MonsterRangeAttack::RenderEffect()
+{
+	switch (m_attackType)
+	{
+		case server::FBX_TYPE::WEEPER_CAST1_BALL:
+		{
+			auto pos{ GetTransform()->GetWorldPosition() };
+			//pos.z -= 200.f;
+
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 600.f }, 0.003f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST2_BALL:
+		{
+			auto pos{ GetTransform()->GetWorldPosition() };
+
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 600.f }, 0.003f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			auto pos{ GetTransform()->GetWorldPosition() };
+
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 400.f }, 0.003f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
+		}
+		break;
+		case server::FBX_TYPE::WEEPER_CAST3_BALL:
+		{
+
+		}
+		break;
+		default:
+		break;
+	}
 }

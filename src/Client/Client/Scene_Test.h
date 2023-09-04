@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -159,7 +159,6 @@ private:
 
 private:
 	std::vector<int32_t> m_effects;
-	std::vector<int32_t> m_billboards;
 	std::unordered_map<server::EFFECT_TYPE, EffectInfo> m_billboardInfo;
 
 private:
@@ -172,6 +171,10 @@ private:
 
 	MAP_TYPE m_eCurrentMapType;
 	MAP_TYPE m_eNextMapType;
+
+private:
+	uint32_t m_weeperSkill2EffectStartIndex;
+	uint32_t m_weeperSkill2EffectCurrentIndex;
 
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;
