@@ -173,14 +173,20 @@ private:
 	MAP_TYPE m_eNextMapType;
 
 private:
-	uint32_t m_weeperSkill2EffectStartIndex;
-	uint32_t m_weeperSkill2EffectCurrentIndex;
-
 	uint32_t m_fireballEffectStartIndex;
 	uint32_t m_fireballEffectCurrentIndex;
 
+	uint32_t m_explodeEffectStartIndex;
+	uint32_t m_explodeEffectCurrentIndex;
+
+	uint32_t m_iceExplodeEffectStartIndex;
+	uint32_t m_iceExplodeEffectCurrentIndex;
+
 	uint32_t m_spiralEffectStartIndex;
 	uint32_t m_spiralEffectCurrentIndex;
+
+	uint32_t m_hitEffectStartIndex;
+	uint32_t m_hitEffectCurrentIndex;
 
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;

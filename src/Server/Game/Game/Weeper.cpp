@@ -425,6 +425,13 @@ void Weeper::Pattern_Cast4_Effect(Player* player)
 {
 	//적용된 힘은 pattern_cast4참고. 해당 함수가 호출된 if문에서 y값을 음수로 준다. 해당 값을 조절하면 내리꽂는 속도를 조절 가능하다.
 	player->SetState(Player::PLAYER_STATE::DAMAGE);
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	ev.objID = player->GetID();
+	ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IN_DISPERSAL);
+	ev.effectPos = player->GetTransform()->GetPosition();
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void Weeper::Sink()

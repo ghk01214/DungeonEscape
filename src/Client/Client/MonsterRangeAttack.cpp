@@ -13,15 +13,6 @@ MonsterRangeAttack::MonsterRangeAttack(server::FBX_TYPE attackType, uint32_t ind
 	m_attackType{ attackType },
 	m_effectIndex{ index }
 {
-	/*switch (m_attackType)
-	{
-		case server::FBX_TYPE::WEEPER_CAST2_BALL:
-		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
-		{
-			m_effectIndex = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Shield_Electric_DarkGray", 0.003f);
-		}
-		break;
-	}*/
 }
 
 MonsterRangeAttack::~MonsterRangeAttack()
@@ -126,7 +117,7 @@ void MonsterRangeAttack::RenderEffect()
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
 		{
 			auto pos{ GetTransform()->GetWorldPosition() };
-			pos.y += 50.f;
+			pos.y += 100.f;
 
 			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 300.f }, 0.003f);
 			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
@@ -135,6 +126,7 @@ void MonsterRangeAttack::RenderEffect()
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
 		{
 			auto pos{ GetTransform()->GetWorldPosition() };
+			pos.y += 100.f;
 
 			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 600.f }, 0.003f);
 			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
@@ -143,8 +135,9 @@ void MonsterRangeAttack::RenderEffect()
 		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
 			auto pos{ GetTransform()->GetWorldPosition() };
+			pos.y += 50.f;
 
-			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 400.f }, 0.003f);
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 300.f }, 0.003f);
 			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
 		}
 		break;

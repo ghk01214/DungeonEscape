@@ -2412,7 +2412,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_fireballEffectCurrentIndex++);
 			objectDesc.vScale = Vec3{ 70.f };
 
-			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 5)
+			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
 				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
 		}
 		break;
@@ -2420,12 +2420,12 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
 			objectDesc.strName = L"Weeper Cast2";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Stone Sphere.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_weeperSkill2EffectCurrentIndex++);
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_fireballEffectCurrentIndex++);
 			objectDesc.vScale = Vec3{ 70.f };
 
-			if (m_weeperSkill2EffectCurrentIndex == m_weeperSkill2EffectStartIndex + 50)
-				m_weeperSkill2EffectCurrentIndex = m_weeperSkill2EffectStartIndex;
+			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
+				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
@@ -2545,13 +2545,38 @@ void Scene_Test::AddEffectTextures()
 	EffectInfo effect;
 	effect.speed = 0.003f;
 	effect.scale = Vec3{ 500.f };
-	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Explode", effect.speed);
-	m_billboardInfo[server::EFFECT_TYPE::EXPLODE] = effect;
+
+	for (int32_t i = 0; i < 70; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Explode", effect.speed);
+
+		if (i == 0)
+		{
+			m_explodeEffectCurrentIndex = effect.index;
+			m_explodeEffectStartIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::EXPLODE] = effect;
+		}
+	}
+
+	effect.speed = 0.003f;
+	effect.scale = Vec3{ 500.f };
+
+	for (int32_t i = 0; i < 5; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Ice_Explode", effect.speed);
+
+		if (i == 0)
+		{
+			m_iceExplodeEffectStartIndex = effect.index;
+			m_iceExplodeEffectCurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::ICE_EXPLODE] = effect;
+		}
+	}
 
 	effect.speed = 0.003f;
 	effect.scale = Vec3{ 300.f };
 
-	for (int32_t i = 0; i < 5; ++i)
+	for (int32_t i = 0; i < 52; ++i)
 	{
 		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Fire", effect.speed);
 
@@ -2565,9 +2590,19 @@ void Scene_Test::AddEffectTextures()
 
 #pragma region [HIT]
 	effect.speed = 0.003f;
-	effect.scale = { 800.f, 800.f, 1.f };
-	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_In_Dispersal", effect.speed);
-	m_billboardInfo[server::EFFECT_TYPE::IN_DISPERSAL] = effect;
+	effect.scale = Vec3{ 800.f };
+
+	for (int32_t i = 0; i < 5; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_In_Dispersal", effect.speed);
+
+		if (i == 0)
+		{
+			m_hitEffectStartIndex = effect.index;
+			m_hitEffectCurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::IN_DISPERSAL] = effect;
+		}
+	}
 
 	effect.speed = 0.0045f;
 	effect.scale = { 2000.f, 2000.f, 1.f };
@@ -2637,18 +2672,6 @@ void Scene_Test::AddEffectTextures()
 
 	effect.speed = 0.003f;
 	effect.scale = Vec3{ 500.f };
-
-	for (int32_t i = 0; i < 51; ++i)
-	{
-		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Shield_Electric_DarkGray", effect.speed);
-
-		if (i == 0)
-		{
-			m_weeperSkill2EffectStartIndex = effect.index;
-			m_weeperSkill2EffectCurrentIndex = effect.index;
-			m_billboardInfo[server::EFFECT_TYPE::SHIELD_ELECTRIC_DARK_GRAY] = effect;
-		}
-	}
 }
 
 void Scene_Test::RemoveObject(network::CPacket& packet)
@@ -2777,12 +2800,30 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav");
 		}
 		break;
-		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
 		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL:
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			RemoveNonAnimatedObject(type, id);
+
+			if (playSound == true)
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav");
+		}
+		break;
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_NUCLEAR:
+		{
+			RemoveNonAnimatedObject(type, id);
+		}
+		break;
 		case server::OBJECT_TYPE::WEEPER_CAST3_BALL:
+		{
+			RemoveNonAnimatedObject(type, id);
+
+			if (playSound == true)
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Ice Hit.wav");
+		}
+		break;
+		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
 		case server::OBJECT_TYPE::WEEPER_CAST4_BALL:
 		case server::OBJECT_TYPE::MONSTER_FIREBALL:
 		case server::OBJECT_TYPE::MONSTER_ICEBALL:
@@ -2829,8 +2870,15 @@ void Scene_Test::RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id)
 	switch (type)
 	{
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
+		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
 			effect = m_billboardInfo[server::EFFECT_TYPE::EXPLODE];
+		}
+		break;
+		case server::OBJECT_TYPE::PLAYER_ICEBALL:
+		case server::OBJECT_TYPE::WEEPER_CAST3_BALL:
+		{
+			effect = m_billboardInfo[server::EFFECT_TYPE::ICE_EXPLODE];
 		}
 		break;
 		default:
@@ -2854,8 +2902,30 @@ void Scene_Test::RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id)
 	{
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
 		{
-			GET_SINGLE(EffectManager)->SetBillBoardInfo(effect.index, effect.pos, effect.scale, effect.speed);
-			GET_SINGLE(EffectManager)->PlayBillBoard(effect.index);
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_explodeEffectCurrentIndex, effect.pos, effect.scale, effect.speed);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_explodeEffectCurrentIndex++);
+
+			if (m_explodeEffectCurrentIndex == m_explodeEffectStartIndex + 70)
+				m_explodeEffectCurrentIndex = m_explodeEffectStartIndex;
+		}
+		break;
+		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_explodeEffectCurrentIndex, effect.pos, Vec3{ 700.f }, effect.speed);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_explodeEffectCurrentIndex++);
+
+			if (m_explodeEffectCurrentIndex == m_explodeEffectStartIndex + 70)
+				m_explodeEffectCurrentIndex = m_explodeEffectStartIndex;
+		}
+		break;
+		case server::OBJECT_TYPE::PLAYER_ICEBALL:
+		case server::OBJECT_TYPE::WEEPER_CAST3_BALL:
+		{
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_iceExplodeEffectCurrentIndex, effect.pos, effect.scale, effect.speed);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_iceExplodeEffectCurrentIndex++);
+
+			if (m_iceExplodeEffectCurrentIndex == m_iceExplodeEffectStartIndex + 5)
+				m_iceExplodeEffectCurrentIndex = m_iceExplodeEffectStartIndex;
 		}
 		break;
 		default:
@@ -2880,8 +2950,21 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 		effectPos.y -= 50.f;
 	}
 
-	GET_SINGLE(EffectManager)->SetBillBoardInfo(info.index, effectPos, info.scale, info.speed, info.alpha);
-	GET_SINGLE(EffectManager)->PlayBillBoard(info.index);
+	if (effectType == server::EFFECT_TYPE::IN_DISPERSAL)
+	{
+		effectPos.y -= 150.f;
+
+		GET_SINGLE(EffectManager)->SetBillBoardInfo(m_hitEffectCurrentIndex, effectPos, info.scale, info.speed, info.alpha);
+		GET_SINGLE(EffectManager)->PlayBillBoard(m_hitEffectCurrentIndex++);
+
+		if (m_hitEffectCurrentIndex == m_hitEffectStartIndex + 5)
+			m_hitEffectCurrentIndex = m_hitEffectStartIndex;
+	}
+	else
+	{
+		GET_SINGLE(EffectManager)->SetBillBoardInfo(info.index, effectPos, info.scale, info.speed, info.alpha);
+		GET_SINGLE(EffectManager)->PlayBillBoard(info.index);
+	}
 }
 
 void Scene_Test::ChangeSound(network::CPacket& packet)
