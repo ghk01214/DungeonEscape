@@ -10,15 +10,18 @@
 
 void MonsterRangeAttack::Start()
 {
-
+	__super::Start();
 }
 
 void MonsterRangeAttack::Update()
 {
+	__super::Update();
 }
 
 void MonsterRangeAttack::LateUpdate()
 {
+	__super::LateUpdate();
+
 	ParsePackets();
 }
 

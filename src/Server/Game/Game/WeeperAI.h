@@ -56,8 +56,6 @@ public:
 private:
 	void ReportSchedule();		//콘솔출력 목적의 디버그 전용 함수
 
-	void ServerMessage_SendMonsterPattern(WEEPER_SCHEDULE schedule);
-
 private:
 	std::vector<WEEPER_SCHEDULE> m_scheduler;
 

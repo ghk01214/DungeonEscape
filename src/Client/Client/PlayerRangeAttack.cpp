@@ -13,10 +13,13 @@
 
 void PlayerRangeAttack::Start()
 {
+	__super::Start();
 }
 
 void PlayerRangeAttack::Update()
 {
+	__super::Update();
+
 	if (GetGameObject()->GetObjectType() == server::OBJECT_TYPE::PLAYER_FIREBALL)
 	{
 		auto pos{ GetTransform()->GetWorldPosition() };
@@ -30,6 +33,8 @@ void PlayerRangeAttack::Update()
 
 void PlayerRangeAttack::LateUpdate()
 {
+	__super::LateUpdate();
+
 	ParsePackets();
 }
 

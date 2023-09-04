@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "WeeperAI.h"
 #include "Weeper.h"
 #include "Monster.h"
@@ -121,8 +121,6 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				SetAIWait(true);
 				EventHandler::GetInstance()->AddEvent("ANIM_END", 6.36, m_weeper);
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 7.f, m_weeper);
-
-				ServerMessage_SendMonsterPattern(schedule);
 			}
 			else
 			{
@@ -152,8 +150,6 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				ReportSchedule();
 
 				QuatUpdateForClient();
-
-				ServerMessage_SendMonsterPattern(schedule);
 			}
 			else
 			{
@@ -183,8 +179,6 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				SetAIWait(true);
 				EventHandler::GetInstance()->AddEvent("ANIM_END", 6.36f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 7.f, m_weeper);
-
-				ServerMessage_SendMonsterPattern(schedule);
 			}
 			else
 			{
@@ -209,8 +203,6 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_CAST4_LOOP", 2.73f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST4", 2.73f, m_weeper);
-
-				ServerMessage_SendMonsterPattern(schedule);
 			}
 			else
 			{
@@ -357,21 +349,4 @@ void WeeperAI::ReportSchedule()
 		std::cout << i << " : " << magic_enum::enum_name(m_scheduler[i]) << std::endl;
 	}
 	std::cout << std::endl << std::endl;
-}
-
-void WeeperAI::ServerMessage_SendMonsterPattern(WEEPER_SCHEDULE schedule)
-{
-	game::TIMER_EVENT ev{ ProtocolID::WR_MONSTER_PATTERN_ACK };
-	ev.objID = m_weeper->m_id;
-
-	if (schedule == WEEPER_SCHEDULE::CAST1)
-		ev.state = magic_enum::enum_integer(server::PATTERN_TYPE::WEEPER1);
-	else if (schedule == WEEPER_SCHEDULE::CAST2)
-		ev.state = magic_enum::enum_integer(server::PATTERN_TYPE::WEEPER2);
-	else if (schedule == WEEPER_SCHEDULE::CAST3)
-		ev.state = magic_enum::enum_integer(server::PATTERN_TYPE::WEEPER3);
-	else if (schedule == WEEPER_SCHEDULE::CAST4)
-		ev.state = magic_enum::enum_integer(server::PATTERN_TYPE::WEEPER4);
-
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
