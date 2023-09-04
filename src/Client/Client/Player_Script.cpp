@@ -36,7 +36,7 @@ void Player_Script::Start()
 	if (magic_enum::enum_integer(m_currState) < 32)
 		GetAnimator()->Play(m_currState);
 
-	Matrix matWorld{ GetTransform()->GetWorldMatrix() };
+	Matrix matWorld{ Matrix::CreateScale(1.5f) };
 	matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
 	GetTransform()->SetWorldMatrix(matWorld);
 }
@@ -342,7 +342,8 @@ void Player_Script::Transform(network::CPacket& packet)
 	}
 	else
 	{
-		matWorld = Matrix::CreateFromQuaternion(Quat{ 0.f, y, 0.f, w });
+		matWorld = Matrix::CreateScale(1.5f);
+		matWorld *= Matrix::CreateFromQuaternion(Quat{ 0.f, y, 0.f, w });
 		matWorld *= Matrix::CreateTranslation(pos);
 	}
 
