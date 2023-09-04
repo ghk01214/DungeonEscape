@@ -98,6 +98,9 @@ public:
 	void SendChangedStateAgain();
 
 private:
+	void ServerMessage_SendRenderLandEffect(const Vec3& pos);
+
+private:
 	//std::unordered_map<GOLEM_SCHEDULE, TriggerObject*> m_patternTriggerDict;
 
 	Vec3 m_landingPosition;

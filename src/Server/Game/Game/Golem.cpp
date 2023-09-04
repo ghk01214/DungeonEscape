@@ -435,6 +435,8 @@ bool Golem::Pattern_Jump_LandCheck()
 
 	EventHandler::GetInstance()->AddEvent("GOLEM_PHYSICLAYER_TO_DEFAULT", 0.5f, this);		//continous
 
+	ServerMessage_SendRenderLandEffect(GetControllerPosition());
+
 	return true;
 }
 
@@ -479,4 +481,14 @@ void Golem::SendChangedStateAgain()
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 
 	--m_sendState;
+}
+
+void Golem::ServerMessage_SendRenderLandEffect(const Vec3& pos)
+{
+	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	ev.objID = m_id;
+	ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IN_DISPERSAL);
+	ev.effectPos = pos;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
