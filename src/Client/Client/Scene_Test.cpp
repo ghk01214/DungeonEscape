@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -79,6 +79,7 @@ void Scene_Test::Update()
 	SendKeyInput();
 	CheckMapMove();
 
+	ChangeBossUIVisibility();
 	ChangePopUpVisibility();
 	ChangeVolume();
 	ChangeMuteTexture();
@@ -456,7 +457,7 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom2.fbx");
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	m_eNextMapType = MAP_TYPE::LastBoss_TreasureRoom;
+	m_eNextMapType = MAP_TYPE::FirstBoss;
 	MoveMap(m_eNextMapType);
 }
 
@@ -523,7 +524,7 @@ void Scene_Test::CreateMagicArtifactEffect(std::shared_ptr<CScene> pScene)
 		behaviour->SetTexture(textures);	// 텍스쳐 정보
 		behaviour->SetSize(Vec2(300.f, 300.f));	// 텍스쳐의 크기
 
-		behaviour->SetDistanceFromPoint(160.f);	// 중점으로부터 거리
+		behaviour->SetDistanceFromPoint(180.f);	// 중점으로부터 거리
 		behaviour->SetTargetPoint(Vec3(6980.f, -1640.f + height, 21180.f));	// 중점 위치
 
 		behaviour->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
@@ -1066,11 +1067,11 @@ float Scene_Test::CreatePartyPlayerMPBar(UITransform trans)
 void Scene_Test::CreateBossUI(server::FBX_TYPE boss, int32_t hp)
 {
 	UITransform transform{ GetRatio(0.f, 100.f), Vec2{} };
-	CreateBossHPBar(transform, hp);
+	CreateBossHPBar(transform, boss, hp);
 	CreateBossClassIcon(transform, boss);
 }
 
-void Scene_Test::CreateBossHPBar(UITransform& trans, int32_t hp)
+void Scene_Test::CreateBossHPBar(UITransform& trans, server::FBX_TYPE boss, int32_t hp)
 {
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
 	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(C)") };
@@ -1087,8 +1088,14 @@ void Scene_Test::CreateBossHPBar(UITransform& trans, int32_t hp)
 		transform->SetLocalScale(Vec3{ trans.scale.x, trans.scale.y, 1.f });
 		transform->SetLocalPosition(Vec3{ trans.pos.x, trans.pos.y, 400.f });
 
+		obj->GetUI()->SetVisible(false);
+
 		AddGameObject(obj);
-		m_bossUIObjets.push_back(obj);
+
+		if (boss == server::FBX_TYPE::WEEPER1)
+			m_weeperUIObjets.push_back(obj);
+		else
+			m_golemUIObjets.push_back(obj);
 	}
 
 	// FILL
@@ -1107,8 +1114,14 @@ void Scene_Test::CreateBossHPBar(UITransform& trans, int32_t hp)
 		obj->AddComponent(script);
 		m_bossHPScript = script;
 
+		obj->GetUI()->SetVisible(false);
+
 		AddGameObject(obj);
-		m_bossUIObjets.push_back(obj);
+
+		if (boss == server::FBX_TYPE::WEEPER1)
+			m_weeperUIObjets.push_back(obj);
+		else
+			m_golemUIObjets.push_back(obj);
 	}
 }
 
@@ -1152,8 +1165,14 @@ void Scene_Test::CreateBossClassIcon(UITransform& trans, server::FBX_TYPE boss)
 	transform->SetLocalScale(scale);
 	transform->SetLocalPosition(Vec3{ trans.pos.x, trans.pos.y, 100.f });
 
+	obj->GetUI()->SetVisible(false);
+
 	AddGameObject(obj);
-	m_bossUIObjets.push_back(obj);
+
+	if (boss == server::FBX_TYPE::WEEPER1)
+		m_weeperUIObjets.push_back(obj);
+	else
+		m_golemUIObjets.push_back(obj);
 }
 
 void Scene_Test::CreateOneTimeDialogue()
@@ -1250,6 +1269,36 @@ void Scene_Test::CreatePopUp()
 	CreateBGMSlider();
 	CreateSEButton();
 	CreateSESlider();
+}
+
+void Scene_Test::ChangeBossUIVisibility()
+{
+	if (m_eNextMapType == MAP_TYPE::FirstBoss)
+	{
+		for (auto& obj : m_weeperUIObjets)
+		{
+			obj->GetUI()->SetVisible(true);
+		}
+	}
+	else if (m_eNextMapType == MAP_TYPE::LastBoss_TreasureRoom)
+	{
+		for (auto& obj : m_golemUIObjets)
+		{
+			obj->GetUI()->SetVisible(true);
+		}
+	}
+	else
+	{
+		for (auto& obj : m_weeperUIObjets)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+
+		for (auto& obj : m_golemUIObjets)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+	}
 }
 #pragma endregion
 
@@ -2165,7 +2214,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	pos.y = packet.Read<float>();
 	pos.z = packet.Read<float>();
 
-	SimpleMath::Quaternion quat;
+	Quat quat;
 	quat.x = packet.Read<float>();
 	quat.y = packet.Read<float>();
 	quat.z = packet.Read<float>();
@@ -2440,7 +2489,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Last Boss Rock";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx";
-			objectDesc.script = nullptr;
+			objectDesc.script = std::make_shared<PhysxObject_Script>();
 		}
 		break;
 #pragma endregion
@@ -2686,10 +2735,10 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			GET_NETWORK->RemoveNetworkObject(id);
 			m_overlappedObjects.erase(id);
 
-			m_bossHPScript.reset();
-
-			RemoveGameObject(m_bossUIObjets);
-			m_bossUIObjets.clear();
+			//m_bossHPScript.reset();
+			//
+			//RemoveGameObject(m_weeperUIObjets);
+			//m_weeperUIObjets.clear();
 		}
 		break;
 		case server::OBJECT_TYPE::MONSTER:

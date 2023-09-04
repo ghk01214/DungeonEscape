@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -106,7 +106,7 @@ private:
 	float CreatePartyPlayerMPBar(UITransform trans);
 
 	void CreateBossUI(server::FBX_TYPE boss, int32_t hp);
-	void CreateBossHPBar(UITransform& trans, int32_t hp);
+	void CreateBossHPBar(UITransform& trans, server::FBX_TYPE boss, int32_t hp);
 	void CreateBossClassIcon(UITransform& trans, server::FBX_TYPE boss);
 
 	void CreateOneTimeDialogue();
@@ -124,6 +124,7 @@ private:
 	void ChangePopUpVisibility();
 	void ChangeVolume();
 	void ChangeMuteTexture();
+	void ChangeBossUIVisibility();
 
 private:
 	void SendKeyInput();
@@ -194,7 +195,8 @@ private:
 	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSliderLeftTip;
 	std::vector<std::shared_ptr<class MuteButton_Script>> m_muteButton;
 
-	std::vector<std::shared_ptr<CGameObject>> m_bossUIObjets;
+	std::vector<std::shared_ptr<CGameObject>> m_weeperUIObjets;
+	std::vector<std::shared_ptr<CGameObject>> m_golemUIObjets;
 	std::shared_ptr<class BossHP_Script> m_bossHPScript;
 
 	bool m_openSetting;
