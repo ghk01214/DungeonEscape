@@ -28,5 +28,7 @@ private:
 
 	float m_hpRatio;
 	float m_barLengthRatio;
+
+	bool m_hpChanged;
 };
 

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -139,6 +139,7 @@ private:
 	void TriggerBehaviour(network::CPacket& packet);
 	void TriggerInteractionCount(network::CPacket& packet);
 	void PlayCutScene(network::CPacket& packet);
+	void ChangeMonsterHP(network::CPacket& packet);
 
 	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
@@ -208,7 +209,8 @@ private:
 
 	std::vector<std::shared_ptr<CGameObject>> m_weeperUIObjets;
 	std::vector<std::shared_ptr<CGameObject>> m_golemUIObjets;
-	std::shared_ptr<class BossHP_Script> m_bossHPScript;
+	std::shared_ptr<class BossHP_Script> m_weeperHPScript;
+	std::shared_ptr<class BossHP_Script> m_golemHPScript;
 
 	bool m_openSetting;
 };

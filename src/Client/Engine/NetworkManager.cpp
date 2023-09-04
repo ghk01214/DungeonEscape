@@ -373,6 +373,7 @@ namespace network
 			case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
 			case ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK:
 			case ProtocolID::WR_PLAY_CUT_SCENE_ACK:
+			case ProtocolID::WR_MONSTER_HP_ACK:
 			{
 				GET_SCENE->PushServerRequest(m_packet);
 			}

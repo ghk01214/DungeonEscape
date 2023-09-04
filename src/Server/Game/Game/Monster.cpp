@@ -153,6 +153,11 @@ void Monster::SetMonsterMobile()
 void Monster::GetDamaged(int32_t damage)
 {
 	m_hp -= damage;
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_MONSTER_HP_ACK };
+	ev.objID = m_id;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void Monster::SendTransform()

@@ -410,4 +410,16 @@ namespace game
 
 		Send(packet);
 	}
+
+	void CSession::SendMonsterHPPacket(Monster* obj)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(obj->GetID());
+		packet.WriteProtocol(ProtocolID::WR_MONSTER_HP_ACK);
+		packet.Write<server::FBX_TYPE>(obj->GetFBXType());
+		packet.Write<int32_t>(obj->GetHP());
+
+		Send(packet);
+	}
 }

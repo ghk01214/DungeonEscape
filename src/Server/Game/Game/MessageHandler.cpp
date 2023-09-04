@@ -134,6 +134,7 @@ namespace game
 				}
 				break;
 				case ProtocolID::WR_MONSTER_QUAT_ACK:
+				case ProtocolID::WR_MONSTER_HP_ACK:
 				{
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
 				}

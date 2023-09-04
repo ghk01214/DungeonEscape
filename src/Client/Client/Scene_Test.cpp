@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -144,6 +144,11 @@ void Scene_Test::LateUpdate()
 			case ProtocolID::WR_PLAY_CUT_SCENE_ACK:
 			{
 				PlayCutScene(packet);
+			}
+			break;
+			case ProtocolID::WR_MONSTER_HP_ACK:
+			{
+				ChangeMonsterHP(packet);
 			}
 			break;
 			default:
@@ -2328,7 +2333,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		case server::FBX_TYPE::RED_GOLEM:
 		{
 			objectDesc.strName = L"Red Golem";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Red Golem.fbx";
 			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
 		}
 		break;
@@ -3178,6 +3183,22 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		break;
 		default:
 		break;
+	}
+}
+
+void Scene_Test::ChangeMonsterHP(network::CPacket& packet)
+{
+	int32_t id{ packet.ReadID() };
+	auto type{ packet.Read<server::FBX_TYPE>() };
+	int32_t hp{ packet.Read<int32_t>() };
+
+	if (type == server::FBX_TYPE::WEEPER1)
+	{
+		m_weeperHPScript->SetHP(hp);
+	}
+	else if (type == server::FBX_TYPE::BLUE_GOLEM)
+	{
+		m_golemHPScript->SetHP(hp);
 	}
 }
 #pragma endregion

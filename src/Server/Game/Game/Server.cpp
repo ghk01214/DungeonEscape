@@ -1242,6 +1242,28 @@ namespace game
 				}
 			}
 			break;
+			case ProtocolID::WR_MONSTER_HP_ACK:
+			{
+				for (auto& obj : monsterObjects)
+				{
+					auto monster{ dynamic_cast<Monster*>(obj) };
+
+					if (monster == nullptr)
+						continue;
+
+					if (monster->GetID() != id)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
+							continue;
+
+						client->SendMonsterHPPacket(monster);
+					}
+				}
+			}
+			break;
 #pragma endregion
 			default:
 			break;

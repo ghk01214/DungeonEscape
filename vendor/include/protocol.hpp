@@ -131,6 +131,9 @@ enum class ProtocolID : unsigned short
 	WR_SHOW_GUIDE_UI_REQ,
 	WR_SHOW_GUIDE_UI_ACK,
 
+	WR_MONSTER_HP_REQ,
+	WR_MONSTER_HP_ACK,
+
 	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion
 

@@ -31,7 +31,7 @@ Golem::Golem(int32_t MonsterID, const Vec3& position, const Quat& rotation, cons
 
 	m_name = L"Golem";
 	m_objType = server::OBJECT_TYPE::BOSS;
-	m_fbxType = server::FBX_TYPE::RED_GOLEM;
+	m_fbxType = server::FBX_TYPE::BLUE_GOLEM;
 }
 
 Golem::~Golem()
