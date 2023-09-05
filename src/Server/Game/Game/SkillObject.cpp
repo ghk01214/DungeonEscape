@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "SkillObject.h"
 #include "RigidBody.h"
 #include "Transform.h"
@@ -848,4 +848,11 @@ void SkillObject::Nuclear_Attribute_Explosion()
 	//weeper의 nuclear가 터졌다. 아래의 NuclearPosition 위치를 사용해 nuclear폭탄이 터진 이펙트를 대입하면 된다.
 	physx::PxVec3 pos = m_body->GetPosition();
 	Vec3 NuclearPosition = FROM_PX3(pos);
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	ev.objID = m_id;
+	ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::NUCLEAR_EXPLOSION);
+	ev.effectPos = NuclearPosition;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

@@ -1,13 +1,20 @@
 ﻿#include "pch.h"
 #include "Skill_Script.h"
 
-#include "Timer.h"
-#include "GameObject.h"
+#include <Timer.h>
+#include <GameObject.h>
+#include <MeshRenderer.h>
+#include <Material.h>
+#include <Transform.h>
 
-#include "MeshRenderer.h"
-#include "Material.h"
-
-Skill_Script::Skill_Script()
+Skill_Script::Skill_Script() :
+	m_repeatCount{ 1 },
+	m_curCount{ 0 },
+	m_duration{ 5.f },
+	m_accTime{ 0.f },
+	m_speed{ 1.f },
+	m_alpha{ 1.f },
+	m_scale{ 1.f }
 {
 }
 
@@ -17,26 +24,27 @@ Skill_Script::~Skill_Script()
 
 void Skill_Script::Awake()
 {
+	__super::Awake();
+
+	ChangeAlpha();
 }
 
 void Skill_Script::Start()
 {
+	__super::Start();
 }
 
 void Skill_Script::Update()
 {
-	m_accTime += (DELTA_TIME * m_speed);
+	__super::Update();
 
-	uint32 size = GetMeshRenderer()->GetMaterialSize();
-
-	for (uint32 i = 0; i < size; ++i)
-	{
-		GetMeshRenderer()->GetMaterial(i)->SetFloat(2, m_fAlpha);
-	}
+	m_accTime += DELTA_TIME;
 }
 
 void Skill_Script::LateUpdate()
 {
+	__super::LateUpdate();
+
 	// 지속시간이 축척되고 있는 시간보다 크다면
 	if (m_duration < m_accTime)
 	{
@@ -48,5 +56,20 @@ void Skill_Script::LateUpdate()
 	if (m_curCount >= m_repeatCount)
 	{
 		GetGameObject()->SetDead(true);
+	}
+}
+
+void Skill_Script::ChangeTransform(Vec3& scale)
+{
+	Matrix mat{ Matrix::CreateScale(scale) };
+	mat *= Matrix::CreateTranslation(GetTransform()->GetWorldPosition());
+	GetTransform()->SetWorldMatrix(mat);
+}
+
+void Skill_Script::ChangeAlpha()
+{
+	for (uint32_t i = 0; i < GetMeshRenderer()->GetMaterialSize(); ++i)
+	{
+		GetMeshRenderer()->GetMaterial(i)->SetFloat(2, m_alpha);
 	}
 }

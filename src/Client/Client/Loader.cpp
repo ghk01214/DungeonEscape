@@ -161,6 +161,11 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Bullet2.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone.fbx");
 
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\Orange.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\Red.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\White.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\Yellow.fbx");
+
 	return S_OK;
 }
 
@@ -232,7 +237,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Paralys", L"..\\Resources\\Texture\\Effect\\Paralys\\tile.png", 21);
 
-	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Shield_Electric_DarkGray", L"..\\Resources\\Texture\\Effect\\Shield Electric\\dark gray\\tile.png", 30);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Shield_Electric_Dark_Gray", L"..\\Resources\\Texture\\Effect\\Shield Electric\\dark gray\\tile.png", 30);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Slash_Special", L"..\\Resources\\Texture\\Effect\\Slash Special\\tile.png", 18);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Fire_Sword", L"..\\Resources\\Texture\\Effect\\Fire Sword\\tile.png", 14);
@@ -243,6 +248,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Cross_Sword", L"..\\Resources\\Texture\\Effect\\Cross Sword\\tile.png", 19);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Spiral", L"..\\Resources\\Texture\\Effect\\Spiral\\tile.png", 18);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Whirl_Pool_Dark_Blue", L"..\\Resources\\Texture\\Effect\\whirl pool\\dark blue\\tile.png", 36);
 
 	return S_OK;
 }

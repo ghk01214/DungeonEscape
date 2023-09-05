@@ -135,5 +135,15 @@ void PlayerRangeAttack::RenderEffect()
 			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
 		}
 		break;
+		case server::FBX_TYPE::PLAYER_THUNDERBALL:
+		{
+			auto pos{ GetTransform()->GetWorldPosition() };
+
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 100.f }, 0.003f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
+		}
+		break;
+		default:
+		break;
 	}
 }

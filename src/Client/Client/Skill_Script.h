@@ -15,12 +15,18 @@ public:
 	virtual void LateUpdate() override;
 
 protected:
-	uint32 m_repeatCount = 1;	// 최대반복횟수
-	uint32 m_curCount = 0;		// 현재 반복되고 있는 횟수
+	void ChangeTransform(Vec3& scale);
+	void ChangeAlpha();
 
-	float m_duration = 1.f;		// 해당 오브젝트 지속시간
-	float m_accTime = 0.f;		// 시간을 축척하기 위한 변수
-	float m_speed = 1.f;		// 축적에 걸리는 시간의 속도
+protected:
+	int32_t m_repeatCount;	// 최대반복횟수
+	int32_t m_curCount;		// 현재 반복되고 있는 횟수
 
-	float m_fAlpha = 1.f;		// Alpha값
+	float m_duration;		// 해당 오브젝트 지속시간
+	float m_accTime;		// 시간을 축척하기 위한 변수
+	float m_speed;		// 축적에 걸리는 시간의 속도
+
+	float m_alpha;		// Alpha값
+
+	Vec3 m_scale;		// 구체 스케일
 };

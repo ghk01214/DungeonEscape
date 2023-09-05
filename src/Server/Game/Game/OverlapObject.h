@@ -29,6 +29,7 @@ public:
 	void UpdateOverlapPosition(physx::PxVec3 pos);
 
 	void ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type);
+	void ServerMessage_RenderEffect(const Vec3& pos, server::EFFECT_TYPE type);
 	void ServerMessage_PlaySound(server::SOUND_TYPE type);
 
 private:

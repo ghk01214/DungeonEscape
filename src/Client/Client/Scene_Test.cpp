@@ -469,16 +469,37 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 void Scene_Test::CreateSkill(std::shared_ptr<CScene> pScene)
 {
 	// ??삵닏??븍뱜 ??밴쉐
-	vector<shared_ptr<CGameObject>> gameObjects = CreateSkillBase(L"BombBase", L"..\\Resources\\FBX\\Skill\\Sphere\\Sphere_Yellow.fbx");
+	std::vector<std::shared_ptr<CGameObject>> gameObjects{ CreateSkillBase(L"BombBase", L"..\\Resources\\FBX\\Skill\\Sphere\\White.fbx") };
 
 	for (auto& object : gameObjects)
 	{
+		Matrix matWorld{ Matrix::CreateTranslation(Vec3{0.f, -2750.f, 0.f}) };
+		object->GetTransform()->SetWorldMatrix(matWorld);
+
 		object->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
-		object->AddComponent(std::make_shared<Bomb_Script>());
+		object->AddComponent(std::make_shared<Bomb_Script>(2.f));
 	}
 
 	// ??삵닏??븍뱜 ?곕떽?
-	pScene->AddGameObject(gameObjects);
+	AddGameObject(gameObjects);
+}
+
+void Scene_Test::CreateSkill(const std::wstring& colorName, const Vec3& worldPos, const Vec3& localScale, float alpha, float scaleSpeed)
+{
+	std::vector<std::shared_ptr<CGameObject>> gameObjects{ CreateSkillBase(colorName, L"..\\Resources\\FBX\\Skill\\Sphere\\" + colorName + L".fbx") };
+
+	for (auto& object : gameObjects)
+	{
+		//Matrix matWorld{ object->GetTransform()->GetWorldMatrix() };
+		//matWorld.Translation(worldPos);
+		Matrix matWorld{ Matrix::CreateTranslation(worldPos) };
+		object->GetTransform()->SetWorldMatrix(matWorld);
+
+		object->GetTransform()->SetLocalScale(localScale);
+		object->AddComponent(std::make_shared<Bomb_Script>(scaleSpeed, alpha));
+	}
+
+	AddGameObject(gameObjects);
 }
 
 void Scene_Test::CreateBillBoard(std::shared_ptr<CScene> pScene)
@@ -607,21 +628,18 @@ std::shared_ptr<CGameObject> Scene_Test::CreateEffectBase(std::vector<shared_ptr
 
 std::vector<std::shared_ptr<CGameObject>> Scene_Test::CreateSkillBase(const std::wstring& skillName, const std::wstring& fbxPath)
 {
-	// ??쎄텢???????fbx ??삵닏??븍뱜 嚥≪뮆諭?
-	shared_ptr<MeshData> meshData = GET_SINGLE(Resources)->LoadFBX(fbxPath);
-
-	vector<shared_ptr<CGameObject>> gameObjects = meshData->Instantiate();
+	std::shared_ptr<MeshData> meshData{ GET_SINGLE(Resources)->LoadFBX(fbxPath) };
+	std::vector<std::shared_ptr<CGameObject>> gameObjects{ meshData->Instantiate() };
 
 	for (auto& gameObject : gameObjects)
 	{
 		gameObject->SetName(skillName);
 		gameObject->SetCheckFrustum(false);
 
-		uint32 materialSize = gameObject->GetMeshRenderer()->GetMaterialSize();
+		std::shared_ptr<Shader> shader{ GET_SHADER(L"Alpha_Blend_Object") };
+		uint32_t materialSize{ gameObject->GetMeshRenderer()->GetMaterialSize() };
 
-		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Alpha_Blend_Object");
-
-		for (uint32 i = 0; i < materialSize; ++i)
+		for (uint32_t i = 0; i < materialSize; ++i)
 		{
 			gameObject->GetMeshRenderer()->GetMaterial(i)->SetShader(shader);
 		}
@@ -1117,16 +1135,22 @@ void Scene_Test::CreateBossHPBar(UITransform& trans, server::FBX_TYPE boss, int3
 		std::shared_ptr<BossHP_Script> script{ std::make_shared<BossHP_Script>(hp) };
 		script->InsertTextures(texture);
 		obj->AddComponent(script);
-		m_bossHPScript = script;
+		script->Start();
 
 		obj->GetUI()->SetVisible(false);
 
 		AddGameObject(obj);
 
 		if (boss == server::FBX_TYPE::WEEPER1)
+		{
+			m_weeperHPScript = script;
 			m_weeperUIObjets.push_back(obj);
+		}
 		else
+		{
+			m_golemHPScript = script;
 			m_golemUIObjets.push_back(obj);
+		}
 	}
 }
 
@@ -2383,7 +2407,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
 			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_spiralEffectCurrentIndex++);
-			objectDesc.vScale = { 2.5f, 2.5f, 2.5f };
+			objectDesc.vScale = Vec3{ 2.5f };
 
 			if (m_spiralEffectCurrentIndex == m_spiralEffectStartIndex + 5)
 				m_spiralEffectCurrentIndex = m_spiralEffectStartIndex;
@@ -2392,8 +2416,12 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		case server::FBX_TYPE::PLAYER_THUNDERBALL:
 		{
 			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
-			objectDesc.script = std::make_shared<PlayerRangeAttack>(type);
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Stone Sphere.fbx";
+			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_electricDarkGrayEffectCurrentIndex);
+			objectDesc.vScale = Vec3{ 40.f };
+
+			if (m_electricDarkGrayEffectCurrentIndex == m_electricDarkGrayEffectStartIndex + 3)
+				m_electricDarkGrayEffectCurrentIndex = m_electricDarkGrayEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::PLAYER_POISONBALL:
@@ -2413,12 +2441,12 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast1";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_fireballEffectCurrentIndex++);
-			objectDesc.vScale = Vec3{ 70.f };
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_wpDarkBlueEffectCurrentIndex++);
+			//objectDesc.vScale = Vec3{ 70.f };
 
-			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
-				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
+			if (m_wpDarkBlueEffectCurrentIndex == m_wpDarkBlueEffectStartIndex + 52)
+				m_wpDarkBlueEffectCurrentIndex = m_wpDarkBlueEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
@@ -2593,9 +2621,39 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
+	effect.speed = 0.003f;
+	effect.scale = Vec3{ 100.f };
+
+	for (int32_t i = 0; i < 2; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Shield_Electric_Dark_Gray", effect.speed);
+
+		if (i == 0)
+		{
+			m_electricDarkGrayEffectStartIndex = effect.index;
+			m_electricDarkGrayEffectCurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::SHIELD_ELECTRIC_DARK_GRAY] = effect;
+		}
+	}
+
+	effect.speed = 0.003f;
+	effect.scale = Vec3{ 100.f };
+
+	for (int32_t i = 0; i < 3; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Whirl_Pool_Dark_Blue", effect.speed);
+
+		if (i == 0)
+		{
+			m_wpDarkBlueEffectCurrentIndex = effect.index;
+			m_wpDarkBlueEffectStartIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::SHIELD_ELECTRIC_DARK_GRAY] = effect;
+		}
+	}
+
 #pragma region [HIT]
 	effect.speed = 0.003f;
-	effect.scale = Vec3{ 800.f };
+	effect.scale = Vec3{ 1000.f };
 
 	for (int32_t i = 0; i < 5; ++i)
 	{
@@ -2947,6 +3005,43 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 	effectPos.y = packet.Read<float>();
 	effectPos.z = packet.Read<float>();
 	server::EFFECT_TYPE effectType{ magic_enum::enum_value<server::EFFECT_TYPE>(effectIndex) };
+
+	if (effectType == server::EFFECT_TYPE::NUCLEAR_EXPLOSION)
+	{
+		effectPos.y -= 150.f;
+		CreateSkill(L"Yellow", effectPos, Vec3{ 150.f }, 1.f, 1.f);
+		CreateSkill(L"White", effectPos, Vec3{ 110.f }, 1.f, 2.f);
+		CreateSkill(L"Red", effectPos, Vec3{ 70.f }, 1.f, 3.5f);
+
+		return;
+	}
+	else if (effectType == server::EFFECT_TYPE::SPELL_EXPLOSION)
+	{
+		int32_t id{ packet.ReadID() };
+		auto bossObjects{ GetBoss() };
+		std::shared_ptr<CGameObject> boss{ nullptr };
+
+		for (auto& obj : bossObjects)
+		{
+			if (obj->GetNetwork()->GetID() == id)
+			{
+				boss = obj;
+				break;
+			}
+		}
+
+		auto look{ boss->GetTransform()->GetLook() };
+		look.Normalize();
+		effectPos = boss->GetTransform()->GetWorldPosition();
+		effectPos -= look * 500.f;
+		effectPos.y -= 50.f;
+
+		CreateSkill(L"Yellow", effectPos, Vec3{ 150.f }, 1.f, 1.f);
+		CreateSkill(L"White", effectPos, Vec3{ 110.f }, 1.f, 2.f);
+		CreateSkill(L"Red", effectPos, Vec3{ 70.f }, 1.f, 3.5f);
+
+		return;
+	}
 
 	auto info{ m_billboardInfo[effectType] };
 

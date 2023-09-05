@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -75,6 +75,7 @@ private:
 	void CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE player);
 	void CreateSphere(std::shared_ptr<CScene> pScene);
 	void CreateSkill(std::shared_ptr<CScene> pScene);
+	void CreateSkill(const std::wstring& colorName, const Vec3& worldPos, const Vec3& localScale, float alpha, float scaleSpeed);
 	void CreateBillBoard(std::shared_ptr<CScene> pScene);
 	void CreateEffect(std::shared_ptr<CScene> pScene);
 	void CreateMagicArtifactEffect(std::shared_ptr<CScene> pScene);
@@ -188,6 +189,12 @@ private:
 
 	uint32_t m_hitEffectStartIndex;
 	uint32_t m_hitEffectCurrentIndex;
+
+	uint32_t m_electricDarkGrayEffectStartIndex;
+	uint32_t m_electricDarkGrayEffectCurrentIndex;
+
+	uint32_t m_wpDarkBlueEffectStartIndex;
+	uint32_t m_wpDarkBlueEffectCurrentIndex;
 
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;

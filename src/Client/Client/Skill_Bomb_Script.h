@@ -5,16 +5,18 @@
 class Bomb_Script : public Skill_Script
 {
 public:
-	Bomb_Script();
+	Bomb_Script(float scaleSpeed = 1.f, float alpha = 1.f);
 	virtual ~Bomb_Script();
 
 public:
-	virtual void Awake() override;
-	virtual void Start() override;
-	virtual void Update() override;
-	virtual void LateUpdate() override;
+	void Awake() override;
+	void Start() override;
+	void Update() override;
+	void LateUpdate() override;
 
 private:
-	float m_AlphaChangeSpeed = 0.5f;
-	float m_AlphaChangeDegree = -1.f;
+	float m_alphaChangeSpeed;
+	float m_alphaChangeDegree;
+
+	float m_scaleChangeSpeed;
 };

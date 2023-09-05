@@ -39,11 +39,29 @@ void OverlapObject::Release()
 void OverlapObject::Activate(std::string scheduleName)
 {
 	m_currentScheduleName = scheduleName;
-	m_active  = true;
+	m_active = true;
 
 	// 기능 : 골렘의 Spell 폭발기능 호출.
 	// 여기에 폭발이펙트를 추가한다는 내용을 클라이언트로 보내면 된다.
 	//m_currentOverlapPos
+
+	if (m_currentScheduleName == "SPELL")
+	{
+		/*FBXMatrix mat{ FBXMatrix::CreateFromQuaternion(m_monsterAI->GetMonster()->GetRotation()) };
+		auto look{ mat.Backward() };
+		look.Normalize();*/
+
+		auto pos{ FROM_PX3(m_currentOverlapPos) };
+		//pos += FROM_PX3(m_monsterAI->GetXZDir()) * 500.f;
+
+		// SPELL을 처음 쓸 때는 m_currOverlapPos가 0, 0, 0이어서 골렘의 중심에서 그려진다
+		// m_currOverlaPos가 계산되기 전에 전송해서 그런가?
+		// 근데 처음 쓸 때 이외에는 잘 작동한다
+		//std::cout << pos.x << ", " << pos.y << ", " << pos.z << "\n";
+		//std::cout << m_currentOverlapPos.x << ", " << m_currentOverlapPos.y << ", " << m_currentOverlapPos.z << "\n";
+
+		ServerMessage_RenderEffect(pos, server::EFFECT_TYPE::SPELL_EXPLOSION);
+	}
 }
 
 void OverlapObject::Deactivate()
@@ -197,6 +215,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 			EventHandler::GetInstance()->AddEvent("GOLEM_ATTACK_DAMAGE_APPLY", 0.1f, player);			//continous. 땅에 닿으면 피격 애니메이션 재생
 
 			ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_DISPERSAL);
+			ServerMessage_RenderEffect(FROM_PX3(m_currentOverlapPos), server::EFFECT_TYPE::IN_DISPERSAL);
 			ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);
 
 			return true;
@@ -250,6 +269,16 @@ void OverlapObject::ServerMessage_RenderEffect(Player* player, server::EFFECT_TY
 	ev.objID = player->GetID();
 	ev.state = magic_enum::enum_integer(type);
 	ev.effectPos = effectPos;
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+}
+
+void OverlapObject::ServerMessage_RenderEffect(const Vec3& pos, server::EFFECT_TYPE type)
+{
+	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	ev.objID = m_monsterAI->GetMonster()->GetID();
+	ev.state = magic_enum::enum_integer(type);
+	ev.effectPos = pos;
 
 	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
