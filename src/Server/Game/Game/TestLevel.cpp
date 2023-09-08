@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -30,7 +30,6 @@ TestLevel::TestLevel()
 TestLevel::~TestLevel()
 {
 }
-
 
 void TestLevel::Init()
 {
@@ -404,15 +403,31 @@ void TestLevel::LoadTriggerObject()
 	artifactBody->SetKinematic(true);
 	artifactObj->ApplyRequestedLayers();
 
-	auto CutScene1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 5500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true)};
-	auto CutScene1Body{ CutScene1Obj->GetComponent<RigidBody>(L"RigidBody") };
-	CutScene1Body->AddCollider<BoxCollider>(CutScene1Obj->GetTransform()->GetScale());
-	CutScene1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE2);
-
-	auto CutScene2Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 16217.f, -1040.f, 28064.f }, Quat(0, 0, 0, 1), Vec3(1000.f, 500.f, 500.f), true)};
+	auto CutScene2Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 5500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true)};
 	auto CutScene2Body{ CutScene2Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene2Body->AddCollider<BoxCollider>(CutScene2Obj->GetTransform()->GetScale());
-	CutScene2Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE4);
+	CutScene2Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE2);
+
+	auto CutScene4Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 16217.f, -1040.f, 28064.f }, Quat(0, 0, 0, 1), Vec3(1000.f, 500.f, 500.f), true)};
+	auto CutScene4Body{ CutScene4Obj->GetComponent<RigidBody>(L"RigidBody") };
+	CutScene4Body->AddCollider<BoxCollider>(CutScene4Obj->GetTransform()->GetScale());
+	CutScene4Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE4);
+
+	auto scene5Pos{ PORTAL1_EXIT };
+	scene5Pos.y += 50.f;
+
+	auto CutScene5Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", scene5Pos, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true)};
+	auto CutScene5Body{ CutScene5Obj->GetComponent<RigidBody>(L"RigidBody") };
+	CutScene5Body->AddCollider<BoxCollider>(CutScene5Obj->GetTransform()->GetScale());
+	CutScene5Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE5);
+
+	auto scene6Pos{ PORTAL5_EXIT };
+	scene6Pos.y += 50.f;
+
+	auto CutScene6Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", scene6Pos, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true)};
+	auto CutScene6Body{ CutScene6Obj->GetComponent<RigidBody>(L"RigidBody") };
+	CutScene6Body->AddCollider<BoxCollider>(CutScene6Obj->GetTransform()->GetScale());
+	CutScene6Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE6);
 
 	auto GuideUI1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 6500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false)};
 	auto GuideUI1Body{ GuideUI1Obj->GetComponent<RigidBody>(L"RigidBody") };

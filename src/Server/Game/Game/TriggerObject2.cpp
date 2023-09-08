@@ -316,7 +316,16 @@ void TriggerObject2::ServerSendInMessage(Player* player)
 		break;
 		case TRIGGERATTRIBUTE::CUTSCENE5:
 		{
-			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE5);
+			m_deactivate = true;
+			SetRemoveReserved();
+			//ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE5);
+		}
+		break;
+		case TRIGGERATTRIBUTE::CUTSCENE6:
+		{
+			m_deactivate = true;
+			SetRemoveReserved();
+			//ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE6);
 		}
 		break;
 		case TRIGGERATTRIBUTE::PORTAL1:

@@ -34,7 +34,8 @@ public:
 		CUTSCENE2,			// 돌기둥을 처음 봤을 때의 컷신
 		CUTSCENE3,			// 기둥이 메테오에 의해 넘어지는 컷신
 		CUTSCENE4,			// 돌 굴러가는 장면을 보여주는 컷신
-		CUTSCENE5,
+		CUTSCENE5,			// Weeper 등장 컷신
+		CUTSCENE6,			// Golem 등장 컷신
 
 		END
 	};
