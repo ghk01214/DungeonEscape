@@ -67,8 +67,9 @@ void Scene_Test::Start()
 
 	if (playMusic == true)
 	{
-		GET_SINGLE(CSoundMgr)->StopAll();
-		GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+		GET_SINGLE(CSoundMgr)->StopBGMSound();
+		GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+		//GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
 	}
 }
 
@@ -2445,7 +2446,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_wpDarkBlueEffectCurrentIndex++);
 			//objectDesc.vScale = Vec3{ 70.f };
 
-			if (m_wpDarkBlueEffectCurrentIndex == m_wpDarkBlueEffectStartIndex + 52)
+			if (m_wpDarkBlueEffectCurrentIndex == m_wpDarkBlueEffectStartIndex + 3)
 				m_wpDarkBlueEffectCurrentIndex = m_wpDarkBlueEffectStartIndex;
 		}
 		break;
@@ -2833,7 +2834,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Ice Hit.wav");
 		}
 		break;
-		case server::OBJECT_TYPE::PLAYER_POISONBALL:
+		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
 		{
 			RemoveNonAnimatedObject(type, id);
 
@@ -2860,10 +2861,17 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			GET_NETWORK->RemoveNetworkObject(id);
 
 			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Fire Explosion.wav");
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Light Explosion.wav");
 		}
 		break;
 		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
+		{
+			RemoveNonAnimatedObject(type, id);
+
+			if (playSound == true)
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"PoisonAcid Hit.wav");
+		}
+		break;
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL:
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
@@ -2886,7 +2894,7 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Ice Hit.wav");
 		}
 		break;
-		case server::OBJECT_TYPE::PLAYER_THUNDERBALL:
+		case server::OBJECT_TYPE::PLAYER_POISONBALL:
 		case server::OBJECT_TYPE::WEEPER_CAST4_BALL:
 		case server::OBJECT_TYPE::MONSTER_FIREBALL:
 		case server::OBJECT_TYPE::MONSTER_ICEBALL:
@@ -2932,6 +2940,7 @@ void Scene_Test::RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id)
 
 	switch (type)
 	{
+		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
@@ -2964,6 +2973,7 @@ void Scene_Test::RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id)
 	switch (type)
 	{
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
+		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
 		{
 			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_explodeEffectCurrentIndex, effect.pos, effect.scale, effect.speed);
 			GET_SINGLE(EffectManager)->PlayBillBoard(m_explodeEffectCurrentIndex++);
@@ -3106,6 +3116,38 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 			}
 		}
 		break;
+		case server::SOUND_TYPE::LIGHT_EXPLOSION:
+		{
+			if (playSound == true)
+			{
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Light Explosion.wav");
+			}
+		}
+		break;
+		case server::SOUND_TYPE::NUCLEAR_EXPLOSION:
+		{
+			if (playSound == true)
+			{
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Nuclear Explosion.ogg");
+			}
+		}
+		break;
+		case server::SOUND_TYPE::SPELL_EXPLOSION:
+		{
+			if (playSound == true)
+			{
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Spell Explosion.ogg");
+			}
+		}
+		break;
+		case server::SOUND_TYPE::LANDING:
+		{
+			if (playSound == true)
+			{
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Landing.wav");
+			}
+		}
+		break;
 		default:
 		break;
 	}
@@ -3136,12 +3178,33 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:
+		{
+			m_fadeScript->FadeOut();
+
+			GET_SINGLE(CSoundMgr)->StopBGMSound();
+			GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+		}
+		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT:
+		{
+			m_fadeScript->FadeOut();
+
+			GET_SINGLE(CSoundMgr)->StopBGMSound();
+			GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+		}
+		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT:
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT:
+		{
+			m_fadeScript->FadeOut();
+		}
+		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT:
 		{
 			m_fadeScript->FadeOut();
+
+			GET_SINGLE(CSoundMgr)->StopBGMSound();
+			GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
 		}
 		break;
 		default:

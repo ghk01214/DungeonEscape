@@ -437,6 +437,12 @@ bool Golem::Pattern_Jump_LandCheck()
 
 	ServerMessage_SendRenderLandEffect(GetControllerPosition());
 
+	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
+	ev.objID = m_id;
+	ev.state = magic_enum::enum_integer(server::SOUND_TYPE::LANDING);
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+
 	return true;
 }
 

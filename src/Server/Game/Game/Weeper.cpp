@@ -239,7 +239,7 @@ void Weeper::UpdateFrameOnce()
 		break;
 		case DEATH:
 		{
-			m_currState = DEAD;
+			//m_currState = DEAD;
 			m_startSendTransform = false;
 		}
 		break;
@@ -427,6 +427,12 @@ void Weeper::Pattern_Cast4_Effect(Player* player)
 	player->SetState(Player::PLAYER_STATE::DAMAGE);
 
 	ServerMessage_SendRenderLandEffect(player);
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
+	ev.objID = player->GetID();
+	ev.state = magic_enum::enum_integer(server::SOUND_TYPE::LIGHT_EXPLOSION);
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }
 
 void Weeper::Sink()

@@ -61,6 +61,7 @@ void OverlapObject::Activate(std::string scheduleName)
 		//std::cout << m_currentOverlapPos.x << ", " << m_currentOverlapPos.y << ", " << m_currentOverlapPos.z << "\n";
 
 		ServerMessage_RenderEffect(pos, server::EFFECT_TYPE::SPELL_EXPLOSION);
+		ServerMessage_PlaySound(server::SOUND_TYPE::SPELL_EXPLOSION);
 	}
 }
 

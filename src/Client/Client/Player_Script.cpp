@@ -81,6 +81,18 @@ void Player_Script::CheckState()
 		break;
 		case DEAD:
 		break;
+		case ATK0:
+		case ATK1:
+		case ATK2:
+		case ATK3:
+		{
+			if (m_playerType == server::FBX_TYPE::NANA)
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Sword.wav");
+
+			GetAnimator()->Play(m_currState);
+			m_aniEnd = false;
+		}
+		break;
 		default:
 		{
 			GetAnimator()->Play(m_currState);
