@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MonsterAI.h"
 #include "Monster.h"
 #include "MonsterSkill.h"
@@ -383,7 +383,7 @@ void MonsterAI::MonsterStart()
 		if (player)
 		{
 			physx::PxVec3 between = TO_PX3(m_monster->GetControllerPosition()) - TO_PX3(player->GetControllerPosition());
-			if (between.magnitude() < 4000.f)			//플레이어와의 거리 체크
+			if (between.magnitude() < 3300.f)			//플레이어와의 거리 체크
 			{
 				m_start = true;
 				SetAIWait(false);
