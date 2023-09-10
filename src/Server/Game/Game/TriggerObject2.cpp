@@ -10,6 +10,8 @@
 #include "EventHandler.h"
 #include "MessageHandler.h"
 #include "SphereCollider.h"
+#include "Weeper.h"
+#include "Golem.h"
 
 using namespace physx;
 using namespace std;
@@ -154,13 +156,47 @@ void TriggerObject2::Attribute_BossCutscene_0()
 		return;
 
 
-	ObjectManager::GetInstance()->GetLayer(L"Layer_Monster")->GetGameObjectByName(L"Weeper")
+	auto monsterlist = ObjectManager::GetInstance()->GetLayer(L"Layer_Monster")->GetGameObjects();
+	if (monsterlist.empty())
+		return;
+
+	for (auto& m : monsterlist)
+	{
+		if (m->GetName() == L"Weeper")
+		{
+			auto weeper = dynamic_cast<Weeper*>(m);				//등장씬으로 쓸만한 애니메이션이 생각이 안남
+			EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_IDLE", 0.5f, weeper);
+		}
+	}
+
+	m_deactivate = true;
+	
+	//클라이언트에게 컷씬 알림을 보내려면 여기에.
+
 }
 
 void TriggerObject2::Attribute_BossCutscene_1()
 {
 	if (m_attribute != TRIGGERATTRIBUTE::CUTSCENE6)
 		return;
+
+	auto monsterlist = ObjectManager::GetInstance()->GetLayer(L"Layer_Monster")->GetGameObjects();
+	if (monsterlist.empty())
+		return;
+
+	for (auto& m : monsterlist)
+	{
+		if (m->GetName() == L"Golem")
+		{
+			auto golem = dynamic_cast<Golem*>(m);				
+			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_ROAR", 0.5f, golem);		//ROAR 애니메이션 재생 시간 2.33
+			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 2.82f, golem);		//ROAR > IDLE로 애니메이션 진행
+		}
+	}
+
+	m_deactivate = true;
+
+	//클라이언트에게 컷씬 알림을 보내려면 여기에.
 }
 
 void TriggerObject2::SendPlayers()
