@@ -101,6 +101,12 @@ void TriggerObject2::Handle_Overlap()
 
 		if (m_attribute == TRIGGERATTRIBUTE::CUTSCENE4)
 			AttributeGimmik2();
+
+		if (m_attribute == TRIGGERATTRIBUTE::CUTSCENE5)
+			Attribute_BossCutscene_0();
+
+		if (m_attribute == TRIGGERATTRIBUTE::CUTSCENE6)
+			Attribute_BossCutscene_1();
 	}
 }
 
@@ -140,6 +146,21 @@ void TriggerObject2::AttributePortal(double timeDelta)
 
 
 	//EventHandler::GetInstance()->AddEventIfNone("TRIGGERCLOCK")
+}
+
+void TriggerObject2::Attribute_BossCutscene_0()
+{
+	if (m_attribute != TRIGGERATTRIBUTE::CUTSCENE5)
+		return;
+
+
+	ObjectManager::GetInstance()->GetLayer(L"Layer_Monster")->GetGameObjectByName(L"Weeper")
+}
+
+void TriggerObject2::Attribute_BossCutscene_1()
+{
+	if (m_attribute != TRIGGERATTRIBUTE::CUTSCENE6)
+		return;
 }
 
 void TriggerObject2::SendPlayers()

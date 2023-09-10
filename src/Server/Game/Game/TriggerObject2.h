@@ -57,6 +57,8 @@ public:			//초기화 관련 함수
 
 public:
 	void AttributePortal(double timeDelta);
+	void Attribute_BossCutscene_0();
+	void Attribute_BossCutscene_1();
 	void SendPlayers();
 	void ThrowGimmik2Ball();
 private:
