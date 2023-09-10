@@ -211,11 +211,6 @@ void Camera::Render_Forward()
 
 	GET_SINGLE(InstancingManager)->Render(m_vecForward);
 
-	if (_type == PROJECTION_TYPE::ORTHOGRAPHIC)
-	{
-		GET_SINGLE(InstancingManager)->Render(m_vecFont);
-	}
-
 	for (auto& gameObject : m_vecParticle)
 	{
 		gameObject->GetParticleSystem()->Render();
@@ -240,6 +235,11 @@ void Camera::Render_Forward()
 			for (auto& obj : m_vecPopUpUI)
 				obj->GetMeshRenderer()->Render();
 		}
+	}
+
+	if (_type == PROJECTION_TYPE::ORTHOGRAPHIC)
+	{
+		GET_SINGLE(InstancingManager)->Render(m_vecFont);
 	}
 }
 

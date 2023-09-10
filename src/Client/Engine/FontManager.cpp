@@ -31,6 +31,9 @@ void FontManager::RenderFonts(const wstring& text, Vec2 vPos, Vec2 vSize, float 
 {
 	assert(m_effectCount < m_maxCount);
 
+	if (text.empty())
+		return;
+
 	m_fontReserveObjects[m_effectCount]->SetLayerIndex(m_UIIndex);
 
 	// 셰이더 설정
@@ -65,6 +68,9 @@ void FontManager::RenderFonts(const wstring& text, Vec2 vPos, Vec2 vSize, float 
 void FontManager::Render3DFonts(const wstring& text, Vec3 vPos, Vec2 vSize, Vec3 vRotation, float gap)
 {
 	assert(m_effectCount < m_maxCount);
+
+	if (text.empty())
+		return;
 
 	m_fontReserveObjects[m_effectCount]->SetLayerIndex(m_ObjectIndex);
 
