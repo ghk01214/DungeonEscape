@@ -90,6 +90,7 @@ void Camera_Basic::LateUpdate()
 		GetTransform()->SetLocalPosition(pos);
 	}
 
+#pragma region [주석]
 	//else
 	//{
 	//	const shared_ptr<Transform>& playerTransform = (*player.begin())->GetTransform();
@@ -151,6 +152,7 @@ void Camera_Basic::LateUpdate()
 
 	//	//Print(m_distanceBetweenPlayerAndCamera);
 	//}
+#pragma endregion
 
 	// 플레이어가 존재할 경우
 	else
@@ -213,10 +215,10 @@ void Camera_Basic::LateUpdate()
 
 		// 구한 eye, at, up을 사용하여 행렬을 구성
 		Matrix matWorld = Matrix::CreateWorld(vCrashPoint, cameraLook, vUp);
-		float basicHeight = 500.f * (1.f - m_distanceRatio);
+		float basicHeight = 1000.f * (1.f - m_distanceRatio);		// basicHeight -> 수정
 		matWorld._42 -= basicHeight;
 
-		float BasicDistanceFromPlayer = 600.f;
+		float BasicDistanceFromPlayer = 600.f;						// BasicDistanceFromPlayer -> 수정
 		Vec3 vBasicDistance = cameraLook * BasicDistanceFromPlayer;
 		matWorld._41 -= vBasicDistance.x;
 		matWorld._43 -= vBasicDistance.z;
