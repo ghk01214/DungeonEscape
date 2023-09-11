@@ -39,6 +39,8 @@ public:
 	void SetMapType(MAP_TYPE eType) { m_eMoveMapType = eType; }
 	MAP_TYPE GetMapType(void) { return m_eMoveMapType; }
 
+	void SetFade(std::shared_ptr<bool> in, std::shared_ptr<bool> out);
+
 protected:
 	float m_fAlpha = 1.f;		// Alpha값
 
@@ -63,4 +65,8 @@ private:
 private:
 	bool m_bFading = false;
 	MAP_TYPE m_eMoveMapType = MAP_TYPE::END;
+
+private:
+	std::shared_ptr<bool> m_fadeIn;
+	std::shared_ptr<bool> m_fadeOut;
 };

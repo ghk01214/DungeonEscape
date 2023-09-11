@@ -18,6 +18,9 @@ protected:
 	void ChangeTransform(Vec3& scale);
 	void ChangeAlpha();
 
+public:
+	void SetRecvFlag(std::shared_ptr<bool> flag);
+
 protected:
 	int32_t m_repeatCount;	// 최대반복횟수
 	int32_t m_curCount;		// 현재 반복되고 있는 횟수
@@ -29,4 +32,6 @@ protected:
 	float m_alpha;		// Alpha값
 
 	Vec3 m_scale;		// 구체 스케일
+
+	std::shared_ptr<bool> m_recv;
 };

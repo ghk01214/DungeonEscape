@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TriggerObject2.h"
 #include "PhysDevice.h"
 #include "physx_utils.h"
@@ -99,7 +99,12 @@ void TriggerObject2::Handle_Overlap()
 		m_beforeCnt = m_currentCnt;
 
 		if (m_attribute < TRIGGERATTRIBUTE::GUIDELINE1)
-			ServerSendInteractionCountMessage();
+		{
+			for (int32_t i = 0; i < SEND_AGAIN; ++i)
+			{
+				ServerSendInteractionCountMessage();
+			}
+		}
 
 		if (m_attribute == TRIGGERATTRIBUTE::CUTSCENE4)
 			AttributeGimmik2();
@@ -223,7 +228,11 @@ void TriggerObject2::SendPlayers()
 
 	// 서버가 클라이언트에게 너희들을 이동시켰다고 알려줘야한다.
 	// 이 코드가 플레이어를 이동시키므로 그동안 렌더링 로드/삭제 + 페이드 인, 아웃하면 된다.
-	ServerSendPortalOutMessage();
+
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		ServerSendPortalOutMessage();
+	}
 }
 
 std::vector<Player*> TriggerObject2::OverlapCheck_Player()
@@ -306,14 +315,22 @@ bool TriggerObject2::Apply(Player* player)
 	{
 		//cout << "attribute once" << endl;
 
-		ServerSendInMessage(player);
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			ServerSendInMessage(player);
+		}
+
 		return true;
 	}
 	else
 	{
 		//cout << "attribute loop" << endl;
 
-		ServerSendInMessage(player);
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			ServerSendInMessage(player);
+		}
+
 		return false;
 	}
 }

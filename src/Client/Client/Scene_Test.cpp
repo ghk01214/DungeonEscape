@@ -43,7 +43,10 @@ Scene_Test::Scene_Test() :
 	m_portalUIScript{ nullptr },
 	m_cinematicScript{ nullptr },
 	m_closeButton{ nullptr },
-	m_openSetting{ false }
+	m_openSetting{ false },
+	m_recvFadeIn{ std::make_shared<bool>(false) },
+	m_recvFadeOut{ std::make_shared<bool>(false) },
+	m_recvExplosionSkill{ std::make_shared<bool>(false) }
 {
 	auto pos{ GetRatio(-100.f, 75.f) };
 	Vec2 scale{ 100.f };
@@ -497,7 +500,11 @@ void Scene_Test::CreateSkill(const std::wstring& colorName, const Vec3& worldPos
 		object->GetTransform()->SetWorldMatrix(matWorld);
 
 		object->GetTransform()->SetLocalScale(localScale);
-		object->AddComponent(std::make_shared<Bomb_Script>(scaleSpeed, alpha));
+
+		auto script{ std::make_shared<Bomb_Script>(scaleSpeed, alpha) };
+		script->SetRecvFlag(m_recvExplosionSkill);
+		object->AddComponent(script);
+		m_skillObject.push_back(script);
 	}
 
 	AddGameObject(gameObjects);
@@ -741,6 +748,7 @@ void Scene_Test::CreateFade(std::shared_ptr<CScene> pScene)
 	vTextures.push_back(texture);
 
 	fade_script->SetLogoInfo(1.f, 1.f, vTextures);
+	fade_script->SetFade(m_recvFadeIn, m_recvFadeOut);
 	gameObject->AddComponent(fade_script);
 
 	m_fadeScript = fade_script;
@@ -3018,6 +3026,11 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 
 	if (effectType == server::EFFECT_TYPE::NUCLEAR_EXPLOSION)
 	{
+		if (*m_recvExplosionSkill == true)
+			return;
+
+		*m_recvExplosionSkill = true;
+
 		effectPos.y -= 150.f;
 		CreateSkill(L"Yellow", effectPos, Vec3{ 150.f }, 1.f, 1.f);
 		CreateSkill(L"White", effectPos, Vec3{ 110.f }, 1.f, 2.f);
@@ -3027,6 +3040,11 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 	}
 	else if (effectType == server::EFFECT_TYPE::SPELL_EXPLOSION)
 	{
+		if (*m_recvExplosionSkill == true)
+			return;
+
+		*m_recvExplosionSkill = true;
+
 		int32_t id{ packet.ReadID() };
 		auto bossObjects{ GetBoss() };
 		std::shared_ptr<CGameObject> boss{ nullptr };
@@ -3164,47 +3182,85 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 	{
 		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI1:
 		{
+			if (m_oneTimeDialogueScript["PILLAR_HINT2"]->IsRendering() == true)
+				return;
+
 			m_oneTimeDialogueScript["PILLAR_HINT2"]->StartRender(1.f, 2.f);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI2:
 		{
+			if (m_oneTimeDialogueScript["WEEPER_HINT"]->IsRendering() == true)
+				return;
+
 			m_oneTimeDialogueScript["WEEPER_HINT"]->StartRender(1.f, 2.f);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI3:
 		{
+			if (m_oneTimeDialogueScript["GOLEM_HINT"]->IsRendering() == true)
+				return;
+
 			m_oneTimeDialogueScript["GOLEM_HINT"]->StartRender(1.f, 2.f);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:
 		{
+			if (*m_recvFadeOut == true)
+				return;
+
+			*m_recvFadeOut = true;
+
 			m_fadeScript->FadeOut();
 
-			GET_SINGLE(CSoundMgr)->StopBGMSound();
-			GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+			if (playMusic == true)
+			{
+				GET_SINGLE(CSoundMgr)->StopBGMSound();
+				GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT:
 		{
+			if (*m_recvFadeOut == true)
+				return;
+
+			*m_recvFadeOut = true;
+
 			m_fadeScript->FadeOut();
 
-			GET_SINGLE(CSoundMgr)->StopBGMSound();
-			GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+			if (playMusic == true)
+			{
+				GET_SINGLE(CSoundMgr)->StopBGMSound();
+				GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT:
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT:
 		{
+			if (*m_recvFadeOut == true)
+				return;
+
+			*m_recvFadeOut = true;
+
 			m_fadeScript->FadeOut();
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT:
 		{
+			if (*m_recvFadeOut == true)
+				return;
+
+			*m_recvFadeOut = true;
+
 			m_fadeScript->FadeOut();
 
-			GET_SINGLE(CSoundMgr)->StopBGMSound();
-			GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+			if (playMusic == true)
+			{
+				GET_SINGLE(CSoundMgr)->StopBGMSound();
+				GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+			}
 		}
 		break;
 		default:
@@ -3225,6 +3281,11 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		{
 			if (m_portalUIScript->GetCount() == 3)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::FirstBoss);
 			}
@@ -3234,6 +3295,11 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		{
 			if (m_portalUIScript->GetCount() == 3)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::Cave);
 			}
@@ -3243,6 +3309,11 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		{
 			if (m_portalUIScript->GetCount() == 3)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
 			}
@@ -3252,6 +3323,11 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		{
 			if (m_portalUIScript->GetCount() == 3)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::ThirdRoom_RockRolling);
 			}
@@ -3261,6 +3337,11 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		{
 			if (m_portalUIScript->GetCount() == 3)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::LastBoss_TreasureRoom);
 			}
@@ -3280,6 +3361,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		// 아티팩트 파괴 후 보호막 사라지는 신
 		case server::CUT_SCENE_TYPE::SCENE1:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
+
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 
 			for (auto& script : m_artifactMagicScript)
@@ -3293,6 +3377,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		// 기둥을 처음 발견해서 기둥의 보호막을 보여주는 신
 		case server::CUT_SCENE_TYPE::SCENE2:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
+
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 			m_oneTimeDialogueScript["PILLAR_HINT"]->StartRender(3.f, 5.f);
 		}
@@ -3300,42 +3387,64 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		// 메테오에 기둥이 넘어지는 신
 		case server::CUT_SCENE_TYPE::SCENE3:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
+
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
 		// 돌덩이가 굴러가서 벽돌 벽을 부수는 신
 		case server::CUT_SCENE_TYPE::SCENE4:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
+
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
+		// Weeper 등장 컷신
 		case server::CUT_SCENE_TYPE::SCENE5:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
+			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
+		// Golem 등장 컷신
 		case server::CUT_SCENE_TYPE::SCENE6:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
+			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE7:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE8:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE9:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE10:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
 		}
 		break;

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -196,6 +196,8 @@ private:
 	uint32_t m_wpDarkBlueEffectStartIndex;
 	uint32_t m_wpDarkBlueEffectCurrentIndex;
 
+	std::vector<std::shared_ptr<class Bomb_Script>> m_skillObject;
+
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;
 	std::shared_ptr<Fade_Script> m_fadeScript;
@@ -220,4 +222,9 @@ private:
 	std::shared_ptr<class BossHP_Script> m_golemHPScript;
 
 	bool m_openSetting;
+
+private:
+	std::shared_ptr<bool> m_recvFadeIn;
+	std::shared_ptr<bool> m_recvFadeOut;
+	std::shared_ptr<bool> m_recvExplosionSkill;
 };

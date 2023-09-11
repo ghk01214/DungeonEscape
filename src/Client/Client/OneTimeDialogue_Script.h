@@ -43,6 +43,8 @@ public:
 public:
 	void SetTimeData(float fadeDuration, float renderDuration);
 
+	constexpr bool IsRendering() const { return m_render; }
+
 private:
 	bool m_render;
 	float m_accTime;
