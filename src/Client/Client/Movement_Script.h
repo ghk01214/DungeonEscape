@@ -5,7 +5,7 @@
 class Movement_Script : public MonoBehaviour
 {
 public:
-	Movement_Script();
+	Movement_Script(int32_t index = 1);
 	~Movement_Script();
 
 public:

@@ -219,7 +219,7 @@ void Scene_Test::CreateMainCamera(std::shared_ptr<CScene> pScene)
 	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
 
 #ifdef MOVEMENT
-	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>();
+	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>(7);
 	camera->AddComponent(pMovementScript);
 #else
 	shared_ptr<Camera_Basic> pCameraScript = make_shared<Camera_Basic>();

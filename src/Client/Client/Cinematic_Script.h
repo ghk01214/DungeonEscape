@@ -24,6 +24,8 @@ private:
 		PILLAR_FOUND,
 		PILLAR_HIT,
 		BOULDER_ROLL,
+		WEEPER_SUMMON,
+		GOLEM_SUMMON,
 
 		MAX
 	};
@@ -42,6 +44,8 @@ public:
 	void StopCinematic(void);
 	void SetData(server::CUT_SCENE_TYPE eType, const vector<CINEMATIC_INFO>& info);
 	void SetScript(shared_ptr<Camera_Basic> cameraBasicScript) { m_cameraBasicScript = cameraBasicScript; }
+
+	constexpr bool IsPlaying() const { return m_bPlay; }
 
 private:
 	int m_currentScene = 0;

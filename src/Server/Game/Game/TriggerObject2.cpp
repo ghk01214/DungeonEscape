@@ -175,9 +175,8 @@ void TriggerObject2::Attribute_BossCutscene_0()
 	}
 
 	m_deactivate = true;
-	
+	SetRemoveReserved();
 	//클라이언트에게 컷씬 알림을 보내려면 여기에.
-
 }
 
 void TriggerObject2::Attribute_BossCutscene_1()
@@ -193,14 +192,14 @@ void TriggerObject2::Attribute_BossCutscene_1()
 	{
 		if (m->GetName() == L"Golem")
 		{
-			auto golem = dynamic_cast<Golem*>(m);				
-			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_ROAR", 0.5f, golem);		//ROAR 애니메이션 재생 시간 2.33
-			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 2.82f, golem);		//ROAR > IDLE로 애니메이션 진행
+			auto golem = dynamic_cast<Golem*>(m);
+			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_ROAR", 4.f, golem);		//ROAR 애니메이션 재생 시간 2.33
+			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 6.32f, golem);		//ROAR > IDLE로 애니메이션 진행
 		}
 	}
 
 	m_deactivate = true;
-
+	SetRemoveReserved();
 	//클라이언트에게 컷씬 알림을 보내려면 여기에.
 }
 
@@ -390,16 +389,12 @@ void TriggerObject2::ServerSendInMessage(Player* player)
 		break;
 		case TRIGGERATTRIBUTE::CUTSCENE5:
 		{
-			m_deactivate = true;
-			SetRemoveReserved();
-			//ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE5);
+			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE5);
 		}
 		break;
 		case TRIGGERATTRIBUTE::CUTSCENE6:
 		{
-			m_deactivate = true;
-			SetRemoveReserved();
-			//ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE6);
+			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE6);
 		}
 		break;
 		case TRIGGERATTRIBUTE::PORTAL1:
