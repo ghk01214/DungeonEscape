@@ -66,10 +66,10 @@ shared_ptr<Mesh> Resources::LoadFontMesh(vector<Vertex> vec)
 	wstring meshName{ L"Font" };
 	meshName += strSize;
 
-	shared_ptr<Mesh> findMesh = Get<Mesh>(meshName.c_str());
+	//shared_ptr<Mesh> findMesh = Get<Mesh>(meshName.c_str());
 
-	if (findMesh)
-		return findMesh;
+	//if (findMesh)
+	//	return findMesh;
 
 	vector<uint32> idx(vec.size() / 4 * 6);
 
