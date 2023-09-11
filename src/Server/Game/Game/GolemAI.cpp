@@ -460,11 +460,10 @@ void GolemAI::BossPatternUIStart()
 	// UI : 골렘이 강력한 공격을 준비한다. 엄폐물을 찾아 피할지 반격의 기회를 노릴지 선택해야한다.
 	cout << "BossPatternUIStart_Golem" << endl;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
-	ev.objID = m_monster->GetID();
-	ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::GUIDE_UI3);
-
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		MonsterAI::BossPatternUIStart(server::TRIGGER_INTERACTION_TYPE::GUIDE_UI3);
+	}
 }
 
 void GolemAI::BossPatternUIEnd()

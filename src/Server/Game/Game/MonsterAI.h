@@ -55,6 +55,9 @@ public:
 	physx::PxQuat GetRotation_For_Pattern(physx::PxVec3 xzDir);
 
 protected:
+	void BossPatternUIStart(server::TRIGGER_INTERACTION_TYPE type);
+
+protected:
 	Monster* m_monster;
 	std::vector<MonsterSkill*> m_skillSizeHolder;
 	Player* m_target = nullptr;
@@ -62,7 +65,7 @@ protected:
 	Vec3 m_targetDir;
 	Vec3 m_monsterLook;
 
-	bool m_AIWait = true;					
+	bool m_AIWait = true;
 
 	float m_detectRange;					//몬스터 인식 범위
 	float m_targetPos_UpdateInterval;		//플레이어 위치 갱신 주기

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MonsterAI.h"
 #include "Monster.h"
 #include "MonsterSkill.h"
@@ -476,4 +476,13 @@ physx::PxQuat MonsterAI::GetRotation_For_Pattern(physx::PxVec3 xzDir)
 	physx::PxQuat rotation(rotAngle, rotAxis);
 
 	return rotation;
+}
+
+void MonsterAI::BossPatternUIStart(server::TRIGGER_INTERACTION_TYPE type)
+{
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	ev.objID = m_monster->GetID();
+	ev.integer = magic_enum::enum_integer(type);
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "WeeperAI.h"
 #include "Weeper.h"
 #include "Monster.h"
@@ -329,11 +329,10 @@ void WeeperAI::BossPatternUIStart()
 	// UI : 사신이 강력한 공격을 준비한다. 물러날지, 반격의 기회를 노릴지 선택해야한다.
 	cout << "BossPatternUIStart_WEEPER" << endl;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
-	ev.objID = m_monster->GetID();
-	ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::GUIDE_UI2);
-
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		MonsterAI::BossPatternUIStart(server::TRIGGER_INTERACTION_TYPE::GUIDE_UI2);
+	}
 }
 
 void WeeperAI::BossPatternUIEnd()
