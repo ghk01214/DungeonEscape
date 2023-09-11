@@ -17,6 +17,7 @@ public:
 private:
 	void SelectField();
 	void InputString();
+	void RenderString();
 
 	void InputAlphabet();
 	void InputNumber();
@@ -29,9 +30,11 @@ public:
 	const int32_t GetStrSize() const { return m_str.length(); }
 
 private:
-	Vec3 m_strPos;
+	Vec2 m_strPos;
 	std::wstring m_str;
 	int32_t m_index;
+
+	int32_t m_prevLength;
 
 	bool m_select;
 };

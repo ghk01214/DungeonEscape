@@ -4,10 +4,13 @@
 #include <Input.h>
 #include <Transform.h>
 #include <UI.h>
+#include <FontManager.h>
 
 InputString_Script::InputString_Script() :
+	m_strPos{ GetRatio(0.f, 5.f) },
 	m_index{ 0 },
-	m_select{ false }
+	m_select{ false },
+	m_prevLength{0}
 {
 }
 
@@ -34,6 +37,7 @@ void InputString_Script::Update()
 
 	SelectField();
 	InputString();
+	RenderString();
 }
 
 void InputString_Script::LateUpdate()
@@ -87,14 +91,30 @@ void InputString_Script::InputString()
 	if (m_select == false)
 		return;
 
-	if (m_str.length() > 15)
+	InputFuncKey();
+
+	if (m_str.length() >= 10)
 		return;
 
 	InputAlphabet();
 	InputNumber();
 	InputNumPad();
 	InputSpecialChar();
-	InputFuncKey();
+}
+
+void InputString_Script::RenderString()
+{
+	if (m_prevLength != m_str.length())
+	{
+		if (m_str.length() > m_prevLength)
+			m_strPos.x -= 20.f;
+		else
+			m_strPos.x += 20.f;
+
+		m_prevLength = m_str.length();
+	}
+
+	GET_SINGLE(FontManager)->RenderFonts(m_str, m_strPos, Vec2{ 0.3f });
 }
 
 void InputString_Script::InputAlphabet()
@@ -113,7 +133,7 @@ void InputString_Script::InputAlphabet()
 		else if (i->GetButtonDown(KEY_TYPE::F) == true) m_str.insert(m_index++, L"F");
 		else if (i->GetButtonDown(KEY_TYPE::G) == true) m_str.insert(m_index++, L"G");
 		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_str.insert(m_index++, L"H");
-		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_str.insert(m_index++, L"I");
+		else if (i->GetButtonDown(KEY_TYPE::I) == true) m_str.insert(m_index++, L"I");
 		else if (i->GetButtonDown(KEY_TYPE::J) == true) m_str.insert(m_index++, L"J");
 		else if (i->GetButtonDown(KEY_TYPE::K) == true) m_str.insert(m_index++, L"K");
 		else if (i->GetButtonDown(KEY_TYPE::L) == true) m_str.insert(m_index++, L"L");
@@ -142,7 +162,7 @@ void InputString_Script::InputAlphabet()
 		else if (i->GetButtonDown(KEY_TYPE::F) == true) m_str.insert(m_index++, L"f");
 		else if (i->GetButtonDown(KEY_TYPE::G) == true) m_str.insert(m_index++, L"g");
 		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_str.insert(m_index++, L"h");
-		else if (i->GetButtonDown(KEY_TYPE::H) == true) m_str.insert(m_index++, L"i");
+		else if (i->GetButtonDown(KEY_TYPE::I) == true) m_str.insert(m_index++, L"i");
 		else if (i->GetButtonDown(KEY_TYPE::J) == true) m_str.insert(m_index++, L"j");
 		else if (i->GetButtonDown(KEY_TYPE::K) == true) m_str.insert(m_index++, L"k");
 		else if (i->GetButtonDown(KEY_TYPE::L) == true) m_str.insert(m_index++, L"l");
