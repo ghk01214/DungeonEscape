@@ -11,10 +11,11 @@
 
 using namespace std;
 
-GolemAI::GolemAI(Golem* golem) :
+GolemAI::GolemAI(Golem* golem, float checkRange) :
 	MonsterAI(golem),
 	m_golem(golem)
 {
+	m_checkRange = checkRange;
 }
 
 GolemAI::~GolemAI()

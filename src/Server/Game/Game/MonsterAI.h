@@ -71,5 +71,6 @@ protected:
 	float m_targetPos_UpdateInterval;		//플레이어 위치 갱신 주기
 
 	bool m_start = false;					//작동시작
+	float m_checkRange;
 };
 

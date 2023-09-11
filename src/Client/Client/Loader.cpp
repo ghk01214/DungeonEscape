@@ -173,7 +173,6 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 {
 	LOAD_TEXTURE(L"Nana_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Nana.png");
 	LOAD_TEXTURE(L"Mistic_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Mistic.png");
-	LOAD_TEXTURE(L"Carmel_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Carmel.png");
 
 	LOAD_TEXTURE(L"Weeper Class", L"..\\Resources\\Texture\\UI\\Icon\\Weeper Class.png");
 	LOAD_TEXTURE(L"Golem Class", L"..\\Resources\\Texture\\UI\\Icon\\Golem Class.png");
@@ -183,6 +182,8 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 
 	LOAD_TEXTURE(L"Weeper Hint", L"..\\Resources\\Texture\\UI\\Font\\Weeper Hint.png");
 	LOAD_TEXTURE(L"Golem Hint", L"..\\Resources\\Texture\\UI\\Font\\Golem Hint.png");
+	LOAD_TEXTURE(L"Boss Warning", L"..\\Resources\\Texture\\UI\\Font\\Boss Warning.png");
+	LOAD_TEXTURE(L"Red Blur", L"..\\Resources\\Texture\\UI\\Blur\\Red.png");
 
 	LOAD_TEXTURE(L"Player Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(C).png");
 	LOAD_TEXTURE(L"HP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(C).png");
@@ -365,12 +366,10 @@ HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 
 	LOAD_TEXTURE(L"Knight", L"..\\Resources\\Texture\\UI\\Font\\Knight.png");
 	LOAD_TEXTURE(L"Mage", L"..\\Resources\\Texture\\UI\\Font\\Mage.png");
-	LOAD_TEXTURE(L"Priest", L"..\\Resources\\Texture\\UI\\Font\\Priest.png");
 	LOAD_TEXTURE(L"Ready", L"..\\Resources\\Texture\\UI\\Font\\Ready.png");
 
 	LOAD_TEXTURE(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
 	LOAD_TEXTURE(L"Mistic", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic.png");
-	LOAD_TEXTURE(L"Carmel", L"..\\Resources\\Texture\\UI\\Character Select\\Carmel.png");
 
 #pragma region [POP UP]
 	LOAD_TEXTURE(L"Pop Up Frame", L"..\\Resources\\Texture\\UI\\Frame\\Pop Up Frame.png");
@@ -380,7 +379,6 @@ HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 
 	LOAD_TEXTURE(L"Knight2", L"..\\Resources\\Texture\\UI\\Font\\Knight2.png");
 	LOAD_TEXTURE(L"Mage2", L"..\\Resources\\Texture\\UI\\Font\\Mage2.png");
-	LOAD_TEXTURE(L"Priest2", L"..\\Resources\\Texture\\UI\\Font\\Priest2.png");
 #pragma endregion
 
 	return S_OK;

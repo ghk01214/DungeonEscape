@@ -383,6 +383,7 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 	CreateOneTimeDialogue();
 	CreatePlayerUI(player);
 	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, GET_NETWORK->GetName());
+	CreateBossWarning();
 
 	CreatePopUp();
 }
@@ -1211,6 +1212,50 @@ void Scene_Test::CreateBossClassIcon(UITransform& trans, server::FBX_TYPE boss)
 		m_weeperUIObjets.push_back(obj);
 	else
 		m_golemUIObjets.push_back(obj);
+}
+
+void Scene_Test::CreateBossWarning()
+{
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Red Blur") };
+	auto pos{ GetRatio(0.f, 0.f) };
+
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		float width{ static_cast<float>(GEngine->GetWindow().width) };
+		float height{ static_cast<float>(GEngine->GetWindow().height) };
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ width, height, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+		std::shared_ptr<BossWarning_Script> script{ std::make_shared<BossWarning_Script>() };
+		script->InsertTextures(texture);
+		obj->AddComponent(script);
+
+		AddGameObject(obj);
+		m_bossWarningScript.push_back(script);
+	}
+
+	texture = GET_TEXTURE(L"Boss Warning");
+	pos = GetRatio(0.f, 50.f);
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 1351.f, 116.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+		std::shared_ptr<BossWarning_Script> script{ std::make_shared<BossWarning_Script>() };
+		script->InsertTextures(texture);
+		obj->AddComponent(script);
+
+		AddGameObject(obj);
+		m_bossWarningScript.push_back(script);
+	}
 }
 
 void Scene_Test::CreateOneTimeDialogue()
@@ -3409,6 +3454,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 				return;
 
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+
+			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
+			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
 		}
 		break;
 		// Golem 등장 컷신
@@ -3418,6 +3466,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 				return;
 
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+
+			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
+			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE7:

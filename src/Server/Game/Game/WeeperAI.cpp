@@ -10,10 +10,11 @@
 
 using namespace std;
 
-WeeperAI::WeeperAI(Weeper* weeper) :
+WeeperAI::WeeperAI(Weeper* weeper, float checkRange) :
 	MonsterAI(weeper),
 	m_weeper(weeper)
 {
+	m_checkRange = checkRange;
 }
 
 WeeperAI::~WeeperAI()

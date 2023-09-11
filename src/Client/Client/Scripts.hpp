@@ -28,6 +28,7 @@
 #include "SliderTip_Script.h"
 #include "VolumeSlider_Script.h"
 #include "BossHP_Script.h"
+#include "BossWarning_Script.h"
 
 #include "InfoUI_Script.h"
 #include "PortalUI_Script.h"

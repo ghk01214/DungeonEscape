@@ -21,7 +21,8 @@ using namespace physx;
 MonsterAI::MonsterAI(Monster* monster) :
 	m_monster(monster),
 	m_detectRange(500000.f),
-	m_targetPos_UpdateInterval(0.5f)
+	m_targetPos_UpdateInterval(0.5f),
+	m_checkRange{ 3000.f }
 {
 }
 
@@ -383,7 +384,7 @@ void MonsterAI::MonsterStart()
 		if (player)
 		{
 			physx::PxVec3 between = TO_PX3(m_monster->GetControllerPosition()) - TO_PX3(player->GetControllerPosition());
-			if (between.magnitude() < 3300.f)			//플레이어와의 거리 체크
+			if (between.magnitude() < m_checkRange)			//플레이어와의 거리 체크
 			{
 				m_start = true;
 				SetAIWait(false);

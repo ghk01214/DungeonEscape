@@ -27,7 +27,7 @@ class GolemAI : public MonsterAI
 {
 	friend class Golem;
 public:
-	GolemAI(Golem* golem);
+	GolemAI(Golem* golem, float checkRange);
 	~GolemAI();
 public:
 	void Init();

@@ -109,6 +109,7 @@ private:
 	void CreateBossUI(server::FBX_TYPE boss, int32_t hp);
 	void CreateBossHPBar(UITransform& trans, server::FBX_TYPE boss, int32_t hp);
 	void CreateBossClassIcon(UITransform& trans, server::FBX_TYPE boss);
+	void CreateBossWarning();
 
 	void CreateOneTimeDialogue();
 
@@ -220,6 +221,7 @@ private:
 	std::vector<std::shared_ptr<CGameObject>> m_golemUIObjets;
 	std::shared_ptr<class BossHP_Script> m_weeperHPScript;
 	std::shared_ptr<class BossHP_Script> m_golemHPScript;
+	std::vector<std::shared_ptr<class BossWarning_Script>> m_bossWarningScript;
 
 	bool m_openSetting;
 
