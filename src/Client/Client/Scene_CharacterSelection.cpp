@@ -465,7 +465,7 @@ void Scene_CharacterSelection::ChangePopUpVisibility()
 		SetUIActive(true);
 
 		m_characterDescription[m_descriptionIndex]->GetUI()->SetVisible(false);
-		m_characterDescription[m_descriptionIndex + 3]->GetUI()->SetVisible(false);
+		m_characterDescription[m_descriptionIndex + 2]->GetUI()->SetVisible(false);
 		//m_characterDescription[m_descriptionIndex + 6]->GetUI()->SetVisible(false);
 		m_closeButton->SetClosePopUpFlag(false);
 		m_descriptionIndex = -1;
@@ -510,7 +510,7 @@ void Scene_CharacterSelection::ChangePopUpVisibility()
 	}
 
 	m_characterDescription[index]->GetUI()->SetVisible(true);
-	m_characterDescription[index + 3]->GetUI()->SetVisible(true);
+	m_characterDescription[index + 2]->GetUI()->SetVisible(true);
 	//m_characterDescription[index + 6]->GetUI()->SetVisible(true);
 
 	m_descriptionIndex = index;

@@ -284,7 +284,7 @@ HRESULT CLoader::Loading_ForStart_Font()
 
 HRESULT CLoader::Loading_ForStart_Texture()
 {
-	LOAD_TEXTURE(L"Lobby_InGame", L"..\\Resources\\Texture\\UI\\Start\\Lobby_InGame.PNG");
+	LOAD_TEXTURE(L"Lobby_InGame", L"..\\Resources\\Texture\\UI\\Start\\Background.PNG");
 
 	LOAD_TEXTURE(L"Title", L"..\\Resources\\Texture\\UI\\Font\\Title.png");
 	LOAD_TEXTURE(L"Log In", L"..\\Resources\\Texture\\UI\\Font\\Log In.png");

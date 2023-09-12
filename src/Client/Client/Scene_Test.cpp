@@ -194,7 +194,7 @@ void Scene_Test::CreateComputeShader(void)
 {
 #pragma region ComputeShader
 	{
-		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
+		shared_ptr<Shader> shader = GET_SHADER(L"ComputeShader");
 
 		// UAV ??Texture ??밴쉐
 		shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
@@ -271,7 +271,7 @@ void Scene_Test::CreateSkyBox(std::shared_ptr<CScene> pScene)
 			meshRenderer->SetMesh(sphereMesh);
 		}
 		{
-			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Skybox");
+			shared_ptr<Shader> shader = GET_SHADER(L"Skybox");
 			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Sky02", L"..\\Resources\\Texture\\Sky02.jpg");
 			shared_ptr<Material> material = make_shared<Material>();
 			material->SetShader(shader);
@@ -357,7 +357,7 @@ void Scene_Test::CreateSphere(std::shared_ptr<CScene> pScene)
 
 	Vec3 pos{ 0.f, 0.f, 0.f };
 
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Alpha_Blend_Object");
+	shared_ptr<Shader> shader = GET_SHADER(L"Alpha_Blend_Object");
 
 	for (auto& gameObject : gameObjects)
 	{
@@ -406,7 +406,7 @@ void Scene_Test::CreateMRTUI(std::shared_ptr<CScene> pScene)
 			meshRenderer->SetMesh(mesh);
 		}
 		{
-			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Texture");
+			shared_ptr<Shader> shader = GET_SHADER(L"Texture");
 
 			shared_ptr<Texture> texture;
 			if (i < 3)
@@ -593,7 +593,7 @@ std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(std::vector<shared_
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
 
 	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+	shared_ptr<Shader> shader = GET_SHADER(L"BillBoard_Texture");
 
 	shared_ptr<Texture> texture = gameObjects->GetBillBoard()->GetTexture();
 	shared_ptr<Material> material = make_shared<Material>();
@@ -624,7 +624,7 @@ std::shared_ptr<CGameObject> Scene_Test::CreateEffectBase(std::vector<shared_ptr
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
 
 	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+	shared_ptr<Shader> shader = GET_SHADER(L"BillBoard_Texture");
 
 	shared_ptr<Texture> texture = gameObjects->GetEffect()->GetTexture();
 	shared_ptr<Material> material = make_shared<Material>();
@@ -669,7 +669,7 @@ std::shared_ptr<CGameObject> Scene_Test::CreateArtifactBase(std::vector<shared_p
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
 
 	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+	shared_ptr<Shader> shader = GET_SHADER(L"BillBoard_Texture");
 
 	shared_ptr<Texture> texture = textures[0];
 	shared_ptr<Material> material = make_shared<Material>();
@@ -735,9 +735,9 @@ void Scene_Test::CreateFade(std::shared_ptr<CScene> pScene)
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
 
 	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+	shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
 
-	shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Lobby_InGame");
+	shared_ptr<Texture> texture = GET_TEXTURE(L"Fade Blur");
 	shared_ptr<Material> material = make_shared<Material>();
 	material->SetShader(shader);
 	material->SetTexture(0, texture);
