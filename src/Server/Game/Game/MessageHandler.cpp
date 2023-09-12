@@ -413,8 +413,8 @@ namespace game
 			Vec3 portal1TestPos{ 0.f, -700.f, 6500.f };
 			Vec3 portal2TestPos{ 0.f, -550.f, 12520.f };
 			Vec3 portal3TestPos{ 0.f, -1590.f, 18420.f };
-			Vec3 portal4TestPos{ 15000.f, -1590.f, 23570.f };
-			Vec3 portal5TestPos{ 16216.f, -3690.f, 39993.f };
+			Vec3 portal4TestPos{ 12450.f, -1590.f, 21170.f };
+			Vec3 portal5TestPos{ 17476.f, -3620.f, 37733.f };
 			Vec3 artifactTest{ -1750.f, -1690.f, 19965.f };
 			Vec3 pos = gimmk2TestPos;
 
@@ -423,7 +423,7 @@ namespace game
 
 			//pos = Vec3(0.f, -1750.f, 0.f);
 
-			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75,75,75)) };
+			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75, 75, 75)) };
 			player->SetName(msg.name);
 			player->SetObjectType(msg.objType);
 			player->SetFBXType(msg.fbxType);

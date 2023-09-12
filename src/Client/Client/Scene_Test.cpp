@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -89,6 +89,7 @@ void Scene_Test::Update()
 	ChangeVolume();
 	ChangeMuteTexture();
 	RenderFont();
+	RenderPortalEffect();
 }
 
 void Scene_Test::LateUpdate()
@@ -998,7 +999,6 @@ void Scene_Test::CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character, con
 	info.str = name;
 
 	m_font[magic_enum::enum_cast<FONT_TYPE>(id).value()] = info;
-	Print(magic_enum::enum_name(magic_enum::enum_cast<FONT_TYPE>(id).value()));
 	//auto mpPos{ CreatePartyPlayerMPBar(m_partyUITransform[id]) };
 	//CreatePartyPlayerHPBar(mpPos, m_partyUITransform[id]);
 }
@@ -2915,8 +2915,123 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
-	effect.speed = 0.003f;
-	effect.scale = Vec3{ 500.f };
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateEffect(L"Effect_Circle_Flame", 0.003f);
+
+		if (i == 0)
+		{
+			m_circleFlameYellowStartIndex = effect.index;
+			m_circleFlameYellowCurrentIndex = effect.index;
+		}
+	}
+}
+
+void Scene_Test::RenderPortalEffect()
+{
+	switch (m_eNextMapType)
+	{
+		case MAP_TYPE::FirstBoss:
+		case MAP_TYPE::Cave:
+		case MAP_TYPE::LastBoss_TreasureRoom:
+		return;
+		default:
+		break;
+	}
+
+
+	if (m_eNextMapType == MAP_TYPE::StartRoom)
+	{
+		Vec3 pos{ 2000.f, 100.f, 5415.f };
+		Vec3 scale{ 1600.f };
+		Vec3 rotation{ 0.f };
+
+		pos.x -= 25.f;
+		pos.z += 300.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+
+		pos.z -= 300.f * 2.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+
+		pos.x -= 300.f - 25.f;
+		pos.z = 5415.f;
+		rotation.y += 90.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+
+		pos.x += 300.f * 2.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+	}
+	else if (m_eNextMapType == MAP_TYPE::SecondRoom_Bridge_SecondBoss)
+	{
+		Vec3 pos{ 14985.f, -1590.f, 21085.f };
+		Vec3 scale{ 3500.f };
+		Vec3 rotation{ 0.f };
+		rotation.y = 90.f;
+
+		pos.x -= 750.f;
+		pos.y = 50.f;
+		pos.z += 100.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+
+		pos.x += 750.f * 2.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+
+		pos.x = 14985.f - 100.f;
+		pos.z -= 750.f + 100.f;
+		rotation.y = 0.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+
+		pos.z += 750.f * 2.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+	}
+	else if (m_eNextMapType == MAP_TYPE::ThirdRoom_RockRolling)
+	{
+		Vec3 pos{ 16165.f, -3301.f, 37770.f };
+		Vec3 scale{ 1500.f };
+		Vec3 rotation{ 0.f };
+
+		pos.x += 50.f;
+		pos.y = -2600.f;
+		pos.z += 300.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+
+		pos.z -= 300.f * 2.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+
+		pos.x -= 300.f;
+		pos.z = 37770.f;
+		rotation.y = 90.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+
+		pos.x += 300.f * 2.f;
+
+		GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+		GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+	}
+
+	m_circleFlameYellowCurrentIndex = m_circleFlameYellowStartIndex;
 }
 
 void Scene_Test::RemoveObject(network::CPacket& packet)

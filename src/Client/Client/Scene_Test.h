@@ -168,6 +168,7 @@ private:
 	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
 	void AddEffectTextures();
+	void RenderPortalEffect();
 
 private:
 	void CheckMapMove(void);
@@ -218,6 +219,9 @@ private:
 
 	uint32_t m_wpDarkBlueEffectStartIndex;
 	uint32_t m_wpDarkBlueEffectCurrentIndex;
+
+	uint32_t m_circleFlameYellowStartIndex;
+	uint32_t m_circleFlameYellowCurrentIndex;
 
 	std::vector<std::shared_ptr<class Bomb_Script>> m_skillObject;
 
