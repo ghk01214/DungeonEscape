@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SkillObject.h"
 #include "RigidBody.h"
 #include "Transform.h"
@@ -427,7 +427,7 @@ void SkillObject::HandlePlayerSkillCollision()
 
 						if (weeper)
 						{
-							weeper->GetDamaged(10);
+							weeper->GetDamaged(100);
 							SetRemoveReserved();						//객체 삭제
 							ServerMessage_SkillRemove();					//서버 메시지 처리
 						}
@@ -441,7 +441,7 @@ void SkillObject::HandlePlayerSkillCollision()
 
 						if (golem != nullptr)
 						{
-							golem->GetDamaged(10);
+							golem->GetDamaged(100);
 							SetRemoveReserved();						//객체 삭제
 							ServerMessage_SkillRemove();					//서버 메시지 처리
 						}

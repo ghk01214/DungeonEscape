@@ -281,7 +281,7 @@ bool OverlapObject2::ApplySkillToMonster(Monster* monster)
 	ServerMessage_RenderEffect(monster);
 
 
-	monster->GetDamaged(10);
+	monster->GetDamaged(100);
 	cout << "몬스터에게 데미지를 줬다." << endl;
 	return true;
 }
