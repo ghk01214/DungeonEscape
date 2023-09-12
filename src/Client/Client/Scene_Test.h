@@ -228,6 +228,7 @@ private:
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;
 	std::shared_ptr<Fade_Script> m_fadeScript;
+	std::shared_ptr<Fade_Script> m_fadeUIScript;
 	std::shared_ptr<PortalUI_Script> m_portalUIScript;
 	std::shared_ptr<Cinematic_Script> m_cinematicScript;
 

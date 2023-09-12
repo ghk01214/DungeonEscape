@@ -13,7 +13,9 @@
 
 #include "Input.h"
 
-Fade_Script::Fade_Script()
+Fade_Script::Fade_Script() :
+	m_fadeIn{ nullptr },
+	m_fadeOut{ nullptr }
 {
 }
 
@@ -61,7 +63,9 @@ void Fade_Script::Update()
 			{
 				m_eState = Fade_State::Contents;
 				m_accTime = 0.f;
-				*m_fadeIn = false;
+
+				if (m_fadeIn != nullptr)
+					*m_fadeIn = false;
 			}
 			else
 			{
@@ -101,7 +105,8 @@ void Fade_Script::Update()
 				else
 					m_bLogoEnd = true;
 
-				*m_fadeOut = false;
+				if (m_fadeOut != nullptr)
+					*m_fadeOut = false;
 			}
 			else
 			{

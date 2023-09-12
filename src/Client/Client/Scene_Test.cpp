@@ -1408,6 +1408,29 @@ void Scene_Test::CreateOneTimeDialogue()
 
 		AddGameObject(obj);
 	}
+
+	texture = GET_TEXTURE(L"Move Map");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto pos{ GetRatio(0.f, 50.f) };
+		auto transform{ obj->GetTransform() };
+
+		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+		std::vector<std::shared_ptr<Texture>> tex;
+		tex.push_back(texture);
+
+		std::shared_ptr<Fade_Script> behaviour{ std::make_shared<Fade_Script>() };
+		behaviour->SetLogoInfo(1.f, 1.f, tex);
+		m_fadeUIScript = behaviour;
+
+		obj->AddComponent(behaviour);
+
+		AddGameObject(obj);
+	}
 }
 
 void Scene_Test::CreatePopUp()
@@ -3490,6 +3513,7 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 			*m_recvFadeOut = true;
 
 			m_fadeScript->FadeOut();
+			m_fadeUIScript->FadeOut();
 
 			if (playMusic == true)
 			{
@@ -3506,6 +3530,7 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 			*m_recvFadeOut = true;
 
 			m_fadeScript->FadeOut();
+			m_fadeUIScript->FadeOut();
 
 			if (playMusic == true)
 			{
@@ -3523,6 +3548,7 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 			*m_recvFadeOut = true;
 
 			m_fadeScript->FadeOut();
+			m_fadeUIScript->FadeOut();
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT:
@@ -3533,6 +3559,7 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 			*m_recvFadeOut = true;
 
 			m_fadeScript->FadeOut();
+			m_fadeUIScript->FadeOut();
 
 			if (playMusic == true)
 			{
@@ -3566,6 +3593,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::FirstBoss);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;
@@ -3580,6 +3608,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::Cave);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;
@@ -3594,6 +3623,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;
@@ -3608,6 +3638,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::ThirdRoom_RockRolling);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;
@@ -3622,6 +3653,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::LastBoss_TreasureRoom);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;

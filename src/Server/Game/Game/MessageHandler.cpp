@@ -418,10 +418,7 @@ namespace game
 			Vec3 artifactTest{ -1750.f, -1690.f, 19965.f };
 			Vec3 pos = gimmk2TestPos;
 
-			//pos.z = 40400.f;
 			pos.x += msg.playerID * 500.f;
-
-			//pos = Vec3(0.f, -1750.f, 0.f);
 
 			Player* player{ m_objMgr->AddGameObjectToLayer<Player>(L"Layer_Player", msg.playerID, pos, Quat(0, 0, 0, 1), Vec3(75, 75, 75)) };
 			player->SetName(msg.name);

@@ -186,6 +186,7 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	LOAD_TEXTURE(L"Red Blur", L"..\\Resources\\Texture\\UI\\Blur\\Red.png");
 
 	LOAD_TEXTURE(L"Fade Blur", L"..\\Resources\\Texture\\UI\\Blur\\White.png");
+	LOAD_TEXTURE(L"Move Map", L"..\\Resources\\Texture\\UI\\Font\\Move Map.png");
 
 	LOAD_TEXTURE(L"Player Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(C).png");
 	LOAD_TEXTURE(L"HP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(C).png");
@@ -229,6 +230,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 {
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Artifact_Protection", L"..\\Resources\\Texture\\Effect\\Artifact Protection\\tile.png", 16);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Circle_Flame", L"..\\Resources\\Texture\\Effect\\Circle Flame\\yellow\\tile.png", 24);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Circle_Wave", L"..\\Resources\\Texture\\Effect\\Circle Wave\\tile.png", 6);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Explode", L"..\\Resources\\Texture\\Effect\\Explode\\tile.png", 20);
