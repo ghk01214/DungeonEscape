@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -416,7 +416,7 @@ namespace game
 			Vec3 portal4TestPos{ 12450.f, -1590.f, 21170.f };
 			Vec3 portal5TestPos{ 17476.f, -3620.f, 37733.f };
 			Vec3 artifactTest{ -1750.f, -1690.f, 19965.f };
-			Vec3 pos = gimmk2TestPos;
+			Vec3 pos = gameStartPos;
 
 			pos.x += msg.playerID * 500.f;
 

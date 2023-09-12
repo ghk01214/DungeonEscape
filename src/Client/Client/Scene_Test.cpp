@@ -71,8 +71,8 @@ void Scene_Test::Start()
 	if (playMusic == true)
 	{
 		GET_SINGLE(CSoundMgr)->StopBGMSound();
-		GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
-		//GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+		//GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+		GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
 	}
 }
 
@@ -470,7 +470,7 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom2.fbx");
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	m_eNextMapType = MAP_TYPE::FirstBoss;
+	m_eNextMapType = MAP_TYPE::StartRoom;
 	MoveMap(m_eNextMapType);
 }
 
@@ -1422,6 +1422,11 @@ void Scene_Test::CreateOneTimeDialogue()
 
 		std::vector<std::shared_ptr<Texture>> tex;
 		tex.push_back(texture);
+
+		for (int32_t i = 0; i < obj->GetMeshRenderer()->GetMaterialSize(); ++i)
+		{
+			obj->GetMeshRenderer()->GetMaterial(i)->SetFloat(2, 0.f);
+		}
 
 		std::shared_ptr<Fade_Script> behaviour{ std::make_shared<Fade_Script>() };
 		behaviour->SetLogoInfo(1.f, 1.f, tex);

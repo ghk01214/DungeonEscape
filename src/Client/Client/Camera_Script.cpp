@@ -14,7 +14,7 @@ Camera_Basic::Camera_Basic() :
 	m_lengthX{ 400.f },
 	m_lengthY{ 200.f },
 	m_rotationAxisX{ 0.f },
-	m_rotationAxisY{ 0.f },
+	m_rotationAxisY{ 180.f },
 	m_distanceRatio{ 1.f }
 {
 }
