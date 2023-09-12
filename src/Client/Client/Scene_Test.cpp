@@ -83,6 +83,7 @@ void Scene_Test::Update()
 	SendKeyInput();
 	CheckMapMove();
 
+	ChangePlayerUIVisibility();
 	ChangeBossUIVisibility();
 	ChangePopUpVisibility();
 	ChangeVolume();
@@ -850,6 +851,7 @@ Vec2 Scene_Test::CreatePlayerImage(server::FBX_TYPE character)
 	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
 	AddGameObject(obj);
+	m_playerUIObjects.push_back(obj);
 
 	pos.x -= 150.f / 2.f;
 
@@ -1023,6 +1025,7 @@ void Scene_Test::CreatePartyPlayerImage(server::FBX_TYPE character, UITransform 
 	transform->SetLocalPosition(Vec3{ trans.pos.x, trans.pos.y, 100.f });
 
 	AddGameObject(obj);
+	m_playerUIObjects.push_back(obj);
 }
 
 void Scene_Test::CreatePartyPlayerName(const std::wstring& name)
@@ -1420,6 +1423,24 @@ void Scene_Test::CreatePopUp()
 
 void Scene_Test::ChangeBossUIVisibility()
 {
+	if (m_fadeScript->GetActivation() == true)
+	{
+		for (auto& obj : m_weeperUIObjets)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+
+		m_font[WEEPER].render = false;
+
+		for (auto& obj : m_golemUIObjets)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+
+		m_font[GOLEM].render = false;
+		return;
+	}
+
 	if (m_eNextMapType == MAP_TYPE::FirstBoss)
 	{
 		for (auto& obj : m_weeperUIObjets)
@@ -1459,6 +1480,9 @@ void Scene_Test::ChangeBossUIVisibility()
 void Scene_Test::RenderFont()
 {
 	if (m_openSetting == true)
+		return;
+
+	if (m_fadeScript->GetActivation() == true)
 		return;
 
 	for (auto& [type, info] : m_font)
@@ -2272,6 +2296,24 @@ void Scene_Test::ChangeMuteTexture()
 		m_sliderTip[SE]->ChangeTexture(0);
 		m_volumeSlider[SE]->ChangeMuteTexture(false);
 		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(false);
+	}
+}
+
+void Scene_Test::ChangePlayerUIVisibility()
+{
+	if (m_fadeScript->GetActivation() == true)
+	{
+		for (auto& obj : m_playerUIObjects)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+	}
+	else
+	{
+		for (auto& obj : m_playerUIObjects)
+		{
+			obj->GetUI()->SetVisible(true);
+		}
 	}
 }
 #pragma endregion

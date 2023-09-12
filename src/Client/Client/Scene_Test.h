@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -43,10 +43,30 @@ private:
 		MAX
 	};
 
+	enum FONT_TYPE
+	{
+		MY_NAME = -1,
+		PARTY1,
+		PARTY2,
+		PARTY3,
+		WEEPER,
+		GOLEM,
+
+		MAX2
+	};
+
 	struct UITransform
 	{
 		Vec2 pos;
 		Vec2 scale;
+	};
+
+	struct FontInfo
+	{
+		Vec2 pos;
+		Vec2 scale;
+		bool render;
+		std::wstring str;
 	};
 
 public:
@@ -94,7 +114,7 @@ private:
 
 private:
 	void CreatePlayerUI(server::FBX_TYPE character);
-	void CreatePlayerImage(server::FBX_TYPE character);
+	Vec2 CreatePlayerImage(server::FBX_TYPE character);
 	void CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTransform);
 	void CreatePlayerName(const std::wstring& name);
 	void CreatePlayerHPBar(float yPos, UITransform& hpTransform);
@@ -126,7 +146,9 @@ private:
 	void ChangePopUpVisibility();
 	void ChangeVolume();
 	void ChangeMuteTexture();
+	void ChangePlayerUIVisibility();
 	void ChangeBossUIVisibility();
+	void RenderFont();
 
 private:
 	void SendKeyInput();
@@ -223,10 +245,15 @@ private:
 	std::shared_ptr<class BossHP_Script> m_golemHPScript;
 	std::vector<std::shared_ptr<class BossWarning_Script>> m_bossWarningScript;
 
+	std::vector<std::shared_ptr<CGameObject>> m_playerUIObjects;
+
 	bool m_openSetting;
 
 private:
 	std::shared_ptr<bool> m_recvFadeIn;
 	std::shared_ptr<bool> m_recvFadeOut;
 	std::shared_ptr<bool> m_recvExplosionSkill;
+
+private:
+	std::unordered_map<FONT_TYPE, FontInfo> m_font;
 };

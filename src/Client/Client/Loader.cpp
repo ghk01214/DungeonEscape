@@ -185,6 +185,8 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	LOAD_TEXTURE(L"Boss Warning", L"..\\Resources\\Texture\\UI\\Font\\Boss Warning.png");
 	LOAD_TEXTURE(L"Red Blur", L"..\\Resources\\Texture\\UI\\Blur\\Red.png");
 
+	LOAD_TEXTURE(L"Fade Blur", L"..\\Resources\\Texture\\UI\\Blur\\White.png");
+
 	LOAD_TEXTURE(L"Player Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(C).png");
 	LOAD_TEXTURE(L"HP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(C).png");
 
