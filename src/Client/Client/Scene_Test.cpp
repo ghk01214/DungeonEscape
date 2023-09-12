@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -3205,9 +3205,12 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 		*m_recvExplosionSkill = true;
 
 		effectPos.y -= 150.f;
-		CreateSkill(L"Yellow", effectPos, Vec3{ 150.f }, 1.f, 1.f);
-		CreateSkill(L"White", effectPos, Vec3{ 110.f }, 1.f, 2.f);
-		CreateSkill(L"Red", effectPos, Vec3{ 70.f }, 1.f, 3.5f);
+		CreateSkill(L"Yellow", effectPos, Vec3{ 650.f }, 1.f, 1.f);
+		CreateSkill(L"White", effectPos, Vec3{ 610.f }, 1.f, 2.f);
+		CreateSkill(L"Red", effectPos, Vec3{ 570.f }, 1.f, 3.5f);
+
+		if (playSound == true)
+			GET_SINGLE(CSoundMgr)->PlayEffect(L"Nuclear Explosion.ogg");
 
 		return;
 	}
@@ -3237,9 +3240,12 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 		effectPos -= look * 500.f;
 		effectPos.y -= 50.f;
 
-		CreateSkill(L"Yellow", effectPos, Vec3{ 150.f }, 1.f, 1.f);
-		CreateSkill(L"White", effectPos, Vec3{ 110.f }, 1.f, 2.f);
-		CreateSkill(L"Red", effectPos, Vec3{ 70.f }, 1.f, 3.5f);
+		CreateSkill(L"Yellow", effectPos, Vec3{ 900.f }, 1.f, 1.f);
+		CreateSkill(L"White", effectPos, Vec3{ 800.f }, 1.f, 2.f);
+		CreateSkill(L"Red", effectPos, Vec3{ 740.f }, 1.f, 3.5f);
+
+		if (playSound == true)
+			GET_SINGLE(CSoundMgr)->PlayEffect(L"Spell Explosion.ogg");
 
 		return;
 	}
@@ -3312,22 +3318,6 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 			if (playSound == true)
 			{
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Light Explosion.wav");
-			}
-		}
-		break;
-		case server::SOUND_TYPE::NUCLEAR_EXPLOSION:
-		{
-			if (playSound == true)
-			{
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Nuclear Explosion.ogg");
-			}
-		}
-		break;
-		case server::SOUND_TYPE::SPELL_EXPLOSION:
-		{
-			if (playSound == true)
-			{
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Spell Explosion.ogg");
 			}
 		}
 		break;
