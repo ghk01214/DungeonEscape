@@ -87,6 +87,7 @@ void Scene_Test::Update()
 	ChangePopUpVisibility();
 	ChangeVolume();
 	ChangeMuteTexture();
+	RenderFont();
 }
 
 void Scene_Test::LateUpdate()
@@ -329,7 +330,7 @@ void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE p
 	for (auto& gameObject : gameObjects)
 	{
 		gameObject->SetObjectType(server::OBJECT_TYPE::PLAYER);
-		//gameObject->SetName(userName);
+		gameObject->SetName(userName);
 	}
 
 	AddPlayer(gameObjects);
@@ -382,7 +383,7 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 {
 	CreateOneTimeDialogue();
 	CreatePlayerUI(player);
-	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, GET_NETWORK->GetName());
+	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, userName);
 	CreateBossWarning();
 
 	CreatePopUp();
@@ -808,14 +809,24 @@ void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameOb
 #pragma region [UI]
 void Scene_Test::CreatePlayerUI(server::FBX_TYPE character)
 {
-	CreatePlayerImage(character);
+	auto pos{ CreatePlayerImage(character) };
+	pos.x += 150.f + 20.f;
+	pos.y += 40.f;
+
+	FontInfo info;
+	info.pos = pos;
+	info.scale = Vec2{ 0.5f };
+	info.render = true;
+	info.str = userName;
+
+	m_font[MY_NAME] = info;
 	//UITransform hpTransform{};
 	//float mpYPos{ CreatePlayerMPBar() };
 	//CreatePlayerHPBar(mpYPos, hpTransform);
 	//CreatePlayerImage(character, hpTransform);
 }
 
-void Scene_Test::CreatePlayerImage(server::FBX_TYPE character)
+Vec2 Scene_Test::CreatePlayerImage(server::FBX_TYPE character)
 {
 	std::shared_ptr<Texture> texture{ nullptr };
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
@@ -839,6 +850,10 @@ void Scene_Test::CreatePlayerImage(server::FBX_TYPE character)
 	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
 	AddGameObject(obj);
+
+	pos.x -= 150.f / 2.f;
+
+	return pos;
 }
 
 void Scene_Test::CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTransform)
@@ -969,6 +984,19 @@ float Scene_Test::CreatePlayerMPBar()
 void Scene_Test::CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character, const std::wstring& name)
 {
 	CreatePartyPlayerImage(character, m_partyUITransform[id]);
+
+	auto pos{ m_partyUITransform[id].pos };
+	pos.x += m_partyUITransform[id].scale.x - 35.f;
+	pos.y += 25.f;
+
+	FontInfo info{};
+	info.pos = pos;
+	info.scale = Vec2{ 0.3f };
+	info.render = true;
+	info.str = name;
+
+	m_font[magic_enum::enum_cast<FONT_TYPE>(id).value()] = info;
+	Print(magic_enum::enum_name(magic_enum::enum_cast<FONT_TYPE>(id).value()));
 	//auto mpPos{ CreatePartyPlayerMPBar(m_partyUITransform[id]) };
 	//CreatePartyPlayerHPBar(mpPos, m_partyUITransform[id]);
 }
@@ -1102,6 +1130,42 @@ void Scene_Test::CreateBossUI(server::FBX_TYPE boss, int32_t hp)
 	UITransform transform{ GetRatio(0.f, 100.f), Vec2{} };
 	CreateBossHPBar(transform, boss, hp);
 	CreateBossClassIcon(transform, boss);
+
+	transform.pos = GetRatio(-10.f, 100.f);
+	transform.pos.y -= 62.f * 0.15f;
+
+	FontInfo info{};
+	info.pos = transform.pos;
+	info.scale = Vec2{ 0.3f };
+	info.render = false;
+
+	switch (boss)
+	{
+		case server::FBX_TYPE::WEEPER1:
+		case server::FBX_TYPE::WEEPER2:
+		case server::FBX_TYPE::WEEPER3:
+		case server::FBX_TYPE::WEEPER4:
+		case server::FBX_TYPE::WEEPER5:
+		case server::FBX_TYPE::WEEPER6:
+		case server::FBX_TYPE::WEEPER7:
+		case server::FBX_TYPE::WEEPER_EMISSIVE:
+		{
+			info.str = L"Reaper";
+			m_font[WEEPER] = info;
+		}
+		break;
+		case server::FBX_TYPE::BLUE_GOLEM:
+		case server::FBX_TYPE::RED_GOLEM:
+		case server::FBX_TYPE::GREEN_GOLEM:
+		{
+			info.pos.x = GetRatio(-20.f, 0.f).x;
+			info.str = L"Blue Golem";
+			m_font[GOLEM] = info;
+		}
+		break;
+		default:
+		break;
+	}
 }
 
 void Scene_Test::CreateBossHPBar(UITransform& trans, server::FBX_TYPE boss, int32_t hp)
@@ -1110,7 +1174,7 @@ void Scene_Test::CreateBossHPBar(UITransform& trans, server::FBX_TYPE boss, int3
 	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(C)") };
 
 	trans.scale = { 38.f * 18.f, 62.f * 0.8f };
-	trans.pos.y -= 62.f;
+	trans.pos.y -= 62.f * 1.25f;
 
 	// FRAME
 	{
@@ -1362,6 +1426,8 @@ void Scene_Test::ChangeBossUIVisibility()
 		{
 			obj->GetUI()->SetVisible(true);
 		}
+
+		m_font[WEEPER].render = true;
 	}
 	else if (m_eNextMapType == MAP_TYPE::LastBoss_TreasureRoom)
 	{
@@ -1369,6 +1435,8 @@ void Scene_Test::ChangeBossUIVisibility()
 		{
 			obj->GetUI()->SetVisible(true);
 		}
+
+		m_font[GOLEM].render = true;
 	}
 	else
 	{
@@ -1377,10 +1445,28 @@ void Scene_Test::ChangeBossUIVisibility()
 			obj->GetUI()->SetVisible(false);
 		}
 
+		m_font[WEEPER].render = false;
+
 		for (auto& obj : m_golemUIObjets)
 		{
 			obj->GetUI()->SetVisible(false);
 		}
+
+		m_font[GOLEM].render = false;
+	}
+}
+
+void Scene_Test::RenderFont()
+{
+	if (m_openSetting == true)
+		return;
+
+	for (auto& [type, info] : m_font)
+	{
+		if (info.render == false)
+			continue;
+
+		GET_SINGLE(FontManager)->RenderFonts(info.str, info.pos, info.scale);
 	}
 }
 #pragma endregion
