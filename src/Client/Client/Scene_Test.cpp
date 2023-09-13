@@ -1329,22 +1329,25 @@ void Scene_Test::CreateOneTimeDialogue()
 {
 	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Pillar Hint") };
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	auto pos2{ GetRatio(0.f, 50.f) };
+	Vec3 pos{ pos2.x, pos2.y, 100.f };
+	Vec3 scale{ 916.f, 106.f, 1.f };
+	std::string dialogueName{};
 
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		auto pos{ GetRatio(0.f, 50.f) };
 		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
 
-		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+		dialogueName = "PILLAR_HINT";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
 
-		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("PILLAR_HINT") };
-		behaviour->InsertTextures(texture);
-		m_oneTimeDialogueScript["PILLAR_HINT"] = behaviour;
-
-		obj->AddComponent(behaviour);
+		obj->AddComponent(script);
 
 		AddGameObject(obj);
 	}
@@ -1354,17 +1357,16 @@ void Scene_Test::CreateOneTimeDialogue()
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		auto pos{ GetRatio(0.f, 50.f) };
 		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
 
-		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+		dialogueName = "PILLAR_HINT2";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
 
-		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("PILLAR_HINT2") };
-		behaviour->InsertTextures(texture);
-		m_oneTimeDialogueScript["PILLAR_HINT2"] = behaviour;
-
-		obj->AddComponent(behaviour);
+		obj->AddComponent(script);
 
 		AddGameObject(obj);
 	}
@@ -1374,17 +1376,35 @@ void Scene_Test::CreateOneTimeDialogue()
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		auto pos{ GetRatio(0.f, 50.f) };
 		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
 
-		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+		dialogueName = "WEEPER_HINT";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
 
-		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("WEEPER_HINT") };
-		behaviour->InsertTextures(texture);
-		m_oneTimeDialogueScript["WEEPER_HINT"] = behaviour;
+		obj->AddComponent(script);
 
-		obj->AddComponent(behaviour);
+		AddGameObject(obj);
+	}
+
+	texture = GET_TEXTURE(L"Weeper Cast4 Hint");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
+
+		dialogueName = "WEEPER_CAST4_HINT";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
+
+		obj->AddComponent(script);
 
 		AddGameObject(obj);
 	}
@@ -1394,17 +1414,16 @@ void Scene_Test::CreateOneTimeDialogue()
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		auto pos{ GetRatio(0.f, 50.f) };
 		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
 
-		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+		dialogueName = "GOLEM_HINT";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
 
-		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("GOLEM_HINT") };
-		behaviour->InsertTextures(texture);
-		m_oneTimeDialogueScript["GOLEM_HINT"] = behaviour;
-
-		obj->AddComponent(behaviour);
+		obj->AddComponent(script);
 
 		AddGameObject(obj);
 	}
@@ -1414,11 +1433,9 @@ void Scene_Test::CreateOneTimeDialogue()
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		auto pos{ GetRatio(0.f, 50.f) };
 		auto transform{ obj->GetTransform() };
-
-		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
 
 		std::vector<std::shared_ptr<Texture>> tex;
 		tex.push_back(texture);
@@ -1428,11 +1445,11 @@ void Scene_Test::CreateOneTimeDialogue()
 			obj->GetMeshRenderer()->GetMaterial(i)->SetFloat(2, 0.f);
 		}
 
-		std::shared_ptr<Fade_Script> behaviour{ std::make_shared<Fade_Script>() };
-		behaviour->SetLogoInfo(1.f, 1.f, tex);
-		m_fadeUIScript = behaviour;
+		std::shared_ptr<Fade_Script> script{ std::make_shared<Fade_Script>() };
+		script->SetLogoInfo(1.f, 1.f, tex);
+		m_fadeUIScript = script;
 
-		obj->AddComponent(behaviour);
+		obj->AddComponent(script);
 
 		AddGameObject(obj);
 	}
@@ -2540,7 +2557,9 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Weeper" + std::to_wstring(magic_enum::enum_integer(type) - magic_enum::enum_integer(server::FBX_TYPE::WEEPER1) + 1);
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\" + objectDesc.strName + L".fbx";
-			objectDesc.script = std::make_shared<Monster_Weeper>(stateIndex);
+			auto script{ std::make_shared<Monster_Weeper>(stateIndex) };
+			script->SetDialogue(m_oneTimeDialogueScript["WEEPER_CAST4_HINT"]);
+			objectDesc.script = script;
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_EMISSIVE:

@@ -14,9 +14,12 @@
 #include <SoundManager.h>
 #include <EffectManager.h>
 
+#include "OneTimeDialogue_Script.h"
+
 Monster_Weeper::Monster_Weeper() :
 	m_prevState{ IDLE },
-	m_currState{ m_prevState }
+	m_currState{ m_prevState },
+	m_cast4UI{ nullptr }
 {
 	m_radius = 100.f;
 	m_halfHeight = 200.f;		// 몬스터 발 높이 위치 변경
@@ -66,6 +69,9 @@ void Monster_Weeper::CheckState()
 		m_aniEnd = false;
 	}
 
+	if (m_currState == CAST4_LOOP)
+		m_cast4UI->StartRender(1.f, 2.f);
+
 	m_prevState = m_currState;
 }
 
@@ -84,17 +90,17 @@ void Monster_Weeper::UpdateFrameRepeat()
 
 	GetAnimator()->RepeatPlay();
 
-	if (m_currState == TAUNT)
-	{
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(140) == true)
-		{
-			auto pos{ GetTransform()->GetWorldPosition() };
-			pos.y += m_halfHeight + 50.f;
+	if (m_currState != TAUNT)
+		return;
 
-			GET_SINGLE(EffectManager)->SetBillBoardInfo(140, pos, Vec3{ 700.f }, 0.005f);
-			GET_SINGLE(EffectManager)->PlayBillBoard(140);
-		}
-	}
+	if (GET_SINGLE(EffectManager)->GetPlayOnce(140) == false)
+		return;
+
+	auto pos{ GetTransform()->GetWorldPosition() };
+	pos.y += m_halfHeight + 50.f;
+
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(140, pos, Vec3{ 700.f }, 0.003f);
+	GET_SINGLE(EffectManager)->PlayBillBoard(140);
 }
 
 void Monster_Weeper::UpdateFrameOnce()
@@ -175,4 +181,9 @@ void Monster_Weeper::ParsePackets()
 
 		packets.pop_front();
 	}
+}
+
+void Monster_Weeper::SetDialogue(std::shared_ptr<OneTimeDialogue_Script> script)
+{
+	m_cast4UI = script;
 }

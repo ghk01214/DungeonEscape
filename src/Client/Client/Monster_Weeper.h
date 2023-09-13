@@ -2,6 +2,8 @@
 
 #include "Monster_Script.h"
 
+class OneTimeDialogue_Script;
+
 class Monster_Weeper : public Monster_Script
 {
 public:
@@ -52,7 +54,12 @@ private:
 
 	void ParsePackets();
 
+public:
+	void SetDialogue(std::shared_ptr<OneTimeDialogue_Script> script);
+
 private:
 	WEEPER_STATE m_prevState;
 	WEEPER_STATE m_currState;
+
+	std::shared_ptr<OneTimeDialogue_Script> m_cast4UI;
 };
