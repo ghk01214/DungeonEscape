@@ -145,7 +145,7 @@ void TriggerObject2::AttributePortal(double timeDelta)
 		EventHandler::GetInstance()->DeleteEvent(name);
 		return;
 	}
-	else if (m_duplicates.size() == 3)
+	else if (m_duplicates.size() == 2)
 	{
 		EventHandler::GetInstance()->AddEventIfNone(name, m_requestedContactTime, this);
 		return;
