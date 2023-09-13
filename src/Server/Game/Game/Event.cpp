@@ -375,6 +375,19 @@ void Event::ExecuteMsg_Once()
 			weeperObj->GetAI()->BossPatternUIEnd();
 		}
 	}
+	
+	if (msg == "COUNTEREFFECT_WEEPER")
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			physx::PxVec3 effectpos = weeperObj->GetAI()->GetCounterEffectPosition();
+			Vec3 effectposdata = FROM_PX3(effectpos);
+
+
+			//effectposdata 보내서 사용하면 된다.
+		}
+	}
 
 
 	//golem
@@ -650,6 +663,20 @@ void Event::ExecuteMsg_Once()
 			{
 				ptr->SkipClear();								//skip 해제
 			}
+		}
+	}
+
+	if (msg == "COUNTEREFFECT_GOLEM")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			physx::PxVec3 effectpos = golemObj->GetAI()->GetCounterEffectPosition();
+			Vec3 effectposdata = FROM_PX3(effectpos);
+
+
+
+			//effectposdata보내면 된다.
 		}
 	}
 

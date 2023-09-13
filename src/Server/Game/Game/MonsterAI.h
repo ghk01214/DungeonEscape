@@ -36,6 +36,8 @@ public:
 	bool SkillRangeCheck();
 	float GetXZDistance();
 
+public:
+	physx::PxVec3 GetCounterEffectPosition();
 
 public:
 	std::vector<Player*> SkillRangeCheck_OverlapObject(std::string scheduleName, OverlapObject* overlapObj);		//overlapObject 전용 호출 함수. 그 외의 클래스에서 호출하지 않는다.

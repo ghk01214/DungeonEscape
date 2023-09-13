@@ -275,6 +275,26 @@ float MonsterAI::GetXZDistance()
 	return between.magnitude();
 }
 
+physx::PxVec3 MonsterAI::GetCounterEffectPosition()
+{
+	physx::PxVec3 currentPos = TO_PX3(m_monster->GetControllerPosition());
+	physx::PxVec3 currentDir = TO_PX3(m_monsterLook);
+
+
+	float weeperDistance = 100.f;
+	float goelemDistance = 200.f;
+	float monsterDistance = 0.f;
+	
+	if (m_monster->GetName() == L"Golem")
+		monsterDistance = goelemDistance;
+	else if (m_monster->GetName() == L"Weeper")
+		monsterDistance = weeperDistance;
+
+	currentPos += currentDir * monsterDistance;
+
+	return currentPos;
+}
+
 std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string scheduleName, OverlapObject* overlapObj)
 {
 	auto physDevice = PhysDevice::GetInstance();

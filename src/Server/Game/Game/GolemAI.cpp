@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "GolemAI.h"
 #include "Golem.h"
 #include "Monster.h"
@@ -403,6 +403,8 @@ void GolemAI::DamageCheck()
 		originalHealth = m_golem->GetHP();
 		if (m_vulnerable)
 		{
+			EventHandler::GetInstance()->AddEvent("COUNTEREFFECT_GOLEM", 0.1f, m_golem);
+
 			m_golem->SetState(Golem::GOLEM_STATE::DAMAGE);
 			EventHandler::GetInstance()->DeleteEvent("ANIM_TO_GOLEM_SPELL_END");
 			EventHandler::GetInstance()->DeleteEvent("GOLEM_SPELL_FUNCTIONCALL");

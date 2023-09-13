@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "WeeperAI.h"
 #include "Weeper.h"
 #include "Monster.h"
@@ -254,6 +254,7 @@ void WeeperAI::DamageCheck()
 		{
 			//CAST2_SCATTER_BREAKDOWN 이벤트에서 호출됨 : 불필요 이벤트 삭제 필요.
 			m_weeper->SetState(Weeper::WEEPER_STATE::TAUNT);
+			EventHandler::GetInstance()->AddEvent("COUNTEREFFECT_WEEPER", 0.1f, m_weeper);
 			EventHandler::GetInstance()->AddEvent("WEEPER_COUNTERSTAGGER_END", 5.f, m_weeper);
 			EventHandler::GetInstance()->DeleteEvent("CAST2_VULNERABLE_OFF");
 			Cast2Vulnerable_OFF();
