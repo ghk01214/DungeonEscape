@@ -12,6 +12,7 @@
 #include <NetworkManager.h>
 #include <Network.h>
 #include <SoundManager.h>
+#include <EffectManager.h>
 
 Monster_Weeper::Monster_Weeper() :
 	m_prevState{ IDLE },
@@ -82,6 +83,18 @@ void Monster_Weeper::UpdateFrameRepeat()
 	}
 
 	GetAnimator()->RepeatPlay();
+
+	if (m_currState == TAUNT)
+	{
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(138) == true)
+		{
+			auto pos{ GetTransform()->GetWorldPosition() };
+			pos.y += m_halfHeight + 50.f;
+
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(138, pos, Vec3{ 700.f }, 0.005f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(138);
+		}
+	}
 }
 
 void Monster_Weeper::UpdateFrameOnce()

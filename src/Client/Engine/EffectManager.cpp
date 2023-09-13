@@ -210,3 +210,8 @@ void EffectManager::Push(void)
 	}
 }
 
+const bool EffectManager::GetPlayOnce(uint32_t index) const
+{
+	return m_billboardReserveObjects[index]->GetBillBoard()->GetPlayOnce();
+}
+

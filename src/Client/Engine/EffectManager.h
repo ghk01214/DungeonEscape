@@ -33,6 +33,7 @@ public:
 	const vector<shared_ptr<CGameObject>>& GetBillBoardObject(void) { return m_billboardReserveObjects; }
 
 	uint32_t GetBillboardCount() { return m_billboardCount; }
+	const bool GetPlayOnce(uint32_t index) const;
 
 private:
 	vector<shared_ptr<CGameObject>> m_effectObjects;
