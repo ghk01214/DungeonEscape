@@ -14,6 +14,7 @@
 #include "EventHandler.h"
 #include "TriggerObject2.h"
 #include "ObjectManager.h"
+#include "MessageHandler.h"
 
 Event::Event(std::string context, double remainTime, GameObject* subject) :
 	msg(context), time(remainTime), target(subject)
@@ -375,7 +376,7 @@ void Event::ExecuteMsg_Once()
 			weeperObj->GetAI()->BossPatternUIEnd();
 		}
 	}
-	
+
 	if (msg == "COUNTEREFFECT_WEEPER")
 	{
 		auto weeperObj = dynamic_cast<Weeper*>(target);
@@ -386,6 +387,14 @@ void Event::ExecuteMsg_Once()
 
 
 			//effectposdata 보내서 사용하면 된다.
+			game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+			ev.objID = weeperObj->GetID();
+			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
+			ev.effectPos.x = effectposdata.x;
+			ev.effectPos.y = effectposdata.y;
+			ev.effectPos.z = effectposdata.z;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(ev);
 		}
 	}
 
@@ -675,8 +684,15 @@ void Event::ExecuteMsg_Once()
 			Vec3 effectposdata = FROM_PX3(effectpos);
 
 
-
 			//effectposdata보내면 된다.
+			game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+			ev.objID = golemObj->GetID();
+			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
+			ev.effectPos.x = effectposdata.x;
+			ev.effectPos.y = effectposdata.y;
+			ev.effectPos.z = effectposdata.z;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(ev);
 		}
 	}
 

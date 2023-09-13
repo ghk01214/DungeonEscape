@@ -281,14 +281,14 @@ physx::PxVec3 MonsterAI::GetCounterEffectPosition()
 	physx::PxVec3 currentDir = TO_PX3(m_monsterLook);
 
 
-	float weeperDistance = 100.f;
-	float goelemDistance = 200.f;
+	//float weeperDistance = 100.f;
+	//float goelemDistance = 200.f;
 	float monsterDistance = 0.f;
-	
-	if (m_monster->GetName() == L"Golem")
-		monsterDistance = goelemDistance;
-	else if (m_monster->GetName() == L"Weeper")
-		monsterDistance = weeperDistance;
+
+	//if (m_monster->GetName() == L"Golem")
+	//	monsterDistance = goelemDistance;
+	//else if (m_monster->GetName() == L"Weeper")
+	//	monsterDistance = weeperDistance;
 
 	currentPos += currentDir * monsterDistance;
 

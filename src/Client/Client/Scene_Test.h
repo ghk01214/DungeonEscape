@@ -223,6 +223,9 @@ private:
 	uint32_t m_circleFlameYellowStartIndex;
 	uint32_t m_circleFlameYellowCurrentIndex;
 
+	uint32_t m_impact15StartIndex;
+	uint32_t m_impact15CurrentIndex;
+
 	std::vector<std::shared_ptr<class Bomb_Script>> m_skillObject;
 
 private:

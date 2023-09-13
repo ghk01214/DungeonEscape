@@ -2877,6 +2877,21 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
+	effect.speed = 0.005f;
+	effect.scale = Vec3{ 1000.f };
+
+	for (int32_t i = 0; i < 2; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact15", effect.speed);
+
+		if (i == 0)
+		{
+			m_impact15StartIndex = effect.index;
+			m_impact15CurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::IMPACT15] = effect;
+		}
+	}
+
 	effect.speed = 0.0045f;
 	effect.scale = { 2000.f, 2000.f, 1.f };
 	effect.alpha = 0.5f;
@@ -3445,6 +3460,14 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 
 		if (m_hitEffectCurrentIndex == m_hitEffectStartIndex + 5)
 			m_hitEffectCurrentIndex = m_hitEffectStartIndex;
+	}
+	else if (effectType == server::EFFECT_TYPE::IMPACT15)
+	{
+		GET_SINGLE(EffectManager)->SetBillBoardInfo(m_impact15CurrentIndex, effectPos, info.scale, info.speed, info.alpha);
+		GET_SINGLE(EffectManager)->PlayBillBoard(m_impact15CurrentIndex++);
+
+		if (m_impact15CurrentIndex == m_impact15StartIndex + 5)
+			m_impact15CurrentIndex = m_impact15StartIndex;
 	}
 	else
 	{

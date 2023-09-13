@@ -115,13 +115,13 @@ void Monster_Golem::UpdateFrameRepeat()
 
 	if (m_currState == STUN)
 	{
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(138) == true)
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(140) == true)
 		{
 			auto pos{ GetTransform()->GetWorldPosition() };
 			pos.y += m_halfHeight;
 
-			GET_SINGLE(EffectManager)->SetBillBoardInfo(138, pos, Vec3{ 700.f }, 0.005f);
-			GET_SINGLE(EffectManager)->PlayBillBoard(138);
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(140, pos, Vec3{ 700.f }, 0.005f);
+			GET_SINGLE(EffectManager)->PlayBillBoard(140);
 		}
 	}
 }

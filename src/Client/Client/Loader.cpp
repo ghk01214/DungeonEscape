@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
@@ -238,6 +238,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Fire\\Fire.png", 64);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact15", L"..\\Resources\\Texture\\Effect\\Implode\\orange brown\\tile.png", 29);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_Dispersal", L"..\\Resources\\Texture\\Effect\\In Dispersal\\tile.png", 33);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Paralys", L"..\\Resources\\Texture\\Effect\\Paralys\\tile.png", 21);
