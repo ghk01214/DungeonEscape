@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TriggerObject2.h"
 #include "PhysDevice.h"
 #include "physx_utils.h"
@@ -139,13 +139,13 @@ void TriggerObject2::AttributePortal(double timeDelta)
 
 	string name = string(magic_enum::enum_name(m_attribute));
 
-	if (m_duplicates.size() < 3)
+	if (m_duplicates.size() < 2)
 	//if (m_duplicates.empty())
 	{
 		EventHandler::GetInstance()->DeleteEvent(name);
 		return;
 	}
-	else if (m_duplicates.size() == 3)
+	else if (m_duplicates.size() == 2)
 	{
 		EventHandler::GetInstance()->AddEventIfNone(name, m_requestedContactTime, this);
 		return;
