@@ -664,6 +664,9 @@ void Event::ExecuteMsg_Once()
 		{
 			golemObj->GetAI()->Vulnuerable_Set(true);
 		}
+
+
+		//골렘 카운터가능시간 진입
 	}
 
 	if (msg == "SPELL_VULNERABLE_OFF")
@@ -673,6 +676,9 @@ void Event::ExecuteMsg_Once()
 		{
 			golemObj->GetAI()->Vulnuerable_Set(false);
 		}
+
+
+		//골렘 카운터가능시간 종료
 	}
 
 	if (msg == "LastBossRock_SkipClear")
