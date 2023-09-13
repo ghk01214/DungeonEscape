@@ -3648,7 +3648,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 	{
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
 				if (*m_recvFadeIn == true)
 					return;
@@ -3663,7 +3663,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
 				if (*m_recvFadeIn == true)
 					return;
@@ -3678,7 +3678,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
 				if (*m_recvFadeIn == true)
 					return;
@@ -3693,7 +3693,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
 				if (*m_recvFadeIn == true)
 					return;
@@ -3708,7 +3708,7 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
 				if (*m_recvFadeIn == true)
 					return;
