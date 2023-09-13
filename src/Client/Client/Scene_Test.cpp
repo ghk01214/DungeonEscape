@@ -760,6 +760,39 @@ void Scene_Test::CreateFade(std::shared_ptr<CScene> pScene)
 	pScene->AddGameObject(gameObject);
 }
 
+std::vector<std::shared_ptr<WeeperEffect_Script>> Scene_Test::CreateWeeperCast4Effect()
+{
+	std::vector<std::shared_ptr<Texture>> textures{ GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Artifact_Protection") };
+	std::vector<std::shared_ptr<WeeperEffect_Script>> scripts;
+	int32_t magicCount{ 4 };
+
+	for (int32_t i = 0; i < magicCount; ++i)
+	{
+		std::shared_ptr<CGameObject> gameObject{ CreateArtifactBase(textures) };
+		std::shared_ptr<WeeperEffect_Script> script{ std::make_shared<WeeperEffect_Script>() };
+
+		script->SetStartRotation(360.f / 4 * i);	// 최초 회전 각도
+		script->SetRotationSpeed(30.f);	// 초당 몇도 회전하는지
+
+		script->SetTexture(textures);	// 텍스쳐 정보
+		script->SetSize(Vec2{ 300.f });	// 텍스쳐의 크기
+
+		script->SetDistanceFromPoint(200.f);	// 중점으로부터 거리
+		script->SetTargetPoint(Vec3{ 0.f });	// 중점 위치
+
+		script->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
+
+		gameObject->AddComponent(script);
+
+		AddGameObject(gameObject);
+
+		//m_weeperCast4EffectScripts.push_back(script);
+		scripts.push_back(script);
+	}
+
+	return scripts;
+}
+
 void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects)
 {
 	switch (eType)
@@ -2557,8 +2590,12 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Weeper" + std::to_wstring(magic_enum::enum_integer(type) - magic_enum::enum_integer(server::FBX_TYPE::WEEPER1) + 1);
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\" + objectDesc.strName + L".fbx";
+
+			auto effectScripts{ CreateWeeperCast4Effect() };
 			auto script{ std::make_shared<Monster_Weeper>(stateIndex) };
 			script->SetDialogue(m_oneTimeDialogueScript["WEEPER_CAST4_HINT"]);
+			script->SetEffectScript(effectScripts);
+
 			objectDesc.script = script;
 		}
 		break;

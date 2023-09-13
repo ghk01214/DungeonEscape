@@ -88,6 +88,9 @@ void Magic_Artifact_Script::Update()
 
 void Magic_Artifact_Script::LateUpdate()
 {
+	if (true)
+		return;
+
 	static int curAxis = 0;
 
 	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUM_6))

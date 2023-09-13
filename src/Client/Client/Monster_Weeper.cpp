@@ -15,6 +15,7 @@
 #include <EffectManager.h>
 
 #include "OneTimeDialogue_Script.h"
+#include "WeeperEffect_Script.h"
 
 Monster_Weeper::Monster_Weeper() :
 	m_prevState{ IDLE },
@@ -45,6 +46,7 @@ void Monster_Weeper::Start()
 void Monster_Weeper::Update()
 {
 	ParsePackets();
+	ChangeCast4EffectPos();
 
 	Monster_Script::Update();
 }
@@ -70,7 +72,21 @@ void Monster_Weeper::CheckState()
 	}
 
 	if (m_currState == CAST4_LOOP)
+	{
 		m_cast4UI->StartRender(1.f, 2.f);
+
+		for (auto& script : m_cast4EffectScripts)
+		{
+			script->FadeIn(1.f);
+		}
+	}
+	else if (m_currState == CAST4_END)
+	{
+		for (auto& script : m_cast4EffectScripts)
+		{
+			script->FadeOut(4.f);
+		}
+	}
 
 	m_prevState = m_currState;
 }
@@ -183,7 +199,23 @@ void Monster_Weeper::ParsePackets()
 	}
 }
 
+void Monster_Weeper::ChangeCast4EffectPos()
+{
+	auto pos{ GetTransform()->GetWorldPosition() };
+	pos.y += 50.f;
+
+	for (auto& script : m_cast4EffectScripts)
+	{
+		script->SetTargetPoint(pos);
+	}
+}
+
 void Monster_Weeper::SetDialogue(std::shared_ptr<OneTimeDialogue_Script> script)
 {
 	m_cast4UI = script;
+}
+
+void Monster_Weeper::SetEffectScript(std::vector<std::shared_ptr<WeeperEffect_Script>> scripts)
+{
+	m_cast4EffectScripts = scripts;
 }

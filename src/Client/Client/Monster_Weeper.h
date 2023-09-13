@@ -3,6 +3,7 @@
 #include "Monster_Script.h"
 
 class OneTimeDialogue_Script;
+class WeeperEffect_Script;
 
 class Monster_Weeper : public Monster_Script
 {
@@ -53,13 +54,16 @@ private:
 	void UpdateFrameOnce() override;
 
 	void ParsePackets();
+	void ChangeCast4EffectPos();
 
 public:
 	void SetDialogue(std::shared_ptr<OneTimeDialogue_Script> script);
+	void SetEffectScript(std::vector<std::shared_ptr<WeeperEffect_Script>> scripts);
 
 private:
 	WEEPER_STATE m_prevState;
 	WEEPER_STATE m_currState;
 
 	std::shared_ptr<OneTimeDialogue_Script> m_cast4UI;
+	std::vector<std::shared_ptr<WeeperEffect_Script>> m_cast4EffectScripts;
 };

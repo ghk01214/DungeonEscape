@@ -14,6 +14,7 @@
 
 #pragma region [EFFECT]
 #include "Magic_Artifact_Script.h"
+#include "WeeperEffect_Script.h"
 #pragma endregion
 
 #pragma region [OBJECTS]
