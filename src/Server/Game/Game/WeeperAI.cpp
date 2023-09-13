@@ -201,7 +201,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				ReportSchedule();
 
 				QuatUpdateForClient();
-
+				EventHandler::GetInstance()->AddEvent("CAST4_EFFECT_START", 1.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_CAST4_LOOP", 2.73f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST4", 2.73f, m_weeper);
 			}
@@ -275,6 +275,8 @@ void WeeperAI::DamageCheck()
 				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("MONSTER_MOBILE", 4.06f, m_weeper);
 				EventHandler::GetInstance()->DeleteEvent("WEEPER_CAST4");
+
+				EventHandler::GetInstance()->AddEvent("CAST4_EFFECT_END", 0.1f, m_weeper);
 			}
 		}
 	}

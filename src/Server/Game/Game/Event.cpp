@@ -398,6 +398,15 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "CAST4_EFFECT_START")
+	{
+		
+	}
+
+	if (msg == "CAST4_EFFECT_END")
+	{
+
+	}
 
 	//golem
 	if (msg == "GOLEM_ATTACK1_FUNCTIONCALL")
@@ -739,6 +748,9 @@ void Event::ExecuteMsg_continuous()
 			weeperObj->SetState(Weeper::WEEPER_STATE::CAST4_END);
 			EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, target);
 			EventHandler::GetInstance()->AddEvent("MONSTER_MOBILE", 4.06f, target);
+
+			EventHandler::GetInstance()->AddEvent("CAST4_EFFECT_END", 0.1f, weeperObj);
+
 			executed = true;	//이벤트 소멸
 		}
 	}
