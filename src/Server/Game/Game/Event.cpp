@@ -338,6 +338,9 @@ void Event::ExecuteMsg_Once()
 			WeeperAI* weeperAI = weeper->GetAI();
 			weeperAI->Cast2Vulnerable_ON();
 		}
+
+
+		// 위퍼 카운터 가능시간 시작
 	}
 
 	if (msg == "CAST2_VULNERABLE_OFF")
@@ -348,6 +351,8 @@ void Event::ExecuteMsg_Once()
 			WeeperAI* weeperAI = weeper->GetAI();
 			weeperAI->Cast2Vulnerable_OFF();
 		}
+
+		// 위퍼 카운터 가능시간 종료
 	}
 
 	if (msg == "WEEPER_CAST3_FUNCTIONCALL")
