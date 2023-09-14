@@ -71,7 +71,7 @@ void Monster_Weeper::CheckState()
 		m_aniEnd = false;
 	}
 
-	if (m_currState == CAST4_LOOP)
+	if (m_currState == CAST4_START)
 	{
 		m_cast4UI->StartRender(1.f, 2.f);
 
@@ -204,10 +204,59 @@ void Monster_Weeper::ChangeCast4EffectPos()
 	auto pos{ GetTransform()->GetWorldPosition() };
 	pos.y += 50.f;
 
+	if (m_currState == CAST4_LOOP)
+		pos.y += 125.f;
+
 	for (auto& script : m_cast4EffectScripts)
 	{
 		script->SetTargetPoint(pos);
 	}
+}
+
+void Monster_Weeper::Transform(network::CPacket& packet)
+{
+	int32_t id{ packet.ReadID() };
+
+	Vec3 pos;
+	pos.x = packet.Read<float>();
+	pos.y = packet.Read<float>();
+	pos.z = packet.Read<float>();
+
+	Quat quat;
+	quat.x = packet.Read<float>();
+	quat.y = packet.Read<float>();
+	quat.z = packet.Read<float>();
+	quat.w = packet.Read<float>();
+
+	Vec3 scale;
+	scale.x = packet.Read<float>();
+	scale.y = packet.Read<float>();
+	scale.z = packet.Read<float>();
+
+	float scaleRatio{ packet.Read<float>() };
+
+	quat.x = 0.f;
+	quat.z = 0.f;
+
+	pos.y -= m_halfHeight;
+
+	if (m_currState == CAST4_LOOP)
+		pos.y -= 125.f;
+
+	Matrix matWorld{ Matrix::CreateScale(scale / scaleRatio) };
+
+	if (quat.y == 0.f)
+	{
+		matWorld = GetTransform()->GetWorldMatrix();
+		matWorld.Translation(pos);
+	}
+	else
+	{
+		matWorld *= Matrix::CreateFromQuaternion(quat);
+		matWorld *= Matrix::CreateTranslation(pos);
+	}
+
+	GetTransform()->SetWorldMatrix(matWorld);
 }
 
 void Monster_Weeper::SetDialogue(std::shared_ptr<OneTimeDialogue_Script> script)

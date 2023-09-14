@@ -786,7 +786,6 @@ std::vector<std::shared_ptr<WeeperEffect_Script>> Scene_Test::CreateWeeperCast4E
 
 		AddGameObject(gameObject);
 
-		//m_weeperCast4EffectScripts.push_back(script);
 		scripts.push_back(script);
 	}
 
@@ -3623,6 +3622,14 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 				return;
 
 			m_oneTimeDialogueScript["GOLEM_HINT"]->StartRender(1.f, 2.f);
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI4:
+		{
+			if (m_oneTimeDialogueScript["WEEPER_CAST4_HINT"]->IsRendering() == true)
+				return;
+
+			m_oneTimeDialogueScript["WEEPER_CAST4_HINT"]->StartRender(1.f, 2.f);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:

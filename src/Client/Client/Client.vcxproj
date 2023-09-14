@@ -218,6 +218,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TriggerBox.h" />
     <ClInclude Include="UI_Script.h" />
+    <ClInclude Include="WeeperEffect_Script.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bar_Script.cpp" />
@@ -276,6 +277,7 @@
     <ClCompile Include="Skill_Script.cpp" />
     <ClCompile Include="TriggerBox.cpp" />
     <ClCompile Include="UI_Script.cpp" />
+    <ClCompile Include="WeeperEffect_Script.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc" />

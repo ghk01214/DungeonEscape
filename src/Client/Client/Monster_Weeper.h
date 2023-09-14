@@ -56,6 +56,9 @@ private:
 	void ParsePackets();
 	void ChangeCast4EffectPos();
 
+private:
+	void Transform(network::CPacket& packet) override;
+
 public:
 	void SetDialogue(std::shared_ptr<OneTimeDialogue_Script> script);
 	void SetEffectScript(std::vector<std::shared_ptr<WeeperEffect_Script>> scripts);
