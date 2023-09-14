@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Monster_Weeper.h"
 
 #include <Animator.h>
@@ -16,6 +16,7 @@
 
 #include "OneTimeDialogue_Script.h"
 #include "WeeperEffect_Script.h"
+#include "BossCounterEffect_Script.h"
 
 Monster_Weeper::Monster_Weeper() :
 	m_prevState{ IDLE },
@@ -77,6 +78,10 @@ void Monster_Weeper::CheckState()
 		{
 			script->FadeOut(4.f);
 		}
+	}
+	else if (m_currState == TAUNT)
+	{
+		m_counterEffectScript->FadeOut(0.5f);
 	}
 
 	m_prevState = m_currState;
@@ -189,9 +194,9 @@ void Monster_Weeper::ParsePackets()
 				Rotate(packet);
 			}
 			break;
-			case ProtocolID::WR_MONSTER_PATTERN_ACK:
+			case ProtocolID::WR_COUNTER_EFFECT_ACK:
 			{
-				SetPatternType(packet);
+				CounterEffect(packet);
 			}
 			break;
 			default:

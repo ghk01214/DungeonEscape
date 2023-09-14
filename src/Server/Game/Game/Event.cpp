@@ -341,6 +341,14 @@ void Event::ExecuteMsg_Once()
 
 
 		// 위퍼 카운터 가능시간 시작
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			game::TIMER_EVENT ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			ev.objID = weeper->GetID();
+			ev.integer = 1;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		}
 	}
 
 	if (msg == "CAST2_VULNERABLE_OFF")
@@ -353,6 +361,14 @@ void Event::ExecuteMsg_Once()
 		}
 
 		// 위퍼 카운터 가능시간 종료
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			game::TIMER_EVENT ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			ev.objID = weeper->GetID();
+			ev.integer = 0;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		}
 	}
 
 	if (msg == "WEEPER_CAST3_FUNCTIONCALL")
@@ -405,7 +421,7 @@ void Event::ExecuteMsg_Once()
 
 	if (msg == "CAST4_EFFECT_START")
 	{
-		
+
 	}
 
 	if (msg == "CAST4_EFFECT_END")
@@ -667,6 +683,14 @@ void Event::ExecuteMsg_Once()
 
 
 		//골렘 카운터가능시간 진입
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			game::TIMER_EVENT ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			ev.objID = golemObj->GetID();
+			ev.integer = 1;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		}
 	}
 
 	if (msg == "SPELL_VULNERABLE_OFF")
@@ -679,6 +703,14 @@ void Event::ExecuteMsg_Once()
 
 
 		//골렘 카운터가능시간 종료
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			game::TIMER_EVENT ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			ev.objID = golemObj->GetID();
+			ev.integer = 0;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		}
 	}
 
 	if (msg == "LastBossRock_SkipClear")

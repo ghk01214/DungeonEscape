@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Monster_Golem.h"
 
 #include <Animator.h>
@@ -191,6 +191,11 @@ void Monster_Golem::ParsePackets()
 			case ProtocolID::WR_MONSTER_QUAT_ACK:
 			{
 				Rotate(packet);
+			}
+			break;
+			case ProtocolID::WR_COUNTER_EFFECT_ACK:
+			{
+				CounterEffect(packet);
 			}
 			break;
 			default:

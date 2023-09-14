@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -109,6 +109,7 @@ private:
 	std::vector<std::shared_ptr<CGameObject>> CreateAnimatedObject(ObjectDesc& objectDesc);
 	void CreateFade(std::shared_ptr<CScene> pScene);
 	std::vector<std::shared_ptr<class WeeperEffect_Script>> CreateWeeperCast4Effect();
+	std::shared_ptr<class BossCounterEffect_Script> CreateBossCounterEffect();
 
 private:
 	void PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects);

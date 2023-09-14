@@ -192,6 +192,9 @@
     <Filter Include="소스 파일\Objects\03. Monster\Boss\Weeper\Effect">
       <UniqueIdentifier>{8f146ce7-a65f-49a0-9207-adc9b0cecc92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\03. Monster\Boss\Counter Effect">
+      <UniqueIdentifier>{c479d1ef-7b48-4827-a10a-b7670be41a8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -368,6 +371,9 @@
     <ClInclude Include="WeeperEffect_Script.h">
       <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="BossCounterEffect_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Counter Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -538,6 +544,9 @@
     </ClCompile>
     <ClCompile Include="WeeperEffect_Script.cpp">
       <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="BossCounterEffect_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Counter Effect</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

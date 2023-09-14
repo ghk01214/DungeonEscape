@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Session.h"
 #include "Transform.h"
 #include "Monsters.hpp"
@@ -419,6 +419,17 @@ namespace game
 		packet.WriteProtocol(ProtocolID::WR_MONSTER_HP_ACK);
 		packet.Write<server::FBX_TYPE>(obj->GetFBXType());
 		packet.Write<int32_t>(obj->GetHP());
+
+		Send(packet);
+	}
+
+	void CSession::SendCounterEffectPacket(int32_t id, bool render)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_COUNTER_EFFECT_ACK);
+		packet.Write<bool>(render);
 
 		Send(packet);
 	}

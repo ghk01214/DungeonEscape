@@ -792,6 +792,24 @@ std::vector<std::shared_ptr<WeeperEffect_Script>> Scene_Test::CreateWeeperCast4E
 	return scripts;
 }
 
+std::shared_ptr<BossCounterEffect_Script> Scene_Test::CreateBossCounterEffect()
+{
+	std::vector<std::shared_ptr<Texture>> textures{ GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Circle_Wave") };
+	std::shared_ptr<CGameObject> gameObject{ CreateArtifactBase(textures) };
+
+	std::shared_ptr<BossCounterEffect_Script> script{ std::make_shared<BossCounterEffect_Script>() };
+	script->SetTexture(textures);	// 텍스쳐 정보
+	script->SetPos(Vec3{ 0.f });
+	script->SetSize(Vec2{ 1000.f });
+	script->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
+
+	gameObject->AddComponent(script);
+
+	AddGameObject(gameObject);
+
+	return script;
+}
+
 void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects)
 {
 	switch (eType)
@@ -1919,7 +1937,7 @@ void Scene_Test::CreateBGMSlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-	}
+}
 
 	// SLIDER FILL(C)
 	texture = GET_TEXTURE(L"Slider Fill(C)");
@@ -2244,7 +2262,7 @@ void Scene_Test::CreateSESlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-	}
+}
 
 	// SLIDER FILL(C)
 	texture = GET_TEXTURE(L"Slider Fill(C)");
@@ -2580,78 +2598,32 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 #pragma endregion
 #pragma region [MONSTER]
 		case server::FBX_TYPE::WEEPER1:
-		case server::FBX_TYPE::WEEPER2:
-		case server::FBX_TYPE::WEEPER3:
-		case server::FBX_TYPE::WEEPER4:
-		case server::FBX_TYPE::WEEPER5:
-		case server::FBX_TYPE::WEEPER6:
-		case server::FBX_TYPE::WEEPER7:
 		{
 			objectDesc.strName = L"Weeper" + std::to_wstring(magic_enum::enum_integer(type) - magic_enum::enum_integer(server::FBX_TYPE::WEEPER1) + 1);
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\" + objectDesc.strName + L".fbx";
 
 			auto effectScripts{ CreateWeeperCast4Effect() };
+			auto counterEffectScript{ CreateBossCounterEffect() };
+			counterEffectScript->Start();
 			auto script{ std::make_shared<Monster_Weeper>(stateIndex) };
 			script->SetDialogue(m_oneTimeDialogueScript["WEEPER_CAST4_HINT"]);
 			script->SetEffectScript(effectScripts);
+			script->SetCounterEffectScript(counterEffectScript);
 
 			objectDesc.script = script;
-		}
-		break;
-		case server::FBX_TYPE::WEEPER_EMISSIVE:
-		{
-			objectDesc.strName = L"Weeper_Emissive";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\Weeper Emissive.fbx";
-			objectDesc.script = std::make_shared<Monster_Weeper>(stateIndex);
 		}
 		break;
 		case server::FBX_TYPE::BLUE_GOLEM:
 		{
 			objectDesc.strName = L"Blue Golem";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx";
-			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::GREEN_GOLEM:
-		{
-			objectDesc.strName = L"Green Golem";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Green Golem.fbx";
-			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::RED_GOLEM:
-		{
-			objectDesc.strName = L"Red Golem";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Red Golem.fbx";
-			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::BLACK_SCORPION:
-		{
-			objectDesc.strName = L"Black Scorpion";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Black Scorpion.fbx";
-			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::ORANGE_SCORPION:
-		{
-			objectDesc.strName = L"Orange Scorpion";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Orange Scorpion.fbx";
-			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::PURPLE_SCORPION:
-		{
-			objectDesc.strName = L"Purple Scorpion";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Purple Scorpion.fbx";
-			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::RED_SCORPION:
-		{
-			objectDesc.strName = L"Red Scorpion";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Red Scorpion.fbx";
-			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
+
+			auto counterEffectScript{ CreateBossCounterEffect() };
+			counterEffectScript->Start();
+			auto script{ std::make_shared<Monster_Golem>(stateIndex) };
+			script->SetCounterEffectScript(counterEffectScript);
+
+			objectDesc.script = script;
 		}
 		break;
 #pragma endregion

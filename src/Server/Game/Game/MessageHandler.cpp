@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -167,6 +167,7 @@ namespace game
 				break;
 				case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
 				case ProtocolID::WR_PLAY_CUT_SCENE_ACK:
+				case ProtocolID::WR_COUNTER_EFFECT_ACK:
 				{
 					postOver.integer = ev.integer;
 

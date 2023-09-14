@@ -2,6 +2,8 @@
 
 #include "MonoBehaviour.h"
 
+class BossCounterEffect_Script;
+
 class Monster_Script : public MonoBehaviour
 {
 public:
@@ -21,7 +23,10 @@ protected:
 protected:
 	virtual void Transform(network::CPacket& packet);
 	void Rotate(network::CPacket& packet);
-	void SetPatternType(network::CPacket& packet);
+	void CounterEffect(network::CPacket& packet);
+
+public:
+	void SetCounterEffectScript(std::shared_ptr<BossCounterEffect_Script> script);
 
 protected:
 	float m_radius;
@@ -29,5 +34,5 @@ protected:
 
 	bool m_aniEnd;
 
-	server::PATTERN_TYPE m_pattern;
+	std::shared_ptr<BossCounterEffect_Script> m_counterEffectScript;
 };

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Session.h"
 #include "GameInstance.h"
 #include "RoomManager.h"
@@ -1261,6 +1261,22 @@ namespace game
 
 						client->SendMonsterHPPacket(monster);
 					}
+				}
+			}
+			break;
+			case ProtocolID::WR_COUNTER_EFFECT_ACK:
+			{
+				bool render{ false };
+
+				if (postOver->integer == 1)
+					render = true;
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendCounterEffectPacket(id, render);
 				}
 			}
 			break;
