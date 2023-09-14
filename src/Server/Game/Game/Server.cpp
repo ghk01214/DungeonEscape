@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Session.h"
 #include "GameInstance.h"
 #include "RoomManager.h"
@@ -886,103 +886,103 @@ namespace game
 			{
 				//if (postOver->objType == server::OBJECT_TYPE::PLAYER)
 				//{
-					for (auto& player : playerObjects)
-					{
-						auto pl{ dynamic_cast<Player*>(player) };
+				for (auto& player : playerObjects)
+				{
+					auto pl{ dynamic_cast<Player*>(player) };
 
-						if (pl == nullptr)
+					if (pl == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendPlayerTransformPacket(pl);
-						}
+						client->SendPlayerTransformPacket(pl);
 					}
+				}
 
-					for (auto& object : rockObjects)
+				for (auto& object : rockObjects)
+				{
+					auto rock{ dynamic_cast<MapObject*>(object) };
+
+					if (rock == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
 					{
-						auto rock{ dynamic_cast<MapObject*>(object) };
-
-						if (rock == nullptr)
+						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(rock, 39.0625f);
-						}
+						client->SendTransformPacket(rock, 39.0625f);
 					}
+				}
 
-					for (auto& object : boulderObjects)
+				for (auto& object : boulderObjects)
+				{
+					auto boulder{ dynamic_cast<MapObject*>(object) };
+
+					if (boulder == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
 					{
-						auto boulder{ dynamic_cast<MapObject*>(object) };
-
-						if (boulder == nullptr)
+						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(boulder, 30.f);
-						}
+						client->SendTransformPacket(boulder, 30.f);
 					}
+				}
 
-					for (auto& object : pillarObjects)
+				for (auto& object : pillarObjects)
+				{
+					auto pillar{ dynamic_cast<PillarObject*>(object) };
+
+					if (pillar == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
 					{
-						auto pillar{ dynamic_cast<PillarObject*>(object) };
-
-						if (pillar == nullptr)
+						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(pillar);
-						}
+						client->SendTransformPacket(pillar);
 					}
+				}
 
-					for (auto& obj : lastBossRockObjects)
+				for (auto& obj : lastBossRockObjects)
+				{
+					auto rock{ dynamic_cast<MapObject*>(obj) };
+
+					if (rock == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
 					{
-						auto rock{ dynamic_cast<MapObject*>(obj) };
-
-						if (rock == nullptr)
+						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(rock);
-						}
+						client->SendTransformPacket(rock);
 					}
+				}
 				//}
 				/*else if (postOver->objType == server::OBJECT_TYPE::BOSS)
 				{*/
-					for (auto& monster : monsterObjects)
-					{
-						auto mob{ dynamic_cast<Monster*>(monster) };
+				for (auto& monster : monsterObjects)
+				{
+					auto mob{ dynamic_cast<Monster*>(monster) };
 
-						if (mob == nullptr)
+					if (mob == nullptr)
+						continue;
+
+					for (auto& client : m_sessions)
+					{
+						if (client->GetState() != STATE::INGAME)
 							continue;
 
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(mob, 50.f);
-						}
+						client->SendTransformPacket(mob, 50.f);
 					}
+				}
 				//}
 
 				for (auto& skillObject : skillObjects)
