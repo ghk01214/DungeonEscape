@@ -135,7 +135,7 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 
 		for (int i = 0; i < 12; ++i)
 		{
-			ParticleObject::Summon(playerPos, 500.f, 1.5f, 2.f);	//생성
+			ParticleObject::Summon(playerPos, 500.f, 1.5f, 2.f, 3.f);	//생성
 		}
 
 		ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);

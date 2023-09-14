@@ -77,7 +77,7 @@ void ParticleObject::ApplyRequestedLayers()
 			));
 }
 
-void ParticleObject::Summon(physx::PxVec3 initialPos, float xzInterval, float xzStrength, float yStrength)
+void ParticleObject::Summon(physx::PxVec3 initialPos, float xzInterval, float xzStrength, float yStrength, float deleteTime)
 {
 	//static std::uniform_real_distribution<float> distributionY(0.f, 1.0f);
 	//static std::uniform_real_distribution<float> distributionXZ(-1.f, 1.f);
@@ -119,5 +119,5 @@ void ParticleObject::Summon(physx::PxVec3 initialPos, float xzInterval, float xz
 
 
 	particleObj->ServerMessage_Init();
-	EventHandler::GetInstance()->AddEvent("REMOVE_PARTICLE", 3.f, particleObj);
+	EventHandler::GetInstance()->AddEvent("REMOVE_PARTICLE", deleteTime, particleObj);
 }

@@ -25,7 +25,7 @@ public:
 
 
 public:
-	static void Summon(physx::PxVec3 initialPos, float xzInterval, float xzStrength, float yStrength);
+	static void Summon(physx::PxVec3 initialPos, float xzInterval, float xzStrength, float yStrength, float deleteTime);
 
 protected:
 	RigidBody* m_body = nullptr;
