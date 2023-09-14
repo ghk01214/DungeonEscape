@@ -69,6 +69,20 @@ void Cinematic_Script::Awake()
 	{
 		info.m_time = 1.5f;
 	}
+
+	for (auto& info : m_info[WEEPER_SUMMON])
+	{
+		info.m_time = 1.5f;
+	}
+
+	m_info[WEEPER_SUMMON].back().m_time = 2.5f;
+
+	for (auto& info : m_info[GOLEM_SUMMON])
+	{
+		info.m_time = 1.5f;
+	}
+
+	m_info[GOLEM_SUMMON].back().m_time = 2.f;
 }
 
 void Cinematic_Script::Start()

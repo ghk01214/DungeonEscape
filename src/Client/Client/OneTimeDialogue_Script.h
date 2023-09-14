@@ -13,6 +13,7 @@ public:
 		PILLAR_HINT2,
 		ARTIFACT_DESTROYED,
 		WEEPER_HINT,
+		WEEPER_CAST4_HINT,
 		GOLEM_HINT,
 
 		MAX
@@ -42,6 +43,8 @@ public:
 
 public:
 	void SetTimeData(float fadeDuration, float renderDuration);
+
+	constexpr bool IsRendering() const { return m_render; }
 
 private:
 	bool m_render;

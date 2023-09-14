@@ -13,7 +13,9 @@
 
 #include "Input.h"
 
-Fade_Script::Fade_Script()
+Fade_Script::Fade_Script() :
+	m_fadeIn{ nullptr },
+	m_fadeOut{ nullptr }
 {
 }
 
@@ -61,6 +63,9 @@ void Fade_Script::Update()
 			{
 				m_eState = Fade_State::Contents;
 				m_accTime = 0.f;
+
+				if (m_fadeIn != nullptr)
+					*m_fadeIn = false;
 			}
 			else
 			{
@@ -99,6 +104,9 @@ void Fade_Script::Update()
 				}
 				else
 					m_bLogoEnd = true;
+
+				if (m_fadeOut != nullptr)
+					*m_fadeOut = false;
 			}
 			else
 			{
@@ -132,4 +140,10 @@ void Fade_Script::SetLogoInfo(float fadeInDuration, float fadeOutDuration, vecto
 	m_fadeOutDuration = fadeOutDuration;	// Fade Out에 걸리는 시간
 	//m_contentsDuration = contentsDuration;	// 내용을 보여주는데 걸리는 시간
 	m_textures = textures;
+}
+
+void Fade_Script::SetFade(std::shared_ptr<bool> in, std::shared_ptr<bool> out)
+{
+	m_fadeIn = in;
+	m_fadeOut = out;
 }

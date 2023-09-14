@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "SkillObject.h"
 #include "RigidBody.h"
 #include "Transform.h"
@@ -427,7 +427,7 @@ void SkillObject::HandlePlayerSkillCollision()
 
 						if (weeper)
 						{
-							weeper->GetDamaged(10);
+							weeper->GetDamaged(100);
 							SetRemoveReserved();						//객체 삭제
 							ServerMessage_SkillRemove();					//서버 메시지 처리
 						}
@@ -441,7 +441,7 @@ void SkillObject::HandlePlayerSkillCollision()
 
 						if (golem != nullptr)
 						{
-							golem->GetDamaged(10);
+							golem->GetDamaged(100);
 							SetRemoveReserved();						//객체 삭제
 							ServerMessage_SkillRemove();					//서버 메시지 처리
 						}
@@ -849,21 +849,12 @@ void SkillObject::Nuclear_Attribute_Explosion()
 	physx::PxVec3 pos = m_body->GetPosition();
 	Vec3 NuclearPosition = FROM_PX3(pos);
 
-
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
 		game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 		ev.objID = m_id;
 		ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::NUCLEAR_EXPLOSION);
 		ev.effectPos = NuclearPosition;
-
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
-	}
-
-
-	{
-		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
-		ev.objID = m_id;
-		ev.state = magic_enum::enum_integer(server::SOUND_TYPE::NUCLEAR_EXPLOSION);
 
 		game::MessageHandler::GetInstance()->PushSendMessage(ev);
 	}

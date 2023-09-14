@@ -19,7 +19,7 @@ protected:
 	virtual void UpdateFrameOnce() = 0;
 
 protected:
-	void Transform(network::CPacket& packet);
+	virtual void Transform(network::CPacket& packet);
 	void Rotate(network::CPacket& packet);
 	void SetPatternType(network::CPacket& packet);
 

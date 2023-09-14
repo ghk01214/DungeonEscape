@@ -14,6 +14,7 @@
 #include "EventHandler.h"
 #include "TriggerObject2.h"
 #include "ObjectManager.h"
+#include "MessageHandler.h"
 
 Event::Event(std::string context, double remainTime, GameObject* subject) :
 	msg(context), time(remainTime), target(subject)
@@ -337,6 +338,9 @@ void Event::ExecuteMsg_Once()
 			WeeperAI* weeperAI = weeper->GetAI();
 			weeperAI->Cast2Vulnerable_ON();
 		}
+
+
+		// 위퍼 카운터 가능시간 시작
 	}
 
 	if (msg == "CAST2_VULNERABLE_OFF")
@@ -347,6 +351,8 @@ void Event::ExecuteMsg_Once()
 			WeeperAI* weeperAI = weeper->GetAI();
 			weeperAI->Cast2Vulnerable_OFF();
 		}
+
+		// 위퍼 카운터 가능시간 종료
 	}
 
 	if (msg == "WEEPER_CAST3_FUNCTIONCALL")
@@ -376,6 +382,36 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	if (msg == "COUNTEREFFECT_WEEPER")
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			physx::PxVec3 effectpos = weeperObj->GetAI()->GetCounterEffectPosition();
+			Vec3 effectposdata = FROM_PX3(effectpos);
+
+
+			//effectposdata 보내서 사용하면 된다.
+			game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+			ev.objID = weeperObj->GetID();
+			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
+			ev.effectPos.x = effectposdata.x;
+			ev.effectPos.y = effectposdata.y;
+			ev.effectPos.z = effectposdata.z;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		}
+	}
+
+	if (msg == "CAST4_EFFECT_START")
+	{
+		
+	}
+
+	if (msg == "CAST4_EFFECT_END")
+	{
+
+	}
 
 	//golem
 	if (msg == "GOLEM_ATTACK1_FUNCTIONCALL")
@@ -628,6 +664,9 @@ void Event::ExecuteMsg_Once()
 		{
 			golemObj->GetAI()->Vulnuerable_Set(true);
 		}
+
+
+		//골렘 카운터가능시간 진입
 	}
 
 	if (msg == "SPELL_VULNERABLE_OFF")
@@ -637,6 +676,9 @@ void Event::ExecuteMsg_Once()
 		{
 			golemObj->GetAI()->Vulnuerable_Set(false);
 		}
+
+
+		//골렘 카운터가능시간 종료
 	}
 
 	if (msg == "LastBossRock_SkipClear")
@@ -650,6 +692,27 @@ void Event::ExecuteMsg_Once()
 			{
 				ptr->SkipClear();								//skip 해제
 			}
+		}
+	}
+
+	if (msg == "COUNTEREFFECT_GOLEM")
+	{
+		auto golemObj = dynamic_cast<Golem*>(target);
+		if (golemObj)
+		{
+			physx::PxVec3 effectpos = golemObj->GetAI()->GetCounterEffectPosition();
+			Vec3 effectposdata = FROM_PX3(effectpos);
+
+
+			//effectposdata보내면 된다.
+			game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+			ev.objID = golemObj->GetID();
+			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
+			ev.effectPos.x = effectposdata.x;
+			ev.effectPos.y = effectposdata.y;
+			ev.effectPos.z = effectposdata.z;
+
+			game::MessageHandler::GetInstance()->PushSendMessage(ev);
 		}
 	}
 
@@ -696,6 +759,9 @@ void Event::ExecuteMsg_continuous()
 			weeperObj->SetState(Weeper::WEEPER_STATE::CAST4_END);
 			EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, target);
 			EventHandler::GetInstance()->AddEvent("MONSTER_MOBILE", 4.06f, target);
+
+			EventHandler::GetInstance()->AddEvent("CAST4_EFFECT_END", 0.1f, weeperObj);
+
 			executed = true;	//이벤트 소멸
 		}
 	}

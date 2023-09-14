@@ -27,8 +27,6 @@ Golem::Golem(int32_t MonsterID, const Vec3& position, const Quat& rotation, cons
 	m_currState{ m_prevState },
 	m_sendState{ 0 }
 {
-	m_hp = 20;
-
 	m_name = L"Golem";
 	m_objType = server::OBJECT_TYPE::BOSS;
 	m_fbxType = server::FBX_TYPE::BLUE_GOLEM;
@@ -47,7 +45,7 @@ void Golem::Init()
 	m_controller->GetBody()->SetMass(1000.f);
 	//SetUp_PatternObjects();
 
-	m_golemAI = new GolemAI(this);
+	m_golemAI = new GolemAI(this, 3000.f);
 	m_golemAI->Init();
 
 	m_AI = m_golemAI;

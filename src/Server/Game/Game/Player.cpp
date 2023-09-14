@@ -97,7 +97,7 @@ void Player::Update(double timeDelta)
 
 	GameObject::Update(timeDelta);
 
-	ServerSendTransformMessage();
+	//ServerSendTransformMessage();
 }
 
 void Player::LateUpdate(double timeDelta)

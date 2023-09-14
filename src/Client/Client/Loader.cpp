@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
@@ -141,11 +141,11 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 	// fbx 紐⑤뜽
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Mistic\\Mistic.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx");
+	//GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx");
 
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Weeper\\Weeper.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Black Scorpion.fbx");
+	//GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Black Scorpion.fbx");
 
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx");
@@ -173,7 +173,6 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 {
 	LOAD_TEXTURE(L"Nana_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Nana.png");
 	LOAD_TEXTURE(L"Mistic_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Mistic.png");
-	LOAD_TEXTURE(L"Carmel_In Game", L"..\\Resources\\Texture\\UI\\In Game\\Carmel.png");
 
 	LOAD_TEXTURE(L"Weeper Class", L"..\\Resources\\Texture\\UI\\Icon\\Weeper Class.png");
 	LOAD_TEXTURE(L"Golem Class", L"..\\Resources\\Texture\\UI\\Icon\\Golem Class.png");
@@ -182,7 +181,13 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	LOAD_TEXTURE(L"Pillar Hint2", L"..\\Resources\\Texture\\UI\\Font\\Pillar Hint2.png");
 
 	LOAD_TEXTURE(L"Weeper Hint", L"..\\Resources\\Texture\\UI\\Font\\Weeper Hint.png");
+	LOAD_TEXTURE(L"Weeper Cast4 Hint", L"..\\Resources\\Texture\\UI\\Font\\Weeper Cast4 Hint.png");
 	LOAD_TEXTURE(L"Golem Hint", L"..\\Resources\\Texture\\UI\\Font\\Golem Hint.png");
+	LOAD_TEXTURE(L"Boss Warning", L"..\\Resources\\Texture\\UI\\Font\\Boss Warning.png");
+	LOAD_TEXTURE(L"Red Blur", L"..\\Resources\\Texture\\UI\\Blur\\Red.png");
+
+	LOAD_TEXTURE(L"Fade Blur", L"..\\Resources\\Texture\\UI\\Blur\\White.png");
+	LOAD_TEXTURE(L"Move Map", L"..\\Resources\\Texture\\UI\\Font\\Move Map.png");
 
 	LOAD_TEXTURE(L"Player Slider Frame(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Frame(C).png");
 	LOAD_TEXTURE(L"HP(C)", L"..\\Resources\\Texture\\UI\\Slider\\Slider02_Fill_Red(C).png");
@@ -226,6 +231,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 {
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Artifact_Protection", L"..\\Resources\\Texture\\Effect\\Artifact Protection\\tile.png", 16);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Circle_Flame", L"..\\Resources\\Texture\\Effect\\Circle Flame\\yellow\\tile.png", 24);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Circle_Wave", L"..\\Resources\\Texture\\Effect\\Circle Wave\\tile.png", 6);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Explode", L"..\\Resources\\Texture\\Effect\\Explode\\tile.png", 20);
@@ -233,6 +239,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Fire\\Fire.png", 64);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact15", L"..\\Resources\\Texture\\Effect\\Implode\\orange brown\\tile.png", 29);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_Dispersal", L"..\\Resources\\Texture\\Effect\\In Dispersal\\tile.png", 33);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Paralys", L"..\\Resources\\Texture\\Effect\\Paralys\\tile.png", 21);
@@ -281,7 +288,7 @@ HRESULT CLoader::Loading_ForStart_Font()
 
 HRESULT CLoader::Loading_ForStart_Texture()
 {
-	LOAD_TEXTURE(L"Lobby_InGame", L"..\\Resources\\Texture\\UI\\Start\\Lobby_InGame.PNG");
+	LOAD_TEXTURE(L"Lobby_InGame", L"..\\Resources\\Texture\\UI\\Start\\Background.PNG");
 
 	LOAD_TEXTURE(L"Title", L"..\\Resources\\Texture\\UI\\Font\\Title.png");
 	LOAD_TEXTURE(L"Log In", L"..\\Resources\\Texture\\UI\\Font\\Log In.png");
@@ -365,12 +372,10 @@ HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 
 	LOAD_TEXTURE(L"Knight", L"..\\Resources\\Texture\\UI\\Font\\Knight.png");
 	LOAD_TEXTURE(L"Mage", L"..\\Resources\\Texture\\UI\\Font\\Mage.png");
-	LOAD_TEXTURE(L"Priest", L"..\\Resources\\Texture\\UI\\Font\\Priest.png");
 	LOAD_TEXTURE(L"Ready", L"..\\Resources\\Texture\\UI\\Font\\Ready.png");
 
 	LOAD_TEXTURE(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
 	LOAD_TEXTURE(L"Mistic", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic.png");
-	LOAD_TEXTURE(L"Carmel", L"..\\Resources\\Texture\\UI\\Character Select\\Carmel.png");
 
 #pragma region [POP UP]
 	LOAD_TEXTURE(L"Pop Up Frame", L"..\\Resources\\Texture\\UI\\Frame\\Pop Up Frame.png");
@@ -380,7 +385,6 @@ HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 
 	LOAD_TEXTURE(L"Knight2", L"..\\Resources\\Texture\\UI\\Font\\Knight2.png");
 	LOAD_TEXTURE(L"Mage2", L"..\\Resources\\Texture\\UI\\Font\\Mage2.png");
-	LOAD_TEXTURE(L"Priest2", L"..\\Resources\\Texture\\UI\\Font\\Priest2.png");
 #pragma endregion
 
 	return S_OK;

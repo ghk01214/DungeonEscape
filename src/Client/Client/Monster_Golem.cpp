@@ -12,6 +12,7 @@
 #include <NetworkManager.h>
 #include <Network.h>
 #include <SoundManager.h>
+#include <EffectManager.h>
 
 Monster_Golem::Monster_Golem() :
 	m_prevState{ IDLE1 },
@@ -26,7 +27,7 @@ Monster_Golem::Monster_Golem(int32_t stateIndex) :
 	m_currState{ m_prevState }
 {
 	m_radius = 100.f;
-	m_halfHeight = 250.f;		// 몬스터 발 높이 위치 변경
+	m_halfHeight = 300.f;		// 몬스터 발 높이 위치 변경
 }
 
 Monster_Golem::~Monster_Golem()
@@ -111,6 +112,18 @@ void Monster_Golem::UpdateFrameRepeat()
 	}
 
 	GetAnimator()->RepeatPlay();
+
+	if (m_currState != STUN)
+		return;
+
+	if (GET_SINGLE(EffectManager)->GetPlayOnce(140) == false)
+		return;
+
+	auto pos{ GetTransform()->GetWorldPosition() };
+	pos.y += m_halfHeight;
+
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(140, pos, Vec3{ 700.f }, 0.003f);
+	GET_SINGLE(EffectManager)->PlayBillBoard(140);
 }
 
 void Monster_Golem::UpdateFrameOnce()

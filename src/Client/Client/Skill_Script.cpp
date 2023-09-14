@@ -56,6 +56,7 @@ void Skill_Script::LateUpdate()
 	if (m_curCount >= m_repeatCount)
 	{
 		GetGameObject()->SetDead(true);
+		*m_recv = false;
 	}
 }
 
@@ -72,4 +73,9 @@ void Skill_Script::ChangeAlpha()
 	{
 		GetMeshRenderer()->GetMaterial(i)->SetFloat(2, m_alpha);
 	}
+}
+
+void Skill_Script::SetRecvFlag(std::shared_ptr<bool> flag)
+{
+	m_recv = flag;
 }

@@ -36,6 +36,8 @@ public:
 	bool SkillRangeCheck();
 	float GetXZDistance();
 
+public:
+	physx::PxVec3 GetCounterEffectPosition();
 
 public:
 	std::vector<Player*> SkillRangeCheck_OverlapObject(std::string scheduleName, OverlapObject* overlapObj);		//overlapObject 전용 호출 함수. 그 외의 클래스에서 호출하지 않는다.
@@ -55,6 +57,9 @@ public:
 	physx::PxQuat GetRotation_For_Pattern(physx::PxVec3 xzDir);
 
 protected:
+	void BossPatternUIStart(server::TRIGGER_INTERACTION_TYPE type);
+
+protected:
 	Monster* m_monster;
 	std::vector<MonsterSkill*> m_skillSizeHolder;
 	Player* m_target = nullptr;
@@ -62,11 +67,12 @@ protected:
 	Vec3 m_targetDir;
 	Vec3 m_monsterLook;
 
-	bool m_AIWait = true;					
+	bool m_AIWait = true;
 
 	float m_detectRange;					//몬스터 인식 범위
 	float m_targetPos_UpdateInterval;		//플레이어 위치 갱신 주기
 
 	bool m_start = false;					//작동시작
+	float m_checkRange;
 };
 

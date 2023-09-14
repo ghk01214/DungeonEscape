@@ -43,7 +43,10 @@ Scene_Test::Scene_Test() :
 	m_portalUIScript{ nullptr },
 	m_cinematicScript{ nullptr },
 	m_closeButton{ nullptr },
-	m_openSetting{ false }
+	m_openSetting{ false },
+	m_recvFadeIn{ std::make_shared<bool>(false) },
+	m_recvFadeOut{ std::make_shared<bool>(false) },
+	m_recvExplosionSkill{ std::make_shared<bool>(false) }
 {
 	auto pos{ GetRatio(-100.f, 75.f) };
 	Vec2 scale{ 100.f };
@@ -68,8 +71,8 @@ void Scene_Test::Start()
 	if (playMusic == true)
 	{
 		GET_SINGLE(CSoundMgr)->StopBGMSound();
-		GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
-		//GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+		//GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+		GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
 	}
 }
 
@@ -80,10 +83,13 @@ void Scene_Test::Update()
 	SendKeyInput();
 	CheckMapMove();
 
+	ChangePlayerUIVisibility();
 	ChangeBossUIVisibility();
 	ChangePopUpVisibility();
 	ChangeVolume();
 	ChangeMuteTexture();
+	RenderFont();
+	RenderPortalEffect();
 }
 
 void Scene_Test::LateUpdate()
@@ -189,7 +195,7 @@ void Scene_Test::CreateComputeShader(void)
 {
 #pragma region ComputeShader
 	{
-		shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"ComputeShader");
+		shared_ptr<Shader> shader = GET_SHADER(L"ComputeShader");
 
 		// UAV ??Texture ??밴쉐
 		shared_ptr<Texture> texture = GET_SINGLE(Resources)->CreateTexture(L"UAVTexture",
@@ -216,7 +222,7 @@ void Scene_Test::CreateMainCamera(std::shared_ptr<CScene> pScene)
 	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
 
 #ifdef MOVEMENT
-	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>();
+	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>(7);
 	camera->AddComponent(pMovementScript);
 #else
 	shared_ptr<Camera_Basic> pCameraScript = make_shared<Camera_Basic>();
@@ -266,7 +272,7 @@ void Scene_Test::CreateSkyBox(std::shared_ptr<CScene> pScene)
 			meshRenderer->SetMesh(sphereMesh);
 		}
 		{
-			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Skybox");
+			shared_ptr<Shader> shader = GET_SHADER(L"Skybox");
 			shared_ptr<Texture> texture = GET_SINGLE(Resources)->Load<Texture>(L"Sky02", L"..\\Resources\\Texture\\Sky02.jpg");
 			shared_ptr<Material> material = make_shared<Material>();
 			material->SetShader(shader);
@@ -326,7 +332,7 @@ void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE p
 	for (auto& gameObject : gameObjects)
 	{
 		gameObject->SetObjectType(server::OBJECT_TYPE::PLAYER);
-		//gameObject->SetName(userName);
+		gameObject->SetName(userName);
 	}
 
 	AddPlayer(gameObjects);
@@ -352,7 +358,7 @@ void Scene_Test::CreateSphere(std::shared_ptr<CScene> pScene)
 
 	Vec3 pos{ 0.f, 0.f, 0.f };
 
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Alpha_Blend_Object");
+	shared_ptr<Shader> shader = GET_SHADER(L"Alpha_Blend_Object");
 
 	for (auto& gameObject : gameObjects)
 	{
@@ -379,7 +385,8 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 {
 	CreateOneTimeDialogue();
 	CreatePlayerUI(player);
-	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, GET_NETWORK->GetName());
+	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, userName);
+	CreateBossWarning();
 
 	CreatePopUp();
 }
@@ -400,7 +407,7 @@ void Scene_Test::CreateMRTUI(std::shared_ptr<CScene> pScene)
 			meshRenderer->SetMesh(mesh);
 		}
 		{
-			shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Texture");
+			shared_ptr<Shader> shader = GET_SHADER(L"Texture");
 
 			shared_ptr<Texture> texture;
 			if (i < 3)
@@ -463,7 +470,7 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom2.fbx");
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	m_eNextMapType = MAP_TYPE::FirstBoss;
+	m_eNextMapType = MAP_TYPE::StartRoom;
 	MoveMap(m_eNextMapType);
 }
 
@@ -497,7 +504,11 @@ void Scene_Test::CreateSkill(const std::wstring& colorName, const Vec3& worldPos
 		object->GetTransform()->SetWorldMatrix(matWorld);
 
 		object->GetTransform()->SetLocalScale(localScale);
-		object->AddComponent(std::make_shared<Bomb_Script>(scaleSpeed, alpha));
+
+		auto script{ std::make_shared<Bomb_Script>(scaleSpeed, alpha) };
+		script->SetRecvFlag(m_recvExplosionSkill);
+		object->AddComponent(script);
+		m_skillObject.push_back(script);
 	}
 
 	AddGameObject(gameObjects);
@@ -583,7 +594,7 @@ std::shared_ptr<CGameObject> Scene_Test::CreateBillBoardBase(std::vector<shared_
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
 
 	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+	shared_ptr<Shader> shader = GET_SHADER(L"BillBoard_Texture");
 
 	shared_ptr<Texture> texture = gameObjects->GetBillBoard()->GetTexture();
 	shared_ptr<Material> material = make_shared<Material>();
@@ -614,7 +625,7 @@ std::shared_ptr<CGameObject> Scene_Test::CreateEffectBase(std::vector<shared_ptr
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
 
 	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+	shared_ptr<Shader> shader = GET_SHADER(L"BillBoard_Texture");
 
 	shared_ptr<Texture> texture = gameObjects->GetEffect()->GetTexture();
 	shared_ptr<Material> material = make_shared<Material>();
@@ -659,7 +670,7 @@ std::shared_ptr<CGameObject> Scene_Test::CreateArtifactBase(std::vector<shared_p
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
 
 	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"BillBoard_Texture");
+	shared_ptr<Shader> shader = GET_SHADER(L"BillBoard_Texture");
 
 	shared_ptr<Texture> texture = textures[0];
 	shared_ptr<Material> material = make_shared<Material>();
@@ -725,9 +736,9 @@ void Scene_Test::CreateFade(std::shared_ptr<CScene> pScene)
 	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadRectangleMesh();
 
 	meshRenderer->SetMesh(mesh);
-	shared_ptr<Shader> shader = GET_SINGLE(Resources)->Get<Shader>(L"Logo_texture");
+	shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
 
-	shared_ptr<Texture> texture = GET_SINGLE(Resources)->Get<Texture>(L"Lobby_InGame");
+	shared_ptr<Texture> texture = GET_TEXTURE(L"Fade Blur");
 	shared_ptr<Material> material = make_shared<Material>();
 	material->SetShader(shader);
 	material->SetTexture(0, texture);
@@ -741,11 +752,44 @@ void Scene_Test::CreateFade(std::shared_ptr<CScene> pScene)
 	vTextures.push_back(texture);
 
 	fade_script->SetLogoInfo(1.f, 1.f, vTextures);
+	fade_script->SetFade(m_recvFadeIn, m_recvFadeOut);
 	gameObject->AddComponent(fade_script);
 
 	m_fadeScript = fade_script;
 
 	pScene->AddGameObject(gameObject);
+}
+
+std::vector<std::shared_ptr<WeeperEffect_Script>> Scene_Test::CreateWeeperCast4Effect()
+{
+	std::vector<std::shared_ptr<Texture>> textures{ GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Artifact_Protection") };
+	std::vector<std::shared_ptr<WeeperEffect_Script>> scripts;
+	int32_t magicCount{ 4 };
+
+	for (int32_t i = 0; i < magicCount; ++i)
+	{
+		std::shared_ptr<CGameObject> gameObject{ CreateArtifactBase(textures) };
+		std::shared_ptr<WeeperEffect_Script> script{ std::make_shared<WeeperEffect_Script>() };
+
+		script->SetStartRotation(360.f / 4 * i);	// 최초 회전 각도
+		script->SetRotationSpeed(30.f);	// 초당 몇도 회전하는지
+
+		script->SetTexture(textures);	// 텍스쳐 정보
+		script->SetSize(Vec2{ 300.f });	// 텍스쳐의 크기
+
+		script->SetDistanceFromPoint(300.f);	// 중점으로부터 거리
+		script->SetTargetPoint(Vec3{ 0.f });	// 중점 위치
+
+		script->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
+
+		gameObject->AddComponent(script);
+
+		AddGameObject(gameObject);
+
+		scripts.push_back(script);
+	}
+
+	return scripts;
 }
 
 void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects)
@@ -799,14 +843,24 @@ void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameOb
 #pragma region [UI]
 void Scene_Test::CreatePlayerUI(server::FBX_TYPE character)
 {
-	CreatePlayerImage(character);
+	auto pos{ CreatePlayerImage(character) };
+	pos.x += 150.f + 20.f;
+	pos.y += 40.f;
+
+	FontInfo info;
+	info.pos = pos;
+	info.scale = Vec2{ 0.5f };
+	info.render = true;
+	info.str = userName;
+
+	m_font[MY_NAME] = info;
 	//UITransform hpTransform{};
 	//float mpYPos{ CreatePlayerMPBar() };
 	//CreatePlayerHPBar(mpYPos, hpTransform);
 	//CreatePlayerImage(character, hpTransform);
 }
 
-void Scene_Test::CreatePlayerImage(server::FBX_TYPE character)
+Vec2 Scene_Test::CreatePlayerImage(server::FBX_TYPE character)
 {
 	std::shared_ptr<Texture> texture{ nullptr };
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
@@ -830,6 +884,11 @@ void Scene_Test::CreatePlayerImage(server::FBX_TYPE character)
 	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
 	AddGameObject(obj);
+	m_playerUIObjects.push_back(obj);
+
+	pos.x -= 150.f / 2.f;
+
+	return pos;
 }
 
 void Scene_Test::CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTransform)
@@ -960,6 +1019,18 @@ float Scene_Test::CreatePlayerMPBar()
 void Scene_Test::CreatePartyPlayerUI(int32_t id, server::FBX_TYPE character, const std::wstring& name)
 {
 	CreatePartyPlayerImage(character, m_partyUITransform[id]);
+
+	auto pos{ m_partyUITransform[id].pos };
+	pos.x += m_partyUITransform[id].scale.x - 35.f;
+	pos.y += 25.f;
+
+	FontInfo info{};
+	info.pos = pos;
+	info.scale = Vec2{ 0.3f };
+	info.render = true;
+	info.str = name;
+
+	m_font[magic_enum::enum_cast<FONT_TYPE>(id).value()] = info;
 	//auto mpPos{ CreatePartyPlayerMPBar(m_partyUITransform[id]) };
 	//CreatePartyPlayerHPBar(mpPos, m_partyUITransform[id]);
 }
@@ -986,6 +1057,7 @@ void Scene_Test::CreatePartyPlayerImage(server::FBX_TYPE character, UITransform 
 	transform->SetLocalPosition(Vec3{ trans.pos.x, trans.pos.y, 100.f });
 
 	AddGameObject(obj);
+	m_playerUIObjects.push_back(obj);
 }
 
 void Scene_Test::CreatePartyPlayerName(const std::wstring& name)
@@ -1093,6 +1165,42 @@ void Scene_Test::CreateBossUI(server::FBX_TYPE boss, int32_t hp)
 	UITransform transform{ GetRatio(0.f, 100.f), Vec2{} };
 	CreateBossHPBar(transform, boss, hp);
 	CreateBossClassIcon(transform, boss);
+
+	transform.pos = GetRatio(-10.f, 100.f);
+	transform.pos.y -= 62.f * 0.15f;
+
+	FontInfo info{};
+	info.pos = transform.pos;
+	info.scale = Vec2{ 0.3f };
+	info.render = false;
+
+	switch (boss)
+	{
+		case server::FBX_TYPE::WEEPER1:
+		case server::FBX_TYPE::WEEPER2:
+		case server::FBX_TYPE::WEEPER3:
+		case server::FBX_TYPE::WEEPER4:
+		case server::FBX_TYPE::WEEPER5:
+		case server::FBX_TYPE::WEEPER6:
+		case server::FBX_TYPE::WEEPER7:
+		case server::FBX_TYPE::WEEPER_EMISSIVE:
+		{
+			info.str = L"Reaper";
+			m_font[WEEPER] = info;
+		}
+		break;
+		case server::FBX_TYPE::BLUE_GOLEM:
+		case server::FBX_TYPE::RED_GOLEM:
+		case server::FBX_TYPE::GREEN_GOLEM:
+		{
+			info.pos.x = GetRatio(-20.f, 0.f).x;
+			info.str = L"Blue Golem";
+			m_font[GOLEM] = info;
+		}
+		break;
+		default:
+		break;
+	}
 }
 
 void Scene_Test::CreateBossHPBar(UITransform& trans, server::FBX_TYPE boss, int32_t hp)
@@ -1101,7 +1209,7 @@ void Scene_Test::CreateBossHPBar(UITransform& trans, server::FBX_TYPE boss, int3
 	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Player Slider Frame(C)") };
 
 	trans.scale = { 38.f * 18.f, 62.f * 0.8f };
-	trans.pos.y -= 62.f;
+	trans.pos.y -= 62.f * 1.25f;
 
 	// FRAME
 	{
@@ -1205,26 +1313,73 @@ void Scene_Test::CreateBossClassIcon(UITransform& trans, server::FBX_TYPE boss)
 		m_golemUIObjets.push_back(obj);
 }
 
-void Scene_Test::CreateOneTimeDialogue()
+void Scene_Test::CreateBossWarning()
 {
-	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Pillar Hint") };
 	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Red Blur") };
+	auto pos{ GetRatio(0.f, 0.f) };
 
 	{
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		auto pos{ GetRatio(0.f, 50.f) };
-		auto transform{ obj->GetTransform() };
+		float width{ static_cast<float>(GEngine->GetWindow().width) };
+		float height{ static_cast<float>(GEngine->GetWindow().height) };
 
-		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ width, height, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
 
-		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("PILLAR_HINT") };
-		behaviour->InsertTextures(texture);
-		m_oneTimeDialogueScript["PILLAR_HINT"] = behaviour;
+		std::shared_ptr<BossWarning_Script> script{ std::make_shared<BossWarning_Script>() };
+		script->InsertTextures(texture);
+		obj->AddComponent(script);
 
-		obj->AddComponent(behaviour);
+		AddGameObject(obj);
+		m_bossWarningScript.push_back(script);
+	}
+
+	texture = GET_TEXTURE(L"Boss Warning");
+	pos = GetRatio(0.f, 50.f);
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 1351.f, 116.f, 1.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+
+		std::shared_ptr<BossWarning_Script> script{ std::make_shared<BossWarning_Script>() };
+		script->InsertTextures(texture);
+		obj->AddComponent(script);
+
+		AddGameObject(obj);
+		m_bossWarningScript.push_back(script);
+	}
+}
+
+void Scene_Test::CreateOneTimeDialogue()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Pillar Hint") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	auto pos2{ GetRatio(0.f, 50.f) };
+	Vec3 pos{ pos2.x, pos2.y, 100.f };
+	Vec3 scale{ 916.f, 106.f, 1.f };
+	std::string dialogueName{};
+
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
+
+		dialogueName = "PILLAR_HINT";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
+
+		obj->AddComponent(script);
 
 		AddGameObject(obj);
 	}
@@ -1234,17 +1389,16 @@ void Scene_Test::CreateOneTimeDialogue()
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		auto pos{ GetRatio(0.f, 50.f) };
 		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
 
-		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+		dialogueName = "PILLAR_HINT2";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
 
-		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("PILLAR_HINT2") };
-		behaviour->InsertTextures(texture);
-		m_oneTimeDialogueScript["PILLAR_HINT2"] = behaviour;
-
-		obj->AddComponent(behaviour);
+		obj->AddComponent(script);
 
 		AddGameObject(obj);
 	}
@@ -1254,17 +1408,35 @@ void Scene_Test::CreateOneTimeDialogue()
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		auto pos{ GetRatio(0.f, 50.f) };
 		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
 
-		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+		dialogueName = "WEEPER_HINT";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
 
-		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("WEEPER_HINT") };
-		behaviour->InsertTextures(texture);
-		m_oneTimeDialogueScript["WEEPER_HINT"] = behaviour;
+		obj->AddComponent(script);
 
-		obj->AddComponent(behaviour);
+		AddGameObject(obj);
+	}
+
+	texture = GET_TEXTURE(L"Weeper Cast4 Hint");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
+
+		dialogueName = "WEEPER_CAST4_HINT";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
+
+		obj->AddComponent(script);
 
 		AddGameObject(obj);
 	}
@@ -1274,17 +1446,42 @@ void Scene_Test::CreateOneTimeDialogue()
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		auto pos{ GetRatio(0.f, 50.f) };
 		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
 
-		transform->SetLocalScale(Vec3{ 916.f, 106.f, 1.f });
-		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 100.f });
+		dialogueName = "GOLEM_HINT";
+		std::shared_ptr<OneTimeDialogue_Script> script{ std::make_shared<OneTimeDialogue_Script>(dialogueName) };
+		script->InsertTextures(texture);
+		m_oneTimeDialogueScript[dialogueName] = script;
 
-		std::shared_ptr<OneTimeDialogue_Script> behaviour{ std::make_shared<OneTimeDialogue_Script>("GOLEM_HINT") };
-		behaviour->InsertTextures(texture);
-		m_oneTimeDialogueScript["GOLEM_HINT"] = behaviour;
+		obj->AddComponent(script);
 
-		obj->AddComponent(behaviour);
+		AddGameObject(obj);
+	}
+
+	texture = GET_TEXTURE(L"Move Map");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(scale);
+		transform->SetLocalPosition(pos);
+
+		std::vector<std::shared_ptr<Texture>> tex;
+		tex.push_back(texture);
+
+		for (int32_t i = 0; i < obj->GetMeshRenderer()->GetMaterialSize(); ++i)
+		{
+			obj->GetMeshRenderer()->GetMaterial(i)->SetFloat(2, 0.f);
+		}
+
+		std::shared_ptr<Fade_Script> script{ std::make_shared<Fade_Script>() };
+		script->SetLogoInfo(1.f, 1.f, tex);
+		m_fadeUIScript = script;
+
+		obj->AddComponent(script);
 
 		AddGameObject(obj);
 	}
@@ -1303,12 +1500,32 @@ void Scene_Test::CreatePopUp()
 
 void Scene_Test::ChangeBossUIVisibility()
 {
+	if (m_fadeScript->GetActivation() == true)
+	{
+		for (auto& obj : m_weeperUIObjets)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+
+		m_font[WEEPER].render = false;
+
+		for (auto& obj : m_golemUIObjets)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+
+		m_font[GOLEM].render = false;
+		return;
+	}
+
 	if (m_eNextMapType == MAP_TYPE::FirstBoss)
 	{
 		for (auto& obj : m_weeperUIObjets)
 		{
 			obj->GetUI()->SetVisible(true);
 		}
+
+		m_font[WEEPER].render = true;
 	}
 	else if (m_eNextMapType == MAP_TYPE::LastBoss_TreasureRoom)
 	{
@@ -1316,6 +1533,8 @@ void Scene_Test::ChangeBossUIVisibility()
 		{
 			obj->GetUI()->SetVisible(true);
 		}
+
+		m_font[GOLEM].render = true;
 	}
 	else
 	{
@@ -1324,10 +1543,31 @@ void Scene_Test::ChangeBossUIVisibility()
 			obj->GetUI()->SetVisible(false);
 		}
 
+		m_font[WEEPER].render = false;
+
 		for (auto& obj : m_golemUIObjets)
 		{
 			obj->GetUI()->SetVisible(false);
 		}
+
+		m_font[GOLEM].render = false;
+	}
+}
+
+void Scene_Test::RenderFont()
+{
+	if (m_openSetting == true)
+		return;
+
+	if (m_fadeScript->GetActivation() == true)
+		return;
+
+	for (auto& [type, info] : m_font)
+	{
+		if (info.render == false)
+			continue;
+
+		GET_SINGLE(FontManager)->RenderFonts(info.str, info.pos, info.scale);
 	}
 }
 #pragma endregion
@@ -2135,6 +2375,24 @@ void Scene_Test::ChangeMuteTexture()
 		m_volumeSliderLeftTip[SE]->ChangeMuteTexture(false);
 	}
 }
+
+void Scene_Test::ChangePlayerUIVisibility()
+{
+	if (m_fadeScript->GetActivation() == true)
+	{
+		for (auto& obj : m_playerUIObjects)
+		{
+			obj->GetUI()->SetVisible(false);
+		}
+	}
+	else
+	{
+		for (auto& obj : m_playerUIObjects)
+		{
+			obj->GetUI()->SetVisible(true);
+		}
+	}
+}
 #pragma endregion
 
 #pragma region [NETWORK]
@@ -2331,7 +2589,13 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Weeper" + std::to_wstring(magic_enum::enum_integer(type) - magic_enum::enum_integer(server::FBX_TYPE::WEEPER1) + 1);
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\" + objectDesc.strName + L".fbx";
-			objectDesc.script = std::make_shared<Monster_Weeper>(stateIndex);
+
+			auto effectScripts{ CreateWeeperCast4Effect() };
+			auto script{ std::make_shared<Monster_Weeper>(stateIndex) };
+			script->SetDialogue(m_oneTimeDialogueScript["WEEPER_CAST4_HINT"]);
+			script->SetEffectScript(effectScripts);
+
+			objectDesc.script = script;
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_EMISSIVE:
@@ -2668,6 +2932,21 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
+	effect.speed = 0.005f;
+	effect.scale = Vec3{ 1000.f };
+
+	for (int32_t i = 0; i < 2; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact15", effect.speed);
+
+		if (i == 0)
+		{
+			m_impact15StartIndex = effect.index;
+			m_impact15CurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::IMPACT15] = effect;
+		}
+	}
+
 	effect.speed = 0.0045f;
 	effect.scale = { 2000.f, 2000.f, 1.f };
 	effect.alpha = 0.5f;
@@ -2734,8 +3013,159 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
-	effect.speed = 0.003f;
-	effect.scale = Vec3{ 500.f };
+	for (int32_t i = 0; i < 4; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateEffect(L"Effect_Circle_Flame", 0.003f);
+
+		if (i == 0)
+		{
+			m_circleFlameYellowStartIndex = effect.index;
+			m_circleFlameYellowCurrentIndex = effect.index;
+		}
+	}
+}
+
+void Scene_Test::RenderPortalEffect()
+{
+	switch (m_eNextMapType)
+	{
+		case MAP_TYPE::FirstBoss:
+		case MAP_TYPE::Cave:
+		case MAP_TYPE::LastBoss_TreasureRoom:
+		return;
+		default:
+		break;
+	}
+
+
+	if (m_eNextMapType == MAP_TYPE::StartRoom)
+	{
+		Vec3 pos{ 2000.f, 100.f, 5415.f };
+		Vec3 scale{ 1600.f };
+		Vec3 rotation{ 0.f };
+
+		pos.x -= 25.f;
+		pos.z += 300.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+
+		pos.z -= 300.f * 2.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+
+		pos.x -= 300.f - 25.f;
+		pos.z = 5415.f;
+		rotation.y += 90.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+
+		pos.x += 300.f * 2.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+	}
+	else if (m_eNextMapType == MAP_TYPE::SecondRoom_Bridge_SecondBoss)
+	{
+		Vec3 pos{ 14985.f, -1590.f, 21085.f };
+		Vec3 scale{ 3500.f };
+		Vec3 rotation{ 0.f };
+		rotation.y = 90.f;
+
+		pos.x -= 750.f;
+		pos.y = 50.f;
+		pos.z += 100.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+
+		pos.x += 750.f * 2.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+
+		pos.x = 14985.f - 100.f;
+		pos.z -= 750.f + 100.f;
+		rotation.y = 0.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+
+		pos.z += 750.f * 2.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+	}
+	else if (m_eNextMapType == MAP_TYPE::ThirdRoom_RockRolling)
+	{
+		Vec3 pos{ 16165.f, -3301.f, 37770.f };
+		Vec3 scale{ 1500.f };
+		Vec3 rotation{ 0.f };
+
+		pos.x += 50.f;
+		pos.y = -2600.f;
+		pos.z += 300.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+
+		pos.z -= 300.f * 2.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+
+		pos.x -= 300.f;
+		pos.z = 37770.f;
+		rotation.y = 90.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+
+		pos.x += 300.f * 2.f;
+
+		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		{
+			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
+			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
+		}
+	}
+
+	m_circleFlameYellowCurrentIndex = m_circleFlameYellowStartIndex;
 }
 
 void Scene_Test::RemoveObject(network::CPacket& packet)
@@ -3018,15 +3448,28 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 
 	if (effectType == server::EFFECT_TYPE::NUCLEAR_EXPLOSION)
 	{
+		if (*m_recvExplosionSkill == true)
+			return;
+
+		*m_recvExplosionSkill = true;
+
 		effectPos.y -= 150.f;
-		CreateSkill(L"Yellow", effectPos, Vec3{ 150.f }, 1.f, 1.f);
-		CreateSkill(L"White", effectPos, Vec3{ 110.f }, 1.f, 2.f);
-		CreateSkill(L"Red", effectPos, Vec3{ 70.f }, 1.f, 3.5f);
+		CreateSkill(L"Yellow", effectPos, Vec3{ 650.f }, 1.f, 1.f);
+		CreateSkill(L"White", effectPos, Vec3{ 610.f }, 1.f, 2.f);
+		CreateSkill(L"Red", effectPos, Vec3{ 570.f }, 1.f, 3.5f);
+
+		if (playSound == true)
+			GET_SINGLE(CSoundMgr)->PlayEffect(L"Nuclear Explosion.ogg");
 
 		return;
 	}
 	else if (effectType == server::EFFECT_TYPE::SPELL_EXPLOSION)
 	{
+		if (*m_recvExplosionSkill == true)
+			return;
+
+		*m_recvExplosionSkill = true;
+
 		int32_t id{ packet.ReadID() };
 		auto bossObjects{ GetBoss() };
 		std::shared_ptr<CGameObject> boss{ nullptr };
@@ -3046,9 +3489,12 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 		effectPos -= look * 500.f;
 		effectPos.y -= 50.f;
 
-		CreateSkill(L"Yellow", effectPos, Vec3{ 150.f }, 1.f, 1.f);
-		CreateSkill(L"White", effectPos, Vec3{ 110.f }, 1.f, 2.f);
-		CreateSkill(L"Red", effectPos, Vec3{ 70.f }, 1.f, 3.5f);
+		CreateSkill(L"Yellow", effectPos, Vec3{ 900.f }, 1.f, 1.f);
+		CreateSkill(L"White", effectPos, Vec3{ 800.f }, 1.f, 2.f);
+		CreateSkill(L"Red", effectPos, Vec3{ 740.f }, 1.f, 3.5f);
+
+		if (playSound == true)
+			GET_SINGLE(CSoundMgr)->PlayEffect(L"Spell Explosion.ogg");
 
 		return;
 	}
@@ -3069,6 +3515,14 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 
 		if (m_hitEffectCurrentIndex == m_hitEffectStartIndex + 5)
 			m_hitEffectCurrentIndex = m_hitEffectStartIndex;
+	}
+	else if (effectType == server::EFFECT_TYPE::IMPACT15)
+	{
+		GET_SINGLE(EffectManager)->SetBillBoardInfo(m_impact15CurrentIndex, effectPos, info.scale, info.speed, info.alpha);
+		GET_SINGLE(EffectManager)->PlayBillBoard(m_impact15CurrentIndex++);
+
+		if (m_impact15CurrentIndex == m_impact15StartIndex + 5)
+			m_impact15CurrentIndex = m_impact15StartIndex;
 	}
 	else
 	{
@@ -3124,22 +3578,6 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 			}
 		}
 		break;
-		case server::SOUND_TYPE::NUCLEAR_EXPLOSION:
-		{
-			if (playSound == true)
-			{
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Nuclear Explosion.ogg");
-			}
-		}
-		break;
-		case server::SOUND_TYPE::SPELL_EXPLOSION:
-		{
-			if (playSound == true)
-			{
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Spell Explosion.ogg");
-			}
-		}
-		break;
 		case server::SOUND_TYPE::LANDING:
 		{
 			if (playSound == true)
@@ -3164,47 +3602,97 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 	{
 		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI1:
 		{
+			if (m_oneTimeDialogueScript["PILLAR_HINT2"]->IsRendering() == true)
+				return;
+
 			m_oneTimeDialogueScript["PILLAR_HINT2"]->StartRender(1.f, 2.f);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI2:
 		{
+			if (m_oneTimeDialogueScript["WEEPER_HINT"]->IsRendering() == true)
+				return;
+
 			m_oneTimeDialogueScript["WEEPER_HINT"]->StartRender(1.f, 2.f);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI3:
 		{
+			if (m_oneTimeDialogueScript["GOLEM_HINT"]->IsRendering() == true)
+				return;
+
 			m_oneTimeDialogueScript["GOLEM_HINT"]->StartRender(1.f, 2.f);
+		}
+		break;
+		case server::TRIGGER_INTERACTION_TYPE::GUIDE_UI4:
+		{
+			if (m_oneTimeDialogueScript["WEEPER_CAST4_HINT"]->IsRendering() == true)
+				return;
+
+			m_oneTimeDialogueScript["WEEPER_CAST4_HINT"]->StartRender(1.f, 2.f);
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT:
 		{
-			m_fadeScript->FadeOut();
+			if (*m_recvFadeOut == true)
+				return;
 
-			GET_SINGLE(CSoundMgr)->StopBGMSound();
-			GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+			*m_recvFadeOut = true;
+
+			m_fadeScript->FadeOut();
+			m_fadeUIScript->FadeOut();
+
+			if (playMusic == true)
+			{
+				GET_SINGLE(CSoundMgr)->StopBGMSound();
+				GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT:
 		{
-			m_fadeScript->FadeOut();
+			if (*m_recvFadeOut == true)
+				return;
 
-			GET_SINGLE(CSoundMgr)->StopBGMSound();
-			GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+			*m_recvFadeOut = true;
+
+			m_fadeScript->FadeOut();
+			m_fadeUIScript->FadeOut();
+
+			if (playMusic == true)
+			{
+				GET_SINGLE(CSoundMgr)->StopBGMSound();
+				GET_SINGLE(CSoundMgr)->PlayBGM(L"World.ogg");
+			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT:
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT:
 		{
+			if (*m_recvFadeOut == true)
+				return;
+
+			*m_recvFadeOut = true;
+
 			m_fadeScript->FadeOut();
+			m_fadeUIScript->FadeOut();
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT:
 		{
-			m_fadeScript->FadeOut();
+			if (*m_recvFadeOut == true)
+				return;
 
-			GET_SINGLE(CSoundMgr)->StopBGMSound();
-			GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+			*m_recvFadeOut = true;
+
+			m_fadeScript->FadeOut();
+			m_fadeUIScript->FadeOut();
+
+			if (playMusic == true)
+			{
+				GET_SINGLE(CSoundMgr)->StopBGMSound();
+				GET_SINGLE(CSoundMgr)->PlayBGM(L"Battle.ogg");
+			}
 		}
 		break;
 		default:
@@ -3223,46 +3711,76 @@ void Scene_Test::TriggerInteractionCount(network::CPacket& packet)
 	{
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::FirstBoss);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::Cave);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::SecondRoom_Bridge_SecondBoss);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::ThirdRoom_RockRolling);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN:
 		{
-			if (m_portalUIScript->GetCount() == 3)
+			if (m_portalUIScript->GetCount() == 2)
 			{
+				if (*m_recvFadeIn == true)
+					return;
+
+				*m_recvFadeIn = true;
+
 				m_fadeScript->FadeIn();
 				m_fadeScript->SetMapType(MAP_TYPE::LastBoss_TreasureRoom);
+				m_fadeUIScript->FadeIn();
 			}
 		}
 		break;
@@ -3280,6 +3798,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		// 아티팩트 파괴 후 보호막 사라지는 신
 		case server::CUT_SCENE_TYPE::SCENE1:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
+
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 
 			for (auto& script : m_artifactMagicScript)
@@ -3293,6 +3814,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		// 기둥을 처음 발견해서 기둥의 보호막을 보여주는 신
 		case server::CUT_SCENE_TYPE::SCENE2:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
+
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 			m_oneTimeDialogueScript["PILLAR_HINT"]->StartRender(3.f, 5.f);
 		}
@@ -3300,42 +3824,70 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 		// 메테오에 기둥이 넘어지는 신
 		case server::CUT_SCENE_TYPE::SCENE3:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
+
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
 		// 돌덩이가 굴러가서 벽돌 벽을 부수는 신
 		case server::CUT_SCENE_TYPE::SCENE4:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
+
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 		}
 		break;
+		// Weeper 등장 컷신
 		case server::CUT_SCENE_TYPE::SCENE5:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
+			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+
+			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
+			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
 		}
 		break;
+		// Golem 등장 컷신
 		case server::CUT_SCENE_TYPE::SCENE6:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
+			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+
+			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
+			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE7:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE8:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE9:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE10:
 		{
+			if (m_cinematicScript->IsPlaying() == true)
+				return;
 
 		}
 		break;

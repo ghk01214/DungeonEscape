@@ -14,6 +14,7 @@
 
 #pragma region [EFFECT]
 #include "Magic_Artifact_Script.h"
+#include "WeeperEffect_Script.h"
 #pragma endregion
 
 #pragma region [OBJECTS]
@@ -28,6 +29,7 @@
 #include "SliderTip_Script.h"
 #include "VolumeSlider_Script.h"
 #include "BossHP_Script.h"
+#include "BossWarning_Script.h"
 
 #include "InfoUI_Script.h"
 #include "PortalUI_Script.h"

@@ -6,8 +6,8 @@
 #include "Timer.h"
 #include "MeshData.h"
 
-Movement_Script::Movement_Script() :
-	m_curSenematic{ 4 }
+Movement_Script::Movement_Script(int32_t index) :
+	m_curSenematic{ index }
 {
 }
 
@@ -21,7 +21,8 @@ void Movement_Script::Awake()
 
 void Movement_Script::Start()
 {
-	m_vPosition = Vec3(6000.f, 1000.f, 20000.f);
+	//m_vPosition = Vec3(6000.f, 1000.f, 20000.f);
+	m_vPosition = Vec3{ 16220.f, -3700.f, 41560.f };
 }
 
 void Movement_Script::Update()
@@ -65,6 +66,14 @@ void Movement_Script::Update()
 	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::D))
 	{
 		movement += matWorld.Right() * m_speed * DELTA_TIME;
+	}
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::Q))
+	{
+		movement += matWorld.Up() * m_speed * DELTA_TIME;
+	}
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::E))
+	{
+		movement += matWorld.Down() * m_speed * DELTA_TIME;
 	}
 
 	m_vPosition = transform->GetWorldPosition() + movement;

@@ -186,6 +186,12 @@
     <Filter Include="소스 파일\Objects\01. UI\PopUp\Input">
       <UniqueIdentifier>{10409053-67c1-4df9-b7d6-3c908abf358d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\BossUI\Warning">
+      <UniqueIdentifier>{ad03454e-bf98-40e0-8357-8fc1ee5e07db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\03. Monster\Boss\Weeper\Effect">
+      <UniqueIdentifier>{8f146ce7-a65f-49a0-9207-adc9b0cecc92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -356,6 +362,12 @@
     <ClInclude Include="InputString_Script.h">
       <Filter>소스 파일\Objects\01. UI\PopUp\Input</Filter>
     </ClInclude>
+    <ClInclude Include="BossWarning_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Warning</Filter>
+    </ClInclude>
+    <ClInclude Include="WeeperEffect_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -520,6 +532,12 @@
     </ClCompile>
     <ClCompile Include="InputString_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\PopUp\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="BossWarning_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Warning</Filter>
+    </ClCompile>
+    <ClCompile Include="WeeperEffect_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Effect</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

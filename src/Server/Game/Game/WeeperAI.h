@@ -26,7 +26,7 @@ class WeeperAI : public MonsterAI
 {
 	friend class Weeper;
 public:
-	WeeperAI(Weeper* weeper);
+	WeeperAI(Weeper* weeper, float checkRange);
 	~WeeperAI();
 public:
 	void Init();

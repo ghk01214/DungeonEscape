@@ -7,7 +7,7 @@
 #define SOUND_DEFAULT 0.5f
 #define SOUND_WEIGHT 0.1f
 
-#define MAX_EFFECT_CHANNEL 10
+#define MAX_EFFECT_CHANNEL 100
 
 class CSoundMgr
 {

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MonsterAI.h"
 #include "Monster.h"
 #include "MonsterSkill.h"
@@ -21,7 +21,8 @@ using namespace physx;
 MonsterAI::MonsterAI(Monster* monster) :
 	m_monster(monster),
 	m_detectRange(500000.f),
-	m_targetPos_UpdateInterval(0.5f)
+	m_targetPos_UpdateInterval(0.5f),
+	m_checkRange{ 3000.f }
 {
 }
 
@@ -274,6 +275,26 @@ float MonsterAI::GetXZDistance()
 	return between.magnitude();
 }
 
+physx::PxVec3 MonsterAI::GetCounterEffectPosition()
+{
+	physx::PxVec3 currentPos = TO_PX3(m_monster->GetControllerPosition());
+	physx::PxVec3 currentDir = TO_PX3(m_monsterLook);
+
+
+	//float weeperDistance = 100.f;
+	//float goelemDistance = 200.f;
+	float monsterDistance = 0.f;
+
+	//if (m_monster->GetName() == L"Golem")
+	//	monsterDistance = goelemDistance;
+	//else if (m_monster->GetName() == L"Weeper")
+	//	monsterDistance = weeperDistance;
+
+	currentPos += currentDir * monsterDistance;
+
+	return currentPos;
+}
+
 std::vector<Player*> MonsterAI::SkillRangeCheck_OverlapObject(std::string scheduleName, OverlapObject* overlapObj)
 {
 	auto physDevice = PhysDevice::GetInstance();
@@ -383,7 +404,7 @@ void MonsterAI::MonsterStart()
 		if (player)
 		{
 			physx::PxVec3 between = TO_PX3(m_monster->GetControllerPosition()) - TO_PX3(player->GetControllerPosition());
-			if (between.magnitude() < 3300.f)			//플레이어와의 거리 체크
+			if (between.magnitude() < m_checkRange)			//플레이어와의 거리 체크
 			{
 				m_start = true;
 				SetAIWait(false);
@@ -476,4 +497,13 @@ physx::PxQuat MonsterAI::GetRotation_For_Pattern(physx::PxVec3 xzDir)
 	physx::PxQuat rotation(rotAngle, rotAxis);
 
 	return rotation;
+}
+
+void MonsterAI::BossPatternUIStart(server::TRIGGER_INTERACTION_TYPE type)
+{
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	ev.objID = m_monster->GetID();
+	ev.integer = magic_enum::enum_integer(type);
+
+	game::MessageHandler::GetInstance()->PushSendMessage(ev);
 }

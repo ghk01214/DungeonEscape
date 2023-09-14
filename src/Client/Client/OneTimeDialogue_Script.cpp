@@ -86,7 +86,6 @@ void OneTimeDialogue_Script::Update()
 	for (uint32_t i = 0; i < size; ++i)
 	{
 		GetMeshRenderer()->GetMaterial(i)->SetFloat(2, m_alpha);
-		//GetMeshRenderer()->GetMaterial(i)->SetTexture(0, m_textures[m_curTextureCount]);
 	}
 }
 

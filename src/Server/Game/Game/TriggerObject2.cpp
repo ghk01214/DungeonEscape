@@ -99,7 +99,12 @@ void TriggerObject2::Handle_Overlap()
 		m_beforeCnt = m_currentCnt;
 
 		if (m_attribute < TRIGGERATTRIBUTE::GUIDELINE1)
-			ServerSendInteractionCountMessage();
+		{
+			for (int32_t i = 0; i < SEND_AGAIN; ++i)
+			{
+				ServerSendInteractionCountMessage();
+			}
+		}
 
 		if (m_attribute == TRIGGERATTRIBUTE::CUTSCENE4)
 			AttributeGimmik2();
@@ -134,13 +139,13 @@ void TriggerObject2::AttributePortal(double timeDelta)
 
 	string name = string(magic_enum::enum_name(m_attribute));
 
-	if (m_duplicates.size() < 3)
+	if (m_duplicates.size() < 2)
 	//if (m_duplicates.empty())
 	{
 		EventHandler::GetInstance()->DeleteEvent(name);
 		return;
 	}
-	else if (m_duplicates.size() == 3)
+	else if (m_duplicates.size() == 2)
 	{
 		EventHandler::GetInstance()->AddEventIfNone(name, m_requestedContactTime, this);
 		return;
@@ -170,9 +175,8 @@ void TriggerObject2::Attribute_BossCutscene_0()
 	}
 
 	m_deactivate = true;
-	
+	SetRemoveReserved();
 	//클라이언트에게 컷씬 알림을 보내려면 여기에.
-
 }
 
 void TriggerObject2::Attribute_BossCutscene_1()
@@ -188,14 +192,14 @@ void TriggerObject2::Attribute_BossCutscene_1()
 	{
 		if (m->GetName() == L"Golem")
 		{
-			auto golem = dynamic_cast<Golem*>(m);				
-			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_ROAR", 0.5f, golem);		//ROAR 애니메이션 재생 시간 2.33
-			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 2.82f, golem);		//ROAR > IDLE로 애니메이션 진행
+			auto golem = dynamic_cast<Golem*>(m);
+			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_ROAR", 4.f, golem);		//ROAR 애니메이션 재생 시간 2.33
+			EventHandler::GetInstance()->AddEvent("ANIM_TO_GOLEM_IDLE", 6.32f, golem);		//ROAR > IDLE로 애니메이션 진행
 		}
 	}
 
 	m_deactivate = true;
-
+	SetRemoveReserved();
 	//클라이언트에게 컷씬 알림을 보내려면 여기에.
 }
 
@@ -223,7 +227,11 @@ void TriggerObject2::SendPlayers()
 
 	// 서버가 클라이언트에게 너희들을 이동시켰다고 알려줘야한다.
 	// 이 코드가 플레이어를 이동시키므로 그동안 렌더링 로드/삭제 + 페이드 인, 아웃하면 된다.
-	ServerSendPortalOutMessage();
+
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		ServerSendPortalOutMessage();
+	}
 }
 
 std::vector<Player*> TriggerObject2::OverlapCheck_Player()
@@ -306,14 +314,22 @@ bool TriggerObject2::Apply(Player* player)
 	{
 		//cout << "attribute once" << endl;
 
-		ServerSendInMessage(player);
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			ServerSendInMessage(player);
+		}
+
 		return true;
 	}
 	else
 	{
 		//cout << "attribute loop" << endl;
 
-		ServerSendInMessage(player);
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			ServerSendInMessage(player);
+		}
+
 		return false;
 	}
 }
@@ -373,16 +389,12 @@ void TriggerObject2::ServerSendInMessage(Player* player)
 		break;
 		case TRIGGERATTRIBUTE::CUTSCENE5:
 		{
-			m_deactivate = true;
-			SetRemoveReserved();
-			//ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE5);
+			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE5);
 		}
 		break;
 		case TRIGGERATTRIBUTE::CUTSCENE6:
 		{
-			m_deactivate = true;
-			SetRemoveReserved();
-			//ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE6);
+			ServerSendCutSceneMessage(server::CUT_SCENE_TYPE::SCENE6);
 		}
 		break;
 		case TRIGGERATTRIBUTE::PORTAL1:

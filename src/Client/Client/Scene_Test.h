@@ -43,10 +43,30 @@ private:
 		MAX
 	};
 
+	enum FONT_TYPE
+	{
+		MY_NAME = -1,
+		PARTY1,
+		PARTY2,
+		PARTY3,
+		WEEPER,
+		GOLEM,
+
+		MAX2
+	};
+
 	struct UITransform
 	{
 		Vec2 pos;
 		Vec2 scale;
+	};
+
+	struct FontInfo
+	{
+		Vec2 pos;
+		Vec2 scale;
+		bool render;
+		std::wstring str;
 	};
 
 public:
@@ -88,13 +108,14 @@ private:
 	std::vector<std::shared_ptr<CGameObject>> CreateMapObject(ObjectDesc& objectDesc);
 	std::vector<std::shared_ptr<CGameObject>> CreateAnimatedObject(ObjectDesc& objectDesc);
 	void CreateFade(std::shared_ptr<CScene> pScene);
+	std::vector<std::shared_ptr<class WeeperEffect_Script>> CreateWeeperCast4Effect();
 
 private:
 	void PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects);
 
 private:
 	void CreatePlayerUI(server::FBX_TYPE character);
-	void CreatePlayerImage(server::FBX_TYPE character);
+	Vec2 CreatePlayerImage(server::FBX_TYPE character);
 	void CreatePlayerImage(server::FBX_TYPE character, UITransform& hpTransform);
 	void CreatePlayerName(const std::wstring& name);
 	void CreatePlayerHPBar(float yPos, UITransform& hpTransform);
@@ -109,6 +130,7 @@ private:
 	void CreateBossUI(server::FBX_TYPE boss, int32_t hp);
 	void CreateBossHPBar(UITransform& trans, server::FBX_TYPE boss, int32_t hp);
 	void CreateBossClassIcon(UITransform& trans, server::FBX_TYPE boss);
+	void CreateBossWarning();
 
 	void CreateOneTimeDialogue();
 
@@ -125,7 +147,9 @@ private:
 	void ChangePopUpVisibility();
 	void ChangeVolume();
 	void ChangeMuteTexture();
+	void ChangePlayerUIVisibility();
 	void ChangeBossUIVisibility();
+	void RenderFont();
 
 private:
 	void SendKeyInput();
@@ -145,6 +169,7 @@ private:
 	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
 	void AddEffectTextures();
+	void RenderPortalEffect();
 
 private:
 	void CheckMapMove(void);
@@ -196,9 +221,18 @@ private:
 	uint32_t m_wpDarkBlueEffectStartIndex;
 	uint32_t m_wpDarkBlueEffectCurrentIndex;
 
+	uint32_t m_circleFlameYellowStartIndex;
+	uint32_t m_circleFlameYellowCurrentIndex;
+
+	uint32_t m_impact15StartIndex;
+	uint32_t m_impact15CurrentIndex;
+
+	std::vector<std::shared_ptr<class Bomb_Script>> m_skillObject;
+
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;
 	std::shared_ptr<Fade_Script> m_fadeScript;
+	std::shared_ptr<Fade_Script> m_fadeUIScript;
 	std::shared_ptr<PortalUI_Script> m_portalUIScript;
 	std::shared_ptr<Cinematic_Script> m_cinematicScript;
 
@@ -218,6 +252,17 @@ private:
 	std::vector<std::shared_ptr<CGameObject>> m_golemUIObjets;
 	std::shared_ptr<class BossHP_Script> m_weeperHPScript;
 	std::shared_ptr<class BossHP_Script> m_golemHPScript;
+	std::vector<std::shared_ptr<class BossWarning_Script>> m_bossWarningScript;
+
+	std::vector<std::shared_ptr<CGameObject>> m_playerUIObjects;
 
 	bool m_openSetting;
+
+private:
+	std::shared_ptr<bool> m_recvFadeIn;
+	std::shared_ptr<bool> m_recvFadeOut;
+	std::shared_ptr<bool> m_recvExplosionSkill;
+
+private:
+	std::unordered_map<FONT_TYPE, FontInfo> m_font;
 };

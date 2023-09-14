@@ -184,7 +184,7 @@ void Scene_CharacterSelection::CreateCharacterNameButton()
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
 		auto transform{ obj->GetTransform() };
-		Vec2 pos{ GetRatio(45.f * (2 * i - 1), -65.f)};
+		Vec2 pos{ GetRatio(45.f * (2 * i - 1), -65.f) };
 		//pos.x = -(width / 2.f) + (width / 3.f) * i + (width / 6.f);
 
 		transform->SetLocalScale(Vec3{ 257.f * 1.2f, 95.f, 1.f });
@@ -464,11 +464,15 @@ void Scene_CharacterSelection::ChangePopUpVisibility()
 
 		SetUIActive(true);
 
-		m_characterDescription[m_descriptionIndex]->GetUI()->SetVisible(false);
-		m_characterDescription[m_descriptionIndex + 3]->GetUI()->SetVisible(false);
-		//m_characterDescription[m_descriptionIndex + 6]->GetUI()->SetVisible(false);
+		if (m_descriptionIndex != -1)
+		{
+			m_characterDescription[m_descriptionIndex]->GetUI()->SetVisible(false);
+			m_characterDescription[m_descriptionIndex + 2]->GetUI()->SetVisible(false);
+			//m_characterDescription[m_descriptionIndex + 4]->GetUI()->SetVisible(false);
+			m_descriptionIndex = -1;
+		}
+
 		m_closeButton->SetClosePopUpFlag(false);
-		m_descriptionIndex = -1;
 		m_popUpActive = false;
 
 		return;
@@ -510,7 +514,7 @@ void Scene_CharacterSelection::ChangePopUpVisibility()
 	}
 
 	m_characterDescription[index]->GetUI()->SetVisible(true);
-	m_characterDescription[index + 3]->GetUI()->SetVisible(true);
+	m_characterDescription[index + 2]->GetUI()->SetVisible(true);
 	//m_characterDescription[index + 6]->GetUI()->SetVisible(true);
 
 	m_descriptionIndex = index;

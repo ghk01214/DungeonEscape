@@ -10,10 +10,11 @@
 
 using namespace std;
 
-WeeperAI::WeeperAI(Weeper* weeper) :
+WeeperAI::WeeperAI(Weeper* weeper, float checkRange) :
 	MonsterAI(weeper),
 	m_weeper(weeper)
 {
+	m_checkRange = checkRange;
 }
 
 WeeperAI::~WeeperAI()
@@ -200,7 +201,7 @@ void WeeperAI::ExecuteSchedule(float deltaTime)
 				ReportSchedule();
 
 				QuatUpdateForClient();
-
+				EventHandler::GetInstance()->AddEvent("CAST4_EFFECT_START", 1.f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_CAST4_LOOP", 2.73f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("WEEPER_CAST4", 2.73f, m_weeper);
 			}
@@ -253,6 +254,7 @@ void WeeperAI::DamageCheck()
 		{
 			//CAST2_SCATTER_BREAKDOWN 이벤트에서 호출됨 : 불필요 이벤트 삭제 필요.
 			m_weeper->SetState(Weeper::WEEPER_STATE::TAUNT);
+			EventHandler::GetInstance()->AddEvent("COUNTEREFFECT_WEEPER", 0.1f, m_weeper);
 			EventHandler::GetInstance()->AddEvent("WEEPER_COUNTERSTAGGER_END", 5.f, m_weeper);
 			EventHandler::GetInstance()->DeleteEvent("CAST2_VULNERABLE_OFF");
 			Cast2Vulnerable_OFF();
@@ -273,6 +275,8 @@ void WeeperAI::DamageCheck()
 				EventHandler::GetInstance()->AddEvent("ANIM_END_IF_CAST4END", 4.06f, m_weeper);
 				EventHandler::GetInstance()->AddEvent("MONSTER_MOBILE", 4.06f, m_weeper);
 				EventHandler::GetInstance()->DeleteEvent("WEEPER_CAST4");
+
+				EventHandler::GetInstance()->AddEvent("CAST4_EFFECT_END", 0.1f, m_weeper);
 			}
 		}
 	}
@@ -329,11 +333,10 @@ void WeeperAI::BossPatternUIStart()
 	// UI : 사신이 강력한 공격을 준비한다. 물러날지, 반격의 기회를 노릴지 선택해야한다.
 	cout << "BossPatternUIStart_WEEPER" << endl;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
-	ev.objID = m_monster->GetID();
-	ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::GUIDE_UI2);
-
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		MonsterAI::BossPatternUIStart(server::TRIGGER_INTERACTION_TYPE::GUIDE_UI2);
+	}
 }
 
 void WeeperAI::BossPatternUIEnd()

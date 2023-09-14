@@ -55,6 +55,10 @@ void TestLevel::Init()
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRANSFORM_ACK, 0 };
+	ev.objType = server::OBJECT_TYPE::NONE;
+	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
 }
 
 void TestLevel::LateUpdate(double timeDelta)
@@ -416,7 +420,7 @@ void TestLevel::LoadTriggerObject()
 	auto scene5Pos{ PORTAL1_EXIT };
 	scene5Pos.y += 50.f;
 
-	auto CutScene5Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", scene5Pos, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true)};
+	auto CutScene5Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", scene5Pos, Quat(0, 0, 0, 1), Vec3(1500.f, 500.f, 500.f), true)};
 	auto CutScene5Body{ CutScene5Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene5Body->AddCollider<BoxCollider>(CutScene5Obj->GetTransform()->GetScale());
 	CutScene5Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE5);
@@ -424,7 +428,7 @@ void TestLevel::LoadTriggerObject()
 	auto scene6Pos{ PORTAL5_EXIT };
 	scene6Pos.y += 50.f;
 
-	auto CutScene6Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", scene6Pos, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true)};
+	auto CutScene6Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", scene6Pos, Quat(0, 0, 0, 1), Vec3(1500.f, 500.f, 500.f), true)};
 	auto CutScene6Body{ CutScene6Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene6Body->AddCollider<BoxCollider>(CutScene6Obj->GetTransform()->GetScale());
 	CutScene6Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE6);
