@@ -71,16 +71,7 @@ void Monster_Weeper::CheckState()
 		m_aniEnd = false;
 	}
 
-	if (m_currState == CAST4_START)
-	{
-		m_cast4UI->StartRender(1.f, 2.f);
-
-		for (auto& script : m_cast4EffectScripts)
-		{
-			script->FadeIn(1.f);
-		}
-	}
-	else if (m_currState == CAST4_END)
+	if (m_currState == CAST4_END)
 	{
 		for (auto& script : m_cast4EffectScripts)
 		{
@@ -145,7 +136,19 @@ void Monster_Weeper::UpdateFrameOnce()
 	}
 
 	if (m_aniEnd == false)
+	{
 		ani->PlayNextFrame();
+
+		if (m_currState == CAST4_START and GetAnimator()->GetAnimFrame() == 40)
+		{
+			m_cast4UI->StartRender(1.f, 2.f);
+
+			for (auto& script : m_cast4EffectScripts)
+			{
+				script->FadeIn(0.5f);
+			}
+		}
+	}
 }
 
 void Monster_Weeper::ParsePackets()

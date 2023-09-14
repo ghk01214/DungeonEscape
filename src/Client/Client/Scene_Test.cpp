@@ -777,7 +777,7 @@ std::vector<std::shared_ptr<WeeperEffect_Script>> Scene_Test::CreateWeeperCast4E
 		script->SetTexture(textures);	// 텍스쳐 정보
 		script->SetSize(Vec2{ 300.f });	// 텍스쳐의 크기
 
-		script->SetDistanceFromPoint(200.f);	// 중점으로부터 거리
+		script->SetDistanceFromPoint(300.f);	// 중점으로부터 거리
 		script->SetTargetPoint(Vec3{ 0.f });	// 중점 위치
 
 		script->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
