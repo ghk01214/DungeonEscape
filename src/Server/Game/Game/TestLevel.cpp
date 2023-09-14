@@ -286,7 +286,7 @@ void TestLevel::LoadMapObject()
 
 	FBXMapLoader rockLoader;
 	rockLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	rockLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\LastBossRock.fbx");
+	rockLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\LastBossRock.fbx");
 
 	auto& rockInfo = rockLoader.GetMapObjectInfo();
 	for (auto& info : rockInfo)

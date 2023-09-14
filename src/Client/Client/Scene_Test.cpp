@@ -2709,13 +2709,6 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 				m_spiralEffectCurrentIndex = m_spiralEffectStartIndex;
 		}
 		break;
-		case server::FBX_TYPE::WEEPER_CAST4_BALL:
-		{
-			objectDesc.strName = L"Weeper Cast4";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Stone Bullet2.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-		}
-		break;
 		case server::FBX_TYPE::MONSTER_ICEBALL:
 		{
 			objectDesc.strName = L"Sphere";
@@ -2734,13 +2727,6 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_DARKBALL:
-		{
-			objectDesc.strName = L"Stone Bullet2";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
 			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
 		}
 		break;
