@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -55,6 +55,10 @@ void TestLevel::Init()
 void TestLevel::Update(double timeDelta)
 {
 	game::MessageHandler::GetInstance()->ExecuteMessage();
+
+	game::TIMER_EVENT ev{ ProtocolID::WR_TRANSFORM_ACK, 0 };
+	ev.objType = server::OBJECT_TYPE::NONE;
+	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
 }
 
 void TestLevel::LateUpdate(double timeDelta)

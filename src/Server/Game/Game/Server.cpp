@@ -884,8 +884,8 @@ namespace game
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
 			{
-				if (postOver->objType == server::OBJECT_TYPE::PLAYER)
-				{
+				//if (postOver->objType == server::OBJECT_TYPE::PLAYER)
+				//{
 					for (auto& player : playerObjects)
 					{
 						auto pl{ dynamic_cast<Player*>(player) };
@@ -965,9 +965,9 @@ namespace game
 							client->SendTransformPacket(rock);
 						}
 					}
-				}
-				else if (postOver->objType == server::OBJECT_TYPE::BOSS)
-				{
+				//}
+				/*else if (postOver->objType == server::OBJECT_TYPE::BOSS)
+				{*/
 					for (auto& monster : monsterObjects)
 					{
 						auto mob{ dynamic_cast<Monster*>(monster) };
@@ -983,7 +983,7 @@ namespace game
 							client->SendTransformPacket(mob, 50.f);
 						}
 					}
-				}
+				//}
 
 				for (auto& skillObject : skillObjects)
 				{
