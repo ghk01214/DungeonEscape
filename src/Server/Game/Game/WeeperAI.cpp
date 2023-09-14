@@ -322,6 +322,7 @@ bool WeeperAI::DeathHandle()
 		m_weeper->m_currState = Weeper::WEEPER_STATE::DEATH;
 		EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_DEAD", 4.15f, m_weeper);
 		EventHandler::GetInstance()->AddEvent("SINK_WEEPER", 3.9f, m_weeper);
+		EventHandler::GetInstance()->AddEvent("WEEPER_SIMULATE_STOP", 8.f, m_weeper);
 		return true;
 	}
 

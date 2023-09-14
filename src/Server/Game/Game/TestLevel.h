@@ -37,5 +37,8 @@ public:
 	virtual void Update(double timeDelta) override;
 	virtual void LateUpdate(double timeDelta) override;
 	virtual void Release() override;
+
+public:
+	void ParticleTest();
 };
 

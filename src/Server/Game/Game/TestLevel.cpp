@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -20,6 +20,7 @@
 #include "FBXMapLoader.h"
 #include "TriggerObject2.h"
 #include "ArtifactObject.h"
+#include "ParticleObject.h"
 
 //#define DEBUG_MAP
 
@@ -46,10 +47,12 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_TriggerObject");
 	objmgr->AddLayer(L"Layer_LastBossRock");
 
+	objmgr->AddLayer(L"Layer_Particle");
+
 	//LoadBasicMap4();
 
-	LoadUnit_DebugMode();
-	LoadMap();
+	//LoadUnit_DebugMode();
+	//LoadMap();
 }
 
 void TestLevel::Update(double timeDelta)
@@ -59,6 +62,10 @@ void TestLevel::Update(double timeDelta)
 	game::TIMER_EVENT ev{ ProtocolID::WR_TRANSFORM_ACK, 0 };
 	ev.objType = server::OBJECT_TYPE::NONE;
 	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
+
+
+
+	ParticleTest();
 }
 
 void TestLevel::LateUpdate(double timeDelta)
@@ -67,6 +74,25 @@ void TestLevel::LateUpdate(double timeDelta)
 
 void TestLevel::Release(void)
 {
+}
+
+void TestLevel::ParticleTest()
+{
+	static bool keyState = false;
+
+
+	bool isKeyPressed = GetAsyncKeyState('P') & 0x8000;
+
+	if (isKeyPressed && !keyState) {
+		ParticleObject::Summon(physx::PxVec3(0, 0, 200), 500.f, 1.5f, 2.f);
+		ParticleObject::Summon(physx::PxVec3(-300, 0, 200), 500.f, 1.5f, 2.f);
+			keyState = true;  // 'P' 키가 눌렸음을 표시
+	}
+	else if (!isKeyPressed) {
+			keyState = false;  // 'P' 키가 떨어짐을 표시
+	}
+
+
 }
 
 void TestLevel::LoadUnit_DebugMode()
@@ -226,7 +252,7 @@ void TestLevel::LoadBasicMap4()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(0, 200, -42), Quat(0, 0, 0, 1), Vec3(75,75,75));
+	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(0, 200, -42), Quat(0, 0, 0, 1), Vec3(75,75,75));
 
 	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, -42), Quat(0, 0, 0, 1), Vec3(9000, 2, 9000));
 	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");

@@ -67,7 +67,8 @@ enum PhysicsLayers
 	MONSTER						= 1 << 2,    // 4
 	SKILLOBJECT_PLAYER			= 1 << 3,    // 8
 	SKILLOBJECT_MONSTER			= 1 << 4,    // 16
-	PILLIAR						= 1 << 5     // 16
+	PILLIAR						= 1 << 5,    // 16
+	PARTICLE					= 1 << 6     // 32
 };
 
 enum class CollisionInfoType
