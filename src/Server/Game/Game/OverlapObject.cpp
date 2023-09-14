@@ -10,6 +10,8 @@
 #include "RaycastHit.h"
 #include "PhysDevice.h"
 #include "physx_utils.h"
+#include "ParticleObject.h"
+
 
 #include "MessageHandler.h"
 
@@ -130,6 +132,12 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		//playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
 
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_DISPERSAL);
+
+		for (int i = 0; i < 12; ++i)
+		{
+			ParticleObject::Summon(playerPos, 500.f, 1.5f, 2.f, 3.f);	//생성
+		}
+
 		ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);
 
 		return true;

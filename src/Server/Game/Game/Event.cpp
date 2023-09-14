@@ -14,6 +14,7 @@
 #include "EventHandler.h"
 #include "TriggerObject2.h"
 #include "ObjectManager.h"
+#include "ParticleObject.h"
 #include "MessageHandler.h"
 
 Event::Event(std::string context, double remainTime, GameObject* subject) :
@@ -386,6 +387,15 @@ void Event::ExecuteMsg_Once()
 		if (weeperObj)
 		{
 			weeperObj->Sink();
+		}
+	}
+	
+	if (msg == "WEEPER_SIMULATE_STOP")
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			weeperObj->GetController()->GetBody()->ExcludeFromSimulation(true);
 		}
 	}
 
@@ -766,6 +776,18 @@ void Event::ExecuteMsg_Once()
 		if (triggerObj)
 		{
 			triggerObj->ThrowGimmik2Ball();
+		}
+	}
+
+	//PARTICLE
+	if (msg == "REMOVE_PARTICLE")
+	{
+		auto particleObj = dynamic_cast<ParticleObject*>(target);
+		if (particleObj)
+		{
+			particleObj->ServerMessage_Release();
+			particleObj->SetRemoveReserved();
+			//파티클 삭제
 		}
 	}
 
