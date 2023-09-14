@@ -151,7 +151,6 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx");
 
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models2.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Pillar Bridge.fbx");
@@ -159,6 +158,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone1.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone2.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone3.fbx");
 
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\Orange.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\Red.fbx");
