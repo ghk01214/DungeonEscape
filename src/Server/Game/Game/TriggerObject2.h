@@ -27,7 +27,7 @@ public:
 		GUIDELINE1,			// 아티팩트가 부서지지 않은 상태에서 돌기둥에 다가갔을 때의 UI
 		GUIDELINE2,			// Weeper의 광역기 공격의 UI 알림
 		GUIDELINE3,			// Golem의 SPELL 공격의 UI 알림
-		GUIDELINE4,
+		GUIDELINE4,			// Weeper의 CAST4 공격의 UI 알림
 		GUIDELINE5,
 
 		CUTSCENE1,			// 아티팩트 파괴 후 보호막 사라질 때의 컷신
