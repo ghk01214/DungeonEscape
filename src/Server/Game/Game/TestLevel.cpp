@@ -264,7 +264,7 @@ void TestLevel::LoadMapObject()
 #ifdef DEBUG_MAP
 	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\ServerDebug.fbx");			// Map 로드
 #else // DEBUG_MAP
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server2.fbx");			// Map 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
 #endif
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
