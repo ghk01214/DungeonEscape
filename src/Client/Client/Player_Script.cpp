@@ -86,7 +86,7 @@ void Player_Script::CheckState()
 		case ATK2:
 		case ATK3:
 		{
-			if (m_playerType == server::FBX_TYPE::NANA)
+			if (m_playerType == server::FBX_TYPE::NANA and playSound == true)
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Sword.wav");
 
 			GetAnimator()->Play(m_currState);

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Monster_Golem.h"
 
 #include <Animator.h>
@@ -116,7 +116,7 @@ void Monster_Golem::UpdateFrameRepeat()
 	if (m_currState != STUN)
 		return;
 
-	if (GET_SINGLE(EffectManager)->GetPlayOnce(140) == false)
+	if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(140) == false)
 		return;
 
 	auto pos{ GetTransform()->GetWorldPosition() };

@@ -2812,6 +2812,7 @@ void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::sha
 
 void Scene_Test::AddEffectTextures()
 {
+#pragma [BILLBOARD]
 	EffectInfo effect;
 	effect.speed = 0.003f;
 	effect.scale = Vec3{ 500.f };
@@ -2984,7 +2985,8 @@ void Scene_Test::AddEffectTextures()
 			m_billboardInfo[server::EFFECT_TYPE::SPIRAL] = effect;
 		}
 	}
-
+#pragma endregion
+#pragma region [EFFECT]
 	for (int32_t i = 0; i < 4; ++i)
 	{
 		effect.index = GET_SINGLE(EffectManager)->CreateEffect(L"Effect_Circle_Flame", 0.003f);
@@ -2995,6 +2997,7 @@ void Scene_Test::AddEffectTextures()
 			m_circleFlameYellowCurrentIndex = effect.index;
 		}
 	}
+#pragma endregion
 }
 
 void Scene_Test::RenderPortalEffect()
@@ -3019,7 +3022,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.x -= 25.f;
 		pos.z += 300.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3027,7 +3030,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.z -= 300.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3037,7 +3040,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.z = 5415.f;
 		rotation.y += 90.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3045,7 +3048,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.x += 300.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3062,7 +3065,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.y = 50.f;
 		pos.z += 100.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3070,7 +3073,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.x += 750.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3080,7 +3083,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.z -= 750.f + 100.f;
 		rotation.y = 0.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3088,7 +3091,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.z += 750.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3104,7 +3107,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.y = -2600.f;
 		pos.z += 300.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3112,7 +3115,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.z -= 300.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3122,7 +3125,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.z = 37770.f;
 		rotation.y = 90.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3130,7 +3133,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.x += 300.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);

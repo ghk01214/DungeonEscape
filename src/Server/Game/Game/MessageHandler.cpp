@@ -139,7 +139,6 @@ namespace game
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
 				}
 				break;
-				case ProtocolID::WR_MONSTER_PATTERN_ACK:
 				case ProtocolID::WR_CHANGE_SOUND_ACK:
 				{
 					postOver.state = ev.state;

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 enum ProtocolBase : unsigned short
 {
@@ -100,9 +100,6 @@ enum class ProtocolID : unsigned short
 
 	WR_MONSTER_QUAT_REQ,
 	WR_MONSTER_QUAT_ACK,
-
-	WR_MONSTER_PATTERN_REQ,
-	WR_MONSTER_PATTERN_ACK,
 
 	WR_SKILL_HIT_REQ,
 	WR_SKILL_HIT_ACK,

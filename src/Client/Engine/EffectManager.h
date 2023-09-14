@@ -34,6 +34,7 @@ public:
 
 	uint32_t GetBillboardCount() { return m_billboardCount; }
 	const bool GetPlayOnce(uint32_t index) const;
+	const bool GetBillboardPlayOnce(uint32_t index) const;
 
 private:
 	vector<shared_ptr<CGameObject>> m_effectObjects;
