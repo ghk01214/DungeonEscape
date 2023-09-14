@@ -25,6 +25,7 @@ public:
 	void SetAlpha(float alpha);
 	void SetPassingTime(float time);
 	void SetActive(bool flag);
+	void SetWeeperLook(Vec3 look);
 
 	void FadeIn(float fadeSpeed);
 	void FadeOut(float fadeSpeed);
@@ -41,6 +42,7 @@ private:
 
 	Vec2 m_size;	// 텍스쳐의 사이즈
 	Vec3 m_targetPos;	// 중점
+	Vec3 m_weeperLook;
 	float m_distanceFromPoint;	// 중점으로 부터 멀어진 거리
 	float m_rotation;	// 회전 각도
 	float m_rotationSpeed;	// 회전 스피드, 90.f면 초당 90.f 회전한다는 의미

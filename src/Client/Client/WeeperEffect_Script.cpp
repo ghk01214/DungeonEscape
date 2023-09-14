@@ -61,15 +61,12 @@ void WeeperEffect_Script::Update()
 	}
 
 	auto transform{ GetTransform() };
-	// look 방향으로 이동
-	//auto look{ transform->GetLook() };
-	//look.Normalize();
-	//m_targetPos -= look * 100.f;
 
 	// 크기 x 회전 x 이동 x 회전
 	transform->SetLocalScale(Vec3{ m_size.x, m_size.y, 1.f });
 	Matrix matWorld{ Matrix::CreateTranslation(Vec3{ 0.f, 0.f, -m_distanceFromPoint }) *
 					 Matrix::CreateRotationY(XMConvertToRadians(m_rotation)) *
+					 Matrix::CreateTranslation(m_weeperLook * 200.f) *
 					 Matrix::CreateTranslation(m_targetPos) };
 
 	// 월드 Matrix 세팅
@@ -198,6 +195,11 @@ void WeeperEffect_Script::SetPassingTime(float time)
 void WeeperEffect_Script::SetActive(bool flag)
 {
 	m_active = flag;
+}
+
+void WeeperEffect_Script::SetWeeperLook(Vec3 look)
+{
+	m_weeperLook = look;
 }
 
 void WeeperEffect_Script::FadeIn(float fadeSpeed)

@@ -205,6 +205,8 @@ void Monster_Weeper::ParsePackets()
 void Monster_Weeper::ChangeCast4EffectPos()
 {
 	auto pos{ GetTransform()->GetWorldPosition() };
+	auto look{ GetTransform()->GetLook() };
+	look.Normalize();
 	pos.y += 50.f;
 
 	if (m_currState == CAST4_LOOP)
@@ -213,6 +215,7 @@ void Monster_Weeper::ChangeCast4EffectPos()
 	for (auto& script : m_cast4EffectScripts)
 	{
 		script->SetTargetPoint(pos);
+		script->SetWeeperLook(-look);
 	}
 }
 
