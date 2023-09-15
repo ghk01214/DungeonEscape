@@ -84,7 +84,7 @@ void TestLevel::ParticleTest()
 	bool isKeyPressed = GetAsyncKeyState('P') & 0x8000;
 
 	if (isKeyPressed && !keyState) {
-		ParticleObject::Summon(physx::PxVec3(0, 0, 200), 500.f, 1.5f, 2.f, 3.f);
+		ParticleObject::Summon(physx::PxVec3(0, 0, 200), 500.f, 1.5f, 2.f, 1.f);
 			keyState = true;  // 'P' 키가 눌렸음을 표시
 	}
 	else if (!isKeyPressed) {
