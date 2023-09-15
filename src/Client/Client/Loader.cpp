@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
@@ -221,6 +221,11 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 
 	LOAD_TEXTURE(L"Slider Tip", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip.png");
 	LOAD_TEXTURE(L"Slider Tip Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip_mute.png");
+
+	LOAD_TEXTURE(L"Weeper Tutorial1", L"..\\Resources\\Texture\\UI\\In Game\\Weeper Tutorial1.png");
+	LOAD_TEXTURE(L"Weeper Tutorial2", L"..\\Resources\\Texture\\UI\\In Game\\Weeper Tutorial2.png");
+	LOAD_TEXTURE(L"Golem Tutorial1", L"..\\Resources\\Texture\\UI\\In Game\\Golem Tutorial1.png");
+	LOAD_TEXTURE(L"Golem Tutorial2", L"..\\Resources\\Texture\\UI\\In Game\\Golem Tutorial2.png");
 #pragma endregion
 
 	return S_OK;

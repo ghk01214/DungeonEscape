@@ -164,6 +164,7 @@
     <ClInclude Include="Bar_Script.h" />
     <ClInclude Include="BossCounterEffect_Script.h" />
     <ClInclude Include="BossHP_Script.h" />
+    <ClInclude Include="BossTutorial_Script.h" />
     <ClInclude Include="BossWarning_Script.h" />
     <ClInclude Include="Button_Script.h" />
     <ClInclude Include="DescriptionButton_Script.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="Bar_Script.cpp" />
     <ClCompile Include="BossCounterEffect_Script.cpp" />
     <ClCompile Include="BossHP_Script.cpp" />
+    <ClCompile Include="BossTutorial_Script.cpp" />
     <ClCompile Include="BossWarning_Script.cpp" />
     <ClCompile Include="Button_Script.cpp" />
     <ClCompile Include="DescriptionButton_Script.cpp" />

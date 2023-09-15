@@ -73,3 +73,8 @@ void CloseButton_Script::SetClosePopUpFlag(bool flag)
 {
 	m_closePopUp = flag;
 }
+
+void CloseButton_Script::SetVisible(bool flag)
+{
+	GetUI()->SetVisible(flag);
+}

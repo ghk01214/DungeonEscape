@@ -46,6 +46,7 @@ public:
 	void SetScript(shared_ptr<Camera_Basic> cameraBasicScript) { m_cameraBasicScript = cameraBasicScript; }
 
 	constexpr bool IsPlaying() const { return m_bPlay; }
+	constexpr int32_t GetCurrentScene() const { return m_currentScene; }
 
 private:
 	int m_currentScene = 0;

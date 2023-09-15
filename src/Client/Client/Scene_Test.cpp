@@ -44,9 +44,12 @@ Scene_Test::Scene_Test() :
 	m_cinematicScript{ nullptr },
 	m_closeButton{ nullptr },
 	m_openSetting{ false },
+	m_showWeeperTutorial{ false },
+	m_showGolemTutorial{ false },
 	m_recvFadeIn{ std::make_shared<bool>(false) },
 	m_recvFadeOut{ std::make_shared<bool>(false) },
-	m_recvExplosionSkill{ std::make_shared<bool>(false) }
+	m_recvExplosionSkill{ std::make_shared<bool>(false) },
+	m_renderFont{ true }
 {
 	auto pos{ GetRatio(-100.f, 75.f) };
 	Vec2 scale{ 100.f };
@@ -90,6 +93,7 @@ void Scene_Test::Update()
 	ChangeMuteTexture();
 	RenderFont();
 	RenderPortalEffect();
+	ShowBossTutorial();
 }
 
 void Scene_Test::LateUpdate()
@@ -1514,6 +1518,8 @@ void Scene_Test::CreatePopUp()
 	CreateBGMSlider();
 	CreateSEButton();
 	CreateSESlider();
+
+	CreateBossTutorial();
 }
 
 void Scene_Test::ChangeBossUIVisibility()
@@ -1574,6 +1580,9 @@ void Scene_Test::ChangeBossUIVisibility()
 
 void Scene_Test::RenderFont()
 {
+	if (m_renderFont == false)
+		return;
+
 	if (m_openSetting == true)
 		return;
 
@@ -1586,6 +1595,28 @@ void Scene_Test::RenderFont()
 			continue;
 
 		GET_SINGLE(FontManager)->RenderFonts(info.str, info.pos, info.scale);
+	}
+}
+
+void Scene_Test::ShowBossTutorial()
+{
+	if (m_cinematicScript->IsPlaying() == true)
+		return;
+
+	if (m_cinematicScript->GetCurrentScene() < 5)
+		return;
+
+	if (m_showWeeperTutorial == true)
+	{
+		m_weeperTutorialScript->SetVisible(true);
+		m_closeButton->SetVisible(true);
+		m_renderFont = false;
+	}
+	else if (m_showGolemTutorial == true)
+	{
+		m_golemTutorialScript->SetVisible(true);
+		m_closeButton->SetVisible(true);
+		m_renderFont = false;
 	}
 }
 #pragma endregion
@@ -1937,7 +1968,7 @@ void Scene_Test::CreateBGMSlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 
 	// SLIDER FILL(C)
 	texture = GET_TEXTURE(L"Slider Fill(C)");
@@ -2262,7 +2293,7 @@ void Scene_Test::CreateSESlider()
 
 		AddGameObject(obj);
 		m_popUp.push_back(obj);
-}
+	}
 
 	// SLIDER FILL(C)
 	texture = GET_TEXTURE(L"Slider Fill(C)");
@@ -2318,6 +2349,56 @@ void Scene_Test::CreateSESlider()
 	}
 }
 
+void Scene_Test::CreateBossTutorial()
+{
+	CreateWeeperTutorial();
+	CreateGolemTutorial();
+}
+
+void Scene_Test::CreateWeeperTutorial()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Weeper Tutorial1") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 1498.f, 1020.f, 1.f });
+	transform->SetLocalPosition(Vec3{ 0.f, 0.f, 400.f });
+
+	std::shared_ptr<BossTutorial_Script> script{ std::make_shared<BossTutorial_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Weeper Tutorial2"));
+	m_weeperTutorialScript = script;
+
+	obj->AddComponent(script);
+
+	AddGameObject(obj);
+}
+
+void Scene_Test::CreateGolemTutorial()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Golem Tutorial1") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 1498.f, 1020.f, 1.f });
+	transform->SetLocalPosition(Vec3{ 0.f, 0.f, 400.f });
+
+	std::shared_ptr<BossTutorial_Script> script{ std::make_shared<BossTutorial_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Golem Tutorial2"));
+	m_golemTutorialScript = script;
+
+	obj->AddComponent(script);
+
+	AddGameObject(obj);
+}
+
 void Scene_Test::ChangePopUpVisibility()
 {
 	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::ESC) == true)
@@ -2330,6 +2411,8 @@ void Scene_Test::ChangePopUpVisibility()
 			{
 				obj->GetUI()->SetVisible(true);
 			}
+
+			m_renderFont = false;
 		}
 		else
 		{
@@ -2337,6 +2420,8 @@ void Scene_Test::ChangePopUpVisibility()
 			{
 				obj->GetUI()->SetVisible(false);
 			}
+
+			m_renderFont = true;
 		}
 	}
 
@@ -2347,8 +2432,14 @@ void Scene_Test::ChangePopUpVisibility()
 			obj->GetUI()->SetVisible(false);
 		}
 
+		m_weeperTutorialScript->GetUI()->SetVisible(false);
+		m_golemTutorialScript->GetUI()->SetVisible(false);
+
 		m_closeButton->SetClosePopUpFlag(false);
 		m_openSetting = false;
+		m_showWeeperTutorial = false;
+		m_showGolemTutorial = false;
+		m_renderFont = true;
 	}
 }
 
@@ -3810,6 +3901,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
 			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
+			m_showWeeperTutorial = true;
 		}
 		break;
 		// Golem 등장 컷신
@@ -3822,6 +3914,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
 			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
+			m_showGolemTutorial = true;
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE7:

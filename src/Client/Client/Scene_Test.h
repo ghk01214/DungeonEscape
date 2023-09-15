@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -11,6 +11,7 @@ class Fade_Script;
 class PortalUI_Script;
 class Cinematic_Script;
 class Magic_Artifact_Script;
+class BossTutorial_Script;
 
 struct EffectInfo
 {
@@ -144,6 +145,10 @@ private:
 	void CreateSEButton();
 	void CreateSESlider();
 
+	void CreateBossTutorial();
+	void CreateWeeperTutorial();
+	void CreateGolemTutorial();
+
 private:
 	void ChangePopUpVisibility();
 	void ChangeVolume();
@@ -151,6 +156,7 @@ private:
 	void ChangePlayerUIVisibility();
 	void ChangeBossUIVisibility();
 	void RenderFont();
+	void ShowBossTutorial();
 
 private:
 	void SendKeyInput();
@@ -257,7 +263,12 @@ private:
 
 	std::vector<std::shared_ptr<CGameObject>> m_playerUIObjects;
 
+	std::shared_ptr<BossTutorial_Script> m_weeperTutorialScript;
+	std::shared_ptr<BossTutorial_Script> m_golemTutorialScript;
+
 	bool m_openSetting;
+	bool m_showWeeperTutorial;
+	bool m_showGolemTutorial;
 
 private:
 	std::shared_ptr<bool> m_recvFadeIn;
@@ -266,4 +277,5 @@ private:
 
 private:
 	std::unordered_map<FONT_TYPE, FontInfo> m_font;
+	bool m_renderFont;
 };

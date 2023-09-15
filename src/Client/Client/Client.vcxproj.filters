@@ -195,6 +195,9 @@
     <Filter Include="소스 파일\Objects\03. Monster\Boss\Counter Effect">
       <UniqueIdentifier>{c479d1ef-7b48-4827-a10a-b7670be41a8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\BossUI\Tutorial">
+      <UniqueIdentifier>{d16b13aa-019f-477b-98c9-c05a696b4053}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -374,6 +377,9 @@
     <ClInclude Include="BossCounterEffect_Script.h">
       <Filter>소스 파일\Objects\03. Monster\Boss\Counter Effect</Filter>
     </ClInclude>
+    <ClInclude Include="BossTutorial_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -547,6 +553,9 @@
     </ClCompile>
     <ClCompile Include="BossCounterEffect_Script.cpp">
       <Filter>소스 파일\Objects\03. Monster\Boss\Counter Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="BossTutorial_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
