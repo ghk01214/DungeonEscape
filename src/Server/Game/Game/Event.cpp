@@ -791,6 +791,18 @@ void Event::ExecuteMsg_Once()
 		}
 	}
 
+	//PARTICLE
+	if (msg == "STOP_PARTICLE")
+	{
+		auto particleObj = dynamic_cast<ParticleObject*>(target);
+		if (particleObj)
+		{
+			particleObj->GetComponent<RigidBody>(L"RigidBody")->ExcludeFromSimulation(true);
+			particleObj->ServerMessage_Release();
+			//파티클 삭제
+		}
+	}
+
 	executed = true;
 }
 
