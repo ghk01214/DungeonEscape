@@ -165,8 +165,8 @@ void Monster::ServerMessage_Transform()
 	if (m_startSendTransform == false)
 		return;
 
-	if (isSleep() == true)
-		return;
+	//if (isSleep() == true)
+	//	return;
 
 	game::TimerEvent ev{ ProtocolID::WR_TRANSFORM_ACK };
 	ev.objID = m_id;
