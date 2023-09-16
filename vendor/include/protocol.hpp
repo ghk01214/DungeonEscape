@@ -134,6 +134,9 @@ enum class ProtocolID : unsigned short
 	WR_COUNTER_EFFECT_REQ,
 	WR_COUNTER_EFFECT_ACK,
 
+	WR_CREATE_PARTICLE_REQ,
+	WR_CREATE_PARTICLE_ACK,
+
 	PROTOCOL_WR_END = ProtocolBase::PROTOCOL_OFFSET_BT,
 #pragma endregion
 

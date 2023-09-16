@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #pragma region [PLAYERS]
 #include "Player_Script.h"
 #include "PlayerRangeAttack.h"
@@ -16,6 +16,7 @@
 #include "Magic_Artifact_Script.h"
 #include "WeeperEffect_Script.h"
 #include "BossCounterEffect_Script.h"
+#include "Particle_Script.h"
 #pragma endregion
 
 #pragma region [OBJECTS]

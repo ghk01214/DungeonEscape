@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Session.h"
 #include "Transform.h"
 #include "Monsters.hpp"
@@ -421,6 +421,19 @@ namespace game
 		packet.WriteID(id);
 		packet.WriteProtocol(ProtocolID::WR_COUNTER_EFFECT_ACK);
 		packet.Write<bool>(render);
+
+		Send(packet);
+	}
+
+	void CSession::SendParticleEffectPacket(ProtocolID protocol, int32_t id, Vec3 pos)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(protocol);
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
 
 		Send(packet);
 	}

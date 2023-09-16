@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Player.h"
 
@@ -52,6 +52,7 @@ namespace game
 		void SendPlayCutScenePacket(server::CUT_SCENE_TYPE type);
 		void SendMonsterHPPacket(Monster* obj);
 		void SendCounterEffectPacket(int32_t id, bool render);
+		void SendParticleEffectPacket(ProtocolID protocol, int32_t id, Vec3 pos);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }

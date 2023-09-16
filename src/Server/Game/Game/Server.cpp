@@ -19,6 +19,7 @@
 #include "Monster.h"
 #include "SkillObject.h"
 #include "EventHandler.h"
+#include "ParticleObject.h"
 
 #include "Weeper.h"
 
@@ -1332,6 +1333,19 @@ namespace game
 						continue;
 
 					client->SendCounterEffectPacket(id, render);
+				}
+			}
+			break;
+			case ProtocolID::WR_CREATE_PARTICLE_ACK:
+			{
+				Vec3 pos{ postOver->effectPosX, postOver->effectPosY, postOver->effectPosZ };
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendParticleEffectPacket(postOver->msgProtocol, id, pos);
 				}
 			}
 			break;

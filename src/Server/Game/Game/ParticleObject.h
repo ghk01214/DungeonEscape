@@ -19,13 +19,14 @@ public:
 public:
 	void ServerMessage_Init();
 	void ServerMessage_Release();							//SetRemoveReserved()이후 바로 호출해야하는 함수
+	void ServerMessage_Transform();
 
 public:
 	void ApplyRequestedLayers();
 
 
 public:
-	static void Summon(physx::PxVec3 initialPos, float xzInterval, float xzStrength, float yStrength, float deleteTime);
+	static int32_t Summon(physx::PxVec3 initialPos, float xzInterval, float xzStrength, float yStrength, float deleteTime);
 
 protected:
 	RigidBody* m_body = nullptr;

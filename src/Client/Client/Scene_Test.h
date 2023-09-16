@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -172,6 +172,7 @@ private:
 	void TriggerInteractionCount(network::CPacket& packet);
 	void PlayCutScene(network::CPacket& packet);
 	void ChangeMonsterHP(network::CPacket& packet);
+	void CreateSparkParticleObject(network::CPacket& packet);
 
 	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
@@ -227,6 +228,9 @@ private:
 
 	uint32_t m_wpDarkBlueEffectStartIndex;
 	uint32_t m_wpDarkBlueEffectCurrentIndex;
+
+	uint32_t m_sparkParticleEffectStartIndex;
+	uint32_t m_sparkParticleEffectCurrentIndex;
 
 	uint32_t m_circleFlameYellowStartIndex;
 	uint32_t m_circleFlameYellowCurrentIndex;

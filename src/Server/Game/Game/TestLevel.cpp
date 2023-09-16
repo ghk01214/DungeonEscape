@@ -78,7 +78,19 @@ void TestLevel::ParticleTest()
 	bool isKeyPressed = GetAsyncKeyState('P') & 0x8000;
 
 	if (isKeyPressed && !keyState) {
-		ParticleObject::Summon(physx::PxVec3(0, 0, 200), 500.f, 1.5f, 2.f, 1.f);
+		for (int32_t i = 0; i < 10; ++i)
+		{
+			int32_t particleID{ ParticleObject::Summon(physx::PxVec3(-250.f, -2600.f, -700.f), 100.f, 15.f, 20.f, 3.f) };
+
+			//for (int32_t i = 0; i < SEND_AGAIN; ++i)
+			{
+				game::TimerEvent ev{ ProtocolID::WR_CREATE_PARTICLE_ACK };
+				ev.objID = particleID;
+				ev.effectPos = Vec3{ -250.f, -2600.f, -700.f };
+
+				MSG_HANDLER->PushSendMessage(ev);
+			}
+		}
 			keyState = true;  // 'P' 키가 눌렸음을 표시
 	}
 	else if (!isKeyPressed) {

@@ -10,6 +10,7 @@
 #include "EventHandler.h"
 
 ParticleObject::ParticleObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
+	: GameObject(position, rotation, scale), m_body(nullptr)
 {
 }
 
@@ -23,14 +24,14 @@ void ParticleObject::Init()
 	m_body->SetCCDFlag(false);
 	m_body->SetKinematic(true);
 
-	//SetObjectType(server::OBJECT_TYPE::MAP_OBJECT); 
+	//SetObjectType(server::OBJECT_TYPE::MAP_OBJECT);
 }
 
 void ParticleObject::Update(double timeDelta)
 {
-	GameObject::Update(timeDelta);
+	ServerMessage_Transform();
 
-	isSleep();
+	GameObject::Update(timeDelta);
 }
 
 void ParticleObject::LateUpdate(double timeDelta)
@@ -47,28 +48,37 @@ void ParticleObject::Release()
 
 void ParticleObject::ServerMessage_Init()
 {
-	m_id = game::MessageHandler::GetInstance()->NewObjectID();
+	m_id = MSG_HANDLER->NewObjectID();
+	m_name = L"PARTICLE";
+	m_objType = server::OBJECT_TYPE::PARTICLE;
 
-	m_name = L"PARTICLE_ROCK";
-	//m_fbxType = server::FBX_TYPE::LAST_BOSS_ROCK;
-	//m_objType = server::OBJECT_TYPE::MAP_OBJECT;
-
-	//game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
-	//ev.objType = m_objType;
-	//ev.objID = m_id;
-
-	//game::MessageHandler::GetInstance()->PushSendMessage(ev);
-	std::cout << "hello1" << std::endl;
+	//std::cout << "create, " << m_id << "\n";
 }
 
 void ParticleObject::ServerMessage_Release()
 {
-	//game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
-	//ev.objID = m_id;
-	//ev.objType = m_objType;
-	//
-	//game::MessageHandler::GetInstance()->PushSendMessage(ev);
-	std::cout << "hello2" << std::endl;
+	//for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
+		ev.objID = m_id;
+		ev.objType = m_objType;
+
+		MSG_HANDLER->PushSendMessage(ev);
+	}
+
+	//std::cout << "release, " << m_id << "\n";
+}
+
+void ParticleObject::ServerMessage_Transform()
+{
+	if (isSleep() == true)
+		return;
+
+	game::TimerEvent ev{ ProtocolID::WR_TRANSFORM_ACK };
+	ev.objID = m_id;
+	ev.objType = m_objType;
+
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void ParticleObject::ApplyRequestedLayers()
@@ -79,7 +89,7 @@ void ParticleObject::ApplyRequestedLayers()
 			));
 }
 
-void ParticleObject::Summon(physx::PxVec3 initialPos, float xzInterval, float xzStrength, float yStrength, float deleteTime)
+int32_t ParticleObject::Summon(physx::PxVec3 initialPos, float xzInterval, float xzStrength, float yStrength, float deleteTime)
 {
 	//static std::uniform_real_distribution<float> distributionY(0.f, 1.0f);
 	//static std::uniform_real_distribution<float> distributionXZ(-1.f, 1.f);
@@ -97,7 +107,7 @@ void ParticleObject::Summon(physx::PxVec3 initialPos, float xzInterval, float xz
 	physx::PxVec3 newPos = initialPos + randomDir * xzInterval * xzStrength;
 	physx::PxVec3 flyDirection = (newPos - initialPos);
 	float yPower = flyDirection.magnitude();
-	std::cout << yPower << std::endl;
+	//std::cout << yPower << std::endl;
 	if (yPower < 0)
 		yPower *= -1.f;
 
@@ -121,6 +131,8 @@ void ParticleObject::Summon(physx::PxVec3 initialPos, float xzInterval, float xz
 
 
 	particleObj->ServerMessage_Init();
-	//EventHandler::GetInstance()->AddEvent("REMOVE_PARTICLE", deleteTime, particleObj);
-	EventHandler::GetInstance()->AddEvent("STOP_PARTICLE", deleteTime, particleObj);
+	EventHandler::GetInstance()->AddEvent("REMOVE_PARTICLE", deleteTime, particleObj);
+	//EventHandler::GetInstance()->AddEvent("STOP_PARTICLE", deleteTime, particleObj);
+
+	return particleObj->GetID();
 }

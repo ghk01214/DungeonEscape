@@ -258,6 +258,8 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Lune_Sword", L"..\\Resources\\Texture\\Effect\\Lune Sword\\tile.png", 28);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Cross_Sword", L"..\\Resources\\Texture\\Effect\\Cross Sword\\tile.png", 19);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Spark_Particle", L"..\\Resources\\Texture\\Effect\\Spark Particle\\tile.png", 25);
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Spiral", L"..\\Resources\\Texture\\Effect\\Spiral\\tile.png", 18);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Whirl_Pool_Dark_Blue", L"..\\Resources\\Texture\\Effect\\whirl pool\\dark blue\\tile.png", 36);
 

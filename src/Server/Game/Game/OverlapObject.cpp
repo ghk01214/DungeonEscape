@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "OverlapObject.h"
 #include "Monster.h"
 #include "MonsterAI.h"
@@ -133,9 +133,14 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_DISPERSAL);
 
-		for (int i = 0; i < 12; ++i)
+		for (int i = 0; i < 10; ++i)
 		{
-			ParticleObject::Summon(playerPos, 500.f, 1.5f, 2.f, 3.f);	//생성
+			int32_t particleID{ ParticleObject::Summon(playerPos, 500.f, 1.5f, 2.f, 3.f) };	//생성
+
+			for (int32_t i = 0; i < SEND_AGAIN; ++i)
+			{
+				ServerMessage_CreateParticle(particleID, FROM_PX3(playerPos));
+			}
 		}
 
 		ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);

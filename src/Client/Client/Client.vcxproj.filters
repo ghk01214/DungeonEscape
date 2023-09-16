@@ -380,6 +380,9 @@
     <ClInclude Include="BossTutorial_Script.h">
       <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
     </ClInclude>
+    <ClInclude Include="Particle_Script.h">
+      <Filter>소스 파일\Objects\06. PhysxObject\Particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -556,6 +559,9 @@
     </ClCompile>
     <ClCompile Include="BossTutorial_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle_Script.cpp">
+      <Filter>소스 파일\Objects\06. PhysxObject\Particle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
