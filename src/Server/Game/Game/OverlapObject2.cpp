@@ -310,12 +310,12 @@ void OverlapObject2::ServerMessage_RenderEffect(Monster* monster)
 
 	Vec3 effectPos = m_player->LocationForBilboard_VictimMonster(monster);		//이펙트 위치
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = m_player->GetID();
 	ev.state = magic_enum::enum_integer(type);
 	ev.effectPos = effectPos;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void OverlapObject2::ServerMessage_RenderEffect_SingleStrike()
@@ -341,10 +341,10 @@ void OverlapObject2::ServerMessage_RenderEffect_SingleStrike()
 	else
 		return;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = m_player->GetID();
 	ev.state = magic_enum::enum_integer(type);
 	ev.effectPos = FROM_PX3(m_pos);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }

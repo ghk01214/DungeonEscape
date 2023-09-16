@@ -24,7 +24,7 @@ namespace game
 		Message(int32_t playerID = -1, ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE);
 	};
 
-	struct TIMER_EVENT
+	struct TimerEvent
 	{
 		std::chrono::steady_clock::time_point	wakeUpTime;
 		ProtocolID								type;
@@ -36,9 +36,9 @@ namespace game
 		Vec3									effectPos;
 		int32_t									integer;
 
-		TIMER_EVENT(ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE, int32_t playerID = -1);
+		TimerEvent(ProtocolID msgProtocol = ProtocolID::PROTOCOL_NONE, int32_t playerID = -1);
 
-		constexpr bool operator<(const TIMER_EVENT& left) const;
+		constexpr bool operator<(const TimerEvent& left) const;
 	};
 
 	class MessageHandler
@@ -57,10 +57,10 @@ namespace game
 		void TransformThread();
 	public:
 		void PushRecvMessage(Message& msg);
-		void PushSendMessage(TIMER_EVENT& ev);
+		void PushSendMessage(TimerEvent& ev);
 		void ExecuteMessage();
 
-		void PushTransformMessage(TIMER_EVENT& ev);
+		void PushTransformMessage(TimerEvent& ev);
 
 	public:
 		int32_t NewObjectID();
@@ -82,8 +82,8 @@ namespace game
 		HANDLE m_iocp;
 
 		tbb::concurrent_queue<Message> m_recvQueue;
-		tbb::concurrent_priority_queue<TIMER_EVENT> m_sendQueue;
-		tbb::concurrent_priority_queue<TIMER_EVENT> m_transformQueue;
+		tbb::concurrent_priority_queue<TimerEvent> m_sendQueue;
+		tbb::concurrent_priority_queue<TimerEvent> m_transformQueue;
 
 		std::atomic_int32_t m_recvQueueSize;
 

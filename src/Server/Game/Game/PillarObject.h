@@ -25,6 +25,7 @@ public:
 public:		//server
 	void ServerMessage_Init();
 	void ServerMessage_Release();			//SetRemoveReserved()이후 바로 호출해야하는 함수
+	void ServerMessage_Transform();
 
 	void Reset();
 

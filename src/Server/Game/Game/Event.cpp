@@ -157,7 +157,7 @@ void Event::ExecuteMsg_Once()
 		if (meteorObj)
 		{
 			meteorObj->SetRemoveReserved();
-			meteorObj->ServerMessage_SkillRemove();
+			meteorObj->ServerMessage_Remove();
 		}
 	}
 
@@ -344,11 +344,11 @@ void Event::ExecuteMsg_Once()
 		// 위퍼 카운터 가능시간 시작
 		for (int32_t i = 0; i < SEND_AGAIN; ++i)
 		{
-			game::TIMER_EVENT ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
 			ev.objID = weeper->GetID();
 			ev.integer = 1;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			MSG_HANDLER->PushSendMessage(ev);
 		}
 	}
 
@@ -364,11 +364,11 @@ void Event::ExecuteMsg_Once()
 		// 위퍼 카운터 가능시간 종료
 		for (int32_t i = 0; i < SEND_AGAIN; ++i)
 		{
-			game::TIMER_EVENT ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
 			ev.objID = weeper->GetID();
 			ev.integer = 0;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			MSG_HANDLER->PushSendMessage(ev);
 		}
 	}
 
@@ -389,7 +389,7 @@ void Event::ExecuteMsg_Once()
 			weeperObj->Sink();
 		}
 	}
-	
+
 	if (msg == "WEEPER_SIMULATE_STOP")
 	{
 		auto weeperObj = dynamic_cast<Weeper*>(target);
@@ -418,14 +418,14 @@ void Event::ExecuteMsg_Once()
 
 
 			//effectposdata 보내서 사용하면 된다.
-			game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+			game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 			ev.objID = weeperObj->GetID();
 			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
 			ev.effectPos.x = effectposdata.x;
 			ev.effectPos.y = effectposdata.y;
 			ev.effectPos.z = effectposdata.z;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			MSG_HANDLER->PushSendMessage(ev);
 		}
 	}
 
@@ -695,11 +695,11 @@ void Event::ExecuteMsg_Once()
 		//골렘 카운터가능시간 진입
 		for (int32_t i = 0; i < SEND_AGAIN; ++i)
 		{
-			game::TIMER_EVENT ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
 			ev.objID = golemObj->GetID();
 			ev.integer = 1;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			MSG_HANDLER->PushSendMessage(ev);
 		}
 	}
 
@@ -715,11 +715,11 @@ void Event::ExecuteMsg_Once()
 		//골렘 카운터가능시간 종료
 		for (int32_t i = 0; i < SEND_AGAIN; ++i)
 		{
-			game::TIMER_EVENT ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
 			ev.objID = golemObj->GetID();
 			ev.integer = 0;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			MSG_HANDLER->PushSendMessage(ev);
 		}
 	}
 
@@ -747,14 +747,14 @@ void Event::ExecuteMsg_Once()
 
 
 			//effectposdata보내면 된다.
-			game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+			game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 			ev.objID = golemObj->GetID();
 			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
 			ev.effectPos.x = effectposdata.x;
 			ev.effectPos.y = effectposdata.y;
 			ev.effectPos.z = effectposdata.z;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			MSG_HANDLER->PushSendMessage(ev);
 		}
 	}
 

@@ -29,7 +29,9 @@ void PillarObject::Init()
 
 void PillarObject::Update(double timeDelta)
 {
-	Reset();
+	//Reset();
+
+	ServerMessage_Transform();
 
 	GameObject::Update(timeDelta);
 }
@@ -106,25 +108,31 @@ void PillarObject::ReceivedAttack_Meteor()
 
 void PillarObject::ServerMessage_Init()
 {
-	m_id = game::MessageHandler::GetInstance()->NewObjectID();
+	m_id = MSG_HANDLER->NewObjectID();
 	m_name = L"PILLAR BRIDGE";
 	m_fbxType = server::FBX_TYPE::PILLAR_BRIDGE;
-	m_objType = server::OBJECT_TYPE::PHYSX_OBJECT;
-
-	game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
-	ev.objType = m_objType;
-	ev.objID = m_id;
-
-	//game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	m_objType = server::OBJECT_TYPE::PILLAR;
 }
 
 void PillarObject::ServerMessage_Release()
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
 	ev.objID = m_id;
 	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
+}
+
+void PillarObject::ServerMessage_Transform()
+{
+	if (isSleep() == true)
+		return;
+
+	game::TimerEvent ev{ ProtocolID::WR_TRANSFORM_ACK };
+	ev.objID = m_id;
+	ev.objType = m_objType;
+
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void PillarObject::Reset()

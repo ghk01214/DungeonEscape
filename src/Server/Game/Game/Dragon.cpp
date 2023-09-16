@@ -113,11 +113,11 @@ void Dragon::CheckState()
 
 			for (int32_t i = 0; i < SEND_AGAIN - 1; ++i)
 			{
-				game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+				game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
 				ev.objID = m_id;
 				ev.objType = m_objType;
 
-				game::MessageHandler::GetInstance()->PushSendMessage(ev);
+				MSG_HANDLER->PushSendMessage(ev);
 			}
 		}
 		break;
@@ -177,12 +177,12 @@ void Dragon::CheckState()
 
 	m_prevState = m_currState;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_CHANGE_STATE_ACK };
 	ev.state = m_currState;
 	ev.objID = m_id;
 	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	//MSG_HANDLER->PushSendMessage(ev);
 
 	//std::cout << "DRAGON STATE : " << magic_enum::enum_name(m_currState) << "\n";
 }

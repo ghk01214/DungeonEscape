@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -57,13 +57,7 @@ void TestLevel::Init()
 
 void TestLevel::Update(double timeDelta)
 {
-	game::MessageHandler::GetInstance()->ExecuteMessage();
-
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRANSFORM_ACK, 0 };
-	ev.objType = server::OBJECT_TYPE::NONE;
-	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
-
-
+	MSG_HANDLER->ExecuteMessage();
 
 	ParticleTest();
 }
@@ -614,7 +608,7 @@ void TestLevel::TestFunction()
 	//
 	//			game::Message msg{ -1, ProtocolID::WR_JUMP_START_ACK };
 	//			msg.objID = mob->GetID();
-	//			game::MessageHandler::GetInstance()->PushSendMessage(msg);
+	//			MSG_HANDLER->PushSendMessage(msg);
 	//		}
 	//	}
 	//}

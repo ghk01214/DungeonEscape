@@ -429,11 +429,11 @@ void TriggerObject2::ServerSendInMessage(Player* player)
 
 void TriggerObject2::ServerSendTriggerInMessage(Player* player, server::TRIGGER_INTERACTION_TYPE triggerType)
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
 	ev.objID = player->GetID();
 	ev.integer = magic_enum::enum_integer(triggerType);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void TriggerObject2::ServerSendPortalOutMessage()
@@ -441,7 +441,7 @@ void TriggerObject2::ServerSendPortalOutMessage()
 	//조건을 확인하고 이에 따라 서버 메시지를 전송한다.
 	//Detect함수에서 조건 확인 후 호출
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
 	ev.objID = m_id;
 
 	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
@@ -455,12 +455,12 @@ void TriggerObject2::ServerSendPortalOutMessage()
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
 		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void TriggerObject2::ServerSendInteractionCountMessage()
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK };
 	ev.objID = m_id;
 	ev.integer = m_currentCnt;
 
@@ -475,16 +475,16 @@ void TriggerObject2::ServerSendInteractionCountMessage()
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void TriggerObject2::ServerSendCutSceneMessage(server::CUT_SCENE_TYPE cutSceneType)
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
 	ev.objID = m_id;
 	ev.integer = magic_enum::enum_integer(cutSceneType);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 bool TriggerObject2::CheckArtifactDestoryed()

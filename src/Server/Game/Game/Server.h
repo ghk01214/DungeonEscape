@@ -16,7 +16,7 @@ namespace game
 	class MessageHandler;
 	class Database;
 	struct Message;
-	struct TIMER_EVENT;
+	struct TimerEvent;
 
 	class CServer
 	{
@@ -80,7 +80,7 @@ namespace game
 		std::atomic_int32_t m_userID;
 		tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableID;
 
-		tbb::concurrent_priority_queue<TIMER_EVENT> m_eventQueue;
+		tbb::concurrent_priority_queue<TimerEvent> m_eventQueue;
 
 		MessageHandler* m_msgHandler;
 		CRoomManager* m_roomManager;

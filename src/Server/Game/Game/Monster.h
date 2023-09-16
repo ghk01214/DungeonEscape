@@ -50,7 +50,7 @@ public:
 	void SetMonsterMobile();
 public:
 	void GetDamaged(int32_t damage);
-	void SendTransform();
+	void ServerMessage_Transform();
 
 public:
 

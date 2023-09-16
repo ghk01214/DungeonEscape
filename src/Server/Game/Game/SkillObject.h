@@ -59,9 +59,12 @@ public:
 	virtual void Release();
 
 public:
-	void ServerMessage_SkillInit();
-	void ServerMessage_SkillHit();
-	void ServerMessage_SkillRemove();
+	void ServerMessage_Init();
+	void ServerMessage_Add();
+	void ServerMessage_Transform();
+	void ServerMessage_Hit();
+	void ServerMessage_Remove();
+	void ServerMessage_Effect(Vec3 pos);
 
 public:
 	void HandlePlayerSkillCollision();							//플레이어 스킬의 충돌 판단	(피격 : 몬스터)
@@ -90,8 +93,6 @@ public:
 
 public:
 	bool IsPlayerSkill();
-	void SendAddAgain();
-	void SendRemoveAgain();
 
 private:
 	RigidBody* m_body = nullptr;
@@ -104,9 +105,6 @@ private:
 	GameObject* m_owner = nullptr;
 
 	bool m_flagPlayer = false;
-
-	int32_t m_sendAdd = 0;
-	int32_t m_sendRemove = 0;
 };
 
 

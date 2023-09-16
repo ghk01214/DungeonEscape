@@ -41,9 +41,9 @@ void Monster::Init()
 
 void Monster::Update(double timeDelta)
 {
-	GameObject::Update(timeDelta);
+	ServerMessage_Transform();
 
-	//SendTransform();
+	GameObject::Update(timeDelta);
 }
 
 void Monster::LateUpdate(double timeDelta)
@@ -154,25 +154,25 @@ void Monster::GetDamaged(int32_t damage)
 {
 	m_hp -= damage;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_MONSTER_HP_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_MONSTER_HP_ACK };
 	ev.objID = m_id;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
-void Monster::SendTransform()
+void Monster::ServerMessage_Transform()
 {
 	if (m_startSendTransform == false)
 		return;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRANSFORM_ACK };
+	if (isSleep() == true)
+		return;
+
+	game::TimerEvent ev{ ProtocolID::WR_TRANSFORM_ACK };
 	ev.objID = m_id;
 	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
-
-	//auto p{ GetTransform()->GetPosition() };
-	//std::cout << p.x << ", " << p.y << ", " << p.z << "\n";
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 MonsterAI* Monster::GetAI()

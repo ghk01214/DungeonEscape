@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "OverlapObject.h"
 #include "Monster.h"
 #include "MonsterAI.h"
@@ -276,29 +276,38 @@ void OverlapObject::ServerMessage_RenderEffect(Player* player, server::EFFECT_TY
 
 	effectPos.y += 50.f;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = player->GetID();
 	ev.state = magic_enum::enum_integer(type);
 	ev.effectPos = effectPos;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void OverlapObject::ServerMessage_RenderEffect(const Vec3& pos, server::EFFECT_TYPE type)
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = m_monsterAI->GetMonster()->GetID();
 	ev.state = magic_enum::enum_integer(type);
 	ev.effectPos = pos;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void OverlapObject::ServerMessage_PlaySound(server::SOUND_TYPE type)
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
 	ev.objID = m_monsterAI->GetMonster()->GetID();
 	ev.state = magic_enum::enum_integer(type);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
+}
+
+void OverlapObject::ServerMessage_CreateParticle(int32_t id, Vec3 pos)
+{
+	game::TimerEvent ev{ ProtocolID::WR_CREATE_PARTICLE_ACK };
+	ev.objID = id;
+	ev.effectPos = pos;
+
+	MSG_HANDLER->PushSendMessage(ev);
 }

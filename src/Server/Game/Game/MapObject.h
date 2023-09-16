@@ -29,6 +29,8 @@ public:
 	void ServerMessage_Init(bool scatterRock, bool boulder);
 	void ServerMessage_Release();							//SetRemoveReserved()이후 바로 호출해야하는 함수
 
+	void ServerMessage_Transform();
+
 public:
 	void ApplyRequestedLayers();
 
