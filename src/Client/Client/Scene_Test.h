@@ -10,8 +10,11 @@ class InfoUI_Script;
 class Fade_Script;
 class PortalUI_Script;
 class Cinematic_Script;
+class VolumeSlider_Script;
 class Magic_Artifact_Script;
 class BossTutorial_Script;
+class BossHP_Script;
+class PageChange_Script;
 
 struct EffectInfo
 {
@@ -255,14 +258,14 @@ private:
 
 	std::shared_ptr<class CloseButton_Script> m_closeButton;
 	std::vector<std::shared_ptr<class SliderTip_Script>> m_sliderTip;
-	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
-	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSliderLeftTip;
+	std::vector<std::shared_ptr<VolumeSlider_Script>> m_volumeSlider;
+	std::vector<std::shared_ptr<VolumeSlider_Script>> m_volumeSliderLeftTip;
 	std::vector<std::shared_ptr<class MuteButton_Script>> m_muteButton;
 
 	std::vector<std::shared_ptr<CGameObject>> m_weeperUIObjets;
 	std::vector<std::shared_ptr<CGameObject>> m_golemUIObjets;
-	std::shared_ptr<class BossHP_Script> m_weeperHPScript;
-	std::shared_ptr<class BossHP_Script> m_golemHPScript;
+	std::shared_ptr<BossHP_Script> m_weeperHPScript;
+	std::shared_ptr<BossHP_Script> m_golemHPScript;
 	std::vector<std::shared_ptr<class BossWarning_Script>> m_bossWarningScript;
 
 	std::vector<std::shared_ptr<CGameObject>> m_playerUIObjects;

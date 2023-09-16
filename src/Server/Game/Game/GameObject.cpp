@@ -74,7 +74,7 @@ bool GameObject::isSleep()
 
     if (body->isKinematic())
     {
-        std::cout << "1) kinematic" << std::endl;
+        //std::cout << "1) kinematic" << std::endl;
         return true;
     }
     if (body->IsRigidbodySleep())

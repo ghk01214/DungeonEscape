@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Session.h"
 #include "GameInstance.h"
 #include "RoomManager.h"
@@ -822,25 +822,6 @@ namespace game
 						}
 					}
 
-					for (auto& object : boulderObjects)
-					{
-						auto rock{ dynamic_cast<MapObject*>(object) };
-
-						if (rock == nullptr)
-							continue;
-
-						if (rock->GetID() != id)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendAddObjPacket(rock, 30.f);
-						}
-					}
-
 					for (auto& object : lastBossRockObjects)
 					{
 						auto rock{ dynamic_cast<MapObject*>(object) };
@@ -878,6 +859,27 @@ namespace game
 								continue;
 
 							client->SendAddObjPacket(pillar);
+						}
+					}
+				}
+				else if (postOver->objType == server::OBJECT_TYPE::BOULDER)
+				{
+					for (auto& object : boulderObjects)
+					{
+						auto rock{ dynamic_cast<MapObject*>(object) };
+
+						if (rock == nullptr)
+							continue;
+
+						if (rock->GetID() != id)
+							continue;
+
+						for (auto& client : m_sessions)
+						{
+							if (client->GetState() != STATE::INGAME)
+								continue;
+
+							client->SendAddObjPacket(rock, 30.f);
 						}
 					}
 				}

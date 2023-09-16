@@ -2646,7 +2646,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 
 		if ((magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(objType)
-			and magic_enum::enum_integer(objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::MONSTER_POISONBALL))
+			and magic_enum::enum_integer(objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::WEEPER_CAST3_BALL))
 			or (objType == server::OBJECT_TYPE::MAP_OBJECT))
 		{
 			gameObject->AddComponent(objectDesc.script);
@@ -2695,7 +2695,7 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 #pragma region [MONSTER]
 		case server::FBX_TYPE::WEEPER1:
 		{
-			objectDesc.strName = L"Weeper" + std::to_wstring(magic_enum::enum_integer(type) - magic_enum::enum_integer(server::FBX_TYPE::WEEPER1) + 1);
+			objectDesc.strName = L"Weeper1";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\" + objectDesc.strName + L".fbx";
 
 			auto effectScripts{ CreateWeeperCast4Effect() };
@@ -2805,27 +2805,6 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 				m_spiralEffectCurrentIndex = m_spiralEffectStartIndex;
 		}
 		break;
-		case server::FBX_TYPE::MONSTER_ICEBALL:
-		{
-			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_THUNDERBALL:
-		{
-			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone Spike.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_POISONBALL:
-		{
-			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-		}
-		break;
 #pragma endregion
 #pragma region [OBJECT]
 		case server::FBX_TYPE::SCATTER_ROCK:
@@ -2894,7 +2873,7 @@ void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::sha
 
 void Scene_Test::AddEffectTextures()
 {
-#pragma [BILLBOARD]
+#pragma region [BILLBOARD]
 	EffectInfo effect;
 	effect.speed = 0.003f;
 	effect.scale = Vec3{ 500.f };
@@ -3396,16 +3375,12 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Ice Hit.wav");
 		}
 		break;
-		case server::OBJECT_TYPE::PLAYER_POISONBALL:
-		case server::OBJECT_TYPE::WEEPER_CAST4_BALL:
-		case server::OBJECT_TYPE::MONSTER_FIREBALL:
-		case server::OBJECT_TYPE::MONSTER_ICEBALL:
-		case server::OBJECT_TYPE::MONSTER_THUNDERBALL:
-		case server::OBJECT_TYPE::MONSTER_POISONBALL:
 #pragma endregion
 #pragma region [OBJECT]
-		case server::OBJECT_TYPE::MAP_OBJECT:
-		case server::OBJECT_TYPE::PHYSX_OBJECT:
+		case server::OBJECT_TYPE::PILLAR:
+		case server::OBJECT_TYPE::BOULDER:
+		case server::OBJECT_TYPE::SCATTER_ROCK:
+		case server::OBJECT_TYPE::ELEVATOR_ROCK:
 		case server::OBJECT_TYPE::PARTICLE:
 #pragma endregion
 		{

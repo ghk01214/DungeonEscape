@@ -22,7 +22,7 @@ void Movement_Script::Awake()
 void Movement_Script::Start()
 {
 	//m_vPosition = Vec3(6000.f, 1000.f, 20000.f);
-	m_vPosition = Vec3{ 16220.f, -3700.f, 41560.f };
+	m_vPosition = Vec3{ 0, -720, 8500 };
 }
 
 void Movement_Script::Update()
