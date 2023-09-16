@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Session.h"
 #include "Transform.h"
 #include "Monsters.hpp"
@@ -8,7 +8,7 @@ namespace game
 {
 	CSession::CSession() :
 		m_recvEx{},
-		m_sendEx{},
+		//m_sendEx{},
 		m_state{ STATE::FREE },
 		m_socket{ INVALID_SOCKET },
 		m_id{ -1 },
@@ -19,7 +19,7 @@ namespace game
 
 	CSession::CSession(Player* obj) :
 		m_recvEx{},
-		m_sendEx{},
+		//m_sendEx{},
 		m_state{ STATE::FREE },
 		m_socket{ INVALID_SOCKET },
 		m_id{ -1 },
@@ -55,9 +55,11 @@ namespace game
 	void CSession::Send(network::CPacket& packet)
 	{
 		// OVERLAPPEDEX에 패킷 데이터 복사
-		m_sendEx.Set(packet);
+		//m_sendEx.Set(packet);
+		network::OVERLAPPEDEX* sendEx{ new network::OVERLAPPEDEX{ network::COMPLETION::SEND } };
+		sendEx->Set(packet);
 
-		WSASend(m_socket, &m_sendEx.wsa, 1, 0, 0, &m_sendEx.over, nullptr);
+		WSASend(m_socket, &sendEx->wsa, 1, 0, 0, &sendEx->over, nullptr);
 	}
 
 	void CSession::SendLoginPacket(Player* obj)

@@ -101,83 +101,82 @@ namespace game
 				continue;
 			}
 
-			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
-			postOver.msgProtocol = ev.type;
-			//postOver.roomID = ev.roomID;
+			network::OVERLAPPEDEX* postOver{ new network::OVERLAPPEDEX{ network::COMPLETION::BROADCAST } };
+			postOver->msgProtocol = ev.type;
+			//postOver->roomID = ev.roomID;
 
 			switch (ev.type)
 			{
 				case ProtocolID::AU_LOGIN_ACK:
 				case ProtocolID::AU_LOGOUT_ACK:
-				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 				case ProtocolID::WR_PLAYER_HP_ACK:
 				case ProtocolID::WR_PLAYER_MP_ACK:
 				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_ADD_OBJ_ACK:
 				case ProtocolID::WR_REMOVE_ACK:
 				case ProtocolID::WR_SKILL_HIT_ACK:
 				{
-					postOver.objType = ev.objType;
+					postOver->objType = ev.objType;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_CHANGE_STATE_ACK:
 				{
-					postOver.objType = ev.objType;
-					postOver.state = ev.state;
+					postOver->objType = ev.objType;
+					postOver->state = ev.state;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
+				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 				case ProtocolID::WR_MONSTER_QUAT_ACK:
 				case ProtocolID::WR_MONSTER_HP_ACK:
 				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_CHANGE_SOUND_ACK:
 				{
-					postOver.state = ev.state;
+					postOver->state = ev.state;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_RENDER_EFFECT_ACK:
+				case ProtocolID::WR_CREATE_PARTICLE_ACK:
 				{
-					postOver.state = ev.state;
-					postOver.effectPosX = ev.effectPos.x;
-					postOver.effectPosY = ev.effectPos.y;
-					postOver.effectPosZ = ev.effectPos.z;
+					postOver->state = ev.state;
+					postOver->effectPosX = ev.effectPos.x;
+					postOver->effectPosY = ev.effectPos.y;
+					postOver->effectPosZ = ev.effectPos.z;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK:
 				{
-					postOver.state = ev.state;
-					postOver.integer = ev.integer;
+					postOver->state = ev.state;
+					postOver->integer = ev.integer;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
 				case ProtocolID::WR_PLAY_CUT_SCENE_ACK:
 				case ProtocolID::WR_COUNTER_EFFECT_ACK:
 				{
-					postOver.integer = ev.integer;
+					postOver->integer = ev.integer;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				default:
 				break;
 			}
-
-			std::this_thread::sleep_for(1ms);
 		}
 	}
 
@@ -204,26 +203,12 @@ namespace game
 				continue;
 			}
 
-			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
-			postOver.msgProtocol = ev.type;
-			postOver.objType = ev.objType;
+			network::OVERLAPPEDEX* postOver{ new network::OVERLAPPEDEX{ network::COMPLETION::BROADCAST } };
+			postOver->msgProtocol = ev.type;
+			postOver->objType = ev.objType;
 			//postOver.roomID = ev.roomID;
 
-			switch (ev.objType)
-			{
-				case server::OBJECT_TYPE::PLAYER:
-				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
-				}
-				break;
-				default:
-				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
-				}
-				break;
-			}
+			PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 		}
 	}
 

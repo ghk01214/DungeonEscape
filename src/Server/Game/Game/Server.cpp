@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Session.h"
 #include "GameInstance.h"
 #include "RoomManager.h"
@@ -180,10 +180,10 @@ namespace game
 
 					if (pOverEx->type == network::COMPLETION::SEND)
 					{
-						ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
-						pOverEx = nullptr;
-						//if (pOverEx != nullptr)
-						//	delete pOverEx;
+						/*ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+						pOverEx = nullptr;*/
+						if (pOverEx != nullptr)
+							delete pOverEx;
 					}
 
 					continue;
@@ -206,10 +206,10 @@ namespace game
 
 				if (pOverEx->type == network::COMPLETION::SEND)
 				{
-					ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
-					pOverEx = nullptr;
-					//if (pOverEx != nullptr)
-					//	delete pOverEx;
+					/*ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+					pOverEx = nullptr;*/
+					if (pOverEx != nullptr)
+						delete pOverEx;
 				}
 
 				continue;
@@ -235,10 +235,8 @@ namespace game
 				case network::COMPLETION::BROADCAST:
 				{
 					BroadcastResult(id, pOverEx);
-
-					ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
-					pOverEx = nullptr;
 				}
+				break;
 				default:
 				break;
 			}
@@ -328,6 +326,9 @@ namespace game
 			if (packetSize > remainSize)
 				break;
 
+			if (packetSize == 0)
+				break;
+
 			ProcessPacket(id, packet);
 
 			pPacket += packetSize;
@@ -352,10 +353,10 @@ namespace game
 		//	Disconnect(id);
 		//}
 
-		ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
-		pOverEx = nullptr;
-		//if (pOverEx != nullptr)
-		//	delete pOverEx;
+		/*ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+		pOverEx = nullptr;*/
+		if (pOverEx != nullptr)
+			delete pOverEx;
 	}
 
 	int32_t CServer::NewPlayerID()

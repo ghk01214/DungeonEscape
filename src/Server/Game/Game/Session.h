@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "Player.h"
 
@@ -68,7 +68,7 @@ namespace game
 		SOCKET m_socket;
 
 		network::OVERLAPPEDEX m_recvEx;
-		network::OVERLAPPEDEX m_sendEx;
+		//network::OVERLAPPEDEX m_sendEx;
 
 		std::atomic<STATE> m_state;
 		std::atomic_int32_t m_id;
