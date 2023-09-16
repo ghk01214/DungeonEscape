@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "WeeperAI.h"
 #include "Weeper.h"
 #include "Monster.h"
@@ -246,8 +246,8 @@ void WeeperAI::DamageCheck()
 		if (m_cast2Counter)
 		{
 			m_weeper->Pattern_Cast2_CounterNuclear();
-			BossPatternUIStart();
-			EventHandler::GetInstance()->AddEvent("BOSSPATTERNUIEND_WEEPER", 3.f, m_weeper);
+			//BossPatternUIStart();
+			//EventHandler::GetInstance()->AddEvent("BOSSPATTERNUIEND_WEEPER", 3.f, m_weeper);
 
 		}
 		else if (m_vulnerable)
