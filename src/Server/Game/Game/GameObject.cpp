@@ -62,6 +62,32 @@ bool GameObject::AccessAuthorized()
         false;
 }
 
+bool GameObject::isSleep()
+{
+    auto body = GetComponent<RigidBody>(L"RigidBody");
+    if (!body)
+    {
+        return true;
+    }
+
+
+
+    if (body->isKinematic())
+    {
+        std::cout << "1) kinematic" << std::endl;
+        return true;
+    }
+    if (body->IsRigidbodySleep())
+    {
+        return true;
+    }
+
+    else
+    {
+        return false;
+    }
+}
+
 bool GameObject::GetRemovalFlag()
 {
     return m_removalFlag;
