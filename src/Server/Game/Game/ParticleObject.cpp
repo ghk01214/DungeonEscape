@@ -29,6 +29,8 @@ void ParticleObject::Init()
 void ParticleObject::Update(double timeDelta)
 {
 	GameObject::Update(timeDelta);
+
+	isSleep();
 }
 
 void ParticleObject::LateUpdate(double timeDelta)
@@ -119,6 +121,6 @@ void ParticleObject::Summon(physx::PxVec3 initialPos, float xzInterval, float xz
 
 
 	particleObj->ServerMessage_Init();
-	EventHandler::GetInstance()->AddEvent("REMOVE_PARTICLE", deleteTime, particleObj);
-	//EventHandler::GetInstance()->AddEvent("STOP_PARTICLE", deleteTime, particleObj);
+	//EventHandler::GetInstance()->AddEvent("REMOVE_PARTICLE", deleteTime, particleObj);
+	EventHandler::GetInstance()->AddEvent("STOP_PARTICLE", deleteTime, particleObj);
 }
