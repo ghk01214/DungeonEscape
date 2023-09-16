@@ -36,7 +36,7 @@ namespace network
 		enum : uint16_t
 		{
 			// 버퍼의 최대 크기는 4MB로 고정
-			BUFF_SIZE = 4096,
+			BUFF_SIZE = 200,
 			// 헤더 크기(클라이언트 id 4바이트(int32_t) + 패킷 프로토콜 2바이트(uint16_t) + 패킷 사이즈 2바이트(uint16_t))
 			HEADER_SIZE = 8,
 			PROTOCOL_ID_OFFSET = 4,
