@@ -118,7 +118,9 @@ void Collider::ResetShape()
 
 uint8_t Collider::GetLayerIndex() const
 {
-	return m_layerIndex;
+	//return m_layerIndex;
+	PxFilterData filter = m_shape->getSimulationFilterData();
+	return filter.word0;
 }
 
 void Collider::SetLayerIndex(uint8_t layerIndex)
