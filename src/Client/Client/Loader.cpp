@@ -244,7 +244,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Circle_Wave", L"..\\Resources\\Texture\\Effect\\Circle Wave\\tile.png", 6);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Explode", L"..\\Resources\\Texture\\Effect\\Explode\\tile.png", 20);
-	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Ice_Explode", L"..\\Resources\\Texture\\Effect\\Ice Explode\\tile.png", 16);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Ice_Explode", L"..\\Resources\\Texture\\Effect\\Ice Explode\\tile.png", 15);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Fire\\Fire.png", 64);
 
