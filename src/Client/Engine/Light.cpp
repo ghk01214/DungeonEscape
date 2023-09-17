@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "Texture.h"
 #include "SceneManager.h"
+#include "Scene.h"
 
 Light::Light() : Component(COMPONENT_TYPE::LIGHT)
 {
@@ -25,9 +26,33 @@ void Light::FinalUpdate()
 {
 	m_lightInfo.position = GetTransform()->GetWorldPosition();
 
-	m_shadowCamera->GetTransform()->SetLocalPosition(GetTransform()->GetLocalPosition());
-	m_shadowCamera->GetTransform()->SetLocalRotation(GetTransform()->GetLocalRotation());
+	auto objects = GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects();
+	Vec3 vPos{};
+	for (auto& object : objects)
+	{
+		if (object->GetName() == L"Main_Camera")
+		{
+			vPos = object->GetTransform()->GetLocalPosition();
+			vPos.y += 2000.f;
+			m_shadowCamera->GetTransform()->SetLocalPosition(vPos);
+		}
+	}
+
+	//m_shadowCamera->GetTransform()->SetLocalPosition(GetTransform()->GetLocalPosition());
+
+	Vec3 vRot = GetTransform()->GetLocalRotation();
+	vRot.y += XMConvertToRadians(180.f);
+
+	m_shadowCamera->GetTransform()->SetLocalRotation(vRot);
+
 	m_shadowCamera->GetTransform()->SetLocalScale(GetTransform()->GetLocalScale());
+
+
+
+
+
+
+
 
 	m_shadowCamera->FinalUpdate();
 }

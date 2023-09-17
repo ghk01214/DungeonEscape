@@ -41,6 +41,16 @@ void InstancingManager::Render(vector<shared_ptr<CGameObject>>& gameObjects)
 			}
 			else
 			{
+				/*for (auto& iter : vec)
+				{
+					uint32 materialSize = iter->GetMeshRenderer()->GetMaterialSize();
+					for (uint32 i = 0; i < materialSize; ++i)
+					{
+						iter->GetMeshRenderer()->GetMaterial(i)->SetInt(0, 0);
+					}
+					iter->GetMeshRenderer()->Render();
+				}*/
+
 				//const uint64 instanceId = key;
 				for (auto& iter : vec)
 				{

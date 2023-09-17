@@ -43,7 +43,7 @@ public:
 
 	shared_ptr<class MeshData> LoadFBX(const wstring& path);
 
-	// 텍스쳐를 여러장 로드하는 함수
+	// ?�스쳐�? ?�러??로드?�는 ?�수
 	vector<shared_ptr<Texture>> LoadTextures(const wstring& key, const wstring& path, uint32 count);
 	vector<shared_ptr<Texture>> LoadEffectTextures(const wstring& key, const wstring& path, uint32 count);
 

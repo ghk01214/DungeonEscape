@@ -45,6 +45,8 @@ void FBXLoader::LoadFbx(const wstring& path)
 		return;
 	else if (fs::path(path).filename() == L"ThirdRoom_RockRolling.fbx")
 		return;
+	else if (fs::path(path).filename() == L"Sample.FBX")
+		return;
 
 	CreateTextures();
 	CreateMaterials();

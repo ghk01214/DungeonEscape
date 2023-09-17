@@ -256,8 +256,10 @@ void CScene::AddDirectionalLight(LightDesc& lightDesc)
 
 	// 방향광은 위치 의미 없음. 0,0,0
 	light->AddComponent(make_shared<Transform>());
-	light->GetTransform()->SetLocalPosition(Vec3(0.f, -1000.f, 500.f));
+	light->GetTransform()->SetLocalPosition(Vec3(0, 1000, 500));
 
+	//-2000, 1200.f, 1000.f
+	
 	// 방향 정보
 	light->GetLight()->SetLightDirection(lightDesc.vDirection);
 

@@ -65,6 +65,7 @@ void FBXMapLoader::MakeMap(void)
 
     for (auto& info : m_mapDeployedObjectInfo)
     {
+
         for (auto& objectInfo : info.second)
         {
             // 오브젝트 생성
@@ -107,6 +108,7 @@ void FBXMapLoader::MakeMap(void)
 
             std::shared_ptr<Mesh> mesh = m_assetInfo[info.first].mesh;
 
+
             if (nullptr != mesh)
             {
                 gameObject->GetMeshRenderer()->SetMesh(mesh);
@@ -126,6 +128,18 @@ void FBXMapLoader::MakeMap(void)
 
             else
                 gameObject.reset();
+
+
+            gameObject->SetName(info.first);
+
+            // 여기서 그림자 적용을 할 static mesh 이름 설정
+            if (info.first == L"SM_Round_Pillar")
+            {
+                gameObject->SetStatic(false);   // -> false로 하면 그림자 나옴, true면 적용 x
+            }
+            else 
+                gameObject->SetStatic(true);
+
         }
     }
 }

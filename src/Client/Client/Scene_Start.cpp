@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "LoginButton_Script.h"
 #include "SettingButton_Script.h"
 #include "CloseButton_Script.h"
@@ -100,8 +100,8 @@ void Scene_Start::CreateUICamera()
 
 	uint8_t layerIndex = GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI");
 
-	camera->GetCamera()->SetCullingMaskAll(); // 다 끄고
-	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI만 찍음
+	camera->GetCamera()->SetCullingMaskAll(); // ???꾧퀬
+	camera->GetCamera()->SetCullingMaskLayerOnOff(layerIndex, false); // UI留?李띿쓬
 
 	AddGameObject(camera);
 }
@@ -143,13 +143,13 @@ void Scene_Start::CreateBackground()
 	std::shared_ptr<Texture> texture = GET_TEXTURE(L"Lobby_InGame");
 	std::shared_ptr<Shader> shader = GET_SHADER(L"Logo_texture");
 
-	// 사용할 텍스쳐와 셰이더만 인자로 넘겨 UI 객체 생성
+	// ?ъ슜???띿뒪爾먯? ?곗씠?붾쭔 ?몄옄濡??섍꺼 UI 媛앹껜 ?앹꽦
 	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 
-	// 레이어 설정
+	// ?덉씠???ㅼ젙
 	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI")); // UI
 
-	// 위치 및 카메라 인덱스 설정
+	// ?꾩튂 諛?移대찓???몃뜳???ㅼ젙
 	Vec2 pos{ GetRatio(30.f, 30.f) };
 	auto transform{ obj->GetTransform() };
 
@@ -248,7 +248,7 @@ void Scene_Start::CreateSettingButton()
 	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-	// 위치 및 카메라 인덱스 설정
+	// ?꾩튂 諛?移대찓???몃뜳???ㅼ젙
 	Vec2 pos{ GetRatio(-93.f, 86.f) };
 	auto transform{ obj->GetTransform() };
 
@@ -1242,7 +1242,7 @@ void Scene_Start::CreateSample()
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		// 위치 및 카메라 인덱스 설정
+		// ?꾩튂 諛?移대찓???몃뜳???ㅼ젙
 		Vec2 pos{ GetRatio(-20.f, -100.f) };
 		pos.y += 150.f / 2.f;
 
@@ -1270,7 +1270,7 @@ void Scene_Start::CreateSample2(float yPos)
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
 
-		// 위치 및 카메라 인덱스 설정
+		// ?꾩튂 諛?移대찓???몃뜳???ㅼ젙
 		Vec2 pos{ GetRatio(-100.f, m_centerPos) };
 		pos.x += 100.f / 2.f;
 		pos.y = yPos;

@@ -187,6 +187,12 @@ void Camera::SortShadowObject()
 			}
 		}
 
+		if (gameObject->GetName() != L"SM_Round_Pillar")
+		{
+			//int a = 10;
+			continue;
+		}
+
 		m_vecShadow.push_back(gameObject);
 	}
 }

@@ -52,7 +52,7 @@ PS_OUT PS_DirLight(VS_OUT input)
 
     LightColor color = CalculateLightColor(g_int_0, viewNormal, viewPos);
 
-    // ±×¸²ÀÚ
+    // ê·¸ë¦¼ìž
     if (length(color.diffuse) != 0)
     {
         matrix shadowCameraVP = g_mat_0;
@@ -73,6 +73,8 @@ PS_OUT PS_DirLight(VS_OUT input)
             if (shadowDepth > 0 && depth > shadowDepth + 0.00001f)
             {
                 color.diffuse *= 0.5f;
+                color.diffuse = -0.2f;
+
                 color.specular = (float4) 0.f;
             }
         }
@@ -105,7 +107,7 @@ PS_OUT PS_PointLight(VS_OUT input)
 {
     PS_OUT output = (PS_OUT)0;
 
-    // input.pos = SV_Position = Screen ÁÂÇ¥
+    // input.pos = SV_Position = Screen ì¢Œí‘œ
     float2 uv = float2(input.pos.x / g_vec2_0.x, input.pos.y / g_vec2_0.y);
     float3 viewPos = g_tex_0.Sample(g_sam_0, uv).xyz;
     if (viewPos.z <= 0.f)
