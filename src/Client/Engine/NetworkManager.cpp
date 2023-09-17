@@ -22,7 +22,7 @@ namespace network
 		m_iocp = INVALID_HANDLE_VALUE;
 		m_socket = INVALID_SOCKET;
 		m_serverKey = 99999;
-		m_pRecvPacket = nullptr;
+		//m_pRecvPacket = nullptr;
 		m_remainSize = 0;
 		m_id = 0;
 		m_login = false;
@@ -86,7 +86,7 @@ namespace network
 		DWORD flag{};
 		ZeroMemory(&m_recvEx.over, sizeof(m_recvEx.over));
 
-		m_recvEx.wsa.len = CPacket::BUFF_SIZE + m_remainSize;
+		m_recvEx.wsa.len = CPacket::BUFF_SIZE - m_remainSize;
 		m_recvEx.wsa.buf = m_recvEx.data + m_remainSize;
 
 		WSARecv(m_socket, &m_recvEx.wsa, 1, 0, &flag, &m_recvEx.over, nullptr);
@@ -94,9 +94,11 @@ namespace network
 
 	void NetworkManager::Send(CPacket& packet)
 	{
-		m_sendEx.Set(packet);
+		//m_sendEx.Set(packet);
+		network::OVERLAPPEDEX* sendEx{ new network::OVERLAPPEDEX{ network::COMPLETION::SEND } };
+		sendEx->Set(packet);
 
-		WSASend(m_socket, &m_sendEx.wsa, 1, 0, 0, &m_sendEx.over, nullptr);
+		WSASend(m_socket, &sendEx->wsa, 1, 0, 0, &sendEx->over, nullptr);
 	}
 
 	void NetworkManager::SendLoginPacket(const std::wstring& ID, const std::wstring& pwd)
@@ -159,11 +161,15 @@ namespace network
 	{
 		DWORD bytes;
 		ULONG_PTR id;
-		OVERLAPPEDEX* pOverEx{ nullptr };
+
 
 		while (true)
 		{
-			if (GetQueuedCompletionStatus(m_iocp, &bytes, &id, reinterpret_cast<LPOVERLAPPED*>(&pOverEx), INFINITE) == 0)
+			OVERLAPPED* over{ nullptr };
+			BOOL ret{ GetQueuedCompletionStatus(m_iocp, &bytes, &id, &over, INFINITE) };
+			OVERLAPPEDEX* pOverEx{ reinterpret_cast<OVERLAPPEDEX*>(over) };
+
+			if (ret == 0)
 			{
 				ErrorQuit(L"GetQueuedCompletionStatus Error");
 			}
@@ -195,35 +201,44 @@ namespace network
 
 	void NetworkManager::Recv(DWORD bytes, OVERLAPPEDEX* pOverEx)
 	{
+		if (bytes == 0)
+			return;
+
 		// 기존에 남아있던 패킷 + 새로 받은 패킷을 합친 사이즈
 		int32_t remainSize{ static_cast<int32_t>(bytes) + m_remainSize };
 		int32_t packetSize{};
 
 		// CPacket 클래스에 받은 데이터 저장
-		m_packet.PushData(pOverEx->data);
-		m_pRecvPacket = pOverEx->data;
+		char* rawPacket{ pOverEx->data };
+		network::CPacket packet{};
+		packet.PushData(rawPacket);
 
 		while (remainSize > 0)
 		{
 			// 헤더(클라이언트 id + 패킷 전체 사이즈)를 뺀 순수 데이터 사이즈
-			packetSize = m_packet.GetPacketSize();
+			packetSize = packet.GetPacketSize();
 
 			if (packetSize > remainSize)
 				break;
 
-			ProcessPacket();
+			if (packetSize == 0)
+				break;
+
+			ProcessPacket(packet);
 
 			// 패킷의 잘린 부분으로 포인터 이동
-			m_pRecvPacket += packetSize;
-			m_packet.PushData(m_pRecvPacket);
+			rawPacket += packetSize;
+			packet.PushData(rawPacket);
 			// 처리한 패킷 사이즈만큼 빼기
 			remainSize -= packetSize;
 		}
 
+		m_remainSize = remainSize;
+
 		// 잘린 데이터를 OVERLAPPEDEX 구조체의 맨 앞으로 이동
 		if (remainSize > 0)
 		{
-			std::memcpy(pOverEx->data, m_packet.GetPacketAddr(), remainSize);
+			std::memcpy(pOverEx->data, rawPacket, remainSize);
 		}
 
 		// 다시 Recv 상태로 대기
@@ -232,17 +247,18 @@ namespace network
 
 	void NetworkManager::Send(DWORD bytes, OVERLAPPEDEX* pOverEx)
 	{
-		ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
-		pOverEx = nullptr;
-		//delete pOverEx;
+		/*ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+		pOverEx = nullptr;*/
+		//if (pOverEx != nullptr)
+			delete pOverEx;
 	}
 #pragma endregion
 
 #pragma region [PROCESS PACKET]
-	void NetworkManager::ProcessPacket()
+	void NetworkManager::ProcessPacket(network::CPacket& packet)
 	{
 		// 프로토콜 종류 읽기
-		ProtocolID packetType{ m_packet.ReadProtocol() };
+		ProtocolID packetType{ packet.ReadProtocol() };
 
 		// 프로토콜의 범위에 따라서 1차적으로 패킷의 종류를 구분하여
 		// 패킷 종류에 맞는 프로세스로 이동
@@ -250,64 +266,67 @@ namespace network
 			packetType < ProtocolID::PROTOCOL_AU_END)
 		{
 			// 인증 프로토콜의 패킷 프로세스 처리
-			ProcessAUPacket(packetType);
+			ProcessAUPacket(packetType, packet);
 		}
 		else if (ProtocolID::PROTOCOL_MY_BEGIN <= packetType and
 			packetType < ProtocolID::PROTOCOL_MY_END)
 		{
 			// 플레이어 프로토콜의 패킷 프로세스 처리
-			ProcessMYPacket(packetType);
+			ProcessMYPacket(packetType, packet);
 		}
 		else if (ProtocolID::PROTOCOL_WR_BEGIN <= packetType and
 			packetType < ProtocolID::PROTOCOL_WR_END)
 		{
-			ProcessWRPacket(packetType);
+			ProcessWRPacket(packetType, packet);
 		}
 		else if (ProtocolID::PROTOCOL_BT_BEGIN <= packetType and
 			packetType < ProtocolID::PROTOCOL_BT_END)
 		{
-			ProcessBTPacket(packetType);
+			ProcessBTPacket(packetType, packet);
 		}
 		else if (ProtocolID::PROTOCOL_IF_BEGIN <= packetType and
 			packetType < ProtocolID::PROTOCOL_IF_END)
 		{
-			ProcessWRPacket(packetType);
+			ProcessWRPacket(packetType, packet);
 		}
 		else if (ProtocolID::PROTOCOL_IT_BEGIN <= packetType and
 			packetType < ProtocolID::PROTOCOL_IT_END)
 		{
-			ProcessWRPacket(packetType);
+			ProcessWRPacket(packetType, packet);
 		}
 		else if (ProtocolID::PROTOCOL_CM_BEGIN <= packetType and
 			packetType < ProtocolID::PROTOCOL_CM_END)
 		{
-			ProcessWRPacket(packetType);
+			ProcessWRPacket(packetType, packet);
 		}
 		else if (ProtocolID::PROTOCOL_EC_BEGIN <= packetType and
 			packetType < ProtocolID::PROTOCOL_EC_END)
 		{
-			ProcessWRPacket(packetType);
+			ProcessWRPacket(packetType, packet);
 		}
 		else if (ProtocolID::PROTOCOL_GM_BEGIN <= packetType and
 			packetType < ProtocolID::PROTOCOL_GM_END)
 		{
-			ProcessWRPacket(packetType);
+			ProcessWRPacket(packetType, packet);
 		}
 		else if (ProtocolID::PROTOCOL_TT_BEGIN <= packetType and
 			packetType < ProtocolID::PROTOCOL_TT_END)
 		{
-			ProcessWRPacket(packetType);
+			ProcessWRPacket(packetType, packet);
 		}
 	}
 
-	void NetworkManager::ProcessAUPacket(ProtocolID type)
+	void NetworkManager::ProcessAUPacket(ProtocolID type, network::CPacket& packet)
 	{
 		switch (type)
 		{
 			case ProtocolID::AU_LOGIN_ACK:
 			{
+				if (m_login == true)
+					return;
+
 				m_login = true;
-				m_id = m_packet.ReadID();
+				m_id = packet.ReadID();
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_ACK:
@@ -320,34 +339,34 @@ namespace network
 		}
 	}
 
-	void NetworkManager::ProcessMYPacket(ProtocolID type)
+	void NetworkManager::ProcessMYPacket(ProtocolID type, network::CPacket& packet)
 	{
 		switch (type)
 		{
 			case ProtocolID::MY_ADD_OBJ_ACK:
 			case ProtocolID::MY_ADD_OBJ_COLLIDER_ACK:
 			{
-				GET_SCENE->PushServerRequest(m_packet);
+				GET_SCENE->PushServerRequest(packet);
 			}
 			break;
 			default:
 			{
 				for (auto& obj : m_objects[m_id])
 				{
-					obj->GetNetwork()->InsertPackets(m_packet);
+					obj->GetNetwork()->InsertPackets(packet);
 				}
 			}
 			break;
 		}
 	}
 
-	void NetworkManager::ProcessWRPacket(ProtocolID type)
+	void NetworkManager::ProcessWRPacket(ProtocolID type, network::CPacket& packet)
 	{
 		switch (type)
 		{
 			case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 			{
-				int32_t id{ m_packet.ReadID() };
+				int32_t id{ packet.ReadID() };
 
 				if (id == m_id)
 				{
@@ -356,14 +375,14 @@ namespace network
 
 					for (auto& obj : m_objects[id])
 					{
-						obj->GetNetwork()->InsertPackets(m_packet);
+						obj->GetNetwork()->InsertPackets(packet);
 					}
 
 					m_alreadyAdded = true;
 				}
 				else
 				{
-					GET_SCENE->PushServerRequest(m_packet);
+					GET_SCENE->PushServerRequest(packet);
 				}
 			}
 			break;
@@ -374,27 +393,28 @@ namespace network
 			case ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK:
 			case ProtocolID::WR_PLAY_CUT_SCENE_ACK:
 			case ProtocolID::WR_MONSTER_HP_ACK:
+			case ProtocolID::WR_CREATE_PARTICLE_ACK:
 			{
-				GET_SCENE->PushServerRequest(m_packet);
+				GET_SCENE->PushServerRequest(packet);
 			}
 			break;
 			case ProtocolID::WR_REMOVE_ACK:
 			{
-				int32_t id{ m_packet.ReadID() };
+				int32_t id{ packet.ReadID() };
 
 				if (id == m_id)
 					RemovePlayer(id);
 				else
-					GET_SCENE->PushServerRequest(m_packet);
+					GET_SCENE->PushServerRequest(packet);
 			}
 			break;
 			default:
 			{
-				int32_t id{ m_packet.ReadID() };
+				int32_t id{ packet.ReadID() };
 
 				for (auto& obj : m_objects[id])
 				{
-					obj->GetNetwork()->InsertPackets(m_packet);
+					obj->GetNetwork()->InsertPackets(packet);
 				}
 			}
 			break;
@@ -402,34 +422,34 @@ namespace network
 	}
 
 #pragma region [UNUSED]
-	void NetworkManager::ProcessBTPacket(ProtocolID type)
+	void NetworkManager::ProcessBTPacket(ProtocolID type, network::CPacket& packet)
 	{
 		// TODO : 추후 전투 관련 패킷 프로세스 처리
 	}
 
-	void NetworkManager::ProcessIFPacket(ProtocolID type)
+	void NetworkManager::ProcessIFPacket(ProtocolID type, network::CPacket& packet)
 	{
 	}
 
-	void NetworkManager::ProcessITPacket(ProtocolID type)
+	void NetworkManager::ProcessITPacket(ProtocolID type, network::CPacket& packet)
 	{
 		// TODO : 추후 아이템 관련 패킷 프로세스 처리
 	}
 
-	void NetworkManager::ProcessCMPacket(ProtocolID type)
+	void NetworkManager::ProcessCMPacket(ProtocolID type, network::CPacket& packet)
 	{
 		// TODO : 추후 커뮤니티(eg. 채팅) 관련 패킷 프로세스 처리
 	}
 
-	void NetworkManager::ProcessECPacket(ProtocolID type)
+	void NetworkManager::ProcessECPacket(ProtocolID type, network::CPacket& packet)
 	{
 	}
 
-	void NetworkManager::ProcessGMPacket(ProtocolID type)
+	void NetworkManager::ProcessGMPacket(ProtocolID type, network::CPacket& packet)
 	{
 	}
 
-	void NetworkManager::ProcessTTPacket(ProtocolID type)
+	void NetworkManager::ProcessTTPacket(ProtocolID type, network::CPacket& packet)
 	{
 		// TODO : 추후 테스트 관련 패킷 프로세스 처리
 	}

@@ -54,17 +54,17 @@ namespace network
 		void Send(DWORD bytes, OVERLAPPEDEX* pOverEx);
 
 #pragma region [PROCESS PACKET]
-		void ProcessPacket();
-		void ProcessAUPacket(ProtocolID type);
-		void ProcessMYPacket(ProtocolID type);
-		void ProcessWRPacket(ProtocolID type);
-		void ProcessBTPacket(ProtocolID type);
-		void ProcessIFPacket(ProtocolID type);
-		void ProcessITPacket(ProtocolID type);
-		void ProcessCMPacket(ProtocolID type);
-		void ProcessECPacket(ProtocolID type);
-		void ProcessGMPacket(ProtocolID type);
-		void ProcessTTPacket(ProtocolID type);
+		void ProcessPacket(network::CPacket& packet);
+		void ProcessAUPacket(ProtocolID type, network::CPacket& packet);
+		void ProcessMYPacket(ProtocolID type, network::CPacket& packet);
+		void ProcessWRPacket(ProtocolID type, network::CPacket& packet);
+		void ProcessBTPacket(ProtocolID type, network::CPacket& packet);
+		void ProcessIFPacket(ProtocolID type, network::CPacket& packet);
+		void ProcessITPacket(ProtocolID type, network::CPacket& packet);
+		void ProcessCMPacket(ProtocolID type, network::CPacket& packet);
+		void ProcessECPacket(ProtocolID type, network::CPacket& packet);
+		void ProcessGMPacket(ProtocolID type, network::CPacket& packet);
+		void ProcessTTPacket(ProtocolID type, network::CPacket& packet);
 #pragma endregion
 
 		void RemovePlayer(int32_t id);
@@ -78,10 +78,10 @@ namespace network
 		std::thread m_networkThread;
 
 		OVERLAPPEDEX m_recvEx;
-		OVERLAPPEDEX m_sendEx;
+		//OVERLAPPEDEX m_sendEx;
 
-		int8* m_pRecvPacket;
-		CPacket m_packet;
+		//int8* m_pRecvPacket;
+		//CPacket m_packet;
 		int32_t m_remainSize;
 
 		int32_t m_id;

@@ -28,7 +28,6 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_mp{ 100 },
 	m_firstSingleStrike{ true },
 	m_prevOnGround{ false },
-	m_sendState{ false },
 	m_cameraDistance{ 381.448f }
 {
 	m_id = playerID;
@@ -65,8 +64,6 @@ void Player::Init()
 
 void Player::Update(double timeDelta)
 {
-	//SendChangedStateAgain();
-
 	CalculateCameraDistance();
 
 	KeyboardLimit();					//FSM 0단계 : 금지상태에서는 키보드 클리어
@@ -94,10 +91,9 @@ void Player::Update(double timeDelta)
 		m_overlapObj->Update();
 
 
+	ServerMessage_SendTransform();
 
 	GameObject::Update(timeDelta);
-
-	//ServerSendTransformMessage();
 }
 
 void Player::LateUpdate(double timeDelta)
@@ -236,20 +232,6 @@ void Player::GetDamaged(int32_t damage)
 void Player::CalculateCameraDistance()
 {
 	m_cameraDistance = m_controller->CalculateCameraDistance();
-}
-
-void Player::SendChangedStateAgain()
-{
-	if (m_sendState <= 0)
-		return;
-
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
-	ev.state = m_currState;
-	ev.objType = m_objType;
-
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
-
-	--m_sendState;
 }
 
 void Player::KeyboardLimit()
@@ -492,16 +474,17 @@ void Player::State_Check_Enter()
 	}
 
 	m_prevState = m_currState;
-	m_sendState = SEND_AGAIN;
 
 	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
-		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
+		game::TimerEvent ev{ ProtocolID::WR_CHANGE_STATE_ACK };
+		ev.objID = m_id;
 		ev.state = m_currState;
 		ev.objType = m_objType;
 
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
 	}
+
 }
 
 void Player::Update_Frame_Continuous()
@@ -743,8 +726,6 @@ Vec3 Player::LocationForBilboard_VictimMonster(Monster* monster)
 	return tempPos;
 }
 
-
-
 void Player::SetControllerMoveSpeed(float value)
 {
 	m_controller->SetMoveSpeed(value);
@@ -893,11 +874,11 @@ void Player::PlayerPattern_ShootMeteor()
 	meteorCollider->SetRestitution(0.3f);
 	meteorCollider->SetRestitutionCombineMode(PhysicsCombineMode::Max);
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
 	ev.objID = m_id;
 	ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE3);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 
 
 	// KeyUp 상태가 전달되기까지의 딜레이가 있어서 로직 종료 시 key 상태 변경
@@ -1110,17 +1091,18 @@ int32_t Player::IsAttackKeyDown()
 	return -1;
 }
 
-void Player::ServerSendTransformMessage()
+void Player::ServerMessage_SendTransform()
 {
 	if (m_startSendTransform == false)
 		return;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRANSFORM_ACK, m_id };
-	ev.objType = m_objType;
-	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
+	//std::cout << magic_enum::enum_name(m_objType) << "\n";
 
-	//auto p{ GetTransform()->GetPosition() };
-	//std::cout << p.x << ", " << p.y << ", " << p.z << "\n";
+	game::TimerEvent ev{ ProtocolID::WR_TRANSFORM_ACK };
+	ev.objID = m_id;
+	ev.objType = m_objType;
+
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 physx::PxVec3 Player::GetForwardVec()

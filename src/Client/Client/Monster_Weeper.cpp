@@ -16,6 +16,7 @@
 
 #include "OneTimeDialogue_Script.h"
 #include "WeeperEffect_Script.h"
+#include "BossCounterEffect_Script.h"
 
 Monster_Weeper::Monster_Weeper() :
 	m_prevState{ IDLE },
@@ -78,6 +79,10 @@ void Monster_Weeper::CheckState()
 			script->FadeOut(4.f);
 		}
 	}
+	else if (m_currState == TAUNT)
+	{
+		m_counterEffectScript->FadeOut(0.5f);
+	}
 
 	m_prevState = m_currState;
 }
@@ -100,13 +105,13 @@ void Monster_Weeper::UpdateFrameRepeat()
 	if (m_currState != TAUNT)
 		return;
 
-	if (GET_SINGLE(EffectManager)->GetPlayOnce(140) == false)
+	if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(140) == false)
 		return;
 
 	auto pos{ GetTransform()->GetWorldPosition() };
-	pos.y += m_halfHeight + 50.f;
+	pos.y += m_halfHeight * 3.f;
 
-	GET_SINGLE(EffectManager)->SetBillBoardInfo(140, pos, Vec3{ 700.f }, 0.003f);
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(140, pos, Vec3{ 200.f }, 0.003f);
 	GET_SINGLE(EffectManager)->PlayBillBoard(140);
 }
 
@@ -189,9 +194,9 @@ void Monster_Weeper::ParsePackets()
 				Rotate(packet);
 			}
 			break;
-			case ProtocolID::WR_MONSTER_PATTERN_ACK:
+			case ProtocolID::WR_COUNTER_EFFECT_ACK:
 			{
-				SetPatternType(packet);
+				CounterEffect(packet);
 			}
 			break;
 			default:

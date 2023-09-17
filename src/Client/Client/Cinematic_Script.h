@@ -15,7 +15,7 @@ typedef struct _tagCINEMATIC_INFO {
 
 class Cinematic_Script : public MonoBehaviour
 {
-private:
+public:
 	enum CUT_SCENE_TYPE
 	{
 		NONE = 0,
@@ -46,6 +46,7 @@ public:
 	void SetScript(shared_ptr<Camera_Basic> cameraBasicScript) { m_cameraBasicScript = cameraBasicScript; }
 
 	constexpr bool IsPlaying() const { return m_bPlay; }
+	constexpr int32_t GetCurrentScene() const { return m_currentScene; }
 
 private:
 	int m_currentScene = 0;

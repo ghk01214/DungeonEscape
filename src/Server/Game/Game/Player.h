@@ -92,7 +92,6 @@ public:
 	void CalculateCameraDistance();
 
 public:
-	void SendChangedStateAgain();
 	void KeyboardLimit();
 	void ChangeStateByKeyInput();
 	void State_Check_Enter();
@@ -133,7 +132,7 @@ private:
 	void PlayerPattern_ATTACK_ForDebug();
 	int32_t IsAttackKeyDown();
 
-	void ServerSendTransformMessage();
+	void ServerMessage_SendTransform();
 	physx::PxVec3 GetForwardVec();
 
 
@@ -160,7 +159,6 @@ private:
 
 	bool m_meteorAvailable = true;			//추후 아이템 획득 등으로 조건 변경
 
-	int32_t m_sendState;
 	float m_cameraDistance;					// 이 변수 값을 바꿔주면 자동으로 카메라 거리를 클라이언트로 전달
 
 private:

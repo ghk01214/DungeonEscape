@@ -37,6 +37,11 @@ public:
 		CUTSCENE5,			// Weeper 등장 컷신
 		CUTSCENE6,			// Golem 등장 컷신
 
+
+		OFFTRACK1,			//길을 이탈했을 경우, 지정된 길로 다시 순간이동시킨다.
+		OFFTRACK2,
+		OFFTRACK3,
+
 		END
 	};
 public:
@@ -59,6 +64,7 @@ public:
 	void AttributePortal(double timeDelta);
 	void Attribute_BossCutscene_0();
 	void Attribute_BossCutscene_1();
+	void Attribute_Offtrack();	//맵 이탈을 했을 경우 지정된 위치로 이동.
 	void SendPlayers();
 	void ThrowGimmik2Ball();
 private:
@@ -99,5 +105,8 @@ private:
 
 private:
 	std::vector<Vec3> m_portalDestination;	//포탈이 이동시켜줄 위치
+
+
+	std::vector<Vec3> m_offTrackDestination; // 경로 이탈할 경우, 지정된 위치로 다시 돌려보낸다 (기믹 1 기둥)
 };
 

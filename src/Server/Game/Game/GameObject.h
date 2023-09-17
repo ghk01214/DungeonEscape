@@ -29,6 +29,9 @@ public:
 	bool AccessAuthorized();
 
 public:
+	bool isSleep();
+
+public:
 #pragma region [TEMPLATE]
 	template<typename T>
 	T* GetComponent(const std::wstring componentName)

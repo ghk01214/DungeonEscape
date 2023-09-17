@@ -20,6 +20,9 @@ public:
 	void Play(uint32 iEffectNumber);
 	void PlayBillBoard(uint32 iEffectNumber);
 
+	void Stop(uint32_t iEffectNumber);
+	void StopBillBoard(uint32 iEffectNumber);
+
 	void SetEffectInfo(uint32 iEffectNumber, Vec3 vPos, Vec3 vScale, Vec3 vRotation, float fPassingTime = 0.001, float fAlpha = 1.f);
 	void SetBillBoardInfo(uint32 iEffectNumber, Vec3 vPos, Vec3 vScale, float fPassingTime = 0.001, float fAlpha = 1.f);
 
@@ -34,6 +37,7 @@ public:
 
 	uint32_t GetBillboardCount() { return m_billboardCount; }
 	const bool GetPlayOnce(uint32_t index) const;
+	const bool GetBillboardPlayOnce(uint32_t index) const;
 
 private:
 	vector<shared_ptr<CGameObject>> m_effectObjects;

@@ -42,7 +42,6 @@ namespace game
 		void SendTransformPacket(GameObject* obj, float scaleRatio = 1.f);
 		void SendStatePacket(int32_t id, int32_t stateIndex);
 		void SendMonsterQuaternionPacket(Monster* obj);
-		void SendMonsterPatternPacket(int32_t id, int32_t patternIndex);
 		void SendSkillHitPacket(int32_t id);
 		void SendPlayerHPPacket(Player* obj);
 		void SendPlayerMPPacket(Player* obj);
@@ -52,6 +51,8 @@ namespace game
 		void SendTriggerInteractionCountPacket(int32_t id, server::TRIGGER_INTERACTION_TYPE type, int32_t size);
 		void SendPlayCutScenePacket(server::CUT_SCENE_TYPE type);
 		void SendMonsterHPPacket(Monster* obj);
+		void SendCounterEffectPacket(int32_t id, bool render);
+		void SendParticleEffectPacket(ProtocolID protocol, int32_t id, Vec3 pos);
 
 		const STATE GetState() const { return m_state; }
 		const int32_t GetID() const { return m_id; }
@@ -68,7 +69,7 @@ namespace game
 		SOCKET m_socket;
 
 		network::OVERLAPPEDEX m_recvEx;
-		network::OVERLAPPEDEX m_sendEx;
+		//network::OVERLAPPEDEX m_sendEx;
 
 		std::atomic<STATE> m_state;
 		std::atomic_int32_t m_id;

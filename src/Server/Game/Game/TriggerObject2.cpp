@@ -49,6 +49,7 @@ void TriggerObject2::Update(double timeDelta)
 
 	Handle_Overlap();
 	AttributePortal(timeDelta);
+	Attribute_Offtrack();
 }
 
 void TriggerObject2::LateUpdate(double timeDelta)
@@ -121,12 +122,15 @@ void TriggerObject2::SetPortalDestination()
 {
 	//HERE
 	m_portalDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));
+	m_offTrackDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));
 
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = PORTAL1_EXIT;
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL2)] = PORTAL2_EXIT;
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL3)] = PORTAL3_EXIT;
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL4)] = PORTAL4_EXIT;
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL5)] = PORTAL5_EXIT;
+
+	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK1)] = OFFTRACK1_EXIT;
 
 	//여기서 포탈 1, 포탈2, 등의 이동 위치를 설정한다.
 }
@@ -201,6 +205,23 @@ void TriggerObject2::Attribute_BossCutscene_1()
 	m_deactivate = true;
 	SetRemoveReserved();
 	//클라이언트에게 컷씬 알림을 보내려면 여기에.
+}
+
+void TriggerObject2::Attribute_Offtrack()
+{
+	int attribNum = static_cast<int>(m_attribute);
+	if (attribNum < static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK1) || attribNum > static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK3))
+		return;
+
+	string name = string(magic_enum::enum_name(m_attribute));
+
+	Vec3 returnpos = Vec3(0,0,0);
+	returnpos = m_offTrackDestination[attribNum];
+
+	for (auto& player : m_duplicates)
+	{
+		player->SetControllerPosition(returnpos);
+	}
 }
 
 void TriggerObject2::SendPlayers()
@@ -429,11 +450,11 @@ void TriggerObject2::ServerSendInMessage(Player* player)
 
 void TriggerObject2::ServerSendTriggerInMessage(Player* player, server::TRIGGER_INTERACTION_TYPE triggerType)
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
 	ev.objID = player->GetID();
 	ev.integer = magic_enum::enum_integer(triggerType);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void TriggerObject2::ServerSendPortalOutMessage()
@@ -441,7 +462,7 @@ void TriggerObject2::ServerSendPortalOutMessage()
 	//조건을 확인하고 이에 따라 서버 메시지를 전송한다.
 	//Detect함수에서 조건 확인 후 호출
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
 	ev.objID = m_id;
 
 	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
@@ -455,12 +476,12 @@ void TriggerObject2::ServerSendPortalOutMessage()
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
 		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void TriggerObject2::ServerSendInteractionCountMessage()
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK };
 	ev.objID = m_id;
 	ev.integer = m_currentCnt;
 
@@ -475,16 +496,16 @@ void TriggerObject2::ServerSendInteractionCountMessage()
 	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
 		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void TriggerObject2::ServerSendCutSceneMessage(server::CUT_SCENE_TYPE cutSceneType)
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
 	ev.objID = m_id;
 	ev.integer = magic_enum::enum_integer(cutSceneType);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 bool TriggerObject2::CheckArtifactDestoryed()

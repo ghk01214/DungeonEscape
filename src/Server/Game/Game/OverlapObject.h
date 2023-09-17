@@ -31,6 +31,7 @@ public:
 	void ServerMessage_RenderEffect(Player* player, server::EFFECT_TYPE type);
 	void ServerMessage_RenderEffect(const Vec3& pos, server::EFFECT_TYPE type);
 	void ServerMessage_PlaySound(server::SOUND_TYPE type);
+	void ServerMessage_CreateParticle(int32_t id, Vec3 pos);
 
 private:
 	std::vector<Player*> m_duplicates;

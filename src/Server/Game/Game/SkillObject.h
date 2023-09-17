@@ -59,9 +59,12 @@ public:
 	virtual void Release();
 
 public:
-	void ServerMessage_SkillInit();
-	void ServerMessage_SkillHit();
-	void ServerMessage_SkillRemove();
+	void ServerMessage_Init();
+	void ServerMessage_Add();
+	void ServerMessage_Transform();
+	void ServerMessage_Hit(Player* player);
+	void ServerMessage_Remove();
+	void ServerMessage_Effect(Vec3 pos);
 
 public:
 	void HandlePlayerSkillCollision();							//플레이어 스킬의 충돌 판단	(피격 : 몬스터)
@@ -72,6 +75,8 @@ public:
 
 	void MonsterSkillFire(physx::PxVec3 dir);					//Weeper::Pattern_Cast1()에서 스킬 오브젝트를 발사하기 위한 함수
 	void WeeperNuclearFire();
+
+
 public:
 	void Handle_Attribute();		//attribute에 따라 지속적으로 실행
 	void Attirbute_Levitate();		//공중 지속
@@ -87,11 +92,10 @@ public:
 
 public:
 	void Nuclear_Attribute_Explosion();
+	void Cast3Ball_Attribute_Explosion();
 
 public:
 	bool IsPlayerSkill();
-	void SendAddAgain();
-	void SendRemoveAgain();
 
 private:
 	RigidBody* m_body = nullptr;
@@ -104,9 +108,6 @@ private:
 	GameObject* m_owner = nullptr;
 
 	bool m_flagPlayer = false;
-
-	int32_t m_sendAdd = 0;
-	int32_t m_sendRemove = 0;
 };
 
 

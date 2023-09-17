@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -23,14 +23,14 @@ namespace game
 	{
 	}
 
-	TIMER_EVENT::TIMER_EVENT(ProtocolID msgProtocol, int32_t playerID) :
+	TimerEvent::TimerEvent(ProtocolID msgProtocol, int32_t playerID) :
 		playerID{ playerID },
 		type{ msgProtocol },
 		wakeUpTime{ CURRENT_TIME }
 	{
 	}
 
-	constexpr bool TIMER_EVENT::operator<(const TIMER_EVENT& left) const
+	constexpr bool TimerEvent::operator<(const TimerEvent& left) const
 	{
 		return left.wakeUpTime < wakeUpTime;
 	}
@@ -72,7 +72,7 @@ namespace game
 
 		while (empty == false)
 		{
-			TIMER_EVENT ev{};
+			TimerEvent ev{};
 			m_sendQueue.try_pop(ev);
 			empty = m_sendQueue.empty();
 		}
@@ -84,11 +84,11 @@ namespace game
 
 		while (true)
 		{
-			TIMER_EVENT ev;
+			TimerEvent ev;
 			auto currentTime{ CURRENT_TIME };
-			//bool success{ m_sendQueue.try_pop(ev) };
+			bool success{ m_sendQueue.try_pop(ev) };
 
-			if (m_sendQueue.try_pop(ev) == false)
+			if (success == false)
 			{
 				std::this_thread::sleep_for(1ms);
 				continue;
@@ -101,83 +101,90 @@ namespace game
 				continue;
 			}
 
-			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
-			postOver.msgProtocol = ev.type;
-			//postOver.roomID = ev.roomID;
+			network::OVERLAPPEDEX* postOver{ new network::OVERLAPPEDEX{ network::COMPLETION::BROADCAST } };
+			postOver->msgProtocol = ev.type;
+			//postOver->roomID = ev.roomID;
 
 			switch (ev.type)
 			{
 				case ProtocolID::AU_LOGIN_ACK:
 				case ProtocolID::AU_LOGOUT_ACK:
-				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 				case ProtocolID::WR_PLAYER_HP_ACK:
 				case ProtocolID::WR_PLAYER_MP_ACK:
 				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_ADD_OBJ_ACK:
 				case ProtocolID::WR_REMOVE_ACK:
-				case ProtocolID::WR_SKILL_HIT_ACK:
 				{
-					postOver.objType = ev.objType;
+					postOver->objType = ev.objType;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_CHANGE_STATE_ACK:
 				{
-					postOver.objType = ev.objType;
-					postOver.state = ev.state;
+					postOver->objType = ev.objType;
+					postOver->state = ev.state;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
+				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 				case ProtocolID::WR_MONSTER_QUAT_ACK:
 				case ProtocolID::WR_MONSTER_HP_ACK:
+				case ProtocolID::WR_SKILL_HIT_ACK:
 				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
-				case ProtocolID::WR_MONSTER_PATTERN_ACK:
 				case ProtocolID::WR_CHANGE_SOUND_ACK:
 				{
-					postOver.state = ev.state;
+					postOver->state = ev.state;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_RENDER_EFFECT_ACK:
+				case ProtocolID::WR_CREATE_PARTICLE_ACK:
 				{
-					postOver.state = ev.state;
-					postOver.effectPosX = ev.effectPos.x;
-					postOver.effectPosY = ev.effectPos.y;
-					postOver.effectPosZ = ev.effectPos.z;
+					postOver->state = ev.state;
+					postOver->effectPosX = ev.effectPos.x;
+					postOver->effectPosY = ev.effectPos.y;
+					postOver->effectPosZ = ev.effectPos.z;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK:
 				{
-					postOver.state = ev.state;
-					postOver.integer = ev.integer;
+					postOver->state = ev.state;
+					postOver->integer = ev.integer;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				case ProtocolID::WR_TRIGGER_INTERACTION_ACK:
 				case ProtocolID::WR_PLAY_CUT_SCENE_ACK:
+				case ProtocolID::WR_COUNTER_EFFECT_ACK:
 				{
-					postOver.integer = ev.integer;
+					postOver->integer = ev.integer;
 
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
+				}
+				break;
+				case ProtocolID::WR_TRANSFORM_ACK:
+				{
+					postOver->objType = ev.objType;
+					//postOver.roomID = ev.roomID;
+
+					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}
 				break;
 				default:
 				break;
 			}
-
-			std::this_thread::sleep_for(1ms);
 		}
 	}
 
@@ -187,7 +194,7 @@ namespace game
 
 		while (true)
 		{
-			TIMER_EVENT ev;
+			TimerEvent ev{};
 			auto currentTime{ CURRENT_TIME };
 			bool success{ m_transformQueue.try_pop(ev) };
 
@@ -204,26 +211,12 @@ namespace game
 				continue;
 			}
 
-			network::OVERLAPPEDEX postOver{ network::COMPLETION::BROADCAST };
-			postOver.msgProtocol = ev.type;
-			postOver.objType = ev.objType;
+			network::OVERLAPPEDEX* postOver{ new network::OVERLAPPEDEX{ network::COMPLETION::BROADCAST } };
+			postOver->msgProtocol = ev.type;
+			postOver->objType = ev.objType;
 			//postOver.roomID = ev.roomID;
 
-			switch (ev.objType)
-			{
-				case server::OBJECT_TYPE::PLAYER:
-				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.playerID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
-				}
-				break;
-				default:
-				{
-					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver.over);
-					std::this_thread::sleep_for(1ms);
-				}
-				break;
-			}
+			PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 		}
 	}
 
@@ -266,8 +259,11 @@ namespace game
 					//player->SetName(L"Mistic");
 					//
 					//Login(msg.playerID, player);
-					TIMER_EVENT ev{ ProtocolID::AU_LOGIN_ACK, msg.playerID };
-					PushSendMessage(ev);
+					//for (int32_t i = 0; i < SEND_AGAIN; ++i)
+					{
+						TimerEvent ev{ ProtocolID::AU_LOGIN_ACK, msg.playerID };
+						PushSendMessage(ev);
+					}
 				}
 				break;
 				case ProtocolID::AU_LOGOUT_REQ:
@@ -333,12 +329,12 @@ namespace game
 		++m_recvQueueSize;
 	}
 
-	void MessageHandler::PushSendMessage(TIMER_EVENT& ev)
+	void MessageHandler::PushSendMessage(TimerEvent& ev)
 	{
 		m_sendQueue.push(ev);
 	}
 
-	void MessageHandler::PushTransformMessage(TIMER_EVENT& ev)
+	void MessageHandler::PushTransformMessage(TimerEvent& ev)
 	{
 		m_transformQueue.push(ev);
 	}
@@ -384,7 +380,7 @@ namespace game
 
 		game::CRoomManager::GetInstance()->Enter(roomID, player);
 
-		TIMER_EVENT ev{ ProtocolID::AU_LOGIN_ACK, playerID };
+		TimerEvent ev{ ProtocolID::AU_LOGIN_ACK, playerID };
 		ev.roomID = roomID;
 
 		PushSendMessage(ev);
@@ -395,7 +391,7 @@ namespace game
 		//game::CRoomManager::GetInstance()->Exit(roomID, player);
 		player->SetRemoveReserved();
 
-		TIMER_EVENT ev{ ProtocolID::AU_LOGOUT_ACK, playerID };
+		TimerEvent ev{ ProtocolID::AU_LOGOUT_ACK, playerID };
 		ev.roomID = roomID;
 
 		PushSendMessage(ev);
@@ -426,11 +422,11 @@ namespace game
 			player->SetFBXType(msg.fbxType);
 		}
 
-		TIMER_EVENT ev{ ProtocolID::WR_ADD_ANIMATE_OBJ_ACK, msg.playerID };
-		ev.objType = msg.objType;
-
-		for (int32_t i = 0; i < 2; ++i)
+		//for (int32_t i = 0; i < SEND_AGAIN; ++i)
 		{
+			TimerEvent ev{ ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
+			ev.objID = msg.playerID;
+
 			PushSendMessage(ev);
 		}
 	}

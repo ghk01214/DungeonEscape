@@ -8,7 +8,7 @@ namespace game
 {
 	CSession::CSession() :
 		m_recvEx{},
-		m_sendEx{},
+		//m_sendEx{},
 		m_state{ STATE::FREE },
 		m_socket{ INVALID_SOCKET },
 		m_id{ -1 },
@@ -19,7 +19,7 @@ namespace game
 
 	CSession::CSession(Player* obj) :
 		m_recvEx{},
-		m_sendEx{},
+		//m_sendEx{},
 		m_state{ STATE::FREE },
 		m_socket{ INVALID_SOCKET },
 		m_id{ -1 },
@@ -55,9 +55,11 @@ namespace game
 	void CSession::Send(network::CPacket& packet)
 	{
 		// OVERLAPPEDEX에 패킷 데이터 복사
-		m_sendEx.Set(packet);
+		//m_sendEx.Set(packet);
+		network::OVERLAPPEDEX* sendEx{ new network::OVERLAPPEDEX{ network::COMPLETION::SEND } };
+		sendEx->Set(packet);
 
-		WSASend(m_socket, &m_sendEx.wsa, 1, 0, 0, &m_sendEx.over, nullptr);
+		WSASend(m_socket, &sendEx->wsa, 1, 0, 0, &sendEx->over, nullptr);
 	}
 
 	void CSession::SendLoginPacket(Player* obj)
@@ -308,17 +310,6 @@ namespace game
 		Send(packet);
 	}
 
-	void CSession::SendMonsterPatternPacket(int32_t id, int32_t patternIndex)
-	{
-		network::CPacket packet;
-
-		packet.WriteID(id);
-		packet.WriteProtocol(ProtocolID::WR_MONSTER_PATTERN_ACK);
-		packet.Write<int32_t>(patternIndex);
-
-		Send(packet);
-	}
-
 	void CSession::SendSkillHitPacket(int32_t id)
 	{
 		network::CPacket packet;
@@ -419,6 +410,30 @@ namespace game
 		packet.WriteProtocol(ProtocolID::WR_MONSTER_HP_ACK);
 		packet.Write<server::FBX_TYPE>(obj->GetFBXType());
 		packet.Write<int32_t>(obj->GetHP());
+
+		Send(packet);
+	}
+
+	void CSession::SendCounterEffectPacket(int32_t id, bool render)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(ProtocolID::WR_COUNTER_EFFECT_ACK);
+		packet.Write<bool>(render);
+
+		Send(packet);
+	}
+
+	void CSession::SendParticleEffectPacket(ProtocolID protocol, int32_t id, Vec3 pos)
+	{
+		network::CPacket packet;
+
+		packet.WriteID(id);
+		packet.WriteProtocol(protocol);
+		packet.Write<float>(pos.x);
+		packet.Write<float>(pos.y);
+		packet.Write<float>(pos.z);
 
 		Send(packet);
 	}

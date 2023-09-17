@@ -193,13 +193,12 @@ void Weeper::CheckState()
 
 	//for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
-		//cout << "호출되긴한거냐?" << endl;
-		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
-		ev.state = m_currState;
+		game::TimerEvent ev{ ProtocolID::WR_CHANGE_STATE_ACK };
 		ev.objID = m_id;
+		ev.state = m_currState;
 		ev.objType = m_objType;
 
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
 	}
 
 }
@@ -427,11 +426,11 @@ void Weeper::Pattern_Cast4_Effect(Player* player)
 
 	ServerMessage_SendRenderLandEffect(player);
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
 	ev.objID = player->GetID();
 	ev.state = magic_enum::enum_integer(server::SOUND_TYPE::LIGHT_EXPLOSION);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void Weeper::Sink()
@@ -498,21 +497,22 @@ void Weeper::SendChangedStateAgain()
 	if (m_sendState <= 0)
 		return;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
+	game::TimerEvent ev{ ProtocolID::WR_CHANGE_STATE_ACK };
+	ev.objID = m_id;
 	ev.state = m_currState;
 	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 
 	--m_sendState;
 }
 
 void Weeper::ServerMessage_SendRenderLandEffect(Player* player)
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = player->GetID();
 	ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IN_DISPERSAL);
 	ev.effectPos = player->GetTransform()->GetPosition();
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }

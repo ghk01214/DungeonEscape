@@ -18,6 +18,7 @@ public:
 	constexpr bool ClosePopUp() const { return m_closePopUp; }
 
 	void SetClosePopUpFlag(bool flag);
+	void SetVisible(bool flag);
 
 private:
 	bool m_closePopUp;

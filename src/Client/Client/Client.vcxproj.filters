@@ -192,6 +192,18 @@
     <Filter Include="소스 파일\Objects\03. Monster\Boss\Weeper\Effect">
       <UniqueIdentifier>{8f146ce7-a65f-49a0-9207-adc9b0cecc92}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\03. Monster\Boss\Counter Effect">
+      <UniqueIdentifier>{c479d1ef-7b48-4827-a10a-b7670be41a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\BossUI\Tutorial">
+      <UniqueIdentifier>{d16b13aa-019f-477b-98c9-c05a696b4053}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\06. PhysxObject\Object">
+      <UniqueIdentifier>{c5225de8-b3af-46b8-a09f-96cda53b449f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\06. PhysxObject\Particle">
+      <UniqueIdentifier>{372876d3-95cc-4c17-ab6b-15ed8852c027}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -268,9 +280,6 @@
     </ClInclude>
     <ClInclude Include="Scene_Test.h">
       <Filter>소스 파일\Objects\00. Scene\Test</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysxObject_Script.h">
-      <Filter>소스 파일\Objects\06. PhysxObject</Filter>
     </ClInclude>
     <ClInclude Include="LoginButton_Script.h">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
@@ -368,6 +377,21 @@
     <ClInclude Include="WeeperEffect_Script.h">
       <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="BossCounterEffect_Script.h">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Counter Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="BossTutorial_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="PageChangeButton_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysxObject_Script.h">
+      <Filter>소스 파일\Objects\06. PhysxObject\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle_Script.h">
+      <Filter>소스 파일\Objects\06. PhysxObject\Particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -442,9 +466,6 @@
     </ClCompile>
     <ClCompile Include="Scene_Test.cpp">
       <Filter>소스 파일\Objects\00. Scene\Test</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysxObject_Script.cpp">
-      <Filter>소스 파일\Objects\06. PhysxObject</Filter>
     </ClCompile>
     <ClCompile Include="LoginButton_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\Lobby</Filter>
@@ -538,6 +559,21 @@
     </ClCompile>
     <ClCompile Include="WeeperEffect_Script.cpp">
       <Filter>소스 파일\Objects\03. Monster\Boss\Weeper\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="BossCounterEffect_Script.cpp">
+      <Filter>소스 파일\Objects\03. Monster\Boss\Counter Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="BossTutorial_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="PageChangeButton_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysxObject_Script.cpp">
+      <Filter>소스 파일\Objects\06. PhysxObject\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle_Script.cpp">
+      <Filter>소스 파일\Objects\06. PhysxObject\Particle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

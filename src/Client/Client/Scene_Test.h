@@ -10,7 +10,11 @@ class InfoUI_Script;
 class Fade_Script;
 class PortalUI_Script;
 class Cinematic_Script;
+class VolumeSlider_Script;
 class Magic_Artifact_Script;
+class BossTutorial_Script;
+class BossHP_Script;
+class PageChangeButton_Script;
 
 struct EffectInfo
 {
@@ -53,6 +57,14 @@ private:
 		GOLEM,
 
 		MAX2
+	};
+
+	enum PAGE_CHANGE_TYPE
+	{
+		PREV,
+		NEXT,
+
+		MAX3
 	};
 
 	struct UITransform
@@ -109,6 +121,7 @@ private:
 	std::vector<std::shared_ptr<CGameObject>> CreateAnimatedObject(ObjectDesc& objectDesc);
 	void CreateFade(std::shared_ptr<CScene> pScene);
 	std::vector<std::shared_ptr<class WeeperEffect_Script>> CreateWeeperCast4Effect();
+	std::shared_ptr<class BossCounterEffect_Script> CreateBossCounterEffect();
 
 private:
 	void PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects);
@@ -143,6 +156,11 @@ private:
 	void CreateSEButton();
 	void CreateSESlider();
 
+	void CreateBossTutorial();
+	void CreatePageChangeButton();
+	void CreateWeeperTutorial();
+	void CreateGolemTutorial();
+
 private:
 	void ChangePopUpVisibility();
 	void ChangeVolume();
@@ -150,6 +168,8 @@ private:
 	void ChangePlayerUIVisibility();
 	void ChangeBossUIVisibility();
 	void RenderFont();
+	void ShowBossTutorial();
+	void ChangeBossTutorialPage();
 
 private:
 	void SendKeyInput();
@@ -165,8 +185,9 @@ private:
 	void TriggerInteractionCount(network::CPacket& packet);
 	void PlayCutScene(network::CPacket& packet);
 	void ChangeMonsterHP(network::CPacket& packet);
+	void CreateSparkParticleObject(network::CPacket& packet);
 
-	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
+	void ClassifyObject(int32_t id, server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
 	void AddEffectTextures();
 	void RenderPortalEffect();
@@ -221,13 +242,18 @@ private:
 	uint32_t m_wpDarkBlueEffectStartIndex;
 	uint32_t m_wpDarkBlueEffectCurrentIndex;
 
+	uint32_t m_sparkParticleEffectStartIndex;
+	uint32_t m_sparkParticleEffectCurrentIndex;
+
 	uint32_t m_circleFlameYellowStartIndex;
 	uint32_t m_circleFlameYellowCurrentIndex;
 
 	uint32_t m_impact15StartIndex;
 	uint32_t m_impact15CurrentIndex;
 
-	std::vector<std::shared_ptr<class Bomb_Script>> m_skillObject;
+	std::vector<std::shared_ptr<class Bomb_Script>> m_specialSkillObject;
+
+	std::unordered_map<int32_t, int32_t> m_skillObjects;
 
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;
@@ -244,19 +270,26 @@ private:
 
 	std::shared_ptr<class CloseButton_Script> m_closeButton;
 	std::vector<std::shared_ptr<class SliderTip_Script>> m_sliderTip;
-	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSlider;
-	std::vector<std::shared_ptr<class VolumeSlider_Script>> m_volumeSliderLeftTip;
+	std::vector<std::shared_ptr<VolumeSlider_Script>> m_volumeSlider;
+	std::vector<std::shared_ptr<VolumeSlider_Script>> m_volumeSliderLeftTip;
 	std::vector<std::shared_ptr<class MuteButton_Script>> m_muteButton;
 
 	std::vector<std::shared_ptr<CGameObject>> m_weeperUIObjets;
 	std::vector<std::shared_ptr<CGameObject>> m_golemUIObjets;
-	std::shared_ptr<class BossHP_Script> m_weeperHPScript;
-	std::shared_ptr<class BossHP_Script> m_golemHPScript;
+	std::shared_ptr<BossHP_Script> m_weeperHPScript;
+	std::shared_ptr<BossHP_Script> m_golemHPScript;
 	std::vector<std::shared_ptr<class BossWarning_Script>> m_bossWarningScript;
 
 	std::vector<std::shared_ptr<CGameObject>> m_playerUIObjects;
 
+	std::shared_ptr<BossTutorial_Script> m_weeperTutorialScript;
+	std::shared_ptr<BossTutorial_Script> m_golemTutorialScript;
+
+	std::vector<std::shared_ptr<PageChangeButton_Script>> m_pageChangeButton;
+
 	bool m_openSetting;
+	bool m_showWeeperTutorial;
+	bool m_showGolemTutorial;
 
 private:
 	std::shared_ptr<bool> m_recvFadeIn;
@@ -265,4 +298,5 @@ private:
 
 private:
 	std::unordered_map<FONT_TYPE, FontInfo> m_font;
+	bool m_renderFont;
 };

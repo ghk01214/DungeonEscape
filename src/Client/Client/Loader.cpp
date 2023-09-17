@@ -143,7 +143,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Nana\\Nana.fbx");
 	//GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Carmel\\Carmel.fbx");
 
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Weeper\\Weeper.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\Weeper\\Weeper1.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx");
 	//GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Black Scorpion.fbx");
 
@@ -151,15 +151,14 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx");
 
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Models2.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Pillar Bridge.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Rolling Rock.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Scatter Rock.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Bullet1.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone Bullet2.fbx");
-	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone1.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone2.fbx");
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Stone3.fbx");
 
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\Orange.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\Red.fbx");
@@ -222,6 +221,16 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 
 	LOAD_TEXTURE(L"Slider Tip", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip.png");
 	LOAD_TEXTURE(L"Slider Tip Mute", L"..\\Resources\\Texture\\UI\\Slider\\Slider Tip_mute.png");
+
+	LOAD_TEXTURE(L"Weeper Tutorial1", L"..\\Resources\\Texture\\UI\\In Game\\Weeper Tutorial1.png");
+	LOAD_TEXTURE(L"Weeper Tutorial2", L"..\\Resources\\Texture\\UI\\In Game\\Weeper Tutorial2.png");
+	LOAD_TEXTURE(L"Golem Tutorial1", L"..\\Resources\\Texture\\UI\\In Game\\Golem Tutorial1.png");
+	LOAD_TEXTURE(L"Golem Tutorial2", L"..\\Resources\\Texture\\UI\\In Game\\Golem Tutorial2.png");
+
+	LOAD_TEXTURE(L"Prev Button", L"..\\Resources\\Texture\\UI\\Button\\Prev.png");
+	LOAD_TEXTURE(L"Prev Button_selected", L"..\\Resources\\Texture\\UI\\Button\\Prev_selected.png");
+	LOAD_TEXTURE(L"Next Button", L"..\\Resources\\Texture\\UI\\Button\\Next.png");
+	LOAD_TEXTURE(L"Next Button_selected", L"..\\Resources\\Texture\\UI\\Button\\Next_selected.png");
 #pragma endregion
 
 	return S_OK;
@@ -235,7 +244,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Circle_Wave", L"..\\Resources\\Texture\\Effect\\Circle Wave\\tile.png", 6);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Explode", L"..\\Resources\\Texture\\Effect\\Explode\\tile.png", 20);
-	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Ice_Explode", L"..\\Resources\\Texture\\Effect\\Ice Explode\\tile.png", 16);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Ice_Explode", L"..\\Resources\\Texture\\Effect\\Ice Explode\\tile.png", 15);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Fire\\Fire.png", 64);
 
@@ -253,6 +262,8 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Star_Sword", L"..\\Resources\\Texture\\Effect\\Star Sword\\tile.png", 24);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Lune_Sword", L"..\\Resources\\Texture\\Effect\\Lune Sword\\tile.png", 28);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Cross_Sword", L"..\\Resources\\Texture\\Effect\\Cross Sword\\tile.png", 19);
+
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Spark_Particle", L"..\\Resources\\Texture\\Effect\\Spark Particle\\tile.png", 25);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Spiral", L"..\\Resources\\Texture\\Effect\\Spiral\\tile.png", 18);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Whirl_Pool_Dark_Blue", L"..\\Resources\\Texture\\Effect\\whirl pool\\dark blue\\tile.png", 36);

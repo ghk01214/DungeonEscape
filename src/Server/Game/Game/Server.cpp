@@ -19,6 +19,7 @@
 #include "Monster.h"
 #include "SkillObject.h"
 #include "EventHandler.h"
+#include "ParticleObject.h"
 
 #include "Weeper.h"
 
@@ -131,7 +132,7 @@ namespace game
 
 		m_gameThread = std::thread{ &CServer::GameThread, this };
 		m_timerThread = std::thread{ &MessageHandler::TimerThread, m_msgHandler };
-		m_transformThread = std::thread{ &MessageHandler::TransformThread, m_msgHandler };
+		//m_transformThread = std::thread{ &MessageHandler::TransformThread, m_msgHandler };
 
 		for (auto& thread : m_workerThreads)
 		{
@@ -140,7 +141,7 @@ namespace game
 
 		m_gameThread.join();
 		m_timerThread.join();
-		m_transformThread.join();
+		//m_transformThread.join();
 	}
 
 	void CServer::WorkerThread()
@@ -180,10 +181,10 @@ namespace game
 
 					if (pOverEx->type == network::COMPLETION::SEND)
 					{
-						ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
-						pOverEx = nullptr;
-						//if (pOverEx != nullptr)
-						//	delete pOverEx;
+						/*ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+						pOverEx = nullptr;*/
+						if (pOverEx != nullptr)
+							delete pOverEx;
 					}
 
 					continue;
@@ -206,10 +207,10 @@ namespace game
 
 				if (pOverEx->type == network::COMPLETION::SEND)
 				{
-					ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
-					pOverEx = nullptr;
-					//if (pOverEx != nullptr)
-					//	delete pOverEx;
+					/*ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+					pOverEx = nullptr;*/
+					if (pOverEx != nullptr)
+						delete pOverEx;
 				}
 
 				continue;
@@ -235,10 +236,8 @@ namespace game
 				case network::COMPLETION::BROADCAST:
 				{
 					BroadcastResult(id, pOverEx);
-
-					ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
-					pOverEx = nullptr;
 				}
+				break;
 				default:
 				break;
 			}
@@ -328,6 +327,9 @@ namespace game
 			if (packetSize > remainSize)
 				break;
 
+			if (packetSize == 0)
+				break;
+
 			ProcessPacket(id, packet);
 
 			pPacket += packetSize;
@@ -352,10 +354,10 @@ namespace game
 		//	Disconnect(id);
 		//}
 
-		ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
-		pOverEx = nullptr;
-		//if (pOverEx != nullptr)
-		//	delete pOverEx;
+		/*ZeroMemory(&pOverEx->over, sizeof(pOverEx->over));
+		pOverEx = nullptr;*/
+		if (pOverEx != nullptr)
+			delete pOverEx;
 	}
 
 	int32_t CServer::NewPlayerID()
@@ -620,7 +622,7 @@ namespace game
 		//session->SetRoomID(roomID);
 		//session->SetPlayer(player);
 		session->SendLoginPacket(player);
-
+		std::cout << std::format("session[{}] login complete\n", id);
 		//for (auto& client : m_sessions)
 		//{
 		//	if (client->GetState() != STATE::INGAME)
@@ -657,12 +659,13 @@ namespace game
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
-		auto monsterObjects{ objMgr->GetLayer(L"Layer_Monster")->GetGameObjects() };
+		auto bossObjects{ objMgr->GetLayer(L"Layer_Monster")->GetGameObjects() };
 		auto skillObjects{ objMgr->GetLayer(L"Layer_SkillObject")->GetGameObjects() };
 		auto pillarObjects{ objMgr->GetLayer(L"Layer_Gimmik_Pillar")->GetGameObjects() };
-		auto rockObjects{ objMgr->GetLayer(L"Layer_Gimmik_Rock")->GetGameObjects() };
+		auto scatterRockObjects{ objMgr->GetLayer(L"Layer_Gimmik_Rock")->GetGameObjects() };
 		auto boulderObjects{ objMgr->GetLayer(L"Layer_Gimmik_Boulder")->GetGameObjects() };
 		auto lastBossRockObjects{ objMgr->GetLayer(L"Layer_LastBossRock")->GetGameObjects() };
+		auto particleObjects{ objMgr->GetLayer(L"Layer_Particle")->GetGameObjects() };
 
 		switch (postOver->msgProtocol)
 		{
@@ -682,8 +685,6 @@ namespace game
 				//int32_t roomID{ postOver->roomID };
 
 				Login(id, m_sessions[id], nullptr, 0);
-
-				std::cout << std::format("session[{}] login complete\n", id);
 			}
 			break;
 			case ProtocolID::AU_LOGOUT_ACK:
@@ -724,7 +725,7 @@ namespace game
 					break;
 				}
 
-				for (auto& monster : monsterObjects)
+				for (auto& monster : bossObjects)
 				{
 					auto mob{ dynamic_cast<Monster*>(monster) };
 
@@ -735,7 +736,7 @@ namespace game
 					mob->SetTransformSendFlag(true);
 				}
 
-				for (auto& object : rockObjects)
+				for (auto& object : scatterRockObjects)
 				{
 					auto rock{ dynamic_cast<MapObject*>(object) };
 
@@ -779,7 +780,7 @@ namespace game
 			case ProtocolID::WR_ADD_OBJ_ACK:
 			{
 				if (magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(postOver->objType)
-					and magic_enum::enum_integer(postOver->objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::MONSTER_POISONBALL))
+					and magic_enum::enum_integer(postOver->objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::WEEPER_CAST3_BALL))
 				{
 					for (auto& skillObject : skillObjects)
 					{
@@ -802,7 +803,7 @@ namespace game
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::MAP_OBJECT)
 				{
-					for (auto& object : rockObjects)
+					for (auto& object : scatterRockObjects)
 					{
 						auto rock{ dynamic_cast<MapObject*>(object) };
 
@@ -818,25 +819,6 @@ namespace game
 								continue;
 
 							client->SendAddObjPacket(rock, 39.0625f);
-						}
-					}
-
-					for (auto& object : boulderObjects)
-					{
-						auto rock{ dynamic_cast<MapObject*>(object) };
-
-						if (rock == nullptr)
-							continue;
-
-						if (rock->GetID() != id)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendAddObjPacket(rock, 30.f);
 						}
 					}
 
@@ -859,7 +841,7 @@ namespace game
 						}
 					}
 				}
-				else if (postOver->objType == server::OBJECT_TYPE::PHYSX_OBJECT)
+				else if (postOver->objType == server::OBJECT_TYPE::PILLAR)
 				{
 					for (auto& object : pillarObjects)
 					{
@@ -880,49 +862,16 @@ namespace game
 						}
 					}
 				}
-			}
-			break;
-			case ProtocolID::WR_TRANSFORM_ACK:
-			{
-				//if (postOver->objType == server::OBJECT_TYPE::PLAYER)
-				//{
-					for (auto& player : playerObjects)
-					{
-						auto pl{ dynamic_cast<Player*>(player) };
-
-						if (pl == nullptr)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendPlayerTransformPacket(pl);
-						}
-					}
-
-					for (auto& object : rockObjects)
+				else if (postOver->objType == server::OBJECT_TYPE::BOULDER)
+				{
+					for (auto& object : boulderObjects)
 					{
 						auto rock{ dynamic_cast<MapObject*>(object) };
 
 						if (rock == nullptr)
 							continue;
 
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(rock, 39.0625f);
-						}
-					}
-
-					for (auto& object : boulderObjects)
-					{
-						auto boulder{ dynamic_cast<MapObject*>(object) };
-
-						if (boulder == nullptr)
+						if (rock->GetID() != id)
 							continue;
 
 						for (auto& client : m_sessions)
@@ -930,75 +879,203 @@ namespace game
 							if (client->GetState() != STATE::INGAME)
 								continue;
 
-							client->SendTransformPacket(boulder, 30.f);
+							client->SendAddObjPacket(rock, 30.f);
 						}
 					}
+				}
+			}
+			break;
+			case ProtocolID::WR_TRANSFORM_ACK:
+			{
+				/*if (postOver->objType != server::OBJECT_TYPE::PLAYER)
+					std::cout << "type : " << magic_enum::enum_name(postOver->objType) << "\n";*/
 
-					for (auto& object : pillarObjects)
-					{
-						auto pillar{ dynamic_cast<PillarObject*>(object) };
-
-						if (pillar == nullptr)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(pillar);
-						}
-					}
-
-					for (auto& obj : lastBossRockObjects)
-					{
-						auto rock{ dynamic_cast<MapObject*>(obj) };
-
-						if (rock == nullptr)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(rock);
-						}
-					}
-				//}
-				/*else if (postOver->objType == server::OBJECT_TYPE::BOSS)
-				{*/
-					for (auto& monster : monsterObjects)
-					{
-						auto mob{ dynamic_cast<Monster*>(monster) };
-
-						if (mob == nullptr)
-							continue;
-
-						for (auto& client : m_sessions)
-						{
-							if (client->GetState() != STATE::INGAME)
-								continue;
-
-							client->SendTransformPacket(mob, 50.f);
-						}
-					}
-				//}
-
-				for (auto& skillObject : skillObjects)
+				switch (postOver->objType)
 				{
-					auto skill{ dynamic_cast<SkillObject*>(skillObject) };
-
-					if (skill == nullptr)
-						continue;
-
-					for (auto& client : m_sessions)
+					case server::OBJECT_TYPE::PLAYER:
 					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
+						for (auto& obj : playerObjects)
+						{
+							auto player{ dynamic_cast<Player*>(obj) };
 
-						client->SendTransformPacket(skill, 100.f);
+							if (player == nullptr)
+								continue;
+
+							if (player->GetID() != id)
+								continue;
+
+							for (auto& client : m_sessions)
+							{
+								if (client->GetState() != STATE::INGAME)
+									continue;
+
+								client->SendPlayerTransformPacket(player);
+							}
+						}
 					}
+					break;
+					case server::OBJECT_TYPE::BOSS:
+					{
+						for (auto& obj : bossObjects)
+						{
+							auto boss{ dynamic_cast<Monster*>(obj) };
+
+							if (boss == nullptr)
+								continue;
+
+							if (boss->GetID() != id)
+								continue;
+
+							for (auto& client : m_sessions)
+							{
+								if (client->GetState() != STATE::INGAME)
+									continue;
+
+								client->SendTransformPacket(boss, 50.f);
+							}
+						}
+					}
+					break;
+					case server::OBJECT_TYPE::PARTICLE:
+					{
+						for (auto& obj : particleObjects)
+						{
+							auto particle{ dynamic_cast<ParticleObject*>(obj) };
+
+							if (particle == nullptr)
+								continue;
+
+							/*if (particle->GetTransform() == nullptr)
+								continue;*/
+
+							if (particle->GetID() != id)
+								continue;
+
+							for (auto& client : m_sessions)
+							{
+								if (client->GetState() != STATE::INGAME)
+									continue;
+
+								client->SendParticleEffectPacket(postOver->msgProtocol, particle->GetID(), particle->GetTransform()->GetPosition());
+								/*auto pos{ particle->GetTransform()->GetPosition() };
+								std::cout << pos.x << ", " << pos.y << ", " << pos.z << "\n";*/
+							}
+						}
+					}
+					break;
+					case server::OBJECT_TYPE::PILLAR:
+					{
+						for (auto& obj : pillarObjects)
+						{
+							auto pillar{ dynamic_cast<PillarObject*>(obj) };
+
+							if (pillar == nullptr)
+								continue;
+
+							if (pillar->GetID() != id)
+								continue;
+
+							for (auto& client : m_sessions)
+							{
+								if (client->GetState() != STATE::INGAME)
+									continue;
+
+								client->SendTransformPacket(pillar);
+							}
+						}
+					}
+					break;
+					case server::OBJECT_TYPE::BOULDER:
+					{
+						for (auto& obj : boulderObjects)
+						{
+							auto boulder{ dynamic_cast<MapObject*>(obj) };
+
+							if (boulder == nullptr)
+								continue;
+
+							if (boulder->GetID() != id)
+								continue;
+
+							for (auto& client : m_sessions)
+							{
+								if (client->GetState() != STATE::INGAME)
+									continue;
+
+								client->SendTransformPacket(boulder, 30.f);
+							}
+						}
+					}
+					break;
+					case server::OBJECT_TYPE::SCATTER_ROCK:
+					{
+						for (auto& obj : scatterRockObjects)
+						{
+							auto rock{ dynamic_cast<MapObject*>(obj) };
+
+							if (rock == nullptr)
+								continue;
+
+							if (rock->GetID() != id)
+								continue;
+
+							for (auto& client : m_sessions)
+							{
+								if (client->GetState() != STATE::INGAME)
+									continue;
+
+								client->SendTransformPacket(rock, 39.0625f);
+							}
+						}
+					}
+					break;
+					case server::OBJECT_TYPE::ELEVATOR_ROCK:
+					{
+						for (auto& obj : lastBossRockObjects)
+						{
+							auto rock{ dynamic_cast<MapObject*>(obj) };
+
+							if (rock == nullptr)
+								continue;
+
+							if (rock->GetID() != id)
+								continue;
+
+							for (auto& client : m_sessions)
+							{
+								if (client->GetState() != STATE::INGAME)
+									continue;
+
+								client->SendTransformPacket(rock);
+							}
+						}
+					}
+					break;
+					case server::OBJECT_TYPE::TRIGGER_OBJECT:
+					case server::OBJECT_TYPE::TRIGGER_OBJECT2:
+					break;
+					default:
+					{
+						for (auto& skillObject : skillObjects)
+						{
+							auto skill{ dynamic_cast<SkillObject*>(skillObject) };
+
+							if (skill == nullptr)
+								continue;
+
+							if (skill->GetID() != id)
+								continue;
+
+							for (auto& client : m_sessions)
+							{
+								if (client->GetState() != STATE::INGAME)
+									continue;
+
+								client->SendTransformPacket(skill, 100.f);
+							}
+						}
+					}
+					break;
 				}
 			}
 			break;
@@ -1024,7 +1101,7 @@ namespace game
 				}
 				else if (postOver->objType == server::OBJECT_TYPE::BOSS)
 				{
-					for (auto& monster : monsterObjects)
+					for (auto& monster : bossObjects)
 					{
 						auto mob{ dynamic_cast<Monster*>(monster) };
 
@@ -1057,7 +1134,7 @@ namespace game
 			break;
 			case ProtocolID::WR_MONSTER_QUAT_ACK:
 			{
-				for (auto& monster : monsterObjects)
+				for (auto& monster : bossObjects)
 				{
 					auto mob{ dynamic_cast<Monster*>(monster) };
 
@@ -1077,44 +1154,14 @@ namespace game
 				}
 			}
 			break;
-			case ProtocolID::WR_MONSTER_PATTERN_ACK:
-			{
-				for (auto& player : playerObjects)
-				{
-					auto pl{ dynamic_cast<Player*>(player) };
-
-					if (pl == nullptr)
-						continue;
-
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						client->SendMonsterPatternPacket(id, postOver->state);
-					}
-				}
-			}
-			break;
 			case ProtocolID::WR_SKILL_HIT_ACK:
 			{
-				for (auto& object : skillObjects)
+				for (auto& client : m_sessions)
 				{
-					auto skill{ dynamic_cast<SkillObject*>(object) };
-
-					if (skill == nullptr)
+					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					if (skill->GetID() != id)
-						continue;
-
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						client->SendSkillHitPacket(id);
-					}
+					client->SendSkillHitPacket(id);
 				}
 			}
 			break;
@@ -1244,7 +1291,7 @@ namespace game
 			break;
 			case ProtocolID::WR_MONSTER_HP_ACK:
 			{
-				for (auto& obj : monsterObjects)
+				for (auto& obj : bossObjects)
 				{
 					auto monster{ dynamic_cast<Monster*>(obj) };
 
@@ -1261,6 +1308,35 @@ namespace game
 
 						client->SendMonsterHPPacket(monster);
 					}
+				}
+			}
+			break;
+			case ProtocolID::WR_COUNTER_EFFECT_ACK:
+			{
+				bool render{ false };
+
+				if (postOver->integer == 1)
+					render = true;
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendCounterEffectPacket(id, render);
+				}
+			}
+			break;
+			case ProtocolID::WR_CREATE_PARTICLE_ACK:
+			{
+				Vec3 pos{ postOver->effectPosX, postOver->effectPosY, postOver->effectPosZ };
+
+				for (auto& client : m_sessions)
+				{
+					if (client->GetState() != STATE::INGAME)
+						continue;
+
+					client->SendParticleEffectPacket(postOver->msgProtocol, id, pos);
 				}
 			}
 			break;

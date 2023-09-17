@@ -224,6 +224,9 @@
     <Filter Include="03. Game\01. GameObject\GimmikObject\ArtifactObject">
       <UniqueIdentifier>{2dc0684a-cd1e-4590-9bce-9c7420a89174}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Game\01. GameObject\ParticleObject">
+      <UniqueIdentifier>{292bcf42-7bc7-4817-9beb-22def802f502}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -415,6 +418,9 @@
     </ClCompile>
     <ClCompile Include="ArtifactObject.cpp">
       <Filter>03. Game\01. GameObject\GimmikObject\ArtifactObject</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleObject.cpp">
+      <Filter>03. Game\01. GameObject\ParticleObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -633,6 +639,9 @@
     </ClInclude>
     <ClInclude Include="ArtifactObject.h">
       <Filter>03. Game\01. GameObject\GimmikObject\ArtifactObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleObject.h">
+      <Filter>03. Game\01. GameObject\ParticleObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

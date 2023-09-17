@@ -116,13 +116,13 @@ void Monster_Golem::UpdateFrameRepeat()
 	if (m_currState != STUN)
 		return;
 
-	if (GET_SINGLE(EffectManager)->GetPlayOnce(140) == false)
+	if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(140) == false)
 		return;
 
 	auto pos{ GetTransform()->GetWorldPosition() };
-	pos.y += m_halfHeight;
+	pos.y += m_halfHeight * 1.5f;
 
-	GET_SINGLE(EffectManager)->SetBillBoardInfo(140, pos, Vec3{ 700.f }, 0.003f);
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(140, pos, Vec3{ 200.f }, 0.003f);
 	GET_SINGLE(EffectManager)->PlayBillBoard(140);
 }
 
@@ -191,6 +191,11 @@ void Monster_Golem::ParsePackets()
 			case ProtocolID::WR_MONSTER_QUAT_ACK:
 			{
 				Rotate(packet);
+			}
+			break;
+			case ProtocolID::WR_COUNTER_EFFECT_ACK:
+			{
+				CounterEffect(packet);
 			}
 			break;
 			default:

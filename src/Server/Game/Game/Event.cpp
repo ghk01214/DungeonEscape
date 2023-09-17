@@ -14,6 +14,7 @@
 #include "EventHandler.h"
 #include "TriggerObject2.h"
 #include "ObjectManager.h"
+#include "ParticleObject.h"
 #include "MessageHandler.h"
 
 Event::Event(std::string context, double remainTime, GameObject* subject) :
@@ -156,7 +157,7 @@ void Event::ExecuteMsg_Once()
 		if (meteorObj)
 		{
 			meteorObj->SetRemoveReserved();
-			meteorObj->ServerMessage_SkillRemove();
+			meteorObj->ServerMessage_Remove();
 		}
 	}
 
@@ -341,6 +342,14 @@ void Event::ExecuteMsg_Once()
 
 
 		// 위퍼 카운터 가능시간 시작
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			ev.objID = weeper->GetID();
+			ev.integer = 1;
+
+			MSG_HANDLER->PushSendMessage(ev);
+		}
 	}
 
 	if (msg == "CAST2_VULNERABLE_OFF")
@@ -353,6 +362,14 @@ void Event::ExecuteMsg_Once()
 		}
 
 		// 위퍼 카운터 가능시간 종료
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			ev.objID = weeper->GetID();
+			ev.integer = 0;
+
+			MSG_HANDLER->PushSendMessage(ev);
+		}
 	}
 
 	if (msg == "WEEPER_CAST3_FUNCTIONCALL")
@@ -370,6 +387,15 @@ void Event::ExecuteMsg_Once()
 		if (weeperObj)
 		{
 			weeperObj->Sink();
+		}
+	}
+
+	if (msg == "WEEPER_SIMULATE_STOP")
+	{
+		auto weeperObj = dynamic_cast<Weeper*>(target);
+		if (weeperObj)
+		{
+			weeperObj->GetController()->GetBody()->ExcludeFromSimulation(true);
 		}
 	}
 
@@ -392,20 +418,20 @@ void Event::ExecuteMsg_Once()
 
 
 			//effectposdata 보내서 사용하면 된다.
-			game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+			game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 			ev.objID = weeperObj->GetID();
 			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
 			ev.effectPos.x = effectposdata.x;
 			ev.effectPos.y = effectposdata.y;
 			ev.effectPos.z = effectposdata.z;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			MSG_HANDLER->PushSendMessage(ev);
 		}
 	}
 
 	if (msg == "CAST4_EFFECT_START")
 	{
-		
+
 	}
 
 	if (msg == "CAST4_EFFECT_END")
@@ -667,6 +693,14 @@ void Event::ExecuteMsg_Once()
 
 
 		//골렘 카운터가능시간 진입
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			ev.objID = golemObj->GetID();
+			ev.integer = 1;
+
+			MSG_HANDLER->PushSendMessage(ev);
+		}
 	}
 
 	if (msg == "SPELL_VULNERABLE_OFF")
@@ -679,6 +713,14 @@ void Event::ExecuteMsg_Once()
 
 
 		//골렘 카운터가능시간 종료
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+			ev.objID = golemObj->GetID();
+			ev.integer = 0;
+
+			MSG_HANDLER->PushSendMessage(ev);
+		}
 	}
 
 	if (msg == "LastBossRock_SkipClear")
@@ -705,14 +747,14 @@ void Event::ExecuteMsg_Once()
 
 
 			//effectposdata보내면 된다.
-			game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+			game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 			ev.objID = golemObj->GetID();
 			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
 			ev.effectPos.x = effectposdata.x;
 			ev.effectPos.y = effectposdata.y;
 			ev.effectPos.z = effectposdata.z;
 
-			game::MessageHandler::GetInstance()->PushSendMessage(ev);
+			MSG_HANDLER->PushSendMessage(ev);
 		}
 	}
 
@@ -734,6 +776,30 @@ void Event::ExecuteMsg_Once()
 		if (triggerObj)
 		{
 			triggerObj->ThrowGimmik2Ball();
+		}
+	}
+
+	//PARTICLE
+	if (msg == "REMOVE_PARTICLE")
+	{
+		auto particleObj = dynamic_cast<ParticleObject*>(target);
+		if (particleObj)
+		{
+			particleObj->ServerMessage_Release();
+			particleObj->SetRemoveReserved();
+			//파티클 삭제
+		}
+	}
+
+	//PARTICLE
+	if (msg == "STOP_PARTICLE")
+	{
+		auto particleObj = dynamic_cast<ParticleObject*>(target);
+		if (particleObj)
+		{
+			particleObj->GetComponent<RigidBody>(L"RigidBody")->ExcludeFromSimulation(true);
+			particleObj->ServerMessage_Release();
+			//파티클 삭제
 		}
 	}
 
@@ -844,6 +910,25 @@ void Event::ExecuteMsg_continuous()
 		}
 	}
 
+	if (msg == "NUCLEAR_ATTACK_DAMAGE_APPLY")		//Jump에서 착지까지 반복호출
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (!playerObj)
+			return;
+
+		executed = false;
+		bool ground = playerObj->GetController()->IsOnGround();
+		if (ground)
+		{
+			if (playerObj->GetState() == Player::PLAYER_STATE::DAMAGE)
+				playerObj->SetState(Player::PLAYER_STATE::IDLE1);
+			else
+				playerObj->SetState(Player::PLAYER_STATE::DAMAGE);
+
+
+			executed = true;
+		}
+	}
 
 
 	if (msg == "LAST_BOSS_ROCK_RISE")		//Jump에서 착지까지 반복호출

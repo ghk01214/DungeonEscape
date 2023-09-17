@@ -33,12 +33,14 @@ PxQueryHitType::Enum CustomQueryFilterCallback::preFilter(
     Collider* collider = static_cast<Collider*>(shape->userData);
     RigidBody* rigidbody = static_cast<RigidBody*>(actor->userData);
 
+
     //m_ignoreBody가 nullptr일때 none반환
     if (m_ignoreBody && rigidbody == m_ignoreBody)
         return PxQueryHitType::eNONE;
 
     if ((1 << collider->GetLayerIndex()) & m_targets)
         return m_hitType;
+
     else
         return PxQueryHitType::eNONE;
 }

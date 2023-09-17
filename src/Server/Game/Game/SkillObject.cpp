@@ -129,6 +129,8 @@ void SkillObject::Init()
 
 			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
 			EventHandler::GetInstance()->AddEvent("SKILL_LEVITATE_END", 0.5f, this);
+
+			m_body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_MONSTER, PhysicsLayers::PLAYER);
 		}
 		break;
 
@@ -185,7 +187,7 @@ void SkillObject::Init()
 				static_cast<PhysicsLayers>(static_cast<int>(PhysicsLayers::MONSTER) | static_cast<int>(PhysicsLayers::SKILLOBJECT_MONSTER)));
 	}
 
-	ServerMessage_SkillInit();
+	ServerMessage_Init();
 }
 
 void SkillObject::Update(double timeDelta)
@@ -198,6 +200,8 @@ void SkillObject::Update(double timeDelta)
 		HandlePlayerSkillCollision();
 	else
 		HandleMonsterSkillCollision();
+
+	ServerMessage_Transform();
 
 	GameObject::Update(timeDelta);
 }
@@ -215,9 +219,9 @@ void SkillObject::Release()
 	GameObject::Release();
 }
 
-void SkillObject::ServerMessage_SkillInit()
+void SkillObject::ServerMessage_Init()
 {
-	m_id = game::MessageHandler::GetInstance()->NewObjectID();
+	m_id = MSG_HANDLER->NewObjectID();
 
 	switch (m_skillType)
 	{
@@ -240,13 +244,6 @@ void SkillObject::ServerMessage_SkillInit()
 			m_name = L"PLAYER THUNDERBALL";
 			m_fbxType = server::FBX_TYPE::PLAYER_THUNDERBALL;
 			m_objType = server::OBJECT_TYPE::PLAYER_THUNDERBALL;
-		}
-		break;
-		case SKILLOBJECTTYPE::PLAYER_POISONBALL:
-		{
-			m_name = L"PLAYER POISONBALL";
-			m_fbxType = server::FBX_TYPE::PLAYER_POISONBALL;
-			m_objType = server::OBJECT_TYPE::PLAYER_POISONBALL;
 		}
 		break;
 		case SKILLOBJECTTYPE::PLAYER_METEOR:
@@ -284,79 +281,71 @@ void SkillObject::ServerMessage_SkillInit()
 			m_objType = server::OBJECT_TYPE::WEEPER_CAST3_BALL;
 		}
 		break;
-		case SKILLOBJECTTYPE::WEEPER_CAST4_BALL:
-		{
-			m_name = L"WEEPER_CAST4_BALL";
-			m_fbxType = server::FBX_TYPE::WEEPER_CAST4_BALL;
-			m_objType = server::OBJECT_TYPE::WEEPER_CAST4_BALL;
-		}
-		break;
-		case SKILLOBJECTTYPE::MONSTER_ICEBALL:
-		{
-			m_name = L"MONSTER ICEBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_ICEBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_ICEBALL;
-		}
-		break;
-		case SKILLOBJECTTYPE::MONSTER_THUNDERBALL:
-		{
-			m_name = L"MONSTER THUNDERBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_THUNDERBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_THUNDERBALL;
-		}
-		break;
-		case SKILLOBJECTTYPE::MONSTER_POISONBALL:
-		{
-			m_name = L"MONSTER POISONBALL";
-			m_fbxType = server::FBX_TYPE::MONSTER_POISONBALL;
-			m_objType = server::OBJECT_TYPE::MONSTER_POISONBALL;
-		}
-		break;
 		default:
 		break;
 	}
 
-	//std::cout << "skill add : " << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
-	for (int32_t i = 0; i < SEND_AGAIN; ++i)
-	{
-		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
-		ev.objType = m_objType;
-		ev.objID = m_id;
-
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
-	}
-
-	m_sendRemove = 0;
-	m_sendAdd = SEND_AGAIN;
+	ServerMessage_Add();
 }
 
-void SkillObject::ServerMessage_SkillHit()
+void SkillObject::ServerMessage_Add()
 {
 	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
-		game::TIMER_EVENT ev{ ProtocolID::WR_SKILL_HIT_ACK };
-		ev.objID = m_id;
+		game::TimerEvent ev{ ProtocolID::WR_ADD_OBJ_ACK };
 		ev.objType = m_objType;
+		ev.objID = m_id;
 
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
 	}
 }
 
-void SkillObject::ServerMessage_SkillRemove()
+void SkillObject::ServerMessage_Transform()
 {
-	//스킬 오브젝트 객체 삭제 전달.
-	//추후 피격 잔상 위치 같이 추가적으로 더 정보를 전달할 수 있음.
-	//std::cout << "skill remove : " << m_id << ", " << magic_enum::enum_name(m_objType) << "\n";
+	if (isSleep() == true)
+		return;
+
+	game::TimerEvent ev{ ProtocolID::WR_TRANSFORM_ACK };
+	ev.objID = m_id;
+	ev.objType = m_objType;
+
+	MSG_HANDLER->PushSendMessage(ev);
+}
+
+void SkillObject::ServerMessage_Hit(Player* player)
+{
 	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
-		game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+		game::TimerEvent ev{ ProtocolID::WR_SKILL_HIT_ACK };
+		ev.objID = player->GetID();
+
+		MSG_HANDLER->PushSendMessage(ev);
+	}
+}
+
+void SkillObject::ServerMessage_Remove()
+{
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
 		ev.objID = m_id;
 		ev.objType = m_objType;
 
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
 	}
+}
 
-	m_sendRemove = SEND_AGAIN;
+void SkillObject::ServerMessage_Effect(Vec3 pos)
+{
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+		ev.objID = m_id;
+		ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::NUCLEAR_EXPLOSION);
+		ev.effectPos = pos;
+
+		MSG_HANDLER->PushSendMessage(ev);
+	}
 }
 
 bool SkillObject::IsPlayerSkill()
@@ -366,34 +355,6 @@ bool SkillObject::IsPlayerSkill()
 
 	else
 		return false;
-}
-
-void SkillObject::SendAddAgain()
-{
-	if (m_sendAdd <= 0)
-		return;
-
-	game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
-	ev.objID = m_id;
-	ev.objType = m_objType;
-
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
-
-	--m_sendAdd;
-}
-
-void SkillObject::SendRemoveAgain()
-{
-	if (m_sendRemove <= 0)
-		return;
-
-	game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
-	ev.objID = m_id;
-	ev.objType = m_objType;
-
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
-
-	--m_sendRemove;
 }
 
 void SkillObject::HandlePlayerSkillCollision()
@@ -429,7 +390,7 @@ void SkillObject::HandlePlayerSkillCollision()
 						{
 							weeper->GetDamaged(100);
 							SetRemoveReserved();						//객체 삭제
-							ServerMessage_SkillRemove();					//서버 메시지 처리
+							ServerMessage_Remove();					//서버 메시지 처리
 						}
 					}
 					break;
@@ -443,7 +404,7 @@ void SkillObject::HandlePlayerSkillCollision()
 						{
 							golem->GetDamaged(100);
 							SetRemoveReserved();						//객체 삭제
-							ServerMessage_SkillRemove();					//서버 메시지 처리
+							ServerMessage_Remove();					//서버 메시지 처리
 						}
 					}
 					break;
@@ -463,7 +424,7 @@ void SkillObject::HandlePlayerSkillCollision()
 
 				m_body->ExcludeFromSimulation(true);
 				SetRemoveReserved();						//객체 삭제
-				ServerMessage_SkillRemove();					//서버 메시지 처리
+				ServerMessage_Remove();					//서버 메시지 처리
 			}
 
 
@@ -473,7 +434,7 @@ void SkillObject::HandlePlayerSkillCollision()
 		else if (type == server::OBJECT_TYPE::PLAYER)
 		{
 			SetRemoveReserved();						//객체 삭제
-			ServerMessage_SkillRemove();					//서버 메시지 처리
+			ServerMessage_Remove();					//서버 메시지 처리
 		}
 
 		//플레이어스킬 : 맵 타격
@@ -504,11 +465,11 @@ void SkillObject::HandlePlayerSkillCollision()
 			}
 
 			SetRemoveReserved();						//객체 삭제
-			ServerMessage_SkillRemove();					//서버 메시지 처리
+			ServerMessage_Remove();					//서버 메시지 처리
 		}
 
 		//플레이어스킬 : 돌기둥 다리 타격
-		else if (type == server::OBJECT_TYPE::PHYSX_OBJECT)
+		else if (type == server::OBJECT_TYPE::PILLAR)
 		{
 			switch (m_skillType)
 			{
@@ -546,36 +507,30 @@ void SkillObject::HandleMonsterSkillCollision()
 		{
 			auto player{ dynamic_cast<Player*>(collider->GetOwnerObject()) };
 
-			if (player != nullptr and player->IsDead() == false)
+			//보스스킬 : 플레이어 타격
+			if (type == server::OBJECT_TYPE::PLAYER)
 			{
-				switch (player->GetFBXType())
+				auto player{ dynamic_cast<Player*>(collider->GetOwnerObject()) };
+
+				if (player != nullptr and player->IsDead() == false)
 				{
-					case server::FBX_TYPE::NANA:
+					if (m_skillType == SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR)
 					{
-						//플레이어 나나 피격
+						Nuclear_Attribute_Explosion();
 					}
-					break;
-					case server::FBX_TYPE::MISTIC:
+					else if (m_skillType == SKILLOBJECTTYPE::WEEPER_CAST3_BALL)
 					{
-						//플레이어 미스틱 피격
+						Cast3Ball_Attribute_Explosion();
 					}
-					break;
-					case server::FBX_TYPE::CARMEL:
+					else
 					{
-						//플레이어 카멜 피격
+						player->SetState(Player::PLAYER_STATE::DAMAGE);
+						ServerMessage_Hit(player);
 					}
-					break;
+
+					SetRemoveReserved();						//객체 삭제
+					ServerMessage_Remove();					//서버 메시지 처리
 				}
-
-				if (m_skillType == SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR)
-				{
-					Nuclear_Attribute_Explosion();
-				}
-
-				SetRemoveReserved();						//객체 삭제
-				ServerMessage_SkillRemove();					//서버 메시지 처리
-
-
 			}
 		}
 
@@ -587,13 +542,13 @@ void SkillObject::HandleMonsterSkillCollision()
 				case SKILLOBJECTTYPE::PLAYER_FIREBALL:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillRemove();					//서버 메시지 처리
+					ServerMessage_Remove();					//서버 메시지 처리
 				}
 				break;
 				case SKILLOBJECTTYPE::PLAYER_POISONBALL:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillRemove();					//서버 메시지 처리
+					ServerMessage_Remove();					//서버 메시지 처리
 				}
 				break;
 				case SKILLOBJECTTYPE::WEEPER_CAST1_BALL:
@@ -601,20 +556,20 @@ void SkillObject::HandleMonsterSkillCollision()
 					if (m_mapEncountered)
 					{
 						SetRemoveReserved();						//객체 삭제
-						ServerMessage_SkillRemove();					//서버 메시지 처리
+						ServerMessage_Remove();					//서버 메시지 처리
 					}
 				}
 				break;
 				case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_SCATTER:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillRemove();					//서버 메시지 처리
+					ServerMessage_Remove();					//서버 메시지 처리
 				}
 				break;
 				case SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillRemove();					//서버 메시지 처리
+					ServerMessage_Remove();					//서버 메시지 처리
 
 					if (m_skillAttrib & SKILLATTRIBUTE::NUCLEAR)
 					{
@@ -625,7 +580,7 @@ void SkillObject::HandleMonsterSkillCollision()
 				case SKILLOBJECTTYPE::WEEPER_CAST3_BALL:
 				{
 					SetRemoveReserved();						//객체 삭제
-					ServerMessage_SkillRemove();					//서버 메시지 처리
+					ServerMessage_Remove();					//서버 메시지 처리
 				}
 				break;
 			}
@@ -843,19 +798,36 @@ void SkillObject::Nuclear_Attribute_Explosion()
 
 		playerController->BounceFromAttack();					//플레이어 input 무효화 (땅 착지전까지)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(knockbackDir.x * horizontalStrength, verticalStrength, knockbackDir.z * horizontalStrength));
+		EventHandler::GetInstance()->AddEvent("NUCLEAR_ATTACK_DAMAGE_APPLY", 0.25f, obj);
 	}
 
 	//weeper의 nuclear가 터졌다. 아래의 NuclearPosition 위치를 사용해 nuclear폭탄이 터진 이펙트를 대입하면 된다.
 	physx::PxVec3 pos = m_body->GetPosition();
 	Vec3 NuclearPosition = FROM_PX3(pos);
 
-	for (int32_t i = 0; i < SEND_AGAIN; ++i)
-	{
-		game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
-		ev.objID = m_id;
-		ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::NUCLEAR_EXPLOSION);
-		ev.effectPos = NuclearPosition;
+	ServerMessage_Effect(NuclearPosition);
+}
 
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+void SkillObject::Cast3Ball_Attribute_Explosion()
+{
+	auto objmgr = ObjectManager::GetInstance();
+	auto playerlist = objmgr->GetLayer(L"Layer_Player")->GetGameObjects();
+	if (playerlist.empty())
+		return;
+
+	for (auto& p : playerlist)
+	{
+		auto player = dynamic_cast<Player*>(p);
+		if (!player)
+			continue;
+
+		physx::PxVec3 playerPos = TO_PX3(player->GetControllerPosition());
+		physx::PxVec3 explosionPos = m_body->GetPosition();
+
+		if((playerPos - explosionPos).magnitude() < 800.f)
+		{
+			player->SetState(Player::PLAYER_STATE::DAMAGE);
+			ServerMessage_Hit(player);
+		}
 	}
 }

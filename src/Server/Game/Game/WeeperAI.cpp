@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "WeeperAI.h"
 #include "Weeper.h"
 #include "Monster.h"
@@ -246,8 +246,8 @@ void WeeperAI::DamageCheck()
 		if (m_cast2Counter)
 		{
 			m_weeper->Pattern_Cast2_CounterNuclear();
-			BossPatternUIStart();
-			EventHandler::GetInstance()->AddEvent("BOSSPATTERNUIEND_WEEPER", 3.f, m_weeper);
+			//BossPatternUIStart();
+			//EventHandler::GetInstance()->AddEvent("BOSSPATTERNUIEND_WEEPER", 3.f, m_weeper);
 
 		}
 		else if (m_vulnerable)
@@ -322,6 +322,7 @@ bool WeeperAI::DeathHandle()
 		m_weeper->m_currState = Weeper::WEEPER_STATE::DEATH;
 		EventHandler::GetInstance()->AddEvent("ANIM_TO_WEEPER_DEAD", 4.15f, m_weeper);
 		EventHandler::GetInstance()->AddEvent("SINK_WEEPER", 3.9f, m_weeper);
+		EventHandler::GetInstance()->AddEvent("WEEPER_SIMULATE_STOP", 8.f, m_weeper);
 		return true;
 	}
 

@@ -154,11 +154,11 @@ void Scorpion::CheckState()
 
 			for (int32_t i = 0; i < SEND_AGAIN; ++i)
 			{
-				game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+				game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
 				ev.objID = m_id;
 				ev.objType = m_objType;
 
-				game::MessageHandler::GetInstance()->PushSendMessage(ev);
+				MSG_HANDLER->PushSendMessage(ev);
 			}
 		}
 		break;
@@ -287,12 +287,12 @@ void Scorpion::CheckState()
 	m_prevState = m_currState;
 	m_sendState = SEND_AGAIN;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
-	ev.state = m_currState;
+	game::TimerEvent ev{ ProtocolID::WR_CHANGE_STATE_ACK };
 	ev.objID = m_id;
+	ev.state = m_currState;
 	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	//MSG_HANDLER->PushSendMessage(ev);
 }
 
 void Scorpion::UpdateFrameRepeat()
@@ -378,11 +378,11 @@ void Scorpion::SendChangedStateAgain()
 	if (m_sendState <= 0)
 		return;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
+	game::TimerEvent ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
 	ev.state = m_currState;
 	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	//MSG_HANDLER->PushSendMessage(ev);
 
 	--m_sendState;
 }

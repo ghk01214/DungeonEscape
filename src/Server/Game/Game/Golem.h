@@ -95,8 +95,6 @@ public:
 	GOLEM_STATE GetState() const;
 	void SetState(GOLEM_STATE state);
 
-	void SendChangedStateAgain();
-
 private:
 	void ServerMessage_SendRenderLandEffect(const Vec3& pos);
 

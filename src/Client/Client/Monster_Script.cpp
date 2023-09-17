@@ -11,10 +11,12 @@
 #include <Transform.h>
 #include <NetworkManager.h>
 #include <Network.h>
+#include <EffectManager.h>
+
+#include "BossCounterEffect_Script.h"
 
 Monster_Script::Monster_Script() :
-	m_aniEnd{ false },
-	m_pattern{ server::PATTERN_TYPE::NONE }
+	m_aniEnd{ false }
 {
 }
 
@@ -130,10 +132,26 @@ void Monster_Script::Rotate(network::CPacket& packet)
 	GetTransform()->SetWorldMatrix(matWorld);
 }
 
-void Monster_Script::SetPatternType(network::CPacket& packet)
+void Monster_Script::CounterEffect(network::CPacket& packet)
 {
 	int32_t id{ packet.ReadID() };
-	int32_t patternIndex{ packet.Read<int32_t>() };
 
-	m_pattern = magic_enum::enum_cast<server::PATTERN_TYPE>(patternIndex).value();
+	bool render{ packet.Read<bool>() };
+
+	if (render == true)
+	{
+		auto pos{ GetTransform()->GetWorldPosition() };
+		pos.y += 10.f;
+		m_counterEffectScript->SetPos(pos);
+		m_counterEffectScript->FadeIn(0.5f);
+	}
+	else
+	{
+		m_counterEffectScript->FadeOut(0.5f);
+	}
+}
+
+void Monster_Script::SetCounterEffectScript(std::shared_ptr<BossCounterEffect_Script> script)
+{
+	m_counterEffectScript = script;
 }

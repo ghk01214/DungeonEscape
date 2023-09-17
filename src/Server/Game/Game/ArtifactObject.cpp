@@ -88,23 +88,23 @@ void ArtifactObject::SetPillarWeak()
 
 void ArtifactObject::ServerMessage_Init()
 {
-	//m_id = game::MessageHandler::GetInstance()->NewObjectID();
+	//m_id = MSG_HANDLER->NewObjectID();
 	m_name = L"ARTIFACT";				// 이름은 이걸로 고정. 해당 코드라인은 수정X
 	//m_fbxType = server::FBX_TYPE::PILLAR_BRIDGE;
 	//m_objType = server::OBJECT_TYPE::PHYSX_OBJECT;
 	//
-	//game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
+	//game::TimerEvent ev{ ProtocolID::WR_ADD_OBJ_ACK };
 	//ev.objType = m_objType;
 	//ev.objID = m_id;
 }
 
 void ArtifactObject::ServerMessage_Release()
 {
-	//game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+	//game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
 	//ev.objID = m_id;
 	//ev.objType = m_objType;
 	//
-	//game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	//MSG_HANDLER->PushSendMessage(ev);
 }
 
 void ArtifactObject::ServerFunctionHere()
@@ -116,11 +116,11 @@ void ArtifactObject::ServerFunctionHere()
 
 
 	// 페이드인/아웃 + 카메라 전환 명령 코드 작성										(1)
-	game::TIMER_EVENT ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
 	ev.integer = magic_enum::enum_integer(server::CUT_SCENE_TYPE::SCENE1);
 	ev.objID = 0;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 
 	// AddEvent함수는 원하는 타이밍에 어떤 행동을 할 수 있게 해준다.
 	// 클라이언트에서 스스로 컷씬 시간이나 이펙트 제거 시간등을 제어할 수 있다면 AddEvent()는 굳이 사용할 필요는 없다.

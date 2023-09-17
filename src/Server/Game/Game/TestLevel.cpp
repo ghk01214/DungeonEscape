@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -20,6 +20,7 @@
 #include "FBXMapLoader.h"
 #include "TriggerObject2.h"
 #include "ArtifactObject.h"
+#include "ParticleObject.h"
 
 //#define DEBUG_MAP
 
@@ -46,6 +47,8 @@ void TestLevel::Init()
 	objmgr->AddLayer(L"Layer_TriggerObject");
 	objmgr->AddLayer(L"Layer_LastBossRock");
 
+	objmgr->AddLayer(L"Layer_Particle");
+
 	//LoadBasicMap4();
 
 	LoadUnit_DebugMode();
@@ -54,11 +57,9 @@ void TestLevel::Init()
 
 void TestLevel::Update(double timeDelta)
 {
-	game::MessageHandler::GetInstance()->ExecuteMessage();
+	MSG_HANDLER->ExecuteMessage();
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRANSFORM_ACK, 0 };
-	ev.objType = server::OBJECT_TYPE::NONE;
-	game::MessageHandler::GetInstance()->PushTransformMessage(ev);
+	ParticleTest();
 }
 
 void TestLevel::LateUpdate(double timeDelta)
@@ -67,6 +68,36 @@ void TestLevel::LateUpdate(double timeDelta)
 
 void TestLevel::Release(void)
 {
+}
+
+void TestLevel::ParticleTest()
+{
+	static bool keyState = false;
+
+
+	bool isKeyPressed = GetAsyncKeyState('P') & 0x8000;
+
+	if (isKeyPressed && !keyState)
+	{
+		for (int32_t i = 0; i < 10; ++i)
+		{
+			int32_t particleID{ ParticleObject::Summon(physx::PxVec3(-250.f, -2600.f, -700.f), 100.f, 15.f, 20.f, 3.f) };
+
+			game::TimerEvent ev{ ProtocolID::WR_CREATE_PARTICLE_ACK };
+			ev.objID = particleID;
+			ev.effectPos = Vec3{ -250.f, -2600.f, -700.f };
+
+			MSG_HANDLER->PushSendMessage(ev);
+		}
+
+		keyState = true;  // 'P' 키가 눌렸음을 표시
+	}
+	else if (!isKeyPressed)
+	{
+		keyState = false;  // 'P' 키가 떨어짐을 표시
+	}
+
+
 }
 
 void TestLevel::LoadUnit_DebugMode()
@@ -92,13 +123,13 @@ void TestLevel::LoadUnit_DebugMode()
 void TestLevel::LoadMap()
 {
 #pragma region 안내
-/*static Mesh 정보 로드
-	1. static Mesh 오브젝트를 로드한다. -> 로드해서 어디 넣지?
-	2. MeshCollider가 가지고 있는 static ConvexMeshWrapper 변수에 staticMesh 오브젝트의 정보를 넣는다.
-	3. 맵 fbx 파일을 로드한다.
-	4. 로드한 맵 정보로부터 actor가 사용하는 staticMesh 오브젝트의 정보와 위치를 받아 맵 오브젝트를 생성한다.
-	5. 생성된 맵 오브젝트는 오브젝트 매니저에 넣는다.
-*/
+	/*static Mesh 정보 로드
+		1. static Mesh 오브젝트를 로드한다. -> 로드해서 어디 넣지?
+		2. MeshCollider가 가지고 있는 static ConvexMeshWrapper 변수에 staticMesh 오브젝트의 정보를 넣는다.
+		3. 맵 fbx 파일을 로드한다.
+		4. 로드한 맵 정보로부터 actor가 사용하는 staticMesh 오브젝트의 정보와 위치를 받아 맵 오브젝트를 생성한다.
+		5. 생성된 맵 오브젝트는 오브젝트 매니저에 넣는다.
+	*/
 #pragma endregion
 
 	bool debug = false;
@@ -246,10 +277,11 @@ void TestLevel::LoadBasicMap4()
 	//aBody->SetKinematic(true);
 	//a->ApplyRequestedLayers();
 
-	auto box2 = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 200), Quat(0, 0, 0, 1), Vec3(500, 500, 500));
+	auto box2 = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3(-500, 0, 200), Quat(0, 0, 0, 1), Vec3(500, 500, 500), false);
 	auto box2body = box2->GetComponent<RigidBody>(L"RigidBody");
 	box2body->AddCollider<BoxCollider>(box2->GetTransform()->GetScale());
 	box2->ApplyRequestedLayers();
+	box2->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::OFFTRACK1);
 }
 
 void TestLevel::LoadMapObject()
@@ -264,7 +296,7 @@ void TestLevel::LoadMapObject()
 #ifdef DEBUG_MAP
 	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\ServerDebug.fbx");			// Map 로드
 #else // DEBUG_MAP
-	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server2.fbx");			// Map 로드
+	mapLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Server.fbx");			// Map 로드
 #endif
 
 	auto& mapInfo = mapLoader.GetMapObjectInfo();
@@ -286,7 +318,7 @@ void TestLevel::LoadMapObject()
 
 	FBXMapLoader rockLoader;
 	rockLoader.AddBasicObject(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\GimmicksRAW.fbx");
-	rockLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\Models\\LastBossRock.fbx");
+	rockLoader.ExtractMapInfo(L"..\\..\\..\\Client\\Resources\\FBX\\LastBossRock.fbx");
 
 	auto& rockInfo = rockLoader.GetMapObjectInfo();
 	for (auto& info : rockInfo)
@@ -401,18 +433,18 @@ void TestLevel::LoadTriggerObject()
 	// 5500 -1790 21170
 	// 16217, -1040, 28064
 
-	auto artifactObj{ objMgr->AddGameObjectToLayer<ArtifactObject>(L"Layer_Gimmik_Artifact", Vec3{ -1750.f, -1690.f, 20465.f }, Quat(0, 0, 0, 1), Vec3(100.f, 200.f, 100.f))};
+	auto artifactObj{ objMgr->AddGameObjectToLayer<ArtifactObject>(L"Layer_Gimmik_Artifact", Vec3{ -1750.f, -1690.f, 20465.f }, Quat(0, 0, 0, 1), Vec3(100.f, 200.f, 100.f)) };
 	auto artifactBody{ artifactObj->GetComponent<RigidBody>(L"RigidBody") };
 	artifactBody->AddCollider<BoxCollider>(artifactObj->GetTransform()->GetScale());
 	artifactBody->SetKinematic(true);
 	artifactObj->ApplyRequestedLayers();
 
-	auto CutScene2Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 5500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true)};
+	auto CutScene2Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 5500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), true) };
 	auto CutScene2Body{ CutScene2Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene2Body->AddCollider<BoxCollider>(CutScene2Obj->GetTransform()->GetScale());
 	CutScene2Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE2);
 
-	auto CutScene4Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 16217.f, -1040.f, 28064.f }, Quat(0, 0, 0, 1), Vec3(1000.f, 500.f, 500.f), true)};
+	auto CutScene4Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 16217.f, -1040.f, 28064.f }, Quat(0, 0, 0, 1), Vec3(1000.f, 500.f, 500.f), true) };
 	auto CutScene4Body{ CutScene4Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene4Body->AddCollider<BoxCollider>(CutScene4Obj->GetTransform()->GetScale());
 	CutScene4Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE4);
@@ -420,7 +452,7 @@ void TestLevel::LoadTriggerObject()
 	auto scene5Pos{ PORTAL1_EXIT };
 	scene5Pos.y += 50.f;
 
-	auto CutScene5Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", scene5Pos, Quat(0, 0, 0, 1), Vec3(1500.f, 500.f, 500.f), true)};
+	auto CutScene5Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", scene5Pos, Quat(0, 0, 0, 1), Vec3(1500.f, 500.f, 500.f), true) };
 	auto CutScene5Body{ CutScene5Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene5Body->AddCollider<BoxCollider>(CutScene5Obj->GetTransform()->GetScale());
 	CutScene5Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE5);
@@ -433,7 +465,7 @@ void TestLevel::LoadTriggerObject()
 	CutScene6Body->AddCollider<BoxCollider>(CutScene6Obj->GetTransform()->GetScale());
 	CutScene6Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE6);
 
-	auto GuideUI1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 6500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false)};
+	auto GuideUI1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 6500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false) };
 	auto GuideUI1Body{ GuideUI1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	GuideUI1Body->AddCollider<BoxCollider>(GuideUI1Obj->GetTransform()->GetScale());
 	GuideUI1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::GUIDELINE1);
@@ -589,7 +621,7 @@ void TestLevel::TestFunction()
 	//
 	//			game::Message msg{ -1, ProtocolID::WR_JUMP_START_ACK };
 	//			msg.objID = mob->GetID();
-	//			game::MessageHandler::GetInstance()->PushSendMessage(msg);
+	//			MSG_HANDLER->PushSendMessage(msg);
 	//		}
 	//	}
 	//}

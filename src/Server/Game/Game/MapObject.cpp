@@ -14,6 +14,7 @@
 MapObject::MapObject(const Vec3& position, const Quat& rotation, const Vec3& scale)
 	: GameObject(position, rotation, scale), m_body(nullptr)
 {
+	m_objType = server::OBJECT_TYPE::MAP_OBJECT;
 }
 
 MapObject::~MapObject()
@@ -25,8 +26,6 @@ void MapObject::Init()
 	m_body = AddComponent<RigidBody>(L"RigidBody");
 	m_body->SetCCDFlag(false);
 	m_body->SetKinematic(true);
-
-	SetObjectType(server::OBJECT_TYPE::MAP_OBJECT);
 }
 
 void MapObject::Update(double timeDelta)
@@ -40,6 +39,7 @@ void MapObject::Update(double timeDelta)
 	//	}
 	//}
 
+	ServerMessage_Transform();
 
 	GameObject::Update(timeDelta);
 }
@@ -137,55 +137,76 @@ void MapObject::ServerMessage_Init(bool scatterRock, bool boulder)
 {
 	if (scatterRock)
 	{										//기믹 돌담
-		m_id = game::MessageHandler::GetInstance()->NewObjectID();
+		m_id = MSG_HANDLER->NewObjectID();
 
 		m_name = L"BLOCK";
 		m_fbxType = server::FBX_TYPE::SCATTER_ROCK;
-		m_objType = server::OBJECT_TYPE::MAP_OBJECT;
+		m_objType = server::OBJECT_TYPE::SCATTER_ROCK;
 
-		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
+		/*game::TimerEvent ev{ ProtocolID::WR_ADD_OBJ_ACK };
 		ev.objType = m_objType;
 		ev.objID = m_id;
 
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);*/
 	}
 	else if (boulder)
 	{										//기믹 공
-		m_id = game::MessageHandler::GetInstance()->NewObjectID();
+		m_id = MSG_HANDLER->NewObjectID();
 
 		m_name = L"ROLLING ROCK";
 		m_fbxType = server::FBX_TYPE::ROLLING_ROCK;
-		m_objType = server::OBJECT_TYPE::MAP_OBJECT;
+		m_objType = server::OBJECT_TYPE::BOULDER;
 
-		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
-		ev.objType = m_objType;
+		game::TimerEvent ev{ ProtocolID::WR_ADD_OBJ_ACK };
 		ev.objID = m_id;
+		ev.objType = m_objType;
 
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
 	}
 	else
 	{			// 골렘 방 4개 돌
-		m_id = game::MessageHandler::GetInstance()->NewObjectID();
+		m_id = MSG_HANDLER->NewObjectID();
 
 		m_name = L"LAST BOSS ROCK";
 		m_fbxType = server::FBX_TYPE::LAST_BOSS_ROCK;
-		m_objType = server::OBJECT_TYPE::MAP_OBJECT;
+		m_objType = server::OBJECT_TYPE::ELEVATOR_ROCK;
 
-		game::TIMER_EVENT ev{ ProtocolID::WR_ADD_OBJ_ACK };
+		/*game::TimerEvent ev{ ProtocolID::WR_ADD_OBJ_ACK };
 		ev.objType = m_objType;
 		ev.objID = m_id;
 
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);*/
 	}
+
+	//std::cout << magic_enum::enum_name(m_fbxType) << ", " << m_id << "\n";
 }
 
 void MapObject::ServerMessage_Release()
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_REMOVE_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
 	ev.objID = m_id;
 	ev.objType = m_objType;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
+}
+
+void MapObject::ServerMessage_Transform()
+{
+	switch (m_objType)
+	{
+		case server::OBJECT_TYPE::MAP_OBJECT:
+		case server::OBJECT_TYPE::TRIGGER_OBJECT2:
+		return;
+	}
+
+	if (isSleep() == true)
+		return;
+
+	game::TimerEvent ev{ ProtocolID::WR_TRANSFORM_ACK };
+	ev.objID = m_id;
+	ev.objType = m_objType;
+
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 void MapObject::ApplyRequestedLayers()

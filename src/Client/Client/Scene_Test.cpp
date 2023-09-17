@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -44,9 +44,12 @@ Scene_Test::Scene_Test() :
 	m_cinematicScript{ nullptr },
 	m_closeButton{ nullptr },
 	m_openSetting{ false },
+	m_showWeeperTutorial{ false },
+	m_showGolemTutorial{ false },
 	m_recvFadeIn{ std::make_shared<bool>(false) },
 	m_recvFadeOut{ std::make_shared<bool>(false) },
-	m_recvExplosionSkill{ std::make_shared<bool>(false) }
+	m_recvExplosionSkill{ std::make_shared<bool>(false) },
+	m_renderFont{ true }
 {
 	auto pos{ GetRatio(-100.f, 75.f) };
 	Vec2 scale{ 100.f };
@@ -90,6 +93,8 @@ void Scene_Test::Update()
 	ChangeMuteTexture();
 	RenderFont();
 	RenderPortalEffect();
+	ShowBossTutorial();
+	ChangeBossTutorialPage();
 }
 
 void Scene_Test::LateUpdate()
@@ -123,11 +128,6 @@ void Scene_Test::LateUpdate()
 				RemoveObject(packet);
 			}
 			break;
-			case ProtocolID::WR_SKILL_HIT_ACK:
-			{
-
-			}
-			break;
 			case ProtocolID::WR_RENDER_EFFECT_ACK:
 			{
 				PlayEffect(packet);
@@ -156,6 +156,11 @@ void Scene_Test::LateUpdate()
 			case ProtocolID::WR_MONSTER_HP_ACK:
 			{
 				ChangeMonsterHP(packet);
+			}
+			break;
+			case ProtocolID::WR_CREATE_PARTICLE_ACK:
+			{
+				CreateSparkParticleObject(packet);
 			}
 			break;
 			default:
@@ -376,6 +381,20 @@ void Scene_Test::CreateSphere(std::shared_ptr<CScene> pScene)
 
 void Scene_Test::SendKeyInput()
 {
+	if (m_cinematicScript->IsPlaying() == true
+		and (m_cinematicScript->GetCurrentScene() == Cinematic_Script::CUT_SCENE_TYPE::WEEPER_SUMMON
+			or m_cinematicScript->GetCurrentScene() == Cinematic_Script::CUT_SCENE_TYPE::GOLEM_SUMMON))
+		return;
+
+	if (m_openSetting == true)
+		return;
+
+	if (m_showWeeperTutorial == true)
+		return;
+
+	if (m_showGolemTutorial == true)
+		return;
+
 	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
 		GET_NETWORK->SendKeyInputPacket();
 }
@@ -470,7 +489,7 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom2.fbx");
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	m_eNextMapType = MAP_TYPE::StartRoom;
+	m_eNextMapType = MAP_TYPE::FirstBoss;
 	MoveMap(m_eNextMapType);
 }
 
@@ -508,7 +527,7 @@ void Scene_Test::CreateSkill(const std::wstring& colorName, const Vec3& worldPos
 		auto script{ std::make_shared<Bomb_Script>(scaleSpeed, alpha) };
 		script->SetRecvFlag(m_recvExplosionSkill);
 		object->AddComponent(script);
-		m_skillObject.push_back(script);
+		m_specialSkillObject.push_back(script);
 	}
 
 	AddGameObject(gameObjects);
@@ -790,6 +809,24 @@ std::vector<std::shared_ptr<WeeperEffect_Script>> Scene_Test::CreateWeeperCast4E
 	}
 
 	return scripts;
+}
+
+std::shared_ptr<BossCounterEffect_Script> Scene_Test::CreateBossCounterEffect()
+{
+	std::vector<std::shared_ptr<Texture>> textures{ GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Circle_Wave") };
+	std::shared_ptr<CGameObject> gameObject{ CreateArtifactBase(textures) };
+
+	std::shared_ptr<BossCounterEffect_Script> script{ std::make_shared<BossCounterEffect_Script>() };
+	script->SetTexture(textures);	// 텍스쳐 정보
+	script->SetPos(Vec3{ 0.f });
+	script->SetSize(Vec2{ 1000.f });
+	script->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
+
+	gameObject->AddComponent(script);
+
+	AddGameObject(gameObject);
+
+	return script;
 }
 
 void Scene_Test::PushMapData(MAP_TYPE eType, std::vector<std::shared_ptr<CGameObject>> objects)
@@ -1496,6 +1533,8 @@ void Scene_Test::CreatePopUp()
 	CreateBGMSlider();
 	CreateSEButton();
 	CreateSESlider();
+
+	CreateBossTutorial();
 }
 
 void Scene_Test::ChangeBossUIVisibility()
@@ -1556,6 +1595,9 @@ void Scene_Test::ChangeBossUIVisibility()
 
 void Scene_Test::RenderFont()
 {
+	if (m_renderFont == false)
+		return;
+
 	if (m_openSetting == true)
 		return;
 
@@ -1568,6 +1610,68 @@ void Scene_Test::RenderFont()
 			continue;
 
 		GET_SINGLE(FontManager)->RenderFonts(info.str, info.pos, info.scale);
+	}
+}
+
+void Scene_Test::ShowBossTutorial()
+{
+	if (m_cinematicScript->IsPlaying() == true)
+		return;
+
+	if (m_cinematicScript->GetCurrentScene() < 5)
+		return;
+
+	if (m_showWeeperTutorial == true)
+	{
+		for (auto& obj : m_pageChangeButton)
+		{
+			obj->SetVisible(true);
+		}
+
+		m_weeperTutorialScript->SetVisible(true);
+		m_closeButton->SetVisible(true);
+		m_renderFont = false;
+	}
+	else if (m_showGolemTutorial == true)
+	{
+		for (auto& obj : m_pageChangeButton)
+		{
+			obj->SetVisible(true);
+		}
+
+		m_golemTutorialScript->SetVisible(true);
+		m_closeButton->SetVisible(true);
+		m_renderFont = false;
+	}
+}
+
+void Scene_Test::ChangeBossTutorialPage()
+{
+	if (m_showWeeperTutorial == true)
+	{
+		if (m_pageChangeButton[PREV]->GetChangePageFlag() == true)
+		{
+			m_weeperTutorialScript->ChangeToPrevPage();
+			m_pageChangeButton[PREV]->SetChangePageFlag(false);
+		}
+		else if (m_pageChangeButton[NEXT]->GetChangePageFlag() == true)
+		{
+			m_weeperTutorialScript->ChangeToNextPage();
+			m_pageChangeButton[NEXT]->SetChangePageFlag(false);
+		}
+	}
+	else if (m_showGolemTutorial == true)
+	{
+		if (m_pageChangeButton[PREV]->GetChangePageFlag() == true)
+		{
+			m_golemTutorialScript->ChangeToPrevPage();
+			m_pageChangeButton[PREV]->SetChangePageFlag(false);
+		}
+		else if (m_pageChangeButton[NEXT]->GetChangePageFlag() == true)
+		{
+			m_golemTutorialScript->ChangeToNextPage();
+			m_pageChangeButton[NEXT]->SetChangePageFlag(false);
+		}
 	}
 }
 #pragma endregion
@@ -2300,24 +2404,163 @@ void Scene_Test::CreateSESlider()
 	}
 }
 
+void Scene_Test::CreateBossTutorial()
+{
+	CreatePageChangeButton();
+	CreateWeeperTutorial();
+	CreateGolemTutorial();
+}
+
+void Scene_Test::CreatePageChangeButton()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Prev Button") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	// Prev Button
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto pos{ GetRatio(-82.f, 0.f) };
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 118.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+		std::shared_ptr<PageChangeButton_Script> script{ std::make_shared<PageChangeButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Prev Button_selected"));
+		m_pageChangeButton.push_back(script);
+
+		obj->AddComponent(script);
+
+		AddGameObject(obj);
+	}
+
+	// Prev Button
+	texture = GET_TEXTURE(L"Next Button");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto pos{ GetRatio(82.f, 0.f) };
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 118.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+		std::shared_ptr<PageChangeButton_Script> script{ std::make_shared<PageChangeButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Next Button_selected"));
+		m_pageChangeButton.push_back(script);
+
+		obj->AddComponent(script);
+
+		AddGameObject(obj);
+	}
+}
+
+void Scene_Test::CreateWeeperTutorial()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Weeper Tutorial1") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 1498.f, 1020.f, 1.f });
+	transform->SetLocalPosition(Vec3{ 0.f, 0.f, 400.f });
+
+	std::shared_ptr<BossTutorial_Script> script{ std::make_shared<BossTutorial_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Weeper Tutorial2"));
+	m_weeperTutorialScript = script;
+
+	obj->AddComponent(script);
+
+	AddGameObject(obj);
+}
+
+void Scene_Test::CreateGolemTutorial()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Golem Tutorial1") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 1498.f, 1020.f, 1.f });
+	transform->SetLocalPosition(Vec3{ 0.f, 0.f, 400.f });
+
+	std::shared_ptr<BossTutorial_Script> script{ std::make_shared<BossTutorial_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Golem Tutorial2"));
+	m_golemTutorialScript = script;
+
+	obj->AddComponent(script);
+
+	AddGameObject(obj);
+}
+
 void Scene_Test::ChangePopUpVisibility()
 {
 	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::ESC) == true)
 	{
-		m_openSetting = !m_openSetting;
-
-		if (m_openSetting == true)
+		if (m_showWeeperTutorial == true)
 		{
-			for (auto& obj : m_popUp)
+			for (auto& obj : m_pageChangeButton)
 			{
-				obj->GetUI()->SetVisible(true);
+				obj->SetVisible(false);
+				obj->SetChangePageFlag(false);
 			}
-		}
-		else
-		{
+
 			for (auto& obj : m_popUp)
 			{
 				obj->GetUI()->SetVisible(false);
+			}
+
+			m_weeperTutorialScript->SetVisible(false);
+			m_showWeeperTutorial = false;
+			m_renderFont = true;
+		}
+		else if (m_showGolemTutorial == true)
+		{
+			for (auto& obj : m_pageChangeButton)
+			{
+				obj->SetVisible(false);
+				obj->SetChangePageFlag(false);
+			}
+
+			for (auto& obj : m_popUp)
+			{
+				obj->GetUI()->SetVisible(false);
+			}
+
+			m_golemTutorialScript->SetVisible(false);
+			m_showGolemTutorial = false;
+			m_renderFont = true;
+		}
+		else
+		{
+			m_openSetting = !m_openSetting;
+
+			if (m_openSetting == true)
+			{
+				for (auto& obj : m_popUp)
+				{
+					obj->GetUI()->SetVisible(true);
+				}
+
+				m_renderFont = false;
+			}
+			else
+			{
+				for (auto& obj : m_popUp)
+				{
+					obj->GetUI()->SetVisible(false);
+				}
+
+				m_renderFont = true;
 			}
 		}
 	}
@@ -2329,8 +2572,20 @@ void Scene_Test::ChangePopUpVisibility()
 			obj->GetUI()->SetVisible(false);
 		}
 
+		for (auto& obj : m_pageChangeButton)
+		{
+			obj->SetVisible(false);
+			obj->SetChangePageFlag(false);
+		}
+
+		m_weeperTutorialScript->GetUI()->SetVisible(false);
+		m_golemTutorialScript->GetUI()->SetVisible(false);
+
 		m_closeButton->SetClosePopUpFlag(false);
 		m_openSetting = false;
+		m_showWeeperTutorial = false;
+		m_showGolemTutorial = false;
+		m_renderFont = true;
 	}
 }
 
@@ -2441,7 +2696,7 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 		hp = packet.Read<int32_t>();
 
 	ObjectDesc objectDesc;
-	ClassifyObject(fbxType, objectDesc, state);
+	ClassifyObject(id, fbxType, objectDesc, state);
 
 	if (objType == server::OBJECT_TYPE::PLAYER)
 		objType = server::OBJECT_TYPE::REMOTE_PLAYER;
@@ -2519,7 +2774,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 
 	ObjectDesc objectDesc;
-	ClassifyObject(fbxType, objectDesc);
+	ClassifyObject(objID, fbxType, objectDesc);
 
 	network::NetworkGameObject gameObjects{ CreateMapObject(objectDesc) };
 	gameObjects = AddNetworkToObject(gameObjects, objType, objID);
@@ -2532,7 +2787,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 		gameObject->GetTransform()->SetWorldMatrix(matWorld);
 
 		if ((magic_enum::enum_integer(server::OBJECT_TYPE::PLAYER_FIREBALL) <= magic_enum::enum_integer(objType)
-			and magic_enum::enum_integer(objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::MONSTER_POISONBALL))
+			and magic_enum::enum_integer(objType) <= magic_enum::enum_integer(server::OBJECT_TYPE::WEEPER_CAST3_BALL))
 			or (objType == server::OBJECT_TYPE::MAP_OBJECT))
 		{
 			gameObject->AddComponent(objectDesc.script);
@@ -2548,7 +2803,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	m_overlappedObjects.insert(objID);
 }
 
-void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex)
+void Scene_Test::ClassifyObject(int32_t id, server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex)
 {
 	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
 	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
@@ -2580,78 +2835,32 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 #pragma endregion
 #pragma region [MONSTER]
 		case server::FBX_TYPE::WEEPER1:
-		case server::FBX_TYPE::WEEPER2:
-		case server::FBX_TYPE::WEEPER3:
-		case server::FBX_TYPE::WEEPER4:
-		case server::FBX_TYPE::WEEPER5:
-		case server::FBX_TYPE::WEEPER6:
-		case server::FBX_TYPE::WEEPER7:
 		{
-			objectDesc.strName = L"Weeper" + std::to_wstring(magic_enum::enum_integer(type) - magic_enum::enum_integer(server::FBX_TYPE::WEEPER1) + 1);
+			objectDesc.strName = L"Weeper1";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\" + objectDesc.strName + L".fbx";
 
 			auto effectScripts{ CreateWeeperCast4Effect() };
+			auto counterEffectScript{ CreateBossCounterEffect() };
+			counterEffectScript->Start();
 			auto script{ std::make_shared<Monster_Weeper>(stateIndex) };
 			script->SetDialogue(m_oneTimeDialogueScript["WEEPER_CAST4_HINT"]);
 			script->SetEffectScript(effectScripts);
+			script->SetCounterEffectScript(counterEffectScript);
 
 			objectDesc.script = script;
-		}
-		break;
-		case server::FBX_TYPE::WEEPER_EMISSIVE:
-		{
-			objectDesc.strName = L"Weeper_Emissive";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\Weeper\\Weeper Emissive.fbx";
-			objectDesc.script = std::make_shared<Monster_Weeper>(stateIndex);
 		}
 		break;
 		case server::FBX_TYPE::BLUE_GOLEM:
 		{
 			objectDesc.strName = L"Blue Golem";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Blue Golem.fbx";
-			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::GREEN_GOLEM:
-		{
-			objectDesc.strName = L"Green Golem";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Green Golem.fbx";
-			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::RED_GOLEM:
-		{
-			objectDesc.strName = L"Red Golem";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\MoltenGolem\\Red Golem.fbx";
-			objectDesc.script = std::make_shared<Monster_Golem>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::BLACK_SCORPION:
-		{
-			objectDesc.strName = L"Black Scorpion";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Black Scorpion.fbx";
-			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::ORANGE_SCORPION:
-		{
-			objectDesc.strName = L"Orange Scorpion";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Orange Scorpion.fbx";
-			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::PURPLE_SCORPION:
-		{
-			objectDesc.strName = L"Purple Scorpion";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Purple Scorpion.fbx";
-			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
-		}
-		break;
-		case server::FBX_TYPE::RED_SCORPION:
-		{
-			objectDesc.strName = L"Red Scorpion";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Character\\StylizedScorpion\\Red Scorpion.fbx";
-			objectDesc.script = std::make_shared<Monster_Scorpion>(stateIndex);
+
+			auto counterEffectScript{ CreateBossCounterEffect() };
+			counterEffectScript->Start();
+			auto script{ std::make_shared<Monster_Golem>(stateIndex) };
+			script->SetCounterEffectScript(counterEffectScript);
+
+			objectDesc.script = script;
 		}
 		break;
 #pragma endregion
@@ -2663,7 +2872,9 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_fireballEffectCurrentIndex++);
 			objectDesc.vScale = Vec3{ 100.f };
 
-			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 5)
+			m_skillObjects[id] = m_fireballEffectCurrentIndex - 1;
+
+			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
 				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
 		}
 		break;
@@ -2671,7 +2882,11 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_spiralEffectCurrentIndex++);
+
+			auto script{ std::make_shared<PlayerRangeAttack>(type, m_spiralEffectCurrentIndex++) };
+			script->SetRenderFlag(false);
+
+			objectDesc.script = script;
 			objectDesc.vScale = Vec3{ 2.5f };
 
 			if (m_spiralEffectCurrentIndex == m_spiralEffectStartIndex + 5)
@@ -2684,6 +2899,8 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Stone Sphere.fbx";
 			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_electricDarkGrayEffectCurrentIndex);
 			objectDesc.vScale = Vec3{ 40.f };
+
+			m_skillObjects[id] = m_electricDarkGrayEffectCurrentIndex - 1;
 
 			if (m_electricDarkGrayEffectCurrentIndex == m_electricDarkGrayEffectStartIndex + 3)
 				m_electricDarkGrayEffectCurrentIndex = m_electricDarkGrayEffectStartIndex;
@@ -2710,12 +2927,13 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_wpDarkBlueEffectCurrentIndex++);
 			//objectDesc.vScale = Vec3{ 70.f };
 
+			m_skillObjects[id] = m_wpDarkBlueEffectCurrentIndex - 1;
+
 			if (m_wpDarkBlueEffectCurrentIndex == m_wpDarkBlueEffectStartIndex + 3)
 				m_wpDarkBlueEffectCurrentIndex = m_wpDarkBlueEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
-		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
 			objectDesc.strName = L"Weeper Cast2";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
@@ -2726,50 +2944,32 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
 		}
 		break;
+		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			objectDesc.strName = L"Weeper Cast2";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_fireballEffectCurrentIndex++);
+			objectDesc.vScale = Vec3{ 70.f };
+
+			m_skillObjects[id] = m_fireballEffectCurrentIndex - 1;
+
+			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
+				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
+		}
+		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast3";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_spiralEffectCurrentIndex++);
+
+			auto script{ std::make_shared<MonsterRangeAttack>(type, m_spiralEffectCurrentIndex++) };
+			script->SetRenderFlag(false);
+
+			objectDesc.script = script;
 			objectDesc.vScale = { 2.f, 2.f, 2.f };
 
 			if (m_spiralEffectCurrentIndex == m_spiralEffectStartIndex + 5)
 				m_spiralEffectCurrentIndex = m_spiralEffectStartIndex;
-		}
-		break;
-		case server::FBX_TYPE::WEEPER_CAST4_BALL:
-		{
-			objectDesc.strName = L"Weeper Cast4";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Stone Bullet2.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_ICEBALL:
-		{
-			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_THUNDERBALL:
-		{
-			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Stone Spike.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_POISONBALL:
-		{
-			objectDesc.strName = L"Sphere";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Poison Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
-		}
-		break;
-		case server::FBX_TYPE::MONSTER_DARKBALL:
-		{
-			objectDesc.strName = L"Stone Bullet2";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type);
 		}
 		break;
 #pragma endregion
@@ -2840,6 +3040,7 @@ void Scene_Test::AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::sha
 
 void Scene_Test::AddEffectTextures()
 {
+#pragma region [BILLBOARD]
 	EffectInfo effect;
 	effect.speed = 0.003f;
 	effect.scale = Vec3{ 500.f };
@@ -2856,7 +3057,7 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
-	effect.speed = 0.003f;
+	effect.speed = 0.006f;
 	effect.scale = Vec3{ 500.f };
 
 	for (int32_t i = 0; i < 5; ++i)
@@ -3013,6 +3214,22 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
+	effect.speed = 0.003f;
+	effect.scale = Vec3{ 100.f };
+
+	for (int32_t i = 0; i < 10; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Spark_Particle", effect.speed);
+
+		if (i == 0)
+		{
+			m_sparkParticleEffectStartIndex = effect.index;
+			m_sparkParticleEffectCurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::SPARK_PARTICLE] = effect;
+		}
+	}
+#pragma endregion
+#pragma region [EFFECT]
 	for (int32_t i = 0; i < 4; ++i)
 	{
 		effect.index = GET_SINGLE(EffectManager)->CreateEffect(L"Effect_Circle_Flame", 0.003f);
@@ -3023,6 +3240,7 @@ void Scene_Test::AddEffectTextures()
 			m_circleFlameYellowCurrentIndex = effect.index;
 		}
 	}
+#pragma endregion
 }
 
 void Scene_Test::RenderPortalEffect()
@@ -3047,7 +3265,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.x -= 25.f;
 		pos.z += 300.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3055,7 +3273,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.z -= 300.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3065,7 +3283,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.z = 5415.f;
 		rotation.y += 90.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3073,7 +3291,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.x += 300.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3090,7 +3308,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.y = 50.f;
 		pos.z += 100.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3098,7 +3316,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.x += 750.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3108,7 +3326,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.z -= 750.f + 100.f;
 		rotation.y = 0.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3116,7 +3334,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.z += 750.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3132,7 +3350,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.y = -2600.f;
 		pos.z += 300.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3140,7 +3358,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.z -= 300.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3150,7 +3368,7 @@ void Scene_Test::RenderPortalEffect()
 		pos.z = 37770.f;
 		rotation.y = 90.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3158,7 +3376,7 @@ void Scene_Test::RenderPortalEffect()
 
 		pos.x += 300.f * 2.f;
 
-		if (GET_SINGLE(EffectManager)->GetPlayOnce(m_circleFlameYellowCurrentIndex) == true)
+		if (GET_SINGLE(EffectManager)->GetBillboardPlayOnce(m_circleFlameYellowCurrentIndex) == true)
 		{
 			GET_SINGLE(EffectManager)->SetEffectInfo(m_circleFlameYellowCurrentIndex, pos, scale, rotation, 0.006f, 1.f);
 			GET_SINGLE(EffectManager)->Play(m_circleFlameYellowCurrentIndex++);
@@ -3324,16 +3542,13 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Ice Hit.wav");
 		}
 		break;
-		case server::OBJECT_TYPE::PLAYER_POISONBALL:
-		case server::OBJECT_TYPE::WEEPER_CAST4_BALL:
-		case server::OBJECT_TYPE::MONSTER_FIREBALL:
-		case server::OBJECT_TYPE::MONSTER_ICEBALL:
-		case server::OBJECT_TYPE::MONSTER_THUNDERBALL:
-		case server::OBJECT_TYPE::MONSTER_POISONBALL:
 #pragma endregion
 #pragma region [OBJECT]
-		case server::OBJECT_TYPE::MAP_OBJECT:
-		case server::OBJECT_TYPE::PHYSX_OBJECT:
+		case server::OBJECT_TYPE::PILLAR:
+		case server::OBJECT_TYPE::BOULDER:
+		case server::OBJECT_TYPE::SCATTER_ROCK:
+		case server::OBJECT_TYPE::ELEVATOR_ROCK:
+		case server::OBJECT_TYPE::PARTICLE:
 #pragma endregion
 		{
 			if (m_overlappedObjects.contains(id) == false)
@@ -3399,6 +3614,12 @@ void Scene_Test::RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id)
 	m_overlappedObjects.erase(id);
 	RemoveNetworkObject(removeObjects);
 	GET_NETWORK->RemoveNetworkObject(id);
+
+	if (m_skillObjects[id])
+	{
+		GET_SINGLE(EffectManager)->StopBillBoard(m_skillObjects[id]);
+		m_skillObjects.erase(id);
+	}
 
 	switch (type)
 	{
@@ -3849,6 +4070,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
 			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
+
+			m_showWeeperTutorial = true;
+			m_weeperTutorialScript->SetPage(BossTutorial_Script::PAGE1);
 		}
 		break;
 		// Golem 등장 컷신
@@ -3861,6 +4085,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
 			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
+
+			m_showGolemTutorial = true;
+			m_golemTutorialScript->SetPage(BossTutorial_Script::PAGE1);
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE7:
@@ -3909,6 +4136,92 @@ void Scene_Test::ChangeMonsterHP(network::CPacket& packet)
 	else if (type == server::FBX_TYPE::BLUE_GOLEM)
 	{
 		m_golemHPScript->SetHP(hp);
+	}
+}
+
+void Scene_Test::CreateSparkParticleObject(network::CPacket& packet)
+{
+	{
+		//int32_t objID{ packet.ReadID() };
+
+		//if (m_overlappedObjects.contains(objID) == true)
+		//	return;
+
+		//Print("create", objID);
+
+		//Vec3 pos;
+		//pos.x = packet.Read<float>();
+		//pos.y = packet.Read<float>();
+		//pos.z = packet.Read<float>();
+
+		//std::vector<std::shared_ptr<Texture>> textures{ GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Spark_Particle") };
+		//std::shared_ptr<CGameObject> gameObject{ CreateArtifactBase(textures) };
+
+		//Matrix matWorld{ Matrix::CreateTranslation(pos) };
+		//gameObject->GetTransform()->SetWorldMatrix(matWorld);
+
+		//std::shared_ptr<Particle_Script> script{ std::make_shared<Particle_Script>() };
+		////script->SetEffectIndex(m_sparkParticleEffectCurrentIndex++);
+
+		////if (m_sparkParticleEffectCurrentIndex == m_sparkParticleEffectStartIndex + 10)
+		////	m_sparkParticleEffectCurrentIndex = m_spiralEffectStartIndex;
+		//script->SetEffectIndex(m_fireballEffectCurrentIndex++);
+
+		//if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
+		//	m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
+		////script->SetTexture(textures);	// 텍스쳐 정보
+		////script->SetPos(Vec3{ 0.f });
+		////script->SetSize(Vec2{ 1000.f });
+		////script->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
+
+		//gameObject->AddComponent(script);
+
+		//auto objType{ server::OBJECT_TYPE::PARTICLE };
+		//network::NetworkGameObject gameObjects;
+
+		//gameObjects.push_back(gameObject);
+		//gameObjects = AddNetworkToObject(gameObjects, objType, objID);
+
+		//AddObjectToScene(objType, gameObjects);
+		//GET_NETWORK->AddNetworkObject(objID, gameObjects);
+
+		//m_overlappedObjects.insert(objID);
+	}
+	{
+		int32_t objID{ packet.ReadID() };
+
+		if (m_overlappedObjects.contains(objID) == true)
+			return;
+
+		Print("create", objID);
+
+		Vec3 pos;
+		pos.x = packet.Read<float>();
+		pos.y = packet.Read<float>();
+		pos.z = packet.Read<float>();
+
+		auto objType{ server::OBJECT_TYPE::PARTICLE };
+
+		ObjectDesc objectDesc;
+		objectDesc.strName = L"Fireball";
+		objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
+		objectDesc.vPostion = Vec3{ 0.f };
+		objectDesc.vScale = Vec3{ 100.f };
+		objectDesc.script = std::make_shared<Particle_Script>();
+
+		network::NetworkGameObject gameObjects{ CreateMapObject(objectDesc) };
+		gameObjects = AddNetworkToObject(gameObjects, objType, objID);
+
+		for (auto& gameObject : gameObjects)
+		{
+			Matrix matWorld{ Matrix::CreateTranslation(pos) };
+			gameObject->GetTransform()->SetWorldMatrix(matWorld);
+		}
+
+		AddObjectToScene(objType, gameObjects);
+		GET_NETWORK->AddNetworkObject(objID, gameObjects);
+
+		m_overlappedObjects.insert(objID);
 	}
 }
 #pragma endregion

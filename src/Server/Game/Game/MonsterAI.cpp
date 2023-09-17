@@ -156,10 +156,10 @@ void MonsterAI::QuatUpdateForClient()
 	//전송.
 	m_monster->m_rotation = q;
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_MONSTER_QUAT_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_MONSTER_QUAT_ACK };
 	ev.objID = m_monster->m_id;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
 
 physx::PxGeometry* MonsterAI::GetRequestedSkillGeometry(std::string schedule)
@@ -501,9 +501,9 @@ physx::PxQuat MonsterAI::GetRotation_For_Pattern(physx::PxVec3 xzDir)
 
 void MonsterAI::BossPatternUIStart(server::TRIGGER_INTERACTION_TYPE type)
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
 	ev.objID = m_monster->GetID();
 	ev.integer = magic_enum::enum_integer(type);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }

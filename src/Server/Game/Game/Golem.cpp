@@ -56,8 +56,6 @@ void Golem::Init()
 
 void Golem::Update(double timeDelta)
 {
-	SendChangedStateAgain();
-
 	m_golemAI->Update(timeDelta);
 	if(m_overlapObject)
 		m_overlapObject->Update();
@@ -207,12 +205,12 @@ void Golem::CheckState()
 
 	//for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
-		game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK };
-		ev.state = m_currState;
+		game::TimerEvent ev{ ProtocolID::WR_CHANGE_STATE_ACK };
 		ev.objID = m_id;
+		ev.state = m_currState;
 		ev.objType = m_objType;
 
-		game::MessageHandler::GetInstance()->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
 	}
 }
 
@@ -435,11 +433,11 @@ bool Golem::Pattern_Jump_LandCheck()
 
 	ServerMessage_SendRenderLandEffect(GetControllerPosition());
 
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
 	ev.objID = m_id;
 	ev.state = magic_enum::enum_integer(server::SOUND_TYPE::LANDING);
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 
 	return true;
 }
@@ -473,26 +471,12 @@ void Golem::SetState(GOLEM_STATE state)
 	m_currState = state;
 }
 
-void Golem::SendChangedStateAgain()
-{
-	if (m_sendState <= 0)
-		return;
-
-	game::TIMER_EVENT ev{ ProtocolID::WR_CHANGE_STATE_ACK, m_id };
-	ev.state = m_currState;
-	ev.objType = m_objType;
-
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
-
-	--m_sendState;
-}
-
 void Golem::ServerMessage_SendRenderLandEffect(const Vec3& pos)
 {
-	game::TIMER_EVENT ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 	ev.objID = m_id;
 	ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IN_DISPERSAL);
 	ev.effectPos = pos;
 
-	game::MessageHandler::GetInstance()->PushSendMessage(ev);
+	MSG_HANDLER->PushSendMessage(ev);
 }
