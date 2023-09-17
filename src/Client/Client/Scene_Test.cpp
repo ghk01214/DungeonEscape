@@ -386,6 +386,20 @@ void Scene_Test::CreateSphere(std::shared_ptr<CScene> pScene)
 
 void Scene_Test::SendKeyInput()
 {
+	if (m_cinematicScript->IsPlaying() == true
+		and (m_cinematicScript->GetCurrentScene() == Cinematic_Script::CUT_SCENE_TYPE::WEEPER_SUMMON
+			or m_cinematicScript->GetCurrentScene() == Cinematic_Script::CUT_SCENE_TYPE::GOLEM_SUMMON))
+		return;
+
+	if (m_openSetting == true)
+		return;
+
+	if (m_showWeeperTutorial == true)
+		return;
+
+	if (m_showGolemTutorial == true)
+		return;
+
 	if (GET_NETWORK->IsSuccessfullyLoggedIn() == true)
 		GET_NETWORK->SendKeyInputPacket();
 }

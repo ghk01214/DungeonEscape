@@ -15,7 +15,7 @@ typedef struct _tagCINEMATIC_INFO {
 
 class Cinematic_Script : public MonoBehaviour
 {
-private:
+public:
 	enum CUT_SCENE_TYPE
 	{
 		NONE = 0,
