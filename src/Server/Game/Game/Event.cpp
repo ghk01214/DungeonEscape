@@ -910,6 +910,25 @@ void Event::ExecuteMsg_continuous()
 		}
 	}
 
+	if (msg == "NUCLEAR_ATTACK_DAMAGE_APPLY")		//Jump에서 착지까지 반복호출
+	{
+		auto playerObj = dynamic_cast<Player*>(target);
+		if (!playerObj)
+			return;
+
+		executed = false;
+		bool ground = playerObj->GetController()->IsOnGround();
+		if (ground)
+		{
+			if (playerObj->GetState() == Player::PLAYER_STATE::DAMAGE)
+				playerObj->SetState(Player::PLAYER_STATE::IDLE1);
+			else
+				playerObj->SetState(Player::PLAYER_STATE::DAMAGE);
+
+
+			executed = true;
+		}
+	}
 
 
 	if (msg == "LAST_BOSS_ROCK_RISE")		//Jump에서 착지까지 반복호출

@@ -506,34 +506,26 @@ void SkillObject::HandleMonsterSkillCollision()
 		{
 			auto player{ dynamic_cast<Player*>(collider->GetOwnerObject()) };
 
-			if (player != nullptr and player->IsDead() == false)
+			//보스스킬 : 플레이어 타격
+			if (type == server::OBJECT_TYPE::PLAYER)
 			{
-				switch (player->GetFBXType())
-				{
-					case server::FBX_TYPE::NANA:
-					{
-						//플레이어 나나 피격
-					}
-					break;
-					case server::FBX_TYPE::MISTIC:
-					{
-						//플레이어 미스틱 피격
-					}
-					break;
-					case server::FBX_TYPE::CARMEL:
-					{
-						//플레이어 카멜 피격
-					}
-					break;
-				}
+				auto player{ dynamic_cast<Player*>(collider->GetOwnerObject()) };
 
-				if (m_skillType == SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR)
+				if (player != nullptr and player->IsDead() == false)
 				{
-					Nuclear_Attribute_Explosion();
-				}
+					if (m_skillType == SKILLOBJECTTYPE::WEEPER_CAST2_BALL_NUCLEAR)
+					{
+						Nuclear_Attribute_Explosion();
+					}
+					else
+					{
+						player->SetState(Player::PLAYER_STATE::DAMAGE);
+						//건호 : 피격 애니메이션 반복처리 가능하도록
+					}
 
-				SetRemoveReserved();						//객체 삭제
-				ServerMessage_Remove();					//서버 메시지 처리
+					SetRemoveReserved();						//객체 삭제
+					ServerMessage_Remove();					//서버 메시지 처리
+				}
 			}
 		}
 
@@ -801,6 +793,7 @@ void SkillObject::Nuclear_Attribute_Explosion()
 
 		playerController->BounceFromAttack();					//플레이어 input 무효화 (땅 착지전까지)
 		playerBody->AddForce(ForceMode::Impulse, physx::PxVec3(knockbackDir.x * horizontalStrength, verticalStrength, knockbackDir.z * horizontalStrength));
+		EventHandler::GetInstance()->AddEvent("NUCLEAR_ATTACK_DAMAGE_APPLY", 0.25f, obj);
 	}
 
 	//weeper의 nuclear가 터졌다. 아래의 NuclearPosition 위치를 사용해 nuclear폭탄이 터진 이펙트를 대입하면 된다.
