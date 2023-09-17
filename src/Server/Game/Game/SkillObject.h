@@ -75,6 +75,8 @@ public:
 
 	void MonsterSkillFire(physx::PxVec3 dir);					//Weeper::Pattern_Cast1()에서 스킬 오브젝트를 발사하기 위한 함수
 	void WeeperNuclearFire();
+
+
 public:
 	void Handle_Attribute();		//attribute에 따라 지속적으로 실행
 	void Attirbute_Levitate();		//공중 지속
@@ -90,6 +92,7 @@ public:
 
 public:
 	void Nuclear_Attribute_Explosion();
+	void Cast3Ball_Attribute_Explosion();
 
 public:
 	bool IsPlayerSkill();

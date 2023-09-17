@@ -129,6 +129,8 @@ void SkillObject::Init()
 
 			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
 			EventHandler::GetInstance()->AddEvent("SKILL_LEVITATE_END", 0.5f, this);
+
+			m_body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_MONSTER, PhysicsLayers::PLAYER);
 		}
 		break;
 
@@ -516,6 +518,10 @@ void SkillObject::HandleMonsterSkillCollision()
 					{
 						Nuclear_Attribute_Explosion();
 					}
+					else if (m_skillType == SKILLOBJECTTYPE::WEEPER_CAST3_BALL)
+					{
+						Cast3Ball_Attribute_Explosion();
+					}
 					else
 					{
 						player->SetState(Player::PLAYER_STATE::DAMAGE);
@@ -800,4 +806,28 @@ void SkillObject::Nuclear_Attribute_Explosion()
 	Vec3 NuclearPosition = FROM_PX3(pos);
 
 	ServerMessage_Effect(NuclearPosition);
+}
+
+void SkillObject::Cast3Ball_Attribute_Explosion()
+{
+	auto objmgr = ObjectManager::GetInstance();
+	auto playerlist = objmgr->GetLayer(L"Layer_Player")->GetGameObjects();
+	if (playerlist.empty())
+		return;
+
+	for (auto& p : playerlist)
+	{
+		auto player = dynamic_cast<Player*>(p);
+		if (!player)
+			continue;
+
+		physx::PxVec3 playerPos = TO_PX3(player->GetControllerPosition());
+		physx::PxVec3 explosionPos = m_body->GetPosition();
+
+		if((playerPos - explosionPos).magnitude() < 800.f)
+		{
+			player->SetState(Player::PLAYER_STATE::DAMAGE);
+			ServerMessage_Hit(player);
+		}
+	}
 }
