@@ -20,7 +20,8 @@ Player_Script::Player_Script(server::FBX_TYPE type, int32_t state) :
 	m_prevState{ IDLE1 },
 	m_currState{ magic_enum::enum_value<PLAYER_STATE>(state) },
 	m_radius{ 50.f },
-	m_halfHeight{ 100.f }		// 플레이어 발 높이 위치 변경
+	m_halfHeight{ 100.f },		// 플레이어 발 높이 위치 변경
+	m_skillHit{ false }
 {
 }
 
@@ -53,6 +54,7 @@ void Player_Script::LateUpdate()
 		MovePlayerCameraLook();
 
 	CheckState();
+	ReplayDamageAnimation();
 	UpdateFrameRepeat();
 	UpdateFrameOnce();
 }
@@ -158,6 +160,19 @@ void Player_Script::UpdateFrameOnce()
 			m_currState = JUMPING;
 		}
 	}
+}
+
+void Player_Script::ReplayDamageAnimation()
+{
+	if (m_skillHit == false)
+		return;
+
+	if (m_currState != DAMAGE)
+		return;
+
+	GetAnimator()->Play(m_currState);
+	m_aniEnd = false;
+	m_skillHit = false;
 }
 
 float Player_Script::GetAngleBetweenVector(const XMVECTOR& vector1, const XMVECTOR& vector2)
@@ -284,6 +299,11 @@ void Player_Script::ParsePackets()
 				m_currState = magic_enum::enum_value<PLAYER_STATE>(state);
 			}
 			break;
+			case ProtocolID::WR_SKILL_HIT_ACK:
+			{
+				m_skillHit = true;
+			}
+			break;
 			default:
 			break;
 		}
@@ -362,10 +382,7 @@ void Player_Script::Transform(network::CPacket& packet)
 	GetTransform()->SetWorldMatrix(matWorld);
 
 	if (GetNetwork()->IsMyPlayer() == true)
-	{
 		GET_SINGLE(SceneManager)->GetActiveScene()->GetMainCamera()->SetRaycastDistance(raycastDistance);
-		//Print(raycastDistance);
-	}
 #pragma region [FOR DEBUGGING]
 	//auto t{ GetTransform()->GetWorldPosition() };
 	//std::cout << std::format("player id - {}, pos : {}, {}, {}", id, t.x, t.y, t.z) << std::endl;

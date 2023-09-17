@@ -61,6 +61,7 @@ private:
 	void CheckState();
 	void UpdateFrameRepeat();
 	void UpdateFrameOnce();
+	void ReplayDamageAnimation();
 
 private:
 	float GetAngleBetweenVector(const XMVECTOR& vector1, const XMVECTOR& vector2);
@@ -88,4 +89,6 @@ private:
 	float m_speed = 50.f;
 
 	bool m_aniEnd;
+
+	bool m_skillHit;
 };

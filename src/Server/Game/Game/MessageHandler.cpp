@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -86,9 +86,9 @@ namespace game
 		{
 			TimerEvent ev;
 			auto currentTime{ CURRENT_TIME };
-			//bool success{ m_sendQueue.try_pop(ev) };
+			bool success{ m_sendQueue.try_pop(ev) };
 
-			if (m_sendQueue.try_pop(ev) == false)
+			if (success == false)
 			{
 				std::this_thread::sleep_for(1ms);
 				continue;
@@ -117,7 +117,6 @@ namespace game
 				break;
 				case ProtocolID::WR_ADD_OBJ_ACK:
 				case ProtocolID::WR_REMOVE_ACK:
-				case ProtocolID::WR_SKILL_HIT_ACK:
 				{
 					postOver->objType = ev.objType;
 
@@ -135,6 +134,7 @@ namespace game
 				case ProtocolID::WR_ADD_ANIMATE_OBJ_ACK:
 				case ProtocolID::WR_MONSTER_QUAT_ACK:
 				case ProtocolID::WR_MONSTER_HP_ACK:
+				case ProtocolID::WR_SKILL_HIT_ACK:
 				{
 					PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
 				}

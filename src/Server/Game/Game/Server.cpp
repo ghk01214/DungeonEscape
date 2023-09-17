@@ -1156,23 +1156,12 @@ namespace game
 			break;
 			case ProtocolID::WR_SKILL_HIT_ACK:
 			{
-				for (auto& object : skillObjects)
+				for (auto& client : m_sessions)
 				{
-					auto skill{ dynamic_cast<SkillObject*>(object) };
-
-					if (skill == nullptr)
+					if (client->GetState() != STATE::INGAME)
 						continue;
 
-					if (skill->GetID() != id)
-						continue;
-
-					for (auto& client : m_sessions)
-					{
-						if (client->GetState() != STATE::INGAME)
-							continue;
-
-						client->SendSkillHitPacket(id);
-					}
+					client->SendSkillHitPacket(id);
 				}
 			}
 			break;

@@ -310,13 +310,12 @@ void SkillObject::ServerMessage_Transform()
 	MSG_HANDLER->PushSendMessage(ev);
 }
 
-void SkillObject::ServerMessage_Hit()
+void SkillObject::ServerMessage_Hit(Player* player)
 {
 	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
 		game::TimerEvent ev{ ProtocolID::WR_SKILL_HIT_ACK };
-		ev.objID = m_id;
-		ev.objType = m_objType;
+		ev.objID = player->GetID();
 
 		MSG_HANDLER->PushSendMessage(ev);
 	}
@@ -520,7 +519,7 @@ void SkillObject::HandleMonsterSkillCollision()
 					else
 					{
 						player->SetState(Player::PLAYER_STATE::DAMAGE);
-						//건호 : 피격 애니메이션 반복처리 가능하도록
+						ServerMessage_Hit(player);
 					}
 
 					SetRemoveReserved();						//객체 삭제

@@ -62,7 +62,7 @@ public:
 	void ServerMessage_Init();
 	void ServerMessage_Add();
 	void ServerMessage_Transform();
-	void ServerMessage_Hit();
+	void ServerMessage_Hit(Player* player);
 	void ServerMessage_Remove();
 	void ServerMessage_Effect(Vec3 pos);
 
