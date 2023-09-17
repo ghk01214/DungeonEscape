@@ -257,7 +257,7 @@ void TestLevel::LoadBasicMap4()
 {
 	auto objmgr = ObjectManager::GetInstance();
 
-	//auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(0, 200, -42), Quat(0, 0, 0, 1), Vec3(75,75,75));
+	auto PlayerObject = objmgr->AddGameObjectToLayer<Player>(L"Layer_Player", 1, Vec3(0, 200, -42), Quat(0, 0, 0, 1), Vec3(75,75,75));
 
 	auto MapPlaneObject = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, -42), Quat(0, 0, 0, 1), Vec3(9000, 2, 9000));
 	auto MapPlaneBody = MapPlaneObject->GetComponent<RigidBody>(L"RigidBody");
@@ -277,10 +277,11 @@ void TestLevel::LoadBasicMap4()
 	//aBody->SetKinematic(true);
 	//a->ApplyRequestedLayers();
 
-	auto box2 = objmgr->AddGameObjectToLayer<MapObject>(L"Layer_Map2", Vec3(0, 0, 200), Quat(0, 0, 0, 1), Vec3(500, 500, 500));
+	auto box2 = objmgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3(-500, 0, 200), Quat(0, 0, 0, 1), Vec3(500, 500, 500), false);
 	auto box2body = box2->GetComponent<RigidBody>(L"RigidBody");
 	box2body->AddCollider<BoxCollider>(box2->GetTransform()->GetScale());
 	box2->ApplyRequestedLayers();
+	box2->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::OFFTRACK1);
 }
 
 void TestLevel::LoadMapObject()

@@ -49,6 +49,7 @@ void TriggerObject2::Update(double timeDelta)
 
 	Handle_Overlap();
 	AttributePortal(timeDelta);
+	Attribute_Offtrack();
 }
 
 void TriggerObject2::LateUpdate(double timeDelta)
@@ -121,12 +122,15 @@ void TriggerObject2::SetPortalDestination()
 {
 	//HERE
 	m_portalDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));
+	m_offTrackDestination.resize(static_cast<int>(TRIGGERATTRIBUTE::END));
 
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL1)] = PORTAL1_EXIT;
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL2)] = PORTAL2_EXIT;
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL3)] = PORTAL3_EXIT;
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL4)] = PORTAL4_EXIT;
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL5)] = PORTAL5_EXIT;
+
+	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK1)] = OFFTRACK1_EXIT;
 
 	//여기서 포탈 1, 포탈2, 등의 이동 위치를 설정한다.
 }
@@ -201,6 +205,23 @@ void TriggerObject2::Attribute_BossCutscene_1()
 	m_deactivate = true;
 	SetRemoveReserved();
 	//클라이언트에게 컷씬 알림을 보내려면 여기에.
+}
+
+void TriggerObject2::Attribute_Offtrack()
+{
+	int attribNum = static_cast<int>(m_attribute);
+	if (attribNum < static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK1) || attribNum > static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK3))
+		return;
+
+	string name = string(magic_enum::enum_name(m_attribute));
+
+	Vec3 returnpos = Vec3(0,0,0);
+	returnpos = m_offTrackDestination[attribNum];
+
+	for (auto& player : m_duplicates)
+	{
+		player->SetControllerPosition(returnpos);
+	}
 }
 
 void TriggerObject2::SendPlayers()
