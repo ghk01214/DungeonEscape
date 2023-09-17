@@ -5,7 +5,8 @@
 #include <Material.h>
 #include <UI.h>
 
-BossTutorial_Script::BossTutorial_Script()
+BossTutorial_Script::BossTutorial_Script() :
+	m_currPage{ PAGE1 }
 {
 }
 
@@ -31,8 +32,6 @@ void BossTutorial_Script::Update()
 		return;
 
 	__super::Update();
-
-
 }
 
 void BossTutorial_Script::LateUpdate()
@@ -52,7 +51,32 @@ void BossTutorial_Script::ChangePage(int32_t index)
 	}
 }
 
+void BossTutorial_Script::ChangeToPrevPage()
+{
+	--m_currPage;
+
+	if (m_currPage < PAGE1)
+		m_currPage = PAGE1;
+
+	ChangePage(m_currPage);
+}
+
+void BossTutorial_Script::ChangeToNextPage()
+{
+	++m_currPage;
+
+	if (m_currPage >= PAGE_NUM::MAX)
+		m_currPage = PAGE_NUM::MAX - 1;
+
+	ChangePage(m_currPage);
+}
+
 void BossTutorial_Script::SetVisible(bool flag)
 {
 	GetUI()->SetVisible(flag);
+}
+
+void BossTutorial_Script::SetPage(int32_t num)
+{
+	m_currPage = num;
 }

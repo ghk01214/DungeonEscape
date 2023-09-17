@@ -383,6 +383,9 @@
     <ClInclude Include="BossTutorial_Script.h">
       <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
     </ClInclude>
+    <ClInclude Include="PageChangeButton_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
+    </ClInclude>
     <ClInclude Include="PhysxObject_Script.h">
       <Filter>소스 파일\Objects\06. PhysxObject\Object</Filter>
     </ClInclude>
@@ -561,6 +564,9 @@
       <Filter>소스 파일\Objects\03. Monster\Boss\Counter Effect</Filter>
     </ClCompile>
     <ClCompile Include="BossTutorial_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
+    </ClCompile>
+    <ClCompile Include="PageChangeButton_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\In Game\BossUI\Tutorial</Filter>
     </ClCompile>
     <ClCompile Include="PhysxObject_Script.cpp">

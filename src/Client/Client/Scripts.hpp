@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #pragma region [PLAYERS]
 #include "Player_Script.h"
 #include "PlayerRangeAttack.h"
@@ -33,6 +33,7 @@
 #include "BossHP_Script.h"
 #include "BossWarning_Script.h"
 #include "BossTutorial_Script.h"
+#include "PageChangeButton_Script.h"
 
 #include "InfoUI_Script.h"
 #include "PortalUI_Script.h"

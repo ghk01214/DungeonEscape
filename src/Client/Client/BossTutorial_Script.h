@@ -5,7 +5,7 @@
 class BossTutorial_Script : public UI_Script
 {
 public:
-	enum PAGE
+	enum PAGE_NUM
 	{
 		PAGE1,
 		PAGE2,
@@ -22,9 +22,17 @@ public:
 	void Update() override;
 	void LateUpdate() override;
 
-public:
+private:
 	void ChangePage(int32_t index);
-	void SetVisible(bool flag);
 
+public:
+	void ChangeToPrevPage();
+	void ChangeToNextPage();
+
+	void SetVisible(bool flag);
+	void SetPage(int32_t num);
+
+private:
+	int32_t m_currPage;
 };
 

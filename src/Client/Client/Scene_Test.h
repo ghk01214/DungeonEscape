@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Client_Defines.h"
 #include <Scene.h>
@@ -14,7 +14,7 @@ class VolumeSlider_Script;
 class Magic_Artifact_Script;
 class BossTutorial_Script;
 class BossHP_Script;
-class PageChange_Script;
+class PageChangeButton_Script;
 
 struct EffectInfo
 {
@@ -57,6 +57,14 @@ private:
 		GOLEM,
 
 		MAX2
+	};
+
+	enum PAGE_CHANGE_TYPE
+	{
+		PREV,
+		NEXT,
+
+		MAX3
 	};
 
 	struct UITransform
@@ -149,6 +157,7 @@ private:
 	void CreateSESlider();
 
 	void CreateBossTutorial();
+	void CreatePageChangeButton();
 	void CreateWeeperTutorial();
 	void CreateGolemTutorial();
 
@@ -160,6 +169,7 @@ private:
 	void ChangeBossUIVisibility();
 	void RenderFont();
 	void ShowBossTutorial();
+	void ChangeBossTutorialPage();
 
 private:
 	void SendKeyInput();
@@ -272,6 +282,8 @@ private:
 
 	std::shared_ptr<BossTutorial_Script> m_weeperTutorialScript;
 	std::shared_ptr<BossTutorial_Script> m_golemTutorialScript;
+
+	std::vector<std::shared_ptr<PageChangeButton_Script>> m_pageChangeButton;
 
 	bool m_openSetting;
 	bool m_showWeeperTutorial;

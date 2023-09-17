@@ -94,6 +94,7 @@ void Scene_Test::Update()
 	RenderFont();
 	RenderPortalEffect();
 	ShowBossTutorial();
+	ChangeBossTutorialPage();
 }
 
 void Scene_Test::LateUpdate()
@@ -1613,15 +1614,55 @@ void Scene_Test::ShowBossTutorial()
 
 	if (m_showWeeperTutorial == true)
 	{
+		for (auto& obj : m_pageChangeButton)
+		{
+			obj->SetVisible(true);
+		}
+
 		m_weeperTutorialScript->SetVisible(true);
 		m_closeButton->SetVisible(true);
 		m_renderFont = false;
 	}
 	else if (m_showGolemTutorial == true)
 	{
+		for (auto& obj : m_pageChangeButton)
+		{
+			obj->SetVisible(true);
+		}
+
 		m_golemTutorialScript->SetVisible(true);
 		m_closeButton->SetVisible(true);
 		m_renderFont = false;
+	}
+}
+
+void Scene_Test::ChangeBossTutorialPage()
+{
+	if (m_showWeeperTutorial == true)
+	{
+		if (m_pageChangeButton[PREV]->GetChangePageFlag() == true)
+		{
+			m_weeperTutorialScript->ChangeToPrevPage();
+			m_pageChangeButton[PREV]->SetChangePageFlag(false);
+		}
+		else if (m_pageChangeButton[NEXT]->GetChangePageFlag() == true)
+		{
+			m_weeperTutorialScript->ChangeToNextPage();
+			m_pageChangeButton[NEXT]->SetChangePageFlag(false);
+		}
+	}
+	else if (m_showGolemTutorial == true)
+	{
+		if (m_pageChangeButton[PREV]->GetChangePageFlag() == true)
+		{
+			m_golemTutorialScript->ChangeToPrevPage();
+			m_pageChangeButton[PREV]->SetChangePageFlag(false);
+		}
+		else if (m_pageChangeButton[NEXT]->GetChangePageFlag() == true)
+		{
+			m_golemTutorialScript->ChangeToNextPage();
+			m_pageChangeButton[NEXT]->SetChangePageFlag(false);
+		}
 	}
 }
 #pragma endregion
@@ -2356,8 +2397,56 @@ void Scene_Test::CreateSESlider()
 
 void Scene_Test::CreateBossTutorial()
 {
+	CreatePageChangeButton();
 	CreateWeeperTutorial();
 	CreateGolemTutorial();
+}
+
+void Scene_Test::CreatePageChangeButton()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Prev Button") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	// Prev Button
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto pos{ GetRatio(-82.f, 0.f) };
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 118.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+		std::shared_ptr<PageChangeButton_Script> script{ std::make_shared<PageChangeButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Prev Button_selected"));
+		m_pageChangeButton.push_back(script);
+
+		obj->AddComponent(script);
+
+		AddGameObject(obj);
+	}
+
+	// Prev Button
+	texture = GET_TEXTURE(L"Next Button");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto pos{ GetRatio(82.f, 0.f) };
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 118.f });
+		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+		std::shared_ptr<PageChangeButton_Script> script{ std::make_shared<PageChangeButton_Script>() };
+		script->InsertTextures(texture);
+		script->InsertTextures(GET_TEXTURE(L"Next Button_selected"));
+		m_pageChangeButton.push_back(script);
+
+		obj->AddComponent(script);
+
+		AddGameObject(obj);
+	}
 }
 
 void Scene_Test::CreateWeeperTutorial()
@@ -2408,25 +2497,62 @@ void Scene_Test::ChangePopUpVisibility()
 {
 	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::ESC) == true)
 	{
-		m_openSetting = !m_openSetting;
-
-		if (m_openSetting == true)
+		if (m_showWeeperTutorial == true)
 		{
-			for (auto& obj : m_popUp)
+			for (auto& obj : m_pageChangeButton)
 			{
-				obj->GetUI()->SetVisible(true);
+				obj->SetVisible(false);
+				obj->SetChangePageFlag(false);
 			}
 
-			m_renderFont = false;
-		}
-		else
-		{
 			for (auto& obj : m_popUp)
 			{
 				obj->GetUI()->SetVisible(false);
 			}
 
+			m_weeperTutorialScript->SetVisible(false);
+			m_showWeeperTutorial = false;
 			m_renderFont = true;
+		}
+		else if (m_showGolemTutorial == true)
+		{
+			for (auto& obj : m_pageChangeButton)
+			{
+				obj->SetVisible(false);
+				obj->SetChangePageFlag(false);
+			}
+
+			for (auto& obj : m_popUp)
+			{
+				obj->GetUI()->SetVisible(false);
+			}
+
+			m_golemTutorialScript->SetVisible(false);
+			m_showGolemTutorial = false;
+			m_renderFont = true;
+		}
+		else
+		{
+			m_openSetting = !m_openSetting;
+
+			if (m_openSetting == true)
+			{
+				for (auto& obj : m_popUp)
+				{
+					obj->GetUI()->SetVisible(true);
+				}
+
+				m_renderFont = false;
+			}
+			else
+			{
+				for (auto& obj : m_popUp)
+				{
+					obj->GetUI()->SetVisible(false);
+				}
+
+				m_renderFont = true;
+			}
 		}
 	}
 
@@ -2435,6 +2561,12 @@ void Scene_Test::ChangePopUpVisibility()
 		for (auto& obj : m_popUp)
 		{
 			obj->GetUI()->SetVisible(false);
+		}
+
+		for (auto& obj : m_pageChangeButton)
+		{
+			obj->SetVisible(false);
+			obj->SetChangePageFlag(false);
 		}
 
 		m_weeperTutorialScript->GetUI()->SetVisible(false);
@@ -3897,7 +4029,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
 			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
+
 			m_showWeeperTutorial = true;
+			m_weeperTutorialScript->SetPage(BossTutorial_Script::PAGE1);
 		}
 		break;
 		// Golem 등장 컷신
@@ -3910,7 +4044,9 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 			m_bossWarningScript[0]->StartBlink(1.f, 0.f, 1.f, 0.8f);
 			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
+
 			m_showGolemTutorial = true;
+			m_golemTutorialScript->SetPage(BossTutorial_Script::PAGE1);
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE7:

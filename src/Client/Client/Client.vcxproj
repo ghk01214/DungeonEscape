@@ -174,6 +174,7 @@
     <ClInclude Include="Effect_Script.h" />
     <ClInclude Include="Fade_Script.h" />
     <ClInclude Include="InputString_Script.h" />
+    <ClInclude Include="PageChangeButton_Script.h" />
     <ClInclude Include="Particle_Script.h" />
     <ClInclude Include="ReadyButton_Script.h" />
     <ClInclude Include="SliderTip_Script.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="Effect_Script.cpp" />
     <ClCompile Include="Fade_Script.cpp" />
     <ClCompile Include="InputString_Script.cpp" />
+    <ClCompile Include="PageChangeButton_Script.cpp" />
     <ClCompile Include="Particle_Script.cpp" />
     <ClCompile Include="ReadyButton_Script.cpp" />
     <ClCompile Include="SliderTip_Script.cpp" />
