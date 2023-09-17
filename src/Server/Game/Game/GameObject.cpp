@@ -70,7 +70,8 @@ bool GameObject::isSleep()
         return true;
     }
 
-
+    if (m_objType == server::OBJECT_TYPE::ELEVATOR_ROCK)
+        return false;
 
     if (body->isKinematic())
     {
