@@ -537,11 +537,11 @@ float CustomController::CalculateCameraDistance()
 
 	if (query->Raycast_MaskApplied(hit, ray, 1 << static_cast<uint8_t>(PhysicsLayers::MAP), PhysicsQueryType::All, m_body))
 	{
-		std::cout << hit.distance << "\n";
+		//std::cout << hit.distance << "\n";
 		return hit.distance;
 	}
 
-	std::cout << "raycast didn't catch anything so return -1" << "\n";
+	//std::cout << "raycast didn't catch anything so return -1" << "\n";
 	return -1.f;
 
 	// raycast 실패시 -1값을 전달 (원래 카메라 거리 적용)
