@@ -187,7 +187,7 @@ private:
 	void ChangeMonsterHP(network::CPacket& packet);
 	void CreateSparkParticleObject(network::CPacket& packet);
 
-	void ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
+	void ClassifyObject(int32_t id, server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex = -1);
 	void AddObjectToScene(server::OBJECT_TYPE type, std::vector<std::shared_ptr<CGameObject>>& gameObjects);
 	void AddEffectTextures();
 	void RenderPortalEffect();
@@ -251,7 +251,9 @@ private:
 	uint32_t m_impact15StartIndex;
 	uint32_t m_impact15CurrentIndex;
 
-	std::vector<std::shared_ptr<class Bomb_Script>> m_skillObject;
+	std::vector<std::shared_ptr<class Bomb_Script>> m_specialSkillObject;
+
+	std::unordered_map<int32_t, int32_t> m_skillObjects;
 
 private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;

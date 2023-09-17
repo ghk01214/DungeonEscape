@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -126,11 +126,6 @@ void Scene_Test::LateUpdate()
 			case ProtocolID::WR_REMOVE_ACK:
 			{
 				RemoveObject(packet);
-			}
-			break;
-			case ProtocolID::WR_SKILL_HIT_ACK:
-			{
-
 			}
 			break;
 			case ProtocolID::WR_RENDER_EFFECT_ACK:
@@ -494,7 +489,7 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom2.fbx");
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	m_eNextMapType = MAP_TYPE::StartRoom;
+	m_eNextMapType = MAP_TYPE::FirstBoss;
 	MoveMap(m_eNextMapType);
 }
 
@@ -532,7 +527,7 @@ void Scene_Test::CreateSkill(const std::wstring& colorName, const Vec3& worldPos
 		auto script{ std::make_shared<Bomb_Script>(scaleSpeed, alpha) };
 		script->SetRecvFlag(m_recvExplosionSkill);
 		object->AddComponent(script);
-		m_skillObject.push_back(script);
+		m_specialSkillObject.push_back(script);
 	}
 
 	AddGameObject(gameObjects);
@@ -2701,7 +2696,7 @@ void Scene_Test::CreateAnimatedRemoteObject(network::CPacket& packet)
 		hp = packet.Read<int32_t>();
 
 	ObjectDesc objectDesc;
-	ClassifyObject(fbxType, objectDesc, state);
+	ClassifyObject(id, fbxType, objectDesc, state);
 
 	if (objType == server::OBJECT_TYPE::PLAYER)
 		objType = server::OBJECT_TYPE::REMOTE_PLAYER;
@@ -2779,7 +2774,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	server::FBX_TYPE fbxType{ packet.Read<server::FBX_TYPE>() };
 
 	ObjectDesc objectDesc;
-	ClassifyObject(fbxType, objectDesc);
+	ClassifyObject(objID, fbxType, objectDesc);
 
 	network::NetworkGameObject gameObjects{ CreateMapObject(objectDesc) };
 	gameObjects = AddNetworkToObject(gameObjects, objType, objID);
@@ -2808,7 +2803,7 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 	m_overlappedObjects.insert(objID);
 }
 
-void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex)
+void Scene_Test::ClassifyObject(int32_t id, server::FBX_TYPE type, ObjectDesc& objectDesc, int32_t stateIndex)
 {
 	objectDesc.vPostion = Vec3(0.f, 0.f, 0.f);
 	objectDesc.vScale = Vec3(1.f, 1.f, 1.f);
@@ -2877,7 +2872,9 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_fireballEffectCurrentIndex++);
 			objectDesc.vScale = Vec3{ 100.f };
 
-			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 5)
+			m_skillObjects[id] = m_fireballEffectCurrentIndex - 1;
+
+			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
 				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
 		}
 		break;
@@ -2885,7 +2882,11 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 		{
 			objectDesc.strName = L"Sphere";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_spiralEffectCurrentIndex++);
+
+			auto script{ std::make_shared<PlayerRangeAttack>(type, m_spiralEffectCurrentIndex++) };
+			script->SetRenderFlag(false);
+
+			objectDesc.script = script;
 			objectDesc.vScale = Vec3{ 2.5f };
 
 			if (m_spiralEffectCurrentIndex == m_spiralEffectStartIndex + 5)
@@ -2898,6 +2899,8 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Stone Sphere.fbx";
 			objectDesc.script = std::make_shared<PlayerRangeAttack>(type, m_electricDarkGrayEffectCurrentIndex);
 			objectDesc.vScale = Vec3{ 40.f };
+
+			m_skillObjects[id] = m_electricDarkGrayEffectCurrentIndex - 1;
 
 			if (m_electricDarkGrayEffectCurrentIndex == m_electricDarkGrayEffectStartIndex + 3)
 				m_electricDarkGrayEffectCurrentIndex = m_electricDarkGrayEffectStartIndex;
@@ -2924,12 +2927,13 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_wpDarkBlueEffectCurrentIndex++);
 			//objectDesc.vScale = Vec3{ 70.f };
 
+			m_skillObjects[id] = m_wpDarkBlueEffectCurrentIndex - 1;
+
 			if (m_wpDarkBlueEffectCurrentIndex == m_wpDarkBlueEffectStartIndex + 3)
 				m_wpDarkBlueEffectCurrentIndex = m_wpDarkBlueEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
-		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
 		{
 			objectDesc.strName = L"Weeper Cast2";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
@@ -2940,11 +2944,28 @@ void Scene_Test::ClassifyObject(server::FBX_TYPE type, ObjectDesc& objectDesc, i
 				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
 		}
 		break;
+		case server::FBX_TYPE::WEEPER_CAST2_BALL_SCATTER:
+		{
+			objectDesc.strName = L"Weeper Cast2";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_fireballEffectCurrentIndex++);
+			objectDesc.vScale = Vec3{ 70.f };
+
+			m_skillObjects[id] = m_fireballEffectCurrentIndex - 1;
+
+			if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
+				m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
+		}
+		break;
 		case server::FBX_TYPE::WEEPER_CAST3_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast3";
 			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Ice Ball.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_spiralEffectCurrentIndex++);
+
+			auto script{ std::make_shared<MonsterRangeAttack>(type, m_spiralEffectCurrentIndex++) };
+			script->SetRenderFlag(false);
+
+			objectDesc.script = script;
 			objectDesc.vScale = { 2.f, 2.f, 2.f };
 
 			if (m_spiralEffectCurrentIndex == m_spiralEffectStartIndex + 5)
@@ -3036,7 +3057,7 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
-	effect.speed = 0.003f;
+	effect.speed = 0.006f;
 	effect.scale = Vec3{ 500.f };
 
 	for (int32_t i = 0; i < 5; ++i)
@@ -3593,6 +3614,12 @@ void Scene_Test::RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id)
 	m_overlappedObjects.erase(id);
 	RemoveNetworkObject(removeObjects);
 	GET_NETWORK->RemoveNetworkObject(id);
+
+	if (m_skillObjects[id])
+	{
+		GET_SINGLE(EffectManager)->StopBillBoard(m_skillObjects[id]);
+		m_skillObjects.erase(id);
+	}
 
 	switch (type)
 	{

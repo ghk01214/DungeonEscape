@@ -13,7 +13,8 @@
 
 PlayerRangeAttack::PlayerRangeAttack(server::FBX_TYPE attackType, uint32_t index) :
 	m_attackType{ attackType },
-	m_effectIndex{ index }
+	m_effectIndex{ index },
+	m_render{ true }
 {
 }
 
@@ -116,6 +117,9 @@ void PlayerRangeAttack::Transform(network::CPacket& packet)
 
 void PlayerRangeAttack::RenderEffect()
 {
+	if (m_render == false)
+		return;
+
 	switch (m_attackType)
 	{
 		case server::FBX_TYPE::PLAYER_FIREBALL:
@@ -146,4 +150,9 @@ void PlayerRangeAttack::RenderEffect()
 		default:
 		break;
 	}
+}
+
+void PlayerRangeAttack::SetRenderFlag(bool flag)
+{
+	m_render = flag;
 }

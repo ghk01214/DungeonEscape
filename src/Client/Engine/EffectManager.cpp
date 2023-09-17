@@ -157,6 +157,16 @@ void EffectManager::PlayBillBoard(uint32 iEffectNumber)
 	m_billboardReserveObjects[iEffectNumber]->GetBillBoard()->SetPlayOnce(false);
 }
 
+void EffectManager::Stop(uint32_t iEffectNumber)
+{
+	m_effectReserveObjects[iEffectNumber]->GetEffect()->SetPlayOnce(true);
+}
+
+void EffectManager::StopBillBoard(uint32_t iEffectNumber)
+{
+	m_billboardReserveObjects[iEffectNumber]->GetBillBoard()->SetPlayOnce(true);
+}
+
 void EffectManager::SetEffectInfo(uint32 iEffectNumber, Vec3 vPos, Vec3 vScale, Vec3 vRotation, float fPassingTime, float fAlpha)
 {
 	// 출력 레이어 설정 -> 카메라

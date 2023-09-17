@@ -20,8 +20,16 @@ protected:
 
 	void RenderEffect();
 
+public:
+	void SetRenderFlag(bool flag);
+
+public:
+	constexpr uint32_t GetEffectIndex() const { return m_effectIndex; }
+
 private:
 	server::FBX_TYPE m_attackType;
 	uint32_t m_effectIndex;
+
+	bool m_render;
 };
 

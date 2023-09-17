@@ -11,7 +11,8 @@
 
 MonsterRangeAttack::MonsterRangeAttack(server::FBX_TYPE attackType, uint32_t index) :
 	m_attackType{ attackType },
-	m_effectIndex{ index }
+	m_effectIndex{ index },
+	m_render{ true }
 {
 }
 
@@ -112,6 +113,9 @@ void MonsterRangeAttack::Transform(network::CPacket& packet)
 
 void MonsterRangeAttack::RenderEffect()
 {
+	if (m_render == false)
+		return;
+
 	switch (m_attackType)
 	{
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
@@ -152,4 +156,9 @@ void MonsterRangeAttack::RenderEffect()
 		default:
 		break;
 	}
+}
+
+void MonsterRangeAttack::SetRenderFlag(bool flag)
+{
+	m_render = flag;
 }

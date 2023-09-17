@@ -20,6 +20,9 @@ public:
 	void Play(uint32 iEffectNumber);
 	void PlayBillBoard(uint32 iEffectNumber);
 
+	void Stop(uint32_t iEffectNumber);
+	void StopBillBoard(uint32 iEffectNumber);
+
 	void SetEffectInfo(uint32 iEffectNumber, Vec3 vPos, Vec3 vScale, Vec3 vRotation, float fPassingTime = 0.001, float fAlpha = 1.f);
 	void SetBillBoardInfo(uint32 iEffectNumber, Vec3 vPos, Vec3 vScale, float fPassingTime = 0.001, float fAlpha = 1.f);
 
