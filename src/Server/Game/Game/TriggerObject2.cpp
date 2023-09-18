@@ -135,7 +135,7 @@ void TriggerObject2::SetPortalDestination()
 
 	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK1)] = OFFTRACK1_EXIT;
 
-	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK_DANCE)] = OFFTRACK_DANCE1_EXIT;
+	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK_DANCE)] = Vec3(0,0,0);		//이건 안씀. 수정할 필요 없다.
 
 
 	//여기서 포탈 1, 포탈2, 등의 이동 위치를 설정한다.
@@ -244,9 +244,9 @@ void TriggerObject2::Attribute_Dance()
 		return;
 
 	vector<Vec3> positions;
-	positions.emplace_back(Vec3(0, 0, 0));			//player1의 위치
-	positions.emplace_back(Vec3(0, 0, 0));			//player2의 위치
-	positions.emplace_back(Vec3(0, 0, 0));			//player3의 위치
+	positions.emplace_back(Vec3(0, 0, 0));			//player1를 보낼 위치
+	positions.emplace_back(Vec3(0, 0, 0));			//player2를 보낼 위치
+	positions.emplace_back(Vec3(0, 0, 0));			//player3를 보낼 위치
 
 	auto layer = ObjectManager::GetInstance()->GetLayer(L"Layer_Player");
 	if (!layer)
