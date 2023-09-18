@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -469,6 +469,11 @@ void TestLevel::LoadTriggerObject()
 	auto GuideUI1Body{ GuideUI1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	GuideUI1Body->AddCollider<BoxCollider>(GuideUI1Obj->GetTransform()->GetScale());
 	GuideUI1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::GUIDELINE1);
+
+	auto OffTrack1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 7750.f, -2790.f + 250.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(6000.f, 500.f, 2500.f), false) };
+	auto OffTrack1Body{ OffTrack1Obj->GetComponent<RigidBody>(L"RigidBody") };
+	OffTrack1Body->AddCollider<BoxCollider>(OffTrack1Obj->GetTransform()->GetScale());
+	OffTrack1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::OFFTRACK1);
 
 	LoadPortalObject();
 }

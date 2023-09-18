@@ -18,7 +18,7 @@
 #define PORTAL4_EXIT Vec3{ 18000.f, -1790.f + 100.f, 25070.f }
 #define PORTAL5_EXIT Vec3{ 16165.f, -3900.f + 100.f, 41780.f }
 
-#define OFFTRACK1_EXIT Vec3{0, 800, -42}
+#define OFFTRACK1_EXIT Vec3{ 5500.f, -1790.f + 500.f, 21170 }
 
 #define BOSSROCKINTERVAL 2000.f
 #define BOSSROCKSPEED 5.f
