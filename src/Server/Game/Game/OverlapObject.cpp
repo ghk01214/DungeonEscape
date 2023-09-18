@@ -132,17 +132,6 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 		//playerBody->AddForce(ForceMode::Impulse, -xzDir * dragPower);
 
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_DISPERSAL);
-
-		for (int i = 0; i < 10; ++i)
-		{
-			int32_t particleID{ ParticleObject::Summon(playerPos, 500.f, 1.5f, 2.f, 3.f) };	//생성
-
-			for (int32_t i = 0; i < SEND_AGAIN; ++i)
-			{
-				ServerMessage_CreateParticle(particleID, FROM_PX3(playerPos));
-			}
-		}
-
 		ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);
 
 		return true;
@@ -158,6 +147,13 @@ bool OverlapObject::ApplyMonsterSkillToPlayer(Player* player)
 
 		ServerMessage_RenderEffect(player, server::EFFECT_TYPE::IN_DISPERSAL);
 		ServerMessage_PlaySound(server::SOUND_TYPE::PUNCH);
+
+		for (int i = 0; i < 10; ++i)
+		{
+			int32_t particleID{ ParticleObject::Summon(playerPos, 300.f, 1.5f, 2.f, 3.f) };	//생성
+
+			ServerMessage_CreateParticle(particleID, FROM_PX3(playerPos));
+		}
 
 		return true;
 	}

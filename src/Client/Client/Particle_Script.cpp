@@ -73,7 +73,7 @@ void Particle_Script::RenderParticle()
 
 	auto pos{ GetTransform()->GetWorldPosition() };
 
-	GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 200.f }, 0.003f);
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 50.f }, 0.003f);
 	GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
 }
 
@@ -136,5 +136,5 @@ void Particle_Script::Transform(network::CPacket& packet)
 
 	GetTransform()->SetWorldMatrix(matWorld);
 
-	//m_render = true;
+	m_render = true;
 }

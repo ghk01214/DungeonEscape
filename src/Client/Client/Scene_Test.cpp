@@ -4434,86 +4434,86 @@ void Scene_Test::ChangeMonsterHP(network::CPacket& packet)
 void Scene_Test::CreateSparkParticleObject(network::CPacket& packet)
 {
 	{
-		//int32_t objID{ packet.ReadID() };
-
-		//if (m_overlappedObjects.contains(objID) == true)
-		//	return;
-
-		//Print("create", objID);
-
-		//Vec3 pos;
-		//pos.x = packet.Read<float>();
-		//pos.y = packet.Read<float>();
-		//pos.z = packet.Read<float>();
-
-		//std::vector<std::shared_ptr<Texture>> textures{ GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Spark_Particle") };
-		//std::shared_ptr<CGameObject> gameObject{ CreateArtifactBase(textures) };
-
-		//Matrix matWorld{ Matrix::CreateTranslation(pos) };
-		//gameObject->GetTransform()->SetWorldMatrix(matWorld);
-
-		//std::shared_ptr<Particle_Script> script{ std::make_shared<Particle_Script>() };
-		////script->SetEffectIndex(m_sparkParticleEffectCurrentIndex++);
-
-		////if (m_sparkParticleEffectCurrentIndex == m_sparkParticleEffectStartIndex + 10)
-		////	m_sparkParticleEffectCurrentIndex = m_spiralEffectStartIndex;
-		//script->SetEffectIndex(m_fireballEffectCurrentIndex++);
-
-		//if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
-		//	m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
-		////script->SetTexture(textures);	// 텍스쳐 정보
-		////script->SetPos(Vec3{ 0.f });
-		////script->SetSize(Vec2{ 1000.f });
-		////script->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
-
-		//gameObject->AddComponent(script);
-
-		//auto objType{ server::OBJECT_TYPE::PARTICLE };
-		//network::NetworkGameObject gameObjects;
-
-		//gameObjects.push_back(gameObject);
-		//gameObjects = AddNetworkToObject(gameObjects, objType, objID);
-
-		//AddObjectToScene(objType, gameObjects);
-		//GET_NETWORK->AddNetworkObject(objID, gameObjects);
-
-		//m_overlappedObjects.insert(objID);
-	}
-	{
 		int32_t objID{ packet.ReadID() };
 
 		if (m_overlappedObjects.contains(objID) == true)
 			return;
 
-		Print("create", objID);
+		//Print("create", objID);
 
 		Vec3 pos;
 		pos.x = packet.Read<float>();
 		pos.y = packet.Read<float>();
 		pos.z = packet.Read<float>();
 
+		std::vector<std::shared_ptr<Texture>> textures{ GET_SINGLE(Resources)->GetEffectTextures(L"Effect_Spark_Particle") };
+		std::shared_ptr<CGameObject> gameObject{ CreateArtifactBase(textures) };
+
+		Matrix matWorld{ Matrix::CreateTranslation(pos) };
+		gameObject->GetTransform()->SetWorldMatrix(matWorld);
+
+		std::shared_ptr<Particle_Script> script{ std::make_shared<Particle_Script>() };
+		//script->SetEffectIndex(m_sparkParticleEffectCurrentIndex++);
+
+		//if (m_sparkParticleEffectCurrentIndex == m_sparkParticleEffectStartIndex + 10)
+		//	m_sparkParticleEffectCurrentIndex = m_spiralEffectStartIndex;
+		script->SetEffectIndex(m_fireballEffectCurrentIndex++);
+
+		if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
+			m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
+		//script->SetTexture(textures);	// 텍스쳐 정보
+		//script->SetPos(Vec3{ 0.f });
+		//script->SetSize(Vec2{ 1000.f });
+		//script->SetPassingTime(0.05f);	// 텍스쳐 1장을 넘어가는데 걸리는 시간
+
+		gameObject->AddComponent(script);
+
 		auto objType{ server::OBJECT_TYPE::PARTICLE };
+		network::NetworkGameObject gameObjects;
 
-		ObjectDesc objectDesc;
-		objectDesc.strName = L"Fireball";
-		objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
-		objectDesc.vPostion = Vec3{ 0.f };
-		objectDesc.vScale = Vec3{ 100.f };
-		objectDesc.script = std::make_shared<Particle_Script>();
-
-		network::NetworkGameObject gameObjects{ CreateMapObject(objectDesc) };
+		gameObjects.push_back(gameObject);
 		gameObjects = AddNetworkToObject(gameObjects, objType, objID);
-
-		for (auto& gameObject : gameObjects)
-		{
-			Matrix matWorld{ Matrix::CreateTranslation(pos) };
-			gameObject->GetTransform()->SetWorldMatrix(matWorld);
-		}
 
 		AddObjectToScene(objType, gameObjects);
 		GET_NETWORK->AddNetworkObject(objID, gameObjects);
 
 		m_overlappedObjects.insert(objID);
+	}
+	{
+		//int32_t objID{ packet.ReadID() };
+
+		//if (m_overlappedObjects.contains(objID) == true)
+		//	return;
+
+		////Print("create", objID);
+
+		//Vec3 pos;
+		//pos.x = packet.Read<float>();
+		//pos.y = packet.Read<float>();
+		//pos.z = packet.Read<float>();
+
+		//auto objType{ server::OBJECT_TYPE::PARTICLE };
+
+		//ObjectDesc objectDesc;
+		//objectDesc.strName = L"Fireball";
+		//objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Fireball.fbx";
+		//objectDesc.vPostion = Vec3{ 0.f };
+		//objectDesc.vScale = Vec3{ 100.f };
+		//objectDesc.script = std::make_shared<Particle_Script>();
+
+		//network::NetworkGameObject gameObjects{ CreateMapObject(objectDesc) };
+		//gameObjects = AddNetworkToObject(gameObjects, objType, objID);
+
+		//for (auto& gameObject : gameObjects)
+		//{
+		//	Matrix matWorld{ Matrix::CreateTranslation(pos) };
+		//	gameObject->GetTransform()->SetWorldMatrix(matWorld);
+		//}
+
+		//AddObjectToScene(objType, gameObjects);
+		//GET_NETWORK->AddNetworkObject(objID, gameObjects);
+
+		//m_overlappedObjects.insert(objID);
 	}
 }
 #pragma endregion
