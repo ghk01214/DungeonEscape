@@ -3016,6 +3016,15 @@ void Scene_Test::CreateRemoteObject(network::CPacket& packet)
 
 		//AddObjectEffectScript(gameObject, fbxType);
 		gameObject->SetObjectType(objType);
+
+		if (objectDesc.strName == L"Scatter Rock"
+			or objectDesc.strName == L"Rolling Rock"
+			or objectDesc.strName == L"Pillar Bridge"
+			or objectDesc.strName == L"Last Boss Rock")
+		{
+			gameObject->SetStatic(false);
+		}
+
 	}
 
 	AddObjectToScene(objType, gameObjects);
@@ -4576,6 +4585,7 @@ void Scene_Test::MoveMap(MAP_TYPE eType)
 				gameObject->GetTransform()->SetWorldMatrix(matWorld);
 
 				gameObject->SetObjectType(server::OBJECT_TYPE::TRIGGER_OBJECT2);
+				gameObject->SetStatic(false);
 				mapObjects.push_back(gameObject);
 			}
 		}
