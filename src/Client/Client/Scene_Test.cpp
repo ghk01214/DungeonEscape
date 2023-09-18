@@ -3216,14 +3216,9 @@ void Scene_Test::AddEffectTextures()
 	m_billboardInfo[server::EFFECT_TYPE::CIRCLE_WAVE] = effect;
 
 	effect.alpha = 1.f;
-
-	effect.speed = 0.007f;
-	effect.scale = Vec3{ 1000.f };
-	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Hit_Animation", effect.speed);
-	m_billboardInfo[server::EFFECT_TYPE::HIT_ANMATION] = effect;
 #pragma endregion
 
-	// 144
+	// 143
 	effect.speed = 0.003f;
 	effect.scale = Vec3{ 300.f };
 	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_In_Dispersal", effect.speed);

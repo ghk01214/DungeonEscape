@@ -111,8 +111,8 @@ void Monster_Weeper::UpdateFrameRepeat()
 	auto pos{ GetTransform()->GetWorldPosition() };
 	pos.y += m_halfHeight * 3.f;
 
-	GET_SINGLE(EffectManager)->SetBillBoardInfo(144, pos, Vec3{ 300.f }, 0.003f);
-	GET_SINGLE(EffectManager)->PlayBillBoard(144);
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(143, pos, Vec3{ 300.f }, 0.003f);
+	GET_SINGLE(EffectManager)->PlayBillBoard(143);
 }
 
 void Monster_Weeper::UpdateFrameOnce()
