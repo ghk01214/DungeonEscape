@@ -224,8 +224,6 @@ void Scene_Loading::CreateLights()
 
 void Scene_Loading::ReadServerIPAddress(std::wstring& ipAddress)
 {
-	std::wcout << L"before read : " << ipAddress << "\n";
-
 	std::wifstream file{ "IP ADDRESS.txt" };
 
 	if (file.fail() == true)
@@ -235,9 +233,6 @@ void Scene_Loading::ReadServerIPAddress(std::wstring& ipAddress)
 	}
 
 	std::getline(file, ipAddress);
-
-	std::wcout << L"after read : " << ipAddress << "\n";
-
 	file.close();
 }
 
