@@ -38,7 +38,12 @@ void Player_Script::Start()
 		GetAnimator()->Play(m_currState);
 
 	Matrix matWorld{ Matrix::CreateScale(1.5f) };
-	matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
+
+	if (GetNetwork()->IsMyPlayer() == true)
+		matWorld *= Matrix::CreateRotationY(XMConvertToRadians(180.f));
+	else
+		matWorld *= Matrix::CreateRotationY(XMConvertToRadians(90.f));
+
 	GetTransform()->SetWorldMatrix(matWorld);
 }
 
