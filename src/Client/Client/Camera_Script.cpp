@@ -183,6 +183,10 @@ void Camera_Basic::LateUpdate()
 		float cameraDistance = m_cameraDistance * m_distanceRatio;
 
 		float raycastDistance = GetCamera()->GetRaycastDistance();
+		float defaultHeight{ 500.f };
+
+		if (raycastDistance > 0)
+			defaultHeight += (2000.f - raycastDistance);
 
 		//if (GET_SINGLE(CInput)->Button_Pressing(CInput::DIMB_LBUTTON))
 			//Print(raycastDistance);
@@ -215,7 +219,7 @@ void Camera_Basic::LateUpdate()
 
 		// 구한 eye, at, up을 사용하여 행렬을 구성
 		Matrix matWorld = Matrix::CreateWorld(vCrashPoint, cameraLook, vUp);
-		float basicHeight = 1000.f * (1.f - m_distanceRatio);		// basicHeight -> 수정
+		float basicHeight = defaultHeight * (1.f - m_distanceRatio);		// basicHeight -> 수정
 		matWorld._42 -= basicHeight;
 
 		float BasicDistanceFromPlayer = 600.f;						// BasicDistanceFromPlayer -> 수정
