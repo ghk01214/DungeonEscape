@@ -66,26 +66,29 @@ void Player::Update(double timeDelta)
 {
 	CalculateCameraDistance();
 
-	KeyboardLimit();					//FSM 0단계 : 금지상태에서는 키보드 클리어
+	if (!m_stateLock)
+	{
+		KeyboardLimit();					//FSM 0단계 : 금지상태에서는 키보드 클리어
 
-	ChangeStateByKeyInput();			//FSM 1단계	: 키보드 입력에 의한 STATE변경 (이동, 점프, 공격) STATE가 자유롭지 못할 시 진입X
+		ChangeStateByKeyInput();			//FSM 1단계	: 키보드 입력에 의한 STATE변경 (이동, 점프, 공격) STATE가 자유롭지 못할 시 진입X
 
-	TriggerZoneStatusUpdate();			//FSM 2단계	: 위부 요인에 의한 STATE변경 (판단 순서 : MP부족 > 피격 > HP부족)
+		TriggerZoneStatusUpdate();			//FSM 2단계	: 위부 요인에 의한 STATE변경 (판단 순서 : MP부족 > 피격 > HP부족)
 
 
-	IsOnGround();						//FSM 3단계	: 공중모션 판단
+		IsOnGround();						//FSM 3단계	: 공중모션 판단
 
-	SkillAttempt();						//FSM 4단계 : STATE_CHECK직전 state가 공격이라면 마나상태에 따라 ATK or TIRED로 진입.
-	DeathCheck();						//			: IDLE상태에서 HP0면 state를 DIE0으로													//최종 STATE
+		SkillAttempt();						//FSM 4단계 : STATE_CHECK직전 state가 공격이라면 마나상태에 따라 ATK or TIRED로 진입.
+		DeathCheck();						//			: IDLE상태에서 HP0면 state를 DIE0으로													//최종 STATE
 
-	PlayerMove();						//			: controller를 사용해 이동한다. state가 move/jump가 아닐 시 키보드 정보 삭제
-	StunCheck();						//			몬스터에 의한 기절
+		PlayerMove();						//			: controller를 사용해 이동한다. state가 move/jump가 아닐 시 키보드 정보 삭제
+		StunCheck();						//			몬스터에 의한 기절
 
-	State_Check_Enter();				//FSM 5단계	: 최종적으로 정해진 State진입에 대한 1회성 행동처리(공격함수 호출, 사운드 출력 등..)		//최종 STATE에 대한 처리
-	Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
-	Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
+		State_Check_Enter();				//FSM 5단계	: 최종적으로 정해진 State진입에 대한 1회성 행동처리(공격함수 호출, 사운드 출력 등..)		//최종 STATE에 대한 처리
+		Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
+		Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
 
-	PlayerPattern_ATTACK_ForDebug();
+		PlayerPattern_ATTACK_ForDebug();
+	}
 
 	if (m_overlapObj)
 		m_overlapObj->Update();
@@ -1149,4 +1152,9 @@ physx::PxQuat Player::GetRotation_For_Overlap(physx::PxVec3 xzDir)
 	physx::PxQuat rotation(rotAngle, rotAxis);
 
 	return rotation;
+}
+
+void Player::Set_StateLock(bool value)
+{
+	m_stateLock = true;
 }

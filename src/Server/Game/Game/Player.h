@@ -124,6 +124,7 @@ public:
 public:
 	void Set_OverlapObject(bool activate);
 	physx::PxQuat GetRotation_For_Overlap(physx::PxVec3 xzDir);
+	void Set_StateLock(bool value);
 
 private:
 	void PlayerPattern_ShootBall();
@@ -160,6 +161,8 @@ private:
 	bool m_meteorAvailable = true;			//추후 아이템 획득 등으로 조건 변경
 
 	float m_cameraDistance;					// 이 변수 값을 바꿔주면 자동으로 카메라 거리를 클라이언트로 전달
+
+	bool m_stateLock = false;
 
 private:
 	Quat m_qlook;

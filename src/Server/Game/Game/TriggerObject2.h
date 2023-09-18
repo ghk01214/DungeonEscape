@@ -41,6 +41,7 @@ public:
 		OFFTRACK1,			//길을 이탈했을 경우, 지정된 길로 다시 순간이동시킨다.
 		OFFTRACK2,
 		OFFTRACK3,
+		OFFTRACK_DANCE,
 
 		END
 	};
@@ -65,6 +66,7 @@ public:
 	void Attribute_BossCutscene_0();
 	void Attribute_BossCutscene_1();
 	void Attribute_Offtrack();	//맵 이탈을 했을 경우 지정된 위치로 이동.
+	void Attribute_Dance();
 	void SendPlayers();
 	void ThrowGimmik2Ball();
 private:

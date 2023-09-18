@@ -115,6 +115,9 @@ void TriggerObject2::Handle_Overlap()
 
 		if (m_attribute == TRIGGERATTRIBUTE::CUTSCENE6)
 			Attribute_BossCutscene_1();
+
+		if (m_attribute == TRIGGERATTRIBUTE::OFFTRACK_DANCE)
+			Attribute_Dance();
 	}
 }
 
@@ -131,6 +134,9 @@ void TriggerObject2::SetPortalDestination()
 	m_portalDestination[static_cast<int>(TRIGGERATTRIBUTE::PORTAL5)] = PORTAL5_EXIT;
 
 	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK1)] = OFFTRACK1_EXIT;
+
+	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK_DANCE)] = OFFTRACK_DANCE1_EXIT;
+
 
 	//여기서 포탈 1, 포탈2, 등의 이동 위치를 설정한다.
 }
@@ -218,9 +224,50 @@ void TriggerObject2::Attribute_Offtrack()
 	Vec3 returnpos = Vec3(0,0,0);
 	returnpos = m_offTrackDestination[attribNum];
 
+
+
 	for (auto& player : m_duplicates)
 	{
 		player->SetControllerPosition(returnpos);
+
+		if (m_attribute == TRIGGERATTRIBUTE::OFFTRACK_DANCE)
+		{
+			player->Set_StateLock(true);
+			player->SetState(Player::PLAYER_STATE::VICTORY1);
+		}
+	}
+}
+
+void TriggerObject2::Attribute_Dance()
+{
+	if (m_attribute != TRIGGERATTRIBUTE::OFFTRACK_DANCE)
+		return;
+
+	vector<Vec3> positions;
+	positions.emplace_back(Vec3(0, 0, 0));			//player1의 위치
+	positions.emplace_back(Vec3(0, 0, 0));			//player2의 위치
+	positions.emplace_back(Vec3(0, 0, 0));			//player3의 위치
+
+	auto layer = ObjectManager::GetInstance()->GetLayer(L"Layer_Player");
+	if (!layer)
+		return;
+
+	auto playerlist = layer->GetGameObjects();
+
+	if (playerlist.empty())
+		return;
+
+	int num = 0;
+	for (auto& p : playerlist)
+	{
+		auto player = dynamic_cast<Player*>(p);
+		if (!player)
+			continue;
+
+		player->Set_StateLock(true);
+		player->SetState(Player::VICTORY1);
+		player->SetControllerPosition(positions[num]);
+		++num;
 	}
 }
 
