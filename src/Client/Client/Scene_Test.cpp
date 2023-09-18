@@ -443,7 +443,7 @@ void Scene_Test::SendKeyInput()
 void Scene_Test::CreateUI(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 {
 	CreateOneTimeDialogue();
-	CreatePlayerUI(player);
+	//CreatePlayerUI(player);
 	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, userName);
 	CreateBossWarning();
 	CreateProgressUI(player);
