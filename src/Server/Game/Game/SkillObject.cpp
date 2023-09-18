@@ -129,8 +129,6 @@ void SkillObject::Init()
 
 			SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
 			EventHandler::GetInstance()->AddEvent("SKILL_LEVITATE_END", 0.5f, this);
-
-			m_body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_MONSTER, PhysicsLayers::PLAYER);
 		}
 		break;
 
@@ -186,6 +184,11 @@ void SkillObject::Init()
 		m_body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_MONSTER,
 				static_cast<PhysicsLayers>(static_cast<int>(PhysicsLayers::MONSTER) | static_cast<int>(PhysicsLayers::SKILLOBJECT_MONSTER)));
 	}
+
+	//weeper cast3에 한해 예외처리,
+	if (m_skillType == SKILLOBJECTTYPE::WEEPER_CAST3_BALL)
+		m_body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::SKILLOBJECT_MONSTER,
+		   static_cast<PhysicsLayers>(static_cast<int>(PhysicsLayers::MONSTER) | static_cast<int>(PhysicsLayers::SKILLOBJECT_MONSTER) | static_cast<int>(PhysicsLayers::PLAYER)));
 
 	ServerMessage_Init();
 }
@@ -518,10 +521,6 @@ void SkillObject::HandleMonsterSkillCollision()
 					{
 						Nuclear_Attribute_Explosion();
 					}
-					else if (m_skillType == SKILLOBJECTTYPE::WEEPER_CAST3_BALL)
-					{
-						Cast3Ball_Attribute_Explosion();
-					}
 					else
 					{
 						player->SetState(Player::PLAYER_STATE::DAMAGE);
@@ -579,6 +578,8 @@ void SkillObject::HandleMonsterSkillCollision()
 				break;
 				case SKILLOBJECTTYPE::WEEPER_CAST3_BALL:
 				{
+					Cast3Ball_Attribute_Explosion();
+
 					SetRemoveReserved();						//객체 삭제
 					ServerMessage_Remove();					//서버 메시지 처리
 				}
@@ -824,7 +825,7 @@ void SkillObject::Cast3Ball_Attribute_Explosion()
 		physx::PxVec3 playerPos = TO_PX3(player->GetControllerPosition());
 		physx::PxVec3 explosionPos = m_body->GetPosition();
 
-		if((playerPos - explosionPos).magnitude() < 800.f)
+		if((playerPos - explosionPos).magnitude() < 400.f)
 		{
 			player->SetState(Player::PLAYER_STATE::DAMAGE);
 			ServerMessage_Hit(player);

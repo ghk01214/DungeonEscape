@@ -280,7 +280,7 @@ void Event::ExecuteMsg_Once()
 			EventHandler::GetInstance()->AddEvent("ANIM_END", 1.87f, owner);		//디버그 전용 애니메이션 종료 코드
 
 
-			EventHandler::GetInstance()->AddEvent("CAST2_VULNERABLE_ON", 4.f, owner);		//애니메이션 종료 시간쯤 Vulnerable 1.5초 정도 ON
+			EventHandler::GetInstance()->AddEvent("CAST2_VULNERABLE_ON", 3.5f, owner);		//애니메이션 종료 시간쯤 Vulnerable 1.5초 정도 ON
 			EventHandler::GetInstance()->AddEvent("CAST2_VULNERABLE_OFF", 5.5f, owner);
 			EventHandler::GetInstance()->AddEvent("AI_WAIT_FREE", 5.7f, owner);
 
@@ -420,7 +420,7 @@ void Event::ExecuteMsg_Once()
 			//effectposdata 보내서 사용하면 된다.
 			game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 			ev.objID = weeperObj->GetID();
-			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
+			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPLODE_ORANGE_BROWN);
 			ev.effectPos.x = effectposdata.x;
 			ev.effectPos.y = effectposdata.y;
 			ev.effectPos.z = effectposdata.z;
@@ -749,7 +749,7 @@ void Event::ExecuteMsg_Once()
 			//effectposdata보내면 된다.
 			game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
 			ev.objID = golemObj->GetID();
-			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPACT15);
+			ev.state = magic_enum::enum_integer(server::EFFECT_TYPE::IMPLODE_ORANGE_BROWN);
 			ev.effectPos.x = effectposdata.x;
 			ev.effectPos.y = effectposdata.y;
 			ev.effectPos.z = effectposdata.z;
