@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Player.h"
 #include "CustomController.h"
 #include "MessageHandler.h"
@@ -30,7 +30,13 @@ Player::Player(int32_t playerID, const Vec3& position, const Quat& rotation, con
 	m_prevOnGround{ false },
 	m_cameraDistance{ 381.448f }
 {
+	using namespace DirectX;
+	using namespace SimpleMath;
+
 	m_id = playerID;
+
+	Matrix mat{ Matrix::CreateRotationY(XMConvertToRadians(180.f)) };
+	m_qlook = XMQuaternionRotationMatrix(mat);
 }
 
 Player::~Player()
