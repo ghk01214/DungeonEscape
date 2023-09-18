@@ -57,7 +57,7 @@ namespace network
 		}
 	}
 
-	std::deque<CPacket>& CNetwork::GetRecvPackets()
+	std::deque<CPacket> CNetwork::GetRecvPackets()
 	{
 		//if (m_myPlayer == true)
 		//	std::cout << m_recvPackets.size() << ", ";

@@ -28,7 +28,7 @@ namespace network
 		void ClearRecvQueue(int32_t size);
 
 		constexpr uint32_t GetID() const { return m_networkID; }
-		std::deque<CPacket>& GetRecvPackets();
+		std::deque<CPacket> GetRecvPackets();
 		const int32_t GetRecvQueueSize() const;
 
 		void SetID(uint32_t id) { m_networkID = id; }
