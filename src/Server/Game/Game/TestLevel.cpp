@@ -51,7 +51,7 @@ void TestLevel::Init()
 
 	//LoadBasicMap4();
 
-	LoadUnit_DebugMode();
+	//LoadUnit_DebugMode();
 	LoadMap();
 }
 
@@ -59,7 +59,7 @@ void TestLevel::Update(double timeDelta)
 {
 	MSG_HANDLER->ExecuteMessage();
 
-	ParticleTest();
+	//ParticleTest();
 }
 
 void TestLevel::LateUpdate(double timeDelta)

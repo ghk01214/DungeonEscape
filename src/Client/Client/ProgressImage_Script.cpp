@@ -64,7 +64,6 @@ void ProgressImage_Script::Update()
 		}
 	}
 
-	PrintVec3(m_pos);
 	GetTransform()->SetLocalPosition(m_pos);
 	ChangeObjectAlpha();
 }

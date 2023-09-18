@@ -234,12 +234,10 @@ void Scene_Test::CreateMainCamera(std::shared_ptr<CScene> pScene)
 	camera->AddComponent(make_shared<Transform>());
 	camera->AddComponent(make_shared<Camera>()); // Near=1, Far=1000, FOV=45??
 
-	//#define MOVEMENT
-
-	//#ifdef MOVEMENT
-		//shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>(7);
-		//camera->AddComponent(pMovementScript);
-	//#else
+#ifdef MOVEMENT
+	shared_ptr<Movement_Script> pMovementScript = make_shared<Movement_Script>(7);
+	camera->AddComponent(pMovementScript);
+#else
 	shared_ptr<Camera_Basic> pCameraScript = make_shared<Camera_Basic>();
 	m_InfoUIScript->SetCameraScript(pCameraScript);
 	camera->AddComponent(pCameraScript);
@@ -248,7 +246,7 @@ void Scene_Test::CreateMainCamera(std::shared_ptr<CScene> pScene)
 	m_cinematicScript = pSenematicScript;
 	pSenematicScript->SetScript(pCameraScript);
 	camera->AddComponent(pSenematicScript);
-	//#endif
+#endif
 
 	camera->GetCamera()->SetFar(30000.f);
 	camera->GetTransform()->SetLocalPosition(Vec3(0.f, 500.f, -500.f));
@@ -304,7 +302,7 @@ void Scene_Test::CreateUICamera(std::shared_ptr<CScene> pScene)
 			meshRenderer->SetMaterial(material);
 		}
 		obj->AddComponent(meshRenderer);
-		pScene->AddGameObject(obj);
+		//pScene->AddGameObject(obj);
 	}
 #pragma endregion
 }
@@ -426,10 +424,12 @@ void Scene_Test::CreateSphere(std::shared_ptr<CScene> pScene)
 
 void Scene_Test::SendKeyInput()
 {
+#ifndef MOVEMENT
 	if (m_cinematicScript->IsPlaying() == true
 		and (m_cinematicScript->GetCurrentScene() == Cinematic_Script::CUT_SCENE_TYPE::WEEPER_SUMMON
 			or m_cinematicScript->GetCurrentScene() == Cinematic_Script::CUT_SCENE_TYPE::GOLEM_SUMMON))
 		return;
+#endif
 
 	if (m_openSetting == true)
 		return;
@@ -1843,11 +1843,13 @@ void Scene_Test::RenderFont()
 
 void Scene_Test::ShowBossTutorial()
 {
+#ifndef MOVEMENT
 	if (m_cinematicScript->IsPlaying() == true)
 		return;
 
 	if (m_cinematicScript->GetCurrentScene() < 5)
 		return;
+#endif
 
 	if (m_showWeeperTutorial == true)
 	{

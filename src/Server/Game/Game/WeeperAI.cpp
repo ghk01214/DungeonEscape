@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "WeeperAI.h"
 #include "Weeper.h"
 #include "Monster.h"
@@ -75,7 +75,9 @@ void WeeperAI::FillSchedule()
 	else
 		m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST4);
 
-
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST1);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST2);
+	//m_scheduler.emplace_back(WEEPER_SCHEDULE::CAST3);
 	std::cout << "Filled Schedule" << std::endl;
 	ReportSchedule();
 }
