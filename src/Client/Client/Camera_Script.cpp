@@ -239,8 +239,8 @@ void Camera_Basic::LateUpdate()
 				long MouseMoveY = GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_Y);
 				m_rotationAxisX += MouseMoveY * DELTA_TIME * 5.f;
 
-				if (m_rotationAxisX < -30.f)
-					m_rotationAxisX = -30.f;
+				if (m_rotationAxisX < -10.f)
+					m_rotationAxisX = -10.f;
 				else if (m_rotationAxisX > 0.f)
 					m_rotationAxisX = 0.f;
 			}
