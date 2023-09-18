@@ -142,6 +142,12 @@ void Fade_Script::SetLogoInfo(float fadeInDuration, float fadeOutDuration, vecto
 	m_textures = textures;
 }
 
+void Fade_Script::SetDurationTime(float fadeInDuration, float fadeOutDuration)
+{
+	m_fadeInDuration = fadeInDuration;	// Fade In에 걸리는 시간
+	m_fadeOutDuration = fadeOutDuration;	// Fade Out에 걸리는 시간
+}
+
 void Fade_Script::SetFade(std::shared_ptr<bool> in, std::shared_ptr<bool> out)
 {
 	m_fadeIn = in;

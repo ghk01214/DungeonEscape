@@ -177,6 +177,7 @@ private:
 	void ShowBossTutorial();
 	void ChangeBossTutorialPage();
 	void ChangeProgress();
+	void FadeInEnding();
 
 private:
 	void SendKeyInput();
@@ -269,6 +270,7 @@ private:
 	std::shared_ptr<InfoUI_Script> m_InfoUIScript;
 	std::shared_ptr<Fade_Script> m_fadeScript;
 	std::shared_ptr<Fade_Script> m_fadeUIScript;
+	std::shared_ptr<Fade_Script> m_fadeEndingScript;
 	std::shared_ptr<PortalUI_Script> m_portalUIScript;
 	std::shared_ptr<Cinematic_Script> m_cinematicScript;
 
@@ -317,5 +319,9 @@ private:
 	std::unordered_map<FONT_TYPE, FontInfo> m_font;
 	bool m_renderFont;
 
-	float m_accTime;
+	float m_progressAccTime;
+	float m_endingAccTime;
+
+	bool m_showEnding;
+	bool m_showEndingMent;
 };

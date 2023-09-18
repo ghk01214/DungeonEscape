@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "MapObject.h"
 
@@ -36,6 +36,7 @@ public:
 		CUTSCENE4,			// 돌 굴러가는 장면을 보여주는 컷신
 		CUTSCENE5,			// Weeper 등장 컷신
 		CUTSCENE6,			// Golem 등장 컷신
+		CUTSCENE7,			// 엔딩 컷신
 
 
 		OFFTRACK1,			//길을 이탈했을 경우, 지정된 길로 다시 순간이동시킨다.

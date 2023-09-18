@@ -50,7 +50,11 @@ Scene_Test::Scene_Test() :
 	m_recvFadeOut{ std::make_shared<bool>(false) },
 	m_recvExplosionSkill{ std::make_shared<bool>(false) },
 	m_renderFont{ true },
-	m_progressFadeIn{ false }
+	m_progressFadeIn{ false },
+	m_progressAccTime{ 0.f },
+	m_endingAccTime{ 0.f },
+	m_showEnding{ false },
+	m_showEndingMent{ false }
 {
 	auto pos{ GetRatio(-100.f, 75.f) };
 	Vec2 scale{ 100.f };
@@ -98,6 +102,7 @@ void Scene_Test::Update()
 	ShowBossTutorial();
 	ChangeBossTutorialPage();
 	ChangeProgress();
+	FadeInEnding();
 }
 
 void Scene_Test::LateUpdate()
@@ -1689,6 +1694,32 @@ void Scene_Test::CreateOneTimeDialogue()
 
 		AddGameObject(obj);
 	}
+
+	texture = GET_TEXTURE(L"Ending");
+	{
+		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+		auto transform{ obj->GetTransform() };
+		transform->SetLocalScale(Vec3{ 1357.f, 120.f, 1.f });
+		transform->SetLocalPosition(pos);
+
+		std::vector<std::shared_ptr<Texture>> tex;
+		tex.push_back(texture);
+
+		for (int32_t i = 0; i < obj->GetMeshRenderer()->GetMaterialSize(); ++i)
+		{
+			obj->GetMeshRenderer()->GetMaterial(i)->SetFloat(2, 0.f);
+		}
+
+		std::shared_ptr<Fade_Script> script{ std::make_shared<Fade_Script>() };
+		script->SetLogoInfo(1.f, 1.f, tex);
+		m_fadeEndingScript = script;
+
+		obj->AddComponent(script);
+
+		AddGameObject(obj);
+	}
 }
 
 void Scene_Test::CreatePopUp()
@@ -1876,16 +1907,44 @@ void Scene_Test::ChangeProgress()
 {
 	if (m_progressFadeIn == true)
 	{
-		m_accTime += DELTA_TIME;
+		m_progressAccTime += DELTA_TIME;
 
-		if (m_accTime >= 4.f)
+		if (m_progressAccTime >= 4.f)
 		{
-			m_accTime = 0.f;
+			m_progressAccTime = 0.f;
 
 			m_progressImageScript->FadeOut(0.0005f);
 			m_progressPlayerIconScript->FadeOut(0.0005f);
 			m_progressFadeIn = false;
 		}
+	}
+}
+
+void Scene_Test::FadeInEnding()
+{
+#ifndef MOVEMENT
+	if (m_cinematicScript->IsPlaying() == false)
+		return;
+
+	if (m_cinematicScript->GetCurrentScene() != Cinematic_Script::CUT_SCENE_TYPE::ENDING)
+		return;
+#endif
+	if (m_fadeScript->GetFading() == true and m_showEndingMent == false)
+	{
+		m_fadeEndingScript->FadeIn();
+		m_showEndingMent = true;
+	}
+
+	if (m_showEnding == true)
+		return;
+
+	m_endingAccTime += DELTA_TIME;
+
+	if (m_endingAccTime >= 8.f)
+	{
+		m_fadeScript->SetDurationTime(2.f, 2.f);
+		m_fadeScript->FadeIn();
+		m_showEnding = true;
 	}
 }
 #pragma endregion
@@ -4396,6 +4455,33 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 			if (m_cinematicScript->IsPlaying() == true)
 				return;
 
+			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+
+			/*for (auto& obj : GET_PLAYER)
+			{
+				Matrix matWorld{ obj->GetTransform()->GetWorldMatrix() };
+				Vec3 scale{};
+				Vec3 rotate{};
+				Vec3 trans{};
+
+				auto vecScale{ XMLoadFloat3(&scale) };
+				auto vecRotate{ XMLoadFloat3(&rotate) };
+				auto vecTrans{ XMLoadFloat3(&trans) };
+
+				XMMatrixDecompose(&vecScale, &vecRotate, &vecTrans, matWorld);
+
+				XMStoreFloat3(&scale, vecScale);
+				XMStoreFloat3(&rotate, vecRotate);
+				XMStoreFloat3(&trans, vecTrans);
+
+				matWorld = Matrix::CreateScale(scale);
+				matWorld *= Matrix::CreateRotationX(rotate.x);
+				matWorld *= Matrix::CreateRotationY(rotate.y + XMConvertToRadians(180.f));
+				matWorld *= Matrix::CreateRotationZ(rotate.z);
+				matWorld *= Matrix::CreateTranslation(trans);
+
+				obj->GetTransform()->SetWorldMatrix(matWorld);
+			}*/
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE8:

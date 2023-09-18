@@ -28,6 +28,7 @@ public:
 
 public:
 	void SetLogoInfo(float fadeInDuration, float fadeOutDuration, vector<shared_ptr<Texture>> textures);
+	void SetDurationTime(float fadeInDuration, float fadeOutDuration);
 
 	bool GetLogoEnd(void) { return m_bLogoEnd; }
 	constexpr bool GetActivation() const { return m_bActivate; }

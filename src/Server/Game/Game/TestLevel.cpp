@@ -475,6 +475,11 @@ void TestLevel::LoadTriggerObject()
 	OffTrack1Body->AddCollider<BoxCollider>(OffTrack1Obj->GetTransform()->GetScale());
 	OffTrack1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::OFFTRACK1);
 
+	auto CutScene7Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 16220.f, -3750.f, 49450.f }, Quat(0, 0, 0, 1), Vec3(1500.f, 500.f, 500.f), true)};
+	auto CutScene7Body{ CutScene7Obj->GetComponent<RigidBody>(L"RigidBody") };
+	CutScene7Body->AddCollider<BoxCollider>(CutScene7Obj->GetTransform()->GetScale());
+	CutScene7Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE7);
+
 	LoadPortalObject();
 }
 

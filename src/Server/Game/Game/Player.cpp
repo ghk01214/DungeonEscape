@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Player.h"
 #include "CustomController.h"
 #include "MessageHandler.h"
@@ -88,17 +88,16 @@ void Player::Update(double timeDelta)
 
 		PlayerMove();						//			: controller를 사용해 이동한다. state가 move/jump가 아닐 시 키보드 정보 삭제
 		StunCheck();						//			몬스터에 의한 기절
-
-		State_Check_Enter();				//FSM 5단계	: 최종적으로 정해진 State진입에 대한 1회성 행동처리(공격함수 호출, 사운드 출력 등..)		//최종 STATE에 대한 처리
-		Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
-		Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
-
-		PlayerPattern_ATTACK_ForDebug();
 	}
+
+	State_Check_Enter();				//FSM 5단계	: 최종적으로 정해진 State진입에 대한 1회성 행동처리(공격함수 호출, 사운드 출력 등..)		//최종 STATE에 대한 처리
+	Update_Frame_Continuous();			//			: 현재 State에 대한 지속적 처리 (현재는 없음)
+	Update_Frame_Once();				//			: 애니메이션 종료에 대한 State재정의 (eg. Damaged > IDLE or DIE0)
+
+	//PlayerPattern_ATTACK_ForDebug();
 
 	if (m_overlapObj)
 		m_overlapObj->Update();
-
 
 	ServerMessage_SendTransform();
 
@@ -852,7 +851,7 @@ void Player::PlayerPattern_ShootBall()
 void Player::PlayerPattern_ShootMeteor()
 {
 	auto pillarlist = ObjectManager::GetInstance()->GetLayer(L"Layer_Gimmik_Pillar")->GetGameObjects();
-	GameObject* pillar =nullptr;
+	GameObject* pillar = nullptr;
 	for (auto& t : pillarlist)
 	{
 		pillar = t;
@@ -871,10 +870,10 @@ void Player::PlayerPattern_ShootMeteor()
 	auto objmgr = ObjectManager::GetInstance();
 	auto layer = objmgr->GetLayer(L"Layer_SkillObject");
 	auto skillObject = objmgr->AddGameObjectToLayer<SkillObject>
-		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(300,300,300), skilltype, nullptr, this);
+		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(300, 300, 300), skilltype, nullptr, this);
 	skillObject->SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED_METEOR, true);
 	skillObject->SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
-	if(pillar)
+	if (pillar)
 		skillObject->m_target = pillar;
 	auto meteorBody = skillObject->GetComponent<RigidBody>(L"RigidBody");
 	auto meteorCollider = meteorBody->GetCollider(0);
@@ -1077,7 +1076,7 @@ void Player::PlayerPattern_SingleStrike(PLAYER_STATE state)
 	EventHandler::GetInstance()->AddEvent("PLAYER_OVERLAPOBJ_ACTIVATE", start, this);
 	EventHandler::GetInstance()->AddEvent("PLAYER_OVERLAPOBJ_DEACTIVATE", end, this);
 
-	if(m_currState == PLAYER_STATE::ATK0)
+	if (m_currState == PLAYER_STATE::ATK0)
 		m_overlapObj->UpdateOverlapType("ATTACK0");
 	else if (m_currState == PLAYER_STATE::ATK1)
 		m_overlapObj->UpdateOverlapType("ATTACK1");

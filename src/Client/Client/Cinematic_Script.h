@@ -26,6 +26,7 @@ public:
 		BOULDER_ROLL,
 		WEEPER_SUMMON,
 		GOLEM_SUMMON,
+		ENDING,
 
 		MAX
 	};
