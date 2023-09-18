@@ -120,7 +120,7 @@ void Monster_Golem::UpdateFrameRepeat()
 		return;
 
 	auto pos{ GetTransform()->GetWorldPosition() };
-	pos.y += m_halfHeight * 1.5f;
+	pos.y += m_halfHeight * 2.f;
 
 	GET_SINGLE(EffectManager)->SetBillBoardInfo(143, pos, Vec3{ 300.f }, 0.003f);
 	GET_SINGLE(EffectManager)->PlayBillBoard(143);

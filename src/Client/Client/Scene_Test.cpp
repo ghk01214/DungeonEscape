@@ -3288,7 +3288,7 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
-	effect.speed = 0.003f;
+	effect.speed = 0.004f;
 	effect.scale = Vec3{ 500.f };
 
 	for (int32_t i = 0; i < 5; ++i)
@@ -3447,7 +3447,7 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
-	effect.speed = 0.006f;
+	effect.speed = 0.004f;
 	effect.scale = Vec3{ 3000.f };
 
 	for (int32_t i = 0; i < 1; ++i)
@@ -4373,7 +4373,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
 
 			m_showWeeperTutorial = true;
-			m_weeperTutorialScript->SetPage(BossTutorial_Script::PAGE1);
+			m_weeperTutorialScript->SetPage(0);
 		}
 		break;
 		// Golem ?깆옣 而룹떊
@@ -4388,7 +4388,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 			m_bossWarningScript[1]->StartBlink(1.f, 0.f, 1.f);
 
 			m_showGolemTutorial = true;
-			m_golemTutorialScript->SetPage(BossTutorial_Script::PAGE1);
+			m_golemTutorialScript->SetPage(0);
 		}
 		break;
 		case server::CUT_SCENE_TYPE::SCENE7:
