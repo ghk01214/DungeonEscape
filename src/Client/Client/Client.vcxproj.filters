@@ -204,6 +204,18 @@
     <Filter Include="소스 파일\Objects\06. PhysxObject\Particle">
       <UniqueIdentifier>{372876d3-95cc-4c17-ab6b-15ed8852c027}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\Progress">
+      <UniqueIdentifier>{dbc7083e-189b-4d7b-aa97-7fa8fb6a52fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\Progress\Image">
+      <UniqueIdentifier>{df3d7337-5f48-43c6-bc04-2ee3e6f0f616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\Progress\Button">
+      <UniqueIdentifier>{d822acb5-8316-48dc-a0b5-37fe5c9e3723}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\Progress\Player Icon">
+      <UniqueIdentifier>{a7e87a48-4c26-492c-a84d-f447ccc9ddab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -392,6 +404,15 @@
     <ClInclude Include="Particle_Script.h">
       <Filter>소스 파일\Objects\06. PhysxObject\Particle</Filter>
     </ClInclude>
+    <ClInclude Include="ProgressImage_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\Progress\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressUIButton_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\Progress\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressPlayerIcon_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\Progress\Player Icon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -574,6 +595,15 @@
     </ClCompile>
     <ClCompile Include="Particle_Script.cpp">
       <Filter>소스 파일\Objects\06. PhysxObject\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressImage_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\Progress\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressUIButton_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\Progress\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressPlayerIcon_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\Progress\Player Icon</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

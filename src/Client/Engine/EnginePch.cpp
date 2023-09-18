@@ -33,14 +33,14 @@ const Vec2 GetRatio(float width, float height)
 {
 	// width, height 최대/최소값은 100/-100
 
-	if (width > 100)
-		width = 100;
-	if (width < -100)
-		width = -100;
-	if (height > 100)
-		height = 100;
-	if (height < -100)
-		height = -100;
+	//if (width > 100)
+	//	width = 100;
+	//if (width < -100)
+	//	width = -100;
+	//if (height > 100)
+	//	height = 100;
+	//if (height < -100)
+	//	height = -100;
 
 	WindowInfo info = GEngine->GetWindow();
 

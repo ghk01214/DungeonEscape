@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ProgressImage_Script.h" />
     <ClInclude Include="Bar_Script.h" />
     <ClInclude Include="BossCounterEffect_Script.h" />
     <ClInclude Include="BossHP_Script.h" />
@@ -176,6 +177,8 @@
     <ClInclude Include="InputString_Script.h" />
     <ClInclude Include="PageChangeButton_Script.h" />
     <ClInclude Include="Particle_Script.h" />
+    <ClInclude Include="ProgressPlayerIcon_Script.h" />
+    <ClInclude Include="ProgressUIButton_Script.h" />
     <ClInclude Include="ReadyButton_Script.h" />
     <ClInclude Include="SliderTip_Script.h" />
     <ClInclude Include="VolumeSlider_Script.h" />
@@ -225,6 +228,7 @@
     <ClInclude Include="WeeperEffect_Script.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ProgressImage_Script.cpp" />
     <ClCompile Include="Bar_Script.cpp" />
     <ClCompile Include="BossCounterEffect_Script.cpp" />
     <ClCompile Include="BossHP_Script.cpp" />
@@ -240,6 +244,8 @@
     <ClCompile Include="InputString_Script.cpp" />
     <ClCompile Include="PageChangeButton_Script.cpp" />
     <ClCompile Include="Particle_Script.cpp" />
+    <ClCompile Include="ProgressPlayerIcon_Script.cpp" />
+    <ClCompile Include="ProgressUIButton_Script.cpp" />
     <ClCompile Include="ReadyButton_Script.cpp" />
     <ClCompile Include="SliderTip_Script.cpp" />
     <ClCompile Include="VolumeSlider_Script.cpp" />

@@ -145,6 +145,11 @@ private:
 	void CreateBossClassIcon(UITransform& trans, server::FBX_TYPE boss);
 	void CreateBossWarning();
 
+	void CreateProgressUI(server::FBX_TYPE player);
+	void CreateProgressBackground();
+	void CreateProgressPlayerIcon(server::FBX_TYPE player);
+	void CreateProgressPopUpIcon();
+
 	void CreateOneTimeDialogue();
 
 	void CreatePopUp();
@@ -167,9 +172,11 @@ private:
 	void ChangeMuteTexture();
 	void ChangePlayerUIVisibility();
 	void ChangeBossUIVisibility();
+	void ChangeProgressUIVisibility();
 	void RenderFont();
 	void ShowBossTutorial();
 	void ChangeBossTutorialPage();
+	void ChangeProgress();
 
 private:
 	void SendKeyInput();
@@ -290,9 +297,16 @@ private:
 
 	std::vector<std::shared_ptr<PageChangeButton_Script>> m_pageChangeButton;
 
+	std::shared_ptr<class ProgressImage_Script> m_progressImageScript;
+	std::shared_ptr<class ProgressUIButton_Script> m_progressButtonScript;
+	std::shared_ptr<class ProgressPlayerIcon_Script> m_progressPlayerIconScript;
+	std::unordered_map<MAP_TYPE, std::shared_ptr<class ProgressImage_Script>> m_areaIconScript;
+
 	bool m_openSetting;
 	bool m_showWeeperTutorial;
 	bool m_showGolemTutorial;
+
+	bool m_progressFadeIn;
 
 private:
 	std::shared_ptr<bool> m_recvFadeIn;
@@ -302,4 +316,6 @@ private:
 private:
 	std::unordered_map<FONT_TYPE, FontInfo> m_font;
 	bool m_renderFont;
+
+	float m_accTime;
 };

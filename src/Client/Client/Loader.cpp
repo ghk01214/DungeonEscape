@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
@@ -233,6 +233,19 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 	LOAD_TEXTURE(L"Prev Button_selected", L"..\\Resources\\Texture\\UI\\Button\\Prev_selected.png");
 	LOAD_TEXTURE(L"Next Button", L"..\\Resources\\Texture\\UI\\Button\\Next.png");
 	LOAD_TEXTURE(L"Next Button_selected", L"..\\Resources\\Texture\\UI\\Button\\Next_selected.png");
+
+	LOAD_TEXTURE(L"Progress Open", L"..\\Resources\\Texture\\UI\\Button\\Question.png");
+	LOAD_TEXTURE(L"Progress Open_selected", L"..\\Resources\\Texture\\UI\\Button\\Question_selected.png");
+	LOAD_TEXTURE(L"Phase1", L"..\\Resources\\Texture\\UI\\In Game\\Phase1.png");
+	LOAD_TEXTURE(L"Phase2", L"..\\Resources\\Texture\\UI\\In Game\\Phase2.png");
+	LOAD_TEXTURE(L"Phase3", L"..\\Resources\\Texture\\UI\\In Game\\Phase3.png");
+	LOAD_TEXTURE(L"Phase4", L"..\\Resources\\Texture\\UI\\In Game\\Phase4.png");
+	LOAD_TEXTURE(L"Phase5", L"..\\Resources\\Texture\\UI\\In Game\\Phase5.png");
+	LOAD_TEXTURE(L"Phase6", L"..\\Resources\\Texture\\UI\\In Game\\Phase6.png");
+	LOAD_TEXTURE(L"Phase7", L"..\\Resources\\Texture\\UI\\In Game\\Phase7.png");
+
+	LOAD_TEXTURE(L"Nana Progress", L"..\\Resources\\Texture\\UI\\In Game\\Nana Progress.png");
+	LOAD_TEXTURE(L"Mistic Progress", L"..\\Resources\\Texture\\UI\\In Game\\Mistic Progress.png");
 #pragma endregion
 
 	return S_OK;

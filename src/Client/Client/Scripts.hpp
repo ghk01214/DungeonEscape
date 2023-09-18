@@ -34,6 +34,9 @@
 #include "BossWarning_Script.h"
 #include "BossTutorial_Script.h"
 #include "PageChangeButton_Script.h"
+#include "ProgressUIButton_Script.h"
+#include "ProgressImage_Script.h"
+#include "ProgressPlayerIcon_Script.h"
 
 #include "InfoUI_Script.h"
 #include "PortalUI_Script.h"

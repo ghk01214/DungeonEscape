@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -49,7 +49,8 @@ Scene_Test::Scene_Test() :
 	m_recvFadeIn{ std::make_shared<bool>(false) },
 	m_recvFadeOut{ std::make_shared<bool>(false) },
 	m_recvExplosionSkill{ std::make_shared<bool>(false) },
-	m_renderFont{ true }
+	m_renderFont{ true },
+	m_progressFadeIn{ false }
 {
 	auto pos{ GetRatio(-100.f, 75.f) };
 	Vec2 scale{ 100.f };
@@ -89,12 +90,14 @@ void Scene_Test::Update()
 	ChangePlayerUIVisibility();
 	ChangeBossUIVisibility();
 	ChangePopUpVisibility();
+	ChangeProgressUIVisibility();
 	ChangeVolume();
 	ChangeMuteTexture();
 	RenderFont();
 	RenderPortalEffect();
 	ShowBossTutorial();
 	ChangeBossTutorialPage();
+	ChangeProgress();
 }
 
 void Scene_Test::LateUpdate()
@@ -443,6 +446,7 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 	CreatePlayerUI(player);
 	CreatePartyPlayerUI(GET_NETWORK->GetID(), player, userName);
 	CreateBossWarning();
+	CreateProgressUI(player);
 
 	CreatePopUp();
 }
@@ -1454,6 +1458,109 @@ void Scene_Test::CreateBossWarning()
 	}
 }
 
+void Scene_Test::CreateProgressUI(server::FBX_TYPE player)
+{
+	CreateProgressBackground();
+	CreateProgressPlayerIcon(player);
+	CreateProgressPopUpIcon();
+}
+
+void Scene_Test::CreateProgressBackground()
+{
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Phase1") };
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto pos{ GetRatio(0.f, 0.f) };
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 500.f, 600.f, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+	std::shared_ptr<ProgressImage_Script> script{ std::make_shared<ProgressImage_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Phase2"));
+	script->InsertTextures(GET_TEXTURE(L"Phase3"));
+	script->InsertTextures(GET_TEXTURE(L"Phase4"));
+	script->InsertTextures(GET_TEXTURE(L"Phase5"));
+	script->InsertTextures(GET_TEXTURE(L"Phase6"));
+	script->InsertTextures(GET_TEXTURE(L"Phase7"));
+	m_progressImageScript = script;
+
+	obj->AddComponent(script);
+
+	AddGameObject(obj);
+}
+
+void Scene_Test::CreateProgressPlayerIcon(server::FBX_TYPE player)
+{
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ nullptr };
+
+	if (player == server::FBX_TYPE::NANA)
+		texture = GET_TEXTURE(L"Nana Progress");
+	else if (player == server::FBX_TYPE::MISTIC)
+		texture = GET_TEXTURE(L"Mistic Progress");
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto pos{ GetRatio(-12.6f, 55.f) };
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 80.f, 100.f, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+	std::shared_ptr<ProgressPlayerIcon_Script> script{ std::make_shared<ProgressPlayerIcon_Script>() };
+	script->InsertTextures(texture);
+	script->SetCurrentPhase(ProgressPlayerIcon_Script::PHASE1);
+	script->SetCurrentPos(Vec3{ pos.x, pos.y, 1.f });
+	script->AddOriginPos(Vec3{ pos.x, pos.y, 1.f });
+
+	pos = GetRatio(13.5f, 55.f);
+	script->AddOriginPos(Vec3{ pos.x, pos.y, 400.f });
+
+	pos = GetRatio(13.5f, 20.f);
+	script->AddOriginPos(Vec3{ pos.x, pos.y, 400.f });
+
+	pos = GetRatio(-12.6f, 20.f);
+	script->AddOriginPos(Vec3{ pos.x, pos.y, 400.f });
+
+	pos = GetRatio(-12.6f, -15.f);
+	script->AddOriginPos(Vec3{ pos.x, pos.y, 400.f });
+
+	pos = GetRatio(13.5f, -15.f);
+	script->AddOriginPos(Vec3{ pos.x, pos.y, 400.f });
+	m_progressPlayerIconScript = script;
+
+	obj->AddComponent(script);
+
+	AddGameObject(obj);
+}
+
+void Scene_Test::CreateProgressPopUpIcon()
+{
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Progress Open") };
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto pos{ GetRatio(95.f, 89.f) };
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 100.f, 100.f, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+	std::shared_ptr<ProgressUIButton_Script> script{ std::make_shared<ProgressUIButton_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Progress Open_selected"));
+	m_progressButtonScript = script;
+
+	obj->AddComponent(script);
+
+	AddGameObject(obj);
+}
+
 void Scene_Test::CreateOneTimeDialogue()
 {
 	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Pillar Hint") };
@@ -1653,6 +1760,36 @@ void Scene_Test::ChangeBossUIVisibility()
 	}
 }
 
+void Scene_Test::ChangeProgressUIVisibility()
+{
+	if (m_fadeScript->GetActivation() == true)
+	{
+		m_progressButtonScript->SetVisible(false);
+		return;
+	}
+
+	if (m_showWeeperTutorial == true)
+	{
+		m_progressButtonScript->SetVisible(false);
+		return;
+	}
+
+	if (m_showGolemTutorial == true)
+	{
+		m_progressButtonScript->SetVisible(false);
+		return;
+	}
+
+	if (m_progressButtonScript->IsOpenProgress() == true)
+	{
+		m_progressImageScript->SetVisible(true);
+		m_progressPlayerIconScript->SetVisible(true);
+		m_progressButtonScript->SetVisible(false);
+	}
+	else
+		m_progressButtonScript->SetVisible(true);
+}
+
 void Scene_Test::RenderFont()
 {
 	if (m_renderFont == false)
@@ -1731,6 +1868,23 @@ void Scene_Test::ChangeBossTutorialPage()
 		{
 			m_golemTutorialScript->ChangeToNextPage();
 			m_pageChangeButton[NEXT]->SetChangePageFlag(false);
+		}
+	}
+}
+
+void Scene_Test::ChangeProgress()
+{
+	if (m_progressFadeIn == true)
+	{
+		m_accTime += DELTA_TIME;
+
+		if (m_accTime >= 4.f)
+		{
+			m_accTime = 0.f;
+
+			m_progressImageScript->FadeOut(0.0005f);
+			m_progressPlayerIconScript->FadeOut(0.0005f);
+			m_progressFadeIn = false;
 		}
 	}
 }
@@ -2599,6 +2753,13 @@ void Scene_Test::ChangePopUpVisibility()
 			m_golemTutorialScript->SetVisible(false);
 			m_showGolemTutorial = false;
 			m_renderFont = true;
+		}
+		else if (m_progressButtonScript->IsOpenProgress() == true)
+		{
+			m_progressImageScript->SetVisible(false);
+			m_progressPlayerIconScript->SetVisible(false);
+			m_progressButtonScript->SetVisible(true);
+			m_progressButtonScript->SetOpenProgressFlag(false);
 		}
 		else
 		{
@@ -3948,6 +4109,13 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 
 			m_fadeScript->FadeOut();
 			m_fadeUIScript->FadeOut();
+			m_progressImageScript->FadeIn(2.f);
+			m_progressPlayerIconScript->FadeIn(2.f);
+			m_progressImageScript->ChangeImage(ProgressImage_Script::PHASE2);
+			m_progressPlayerIconScript->SetCurrentPhase(ProgressPlayerIcon_Script::PHASE2);
+			m_progressPlayerIconScript->ChangeCurrentPos(ProgressPlayerIcon_Script::PHASE2);
+
+			m_progressFadeIn = true;
 
 			if (playMusic == true)
 			{
@@ -3965,6 +4133,13 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 
 			m_fadeScript->FadeOut();
 			m_fadeUIScript->FadeOut();
+			m_progressImageScript->FadeIn(2.f);
+			m_progressPlayerIconScript->FadeIn(2.f);
+			m_progressImageScript->ChangeImage(ProgressImage_Script::PHASE3);
+			m_progressPlayerIconScript->ChangeCurrentPos(ProgressPlayerIcon_Script::PHASE3);
+			m_progressPlayerIconScript->SetCurrentPhase(ProgressPlayerIcon_Script::PHASE3);
+
+			m_progressFadeIn = true;
 
 			if (playMusic == true)
 			{
@@ -3974,6 +4149,23 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT:
+		{
+			if (*m_recvFadeOut == true)
+				return;
+
+			*m_recvFadeOut = true;
+
+			m_fadeScript->FadeOut();
+			m_fadeUIScript->FadeOut();
+			m_progressImageScript->FadeIn(2.f);
+			m_progressPlayerIconScript->FadeIn(2.f);
+			m_progressImageScript->ChangeImage(ProgressImage_Script::PHASE4);
+			m_progressPlayerIconScript->ChangeCurrentPos(ProgressPlayerIcon_Script::PHASE4);
+			m_progressPlayerIconScript->SetCurrentPhase(ProgressPlayerIcon_Script::PHASE4);
+
+			m_progressFadeIn = true;
+		}
+		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT:
 		{
 			if (*m_recvFadeOut == true)
@@ -3983,6 +4175,13 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 
 			m_fadeScript->FadeOut();
 			m_fadeUIScript->FadeOut();
+			m_progressImageScript->FadeIn(2.f);
+			m_progressPlayerIconScript->FadeIn(2.f);
+			m_progressImageScript->ChangeImage(ProgressImage_Script::PHASE5);
+			m_progressPlayerIconScript->ChangeCurrentPos(ProgressPlayerIcon_Script::PHASE5);
+			m_progressPlayerIconScript->SetCurrentPhase(ProgressPlayerIcon_Script::PHASE5);
+
+			m_progressFadeIn = true;
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT:
@@ -3994,6 +4193,13 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 
 			m_fadeScript->FadeOut();
 			m_fadeUIScript->FadeOut();
+			m_progressImageScript->FadeIn(2.f);
+			m_progressPlayerIconScript->FadeIn(2.f);
+			m_progressImageScript->ChangeImage(ProgressImage_Script::PHASE6);
+			m_progressPlayerIconScript->ChangeCurrentPos(ProgressPlayerIcon_Script::PHASE6);
+			m_progressPlayerIconScript->SetCurrentPhase(ProgressPlayerIcon_Script::PHASE6);
+
+			m_progressFadeIn = true;
 
 			if (playMusic == true)
 			{
