@@ -33,6 +33,9 @@ public:
 	void LoadTextures();
 	void CreateLights();
 
+private:
+	void ReadServerIPAddress(std::wstring& ipAddress);
+
 public:
 	static std::shared_ptr<CScene> Create(SCENE eNextScene);
 

@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "Scene_Loading.h"
 
+#include <fstream>
+
 #include <Camera.h>
 #include <Transform.h>
 #include <MeshRenderer.h>
@@ -35,16 +37,14 @@ void Scene_Loading::Loading(SCENE eNextScene)
 
 void Scene_Loading::LogIn()
 {
-	std::wstring SERVER_ADDR{};
 	std::wstring ID{};
 	std::wstring PWD{};
-	//std::wcout << L"IP ADDRESS : ";
-	//std::wcin >> SERVER_ADDR;
 	//std::wcout << L"ID : ";
 	//std::wcin >> ID;
 	//std::wcout << L"PASSWORD : ";
 	//std::wcin >> PWD;
-	SERVER_ADDR = L"127.0.0.1";
+
+	ReadServerIPAddress(serverIP_Address);
 
 	GET_NETWORK->Init(serverIP_Address);
 	GET_NETWORK->SendLoginPacket(ID, PWD);
@@ -220,6 +220,25 @@ void Scene_Loading::CreateLights()
 	lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
 
 	AddDirectionalLight(lightDesc);
+}
+
+void Scene_Loading::ReadServerIPAddress(std::wstring& ipAddress)
+{
+	std::wcout << L"before read : " << ipAddress << "\n";
+
+	std::wifstream file{ "IP ADDRESS.txt" };
+
+	if (file.fail() == true)
+	{
+		std::cout << "Failed to open IP ADDRESS file" << std::endl;
+		return;
+	}
+
+	std::getline(file, ipAddress);
+
+	std::wcout << L"after read : " << ipAddress << "\n";
+
+	file.close();
 }
 
 shared_ptr<CScene> Scene_Loading::Create(SCENE eNextScene)
