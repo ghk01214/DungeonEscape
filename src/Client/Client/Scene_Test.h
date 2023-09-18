@@ -239,8 +239,11 @@ private:
 	uint32_t m_electricDarkGrayEffectStartIndex;
 	uint32_t m_electricDarkGrayEffectCurrentIndex;
 
-	uint32_t m_wpDarkBlueEffectStartIndex;
-	uint32_t m_wpDarkBlueEffectCurrentIndex;
+	uint32_t m_brightFlareDarkGrayEffectStartIndex;
+	uint32_t m_brightFlareDarkGrayEffectCurrentIndex;
+
+	uint32_t m_flashInDarkEffectStartIndex;
+	uint32_t m_flashInDarkEffectCurrentIndex;
 
 	uint32_t m_sparkParticleEffectStartIndex;
 	uint32_t m_sparkParticleEffectCurrentIndex;
@@ -248,8 +251,8 @@ private:
 	uint32_t m_circleFlameYellowStartIndex;
 	uint32_t m_circleFlameYellowCurrentIndex;
 
-	uint32_t m_impact15StartIndex;
-	uint32_t m_impact15CurrentIndex;
+	uint32_t m_implodeOrangeBrownEffectStartIndex;
+	uint32_t m_implodeOrangeBrownEffectCurrentIndex;
 
 	std::vector<std::shared_ptr<class Bomb_Script>> m_specialSkillObject;
 

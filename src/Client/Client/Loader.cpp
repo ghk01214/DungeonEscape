@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
@@ -165,6 +165,8 @@ HRESULT CLoader::Loading_GamePlayLevel_Fbx()
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\White.fbx");
 	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Skill\\Sphere\\Yellow.fbx");
 
+	GET_SINGLE(Resources)->LoadFBX(L"..\\Resources\\FBX\\Models\\Sphere2.fbx");
+
 	return S_OK;
 }
 
@@ -240,16 +242,21 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 {
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Artifact_Protection", L"..\\Resources\\Texture\\Effect\\Artifact Protection\\tile.png", 16);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Bright_Flare_Dark_Gray", L"..\\Resources\\Texture\\Effect\\Bright Flare\\dark gray\\tile.png", 32);
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Circle_Flame", L"..\\Resources\\Texture\\Effect\\Circle Flame\\yellow\\tile.png", 24);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Circle_Wave", L"..\\Resources\\Texture\\Effect\\Circle Wave\\tile.png", 6);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Explode", L"..\\Resources\\Texture\\Effect\\Explode\\tile.png", 20);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Ice_Explode", L"..\\Resources\\Texture\\Effect\\Ice Explode\\tile.png", 15);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Flash_In_Dark", L"..\\Resources\\Texture\\Effect\\Flash In\\dark\\tile.png", 34);
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Fire\\Fire.png", 64);
 
-	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Impact15", L"..\\Resources\\Texture\\Effect\\Implode\\orange brown\\tile.png", 29);
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_Dispersal", L"..\\Resources\\Texture\\Effect\\In Dispersal\\tile.png", 33);
+
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_Orange_Brown", L"..\\Resources\\Texture\\Effect\\Implode\\orange brown\\tile.png", 29);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Paralys", L"..\\Resources\\Texture\\Effect\\Paralys\\tile.png", 21);
 
@@ -266,7 +273,7 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Spark_Particle", L"..\\Resources\\Texture\\Effect\\Spark Particle\\tile.png", 25);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Spiral", L"..\\Resources\\Texture\\Effect\\Spiral\\tile.png", 18);
-	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Whirl_Pool_Dark_Blue", L"..\\Resources\\Texture\\Effect\\whirl pool\\dark blue\\tile.png", 36);
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Smokey_Swirl", L"..\\Resources\\Texture\\Effect\\smokey swirl\\tile.png", 48);
 
 	return S_OK;
 }

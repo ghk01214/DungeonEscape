@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Monster_Weeper.h"
 
 #include <Animator.h>
@@ -111,8 +111,8 @@ void Monster_Weeper::UpdateFrameRepeat()
 	auto pos{ GetTransform()->GetWorldPosition() };
 	pos.y += m_halfHeight * 3.f;
 
-	GET_SINGLE(EffectManager)->SetBillBoardInfo(140, pos, Vec3{ 200.f }, 0.003f);
-	GET_SINGLE(EffectManager)->PlayBillBoard(140);
+	GET_SINGLE(EffectManager)->SetBillBoardInfo(144, pos, Vec3{ 300.f }, 0.003f);
+	GET_SINGLE(EffectManager)->PlayBillBoard(144);
 }
 
 void Monster_Weeper::UpdateFrameOnce()

@@ -2983,14 +2983,15 @@ void Scene_Test::ClassifyObject(int32_t id, server::FBX_TYPE type, ObjectDesc& o
 		case server::FBX_TYPE::WEEPER_CAST1_BALL:
 		{
 			objectDesc.strName = L"Weeper Cast1";
-			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
-			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_wpDarkBlueEffectCurrentIndex++);
+			//objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Skill\\Sphere.fbx";
+			objectDesc.strPath = L"..\\Resources\\FBX\\Models\\Sphere2.fbx";
+			objectDesc.script = std::make_shared<MonsterRangeAttack>(type, m_brightFlareDarkGrayEffectCurrentIndex++);
 			//objectDesc.vScale = Vec3{ 70.f };
 
-			m_skillObjects[id] = m_wpDarkBlueEffectCurrentIndex - 1;
+			m_skillObjects[id] = m_brightFlareDarkGrayEffectCurrentIndex - 1;
 
-			if (m_wpDarkBlueEffectCurrentIndex == m_wpDarkBlueEffectStartIndex + 3)
-				m_wpDarkBlueEffectCurrentIndex = m_wpDarkBlueEffectStartIndex;
+			if (m_brightFlareDarkGrayEffectCurrentIndex == m_brightFlareDarkGrayEffectStartIndex + 3)
+				m_brightFlareDarkGrayEffectCurrentIndex = m_brightFlareDarkGrayEffectStartIndex;
 		}
 		break;
 		case server::FBX_TYPE::WEEPER_CAST2_BALL:
@@ -3132,6 +3133,21 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
+	effect.speed = 0.006f;
+	effect.scale = Vec3{ 500.f };
+
+	for (int32_t i = 0; i < 5; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Flash_In_Dark", effect.speed);
+
+		if (i == 0)
+		{
+			m_flashInDarkEffectStartIndex = effect.index;
+			m_flashInDarkEffectCurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::FLASH_IN_DARK] = effect;
+		}
+	}
+
 	effect.speed = 0.003f;
 	effect.scale = Vec3{ 300.f };
 
@@ -3167,13 +3183,13 @@ void Scene_Test::AddEffectTextures()
 
 	for (int32_t i = 0; i < 3; ++i)
 	{
-		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Whirl_Pool_Dark_Blue", effect.speed);
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Bright_Flare_Dark_Gray", effect.speed);
 
 		if (i == 0)
 		{
-			m_wpDarkBlueEffectCurrentIndex = effect.index;
-			m_wpDarkBlueEffectStartIndex = effect.index;
-			m_billboardInfo[server::EFFECT_TYPE::SHIELD_ELECTRIC_DARK_GRAY] = effect;
+			m_brightFlareDarkGrayEffectCurrentIndex = effect.index;
+			m_brightFlareDarkGrayEffectStartIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::BRIGHT_FLARE_DARK_GRAY] = effect;
 		}
 	}
 
@@ -3193,21 +3209,6 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
-	effect.speed = 0.005f;
-	effect.scale = Vec3{ 1000.f };
-
-	for (int32_t i = 0; i < 2; ++i)
-	{
-		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Impact15", effect.speed);
-
-		if (i == 0)
-		{
-			m_impact15StartIndex = effect.index;
-			m_impact15CurrentIndex = effect.index;
-			m_billboardInfo[server::EFFECT_TYPE::IMPACT15] = effect;
-		}
-	}
-
 	effect.speed = 0.0045f;
 	effect.scale = { 2000.f, 2000.f, 1.f };
 	effect.alpha = 0.5f;
@@ -3215,11 +3216,18 @@ void Scene_Test::AddEffectTextures()
 	m_billboardInfo[server::EFFECT_TYPE::CIRCLE_WAVE] = effect;
 
 	effect.alpha = 1.f;
+
+	effect.speed = 0.007f;
+	effect.scale = Vec3{ 1000.f };
+	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Hit_Animation", effect.speed);
+	m_billboardInfo[server::EFFECT_TYPE::HIT_ANMATION] = effect;
 #pragma endregion
 
-	effect.speed = 0.004f;
-	effect.scale = Vec3{ 500.f };
-	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Paralys", effect.speed);
+	// 144
+	effect.speed = 0.003f;
+	effect.scale = Vec3{ 300.f };
+	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_In_Dispersal", effect.speed);
+
 	m_billboardInfo[server::EFFECT_TYPE::PARALYS] = effect;
 
 #pragma region [SWORD]
@@ -3271,6 +3279,21 @@ void Scene_Test::AddEffectTextures()
 			m_spiralEffectStartIndex = effect.index;
 			m_spiralEffectCurrentIndex = effect.index;
 			m_billboardInfo[server::EFFECT_TYPE::SPIRAL] = effect;
+		}
+	}
+
+	effect.speed = 0.006f;
+	effect.scale = Vec3{ 3000.f };
+
+	for (int32_t i = 0; i < 1; ++i)
+	{
+		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Implode_Orange_Brown", effect.speed);
+
+		if (i == 0)
+		{
+			m_implodeOrangeBrownEffectStartIndex = effect.index;
+			m_implodeOrangeBrownEffectCurrentIndex = effect.index;
+			m_billboardInfo[server::EFFECT_TYPE::IMPLODE_ORANGE_BROWN] = effect;
 		}
 	}
 
@@ -3684,13 +3707,21 @@ void Scene_Test::RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id)
 	switch (type)
 	{
 		case server::OBJECT_TYPE::PLAYER_FIREBALL:
-		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
 		{
 			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_explodeEffectCurrentIndex, effect.pos, effect.scale, effect.speed);
 			GET_SINGLE(EffectManager)->PlayBillBoard(m_explodeEffectCurrentIndex++);
 
 			if (m_explodeEffectCurrentIndex == m_explodeEffectStartIndex + 70)
 				m_explodeEffectCurrentIndex = m_explodeEffectStartIndex;
+		}
+		break;
+		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
+		{
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_flashInDarkEffectCurrentIndex, effect.pos, effect.scale, effect.speed);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_flashInDarkEffectCurrentIndex++);
+
+			if (m_flashInDarkEffectCurrentIndex == m_flashInDarkEffectStartIndex + 5)
+				m_flashInDarkEffectCurrentIndex = m_flashInDarkEffectStartIndex;
 		}
 		break;
 		case server::OBJECT_TYPE::WEEPER_CAST2_BALL_SCATTER:
@@ -3703,9 +3734,17 @@ void Scene_Test::RemoveNonAnimatedObject(server::OBJECT_TYPE type, int32_t id)
 		}
 		break;
 		case server::OBJECT_TYPE::PLAYER_ICEBALL:
-		case server::OBJECT_TYPE::WEEPER_CAST3_BALL:
 		{
 			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_iceExplodeEffectCurrentIndex, effect.pos, effect.scale, effect.speed);
+			GET_SINGLE(EffectManager)->PlayBillBoard(m_iceExplodeEffectCurrentIndex++);
+
+			if (m_iceExplodeEffectCurrentIndex == m_iceExplodeEffectStartIndex + 5)
+				m_iceExplodeEffectCurrentIndex = m_iceExplodeEffectStartIndex;
+		}
+		break;
+		case server::OBJECT_TYPE::WEEPER_CAST3_BALL:
+		{
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_iceExplodeEffectCurrentIndex, effect.pos, effect.scale * 2.f, effect.speed);
 			GET_SINGLE(EffectManager)->PlayBillBoard(m_iceExplodeEffectCurrentIndex++);
 
 			if (m_iceExplodeEffectCurrentIndex == m_iceExplodeEffectStartIndex + 5)
@@ -3796,14 +3835,6 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 
 		if (m_hitEffectCurrentIndex == m_hitEffectStartIndex + 5)
 			m_hitEffectCurrentIndex = m_hitEffectStartIndex;
-	}
-	else if (effectType == server::EFFECT_TYPE::IMPACT15)
-	{
-		GET_SINGLE(EffectManager)->SetBillBoardInfo(m_impact15CurrentIndex, effectPos, info.scale, info.speed, info.alpha);
-		GET_SINGLE(EffectManager)->PlayBillBoard(m_impact15CurrentIndex++);
-
-		if (m_impact15CurrentIndex == m_impact15StartIndex + 5)
-			m_impact15CurrentIndex = m_impact15StartIndex;
 	}
 	else
 	{

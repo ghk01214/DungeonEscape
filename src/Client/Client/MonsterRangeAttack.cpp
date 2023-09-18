@@ -123,7 +123,7 @@ void MonsterRangeAttack::RenderEffect()
 			auto pos{ GetTransform()->GetWorldPosition() };
 			//pos.y += 100.f;
 
-			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 400.f }, 0.003f);
+			GET_SINGLE(EffectManager)->SetBillBoardInfo(m_effectIndex, pos, Vec3{ 300.f }, 0.003f);
 			GET_SINGLE(EffectManager)->PlayBillBoard(m_effectIndex);
 		}
 		break;
