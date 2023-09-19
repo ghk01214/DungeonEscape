@@ -443,11 +443,13 @@ void TestLevel::LoadTriggerObject()
 	auto CutScene2Body{ CutScene2Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene2Body->AddCollider<BoxCollider>(CutScene2Obj->GetTransform()->GetScale());
 	CutScene2Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE2);
+	CutScene2Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto CutScene4Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 16217.f, -1040.f, 28064.f }, Quat(0, 0, 0, 1), Vec3(1000.f, 500.f, 500.f), true) };
 	auto CutScene4Body{ CutScene4Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene4Body->AddCollider<BoxCollider>(CutScene4Obj->GetTransform()->GetScale());
 	CutScene4Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE4);
+	CutScene4Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto scene5Pos{ PORTAL1_EXIT };
 	scene5Pos.y += 50.f;
@@ -456,6 +458,7 @@ void TestLevel::LoadTriggerObject()
 	auto CutScene5Body{ CutScene5Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene5Body->AddCollider<BoxCollider>(CutScene5Obj->GetTransform()->GetScale());
 	CutScene5Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE5);
+	CutScene5Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto scene6Pos{ PORTAL5_EXIT };
 	scene6Pos.y += 50.f;
@@ -464,21 +467,25 @@ void TestLevel::LoadTriggerObject()
 	auto CutScene6Body{ CutScene6Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene6Body->AddCollider<BoxCollider>(CutScene6Obj->GetTransform()->GetScale());
 	CutScene6Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE6);
+	CutScene6Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto GuideUI1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 6500.f, -1540.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false) };
 	auto GuideUI1Body{ GuideUI1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	GuideUI1Body->AddCollider<BoxCollider>(GuideUI1Obj->GetTransform()->GetScale());
 	GuideUI1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::GUIDELINE1);
+	GuideUI1Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto OffTrack1Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 7750.f, -2790.f + 250.f, 21170.f }, Quat(0, 0, 0, 1), Vec3(6000.f, 500.f, 2500.f), false) };
 	auto OffTrack1Body{ OffTrack1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	OffTrack1Body->AddCollider<BoxCollider>(OffTrack1Obj->GetTransform()->GetScale());
 	OffTrack1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::OFFTRACK1);
+	OffTrack1Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto CutScene7Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", Vec3{ 16220.f, -3750.f, 49450.f }, Quat(0, 0, 0, 1), Vec3(1500.f, 500.f, 500.f), true)};
 	auto CutScene7Body{ CutScene7Obj->GetComponent<RigidBody>(L"RigidBody") };
 	CutScene7Body->AddCollider<BoxCollider>(CutScene7Obj->GetTransform()->GetScale());
 	CutScene7Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::CUTSCENE7);
+	CutScene7Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	LoadPortalObject();
 }
@@ -491,26 +498,31 @@ void TestLevel::LoadPortalObject()
 	auto Portal1Body{ Portal1Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal1Body->AddCollider<BoxCollider>(Portal1Obj->GetTransform()->GetScale());
 	Portal1Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL1);
+	Portal1Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto Portal2Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL2_POS, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false) };
 	auto Portal2Body{ Portal2Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal2Body->AddCollider<BoxCollider>(Portal2Obj->GetTransform()->GetScale());
 	Portal2Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL2);
+	Portal2Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto Portal3Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL3_POS, Quat(0, 0, 0, 1), Vec3(500.f, 500.f, 500.f), false) };
 	auto Portal3Body{ Portal3Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal3Body->AddCollider<BoxCollider>(Portal3Obj->GetTransform()->GetScale());
 	Portal3Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL3);
+	Portal3Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto Portal4Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL4_POS, Quat(0, 0, 0, 1), Vec3(1666.6f, 1666.6f, 1666.6f), false) };
 	auto Portal4Body{ Portal4Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal4Body->AddCollider<BoxCollider>(Portal4Obj->GetTransform()->GetScale());
 	Portal4Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL4);
+	Portal4Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 
 	auto Portal5Obj{ objMgr->AddGameObjectToLayer<TriggerObject2>(L"Layer_TriggerObject", PORTAL5_POS, Quat(0, 0, 0, 1), Vec3(600.f, 600.f, 600.f), false) };
 	auto Portal5Body{ Portal5Obj->GetComponent<RigidBody>(L"RigidBody") };
 	Portal5Body->AddCollider<BoxCollider>(Portal5Obj->GetTransform()->GetScale());
 	Portal5Obj->SetTriggerAttribute(TriggerObject2::TRIGGERATTRIBUTE::PORTAL5);
+	Portal5Body->GetCollider(0)->ApplyModifiedLayer(PhysicsLayers::PARTICLE, PhysicsLayers::NONE);
 }
 
 void TestLevel::LoadDebugMap_Bridge()
