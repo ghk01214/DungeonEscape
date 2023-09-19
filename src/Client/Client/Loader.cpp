@@ -415,7 +415,9 @@ HRESULT CLoader::Loading_ForCharacterSelection_Texture()
 	LOAD_TEXTURE(L"Ready", L"..\\Resources\\Texture\\UI\\Font\\Ready.png");
 
 	LOAD_TEXTURE(L"Nana", L"..\\Resources\\Texture\\UI\\Character Select\\Nana.png");
+	LOAD_TEXTURE(L"Nana Unavailable", L"..\\Resources\\Texture\\UI\\Character Select\\Nana Unavailable.png");
 	LOAD_TEXTURE(L"Mistic", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic.png");
+	LOAD_TEXTURE(L"Mistic Unavailable", L"..\\Resources\\Texture\\UI\\Character Select\\Mistic Unavailable.png");
 
 #pragma region [POP UP]
 	LOAD_TEXTURE(L"Pop Up Frame", L"..\\Resources\\Texture\\UI\\Frame\\Pop Up Frame.png");
