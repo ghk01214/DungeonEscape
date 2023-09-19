@@ -52,7 +52,7 @@ PS_OUT PS_DirLight(VS_OUT input)
 
     LightColor color = CalculateLightColor(g_int_0, viewNormal, viewPos);
 
-    // 그림자
+    // 洹몃┝??
     if (length(color.diffuse) != 0)
     {
         matrix shadowCameraVP = g_mat_0;
@@ -107,7 +107,7 @@ PS_OUT PS_PointLight(VS_OUT input)
 {
     PS_OUT output = (PS_OUT)0;
 
-    // input.pos = SV_Position = Screen 좌표
+    // input.pos = SV_Position = Screen 醫뚰몴
     float2 uv = float2(input.pos.x / g_vec2_0.x, input.pos.y / g_vec2_0.y);
     float3 viewPos = g_tex_0.Sample(g_sam_0, uv).xyz;
     if (viewPos.z <= 0.f)

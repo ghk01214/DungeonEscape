@@ -222,6 +222,9 @@
     <Filter Include="소스 파일\Objects\11. Lights\FollowingLight">
       <UniqueIdentifier>{38fde3d7-520a-4eda-b75a-6ff718e0fec3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\11. Lights\PlayerShadow">
+      <UniqueIdentifier>{2217c69e-caa7-4818-9087-e4aeac1f60d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -422,6 +425,9 @@
     <ClInclude Include="FollowingPointLight_Script.h">
       <Filter>소스 파일\Objects\11. Lights\FollowingLight</Filter>
     </ClInclude>
+    <ClInclude Include="PlayerShadow.h">
+      <Filter>소스 파일\Objects\11. Lights\PlayerShadow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -616,6 +622,9 @@
     </ClCompile>
     <ClCompile Include="FollowingPointLight_Script.cpp">
       <Filter>소스 파일\Objects\11. Lights\FollowingLight</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerShadow.cpp">
+      <Filter>소스 파일\Objects\11. Lights\PlayerShadow</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

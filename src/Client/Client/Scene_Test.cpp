@@ -302,7 +302,7 @@ void Scene_Test::CreateUICamera(std::shared_ptr<CScene> pScene)
 			meshRenderer->SetMaterial(material);
 		}
 		obj->AddComponent(meshRenderer);
-		//pScene->AddGameObject(obj);
+		pScene->AddGameObject(obj);
 	}
 #pragma endregion
 }
@@ -401,6 +401,14 @@ void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE p
 	{
 		object->GetTransform()->SetWorldMatrix(matWorld);
 	}
+
+	
+	auto shadowObj = CreatePlayerShadowObject();
+	shadowObj->SetName(L"Player_Shadow");
+	shadowObj->SetStatic(false);
+	shadowObj->AddComponent(std::make_shared<PlayerShadow>());
+
+	AddShadowObject(shadowObj);
 }
 
 void Scene_Test::CreateSphere(std::shared_ptr<CScene> pScene)
@@ -430,6 +438,28 @@ void Scene_Test::CreateSphere(std::shared_ptr<CScene> pScene)
 	}
 
 	pScene->AddGameObject(gameObjects);
+}
+
+shared_ptr<CGameObject> Scene_Test::CreatePlayerShadowObject(void)
+{
+	shared_ptr<CGameObject> obj = make_shared<CGameObject>();
+	obj->SetName(L"Cicle Object");
+	obj->AddComponent(make_shared<Transform>());
+	obj->GetTransform()->SetLocalScale(Vec3(100.f, 100.f, 100.f));
+	obj->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
+	obj->SetStatic(false);
+	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	{
+		shared_ptr<Mesh> sphereMesh = GET_SINGLE(Resources)->LoadSphereMesh();
+		meshRenderer->SetMesh(sphereMesh);
+	}
+	{
+		shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"GameObject");
+		meshRenderer->SetMaterial(material->Clone());
+	}
+	obj->AddComponent(meshRenderer);
+
+	return obj;
 }
 
 void Scene_Test::SendKeyInput()

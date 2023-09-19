@@ -58,3 +58,7 @@
 #pragma region [light]
 #include "FollowingPointLight_Script.h"
 #pragma endregion
+
+#pragma region [shadow]
+#include "PlayerShadow.h"
+#pragma endregion
