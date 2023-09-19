@@ -808,7 +808,7 @@ void Player::PlayerPattern_ShootBall()
 		{
 			physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());
 
-			if (playerPos.x < 4750.f || playerPos.x > 100860.f)
+			if (playerPos.x < 4750.f || playerPos.x > 7250.f)
 				return;
 
 			if (playerPos.y < -2790.f || playerPos.y > 210.f)
