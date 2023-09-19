@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TestLevel.h"
 #include "ObjectManager.h"
 #include "Player.h"
@@ -51,7 +51,7 @@ void TestLevel::Init()
 
 	//LoadBasicMap4();
 
-	//LoadUnit_DebugMode();
+	LoadUnit_DebugMode();
 	LoadMap();
 }
 
