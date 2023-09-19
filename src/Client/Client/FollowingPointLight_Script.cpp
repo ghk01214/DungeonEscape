@@ -26,11 +26,11 @@ void FollowingPointLight_Script::Update()
 
 	Vec3 vPos = player->GetTransform()->GetWorldMatrix().Translation();
 
-	//vPos.y .f;
+	vPos.y += 200.f;
 
 	GetTransform()->SetLocalPosition(vPos);
 
-	cout << vPos.y << "  ";
+	//cout << vPos.x << "  " << vPos.y << "  " << vPos.z << endl;
 }
 
 void FollowingPointLight_Script::LateUpdate()

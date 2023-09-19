@@ -9,7 +9,7 @@
 #include <Engine.h>
 
 //#ifndef RELEASE
-#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+//#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
 //#endif
 
 #define MAX_LOADSTRING 100
