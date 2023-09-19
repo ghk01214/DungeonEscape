@@ -485,6 +485,12 @@ void SkillObject::HandlePlayerSkillCollision()
 						SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED_METEOR, false);
 						SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, false);
 					}
+
+					if (!m_pillarCollisionSound)
+					{
+						//std::cout << "사운드 출력" << std::endl;
+						m_pillarCollisionSound = true;
+					}
 				}
 				break;
 			}
