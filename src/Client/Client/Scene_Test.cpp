@@ -402,7 +402,7 @@ void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE p
 		object->GetTransform()->SetWorldMatrix(matWorld);
 	}
 
-	
+
 	auto shadowObj = CreatePlayerShadowObject();
 	shadowObj->SetName(L"Player_Shadow");
 	shadowObj->SetStatic(false);
@@ -4219,13 +4219,6 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 
 			m_fadeScript->FadeOut();
 			m_fadeUIScript->FadeOut();
-			m_progressImageScript->FadeIn(2.f);
-			m_progressPlayerIconScript->FadeIn(2.f);
-			m_progressImageScript->ChangeImage(ProgressImage_Script::PHASE2);
-			m_progressPlayerIconScript->SetCurrentPhase(ProgressPlayerIcon_Script::PHASE2);
-			m_progressPlayerIconScript->ChangeCurrentPos(ProgressPlayerIcon_Script::PHASE2);
-
-			m_progressFadeIn = true;
 
 			if (playMusic == true)
 			{
@@ -4267,13 +4260,6 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 
 			m_fadeScript->FadeOut();
 			m_fadeUIScript->FadeOut();
-			m_progressImageScript->FadeIn(2.f);
-			m_progressPlayerIconScript->FadeIn(2.f);
-			m_progressImageScript->ChangeImage(ProgressImage_Script::PHASE4);
-			m_progressPlayerIconScript->ChangeCurrentPos(ProgressPlayerIcon_Script::PHASE4);
-			m_progressPlayerIconScript->SetCurrentPhase(ProgressPlayerIcon_Script::PHASE4);
-
-			m_progressFadeIn = true;
 		}
 		break;
 		case server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT:
@@ -4303,13 +4289,6 @@ void Scene_Test::TriggerBehaviour(network::CPacket& packet)
 
 			m_fadeScript->FadeOut();
 			m_fadeUIScript->FadeOut();
-			m_progressImageScript->FadeIn(2.f);
-			m_progressPlayerIconScript->FadeIn(2.f);
-			m_progressImageScript->ChangeImage(ProgressImage_Script::PHASE6);
-			m_progressPlayerIconScript->ChangeCurrentPos(ProgressPlayerIcon_Script::PHASE6);
-			m_progressPlayerIconScript->SetCurrentPhase(ProgressPlayerIcon_Script::PHASE6);
-
-			m_progressFadeIn = true;
 
 			if (playMusic == true)
 			{
