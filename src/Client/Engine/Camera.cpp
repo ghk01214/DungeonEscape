@@ -37,6 +37,8 @@ void Camera::FinalUpdate()
 	else
 		m_matProjection = ::XMMatrixOrthographicLH(m_width * m_scale, m_height * m_scale, m_near, m_far);
 
+	Camera::S_MatView = m_matView;
+	Camera::S_MatProjection = m_matProjection;
 	m_frustum.FinalUpdate();
 }
 
@@ -91,15 +93,16 @@ void Camera::SortGameObject()
 		if (IsCulled(gameObject->GetLayerIndex()))
 			continue;
 
-		//if (gameObject->GetCheckFrustum())
-		//{
-		//	if (m_frustum.ContainsSphere(
-		//		gameObject->GetTransform()->GetWorldPosition(),
-		//		gameObject->GetTransform()->GetBoundingSphereRadius()) == false)
-		//	{
-		//		continue;
-		//	}
-		//}
+		gameObject->SetCheckFrustum(true);
+		if (gameObject->GetCheckFrustum())
+		{
+			if (m_frustum.ContainsSphere(
+				gameObject->GetTransform()->GetLocalMulWorldPosition(),
+				gameObject->GetTransform()->GetLocalMulWorldMatrixBoundingSphereRadius()) == false)
+			{
+				continue;
+			}
+		}
 
 		if (gameObject->GetMeshRenderer())
 		{
@@ -187,10 +190,10 @@ void Camera::SortShadowObject()
 		if (gameObject->GetCheckFrustum())
 		{
 			if (m_frustum.ContainsSphere(
-				gameObject->GetTransform()->GetWorldPosition(),
-				gameObject->GetTransform()->GetBoundingSphereRadius()) == false)
+				gameObject->GetTransform()->GetLocalMulWorldPosition(),
+				gameObject->GetTransform()->GetLocalMulWorldMatrixBoundingSphereRadius()) == false)
 			{
-				//continue;
+				continue;
 			}
 		}
 

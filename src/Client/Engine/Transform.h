@@ -38,11 +38,13 @@ public:
 
 	// TEMP
 	float GetBoundingSphereRadius() { return max(max(_localScale.x, _localScale.y), _localScale.z); }
+	float GetLocalMulWorldMatrixBoundingSphereRadius(void);
 
 	const Matrix& GetLocalToWorldMatrix() { return _matLocalMulWorld; }
 	const Matrix& GetLocalMatrix() { return _matLocal; }
 	const Matrix& GetWorldMatrix() { return _matWorld; }
 	Vec3 GetWorldPosition() { return _matWorld.Translation(); }
+	Vec3 GetLocalMulWorldPosition() { return _matLocalMulWorld.Translation(); }
 
 	Vec3 GetRight() { return _matWorld.Right(); }
 	Vec3 GetUp() { return _matWorld.Up(); }

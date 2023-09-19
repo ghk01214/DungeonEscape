@@ -48,6 +48,17 @@ void Transform::PushData()
 	CONST_BUFFER(CONSTANT_BUFFER_TYPE::TRANSFORM)->PushGraphicsData(&transformParams, sizeof(transformParams));
 }
 
+float Transform::GetLocalMulWorldMatrixBoundingSphereRadius(void)
+{
+	Vec3 vScale{};
+
+	vScale.x = XMVectorGetX(XMVector3Length(_matLocalMulWorld.Right()));
+	vScale.y = XMVectorGetX(XMVector3Length(_matLocalMulWorld.Forward()));
+	vScale.z = XMVectorGetX(XMVector3Length(_matLocalMulWorld.Up()));
+
+	return max(max(vScale.x, vScale.y), vScale.z) * 1000.f;
+}
+
 Vec3 Transform::GetScale()
 {
 	return Vec3(XMVectorGetX(XMVector3Length(_matWorld.Right())), XMVectorGetX(XMVector3Length(_matWorld.Up())), XMVectorGetX(XMVector3Length(_matWorld.Backward())));
