@@ -188,9 +188,6 @@ void Camera_Basic::LateUpdate()
 		if (raycastDistance > 0)
 			defaultHeight += (1000.f - raycastDistance);
 
-		//if (GET_SINGLE(CInput)->Button_Pressing(CInput::DIMB_LBUTTON))
-			//Print(raycastDistance);
-
 		raycastDistance *= 0.95f;
 		Vec3 vCrashPoint{};
 		float distance{};

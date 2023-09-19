@@ -27,7 +27,7 @@ private:
 	float m_rotationAxisX;
 
 	float m_distanceRatio;	// 0.f ~ 1.f 사이의 값
-	float m_cameraDistance = 2000.f;	// 카메라와 플레이어 사이의 거리 값
+	float m_cameraDistance = 1000.f;	// 카메라와 플레이어 사이의 거리 값
 
 private:
 	bool m_bPlayCinematic = false;
