@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Camera_Script.h"
 
 #include <Transform.h>
@@ -186,7 +186,7 @@ void Camera_Basic::LateUpdate()
 		float defaultHeight{ 500.f };
 
 		if (raycastDistance > 0)
-			defaultHeight += (2000.f - raycastDistance);
+			defaultHeight += (1000.f - raycastDistance);
 
 		//if (GET_SINGLE(CInput)->Button_Pressing(CInput::DIMB_LBUTTON))
 			//Print(raycastDistance);
@@ -253,7 +253,7 @@ void Camera_Basic::LateUpdate()
 
 		// 마우스 휠 이동
 		{
-			m_distanceRatio -= GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_WHEEL) * 0.0003f;	// 1틱 -> 120
+			//m_distanceRatio -= GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_WHEEL) * 0.0003f;	// 1틱 -> 120
 
 			if (m_distanceRatio < 0.3)
 				m_distanceRatio = 0.3;
