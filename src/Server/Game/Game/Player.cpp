@@ -881,7 +881,6 @@ void Player::PlayerPattern_ShootMeteor()
 		(L"Layer_SkillObject", ballPos, Quat(0, 0, 0, 1), Vec3(300, 300, 300), skilltype, nullptr, this);
 	skillObject->SetAttribute(SkillObject::SKILLATTRIBUTE::GUIDED_METEOR, true);
 	skillObject->SetAttribute(SkillObject::SKILLATTRIBUTE::LEVITATE, true);
-	skillObject->SetName(L"PLAYER_METEOR");
 	if (pillar)
 		skillObject->m_target = pillar;
 	auto meteorBody = skillObject->GetComponent<RigidBody>(L"RigidBody");

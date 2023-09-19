@@ -4,6 +4,7 @@
 //#include "BoxCollider.h"
 //#include "SphereCollider.h"
 //#include "MeshCollider.h"
+#include "CollisionPairInfo.h"
 #include "Transform.h"
 #include "TimeManager.h"
 #include "Collider.h"
@@ -39,6 +40,7 @@ void MapObject::Update(double timeDelta)
 	//	}
 	//}
 
+	Gimmik2SoundAlram();
 	ServerMessage_Transform();
 
 	GameObject::Update(timeDelta);
@@ -131,6 +133,31 @@ void MapObject::CheckSkip()
 void MapObject::SkipClear()
 {
 	m_skip = false;
+}
+
+void MapObject::Gimmik2SoundAlram()
+{
+	if (GetName() != L"ROLLING ROCK")
+		return;
+
+	if (m_gimmik2Alarm)
+		return;
+
+	auto ballcollider = m_body->GetCollider(0);
+	auto collisioninfo = ballcollider->GetCollisionInfo(CollisionInfoType::Enter);
+
+	for (auto& info : collisioninfo)
+	{
+		auto collider = info.get()->GetFromCollider();
+		if (!collider)
+			continue;
+
+		if (collider->GetOwnerObject()->GetName() == L"BLOCK")
+		{
+			m_gimmik2Alarm = true;
+			//기믹 2번 : 공이 벽과 충돌한 사운드 출력
+		}
+	}
 }
 
 void MapObject::ServerMessage_Init(bool scatterRock, bool boulder)

@@ -25,6 +25,8 @@ public:	//LastBossRock전용함수
 	void SkipClear();
 
 
+	void Gimmik2SoundAlram();
+
 public:
 	void ServerMessage_Init(bool scatterRock, bool boulder);
 	void ServerMessage_Release();							//SetRemoveReserved()이후 바로 호출해야하는 함수
@@ -41,4 +43,6 @@ private:
 	Vec3 m_initialPosition;
 	Vec3 m_riseupPosition;
 	bool m_skip = false;
+
+	bool m_gimmik2Alarm = false;
 };
