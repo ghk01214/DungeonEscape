@@ -86,7 +86,7 @@ void GolemAI::FillSchedule()
 	}
 
 	//15퍼로 단일공격 (어퍼컷은 제외)
-	else if (value < 0.60f)
+	else if (value < 0.70f)
 	{
 		if (value2 < 0.2f)
 			m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK2);
@@ -95,10 +95,6 @@ void GolemAI::FillSchedule()
 		else
 			m_scheduler.emplace_back(GOLEM_SCHEDULE::ATTACK4);
 	}
-
-	//10퍼로 달리기
-	else if (value < 0.70f)
-		m_scheduler.emplace_back(GOLEM_SCHEDULE::RUN);
 
 	//15퍼로 점프 공격
 	else if (value < 0.85f)
