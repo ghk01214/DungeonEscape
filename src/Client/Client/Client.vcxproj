@@ -174,6 +174,7 @@
     <ClInclude Include="Creator.h" />
     <ClInclude Include="Effect_Script.h" />
     <ClInclude Include="Fade_Script.h" />
+    <ClInclude Include="FollowingPointLight_Script.h" />
     <ClInclude Include="InputString_Script.h" />
     <ClInclude Include="PageChangeButton_Script.h" />
     <ClInclude Include="Particle_Script.h" />
@@ -241,6 +242,7 @@
     <ClCompile Include="Creator.cpp" />
     <ClCompile Include="Effect_Script.cpp" />
     <ClCompile Include="Fade_Script.cpp" />
+    <ClCompile Include="FollowingPointLight_Script.cpp" />
     <ClCompile Include="InputString_Script.cpp" />
     <ClCompile Include="PageChangeButton_Script.cpp" />
     <ClCompile Include="Particle_Script.cpp" />

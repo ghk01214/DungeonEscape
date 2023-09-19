@@ -338,10 +338,20 @@ void Scene_Test::CreateLights(std::shared_ptr<CScene> pScene)
 	LightDesc lightDesc;
 	lightDesc.vDirection = Vec3(0.f, -1.f, 0.f);
 	lightDesc.vDiffuse = Vec3(1.f, 1.f, 1.f);
-	lightDesc.vAmbient = Vec3(0.8f, 0.8f, 0.8f);
+	lightDesc.vAmbient = Vec3(0.4f, 0.4f, 0.4f);
 	lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
 
 	pScene->AddDirectionalLight(lightDesc);
+
+
+
+	lightDesc.vDiffuse = Vec3(1.f, 0.f, 0.f);
+	lightDesc.vAmbient = Vec3(0.1f, 0.1f, 0.1f);
+	lightDesc.vSpecular = Vec3(0.1f, 0.1f, 0.1f);
+	lightDesc.lightRange = 1000.f;
+
+	auto pointlight = pScene->AddPointLight(lightDesc);
+	pointlight->AddComponent(make_shared<FollowingPointLight_Script>());
 }
 
 void Scene_Test::CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE player)
@@ -536,7 +546,7 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 	mapLoader.ExtractMapInfo(L"..\\Resources\\FBX\\SplitMap\\Client\\LastBoss_TreasureRoom2.fbx");
 	PushMapData(MAP_TYPE::LastBoss_TreasureRoom, mapLoader.GetMapObjectInfo());
 
-	m_eNextMapType = MAP_TYPE::FirstBoss;
+	m_eNextMapType = MAP_TYPE::StartRoom;
 	MoveMap(m_eNextMapType);
 
 
@@ -4698,8 +4708,8 @@ void Scene_Test::MoveMap(MAP_TYPE eType)
 
 	for (auto& mapObject : mapObjects)
 	{
-		mapObject->SetCheckFrustum(false);
-		mapObject->SetStatic(false);
+		//mapObject->SetCheckFrustum(false);
+		//mapObject->SetStatic(false);
 		AddMapObject(mapObject);
 	}
 

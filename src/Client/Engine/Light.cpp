@@ -8,6 +8,7 @@
 #include "Texture.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "Timer.h"
 
 Light::Light() : Component(COMPONENT_TYPE::LIGHT)
 {
@@ -27,21 +28,40 @@ void Light::FinalUpdate()
 	m_lightInfo.position = GetTransform()->GetWorldPosition();
 
 	auto objects = GET_SINGLE(SceneManager)->GetActiveScene()->GetGameObjects();
+	auto player = GET_SINGLE(SceneManager)->GetActiveScene()->GetPlayer();
+
+
+	static float length2 = 7600;
+
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUMPAD_1))
+	{
+		length2 -= DELTA_TIME * 2000.f;
+	}
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUMPAD_2))
+	{
+		length2 += DELTA_TIME * 2000.f;
+	}
+
+
 	Vec3 vPos{};
 	for (auto& object : objects)
 	{
 		if (object->GetName() == L"Main_Camera")
 		{
-			vPos = object->GetTransform()->GetLocalPosition();
-			vPos.y += 2000.f;
+			vPos = (*player.begin())->GetTransform()->GetWorldMatrix().Translation();
+			vPos.y += length2;
 			m_shadowCamera->GetTransform()->SetLocalPosition(vPos);
 		}
 	}
 
 	//m_shadowCamera->GetTransform()->SetLocalPosition(GetTransform()->GetLocalPosition());
 
+	//std::cout << vPos.x << " " << vPos.y << " " << vPos.z << std::endl;
+	m_shadowCamera->GetTransform()->SetLocalPosition(vPos);
+
+
 	Vec3 vRot = GetTransform()->GetLocalRotation();
-	vRot.y += XMConvertToRadians(180.f);
+	//vRot.y += XMConvertToRadians(180.f);
 
 	m_shadowCamera->GetTransform()->SetLocalRotation(vRot);
 
@@ -108,10 +128,10 @@ void Light::SetLightType(LIGHT_TYPE type)
 		m_volumeMesh = GET_SINGLE(Resources)->Get<Mesh>(L"Rectangle");
 		m_lightMaterial = GET_SINGLE(Resources)->Get<Material>(L"DirLight");
 
-		m_shadowCamera->GetCamera()->SetScale(1.f);
+		m_shadowCamera->GetCamera()->SetScale(10.f);
 		m_shadowCamera->GetCamera()->SetFar(10000.f);
-		m_shadowCamera->GetCamera()->SetWidth(4096);
-		m_shadowCamera->GetCamera()->SetHeight(4096);
+		m_shadowCamera->GetCamera()->SetWidth(8192);
+		m_shadowCamera->GetCamera()->SetHeight(8192);
 
 		break;
 	case LIGHT_TYPE::POINT_LIGHT:

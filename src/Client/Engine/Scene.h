@@ -13,12 +13,12 @@ typedef struct _tagObjectDesc {
 
 typedef struct _tagLightDesc {
 	Vec3 vPosition;
-	Vec3 vDirection;
+	Vec3 vDirection;	// direction, spot light
 	Vec3 vDiffuse;
 	Vec3 vAmbient;
 	Vec3 vSpecular;
-	float lightRange;
-	float lightAngle;
+	float lightRange;	// point light
+	float lightAngle;	// spot light
 } LightDesc;
 
 class CScene
@@ -50,8 +50,8 @@ private:
 
 public:
 	void AddDirectionalLight(LightDesc& lightDesc);
-	void AddPointLight(LightDesc& lightDesc);
-	void AddSpotLight(LightDesc& lightDesc);
+	shared_ptr<CGameObject> AddPointLight(LightDesc& lightDesc);
+	shared_ptr<CGameObject> AddSpotLight(LightDesc& lightDesc);
 
 public:
 	void AddGameObject(shared_ptr<CGameObject> gameObject);

@@ -50,6 +50,10 @@ void Player_Script::Start()
 void Player_Script::Update(void)
 {
 	ParsePackets();
+
+
+	
+	//cout << GetTransform()->GetWorldMatrix().Translation().y << endl;
 }
 
 void Player_Script::LateUpdate()

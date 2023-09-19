@@ -26,6 +26,13 @@ void CScene::Awake()
 	{
 		gameObject->Awake();
 	}
+
+	for (const auto& light : m_lights)
+	{
+		light->GetGameObject()->Awake();
+	}
+
+	
 }
 
 void CScene::Start()
@@ -38,6 +45,11 @@ void CScene::Start()
 	for (const shared_ptr<CGameObject>& gameObject : m_gameObjects)
 	{
 		gameObject->Start();
+	}
+
+	for (const auto& light : m_lights)
+	{
+		light->GetGameObject()->Start();
 	}
 }
 
@@ -52,6 +64,11 @@ void CScene::Update()
 	{
 		gameObject->Update();
 	}
+
+	for (const auto& light : m_lights)
+	{
+		light->GetGameObject()->Update();
+	}
 }
 
 void CScene::LateUpdate()
@@ -65,6 +82,11 @@ void CScene::LateUpdate()
 	{
 		gameObject->LateUpdate();
 	}
+
+	for (const auto& light : m_lights)
+	{
+		light->GetGameObject()->LateUpdate();
+	}
 }
 
 void CScene::FinalUpdate()
@@ -77,6 +99,11 @@ void CScene::FinalUpdate()
 	for (const shared_ptr<CGameObject>& gameObject : m_gameObjects)
 	{
 		gameObject->FinalUpdate();
+	}
+
+	for (const auto& light : m_lights)
+	{
+		light->GetGameObject()->FinalUpdate();
 	}
 
 	std::vector<shared_ptr<CGameObject>> Objects;
@@ -274,7 +301,7 @@ void CScene::AddDirectionalLight(LightDesc& lightDesc)
 	m_dirlight = light;
 }
 
-void CScene::AddPointLight(LightDesc& lightDesc)
+shared_ptr<CGameObject> CScene::AddPointLight(LightDesc& lightDesc)
 {
 	shared_ptr<CGameObject> light = std::make_shared<CGameObject>();
 
@@ -286,8 +313,8 @@ void CScene::AddPointLight(LightDesc& lightDesc)
 	light->AddComponent(make_shared<Transform>());
 	light->GetTransform()->SetLocalPosition(lightDesc.vPosition);
 
-	// 방향 정보
-	light->GetLight()->SetLightDirection(lightDesc.vDirection);
+	//// 방향 정보
+	//light->GetLight()->SetLightDirection(lightDesc.vDirection);
 
 	// 색상 정보
 	light->GetLight()->SetDiffuse(lightDesc.vDiffuse);
@@ -299,9 +326,11 @@ void CScene::AddPointLight(LightDesc& lightDesc)
 
 	// light
 	AddGameObject(light);
+
+	return light;
 }
 
-void CScene::AddSpotLight(LightDesc& lightDesc)
+shared_ptr<CGameObject> CScene::AddSpotLight(LightDesc& lightDesc)
 {
 	shared_ptr<CGameObject> light = std::make_shared<CGameObject>();
 
@@ -322,12 +351,14 @@ void CScene::AddSpotLight(LightDesc& lightDesc)
 	light->GetLight()->SetSpecular(lightDesc.vSpecular);
 
 	// 빛의 길이
-	light->GetLight()->SetLightRange(lightDesc.lightRange);
+	//light->GetLight()->SetLightRange(lightDesc.lightRange);
 	// 빛의 범위
 	light->GetLight()->SetLightAngle(lightDesc.lightAngle);
 
 	// light
 	AddGameObject(light);
+
+	return light;
 }
 
 

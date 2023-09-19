@@ -52,3 +52,9 @@
 
 #include "Fade_Script.h"
 #pragma endregion
+
+
+
+#pragma region [light]
+#include "FollowingPointLight_Script.h"
+#pragma endregion
