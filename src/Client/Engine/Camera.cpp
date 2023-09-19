@@ -82,6 +82,9 @@ void Camera::SortGameObject()
 			continue;
 		}
 
+		if (gameObject->GetName() == L"Player_Shadow")
+			continue;
+
 		if (gameObject->GetMeshRenderer() == nullptr && gameObject->GetParticleSystem() == nullptr)
 			continue;
 
@@ -194,7 +197,8 @@ void Camera::SortShadowObject()
 		m_vecShadow.push_back(gameObject);
 	}
 
-	//cout << m_vecShadow.size() << endl;
+	for (auto object : scene->GetShaodwObjects())
+		m_vecShadow.push_back(object);
 }
 
 void Camera::Render_Deferred()

@@ -106,6 +106,7 @@ private:
 	void CreateMap(std::shared_ptr<CScene> pScene);
 	void CreatePlayer(std::shared_ptr<CScene> pScene, server::FBX_TYPE player);
 	void CreateSphere(std::shared_ptr<CScene> pScene);
+	shared_ptr<CGameObject> CreatePlayerShadowObject(void);
 	void CreateSkill(std::shared_ptr<CScene> pScene);
 	void CreateSkill(const std::wstring& colorName, const Vec3& worldPos, const Vec3& localScale, float alpha, float scaleSpeed);
 	void CreateBillBoard(std::shared_ptr<CScene> pScene);

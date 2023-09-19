@@ -272,6 +272,10 @@ void Player_Script::MovePlayerCameraLook(void)
 	Vec3 pLook = transform->GetLook();
 
 	//cout << pLook.x << " " << pLook.y << " " << pLook.z << endl;
+
+	Vec3 vPos = GetTransform()->GetLocalToWorldMatrix().Translation();
+
+	//cout << "Player : " << vPos.x << " " << vPos.y << " " << vPos.z << " " << endl;
 }
 
 void Player_Script::ParsePackets()

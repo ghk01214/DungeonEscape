@@ -441,6 +441,12 @@ void CScene::AddMapObject(shared_ptr<CGameObject> gameObject)
 	m_mapObjects.push_back(gameObject);
 }
 
+void CScene::AddShadowObject(std::shared_ptr<CGameObject> gameObject)
+{
+	m_shadowObjects.push_back(gameObject);
+	m_gameObjects.push_back(gameObject);
+}
+
 void CScene::AddPlayer(std::vector<std::shared_ptr<CGameObject>> gameObject)
 {
 	for (auto& object : gameObject)

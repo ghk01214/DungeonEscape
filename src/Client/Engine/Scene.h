@@ -64,6 +64,7 @@ public:
 	void ClearMapObject(void) { m_mapObjects.clear(); }
 
 public:
+	void AddShadowObject(std::shared_ptr<CGameObject> gameObject);
 	void AddPlayer(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void AddMonster(std::vector<std::shared_ptr<CGameObject>> gameObject);
 	void AddBoss(std::vector<std::shared_ptr<CGameObject>> gameObject);
@@ -80,6 +81,7 @@ public:
 public:
 	const vector<shared_ptr<CGameObject>>& GetGameObjects(void) { return m_gameObjects; }
 	const vector<shared_ptr<CGameObject>>& GetMapObjects(void) { return m_mapObjects; }
+	const vector<shared_ptr<CGameObject>>& GetShaodwObjects(void) { return m_shadowObjects; }
 	const vector<shared_ptr<CGameObject>>& GetPlayer(void) { return m_player; }
 	const vector<shared_ptr<CGameObject>>& GetMonster(void) { return m_monster; }
 	const vector<shared_ptr<CGameObject>>& GetBoss(void) { return m_boss; }
@@ -96,6 +98,7 @@ public:
 private:
 	vector<shared_ptr<CGameObject>>		m_gameObjects;
 	vector<shared_ptr<CGameObject>>		m_mapObjects;
+	vector<shared_ptr<CGameObject>>		m_shadowObjects;
 	vector<shared_ptr<class Camera>>	m_cameras;
 	vector<shared_ptr<class Light>>		m_lights;
 
