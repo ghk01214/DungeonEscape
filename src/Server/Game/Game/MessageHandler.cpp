@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MessageHandler.h"
 #include "ObjectManager.h"
 #include "GameObject.h"
@@ -422,7 +422,7 @@ namespace game
 			player->SetFBXType(msg.fbxType);
 		}
 
-		//for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
 		{
 			TimerEvent ev{ ProtocolID::WR_ADD_ANIMATE_OBJ_ACK };
 			ev.objID = msg.playerID;

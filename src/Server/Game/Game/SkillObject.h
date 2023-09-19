@@ -108,6 +108,9 @@ private:
 	GameObject* m_owner = nullptr;
 
 	bool m_flagPlayer = false;
+
+
+	bool m_pillarCollisionSound = false;
 };
 
 

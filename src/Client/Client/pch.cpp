@@ -2,8 +2,8 @@
 
 std::wstring serverIP_Address{};
 std::wstring userName{ L"Player" };
-bool playMusic{ false };
-bool playSound{ false };
+bool playMusic{ true };
+bool playSound{ true };
 
 void PrintVec3(const Vec3& v)
 {

@@ -57,7 +57,7 @@ void ParticleObject::ServerMessage_Init()
 
 void ParticleObject::ServerMessage_Release()
 {
-	//for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
 	{
 		game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
 		ev.objID = m_id;

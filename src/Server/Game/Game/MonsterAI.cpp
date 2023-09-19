@@ -156,10 +156,13 @@ void MonsterAI::QuatUpdateForClient()
 	//전송.
 	m_monster->m_rotation = q;
 
-	game::TimerEvent ev{ ProtocolID::WR_MONSTER_QUAT_ACK };
-	ev.objID = m_monster->m_id;
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_MONSTER_QUAT_ACK };
+		ev.objID = m_monster->m_id;
 
-	MSG_HANDLER->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
+	}
 }
 
 physx::PxGeometry* MonsterAI::GetRequestedSkillGeometry(std::string schedule)

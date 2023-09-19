@@ -302,7 +302,7 @@ void Scene_Test::CreateUICamera(std::shared_ptr<CScene> pScene)
 			meshRenderer->SetMaterial(material);
 		}
 		obj->AddComponent(meshRenderer);
-		pScene->AddGameObject(obj);
+		//pScene->AddGameObject(obj);
 	}
 #pragma endregion
 }
@@ -3548,7 +3548,7 @@ void Scene_Test::AddEffectTextures()
 		}
 	}
 
-	effect.speed = 0.004f;
+	effect.speed = 0.003f;
 	effect.scale = Vec3{ 3000.f };
 
 	for (int32_t i = 0; i < 1; ++i)

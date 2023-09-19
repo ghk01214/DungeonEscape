@@ -154,10 +154,13 @@ void Monster::GetDamaged(int32_t damage)
 {
 	m_hp -= damage;
 
-	game::TimerEvent ev{ ProtocolID::WR_MONSTER_HP_ACK };
-	ev.objID = m_id;
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_MONSTER_HP_ACK };
+		ev.objID = m_id;
 
-	MSG_HANDLER->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
+	}
 }
 
 void Monster::ServerMessage_Transform()

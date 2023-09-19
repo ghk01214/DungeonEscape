@@ -56,8 +56,10 @@ void Golem::Init()
 
 void Golem::Update(double timeDelta)
 {
+	SendChangedStateAgain();
+
 	m_golemAI->Update(timeDelta);
-	if(m_overlapObject)
+	if (m_overlapObject)
 		m_overlapObject->Update();
 
 	CheckState();				//State를 진입할 때
@@ -297,7 +299,7 @@ GolemAI* Golem::GetAI()
 void Golem::Pattern_Attack1()
 {
 	//AddSkillSize에서 줬던 이름으로
-	if(m_overlapObject)
+	if (m_overlapObject)
 		m_overlapObject->Activate("ATTACK1");
 
 }
@@ -479,4 +481,19 @@ void Golem::ServerMessage_SendRenderLandEffect(const Vec3& pos)
 	ev.effectPos = pos;
 
 	MSG_HANDLER->PushSendMessage(ev);
+}
+
+void Golem::SendChangedStateAgain()
+{
+	if (m_sendState <= 0)
+		return;
+
+	game::TimerEvent ev{ ProtocolID::WR_CHANGE_STATE_ACK };
+	ev.objID = m_id;
+	ev.state = m_currState;
+	ev.objType = m_objType;
+
+	MSG_HANDLER->PushSendMessage(ev);
+
+	--m_sendState;
 }
