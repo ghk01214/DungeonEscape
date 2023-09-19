@@ -3663,7 +3663,7 @@ void Scene_Test::AddEffectTextures()
 	effect.speed = 0.003f;
 	effect.scale = Vec3{ 100.f };
 
-	for (int32_t i = 0; i < 10; ++i)
+	for (int32_t i = 0; i < 20; ++i)
 	{
 		effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Spark_Particle", effect.speed);
 
@@ -4682,10 +4682,10 @@ void Scene_Test::CreateSparkParticleObject(network::CPacket& packet)
 
 		//if (m_sparkParticleEffectCurrentIndex == m_sparkParticleEffectStartIndex + 10)
 		//	m_sparkParticleEffectCurrentIndex = m_spiralEffectStartIndex;
-		script->SetEffectIndex(m_fireballEffectCurrentIndex++);
+		script->SetEffectIndex(m_sparkParticleEffectCurrentIndex++);
 
-		if (m_fireballEffectCurrentIndex == m_fireballEffectStartIndex + 52)
-			m_fireballEffectCurrentIndex = m_fireballEffectStartIndex;
+		if (m_sparkParticleEffectCurrentIndex == m_sparkParticleEffectStartIndex + 20)
+			m_sparkParticleEffectCurrentIndex = m_sparkParticleEffectStartIndex;
 		//script->SetTexture(textures);	// ?띿뒪爾??뺣낫
 		//script->SetPos(Vec3{ 0.f });
 		//script->SetSize(Vec2{ 1000.f });
