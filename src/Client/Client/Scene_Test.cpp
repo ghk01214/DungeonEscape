@@ -583,23 +583,23 @@ void Scene_Test::CreateMap(std::shared_ptr<CScene> pScene)
 
 
 
-	shared_ptr<CGameObject> obj = make_shared<CGameObject>();
-	obj->AddComponent(make_shared<Transform>());
-	obj->GetTransform()->SetLocalScale(Vec3(2000.f, 1.f, 2000.f));
-	obj->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
-	obj->SetStatic(true);
-	shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
-	{
-		shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCubeMesh();
-		meshRenderer->SetMesh(mesh);
-	}
-	{
-		shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"GameObject")->Clone();
-		material->SetInt(0, 0);
-		meshRenderer->SetMaterial(material);
-	}
-	obj->AddComponent(meshRenderer);
-	pScene->AddGameObject(obj);
+	//shared_ptr<CGameObject> obj = make_shared<CGameObject>();
+	//obj->AddComponent(make_shared<Transform>());
+	//obj->GetTransform()->SetLocalScale(Vec3(2000.f, 1.f, 2000.f));
+	//obj->GetTransform()->SetLocalPosition(Vec3(0.f, 0.f, 0.f));
+	//obj->SetStatic(true);
+	//shared_ptr<MeshRenderer> meshRenderer = make_shared<MeshRenderer>();
+	//{
+	//	shared_ptr<Mesh> mesh = GET_SINGLE(Resources)->LoadCubeMesh();
+	//	meshRenderer->SetMesh(mesh);
+	//}
+	//{
+	//	shared_ptr<Material> material = GET_SINGLE(Resources)->Get<Material>(L"GameObject")->Clone();
+	//	material->SetInt(0, 0);
+	//	meshRenderer->SetMaterial(material);
+	//}
+	//obj->AddComponent(meshRenderer);
+	//pScene->AddGameObject(obj);
 }
 
 void Scene_Test::CreateSkill(std::shared_ptr<CScene> pScene)

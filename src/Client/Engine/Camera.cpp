@@ -37,9 +37,16 @@ void Camera::FinalUpdate()
 	else
 		m_matProjection = ::XMMatrixOrthographicLH(m_width * m_scale, m_height * m_scale, m_near, m_far);
 
+	Matrix matView = Camera::S_MatView;
+	Matrix matProjection = Camera::S_MatProjection;
+
 	Camera::S_MatView = m_matView;
 	Camera::S_MatProjection = m_matProjection;
+
 	m_frustum.FinalUpdate();
+
+	Camera::S_MatView = matView;
+	Camera::S_MatProjection = matProjection;
 }
 
 void Camera::SortGameObject()
@@ -93,7 +100,6 @@ void Camera::SortGameObject()
 		if (IsCulled(gameObject->GetLayerIndex()))
 			continue;
 
-		gameObject->SetCheckFrustum(true);
 		if (gameObject->GetCheckFrustum())
 		{
 			if (m_frustum.ContainsSphere(

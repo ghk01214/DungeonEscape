@@ -68,6 +68,14 @@ void FBXMapLoader::MakeMap(void)
 
         for (auto& objectInfo : info.second)
         {
+            if (
+                (info.first == L"SM_Banner_1") ||
+                (info.first == L"SM_Banner_2") ||
+                (info.first == L"SM_Banner_3") ||
+                (info.first == L"SM_Banner_4")
+                )
+                continue;
+
             // 오브젝트 생성
             shared_ptr<CGameObject> gameObject = make_shared<CGameObject>();
 
@@ -109,6 +117,8 @@ void FBXMapLoader::MakeMap(void)
 
 
             gameObject->SetName(info.first);
+
+
 
             // 여기서 그림자 적용을 할 static mesh 이름 설정
             if (
@@ -165,6 +175,7 @@ void FBXMapLoader::MakeMap(void)
                 else
                     gameObject->GetMeshRenderer()->GetMaterial()->SetInt(0, 1);
 
+                gameObject->SetCheckFrustum(true);
                 m_MapObjectInfo.push_back(gameObject);
             }
             else
