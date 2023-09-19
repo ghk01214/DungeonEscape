@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Loader.h"
 #include "Resources.h"
 #include "MeshData.h"
@@ -238,6 +238,8 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 
 	LOAD_TEXTURE(L"Progress Open", L"..\\Resources\\Texture\\UI\\Button\\Info.png");
 	LOAD_TEXTURE(L"Progress Open_selected", L"..\\Resources\\Texture\\UI\\Button\\Info_selected.png");
+	LOAD_TEXTURE(L"Question", L"..\\Resources\\Texture\\UI\\Button\\Question.png");
+	LOAD_TEXTURE(L"Question_selected", L"..\\Resources\\Texture\\UI\\Button\\Question_selected.png");
 	LOAD_TEXTURE(L"Phase1", L"..\\Resources\\Texture\\UI\\In Game\\Phase1.png");
 	LOAD_TEXTURE(L"Phase2", L"..\\Resources\\Texture\\UI\\In Game\\Phase2.png");
 	LOAD_TEXTURE(L"Phase3", L"..\\Resources\\Texture\\UI\\In Game\\Phase3.png");
@@ -248,6 +250,9 @@ HRESULT CLoader::Loading_GamePlayLevel_UI()
 
 	LOAD_TEXTURE(L"Nana Progress", L"..\\Resources\\Texture\\UI\\In Game\\Nana Progress.png");
 	LOAD_TEXTURE(L"Mistic Progress", L"..\\Resources\\Texture\\UI\\In Game\\Mistic Progress.png");
+
+	LOAD_TEXTURE(L"Nana Gimmick Tutorial", L"..\\Resources\\Texture\\UI\\In Game\\Nana Gimmick Tutorial.png");
+	LOAD_TEXTURE(L"Mistic Gimmick Tutorial", L"..\\Resources\\Texture\\UI\\In Game\\Mistic Gimmick Tutorial.png");
 #pragma endregion
 
 	return S_OK;

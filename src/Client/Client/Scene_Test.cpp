@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -100,6 +100,7 @@ void Scene_Test::Update()
 	RenderFont();
 	RenderPortalEffect();
 	ShowBossTutorial();
+	ShowGimmickTutorial();
 	ChangeBossTutorialPage();
 	ChangeProgress();
 	FadeInEnding();
@@ -494,6 +495,7 @@ void Scene_Test::CreateUI(shared_ptr<CScene> pScene, server::FBX_TYPE player)
 	CreateProgressUI(player);
 
 	CreatePopUp();
+	CreateGimmickTutorial(player);
 }
 
 #pragma region [CLIENT]
@@ -1989,6 +1991,36 @@ void Scene_Test::FadeInEnding()
 		m_showEnding = true;
 	}
 }
+
+void Scene_Test::ShowGimmickTutorial()
+{
+	if (m_gimmickTutorialButtonScript->IsOpenTutorial() == true)
+	{
+		m_gimmickTutorialButtonScript->SetVisible(false);
+		m_gimmickTutorialObject->GetUI()->SetVisible(true);
+		m_closeButton->SetVisible(true);
+		m_renderFont = false;
+
+		return;
+	}
+
+#ifndef MOVEMENT
+	if (m_cinematicScript->IsPlaying() == true)
+		return;
+
+	if (m_cinematicScript->GetCurrentScene() != Cinematic_Script::PILLAR_FOUND)
+		return;
+#endif
+
+	if (m_showGimmickTutorial == false)
+		return;
+
+	m_gimmickTutorialButtonScript->SetVisible(false);
+	m_gimmickTutorialButtonScript->SetOpenTutorialFlag(true);
+	m_gimmickTutorialObject->GetUI()->SetVisible(true);
+	m_closeButton->SetVisible(true);
+	m_renderFont = false;
+}
 #pragma endregion
 
 #pragma region [POP UP]
@@ -2817,6 +2849,57 @@ void Scene_Test::CreateGolemTutorial()
 	AddGameObject(obj);
 }
 
+void Scene_Test::CreateGimmickTutorial(server::FBX_TYPE player)
+{
+	CreateGimmickTutorialButton();
+	CreateGimmickTutorialImage(player);
+}
+
+void Scene_Test::CreateGimmickTutorialButton()
+{
+	std::shared_ptr<Texture> texture{ GET_TEXTURE(L"Question") };
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto pos{ GetRatio(95.f, -89.f) };
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 100.f, 100.f, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+	std::shared_ptr<GimmickTutorialUIButton_Script> script{ std::make_shared<GimmickTutorialUIButton_Script>() };
+	script->InsertTextures(texture);
+	script->InsertTextures(GET_TEXTURE(L"Question_selected"));
+	m_gimmickTutorialButtonScript = script;
+
+	obj->AddComponent(script);
+
+	AddGameObject(obj);
+}
+
+void Scene_Test::CreateGimmickTutorialImage(server::FBX_TYPE player)
+{
+	std::shared_ptr<Texture> texture{};
+	std::shared_ptr<Shader> shader{ GET_SHADER(L"Logo_texture") };
+
+	if (player == server::FBX_TYPE::NANA)
+		texture = GET_TEXTURE(L"Nana Gimmick Tutorial");
+	else if (player == server::FBX_TYPE::MISTIC)
+		texture = GET_TEXTURE(L"Mistic Gimmick Tutorial");
+
+	std::shared_ptr<CGameObject> obj{ Creator::CreatePopUpObject(texture, shader, false) };
+	obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
+
+	auto pos{ GetRatio(0.f, 0.f) };
+	auto transform{ obj->GetTransform() };
+	transform->SetLocalScale(Vec3{ 1498.f, 1020.f, 1.f });
+	transform->SetLocalPosition(Vec3{ pos.x, pos.y, 400.f });
+
+	AddGameObject(obj);
+	m_gimmickTutorialObject = obj;
+}
+
 void Scene_Test::ChangePopUpVisibility()
 {
 	if (GET_SINGLE(CInput)->GetButtonDown(KEY_TYPE::ESC) == true)
@@ -2862,6 +2945,15 @@ void Scene_Test::ChangePopUpVisibility()
 			m_progressButtonScript->SetVisible(true);
 			m_progressButtonScript->SetOpenProgressFlag(false);
 		}
+		else if (m_gimmickTutorialButtonScript->IsOpenTutorial() == true)
+		{
+			m_gimmickTutorialButtonScript->SetVisible(true);
+			m_gimmickTutorialButtonScript->SetOpenTutorialFlag(false);
+			m_gimmickTutorialObject->GetUI()->SetVisible(false);
+			m_closeButton->SetVisible(false);
+			m_closeButton->SetClosePopUpFlag(false);
+			m_showGimmickTutorial = false;
+		}
 		else
 		{
 			m_openSetting = !m_openSetting;
@@ -2902,6 +2994,11 @@ void Scene_Test::ChangePopUpVisibility()
 
 		m_weeperTutorialScript->GetUI()->SetVisible(false);
 		m_golemTutorialScript->GetUI()->SetVisible(false);
+
+		m_gimmickTutorialButtonScript->SetVisible(true);
+		m_gimmickTutorialButtonScript->SetOpenTutorialFlag(false);
+		m_gimmickTutorialObject->GetUI()->SetVisible(false);
+		m_showGimmickTutorial = false;
 
 		m_closeButton->SetClosePopUpFlag(false);
 		m_openSetting = false;
@@ -4421,6 +4518,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 			m_oneTimeDialogueScript["PILLAR_HINT"]->StartRender(3.f, 5.f);
+			m_showGimmickTutorial = true;
 		}
 		break;
 		// 筌롫????쇰퓠 疫꿸퀡維????뤿선筌왖????
@@ -4430,6 +4528,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 				return;
 
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
+			m_gimmickTutorialButtonScript->SetVisible(false);
 		}
 		break;
 		// ???쑆??? ?대???첎???甕곗럥猷?甕곗럩???봔??롫뮉 ??

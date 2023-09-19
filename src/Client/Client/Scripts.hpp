@@ -37,6 +37,7 @@
 #include "ProgressUIButton_Script.h"
 #include "ProgressImage_Script.h"
 #include "ProgressPlayerIcon_Script.h"
+#include "GimmickTutorialUIButton_Script.h"
 
 #include "InfoUI_Script.h"
 #include "PortalUI_Script.h"

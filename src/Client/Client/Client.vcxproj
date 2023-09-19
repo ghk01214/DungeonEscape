@@ -161,6 +161,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GimmickTutorialUIButton_Script.h" />
     <ClInclude Include="PlayerShadow.h" />
     <ClInclude Include="ProgressImage_Script.h" />
     <ClInclude Include="Bar_Script.h" />
@@ -230,6 +231,7 @@
     <ClInclude Include="WeeperEffect_Script.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GimmickTutorialUIButton_Script.cpp" />
     <ClCompile Include="PlayerShadow.cpp" />
     <ClCompile Include="ProgressImage_Script.cpp" />
     <ClCompile Include="Bar_Script.cpp" />

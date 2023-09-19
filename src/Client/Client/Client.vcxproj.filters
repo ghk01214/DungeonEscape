@@ -225,6 +225,9 @@
     <Filter Include="소스 파일\Objects\11. Lights\PlayerShadow">
       <UniqueIdentifier>{2217c69e-caa7-4818-9087-e4aeac1f60d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\01. UI\In Game\Gimmick Tutorial">
+      <UniqueIdentifier>{67558348-1fd2-49be-adad-d6d44fa7ec29}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -428,6 +431,9 @@
     <ClInclude Include="PlayerShadow.h">
       <Filter>소스 파일\Objects\11. Lights\PlayerShadow</Filter>
     </ClInclude>
+    <ClInclude Include="GimmickTutorialUIButton_Script.h">
+      <Filter>소스 파일\Objects\01. UI\In Game\Gimmick Tutorial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -625,6 +631,9 @@
     </ClCompile>
     <ClCompile Include="PlayerShadow.cpp">
       <Filter>소스 파일\Objects\11. Lights\PlayerShadow</Filter>
+    </ClCompile>
+    <ClCompile Include="GimmickTutorialUIButton_Script.cpp">
+      <Filter>소스 파일\Objects\01. UI\In Game\Gimmick Tutorial</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -167,6 +167,10 @@ private:
 	void CreateWeeperTutorial();
 	void CreateGolemTutorial();
 
+	void CreateGimmickTutorial(server::FBX_TYPE player);
+	void CreateGimmickTutorialButton();
+	void CreateGimmickTutorialImage(server::FBX_TYPE player);
+
 private:
 	void ChangePopUpVisibility();
 	void ChangeVolume();
@@ -179,6 +183,7 @@ private:
 	void ChangeBossTutorialPage();
 	void ChangeProgress();
 	void FadeInEnding();
+	void ShowGimmickTutorial();
 
 private:
 	void SendKeyInput();
@@ -305,11 +310,16 @@ private:
 	std::shared_ptr<class ProgressPlayerIcon_Script> m_progressPlayerIconScript;
 	std::unordered_map<MAP_TYPE, std::shared_ptr<class ProgressImage_Script>> m_areaIconScript;
 
+	std::shared_ptr<CGameObject> m_gimmickTutorialObject;
+	std::shared_ptr<class GimmickTutorialUIButton_Script> m_gimmickTutorialButtonScript;
+
 	bool m_openSetting;
 	bool m_showWeeperTutorial;
 	bool m_showGolemTutorial;
 
 	bool m_progressFadeIn;
+
+	bool m_showGimmickTutorial;
 
 private:
 	std::shared_ptr<bool> m_recvFadeIn;
