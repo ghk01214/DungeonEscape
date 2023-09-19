@@ -1,6 +1,8 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Frustum.h"
 #include "Camera.h"
+
+#include <iostream>
 
 void Frustum::FinalUpdate()
 {
@@ -26,6 +28,18 @@ void Frustum::FinalUpdate()
 	m_planes[PLANE_DOWN] = ::XMPlaneFromPoints(worldPos[7], worldPos[3], worldPos[6]); // CCW
 	m_planes[PLANE_LEFT] = ::XMPlaneFromPoints(worldPos[4], worldPos[0], worldPos[7]); // CW
 	m_planes[PLANE_RIGHT] = ::XMPlaneFromPoints(worldPos[5], worldPos[6], worldPos[1]); // CCW
+
+
+
+	Vec3 pos = Camera::S_MatView.Translation();
+	//cout << pos.x << " " << pos.y << " " << pos.z << endl;
+
+	//cout << "x : ";
+	//for (auto& pos : m_planes)
+	//{
+	//	cout << pos.x << " ";
+	//}
+	//cout << endl;
 }
 
 bool Frustum::ContainsSphere(const Vec3& pos, float radius)

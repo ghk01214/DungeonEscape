@@ -33,14 +33,15 @@ void Light::FinalUpdate()
 
 	static float length2 = 7600;
 
-	/*if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUMPAD_1))
+	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUMPAD_1))
 	{
 		length2 -= DELTA_TIME * 2000.f;
 	}
 	if (GET_SINGLE(CInput)->GetButton(KEY_TYPE::NUMPAD_2))
 	{
 		length2 += DELTA_TIME * 2000.f;
-	}*/
+	}
+	//std::cout << "Light::FinalUpdate() length2 : " << length2 << std::endl;
 
 
 	Vec3 vPos{};
