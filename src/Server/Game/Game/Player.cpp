@@ -806,13 +806,16 @@ void Player::PlayerPattern_ShootBall()
 		break;
 		case ATK3:
 		{
-			Vec3 gimmik1PilliarPosition = Vec3(0, 0, 0);				//실제 기둥 위치 입력. Vec3(0,0,0)을 수정해라.
-			physx::PxVec3 pos1 = TO_PX3(GetControllerPosition());		//플레이어 위치
-			physx::PxVec3 pos2 = TO_PX3(gimmik1PilliarPosition);
+			physx::PxVec3 playerPos = TO_PX3(GetControllerPosition());
 
-			if ((pos1 - pos2).magnitude() > 800)						//기믹기둥과 플레이어 사이 거리가 800 이상일 경우 메테오 호출X
-				return;													//800이라는 값을 수정해라.
+			if (playerPos.x < 4750.f || playerPos.x > 100860.f)
+				return;
 
+			if (playerPos.y < -2790.f || playerPos.y > 210.f)
+				return;
+
+			if (playerPos.z < 19920.f || playerPos.z > 22420.f)
+				return;
 
 			if (m_meteorAvailable)
 			{
