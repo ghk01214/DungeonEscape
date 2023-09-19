@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Scene_Test.h"
 
 #pragma region [ENGINE]
@@ -4580,6 +4580,7 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 			m_golemTutorialScript->SetPage(0);
 		}
 		break;
+		// 엔딩 컷신
 		case server::CUT_SCENE_TYPE::SCENE7:
 		{
 			if (m_cinematicScript->IsPlaying() == true)
@@ -4587,6 +4588,11 @@ void Scene_Test::PlayCutScene(network::CPacket& packet)
 
 			m_cinematicScript->PlayCinematic(magic_enum::enum_integer(sceneType));
 
+			if (playMusic == true)
+			{
+				GET_SINGLE(CSoundMgr)->StopBGMSound();
+				GET_SINGLE(CSoundMgr)->PlayBGM(L"Ending.ogg");
+			}
 			/*for (auto& obj : GET_PLAYER)
 			{
 				Matrix matWorld{ obj->GetTransform()->GetWorldMatrix() };
