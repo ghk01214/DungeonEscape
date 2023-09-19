@@ -351,6 +351,18 @@ void SkillObject::ServerMessage_Effect(Vec3 pos)
 	}
 }
 
+void SkillObject::ServerMessage_Sound(int32_t id, server::SOUND_TYPE type)
+{
+	//for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
+		ev.objID = id;
+		ev.state = magic_enum::enum_integer(type);
+
+		MSG_HANDLER->PushSendMessage(ev);
+	}
+}
+
 bool SkillObject::IsPlayerSkill()
 {
 	if (m_flagPlayer)
@@ -488,8 +500,9 @@ void SkillObject::HandlePlayerSkillCollision()
 
 					if (!m_pillarCollisionSound)
 					{
-						//std::cout << "사운드 출력" << std::endl;
 						m_pillarCollisionSound = true;
+
+						ServerMessage_Sound(collider->GetOwnerObject()->GetID(), server::SOUND_TYPE::LIGHT_EXPLOSION);
 					}
 				}
 				break;

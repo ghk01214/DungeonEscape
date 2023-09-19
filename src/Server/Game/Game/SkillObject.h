@@ -65,6 +65,7 @@ public:
 	void ServerMessage_Hit(Player* player);
 	void ServerMessage_Remove();
 	void ServerMessage_Effect(Vec3 pos);
+	void ServerMessage_Sound(int32_t id, server::SOUND_TYPE type);
 
 public:
 	void HandlePlayerSkillCollision();							//플레이어 스킬의 충돌 판단	(피격 : 몬스터)

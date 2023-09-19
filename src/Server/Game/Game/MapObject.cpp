@@ -156,6 +156,8 @@ void MapObject::Gimmik2SoundAlram()
 		{
 			m_gimmik2Alarm = true;
 			//기믹 2번 : 공이 벽과 충돌한 사운드 출력
+
+			ServerMessage_Sound(collider->GetOwnerObject()->GetID(), server::SOUND_TYPE::ROCK_SCATTER);
 		}
 	}
 }
@@ -238,6 +240,15 @@ void MapObject::ServerMessage_Transform()
 	game::TimerEvent ev{ ProtocolID::WR_TRANSFORM_ACK };
 	ev.objID = m_id;
 	ev.objType = m_objType;
+
+	MSG_HANDLER->PushSendMessage(ev);
+}
+
+void MapObject::ServerMessage_Sound(int32_t id, server::SOUND_TYPE type)
+{
+	game::TimerEvent ev{ ProtocolID::WR_CHANGE_SOUND_ACK };
+	ev.objID = id;
+	ev.state = magic_enum::enum_integer(type);
 
 	MSG_HANDLER->PushSendMessage(ev);
 }

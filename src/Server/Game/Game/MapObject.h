@@ -32,6 +32,7 @@ public:
 	void ServerMessage_Release();							//SetRemoveReserved()이후 바로 호출해야하는 함수
 
 	void ServerMessage_Transform();
+	void ServerMessage_Sound(int32_t id, server::SOUND_TYPE type);
 
 public:
 	void ApplyRequestedLayers();

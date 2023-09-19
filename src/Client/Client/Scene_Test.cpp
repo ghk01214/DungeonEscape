@@ -3953,9 +3953,6 @@ void Scene_Test::RemoveObject(network::CPacket& packet)
 			m_overlappedObjects.erase(id);
 			RemoveNetworkObject(removeObjects);
 			GET_NETWORK->RemoveNetworkObject(id);
-
-			if (playSound == true)
-				GET_SINGLE(CSoundMgr)->PlayEffect(L"Light Explosion.wav");
 		}
 		break;
 		case server::OBJECT_TYPE::WEEPER_CAST1_BALL:
@@ -4258,6 +4255,14 @@ void Scene_Test::ChangeSound(network::CPacket& packet)
 			if (playSound == true)
 			{
 				GET_SINGLE(CSoundMgr)->PlayEffect(L"Landing.wav");
+			}
+		}
+		break;
+		case server::SOUND_TYPE::ROCK_SCATTER:
+		{
+			if (playSound == true)
+			{
+				GET_SINGLE(CSoundMgr)->PlayEffect(L"Rock Scatter.ogg");
 			}
 		}
 		break;
