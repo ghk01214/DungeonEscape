@@ -261,12 +261,14 @@ void WeeperAI::DamageCheck()
 			EventHandler::GetInstance()->DeleteEvent("CAST2_VULNERABLE_OFF");
 			Cast2Vulnerable_OFF();
 
+			for (int32_t i = 0; i < SEND_AGAIN; ++i)
+			{
+				game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
+				ev.objID = m_weeper->GetID();
+				ev.integer = 0;
 
-			game::TimerEvent ev{ ProtocolID::WR_COUNTER_EFFECT_ACK };
-			ev.objID = m_weeper->GetID();
-			ev.integer = 0;
-
-			MSG_HANDLER->PushSendMessage(ev);
+				MSG_HANDLER->PushSendMessage(ev);
+			}
 		}
 		else if (m_weeper->GetState() == Weeper::WEEPER_STATE::CAST4_LOOP)
 		{

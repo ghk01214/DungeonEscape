@@ -157,11 +157,14 @@ void MapObject::ServerMessage_Init(bool scatterRock, bool boulder)
 		m_fbxType = server::FBX_TYPE::ROLLING_ROCK;
 		m_objType = server::OBJECT_TYPE::BOULDER;
 
-		game::TimerEvent ev{ ProtocolID::WR_ADD_OBJ_ACK };
-		ev.objID = m_id;
-		ev.objType = m_objType;
+		for (int32_t i = 0; i < SEND_AGAIN; ++i)
+		{
+			game::TimerEvent ev{ ProtocolID::WR_ADD_OBJ_ACK };
+			ev.objID = m_id;
+			ev.objType = m_objType;
 
-		MSG_HANDLER->PushSendMessage(ev);
+			MSG_HANDLER->PushSendMessage(ev);
+		}
 	}
 	else
 	{			// 골렘 방 4개 돌
@@ -183,11 +186,14 @@ void MapObject::ServerMessage_Init(bool scatterRock, bool boulder)
 
 void MapObject::ServerMessage_Release()
 {
-	game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
-	ev.objID = m_id;
-	ev.objType = m_objType;
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_REMOVE_ACK };
+		ev.objID = m_id;
+		ev.objType = m_objType;
 
-	MSG_HANDLER->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
+	}
 }
 
 void MapObject::ServerMessage_Transform()

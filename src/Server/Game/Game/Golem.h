@@ -97,6 +97,7 @@ public:
 
 private:
 	void ServerMessage_SendRenderLandEffect(const Vec3& pos);
+	void SendChangedStateAgain();
 
 private:
 	//std::unordered_map<GOLEM_SCHEDULE, TriggerObject*> m_patternTriggerDict;

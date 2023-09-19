@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TriggerObject2.h"
 #include "PhysDevice.h"
 #include "physx_utils.h"
@@ -101,10 +101,7 @@ void TriggerObject2::Handle_Overlap()
 
 		if (m_attribute < TRIGGERATTRIBUTE::GUIDELINE1)
 		{
-			for (int32_t i = 0; i < SEND_AGAIN; ++i)
-			{
-				ServerSendInteractionCountMessage();
-			}
+			ServerSendInteractionCountMessage();
 		}
 
 		if (m_attribute == TRIGGERATTRIBUTE::CUTSCENE4)
@@ -135,7 +132,7 @@ void TriggerObject2::SetPortalDestination()
 
 	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK1)] = OFFTRACK1_EXIT;
 
-	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK_DANCE)] = Vec3(0,0,0);		//이건 안씀. 수정할 필요 없다.
+	m_offTrackDestination[static_cast<int>(TRIGGERATTRIBUTE::OFFTRACK_DANCE)] = Vec3(0, 0, 0);		//이건 안씀. 수정할 필요 없다.
 
 
 	//여기서 포탈 1, 포탈2, 등의 이동 위치를 설정한다.
@@ -150,7 +147,7 @@ void TriggerObject2::AttributePortal(double timeDelta)
 	string name = string(magic_enum::enum_name(m_attribute));
 
 	if (m_duplicates.size() < 2)
-	//if (m_duplicates.empty())
+		//if (m_duplicates.empty())
 	{
 		EventHandler::GetInstance()->DeleteEvent(name);
 		return;
@@ -490,11 +487,14 @@ void TriggerObject2::ServerSendInMessage(Player* player)
 
 void TriggerObject2::ServerSendTriggerInMessage(Player* player, server::TRIGGER_INTERACTION_TYPE triggerType)
 {
-	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
-	ev.objID = player->GetID();
-	ev.integer = magic_enum::enum_integer(triggerType);
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+		ev.objID = player->GetID();
+		ev.integer = magic_enum::enum_integer(triggerType);
 
-	MSG_HANDLER->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
+	}
 }
 
 void TriggerObject2::ServerSendPortalOutMessage()
@@ -502,50 +502,59 @@ void TriggerObject2::ServerSendPortalOutMessage()
 	//조건을 확인하고 이에 따라 서버 메시지를 전송한다.
 	//Detect함수에서 조건 확인 후 호출
 
-	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
-	ev.objID = m_id;
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_ACK };
+		ev.objID = m_id;
 
-	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
-		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL2)
-		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)
-		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
-		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
-		ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT);
+		if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
+			ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_OUT);
+		else if (m_attribute == TRIGGERATTRIBUTE::PORTAL2)
+			ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_OUT);
+		else if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)
+			ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_OUT);
+		else if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
+			ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_OUT);
+		else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
+			ev.integer = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_OUT);
 
-	MSG_HANDLER->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
+	}
 }
 
 void TriggerObject2::ServerSendInteractionCountMessage()
 {
-	game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK };
-	ev.objID = m_id;
-	ev.integer = m_currentCnt;
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_TRIGGER_INTERACTION_COUNT_ACK };
+		ev.objID = m_id;
+		ev.integer = m_currentCnt;
 
-	if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL2)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN);
-	else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
-		ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
+		if (m_attribute == TRIGGERATTRIBUTE::PORTAL1)
+			ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL1_IN);
+		else if (m_attribute == TRIGGERATTRIBUTE::PORTAL2)
+			ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL2_IN);
+		else if (m_attribute == TRIGGERATTRIBUTE::PORTAL3)
+			ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL3_IN);
+		else if (m_attribute == TRIGGERATTRIBUTE::PORTAL4)
+			ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL4_IN);
+		else if (m_attribute == TRIGGERATTRIBUTE::PORTAL5)
+			ev.state = magic_enum::enum_integer(server::TRIGGER_INTERACTION_TYPE::PORTAL5_IN);
 
-	MSG_HANDLER->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
+	}
 }
 
 void TriggerObject2::ServerSendCutSceneMessage(server::CUT_SCENE_TYPE cutSceneType)
 {
-	game::TimerEvent ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
-	ev.objID = m_id;
-	ev.integer = magic_enum::enum_integer(cutSceneType);
+	for (int32_t i = 0; i < SEND_AGAIN; ++i)
+	{
+		game::TimerEvent ev{ ProtocolID::WR_PLAY_CUT_SCENE_ACK };
+		ev.objID = m_id;
+		ev.integer = magic_enum::enum_integer(cutSceneType);
 
-	MSG_HANDLER->PushSendMessage(ev);
+		MSG_HANDLER->PushSendMessage(ev);
+	}
 }
 
 bool TriggerObject2::CheckArtifactDestoryed()
