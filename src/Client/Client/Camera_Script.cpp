@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Camera_Script.h"
 
 #include <Transform.h>
@@ -236,13 +236,13 @@ void Camera_Basic::LateUpdate()
 			// 마우스 왼쪽 버튼을 누르고 있을 경우
 			//if (GET_SINGLE(CInput)->Button_Pressing(CInput::DIMB_LBUTTON))
 			{
-				long MouseMoveY = GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_Y);
+				/*long MouseMoveY = GET_SINGLE(CInput)->Get_DIMMoveState(CInput::DIMM_Y);
 				m_rotationAxisX += MouseMoveY * DELTA_TIME * 5.f;
 
 				if (m_rotationAxisX < -10.f)
 					m_rotationAxisX = -10.f;
 				else if (m_rotationAxisX > 0.f)
-					m_rotationAxisX = 0.f;
+					m_rotationAxisX = 0.f;*/
 			}
 		}
 		// Y축 회전
