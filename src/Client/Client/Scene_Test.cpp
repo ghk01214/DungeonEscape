@@ -3674,6 +3674,11 @@ void Scene_Test::AddEffectTextures()
 			m_billboardInfo[server::EFFECT_TYPE::SPARK_PARTICLE] = effect;
 		}
 	}
+
+	effect.speed = 0.003f;
+	effect.scale = Vec3{ 2000.f };
+	effect.index = GET_SINGLE(EffectManager)->CreateBillBoard(L"Effect_Hit", effect.speed);
+	m_billboardInfo[server::EFFECT_TYPE::HIT] = effect;
 #pragma endregion
 #pragma region [EFFECT]
 	for (int32_t i = 0; i < 4; ++i)

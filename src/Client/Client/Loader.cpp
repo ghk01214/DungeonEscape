@@ -274,6 +274,8 @@ HRESULT CLoader::Loading_GamePlayLevel_Effect()
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Fire", L"..\\Resources\\Texture\\Effect\\Fire\\Fire.png", 64);
 
+	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Hit", L"..\\Resources\\Texture\\Effect\\Hit\\tile.png", 4);
+
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_In_Dispersal", L"..\\Resources\\Texture\\Effect\\In Dispersal\\tile.png", 33);
 
 	GET_SINGLE(Resources)->LoadEffectTextures(L"Effect_Implode_Orange_Brown", L"..\\Resources\\Texture\\Effect\\Implode\\orange brown\\tile.png", 29);

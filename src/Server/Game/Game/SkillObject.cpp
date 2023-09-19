@@ -351,6 +351,16 @@ void SkillObject::ServerMessage_Effect(Vec3 pos)
 	}
 }
 
+void SkillObject::ServerMessage_Effect(Vec3 pos, server::EFFECT_TYPE type)
+{
+	game::TimerEvent ev{ ProtocolID::WR_RENDER_EFFECT_ACK };
+	ev.objID = m_id;
+	ev.state = magic_enum::enum_integer(type);
+	ev.effectPos = pos;
+
+	MSG_HANDLER->PushSendMessage(ev);
+}
+
 void SkillObject::ServerMessage_Sound(int32_t id, server::SOUND_TYPE type)
 {
 	//for (int32_t i = 0; i < SEND_AGAIN; ++i)
@@ -502,6 +512,7 @@ void SkillObject::HandlePlayerSkillCollision()
 					{
 						m_pillarCollisionSound = true;
 
+						ServerMessage_Effect(GetTransform()->GetPosition(), server::EFFECT_TYPE::HIT);
 						ServerMessage_Sound(collider->GetOwnerObject()->GetID(), server::SOUND_TYPE::LIGHT_EXPLOSION);
 					}
 				}
