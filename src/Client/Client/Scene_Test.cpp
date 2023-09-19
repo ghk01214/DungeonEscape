@@ -4174,9 +4174,9 @@ void Scene_Test::PlayEffect(network::CPacket& packet)
 		effectPos -= look * 500.f;
 		effectPos.y -= 50.f;
 
-		CreateSkill(L"Yellow", effectPos, Vec3{ 900.f }, 1.f, 1.f);
-		CreateSkill(L"White", effectPos, Vec3{ 800.f }, 1.f, 2.f);
-		CreateSkill(L"Red", effectPos, Vec3{ 740.f }, 1.f, 3.5f);
+		CreateSkill(L"Yellow", effectPos, Vec3{ 600.f }, 1.f, 1.f);
+		CreateSkill(L"White", effectPos, Vec3{ 500.f }, 1.f, 2.f);
+		CreateSkill(L"Red", effectPos, Vec3{ 440.f }, 1.f, 3.5f);
 
 		if (playSound == true)
 			GET_SINGLE(CSoundMgr)->PlayEffect(L"Spell Explosion.ogg");
