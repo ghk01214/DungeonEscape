@@ -50,6 +50,10 @@ void Player_Script::Start()
 void Player_Script::Update(void)
 {
 	ParsePackets();
+
+
+	
+	//cout << GetTransform()->GetWorldMatrix().Translation().y << endl;
 }
 
 void Player_Script::LateUpdate()
@@ -197,7 +201,7 @@ void Player_Script::TurnPlayer(Vec3 from, Vec3 to)
 	float dot = XMVectorGetX(XMVector3Dot(vNormal1, vNormal2));
 	float angle = acosf(dot);
 
-	if (XMConvertToDegrees(angle) < 10)
+	if (XMConvertToDegrees(angle) < 20)
 		return;
 
 	if (crossProduct < 0)
@@ -263,6 +267,11 @@ void Player_Script::MovePlayerCameraLook(void)
 		// 서버에 카메라 Look 방향 전송
 		GetNetwork()->SendCameraLook(camera->GetTransform()->GetLook());
 	}
+
+
+	Vec3 pLook = transform->GetLook();
+
+	//cout << pLook.x << " " << pLook.y << " " << pLook.z << endl;
 }
 
 void Player_Script::ParsePackets()

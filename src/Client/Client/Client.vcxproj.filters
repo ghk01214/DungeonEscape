@@ -216,6 +216,12 @@
     <Filter Include="소스 파일\Objects\01. UI\In Game\Progress\Player Icon">
       <UniqueIdentifier>{a7e87a48-4c26-492c-a84d-f447ccc9ddab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Objects\11. Lights">
+      <UniqueIdentifier>{f43ec7f1-2d54-4c71-8291-754ba1c04851}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Objects\11. Lights\FollowingLight">
+      <UniqueIdentifier>{38fde3d7-520a-4eda-b75a-6ff718e0fec3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -413,6 +419,9 @@
     <ClInclude Include="ProgressPlayerIcon_Script.h">
       <Filter>소스 파일\Objects\01. UI\In Game\Progress\Player Icon</Filter>
     </ClInclude>
+    <ClInclude Include="FollowingPointLight_Script.h">
+      <Filter>소스 파일\Objects\11. Lights\FollowingLight</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
@@ -604,6 +613,9 @@
     </ClCompile>
     <ClCompile Include="ProgressPlayerIcon_Script.cpp">
       <Filter>소스 파일\Objects\01. UI\In Game\Progress\Player Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="FollowingPointLight_Script.cpp">
+      <Filter>소스 파일\Objects\11. Lights\FollowingLight</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

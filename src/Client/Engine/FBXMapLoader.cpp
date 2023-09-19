@@ -106,8 +106,50 @@ void FBXMapLoader::MakeMap(void)
             // 메쉬 정보 추가
             gameObject->AddComponent(make_shared<MeshRenderer>());
 
-            std::shared_ptr<Mesh> mesh = m_assetInfo[info.first].mesh;
 
+
+            gameObject->SetName(info.first);
+
+            // 여기서 그림자 적용을 할 static mesh 이름 설정
+            if (
+                 (info.first == L"SM_Round_Pillar") ||
+                 (info.first == L"SM_Brazier_stand") ||
+                 (info.first == L"SM_Railing") ||
+                 (info.first == L"SM_Railing_Single_01") ||
+                 (info.first == L"crystal_tombstone") ||
+                 (info.first == L"stone_array") ||
+                 (info.first == L"SM_brick_01") ||
+                 (info.first == L"SM_brick_02") ||
+                 (info.first == L"SM_brick_03") ||
+                 (info.first == L"SM_brick_04") ||
+                 (info.first == L"SM_brick_05") ||
+                 (info.first == L"SM_brick_06") ||
+                 (info.first == L"SM_brick_07") ||
+                 (info.first == L"SM_Table") ||
+                 (info.first == L"SM_Chair") ||
+                 (info.first == L"SM_Stool") ||
+                 (info.first == L"SM_Brazier_02") ||
+                 (info.first == L"SM_Candle_stand_1") ||
+                 (info.first == L"SM_Bookshelf") ||
+                 (info.first == L"SM_Bar") ||
+                 (info.first == L"SM_Barrel") ||
+                 (info.first == L"SM_Beam_4") ||
+                 (info.first == L"SM_Beam_2") ||
+                 (info.first == L"SM_Barrel_Broken") ||
+                 (info.first == L"SM_Crate_Broken") ||
+                 (info.first == L"SM_Hanging_Brazier") ||
+                 (info.first == L"SM_Candle_stand_2") ||
+                 (info.first == L"SM_Metal_Chest_Open") ||
+                 (info.first == L"SM_Stairs")
+                )
+            {
+                gameObject->SetStatic(false);   // -> false로 하면 그림자 나옴, true면 적용 x
+            }
+            else
+                gameObject->SetStatic(true);
+
+
+            std::shared_ptr<Mesh> mesh = m_assetInfo[info.first].mesh;
 
             if (nullptr != mesh)
             {
@@ -125,21 +167,8 @@ void FBXMapLoader::MakeMap(void)
 
                 m_MapObjectInfo.push_back(gameObject);
             }
-
             else
                 gameObject.reset();
-
-
-            gameObject->SetName(info.first);
-
-            // 여기서 그림자 적용을 할 static mesh 이름 설정
-            if (info.first == L"SM_Round_Pillar")
-            {
-                gameObject->SetStatic(false);   // -> false로 하면 그림자 나옴, true면 적용 x
-            }
-            else 
-                gameObject->SetStatic(true);
-
         }
     }
 }

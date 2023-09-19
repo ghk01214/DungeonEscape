@@ -88,15 +88,15 @@ void Camera::SortGameObject()
 		if (IsCulled(gameObject->GetLayerIndex()))
 			continue;
 
-		if (gameObject->GetCheckFrustum())
-		{
-			if (m_frustum.ContainsSphere(
-				gameObject->GetTransform()->GetWorldPosition(),
-				gameObject->GetTransform()->GetBoundingSphereRadius()) == false)
-			{
-				continue;
-			}
-		}
+		//if (gameObject->GetCheckFrustum())
+		//{
+		//	if (m_frustum.ContainsSphere(
+		//		gameObject->GetTransform()->GetWorldPosition(),
+		//		gameObject->GetTransform()->GetBoundingSphereRadius()) == false)
+		//	{
+		//		continue;
+		//	}
+		//}
 
 		if (gameObject->GetMeshRenderer())
 		{
@@ -166,13 +166,17 @@ void Camera::SortShadowObject()
 
 	m_vecShadow.clear();
 
+	int sum = 0;
 	for (auto& gameObject : gameObjects)
 	{
 		if (gameObject->GetMeshRenderer() == nullptr)
 			continue;
 
 		if (gameObject->IsStatic())
+		{
+			++sum;
 			continue;
+		}
 
 		if (IsCulled(gameObject->GetLayerIndex()))
 			continue;
@@ -183,18 +187,14 @@ void Camera::SortShadowObject()
 				gameObject->GetTransform()->GetWorldPosition(),
 				gameObject->GetTransform()->GetBoundingSphereRadius()) == false)
 			{
-				continue;
+				//continue;
 			}
-		}
-
-		if (gameObject->GetName() != L"SM_Round_Pillar")
-		{
-			//int a = 10;
-			continue;
 		}
 
 		m_vecShadow.push_back(gameObject);
 	}
+
+	//cout << m_vecShadow.size() << endl;
 }
 
 void Camera::Render_Deferred()
