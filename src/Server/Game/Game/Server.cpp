@@ -106,7 +106,6 @@ namespace game
 
 		m_roomManager->Init();
 		m_msgHandler->Init(m_iocp);
-		//m_database->Init(m_iocp);
 		m_gameInstance->Init();
 	}
 
@@ -132,7 +131,6 @@ namespace game
 
 		m_gameThread = std::thread{ &CServer::GameThread, this };
 		m_timerThread = std::thread{ &MessageHandler::TimerThread, m_msgHandler };
-		//m_transformThread = std::thread{ &MessageHandler::TransformThread, m_msgHandler };
 
 		for (auto& thread : m_workerThreads)
 		{
@@ -141,7 +139,6 @@ namespace game
 
 		m_gameThread.join();
 		m_timerThread.join();
-		//m_transformThread.join();
 	}
 
 	void CServer::WorkerThread()
@@ -387,7 +384,7 @@ namespace game
 
 			if (issueReuseID == true)
 			{
-				++m_userID;
+				//++m_userID;
 				return newID;
 			}
 		}
@@ -656,6 +653,7 @@ namespace game
 
 	void CServer::BroadcastResult(int32_t id, network::OVERLAPPEDEX* postOver)
 	{
+#pragma region [OBJECTS]
 		auto objMgr{ ObjectManager::GetInstance() };
 		auto playerObjects{ objMgr->GetLayer(L"Layer_Player")->GetGameObjects() };
 		auto mapObjects{ objMgr->GetLayer(L"Layer_Map")->GetGameObjects() };
@@ -666,6 +664,7 @@ namespace game
 		auto boulderObjects{ objMgr->GetLayer(L"Layer_Gimmik_Boulder")->GetGameObjects() };
 		auto lastBossRockObjects{ objMgr->GetLayer(L"Layer_LastBossRock")->GetGameObjects() };
 		auto particleObjects{ objMgr->GetLayer(L"Layer_Particle")->GetGameObjects() };
+#pragma endregion
 
 		switch (postOver->msgProtocol)
 		{
@@ -887,9 +886,6 @@ namespace game
 			break;
 			case ProtocolID::WR_TRANSFORM_ACK:
 			{
-				/*if (postOver->objType != server::OBJECT_TYPE::PLAYER)
-					std::cout << "type : " << magic_enum::enum_name(postOver->objType) << "\n";*/
-
 				switch (postOver->objType)
 				{
 					case server::OBJECT_TYPE::PLAYER:

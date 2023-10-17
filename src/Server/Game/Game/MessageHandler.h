@@ -60,8 +60,6 @@ namespace game
 		void PushSendMessage(TimerEvent& ev);
 		void ExecuteMessage();
 
-		void PushTransformMessage(TimerEvent& ev);
-
 	public:
 		int32_t NewObjectID();
 
@@ -83,13 +81,11 @@ namespace game
 
 		tbb::concurrent_queue<Message> m_recvQueue;
 		tbb::concurrent_priority_queue<TimerEvent> m_sendQueue;
-		tbb::concurrent_priority_queue<TimerEvent> m_transformQueue;
 
 		std::atomic_int32_t m_recvQueueSize;
 
 		std::atomic_int32_t m_objectsNum;
 		std::atomic_int32_t m_objectIDOffest;
-		tbb::concurrent_priority_queue<int32_t, std::greater<int32_t>> m_reusableObjectID;
 
 		ObjectManager* m_objMgr;
 	};

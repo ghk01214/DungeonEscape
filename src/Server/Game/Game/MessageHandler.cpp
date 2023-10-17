@@ -103,7 +103,6 @@ namespace game
 
 			network::OVERLAPPEDEX* postOver{ new network::OVERLAPPEDEX{ network::COMPLETION::BROADCAST } };
 			postOver->msgProtocol = ev.type;
-			//postOver->roomID = ev.roomID;
 
 			switch (ev.type)
 			{
@@ -188,38 +187,6 @@ namespace game
 		}
 	}
 
-	void MessageHandler::TransformThread()
-	{
-		using namespace std::chrono_literals;
-
-		while (true)
-		{
-			TimerEvent ev{};
-			auto currentTime{ CURRENT_TIME };
-			bool success{ m_transformQueue.try_pop(ev) };
-
-			if (success == false)
-			{
-				std::this_thread::sleep_for(1ms);
-				continue;
-			}
-
-			if (ev.wakeUpTime > currentTime)
-			{
-				m_transformQueue.push(ev);
-				std::this_thread::sleep_for(1ms);
-				continue;
-			}
-
-			network::OVERLAPPEDEX* postOver{ new network::OVERLAPPEDEX{ network::COMPLETION::BROADCAST } };
-			postOver->msgProtocol = ev.type;
-			postOver->objType = ev.objType;
-			//postOver.roomID = ev.roomID;
-
-			PostQueuedCompletionStatus(m_iocp, 1, ev.objID, &postOver->over);
-		}
-	}
-
 	void MessageHandler::ExecuteMessage()
 	{
 		int32_t size{ m_recvQueueSize };
@@ -247,7 +214,7 @@ namespace game
 			++i;
 		}
 
-		for (int32_t i = 0; i < size;)
+		for (int32_t i = 0; i < size; ++i)
 		{
 			Message msg{ queue.front() };
 			switch (msg.msgProtocol)
@@ -318,7 +285,6 @@ namespace game
 				break;
 			}
 
-			++i;
 			queue.pop();
 		}
 	};
@@ -332,11 +298,6 @@ namespace game
 	void MessageHandler::PushSendMessage(TimerEvent& ev)
 	{
 		m_sendQueue.push(ev);
-	}
-
-	void MessageHandler::PushTransformMessage(TimerEvent& ev)
-	{
-		m_transformQueue.push(ev);
 	}
 
 	int32_t MessageHandler::NewObjectID()
