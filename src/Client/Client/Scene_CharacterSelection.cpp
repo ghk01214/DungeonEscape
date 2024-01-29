@@ -137,7 +137,7 @@ void Scene_CharacterSelection::CreateCharacterImage()
 		transform->SetLocalScale(Vec3{ width / 4.f, height / 1.5f, 1.f });
 		transform->SetLocalPosition(Vec3{ pos.x, pos.y, 450.f });
 
-		if (i == 0)
+		//if (i == 0)
 		{
 			std::shared_ptr<CharacterSelectButton_Script> script{ std::make_shared<CharacterSelectButton_Script>() };
 			script->InsertTextures(texture);
@@ -157,7 +157,7 @@ void Scene_CharacterSelection::CreateCharacterImage()
 		if (i == 0)
 			texture = GET_TEXTURE(L"Nana");
 		else if (i == 1)
-			texture = GET_TEXTURE(L"Mistic Unavailable");
+			texture = GET_TEXTURE(L"Mistic");
 
 		std::shared_ptr<CGameObject> obj{ Creator::CreateUIObject(texture, shader, true) };
 		obj->SetLayerIndex(GET_SINGLE(SceneManager)->LayerNameToIndex(L"UI"));
